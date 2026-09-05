@@ -15,7 +15,7 @@ const plural = (n: number, one: string, many: string) => (n > 1 ? many : one);
 const DICT = {
   // ── Header / global ──────────────────────────────────────────────────────
   "header.bestPrice": { fr: "Meilleur prix garanti en direct", en: "Best price guaranteed, direct" },
-  "header.home": { fr: "Accueil Bambou Resort", en: "Bambou Resort home" },
+  "header.home": { fr: "AccueilUrban Cowboy", en: "Bambou Resort home" },
   "hotelError.msg": { fr: "Impossible de charger la configuration de l'hôtel.", en: "Couldn't load the hotel configuration." },
   "common.retry": { fr: "Réessayer", en: "Try again" },
   "common.restoring": { fr: "Restauration de votre sélection…", en: "Restoring your selection…" },
@@ -40,10 +40,10 @@ const DICT = {
   "contact.email": { fr: "Écrire un e-mail", en: "Send an email" },
   "contact.share": { fr: "Partager ma sélection", en: "Share my selection" },
   "contact.copied": { fr: "Lien copié ✓", en: "Link copied ✓" },
-  "contact.shareTitle": { fr: "Ma sélection — Bambou Resort", en: "My selection — Bambou Resort" },
+  "contact.shareTitle": { fr: "Ma sélection —Urban Cowboy", en: "My selection —Urban Cowboy" },
   "contact.shareText": {
-    fr: "Voici ma sélection de séjour au Bambou Resort :",
-    en: "Here's my stay selection at Bambou Resort:",
+    fr: "Voici ma sélection de séjour auUrban Cowboy :",
+    en: "Here's my stay selection atUrban Cowboy:",
   },
   "contact.close": { fr: "Fermer", en: "Close" },
 
@@ -135,7 +135,7 @@ const DICT = {
   "guest.nationality": { fr: "Nationalité", en: "Nationality" },
   "guest.notes": { fr: "Demandes particulières (optionnel)", en: "Special requests (optional)" },
   "guest.notesPlaceholder": { fr: "Étage élevé, lit bébé, arrivée tardive…", en: "High floor, baby cot, late arrival…" },
-  "guest.marketing": { fr: "Je souhaite recevoir les offres et nouvelles du Bambou Resort par e-mail.", en: "I'd like to receive offers and news from Bambou Resort by email." },
+  "guest.marketing": { fr: "Je souhaite recevoir les offres et nouvelles duUrban Cowboy par e-mail.", en: "I'd like to receive offers and news fromUrban Cowboy by email." },
   "guest.continue": { fr: "Continuer", en: "Continue" },
   "creoleUp.title": { fr: "Composez votre expérience créole", en: "Craft your Creole experience" },
   "creoleUp.subtitle": { fr: "Ajoutez maintenant — pré-coché à l'étape suivante.", en: "Add now — pre-selected at the next step." },

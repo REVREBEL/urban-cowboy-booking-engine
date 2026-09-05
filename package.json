@@ -1,9 +1,9 @@
 {
-  "name": "bambou-booking",
+  "name": "urban-cowboy-booking",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Moteur de réservation sur-mesure Bambou Resort (Mews Booking Engine API) — Cloudflare Workers + Static Assets",
+  "description": "Urban Cowboy (Mews Booking Engine API) — Cloudflare Workers + Static Assets",
   "engines": {
     "node": ">=22.0.0"
   },

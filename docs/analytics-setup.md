@@ -1,21 +1,21 @@
-# Analytics du moteur de réservation — Supabase + n8n
+# Booking Engine Analytics — Supabase + n8n
 
-Pipeline : **front → `/api/mews/track` (Worker) → n8n (`WEBHOOK_EVENTS`) → Supabase**.
+Pipeline: **frontend → `/api/mews/track` (Worker) → n8n (`WEBHOOK_EVENTS`) → Supabase**.
 
-Le front pousse un event à **chaque étape** du tunnel + aux jalons de paiement.
-Tout passe par **un seul** webhook n8n (pour avoir les logs), qui insère dans Supabase.
+The frontend pushes an event at **each step** of the funnel + at payment milestones.
+Everything passes through **a single** n8n webhook (for logging purposes), which inserts into Supabase.
 
-## Events envoyés
+## Sent Events
 
-| `status`            | Quand                                              |
-| ------------------- | -------------------------------------------------- |
-| `etape`             | À chaque étape atteinte (le champ `step` précise laquelle : `dates`, `results`, `guest`, `upgrade`, `extras`, `payment`, `confirmation`) |
-| `paiement_initie`   | Clic sur « Payer » (réservation créée + demande de paiement Mews) |
-| `paiement_valide`   | Paiement encaissé (confirmé par Mews)              |
+| `status` | When |
+| --- | --- |
+| `etape` | At each step reached (the `step` field specifies which: `dates`, `results`, `guest`, `upgrade`, `extras`, `payment`, `confirmation`) |
+| `paiement_initie` | Click on "Pay" (reservation created + Mews payment request) |
+| `paiement_valide` | Payment collected (confirmed by Mews) |
 
-> **Panier abandonné** = pas de `paiement_valide`. **Paiement non abouti** = `paiement_initie` sans `paiement_valide`. (Dérivés côté Supabase, pas d'event dédié.)
+> **Abandoned cart** = no `paiement_valide`. **Unsuccessful payment** = `paiement_initie` without `paiement_valide`. (Derived on the Supabase side, no dedicated event.)
 
-### Payload (exemple)
+### Payload (example)
 
 ```json
 {
@@ -36,17 +36,18 @@ Tout passe par **un seul** webhook n8n (pour avoir les logs), qui insère dans S
   "lang": "fr",
   "utm": { "utm_source": "google", "utm_medium": "cpc", "utm_campaign": "ete", "gclid": "…" }
 }
+
 ```
 
 ---
 
-## 1) Supabase — SQL à coller (SQL Editor)
+## 1) Supabase — SQL to paste (SQL Editor)
 
-Deux tables : `booking_events` (journal append-only) et `carts` (état courant, 1 ligne/panier).
-Un **trigger** met à jour `carts` à chaque insert → **n8n n'a qu'à insérer dans `booking_events`**.
+Two tables: `booking_events` (append-only log) and `carts` (current state, 1 row/cart).
+A **trigger** updates `carts` on every insert → **n8n only needs to insert into `booking_events**`.
 
 ```sql
--- Journal append-only : un event par étape/paiement.
+-- Append-only log: one event per step/payment.
 create table if not exists public.booking_events (
   id          bigint generated always as identity primary key,
   received_at timestamptz not null default now(),
@@ -61,7 +62,7 @@ create index if not exists booking_events_status_idx   on public.booking_events 
 create index if not exists booking_events_step_idx      on public.booking_events (step);
 create index if not exists booking_events_received_idx  on public.booking_events (received_at desc);
 
--- État courant par panier (table du dashboard).
+-- Current state per cart (dashboard table).
 create table if not exists public.carts (
   cart_id              text primary key,
   first_seen           timestamptz not null,
@@ -76,14 +77,14 @@ create table if not exists public.carts (
   room_name text, rate_name text, total_grand numeric, currency text,
   customer_email text, customer_name text, customer_phone text, customer_nationality text,
   reservation_group_id text, payment_request_id text,
-  airport_transfer boolean not null default false,   -- extra HORS Mews : cible de relance
+  airport_transfer boolean not null default false,   -- extra OUTSIDE Mews: retargeting target
   payload jsonb
 );
 create index if not exists carts_last_seen_idx on public.carts (last_seen desc);
 create index if not exists carts_status_idx     on public.carts (last_status);
 create index if not exists carts_utm_idx         on public.carts (utm_source);
 
--- Trigger : agrège chaque event dans carts (upsert).
+-- Trigger: aggregates each event into carts (upsert).
 create or replace function public.sync_cart_from_event()
 returns trigger language plpgsql as $$
 declare
@@ -119,7 +120,7 @@ begin
     payment_initiated    = c.payment_initiated or excluded.payment_initiated,
     paid                 = c.paid or excluded.paid,
     lang                 = coalesce(excluded.lang, c.lang),
-    utm_source           = coalesce(c.utm_source, excluded.utm_source),   -- garde la 1re source (attribution)
+    utm_source           = coalesce(c.utm_source, excluded.utm_source),   -- keeps the 1st source (attribution)
     utm_medium           = coalesce(c.utm_medium, excluded.utm_medium),
     utm_campaign         = coalesce(c.utm_campaign, excluded.utm_campaign),
     utm_term             = coalesce(c.utm_term, excluded.utm_term),
@@ -141,7 +142,7 @@ begin
     customer_nationality = coalesce(excluded.customer_nationality, c.customer_nationality),
     reservation_group_id = coalesce(excluded.reservation_group_id, c.reservation_group_id),
     payment_request_id   = coalesce(excluded.payment_request_id, c.payment_request_id),
-    airport_transfer     = excluded.airport_transfer,   -- dernier choix connu (coché / décoché)
+    airport_transfer     = excluded.airport_transfer,   -- last known choice (checked / unchecked)
     payload              = excluded.payload;
   return new;
 end $$;
@@ -150,62 +151,68 @@ drop trigger if exists trg_sync_cart on public.booking_events;
 create trigger trg_sync_cart after insert on public.booking_events
 for each row execute function public.sync_cart_from_event();
 
--- Sécurité : RLS activé, aucune policy publique → seul le service_role (n8n) écrit/lit.
+-- Security: RLS enabled, no public policy → only service_role (n8n) writes/reads.
 alter table public.booking_events enable row level security;
 alter table public.carts          enable row level security;
+
 ```
 
-Puis récupère (Settings → API) : **Project URL** + clé **`service_role`** (secrète — pour n8n uniquement).
+Then retrieve (Settings → API): **Project URL** + **`service_role`** key (secret — for n8n only).
 
 ---
 
-## 2) n8n — workflow « Bambou — Booking Events »
+## 2) n8n — Workflow "Bambou — Booking Events"
 
-1. **Webhook** (node) : méthode `POST`, path ex. `booking-events`. Copie la **Production URL** → c'est elle qu'on met dans `WEBHOOK_EVENTS`.
-2. **Supabase** (node) → opération **Insert**, table `booking_events`. Mappe (le body arrive sous `{{$json.body}}` en général — vérifie ce que n8n affiche) :
-   - `cart_id`  ← `{{ $json.body.cartId }}`
-   - `status`   ← `{{ $json.body.status }}`
-   - `step`     ← `{{ $json.body.step }}`
-   - `event_at` ← `{{ $json.body.timestamp }}`
-   - `payload`  ← `{{ $json.body }}`  *(l'objet complet en jsonb)*
-   > Pas besoin de toucher `carts` : le trigger Postgres s'en charge.
-3. **Active** le workflow. L'onglet **Executions** = tes logs (chaque hit = une exécution).
-4. Credentials Supabase dans n8n : Host = Project URL, Service Role Secret = clé `service_role`.
+1. **Webhook** (node): `POST` method, path e.g. `booking-events`. Copy the **Production URL** → this is what goes into `WEBHOOK_EVENTS`.
+2. **Supabase** (node) → **Insert** operation, table `booking_events`. Map (the body usually arrives under `{{$json.body}}` — check what n8n displays):
+* `cart_id`  ← `{{ $json.body.cartId }}`
+* `status`   ← `{{ $json.body.status }}`
+* `step`     ← `{{ $json.body.step }}`
+* `event_at` ← `{{ $json.body.timestamp }}`
+* `payload`  ← `{{ $json.body }}`  *(the full object as jsonb)*
 
----
 
-## 3) Ce qu'il reste (côté déploiement)
+> No need to touch `carts`: the Postgres trigger handles it.
 
-- Donne-moi la **Production URL** du webhook n8n → je la mets dans `WEBHOOK_EVENTS` (wrangler.toml ou Secret Cloudflare) et je déploie.
-- Tant que `WEBHOOK_EVENTS` est vide, le tracking est **no-op** (aucune erreur).
+
+3. **Activate** the workflow. The **Executions** tab = your logs (each hit = one execution).
+4. **Supabase credentials** in n8n: Host = Project URL, Service Role Secret = `service_role` key.
 
 ---
 
-## Requêtes prêtes (pour le futur dashboard)
+## 3) Next steps (deployment side)
+
+* Provide me with the **Production URL** of the n8n webhook → I will put it in `WEBHOOK_EVENTS` (`wrangler.toml` or Cloudflare Secret) and deploy.
+* As long as `WEBHOOK_EVENTS` is empty, tracking is a **no-op** (no errors generated).
+
+---
+
+## Ready-to-use queries (for the future dashboard)
 
 ```sql
--- Paniers abandonnés (inactifs > 30 min, non payés, arrêtés en cours de tunnel)
+-- Abandoned carts (inactive > 30 min, unpaid, stopped mid-funnel)
 select cart_id, last_step, last_seen, customer_email, room_name, total_grand, utm_source
 from carts
 where not paid and last_status = 'etape' and last_seen < now() - interval '30 minutes'
 order by last_seen desc;
 
--- Paiements non aboutis (paiement lancé mais jamais validé)
+-- Unsuccessful payments (payment initiated but never validated)
 select cart_id, last_seen, customer_email, room_name, total_grand, payment_request_id, utm_source
 from carts
 where payment_initiated and not paid
 order by last_seen desc;
 
--- Sources : sessions vs conversions par utm_source
+-- Sources: sessions vs conversions by utm_source
 select coalesce(utm_source,'(direct)') as source,
-       count(*)                        as paniers,
+       count(*)                        as carts,
        count(*) filter (where paid)    as conversions,
-       round(100.0 * count(*) filter (where paid) / nullif(count(*),0), 1) as taux_pct
-from carts group by 1 order by paniers desc;
+       round(100.0 * count(*) filter (where paid) / nullif(count(*),0), 1) as rate_pct
+from carts group by 1 order by carts desc;
 
--- Funnel : nb de paniers distincts ayant atteint chaque étape
-select step, count(distinct cart_id) as paniers
+-- Funnel: number of distinct carts reaching each step
+select step, count(distinct cart_id) as carts
 from booking_events where status = 'etape'
 group by step
 order by array_position(array['dates','results','guest','upgrade','extras','payment','confirmation'], step);
+
 ```

@@ -1,14 +1,14 @@
-# Copiez ce fichier en `.dev.vars` (gitignored) pour le développement local.
-# `wrangler dev` le lit automatiquement. NE COMMITTEZ JAMAIS `.dev.vars`.
+# Copy this file to `.dev.vars` (gitignored) for local development.
+# `wrangler dev` reads it automatically. NEVER COMMIT `.dev.vars`.
 #
-# ⚠️ Ces valeurs pointent sur la PRODUCTION : aller au bout du paiement crée une
-#    VRAIE réservation. Utilisez le bloc DEMO en bas pour tester sans risque.
+# ⚠️ These values point to PRODUCTION: completing the payment process creates a
+#    REAL reservation. Use the DEMO block below to test safely.
 
 MEWS_BASE_URL=https://api.mews.com
 MEWS_APP_BASE_URL=https://app.mews.com
 
-# Booking Engine API — chaîne Client activée par Mews sur l'entreprise Bambou Resort.
-MEWS_CLIENT=<chaîne Client fournie par Mews — NE PAS committer la vraie valeur>
+# Booking Engine API — Client string enabled by Mews on the Urban Cowboy enterprise.
+MEWS_CLIENT=<Client string provided by Mews — DO NOT commit the real value>
 
 MEWS_HOTEL_ID=d81c0909-af62-4227-9cfe-b2cf00fea600
 MEWS_CONFIG_ID=43ec5bf8-09e2-4ae8-83d2-b39900e86b9b
@@ -16,19 +16,19 @@ MEWS_CONFIG_ID=43ec5bf8-09e2-4ae8-83d2-b39900e86b9b
 MEWS_ADULT_AGE_CATEGORY_ID=3b9bdb28-d9e1-4fac-904f-b2cf00febb8f
 MEWS_CHILD_AGE_CATEGORY_ID=5cd331e0-0069-4f46-a20f-b2cf00febb8f
 
-# Webhook (optionnel) : URL POST notifiée à chaque paiement initié (payment.initiated)
-# et à chaque réservation payée (reservation.paid). Laisser vide = désactivé.
-# WEBHOOK_URL=https://exemple.com/mews-webhook
+# Webhook (optional): POST URL notified on every initiated payment (payment.initiated)
+# and on every paid reservation (reservation.paid). Leave empty = disabled.
+# WEBHOOK_URL=https://example.com/mews-webhook
 
-# Webhooks (optionnels) : suivi de panier (funnel) → base des paniers, un par statut.
-# WEBHOOK_BASKET_CREATED=https://n8n.exemple.com/webhook/basket-created
-# WEBHOOK_PAYMENT_INITIATED=https://n8n.exemple.com/webhook/paiement-initiated
-# WEBHOOK_PAYMENT_VALIDATED=https://n8n.exemple.com/webhook/paiement-validated
+# Webhooks (optional): cart tracking (funnel) → carts base, one per status.
+# WEBHOOK_BASKET_CREATED=https://n8n.example.com/webhook/basket-created
+# WEBHOOK_PAYMENT_INITIATED=https://n8n.example.com/webhook/payment-initiated
+# WEBHOOK_PAYMENT_VALIDATED=https://n8n.example.com/webhook/payment-validated
 
-# ── Bascule DEMO (tests sans risque) ────────────────────────────────────────
+# ── DEMO Toggle (safe testing) ────────────────────────────────────────
 # MEWS_BASE_URL=https://api.mews-demo.com
 # MEWS_APP_BASE_URL=https://app.mews-demo.com
-# MEWS_CLIENT=<chaîne Client fournie par Mews — NE PAS committer la vraie valeur>
+# MEWS_CLIENT=<Client string provided by Mews — DO NOT commit the real value>
 # MEWS_HOTEL_ID=3edbe1b4-6739-40b7-81b3-d369d9469c48
 # MEWS_CONFIG_ID=93e27b6f-cba7-4e0b-a24a-819e1b7b388a
 # MEWS_ADULT_AGE_CATEGORY_ID=5485e2f3-4034-4ca1-8a8f-ade30114c61f

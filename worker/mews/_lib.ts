@@ -37,14 +37,14 @@ export async function postWebhook(url: string | undefined, payload: unknown): Pr
   }
 }
 
-// Catégories d'âge de l'entreprise Bambou Resort (vérifiées en live) — fallback si les
+// Catégories d'âge de l'entrepriseUrban Cowboy (vérifiées en live) — fallback si les
 // vars ne sont pas définies. Surchargeables via MEWS_ADULT/CHILD_AGE_CATEGORY_ID.
 const AGE_FALLBACK = {
   adult: "3b9bdb28-d9e1-4fac-904f-b2cf00febb8f",
   child: "5cd331e0-0069-4f46-a20f-b2cf00febb8f",
 };
 
-// ── Hébergements (Booking Engine configs) — setup Bambou Resort ────────────────
+// ── Hébergements (Booking Engine configs) — setupUrban Cowboy ────────────────
 // Non secret (comme MEWS_CONFIG_ID, déjà public). Chaque hébergement = 1 config Mews
 // + SES catégories d'âge (adulte/enfant). IDs vérifiés en live via configuration/get.
 export interface Property {

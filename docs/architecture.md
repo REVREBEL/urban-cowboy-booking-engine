@@ -1,242 +1,219 @@
-# Bambou Resort — Guide technique & métier
+# Urban Cowboy — Technical & Business Guide
 
-> Carte des flux et des décisions — techniques et métier — pour qu'en arrivant sur le
-> projet on sache tout de suite si un comportement observé est **voulu**, une
-> **subtilité à connaître**, ou un **vrai bug**.
->
-> Stack : **Cloudflare Worker + React/Vite** · PMS : **Mews Distributor v1** · Analytics : **n8n → Supabase**
+> Flow map and decision guide — technical and business — so that anyone joining the
+> project immediately knows whether an observed behavior is **intended**, a
+> **subtlety to be aware of**, or a **real bug**.
+> Stack: **Cloudflare Worker + React/Vite** · PMS: **Mews Distributor v1** · Analytics: **n8n → Supabase**
 
-## Sommaire
+## Table of Contents
 
-1. [Architecture d'ensemble](#1-architecture-densemble)
-2. [Le tunnel de réservation](#2-le-tunnel-de-réservation)
-3. [Multi-hébergement (3 configs Mews)](#3-multi-hébergement--3-configurations-mews)
-4. [Langues FR / EN](#4-langues--fr--en)
-5. [Liens partageables & réhydratation](#5-liens-partageables--réhydratation)
-6. [Pipeline analytics](#6-pipeline-analytics)
-7. [Voulu, ou bug ?](#7-voulu-ou-bug-)
-8. [Donnée réelle vs démo](#8-donnée-réelle-mews-vs-démo-en-dur)
-9. [Outils, emplacements & comptes](#9-outils-emplacements--comptes)
+1. [Overall Architecture](https://www.google.com/search?q=%231-overall-architecture)
+2. [The Booking Funnel](https://www.google.com/search?q=%232-the-booking-funnel)
+3. [Multi-Property (3 Mews Configs)](https://www.google.com/search?q=%233-multi-property--3-mews-configurations)
+4. [Languages FR / EN](https://www.google.com/search?q=%234-languages--fr--en)
+5. [Shareable Links & Rehydration](https://www.google.com/search?q=%235-shareable-links--rehydration)
+6. [Analytics Pipeline](https://www.google.com/search?q=%236-analytics-pipeline)
+7. [Intended, or Bug?](https://www.google.com/search?q=%237-intended-or-bug)
+8. [Real Data (Mews) vs. Demo (Hardcoded)](https://www.google.com/search?q=%238-real-data-mews-vs-demo-hardcoded)
+9. [Tools, Locations & Accounts](https://www.google.com/search?q=%239-tools-locations--accounts)
 
 ---
 
-## 1. Architecture d'ensemble
+## 1. Overall Architecture
 
-Le front ne parle **jamais** directement à Mews. Tout passe par des fonctions du Worker
-sur la même origine (`/api/mews/*`). Cette frontière unique cache le jeton `Client` et
-les UUID de l'établissement, et cure les réponses Mews (≈ 80 devises → EUR seulement).
+The frontend **never** talks directly to Mews. Everything goes through Worker functions
+on the same origin (`/api/mews/*`). This single boundary hides the `Client` token and
+property UUIDs, and cleans up Mews responses (≈ 80 currencies → EUR only).
 
 ```mermaid
 flowchart LR
-  U["Visiteur"] --> F["Front SPA<br/>(Static Assets)"]
-  F -->|"/api/mews/*"| W["Worker<br/>(proxy sécurisé)"]
-  W -->|"Client + UUID cachés"| M["Mews<br/>Distributor v1"]
+  U["Visitor"] --> F["Frontend SPA<br/>(Static Assets)"]
+  F -->|"/api/mews/*"| W["Worker<br/>(secure proxy)"]
+  W -->|"Hidden Client + UUIDs"| M["Mews<br/>Distributor v1"]
   F -.->|"/api/mews/track"| W
   W -.-> N["n8n"]
   N -.-> S["Supabase"]
   S -.-> D["Dashboard<br/>/dashboard"]
+
 ```
 
-*Trait plein = réservation en direct · pointillés = suivi analytics (asynchrone, best-effort).*
+*Solid line = direct booking · dotted line = analytics tracking (asynchronous, best-effort).*
 
 ---
 
-## 2. Le tunnel de réservation
+## 2. The Booking Funnel
 
-Sept étapes. L'état vit dans les **paramètres d'URL** (dates, hébergements, chambre,
-tarif, extras, étape, langue) — ce qui rend chaque lien partageable et rejouable. Le
-paiement est délégué à la **page hébergée par Mews** (carte + 3-D Secure), avec retour
-sur `/confirmation`.
+Seven steps. State lives in **URL parameters** (dates, properties, room, rate,
+extras, step, language) — making every link shareable and replayable. Payment is
+delegated to the **Mews-hosted page** (card + 3-D Secure), with a return redirect to
+`/confirmation`.
 
 ```mermaid
 flowchart LR
-  A["1 · Recherche"] --> B["2 · Résultats"] --> C["3 · Coordonnées"] --> D["4 · Surclassement"] --> E["5 · Extras"] --> F["6 · Paiement<br/>(page Mews)"] --> G["7 · Confirmation"]
+  A["1 · Search"] --> B["2 · Results"] --> C["3 · Guest Details"] --> D["4 · Upgrade"] --> E["5 · Extras"] --> F["6 · Payment<br/>(Mews page)"] --> G["7 · Confirmation"]
+
 ```
 
-> Le suivi analytics émet un événement `etape` à **chaque** étape (dès la recherche),
-> plus `paiement_initie` et `paiement_valide`. C'est ce qui alimente le funnel du dashboard.
+> Analytics tracking emits a `step` event at **every** step (starting from search),
+> plus `paiement_initie` (payment initiated) and `paiement_valide` (payment validated). This feeds the dashboard funnel.
 
 ---
 
-## 3. Multi-hébergement — 3 configurations Mews
+Important consequence: in Mews, a **product (extra) belongs to a single configuration**.
+Booking a Room with a breakfast is rejected by Mews
+(`product invalid`). The engine therefore filters extras based on the property of the
+selected room at step 2.
 
-« Bambou », ce sont en réalité **trois établissements Mews distincts** — Hôtel Bambou,
-Culture Créole, Villas — chacun sa configuration. Un seul appel `configuration/get` les
-récupère et fusionne le catalogue, en **taguant chaque chambre et chaque extra par son
-hébergement**.
+> A category returned by availability but **missing from the catalog** `configuration/get`
+> (lacking name or photo) is deliberately **hidden** rather than displayed as an empty card.
+
+---
+
+## 4. Languages — FR / EN
+
+Language is controlled via `?lang=fr|en` (or the footer language picker, which reloads the page
+to re-localize everything). It is sent to Mews (`LanguageCode`) — which also sets the
+language for the **payment page** and transactional emails.
+
+---
+
+## 5. Shareable Links & Rehydration
+
+Because complete state is kept in the URL, users can share their selection: the recipient
+arrives at the **exact same step** with the same choices. When opening a deep link, the
+engine briefly displays a "Restoring..." screen, reloads availability, and reconstructs
+the room/rate *before* rendering the step (to prevent invalid redirects).
 
 ```mermaid
 flowchart TD
-  H["Hôtel Bambou"] --> CAT["Catalogue fusionné<br/>chambres + extras<br/>tagués par hébergement"]
-  CR["Culture Créole"] --> CAT
-  V["Villas"] --> CAT
-  CAT --> RULE["Règle d'or : une chambre ne propose<br/>QUE les extras de SON hébergement"]
+  L["Shared Link<br/>(state in URL)"] --> Q{"Advanced step<br/>+ room in URL?"}
+  Q -->|no| R["Display step directly"]
+  Q -->|yes| LO["'Restoring...' screen<br/>reloads availability + reconstructs"]
+  LO --> OK{"Room still available?"}
+  OK -->|yes| S["Same step, restored choices"]
+  OK -->|no| B["Redirect to Results"]
+
 ```
 
-Conséquence importante : dans Mews, un **produit (extra) appartient à une seule config**.
-Réserver une chambre Culture Créole avec un petit-déjeuner « Hôtel Bambou » est refusé
-par Mews (`product invalid`). Le moteur filtre donc les extras selon l'hébergement de la
-chambre choisie à l'étape 2.
-
-> Une catégorie renvoyée par la dispo mais **absente du catalogue** `configuration/get`
-> (sans nom ni photo) est volontairement **masquée** plutôt qu'affichée en carte vide.
+> **⚠️ Good to know —** deliberate choice: **guest contact details** (name, email,
+> phone) are included in the URL to restore input fields. Consequently, they are visible
+> in browser history, server logs, and to anyone receiving the link — this should be addressed in the privacy policy.
 
 ---
 
-## 4. Langues — FR / EN
+## 6. Analytics Pipeline
 
-La langue se pilote par `?lang=fr|en` (ou le sélecteur du footer, qui recharge la page
-pour tout re-localiser). Elle est envoyée à Mews (`LanguageCode`) — c'est aussi ce qui
-fixe la langue de la **page de paiement** et des e-mails.
-
-> **⚠️ À savoir —** le contenu des chambres (noms, descriptions, noms de tarifs comme
-> « Non remboursable ») est saisi **en français uniquement** dans le PMS. En anglais,
-> l'**interface** est traduite, mais ces textes retombent en français : c'est voulu,
-> tant que l'hôtel ne les traduit pas côté Mews.
-
----
-
-## 5. Liens partageables & réhydratation
-
-Comme l'état complet est dans l'URL, on peut partager sa sélection : le destinataire
-arrive à la **même étape** avec les mêmes choix. À l'ouverture d'un lien profond, le
-moteur affiche un bref écran « Restauration… », recharge la disponibilité et reconstruit
-la chambre/tarif *avant* d'afficher l'étape (pour ne pas rebondir à tort).
-
-```mermaid
-flowchart TD
-  L["Lien partagé<br/>(état dans l'URL)"] --> Q{"Étape avancée<br/>+ chambre dans l'URL ?"}
-  Q -->|non| R["Affiche l'étape directement"]
-  Q -->|oui| LO["Écran « Restauration… »<br/>recharge dispo + reconstruit"]
-  LO --> OK{"Chambre encore disponible ?"}
-  OK -->|oui| S["Même étape, choix restaurés"]
-  OK -->|non| B["Retour aux Résultats"]
-```
-
-> **⚠️ À savoir —** choix assumé : les **coordonnées du voyageur** (nom, e-mail,
-> téléphone) sont incluses dans l'URL pour restaurer la saisie. Elles sont donc visibles
-> dans l'historique, les logs et par toute personne recevant le lien — à couvrir dans la
-> politique de confidentialité.
-
----
-
-## 6. Pipeline analytics
-
-À chaque étape, le front pousse un événement vers **un unique endpoint n8n** (via le
-Worker, pour les logs), qui insère dans Supabase. Un **trigger** Postgres agrège chaque
-événement dans une table `carts` (une ligne par panier) que lit le dashboard.
+At every step, the frontend pushes an event to a **single n8n endpoint** (via the
+Worker for logging), which inserts it into Supabase. A Postgres **trigger** aggregates each
+event into a `carts` table (one row per cart) read by the dashboard.
 
 ```mermaid
 flowchart LR
-  FR["Front · track()<br/>chaque étape"] -->|"/api/mews/track"| WK["Worker"]
+  FR["Front · track()<br/>every step"] -->|"/api/mews/track"| WK["Worker"]
   WK -->|"1 webhook"| N8["n8n (logs)"]
   N8 --> BE["Supabase<br/>booking_events"]
-  BE -->|"trigger"| CA["carts<br/>1 ligne / panier"]
+  BE -->|"trigger"| CA["carts<br/>1 row / cart"]
   CA --> DA["Dashboard<br/>funnel + KPIs"]
+
 ```
 
-**Atomicité :** l'insert dans `booking_events` et la mise à jour de `carts` forment
-**une seule transaction**. Si le trigger échoue, tout est annulé (rien n'est enregistré)
-— c'est ce qui garantit qu'on n'a jamais un événement sans son panier.
+**Atomicity:** Inserting into `booking_events` and updating `carts` form **a single transaction**.
+If the trigger fails, everything is rolled back (nothing is saved) — guaranteeing that an
+event is never stored without updating its cart.
 
-> « Paiement non abouti » n'est pas un statut envoyé : c'est **déduit** = `paiement_initie`
-> sans `paiement_valide`. Or `paiement_valide` ne part que si le client **revient** sur la
-> page de confirmation. La validation fiable se fait donc côté n8n, qui rappelle Mews avec
-> le `reservationGroupId` présent dans l'événement.
-
----
-
-## 7. Voulu, ou bug ?
-
-Le tableau à garder sous la main quand on découvre le projet.
-**✅ Voulu** = attendu · **⚠️ À savoir** = effet de bord assumé · **❌ Bug** = anormal.
-
-| Comportement observé | Statut | Pourquoi |
-|---|---|---|
-| Les noms de chambres restent en français en mode anglais | ✅ Voulu | Contenu Mews saisi FR uniquement. L'interface est traduite, pas le catalogue PMS. |
-| Aucune villa (ni accordéon « Villas ») sur certaines dates | ✅ Voulu | Zéro disponibilité villa sur ces dates. L'accordéon n'apparaît que s'il y a de la dispo. |
-| Un extra apparaît pour une chambre mais pas pour une autre | ✅ Voulu | Les extras sont rattachés à une config Mews ; on ne montre que ceux de l'hébergement de la chambre. |
-| « 0 € de frais et commission » affiché sur tous les tarifs | ✅ Voulu | L'API ne permet pas de vérifier la remboursabilité par tarif : on affiche le message sûr (réservation en direct, sans commission plateforme). |
-| Un lien partagé retombe sur « Résultats » au lieu de l'étape | ⚠️ À savoir | Normal *si* la chambre n'est plus disponible aux dates. Sinon (chambre dispo), c'est un bug de réhydratation. |
-| E-mail / téléphone visibles dans l'URL | ⚠️ À savoir | Choix assumé pour le partage/reprise de panier. Donnée perso dans l'URL → à cadrer côté RGPD. |
-| Bref écran « Restauration de votre sélection… » | ✅ Voulu | Réhydratation d'un lien profond : on recharge la dispo avant d'afficher l'étape. |
-| Un panier payé apparaît « non abouti » dans le dashboard | ⚠️ À savoir | Le client n'est pas revenu sur `/confirmation` → `paiement_valide` non émis. n8n doit valider via Mews (`reservationGroupId`). |
-| `booking_events` vide après une erreur 400 du trigger | ✅ Voulu | Transaction atomique : si le trigger plante, l'insert est annulé (rollback). Cohérence garantie. |
-| `/dashboard` affiche « à configurer » | ✅ Voulu | Clé anon Supabase absente de `config.ts`. Une fois renseignée → écran de login. |
-| Une chambre « bookable » n'apparaît pas dans la liste | ✅ Voulu | Catégorie présente en dispo mais absente du catalogue `configuration/get` (sans nom/photo) → masquée. |
+> "Unsuccessful payment" is not an event sent by the front: it is **derived** = `payment_valid`
+> without `payment_valid`. However, `payment_valid` is only emitted if the customer **returns** to
+> the confirmation page. Reliable validation is thus handled on the n8n side, which calls Mews using
+> the `reservationGroupId` present in the event.
 
 ---
 
-## 8. Donnée réelle (Mews) vs démo (en dur)
+## 7. Intended, or Bug?
 
-Plusieurs éléments de réassurance sont **générés**, pas issus de Mews. À savoir avant de
-« débuguer » un chiffre qui bouge tout seul. **🟢 Réel** = vient de Mews · **🟣 Démo** = en dur, à remplacer.
+Keep this table handy when onboarding on the project.
+**✅ Intended** = expected behavior · **⚠️ Good to know** = accepted side effect · **❌ Bug** = abnormal behavior.
 
-| Élément affiché | Source | Détail |
-|---|---|---|
-| Disponibilité, prix, tarifs | 🟢 Réel | Mews `getAvailability` / `getPricing`, curés en EUR. |
-| Noms, descriptions, photos des chambres | 🟢 Réel | Mews `configuration/get`. |
-| « Plus que N chambres » | 🟢 Réel | Basé sur `AvailableRoomCount` de Mews. |
-| Conditions générales (lien) | 🟢 Réel | URL fournie par la configuration Mews. |
-| Note « 4,2 · 2 064 avis » | 🟣 Démo | En dur. À brancher sur une vraie source d'avis. |
-| « 14 personnes consultent ce séjour » | 🟣 Démo | Généré (graine par chambre), pas un compteur réel. |
-| « Réservé N fois cette semaine » | 🟣 Démo | Généré. Preuve sociale d'illustration. |
-| « Coup de cœur voyageurs » / « Très demandé » | 🟣 Démo | Badges d'illustration (règle simple / graine), pas un signal Mews. |
-| Minuteur « Nous gardons votre chambre 10 min » | 🟣 Démo | Visuel d'urgence ; aucune réservation temporaire réelle côté Mews. |
-
----
-
-## 9. Outils, emplacements & comptes
-
-> ⚠️ Ce tableau liste **où** vivent les choses, **jamais les secrets** (le repo est public).
-> Les valeurs sensibles restent dans Cloudflare (secrets), `.dev.vars` (local) et les
-> credentials n8n — voir « Où vivent les secrets » plus bas.
-
-| Outil | Rôle | Où (console) | Compte |
-|---|---|---|---|
-| **GitHub** | Code source | [github.com/valentin-nocodefactory/bambou-resort-booking-engine](https://github.com/valentin-nocodefactory/bambou-resort-booking-engine) | `valentin-nocodefactory` |
-| **Cloudflare Workers** | Hébergement + déploiement | dash.cloudflare.com → Worker `bambou-resort-booking-engine` | compte `valentin7732` (sous-domaine `*.valentin7732.workers.dev`) |
-| **Mews** | PMS / dispo / prix / paiement | [app.mews.com](https://app.mews.com) (Commander) · `api.mews.com` (Distributor v1) | compte Mews de l'hôtel Bambou (3 configurations) |
-| **n8n** | Automatisation / suivi funnel | [n8n.srv842183.hstgr.cloud](https://n8n.srv842183.hstgr.cloud) (auto-hébergé Hostinger, `srv842183`) | instance n8n du projet |
-| **Supabase** | Base de données + Auth + API | [supabase.com/dashboard/project/wrakgyuiihxlcaxinckm](https://supabase.com/dashboard/project/wrakgyuiihxlcaxinckm) | projet `wrakgyuiihxlcaxinckm` |
-| **Site vitrine** | Charte (polices, couleurs, photos, contact) | [bambouresort.com](https://www.bambouresort.com) (Webflow) | — |
-| **NocodeFactory** | Développement | crédit footer | — |
-
-### URLs clés
-
-| Quoi | URL |
-|---|---|
-| Moteur de réservation (prod) | `https://bambou-resort-booking-engine.valentin7732.workers.dev` |
-| Dashboard back-office | `…workers.dev/dashboard` |
-| Endpoint suivi → n8n | `https://n8n.srv842183.hstgr.cloud/webhook/booking-event` |
-| API Supabase (REST auto) | `https://wrakgyuiihxlcaxinckm.supabase.co/rest/v1/…` |
-
-### Déploiement
-
-Aucun déploiement manuel : **push sur `main` → Cloudflare Workers Builds** rebuild et
-déploie automatiquement (front + Worker sur la même origine, ~1 min). Le dashboard est une
-2ᵉ page du même build (`/dashboard`).
-
-### Où vivent les secrets (jamais dans le repo)
-
-| Secret | Rôle | Emplacement |
-|---|---|---|
-| `MEWS_CLIENT` | Jeton Distributor Mews | `.dev.vars` (local) **+** Secret Cloudflare (prod) |
-| Supabase `service_role` | Accès total à la base (contourne le RLS) | **Uniquement** dans les credentials n8n |
-| Supabase `anon` (publique) | Lecture front via RLS + Auth | `src/dashboard/config.ts` (publique par design) |
-| IDs Mews publics + `WEBHOOK_EVENTS` | Non secrets (hotel/config/catégories d'âge) | `wrangler.toml` → `[vars]` |
-
-> 🔑 **À faire** : la clé `service_role` a été exposée une fois → la **régénérer** dans
-> Supabase (Settings → API) et remettre la nouvelle dans n8n.
-
-### Contact réception (affiché dans le moteur)
-
-Téléphone `+33 7 68 30 83 96` · e-mail `reservation@hotelbambou.fr`
-(alternatives : `hbreception@outlook.fr`, `hello@hotelbambou.fr`). Modifiable en un seul
-endroit : `src/components/ContactBar.tsx`.
+| Observed Behavior | Status | Why |
+| --- | --- | --- |
+| Room names remain in French in English mode | ✅ Intended | Mews content entered in FR only. Interface is translated, PMS catalog is not. |
+| No villas (nor "Villas" accordion) on certain dates | ✅ Intended | Zero villa availability for those dates. Accordion only appears if availability exists. |
+| An extra appears for one room but not another | ✅ Intended | Extras are attached to a specific Mews config; only extras from the room's property are shown. |
+| "€0 fees and commission" displayed on all rates | ✅ Intended | API does not allow checking refundability per rate: we display the safe messaging (direct booking, zero platform commission). |
+| Shared link falls back to "Results" instead of step | ⚠️ Good to know | Normal *if* room is no longer available on those dates. Otherwise (room available), it is a rehydration bug. |
+| Email / phone visible in URL | ⚠️ Good to know | Intentional choice for cart sharing/resumption. Personal data in URL → needs coverage under GDPR policy. |
+| Brief "Restoring your selection..." screen | ✅ Intended | Deep-link rehydration: reloads availability before displaying the step. |
+| Paid cart appears as "unsuccessful" in dashboard | ⚠️ Good to know | Customer did not return to `/confirmation` → `payment_valid` not emitted. n8n must validate via Mews (`reservationGroupId`). |
+| `booking_events` empty after a 400 trigger error | ✅ Intended | Atomic transaction: if trigger fails, insert is rolled back. Guarantees consistency. |
+| `/dashboard` displays "needs configuration" | ✅ Intended | Supabase anon key missing from `config.ts`. Once provided → login screen. |
+| A "bookable" room does not appear in list | ✅ Intended | Category present in availability but missing from catalog `configuration/get` (lacks name/photo) → hidden. |
 
 ---
 
-*Document d'onboarding — à mettre à jour quand une règle change (idéalement dans le même
-commit que le code concerné). En cas de doute sur un comportement non listé ici : le
-considérer comme **à investiguer**, pas comme voulu.*
+## 8. Real Data (Mews) vs. Demo (Hardcoded)
+
+Several reassurance elements are **generated**, not sourced from Mews. Good to know before
+"debugging" a number that changes on its own. **🟢 Real** = comes from Mews · **🟣 Demo** = hardcoded, to be replaced.
+
+| Displayed Element | Source | Details |
+| --- | --- | --- |
+| Availability, pricing, rates | 🟢 Real | Mews `getAvailability` / `getPricing`, curated in EUR. |
+| Room names, descriptions, photos | 🟢 Real | Mews `configuration/get`. |
+| "Only N rooms left" | 🟢 Real | Based on Mews `AvailableRoomCount`. |
+| Terms & Conditions (link) | 🟢 Real | URL provided by Mews configuration. |
+| Rating "4.2 · 2,064 reviews" | 🟣 Demo | Hardcoded. To be connected to a real review source. |
+| "14 people viewing this stay" | 🟣 Demo | Generated (seeded per room), not a real counter. |
+| "Booked N times this week" | 🟣 Demo | Generated. Illustrative social proof. |
+| "Guest Favorite" / "High Demand" | 🟣 Demo | Illustrative badges (simple rule / seed), not a Mews signal. |
+| Timer "We hold your room for 10 min" | 🟣 Demo | Urgency visual; no actual temporary reservation on Mews. |
+
+---
+
+## 9. Tools, Locations & Accounts
+
+> ⚠️ This table lists **where** things live, **never secrets** (the repo is public).
+> Sensitive values remain in Cloudflare (secrets), `.dev.vars` (local), and n8n credentials — see "Where secrets live" below.
+
+| Tool | Role | Where (console) | Account |
+| --- | --- | --- | --- |
+| **GitHub** | Source code | [github.com/valentin-nocodefactory/bambou-resort-booking-engine](https://github.com/valentin-nocodefactory/bambou-resort-booking-engine) | `valentin-nocodefactory` |
+| **Cloudflare Workers** | Hosting + deployment | dash.cloudflare.com → Worker `bambou-resort-booking-engine` | `valentin7732` account (`*.valentin7732.workers.dev` subdomain) |
+| **Mews** | PMS / availability / pricing / payment | [app.mews.com](https://app.mews.com) (Commander) · `api.mews.com` (Distributor v1) | Hôtel Bambou Mews account (3 configurations) |
+| **n8n** | Automation / funnel tracking | [n8n.srv842183.hstgr.cloud](https://n8n.srv842183.hstgr.cloud) (self-hosted Hostinger, `srv842183`) | Project n8n instance |
+| **Supabase** | Database + Auth + API | [supabase.com/dashboard/project/wrakgyuiihxlcaxinckm](https://supabase.com/dashboard/project/wrakgyuiihxlcaxinckm) | Project `wrakgyuiihxlcaxinckm` |
+| **Showcase Website** | Brand guidelines (fonts, colors, photos, contact) | [bambouresort.com](https://www.bambouresort.com) (Webflow) | — |
+| **NocodeFactory** | Development | Footer credit | — |
+
+### Key URLs
+
+| What | URL |
+| --- | --- |
+| Booking Engine (Prod) | 
+| Back-Office Dashboard | `…workers.dev/dashboard` |
+| Tracking Endpoint → n8n | 
+| Supabase API (REST auto) |
+
+### Deployment
+
+No manual deployment: **push to `main` → Cloudflare Workers Builds** automatically rebuilds and
+deploys (front + Worker on the same origin, ~1 min). The dashboard is a 2nd page of the
+same build (`/dashboard`).
+
+### Where Secrets Live (Never in the Repo)
+
+| Secret | Role | Location |
+| --- | --- | --- |
+| `MEWS_CLIENT` | Mews Distributor Token | `.dev.vars` (local) **+** Cloudflare Secret (prod) |
+| Supabase `service_role` | Full database access (bypasses RLS) | **Only** in n8n credentials |
+| Supabase `anon` (public) | Frontend read via RLS + Auth | `src/dashboard/config.ts` (public by design) |
+| Public Mews IDs + `WEBHOOK_EVENTS` | Non-secrets (hotel/config/age categories) | `wrangler.toml` → `[vars]` |
+
+> 🔑 **To do**: the `service_role` key was exposed once → **regenerate** it in Supabase (Settings → API) and update it in n8n.
+
+### Reception Contact (Displayed in the Booking Engine)
+
+Phone `123-456-7890` · Email `reservation@hotel.com'
+(Alternatives: `reservation@hotel.com`, `eservation@hotel.com`). Editable in a single place: `src/components/ContactBar.tsx`.
+
+---
+
+*Onboarding document — update whenever a rule changes (ideally in the same commit as the related code). If unsure about an unlisted behavior: consider it **to be investigated**, not intended.*

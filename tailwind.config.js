@@ -4,17 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── Charte réelle Bambou Resort (extraite de bambouresort.com) ──────────
-        beige: { DEFAULT: "#fffbf0", deep: "#f3ecd9" }, // fond chaud + beige profond (bordures/sections)
-        corail: { DEFAULT: "#ff6f62", soft: "#ff8a7f", dark: "#e85b4f" }, // accent / CTA — le « pop » de la marque
-        marine: { DEFAULT: "#061a2d", soft: "#0e2c47" }, // bleu nuit — texte, surfaces sombres, structure
+        beige: { DEFAULT: "#fffbf0", deep: "#f3ecd9" }, 
+        corail: { DEFAULT: "#ff6f62", soft: "#ff8a7f", dark: "#e85b4f" }, 
+        marine: { DEFAULT: "#061a2d", soft: "#0e2c47" }, 
 
-        // ── Alias rétro-compat : anciens noms → charte réelle (rôles préservés) ──
-        // Les composants existants (bg-turquoise, text-creole, bg-cream…) restent
-        // automatiquement dans la charte, sans réécriture.
-        turquoise: { DEFAULT: "#061a2d", vivid: "#ff6f62" }, // primaire/liens → marine ; accent vif → corail
+        turquoise: { DEFAULT: "#061a2d", vivid: "#ff6f62" }, 
         teal: { deep: "#061a2d" }, // fonds sombres / hero → marine
-        creole: { DEFAULT: "#ff6f62", soft: "#ff8a7f" }, // accent chaud → corail
+        creole: { DEFAULT: "#ff6f62", soft: "#ff8a7f" }, 
         sand: "#f3ecd9",
         cream: "#fffbf0",
         ink: "#061a2d",

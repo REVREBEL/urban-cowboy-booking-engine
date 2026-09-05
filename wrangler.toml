@@ -1,4 +1,4 @@
-name = "bambou-resort-booking-engine"
+name = "urban-cowboy-booking-engine"
 main = "worker/index.ts"
 compatibility_date = "2025-05-01"
 # fetch() est global sur le runtime Workers — pas besoin de nodejs_compat.
@@ -10,7 +10,7 @@ directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
 
-# ⚠️ PRODUCTION — Bambou Resort Martinique (identifiants publics, NON secrets).
+# ⚠️ PRODUCTION —Urban Cowboy Martinique (identifiants publics, NON secrets).
 # Le secret MEWS_CLIENT n'est PAS ici : .dev.vars en local, secret Cloudflare en prod.
 # ⚠️⚠️ Une réservation créée depuis cette config est une VRAIE réservation dans le PMS.
 [vars]

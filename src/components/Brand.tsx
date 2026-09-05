@@ -1,6 +1,6 @@
 import logoRaw from "../assets/bambou-logo.svg?raw";
 
-// Logo officiel Bambou Resort (emblème + wordmark), repris du site bambouresort.com.
+// Logo officielUrban Cowboy (emblème + wordmark), repris du site bambouresort.com.
 // SVG inline → se colore via `currentColor` : marine sur le header beige (`text-teal-deep`),
 // clair sur le footer / la confirmation (`text-cream`). Taille pilotée par la hauteur.
 export function Brand({ className = "", subtle = false }: { className?: string; subtle?: boolean }) {
