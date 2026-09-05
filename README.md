@@ -1,186 +1,236 @@
-# Bambou Resort — Moteur de réservation sur-mesure
+# Urban Cowboy — Custom Booking Engine
 
-Moteur de réservation custom construit par-dessus la **Mews Booking Engine API** (alias Distributor API)
-pour le **Bambou Resort** (Martinique). Front statique **Vite + React + TypeScript + Tailwind**, proxy
-serveur en **Cloudflare Worker** (Static Assets), déploiement continu via **GitHub → Cloudflare Workers Builds**.
+Custom booking engine built on top of the **Mews Booking Engine API** for **Urban Cowboy** in Catskills.
 
-Ambiance : luxe tropical créole, « les pieds dans l'eau ». Parcours en 6 étapes, données 100 % en direct de Mews.
+Static frontend built with **Vite + React + TypeScript + Tailwind**, with a **Cloudflare Worker** server proxy using Static Assets, and continuous deployment via **GitHub → Cloudflare Workers Builds**.
+
+Six-step booking journey with data pulled 100% live from Mews.
 
 ---
 
-## ✨ Parcours utilisateur
+## ✨ User Journey
 
-1. **Dates + occupants** → recherche de disponibilité.
-2. **Disponibilité groupée par type de chambre** : cartes « à partir de », avec **Choisir** ou **Voir le détail**
-   (**panneau latéral** qui glisse depuis la droite — photos + description + équipements + liste des tarifs, badge
-   « Meilleur prix », prix barré, confirmation du prix exact via `reservations/getPricing`).
-3. **Upsells** : suggestion inline sur l'écran résultats **+** étape Extras dédiée (produits Mews, total recalculé).
-4. **Infos client** (voyageur principal, validations).
-5. **Extras additionnels**.
-6. **Paiement** (Voie A — Payment Request hébergé par Mews + 3-D Secure) → **réservation créée dans Mews** → **confirmation**
-   (vérification du paiement via `reservationGroups/get`, bouton « Reprendre le paiement »).
+1. **Dates + guests** → availability search.
+2. **Availability grouped by room type**: “from” pricing cards with **Select** or **View details**
+   (**side drawer** sliding in from the right, with photos + description + amenities + rate list, “Best price” badge, struck-through pricing, and exact price confirmation via `reservations/getPricing`).
+3. **Upsells**: inline suggestion on the results screen **plus** a dedicated Extras step using Mews products with a recalculated total.
+4. **Guest information**: primary guest and validations.
+5. **Additional extras**.
+6. **Payment**: Path A, using a Mews-hosted Payment Request + 3-D Secure → **reservation created in Mews** → **confirmation**
+   with payment verification via `reservationGroups/get` and a **Resume payment** button.
 
-L'état (dates, occupants, sélection, n° de groupe) est porté par l'**URL** (`searchParams`) + un Context React :
-liens partageables et retour de paiement robustes, sans base de données.
+State including dates, guests, selection, and reservation group number is stored in the **URL** (`searchParams`) plus React Context.
 
-### Expérience & conversion (style Airbnb)
+This allows shareable links and robust payment-return handling without a database.
 
-- **Moteur standalone** : pas de hero — écran de recherche épuré (barre Destination · Dates · Voyageurs · Rechercher).
-- **Calendrier de plage à la Airbnb** (`DateRangePicker`) : popover 2 mois, sélection début → fin, surbrillance + aperçu au survol, dates passées désactivées.
-- **Panneau détail latéral** (`RoomDetailDrawer`) qui glisse depuis la droite (scrim, Escape, slide animé) — pas une popup modale.
-- **Leviers de conversion** : note & avis, « Coup de cœur voyageurs », rareté (« Plus que N »), forte demande, nombre de personnes qui consultent, prix barrés & % d'économie, annulation gratuite, paiement sécurisé, minuteur de maintien au paiement.
-- **Dev Panel** (`</> API`, en bas à gauche) : journal en direct de chaque appel `/api/mews/*` avec son **statut, sa durée, le corps de requête, un résumé de réponse, et une explication « pourquoi cet appel »**. Transparence totale sur les échanges avec Mews.
-- Typo éditoriale **Fraunces** (serif) + **Manrope** (corps), palette tropicale, micro-animations (slide/scale/fade), cibles tactiles ≥ 44 px, focus visibles.
+### Experience & Conversion, Airbnb Style
+
+- **Standalone engine**: no hero section. Clean search screen with Destination · Dates · Guests · Search.
+- **Airbnb-style date range calendar** (`DateRangePicker`): two-month popover, start → end selection, highlighted range + hover preview, with past dates disabled.
+- **Side detail drawer** (`RoomDetailDrawer`) sliding in from the right with scrim, Escape support, and animated slide transition rather than a popup modal.
+- **Conversion levers**: rating & reviews, “Guest Favorite,” scarcity messaging such as “Only N left,” high demand, number of people viewing, struck-through prices & savings percentage, free cancellation, secure payment, and a payment hold timer.
+- **Dev Panel** (`</> API`, bottom left): live log of every `/api/mews/*` request showing **status, duration, request body, response summary, and an explanation of why the call was made**. Full transparency into communication with Mews.
+- Editorial typography using **Fraunces** for serif display type + **Manrope** for body copy, tropical palette, micro-animations including slide/scale/fade, touch targets ≥ 44 px, and visible focus states.
 
 ---
 
 ## 🧱 Architecture
 
+```text
+Browser ──(/api/mews/*, same origin)──▶ Cloudflare Worker ──(Client injected)──▶ Mews Distributor API
+ static frontend (dist/, ASSETS binding)     worker/index.ts → worker/mews/*          api.mews.com
 ```
-Navigateur ──(/api/mews/*, même origine)──▶ Cloudflare Worker ──(Client injecté)──▶ Mews Distributor API
-   front statique (dist/, binding ASSETS)       worker/index.ts → worker/mews/*          api.mews.com
-```
 
-Un **seul Worker** (`worker/index.ts`) :
-- route `/api/mews/*` vers les handlers proxy (`worker/mews/*`),
-- sert le front buildé via le binding **Static Assets** (`dist/`), avec fallback SPA
-  (`not_found_handling = "single-page-application"`) pour les routes client (`/confirmation`…).
+A **single Worker** (`worker/index.ts`):
 
-**Pourquoi ce modèle (et pas des appels navigateur directs) ?**
+- routes `/api/mews/*` to proxy handlers (`worker/mews/*`)
+- serves the built frontend through the **Static Assets** binding (`dist/`), with SPA fallback
+  (`not_found_handling = "single-page-application"`) for client-side routes such as `/confirmation`
 
-- Le `Client` Mews et les IDs (`HotelId`/`ConfigId`/catégories d'âge) restent **server-side**, jamais dans le bundle.
-- **Pas de CORS** : le navigateur n'appelle que `/api/mews/*` (même origine que le front).
-- Centralisation du timeout (12 s), des erreurs, de la vérification de paiement, et de la **curation** des réponses
-  (ex. `getPricing` brut ≈ 380 Ko → ~1 Ko en EUR ; réservations curées en JSON léger).
-- Un seul repo, un seul déploiement (`wrangler deploy`), compatible **Cloudflare Workers Builds** (Git).
+**Why this model instead of direct browser requests?**
+
+- The Mews `Client` and IDs (`HotelId` / `ConfigId` / age categories) remain **server-side** and never enter the frontend bundle.
+- **No CORS issues**: the browser only calls `/api/mews/*` on the same origin as the frontend.
+- Centralized 12-second timeout handling, errors, payment verification, and **response curation**
+  such as reducing a raw `getPricing` response of approximately 380 KB to roughly 1 KB of EUR-specific data, and reducing reservations to lightweight JSON.
+- One repository, one deployment (`wrangler deploy`), compatible with **Cloudflare Workers Builds** through Git.
 
 ---
 
-## 🚀 Démarrage local
+## 🚀 Local Development
 
 ```bash
 npm install
-cp .dev.vars.example .dev.vars   # secrets locaux (gitignored)
-npm run dev                      # front (Vite :5173) + Worker (wrangler :8787)
+cp .dev.vars.example .dev.vars   # local secrets (gitignored)
+npm run dev                      # frontend (Vite :5173) + Worker (wrangler :8787)
 ```
 
-Ouvrez **http://localhost:5173**. Vite sert le front avec HMR et **proxie `/api/*`** vers le **Worker**
-(`wrangler dev`, :8787) qui lit `.dev.vars`. Du point de vue du navigateur, tout est sur la même origine (`:5173`).
+Open **http://localhost:5173**.
 
-> `npm run dev` lance d'abord un `vite build` (le binding ASSETS de `wrangler dev` a besoin de `dist/`), puis
-> `concurrently` exécute `wrangler dev` (le Worker, :8787) **et** `vite` (HMR, :5173). En prod, le Worker sert
-> à la fois le front et `/api/*` sur la même origine.
+Vite serves the frontend with HMR and **proxies `/api/*`** to the **Worker**
+(`wrangler dev`, port 8787), which reads `.dev.vars`.
+
+From the browser's perspective, everything is served from the same origin (`:5173`).
+
+> `npm run dev` first runs a `vite build` because the `wrangler dev` ASSETS binding requires `dist/`, then
+> `concurrently` runs `wrangler dev` for the Worker on port 8787 **and** `vite` for HMR on port 5173.
+> In production, the Worker serves both the frontend and `/api/*` from the same origin.
 
 ### Scripts
 
-| Script | Rôle |
+| Script | Purpose |
 | --- | --- |
-| `npm run dev` | Build front + Worker (`wrangler dev`, :8787) + Vite (HMR, :5173), `/api` proxifié. |
-| `npm run build` | Build statique du front → `dist/`. |
-| `npm run preview` | Build puis `wrangler dev` (:8787) — teste le Worker (front + `/api`) sur une seule origine, comme en prod. |
-| `npm run deploy` | Build puis `wrangler deploy` (déploiement manuel du Worker + assets). |
-| `npm run typecheck` | `tsc --noEmit` sur `src/`. |
+| `npm run dev` | Build frontend + Worker (`wrangler dev`, :8787) + Vite (HMR, :5173), with `/api` proxied. |
+| `npm run build` | Static frontend build → `dist/`. |
+| `npm run preview` | Build then run `wrangler dev` (:8787), testing the Worker, frontend, and `/api` from a single origin just like production. |
+| `npm run deploy` | Build then `wrangler deploy`, manually deploying the Worker + assets. |
+| `npm run typecheck` | Run `tsc --noEmit` against `src/`. |
 
 ---
 
-## 🔑 Variables d'environnement
+## 🔑 Environment Variables
 
-| Variable | Rôle | Secret ? | Local | Prod |
+| Variable | Purpose | Secret? | Local | Production |
 | --- | --- | --- | --- | --- |
-| `MEWS_BASE_URL` | Base API Mews (`https://api.mews.com`) | non | `.dev.vars` | `wrangler.toml [vars]` ou dashboard |
-| `MEWS_APP_BASE_URL` | Base app Mews (page de paiement) | non | `.dev.vars` | idem |
-| `MEWS_CLIENT` | Chaîne `Client` Booking Engine API | **OUI** | `.dev.vars` | **Secret** (dashboard Worker) |
-| `MEWS_HOTEL_ID` | UUID établissement | non | `.dev.vars` | `wrangler.toml [vars]` ou dashboard |
-| `MEWS_CONFIG_ID` | UUID configuration | non | `.dev.vars` | idem |
-| `MEWS_ADULT_AGE_CATEGORY_ID` | Catégorie d'âge « adulte » | non | `.dev.vars` | idem (fallback entreprise intégré) |
-| `MEWS_CHILD_AGE_CATEGORY_ID` | Catégorie d'âge « enfant » | non | `.dev.vars` | idem |
-| `WEBHOOK_URL` | URL notifiée `payment.initiated` / `reservation.paid` (voir [🔔 Webhooks](#-webhooks)) | non¹ | `.dev.vars` | `wrangler.toml [vars]` ou dashboard |
+| `MEWS_BASE_URL` | Mews API base (`https://api.mews.com`) | no | `.dev.vars` | `wrangler.toml [vars]` or dashboard |
+| `MEWS_APP_BASE_URL` | Mews app base URL for the payment page | no | `.dev.vars` | same |
+| `MEWS_CLIENT` | Booking Engine API `Client` string | **YES** | `.dev.vars` | **Secret** in Worker dashboard |
+| `MEWS_HOTEL_ID` | Property UUID | no | `.dev.vars` | `wrangler.toml [vars]` or dashboard |
+| `MEWS_CONFIG_ID` | Configuration UUID | no | `.dev.vars` | same |
+| `MEWS_ADULT_AGE_CATEGORY_ID` | “Adult” age category | no | `.dev.vars` | same, with built-in enterprise fallback |
+| `MEWS_CHILD_AGE_CATEGORY_ID` | “Child” age category | no | `.dev.vars` | same |
+| `WEBHOOK_URL` | URL notified for `payment.initiated` / `reservation.paid`; see [Webhooks](#-webhooks) | no¹ | `.dev.vars` | `wrangler.toml [vars]` or dashboard |
 
-> ¹ Non secrète au sens Mews, mais si l'URL contient un jeton, ajoutez-la plutôt en **Secret** côté Cloudflare.
+> ¹ Not considered secret by Mews itself, but if the URL contains a token, it should instead be stored as a **Secret** in Cloudflare.
 
-Les valeurs **non secrètes** (prod Bambou Resort) sont dans [`wrangler.toml`](./wrangler.toml) (`[vars]`) : un
-déploiement fonctionne immédiatement, seul **`MEWS_CLIENT`** doit être ajouté en **secret chiffré**. Le `Client` et les IDs ne
-finissent **jamais** dans le front (aucune variable `VITE_*` n'est utilisée).
+The **non-secret** Urban Cowboy production values are stored in [`wrangler.toml`](./wrangler.toml) under `[vars]`.
 
-### 🔑 Chaîne Client
+A deployment therefore works immediately, with only **`MEWS_CLIENT`** needing to be added as an **encrypted secret**.
 
-`MEWS_CLIENT = ‹chaîne Client Mews — secret›` — chaîne **activée par Mews** sur l'entreprise Bambou Resort (vérifiée **200 OK**).
-À définir comme **secret** côté Cloudflare :
+The `Client` and IDs **never** reach the frontend because no `VITE_*` variables are used.
 
-1. Dashboard Cloudflare → ton Worker → **Settings → Variables and Secrets**.
-2. Ajouter/Modifier le **secret** `MEWS_CLIENT` = `‹chaîne Client Mews — secret›`. **Aucun changement de code.**
-3. Re-déployer (ou « Retry deployment »).
+### 🔑 Client String
 
-En CLI : `npx wrangler secret put MEWS_CLIENT`.
+`MEWS_CLIENT = ‹Mews Client string — secret›`
+
+This is a string **activated by Mews** for the Urban Cowboy enterprise and verified to return **200 OK**.
+
+Configure it as a Cloudflare **secret**:
+
+1. Cloudflare Dashboard → your Worker → **Settings → Variables and Secrets**.
+2. Add or modify the **secret** `MEWS_CLIENT` = `‹Mews Client string — secret›`. **No code changes required.**
+3. Redeploy, or select **Retry deployment**.
+
+Using the CLI:
+
+```bash
+npx wrangler secret put MEWS_CLIENT
+```
 
 ---
 
-## ☁️ Déploiement GitHub → Cloudflare Workers Builds
+## ☁️ GitHub → Cloudflare Workers Builds Deployment
 
-Le projet est un **Worker + Static Assets** : `npm run build` produit le front (`dist/`), puis `wrangler deploy`
-publie le Worker (`worker/index.ts`) **et** uploade `dist/` comme assets.
+The project uses the **Worker + Static Assets** model.
 
-1. Push sur GitHub (déjà fait).
-2. Cloudflare Dashboard → **Workers & Pages → Create → Workers → Import a repository** → choisir le repo.
-3. **Build & deploy settings** :
-   - **Build command** : `npm run build`
-   - **Deploy command** : `npx wrangler deploy`
-   - **Non-production branch deploy command** : `npx wrangler versions upload` (= preview-URLs sur les PR)
-   - **API token** : laisser vide (Cloudflare en crée un)
-4. **Variables and Secrets** : ajouter `MEWS_CLIENT` en **Secret** (les autres variables viennent de `wrangler.toml [vars]`).
-5. **Deploy**. Ensuite : push sur `main` = **production** automatique ; chaque **PR** = version preview (URL dédiée).
-6. **Domaine** : Worker → **Settings → Domains & Routes** → `reservation.bambouresort.com` (DNS géré par Cloudflare).
+`npm run build` produces the frontend (`dist/`), then `wrangler deploy` publishes the Worker (`worker/index.ts`) **and** uploads `dist/` as static assets.
 
-**Déploiement manuel (CLI)** :
+1. Push to GitHub, already completed.
+2. Cloudflare Dashboard → **Workers & Pages → Create → Workers → Import a repository** → select the repository.
+3. Configure **Build & deploy settings**:
+   - **Build command**: `npm run build`
+   - **Deploy command**: `npx wrangler deploy`
+   - **Non-production branch deploy command**: `npx wrangler versions upload`, providing preview URLs for PRs
+   - **API token**: leave blank because Cloudflare creates one
+4. Under **Variables and Secrets**, add `MEWS_CLIENT` as a **Secret**. Other variables come from `wrangler.toml [vars]`.
+5. **Deploy**. Afterward:
+   - push to `main` = automatic **production**
+   - each **PR** = preview version with its own URL
+6. **Domain**: Worker → **Settings → Domains & Routes** → `hotel's reservation email address`, with DNS managed by Cloudflare.
+
+**Manual deployment via CLI:**
 
 ```bash
 npm run build && npx wrangler deploy
-# secret : npx wrangler secret put MEWS_CLIENT
+# secret: npx wrangler secret put MEWS_CLIENT
 ```
 
-> ℹ️ Ce projet n'utilise **pas** le modèle « Pages Functions » (`functions/`) mais le modèle **Workers + Static
-> Assets** : un seul Worker route `/api/*` et sert le front. C'est le flux proposé par défaut dans le dashboard
-> Cloudflare actuel (« Workers Builds »), avec `wrangler deploy`.
+> ℹ️ This project does **not** use the “Pages Functions” model (`functions/`).
+> It uses **Workers + Static Assets**: one Worker routes `/api/*` and serves the frontend.
+> This is the default workflow offered by the current Cloudflare dashboard under “Workers Builds,” using `wrangler deploy`.
 
 ---
 
-## 💳 Paiement
+## 💳 Payment
 
-### Voie A — Payment Request (implémentée, MVP)
+### Path A — Payment Request, Implemented MVP
 
-1. `reservationGroups/create` **sans** `CreditCardData` → pour un `RateGroup` en
-   `Automatic / ChargeCreditCard` (le cas de la plupart des tarifs Bambou), Mews renvoie un `PaymentRequestId`.
-2. La Function construit (server-side) l'URL hébergée par Mews :
-   `${MEWS_APP_BASE_URL}/navigator/payment-requests/detail/{PaymentRequestId}?returnUrl={base64}`
-   où `returnUrl` = Base64 de `${origin}/confirmation?rgid={groupId}`.
-3. Le front est redirigé → page carte + 3-D Secure hébergée par Mews.
-4. Au retour, `Confirmation` appelle `/api/mews/reservation-status` (`reservationGroups/get`) et boucle tant que le
-   paiement n'est ni `Completed`/`Charged` ni en échec final. Bouton **« Reprendre le paiement »** (`/api/mews/payment-link`).
+1. `reservationGroups/create` is called **without** `CreditCardData`.
 
-Si un tarif est en **settlement `Manual`** (pas de `PaymentRequestId`), la réservation est créée et la confirmation
-affiche **« paiement à l'arrivée »**.
+   For a `RateGroup` configured as `Automatic / ChargeCreditCard`, which applies to most Bambou rates, Mews returns a `PaymentRequestId`.
 
-### Voie B — PCI Proxy Secure Fields (V2, non implémentée)
+2. The Function constructs the Mews-hosted payment URL server-side:
 
-Paiement intégré via Datatrans Secure Fields, `merchantId = PaymentGateway.PublicKey` de `hotels/get`.
-En **production**, la passerelle est configurée (`PciProxy`, Visa/MasterCard/Apple Pay/Google Pay) → Voie B
-branchable en V2. En sandbox : `https://pay.sandbox.datatrans.com/...` ; en prod retirer `sandbox.`.
+```text
+${MEWS_APP_BASE_URL}/navigator/payment-requests/detail/{PaymentRequestId}?returnUrl={base64}
+```
+
+where `returnUrl` is the Base64 representation of:
+
+```text
+${origin}/confirmation?rgid={groupId}
+```
+
+3. The frontend redirects the guest to the Mews-hosted card page + 3-D Secure.
+
+4. When the guest returns, `Confirmation` calls `/api/mews/reservation-status` using `reservationGroups/get` and continues polling until the payment is either `Completed` / `Charged` or reaches a final failed state.
+
+A **Resume payment** button uses `/api/mews/payment-link`.
+
+If the selected rate uses **`Manual` settlement**, meaning no `PaymentRequestId` is returned, the reservation is still created and the confirmation screen displays **“payment on arrival.”**
+
+### Path B — PCI Proxy Secure Fields, V2, Not Implemented
+
+Integrated payment through Datatrans Secure Fields using:
+
+```text
+merchantId = PaymentGateway.PublicKey
+```
+
+from `hotels/get`.
+
+In **production**, the payment gateway is configured for `PciProxy`, Visa, MasterCard, Apple Pay, and Google Pay, meaning Path B can be connected in V2.
+
+Sandbox:
+
+```text
+https://pay.sandbox.datatrans.com/...
+```
+
+Production: remove `sandbox.`.
 
 ---
 
 ## 🔔 Webhooks
 
-Le Worker peut notifier une **URL externe** (`WEBHOOK_URL`) à deux moments. Optionnel : si la variable n'est
-pas définie, rien n'est envoyé (aucun impact sur la réservation). Chaque notification est un `POST`
-`application/json`, envoyé **en tâche de fond** (`ctx.waitUntil`) — un webhook lent ou en échec **ne bloque ni
-ne casse jamais** la réservation.
+The Worker can notify an **external URL** (`WEBHOOK_URL`) at two points.
 
-| Événement | Déclencheur | Fiabilité |
+This is optional. If the variable is not defined, nothing is sent and the reservation is unaffected.
+
+Each notification is an `application/json` `POST` sent **in the background** using `ctx.waitUntil`.
+
+A slow or failed webhook therefore **never blocks or breaks** the reservation.
+
+| Event | Trigger | Reliability |
 | --- | --- | --- |
-| `payment.initiated` | `reservationGroups/create` renvoie un `PaymentRequestId` (tarif à règlement automatique) | **Serveur** — fiable, à chaque paiement initié. |
-| `reservation.paid` | Au retour sur `/confirmation`, le front sonde le statut et le paiement est encaissé (`Charged`/`Completed`) | Dépend du **retour du client** sur la page. |
+| `payment.initiated` | `reservationGroups/create` returns a `PaymentRequestId` for an automatically settled rate | **Server-side** and reliable for every payment initiated. |
+| `reservation.paid` | After returning to `/confirmation`, the frontend checks status and payment has been captured as `Charged` / `Completed` | Depends on the **guest returning** to the page. |
 
-Payload commun : `{ event, timestamp (ISO), ... }`.
+Common payload:
+
+```text
+{ event, timestamp (ISO), ... }
+```
 
 ```jsonc
 // payment.initiated
@@ -193,9 +243,15 @@ Payload commun : `{ event, timestamp (ISO), ... }`.
   "customer": { "email": "…", "firstName": "…", "lastName": "…" },
   "totalAmount": { "currency": "EUR", "gross": 2465.85, "net": 2465.85 },
   "reservations": [
-    { "number": "8017", "roomCategoryId": "256f…", "rateId": "e835…",
-      "startUtc": "2026-09-15T12:00:00Z", "endUtc": "2026-09-18T10:00:00Z",
-      "adultCount": 2, "childCount": 0 }
+    {
+      "number": "8017",
+      "roomCategoryId": "256f…",
+      "rateId": "e835…",
+      "startUtc": "2026-09-15T12:00:00Z",
+      "endUtc": "2026-09-18T10:00:00Z",
+      "adultCount": 2,
+      "childCount": 0
+    }
   ]
 }
 
@@ -205,101 +261,164 @@ Payload commun : `{ event, timestamp (ISO), ... }`.
   "timestamp": "…",
   "reservationGroupId": "abc3…",
   "confirmationNumbers": ["8017"],
-  "payments": [{ "id": "…", "state": "Charged" }]
+  "payments": [
+    { "id": "…", "state": "Charged" }
+  ]
 }
 ```
 
-**⚠️ Déduplication obligatoire.** `reservation.paid` part **côté front** : il peut se répéter si le client
-recharge/revisite `/confirmation`. Le consommateur **doit dédupliquer** par `reservationGroupId`. Pour une source
-d'événements « payé » 100 % serveur et garantie, brancher plutôt un **webhook Mews Connector**
-(`PaymentUpdated` / `ServiceOrderUpdated`) côté PMS — complémentaire à ce mécanisme léger.
+**⚠️ Deduplication is required.**
+
+`reservation.paid` is sent **from the frontend**, meaning it can be repeated if the guest reloads or revisits `/confirmation`.
+
+The receiving system **must deduplicate using `reservationGroupId`**.
+
+For a guaranteed, 100% server-side source of “paid” events, connect a **Mews Connector webhook** such as `PaymentUpdated` / `ServiceOrderUpdated` on the PMS side instead.
+
+That approach complements this lightweight mechanism.
 
 **Configuration**
 
-- **Local** : `WEBHOOK_URL=https://…` dans `.dev.vars`.
-- **Cloudflare** : Worker → **Settings → Variables and Secrets** → ajouter `WEBHOOK_URL` (Variable, ou **Secret**
-  si l'URL porte un jeton), puis re-déployer. Un service comme [webhook.site](https://webhook.site) permet de
-  tester la réception en un clic.
+- **Local**: set `WEBHOOK_URL=https://…` in `.dev.vars`.
+- **Cloudflare**: Worker → **Settings → Variables and Secrets** → add `WEBHOOK_URL` as a Variable, or as a **Secret** if the URL contains a token, then redeploy.
+
+A service such as [webhook.site](https://webhook.site) can be used to test receipt in one click.
 
 ---
 
-## 🏭 Production — Bambou Resort Martinique (ACTIF)
+## 🏭 Production 
 
-Le déploiement pointe sur l'entreprise **réelle**. Config actuelle (`wrangler.toml [vars]` + `.dev.vars`) :
+The deployment points to the **real production enterprise**.
 
-- **API** : `api.mews.com` / `app.mews.com`.
-- **`MEWS_CLIENT`** : `‹chaîne Client Mews — secret›` (secret Cloudflare + `.dev.vars` local).
-- **`MEWS_HOTEL_ID`** = `d81c0909-…` (Enterprise Bambou Resort Martinique) · **`MEWS_CONFIG_ID`** = `43ec5bf8-…` (Booking Engine « Hôtel Bambou »).
-- **Catégories d'âge** réelles : adulte `3b9bdb28-…`, enfant `5cd331e0-…`.
-- **Passerelle de paiement** : `PciProxy` configurée → Voie A opérationnelle (page carte + 3-D Secure). Un groupe de tarifs est en règlement **Manual** → « paiement à l'arrivée ».
-- **E-mails de confirmation** : Mews les envoie au client (`Customer.Email`) si les templates sont activés côté établissement.
+Current configuration from `wrangler.toml [vars]` + `.dev.vars`:
 
-> ⚠️ **En production, toute réservation menée jusqu'au paiement est RÉELLE** (créée dans le PMS du Bambou, e-mail
-> client déclenché). Pour tester sans risque, réactivez les valeurs **demo** commentées en bas de `.dev.vars`
-> (bascule locale instantanée, aucun changement de code).
+- **API**: `api.mews.com` / `app.mews.com`
+- **`MEWS_CLIENT`**: `‹Mews Client string — secret›`, stored as a Cloudflare secret and locally in `.dev.vars`
+- **`MEWS_HOTEL_ID`** = `d81c0909-…`, Urban Cowboy Catskills Enterprise
+- **`MEWS_CONFIG_ID`** = `43ec5bf8-…`, “Hôtel Bambou” Booking Engine
+- **Real age categories**:
+  - adult `3b9bdb28-…`
+  - child `5cd331e0-…`
+- **Payment gateway**: `PciProxy` configured, so Path A is operational with card page + 3-D Secure.
+  One rate group uses **Manual** settlement and therefore displays “payment on arrival.”
+- **Confirmation emails**: Mews sends these to `Customer.Email` if the property's email templates are enabled.
 
-- **Visuels d'accueil** : `src/lib/assets.ts` (placeholders du site bambouresort.com) — remplaçables par les vrais.
-- Vérifier que `dist/` ne contient **aucun secret**.
+> ⚠️ **In production, any reservation taken through payment is REAL.**
+> It is created in Urban Cowboy's PMS and triggers the guest email.
+>
+> To test safely, re-enable the commented **demo** values at the bottom of `.dev.vars`.
+> This switches the local environment immediately without requiring any code changes.
+
+- **Homepage visuals**: `src/lib/assets.ts` currently contains placeholders from hotelwebsite.com and can be replaced with final assets.
+- Verify that `dist/` contains **no secrets**.
 
 ---
 
 ## 📁 Structure
 
-```
+```text
 worker/
-  index.ts                 # Entrée Worker : route /api/mews/* + sert le front (binding ASSETS) + fallback SPA
-  mews/                    # Proxy serveur — un fichier = une route /api/mews/*
-    _lib.ts                #   helper mews() (injection Client + timeout 12s), validations, occupancyData(), notify() (webhooks)
-    hotel.ts               #   hotels/get            (cache 5 min)
+  index.ts                 # Worker entry: route /api/mews/* + serve frontend (ASSETS binding) + SPA fallback
+  mews/                    # Server proxy: one file = one /api/mews/* route
+    _lib.ts                #   mews() helper (Client injection + 12s timeout), validations,
+                           #   occupancyData(), notify() (webhooks)
+    hotel.ts               #   hotels/get                  (5 min cache)
     availability.ts        #   hotels/getAvailability
-    pricing.ts             #   reservations/getPricing  (curé EUR-only)
-    reservation.ts         #   reservationGroups/create (whitelist + paymentUrl Voie A + webhook payment.initiated)
-    reservation-status.ts  #   reservationGroups/get    (statut paiement curé + webhook reservation.paid)
-    payment-link.ts        #   reconstruit l'URL de paiement pour un PaymentRequest en attente
+    pricing.ts             #   reservations/getPricing     (curated EUR-only)
+    reservation.ts         #   reservationGroups/create    (whitelist + Path A paymentUrl
+                           #                                + payment.initiated webhook)
+    reservation-status.ts  #   reservationGroups/get       (curated payment status
+                           #                                + reservation.paid webhook)
+    payment-link.ts        #   reconstructs the payment URL for a pending PaymentRequest
     voucher.ts             #   vouchers/validate
+
 src/
-  lib/        api.ts (frontière réseau unique), shaping.ts (buildRooms, min-price, dédup),
-              format.ts (loc/eur/nights/imgUrl), assets.ts, apiLog.ts (journal → Dev Panel)
-  state/      booking.tsx (Context + encodage URL + config hôtel + totaux)
+  lib/        api.ts       (single network boundary),
+              shaping.ts   (buildRooms, min-price, deduplication),
+              format.ts    (locale/EUR/nights/imgUrl),
+              assets.ts,
+              apiLog.ts    (log → Dev Panel)
+
+  state/      booking.tsx  (Context + URL encoding + hotel config + totals)
+
   types/      mews.ts
-  components/ Brand, StepProgress, DateRangePicker, RoomCard, RoomDetailDrawer, UpsellCard,
-              BookingSummary, StepLayout, DataBadge, DevPanel, conversion, Photo, icons
-  steps/      Dates (recherche standalone), Results, Guest, Extras, Payment, Confirmation
-  App.tsx     machine d'étapes + header + footer + Dev Panel
-wrangler.toml (main + [assets] + [vars])   .dev.vars(.example)   .node-version
+
+  components/ Brand,
+              StepProgress,
+              DateRangePicker,
+              RoomCard,
+              RoomDetailDrawer,
+              UpsellCard,
+              BookingSummary,
+              StepLayout,
+              DataBadge,
+              DevPanel,
+              conversion,
+              Photo,
+              icons
+
+  steps/      Dates        (standalone search),
+              Results,
+              Guest,
+              Extras,
+              Payment,
+              Confirmation
+
+  App.tsx     step machine + header + footer + Dev Panel
+
+wrangler.toml (main + [assets] + [vars])
+.dev.vars(.example)
+.node-version
 ```
 
-**Sécurité** : chaque handler reconstruit l'objet Mews à partir de champs **whitelistés** (jamais de forward du body
-brut), injecte les IDs depuis `env`, et n'expose aucun CORS large.
+**Security**: every handler reconstructs the Mews request object using **whitelisted fields** rather than forwarding the raw request body, injects IDs from `env`, and exposes no broad CORS policy.
 
 ---
 
-## 🧪 Vérifier les réservations créées
+## 🧪 Verifying Created Reservations
 
-Back-office Mews : **https://app.mews.com** (compte de l'établissement Bambou Resort).
-Les réservations créées par le moteur y apparaissent (n° de confirmation affiché sur l'écran final).
-⚠️ En production, ce sont de **vraies** réservations.
+Mews back office:
 
----
+**https://app.mews.com**
 
-## 🔀 Variantes (non implémentées)
+Use the Urban Cowboy property account.
 
-- **Embed Webflow** : héberger le moteur sur `reservation.bambouresort.com` (Cloudflare Worker) et y pointer les
-  boutons « Réserver » du site Webflow, ou l'embarquer en `<iframe>`. Le proxy Mews reste le Worker.
-- **Pages Functions** : variante alternative (dossier `functions/`, `wrangler pages deploy`) si un compte
-  expose encore le flux Pages. Ici on utilise **Workers + Static Assets**, le flux par défaut du dashboard actuel.
-- **Log des réservations (V2)** : binder un namespace **KV** (ou **D1**) dans `wrangler.toml` et écrire
-  `reservationGroupId` + récap après confirmation (point d'extension prévu, pas de DB pour le MVP).
+Reservations created by the booking engine appear there, with the confirmation number displayed on the final booking screen.
+
+⚠️ In production, these are **real reservations**.
 
 ---
 
-## ⚠️ Pièges (vérifiés en live)
+## 🔀 Variants, Not Implemented
 
-1. **401 Client** : le `Client` doit être une chaîne activée par Mews (`‹chaîne Client Mews — secret›`). Réglé via l'env var/secret, jamais côté front.
-2. **CORS** : résolu par l'architecture (front → `/api/mews/*` même origine).
-3. **Prix null** : certains combos renvoient `GrossValue: null` → ignorés (`buildRooms`).
-4. **Dates** : toujours `...T00:00:00Z` ; Mews normalise ensuite aux heures réelles de check-in/out de l'hôtel.
-5. **Catégories d'âge** : absentes de `hotels/get` → fournies par env (fallback demo), à remplacer en prod.
-6. **Paiement** : `PaymentRequestId` seulement si le `RateGroup` est en settlement automatique ; sinon « paiement à l'arrivée ».
-7. **returnUrl** : Base64 d'une URL absolue (construit côté serveur).
-8. **Secrets** : `.dev.vars` gitignored ; en prod `MEWS_CLIENT` en **Secret** (dashboard Worker) ; `dist/` sans secret.
+- **Webflow embed**: host the engine at `reservation.hoteldomain.com` using the Cloudflare Worker, then point the Webflow site's **Book** buttons to it, or embed it in an `<iframe>`.
+
+  The Mews proxy remains in the Worker.
+
+- **Pages Functions**: alternative architecture using a `functions/` directory and `wrangler pages deploy` if the account still exposes the Pages workflow.
+
+  This project instead uses **Workers + Static Assets**, the current dashboard's default flow.
+
+- **Reservation logging, V2**: bind a **KV** namespace or **D1** database in `wrangler.toml` and write the `reservationGroupId` + booking summary after confirmation.
+
+  The extension point is already planned, but the MVP does not use a database.
+
+---
+
+## ⚠️ Gotchas, Verified Live
+
+1. **401 Client**: the `Client` must be a Mews-activated string (`‹Mews Client string — secret›`). Configure it through an environment variable / secret and never expose it in the frontend.
+
+2. **CORS**: resolved by the architecture because the frontend calls same-origin `/api/mews/*`.
+
+3. **Null prices**: some combinations return `GrossValue: null`. These are ignored by `buildRooms`.
+
+4. **Dates**: always use `...T00:00:00Z`. Mews then normalizes them to the property's actual check-in and check-out times.
+
+5. **Age categories**: these are absent from `hotels/get`, so they are provided by environment variables with a demo fallback and must be replaced for production.
+
+6. **Payment**: a `PaymentRequestId` is only returned when the `RateGroup` uses automatic settlement. Otherwise the booking uses “payment on arrival.”
+
+7. **`returnUrl`**: Base64 encoding of an absolute URL, constructed server-side.
+
+8. **Secrets**: `.dev.vars` is gitignored. In production, `MEWS_CLIENT` is stored as a **Secret** in the Worker dashboard, and `dist/` must contain no secrets.
