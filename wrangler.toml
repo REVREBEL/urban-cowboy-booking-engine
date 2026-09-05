@@ -1,0 +1,28 @@
+name = "bambou-resort-booking-engine"
+main = "worker/index.ts"
+compatibility_date = "2025-05-01"
+# fetch() est global sur le runtime Workers — pas besoin de nodejs_compat.
+
+# Static Assets : le front buildé (dist/) est servi par le binding ASSETS.
+# not_found_handling = SPA → /confirmation et autres routes client renvoient index.html.
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+# ⚠️ PRODUCTION — Bambou Resort Martinique (identifiants publics, NON secrets).
+# Le secret MEWS_CLIENT n'est PAS ici : .dev.vars en local, secret Cloudflare en prod.
+# ⚠️⚠️ Une réservation créée depuis cette config est une VRAIE réservation dans le PMS.
+[vars]
+MEWS_BASE_URL = "https://api.mews.com"
+MEWS_APP_BASE_URL = "https://app.mews.com"
+MEWS_HOTEL_ID = "d81c0909-af62-4227-9cfe-b2cf00fea600"
+MEWS_CONFIG_ID = "43ec5bf8-09e2-4ae8-83d2-b39900e86b9b"
+# Catégories d'âge réelles de l'entreprise (vérifiées en live).
+MEWS_ADULT_AGE_CATEGORY_ID = "3b9bdb28-d9e1-4fac-904f-b2cf00febb8f"
+MEWS_CHILD_AGE_CATEGORY_ID = "5cd331e0-0069-4f46-a20f-b2cf00febb8f"
+
+# ★ UNIQUE endpoint de suivi (funnel complet) → n8n → Supabase. TOUS les events y passent.
+# Repo public → l'URL est visible ; pour la garder privée, la définir en Secret Cloudflare
+# (dashboard) et retirer cette ligne.
+WEBHOOK_EVENTS = "https://n8n.srv842183.hstgr.cloud/webhook/booking-event"

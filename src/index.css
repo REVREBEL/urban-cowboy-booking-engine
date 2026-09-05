@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream font-body text-ink antialiased;
+    font-feature-settings: "ss01";
+  }
+
+  /* Titres : serif Fraunces, optical sizing pour l'élégance éditoriale */
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    font-optical-sizing: auto;
+  }
+
+  /* Accents éditoriaux en italique (ex. « à l'essentiel ») — Instrument Serif italique, corail */
+  .accent {
+    @apply font-display italic text-corail;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
+      transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-corail
+      focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  /* Primaire : marine (blanc dessus = contraste AAA), élégant et luxe */
+  .btn-primary {
+    @apply btn bg-marine text-white shadow-card hover:bg-marine-soft hover:shadow-float;
+  }
+  /* CTA d'emphase : corail (le « pop » de la marque) — texte marine pour l'accessibilité (AA) */
+  .btn-accent {
+    @apply btn bg-corail text-marine shadow-card hover:bg-corail-dark hover:shadow-float;
+  }
+  .btn-ghost {
+    @apply btn border border-marine/25 bg-white/70 text-marine hover:border-marine hover:bg-white;
+  }
+  .btn-link {
+    @apply inline-flex items-center gap-1.5 text-sm font-semibold text-marine underline-offset-4 hover:text-corail hover:underline;
+  }
+
+  .card {
+    @apply rounded-xl2 border border-marine/5 bg-white shadow-card;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-marine/60;
+  }
+  .field-input {
+    @apply w-full rounded-xl border border-marine/15 bg-white px-4 py-3 text-marine shadow-sm outline-none
+      transition focus:border-corail focus:ring-2 focus:ring-corail/25 placeholder:text-marine/35;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-corail/10 px-3 py-1 text-xs font-semibold text-marine;
+  }
+}
+
+@layer utilities {
+  /* Léger grain / fondu pour les fonds sombres du hero */
+  .text-balance {
+    text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
