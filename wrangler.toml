@@ -10,19 +10,14 @@ directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
 
-# ⚠️ PRODUCTION — Urban Cowboy Martinique (public identifiers, NOT secrets).
-# The MEWS_CLIENT secret is NOT here: .dev.vars locally, Cloudflare secret in prod.
-# ⚠️⚠️ A booking created with this config is a REAL booking in the PMS.
+# Safe demo defaults. Production identifiers and integrations must be supplied
+# explicitly in the target Cloudflare environment; none are inherited here.
 [vars]
 MEWS_BASE_URL = "https://api.mews-demo.com"
 MEWS_APP_BASE_URL = "https://api.mews-demo.com"
-MEWS_HOTEL_ID="3edbe1b4-6739-40b7-81b3-d369d9469c48"
-MEWS_CONFIG_ID="93e27b6f-cba7-4e0b-a24a-819e1b7b388a"
-# Actual enterprise age categories (verified live).
-MEWS_ADULT_AGE_CATEGORY_ID = "3b9bdb28-d9e1-4fac-904f-b2cf00febb8f"
-MEWS_CHILD_AGE_CATEGORY_ID = "5cd331e0-0069-4f46-a20f-b2cf00febb8f"
+MEWS_HOTEL_ID = "3edbe1b4-6739-40b7-81b3-d369d9469c48"
+MEWS_CONFIG_ID = "93e27b6f-cba7-4e0b-a24a-819e1b7b388a"
+MEWS_ADULT_AGE_CATEGORY_ID = "5485e2f3-4034-4ca1-8a8f-ade30114c61f"
+MEWS_CHILD_AGE_CATEGORY_ID = "fece4b6b-39fa-4ccd-9909-afba0092eeb1"
 
-# ★ SINGLE tracking endpoint (full funnel) → n8n → Supabase. ALL events go through it.
-# Public repo → the URL is visible; to keep it private, set it as a Cloudflare Secret
-# (dashboard) and remove this line.
-WEBHOOK_EVENTS = "https://n8n.srv842183.hstgr.cloud/webhook/booking-event"
+# Tracking is intentionally disabled until Urban Cowboy provisions its own endpoint.

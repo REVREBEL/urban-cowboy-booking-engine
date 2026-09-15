@@ -138,7 +138,7 @@ export function upgradeRooms(rooms: ShapedRoom[], current: ShapedRoom | null, cu
     .filter(
       (r) =>
         r.categoryId !== current.categoryId &&
-        // Surclassement DANS le même groupe (Hôtel Bambou / Culture Créole / Villas) — pas de croisement.
+        // Upgrade within the same property group only; never cross properties.
         r.property === current.property &&
         r.fromGross != null &&
         r.fromGross > currentTotal + 0.5,
@@ -253,13 +253,10 @@ export function cheapestDrinkProduct(products: ShapedProduct[], property: string
   );
 }
 
-// Repas déjà « inclus » à l'Hôtel Bambou : la demi-pension y comprend le petit-déjeuner
-// ET le dîner → ces extras STANDARD sont redondants et MASQUÉS quand la chambre choisie
-// appartient à l'Hôtel Bambou. Exceptions GARDÉES (expériences premium, pas un simple
-// repas) : petit-déjeuner FLOTTANT en mer et dîner SUR LA PLAGE. Le déjeuner / pension
-// complète (midi) N'est PAS inclus → conservé. Culture Créole & Villas (demi-pension NON
-// incluse) montrent tous les extras.
-const MEAL_KEEP = /flottant|floating|plage|beach/i; // expériences premium : gardées même à l'Hôtel
+// Meals already included in a property's rate should not be offered twice.
+// Keep premium experiences (floating breakfast or beach dinner) and lunch/full-board
+// products, which are not equivalent to standard included breakfast or dinner.
+const MEAL_KEEP = /flottant|floating|plage|beach/i;
 const BREAKFAST_OR_DINNER = /petit.?d[ée]j|breakfast|fr[üu]hst[üu]ck|d[îi]ner|dinner/i;
 
 export function isHotelIncludedMeal(p: ShapedProduct): boolean {

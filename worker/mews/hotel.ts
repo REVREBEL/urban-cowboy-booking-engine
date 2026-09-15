@@ -3,7 +3,7 @@ import { mewsJson, json, mewsLang, PROPERTIES, propertyByConfig, type Env } from
 const locStr = (v: unknown): string | null =>
   typeof v === "string" ? v : v && typeof v === "object" ? ((v as any)["fr-FR"] ?? (v as any)["en-GB"] ?? Object.values(v as any)[0] ?? null) : null;
 
-// configuration/get — catalogue CONFIG-NATIF des 3 hébergements (Hôtel Bambou,
+// configuration/get — native Mews catalog for configured properties.
 // Culture Créole, Villas) en UN seul appel. On cure en HotelConfig léger (EUR-only) :
 //  • RoomCategories de TOUS les hébergements, chacune taguée `Property` (clé),
 //  • Products fusionnés (dédup par Id), ImageBaseUrl, CGV, liste des hébergements.
@@ -12,7 +12,7 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
   const lang = mewsLang(new URL(request.url).searchParams.get("lang"));
   const res = await mewsJson<any>(env, "configuration/get", {
     Ids: PROPERTIES.map((p) => p.configId),
-    PrimaryId: env.MEWS_CONFIG_ID, // Hôtel Bambou = primaire
+    PrimaryId: env.MEWS_CONFIG_ID,
     LanguageCode: lang,
   });
   if (!res.ok || !res.data) return json({ error: "config_failed", status: res.status }, 502);

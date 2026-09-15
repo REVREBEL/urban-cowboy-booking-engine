@@ -4,7 +4,7 @@ import { eur } from "../lib/format";
 import { IconCloche, IconCroissant } from "./icons";
 import { t } from "../i18n";
 
-// Détail du prix (récap). Pour l'Hôtel Bambou (demi-pension incluse) : hébergement +
+// Price breakdown. Included meals remain part of the accommodation rate.
 // petit-déjeuner buffet + dîner buffet (inclus). La TAXE DE SÉJOUR est lue directement
 // dans le tarif Mews (ligne TVA 0 %, portée par ShapedRate.citySejour) — jamais « en dur »,
 // elle s'adapte à chaque hébergement (Hôtel 1,20 € / Créole 1,70 €/adulte/nuit…). Le total

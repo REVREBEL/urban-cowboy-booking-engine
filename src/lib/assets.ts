@@ -1,5 +1,4 @@
-// Visuels d'ambiance (issus du vrai site bambouresort.com — CDN Webflow).
-// En production l'hôtel fournira ses propres visuels / ceux des RoomCategories Mews.
+// Demo ambience imagery. Production should use property-owned assets or Mews room-category media.
 const CDN = "https://cdn.prod.website-files.com/678e9d5d649f91d177c0d31a";
 
 export const ASSETS = {

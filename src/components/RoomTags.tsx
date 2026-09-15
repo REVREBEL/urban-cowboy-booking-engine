@@ -19,7 +19,7 @@ export function benefitTags(room: ShapedRoom): Tag[] {
   return roomBenefits(room).map((b) => ({ key: b, label: t(BENEFIT[b].key), Icon: BENEFIT[b].Icon }));
 }
 
-// Repas inclus (demi-pension) — Hôtel Bambou uniquement.
+// Included-meal indicator for rates that provide it.
 export function mealTags(room: ShapedRoom): Tag[] {
   if (room.property !== "hotel") return [];
   return [

@@ -103,9 +103,7 @@ From the browser's perspective, everything is served from the same origin (`:517
 
 > ¹ Not considered secret by Mews itself, but if the URL contains a token, it should instead be stored as a **Secret** in Cloudflare.
 
-The **non-secret** Urban Cowboy production values are stored in [`wrangler.toml`](./wrangler.toml) under `[vars]`.
-
-A deployment therefore works immediately, with only **`MEWS_CLIENT`** needing to be added as an **encrypted secret**.
+Only safe Mews demo values are stored in [`wrangler.toml`](./wrangler.toml). Production identifiers and integrations must be supplied explicitly in the deployment environment.
 
 The `Client` and IDs **never** reach the frontend because no `VITE_*` variables are used.
 
@@ -167,7 +165,7 @@ npm run build && npx wrangler deploy
 
 1. `reservationGroups/create` is called **without** `CreditCardData`.
 
-   For a `RateGroup` configured as `Automatic / ChargeCreditCard`, which applies to most Bambou rates, Mews returns a `PaymentRequestId`.
+   For a `RateGroup` configured as `Automatic / ChargeCreditCard`, Mews returns a `PaymentRequestId`.
 
 2. The Function constructs the Mews-hosted payment URL server-side:
 
@@ -286,28 +284,11 @@ A service such as [webhook.site](https://webhook.site) can be used to test recei
 
 ---
 
-## 🏭 Production 
+## 🏭 Production
 
-The deployment points to the **real production enterprise**.
+Production is intentionally unconfigured. The checked-in Worker and `.dev.vars.example` use Mews demo identifiers, disable funnel tracking, and contain no inherited property account IDs.
 
-Current configuration from `wrangler.toml [vars]` + `.dev.vars`:
-
-- **API**: `api.mews.com` / `app.mews.com`
-- **`MEWS_CLIENT`**: `‹Mews Client string — secret›`, stored as a Cloudflare secret and locally in `.dev.vars`
-- **`MEWS_HOTEL_ID`** = `d81c0909-…`, Urban Cowboy Catskills Enterprise
-- **`MEWS_CONFIG_ID`** = `43ec5bf8-…`, “Hôtel Bambou” Booking Engine
-- **Real age categories**:
-  - adult `3b9bdb28-…`
-  - child `5cd331e0-…`
-- **Payment gateway**: `PciProxy` configured, so Path A is operational with card page + 3-D Secure.
-  One rate group uses **Manual** settlement and therefore displays “payment on arrival.”
-- **Confirmation emails**: Mews sends these to `Customer.Email` if the property's email templates are enabled.
-
-> ⚠️ **In production, any reservation taken through payment is REAL.**
-> It is created in Urban Cowboy's PMS and triggers the guest email.
->
-> To test safely, re-enable the commented **demo** values at the bottom of `.dev.vars`.
-> This switches the local environment immediately without requiring any code changes.
+Before a production deployment, provision project-owned values for the Mews API hosts, client secret, hotel/configuration/age-category IDs, reception details, optional transfer URL, analytics webhook, and Supabase project. Keep secrets in Cloudflare or local `.dev.vars`, never in the repository.
 
 - **Homepage visuals**: `src/lib/assets.ts` currently contains placeholders from hotelwebsite.com and can be replaced with final assets.
 - Verify that `dist/` contains **no secrets**.

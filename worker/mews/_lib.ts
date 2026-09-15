@@ -37,26 +37,20 @@ export async function postWebhook(url: string | undefined, payload: unknown): Pr
   }
 }
 
-// Catégories d'âge de l'entrepriseUrban Cowboy (vérifiées en live) — fallback si les
-// vars ne sont pas définies. Surchargeables via MEWS_ADULT/CHILD_AGE_CATEGORY_ID.
+// Safe Mews demo fallbacks. Production values must come from the deployment environment.
 const AGE_FALLBACK = {
-  adult: "3b9bdb28-d9e1-4fac-904f-b2cf00febb8f",
-  child: "5cd331e0-0069-4f46-a20f-b2cf00febb8f",
+  adult: "5485e2f3-4034-4ca1-8a8f-ade30114c61f",
+  child: "fece4b6b-39fa-4ccd-9909-afba0092eeb1",
 };
 
-// ── Hébergements (Booking Engine configs) — setupUrban Cowboy ────────────────
-// Non secret (comme MEWS_CONFIG_ID, déjà public). Chaque hébergement = 1 config Mews
-// + SES catégories d'âge (adulte/enfant). IDs vérifiés en live via configuration/get.
+// Configured properties. Demo IDs are public fixtures; production IDs come from the environment.
 export interface Property {
   key: string; // "hotel" | "creole" | "villas"
   label: string;
   configId: string;
   adultAgeCategoryId: string;
   childAgeCategoryId: string | null; // null = pas d'enfants (ex. Culture Créole)
-  // Bébé « en berceau » : gratuit ET non décompté. Seul l'Hôtel Bambou expose une
-  // catégorie d'âge Mews « Bébé » (0-3). Ailleurs = null → le bébé n'est pas envoyé 
-  // Mews (Villas rejette d'ailleurs l'ID avec « Invalid AgeCategoryId »), il est juste
-  // consigné en note de réservation. Vérifié en live via configuration + getAvailability.
+  // Infants are sent only when the selected property exposes an infant age category.
   infantAgeCategoryId: string | null;
 }
 export const PROPERTIES: Property[] = [
@@ -74,14 +68,12 @@ export const propertyByKey = (key: unknown): Property | undefined =>
   typeof key === "string" ? PROPERTIES.find((p) => p.key === key) : undefined;
 export const propertyByConfig = (configId: string): Property | undefined => PROPERTIES.find((p) => p.configId === configId);
 
-// OccupancyData Mews pour UN hébergement (utilise SES catégories d'âge).
+// Build Mews occupancy using the selected property's age categories.
 export function occupancyForProperty(prop: Property, adults: number, children = 0, infants = 0) {
   const out: { AgeCategoryId: string; PersonCount: number }[] = [];
   if (adults > 0) out.push({ AgeCategoryId: prop.adultAgeCategoryId, PersonCount: adults });
   if (children > 0 && prop.childAgeCategoryId) out.push({ AgeCategoryId: prop.childAgeCategoryId, PersonCount: children });
-  // Bébé en berceau : envoyé UNIQUEMENT là où une catégorie Mews existe (Hôtel Bambou).
-  // Non décompté par Mews (vérifié : même nombre de chambres avec/sans bébé). Ailleurs,
-  // le bébé n'entre pas dans l'OccupancyData → il est consigné en note à la réservation.
+  // Send infants only where a Mews age category exists.
   if (infants > 0 && prop.infantAgeCategoryId) out.push({ AgeCategoryId: prop.infantAgeCategoryId, PersonCount: infants });
   return out;
 }

@@ -165,7 +165,7 @@ function Login() {
   return (
     <div className="grid min-h-dvh place-items-center bg-cream px-5">
       <form onSubmit={submit} className="card w-full max-w-sm p-7">
-        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-corail">Bambou · Back-office</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-corail">Urban Cowboy · Back-office</p>
         <h1 className="mt-1 font-display text-2xl text-ink">Dashboard funnel</h1>
         <p className="mt-1 text-sm text-ink/60">Connecte-toi pour piloter le tunnel.</p>
 
@@ -177,7 +177,7 @@ function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="field-input mt-1"
-            placeholder="toi@hotelbambou.fr"
+            placeholder="you@example.com"
           />
         </label>
         <label className="mt-3 block text-sm font-medium text-ink/80">
@@ -327,7 +327,7 @@ function Panel({ email }: { email: string }) {
       <header className="sticky top-0 z-20 border-b border-ink/10 bg-cream/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-corail">Bambou · Back-office</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-corail">Urban Cowboy · Back-office</p>
             <h1 className="font-display text-xl text-ink">Dashboard funnel</h1>
           </div>
           <div className="flex flex-wrap items-center gap-2">

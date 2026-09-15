@@ -17,7 +17,7 @@ const UTM_KEYS = [
   "fbclid",
 ] as const;
 
-const SS_KEY = "bambou_utms";
+const SS_KEY = "urban_cowboy_utms";
 
 let utms: Record<string, string> = {};
 

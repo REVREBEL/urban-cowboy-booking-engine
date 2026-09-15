@@ -1,35 +1,22 @@
 # Copy this file to `.dev.vars` (gitignored) for local development.
 # `wrangler dev` reads it automatically. NEVER COMMIT `.dev.vars`.
 #
-# ⚠️ These values point to PRODUCTION: completing the payment process creates a
-#    REAL reservation. Use the DEMO block below to test safely.
-
-MEWS_BASE_URL=https://api.mews.com
-MEWS_APP_BASE_URL=https://app.mews.com
+# Safe Mews demo defaults. Replace these only with identifiers issued for the
+# intended Urban Cowboy environment.
+MEWS_BASE_URL=https://api.mews-demo.com
+MEWS_APP_BASE_URL=https://api.mews-demo.com
 
 # Booking Engine API — Client string enabled by Mews on the Urban Cowboy enterprise.
 MEWS_CLIENT=<Client string provided by Mews — DO NOT commit the real value>
 
-MEWS_HOTEL_ID=d81c0909-af62-4227-9cfe-b2cf00fea600
-MEWS_CONFIG_ID=43ec5bf8-09e2-4ae8-83d2-b39900e86b9b
-
-MEWS_ADULT_AGE_CATEGORY_ID=3b9bdb28-d9e1-4fac-904f-b2cf00febb8f
-MEWS_CHILD_AGE_CATEGORY_ID=5cd331e0-0069-4f46-a20f-b2cf00febb8f
+MEWS_HOTEL_ID=3edbe1b4-6739-40b7-81b3-d369d9469c48
+MEWS_CONFIG_ID=93e27b6f-cba7-4e0b-a24a-819e1b7b388a
+MEWS_ADULT_AGE_CATEGORY_ID=5485e2f3-4034-4ca1-8a8f-ade30114c61f
+MEWS_CHILD_AGE_CATEGORY_ID=fece4b6b-39fa-4ccd-9909-afba0092eeb1
 
 # Webhook (optional): POST URL notified on every initiated payment (payment.initiated)
 # and on every paid reservation (reservation.paid). Leave empty = disabled.
 # WEBHOOK_URL=https://example.com/mews-webhook
 
-# Webhooks (optional): cart tracking (funnel) → carts base, one per status.
-# WEBHOOK_BASKET_CREATED=https://n8n.example.com/webhook/basket-created
-# WEBHOOK_PAYMENT_INITIATED=https://n8n.example.com/webhook/payment-initiated
-# WEBHOOK_PAYMENT_VALIDATED=https://n8n.example.com/webhook/payment-validated
-
-# ── DEMO Toggle (safe testing) ────────────────────────────────────────
-# MEWS_BASE_URL=https://api.mews-demo.com
-# MEWS_APP_BASE_URL=https://app.mews-demo.com
-# MEWS_CLIENT=<Client string provided by Mews — DO NOT commit the real value>
-# MEWS_HOTEL_ID=3edbe1b4-6739-40b7-81b3-d369d9469c48
-# MEWS_CONFIG_ID=93e27b6f-cba7-4e0b-a24a-819e1b7b388a
-# MEWS_ADULT_AGE_CATEGORY_ID=5485e2f3-4034-4ca1-8a8f-ade30114c61f
-# MEWS_CHILD_AGE_CATEGORY_ID=fece4b6b-39fa-4ccd-9909-afba0092eeb1
+# Funnel tracking is disabled unless this project provisions its own endpoint.
+# WEBHOOK_EVENTS=https://example.com/webhook/booking-events

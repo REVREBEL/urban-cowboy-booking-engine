@@ -47,7 +47,7 @@ export function Extras() {
 
   // On n'affiche QUE les extras de l'hébergement de la chambre choisie (step 2) :
   // un produit d'une autre config Mews est refusé à la réservation. De plus, à l'Hôtel
-  // Bambou (demi-pension incluse), on masque les extras petit-déjeuner / dîner redondants
+  // Hide breakfast/dinner extras when the selected rate already includes meals.
   // — sauf le petit-déjeuner flottant. Culture Créole & Villas montrent tout. Enfin, un
   // réveillon hors de ses dates (24/12 · 31/12) est masqué.
   const groups = useMemo(() => {
@@ -83,7 +83,7 @@ export function Extras() {
           <DataBadge label="Extras · Mews" />
         </div>
 
-        {/* Service Bambou (HORS Mews) : simple case à cocher « transfert aéroport ».
+        {/* Property service outside Mews: an airport-transfer interest checkbox.
             N'entre pas dans le total ni la résa Mews — booléen envoyé à n8n (relance). */}
         <section>
           <div className="mb-3 flex items-center gap-3">

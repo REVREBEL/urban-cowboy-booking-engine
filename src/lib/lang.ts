@@ -14,7 +14,7 @@ export type Lang = "fr" | "en";
 export const MEWS_LANG: Record<Lang, string> = { fr: "fr-FR", en: "en-GB" };
 export const LOCALE: Record<Lang, string> = { fr: "fr-FR", en: "en-GB" };
 
-const LS_KEY = "bambou_lang";
+const LS_KEY = "urban_cowboy_lang";
 
 const parse = (v: string | null | undefined): Lang | null =>
   v === "fr" || v === "en" ? v : null;

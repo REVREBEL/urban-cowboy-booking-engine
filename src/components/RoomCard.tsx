@@ -9,7 +9,7 @@ import { t } from "../i18n";
 
 // Libellés d'hébergement (pour le badge sur la carte, quand plusieurs sont affichés).
 const PROPERTY_LABELS: Record<string, string> = {
-  hotel: "Hôtel Bambou",
+  hotel: "Urban Cowboy",
   creole: "Culture Créole",
   villas: "Villas",
 };
@@ -98,7 +98,7 @@ export function RoomCard({
           <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
             <IconCheck className="h-3.5 w-3.5" /> {t("roomCard.noFees")}
           </span>
-          {/* Hôtel Bambou : demi-pension incluse dans le tarif. */}
+          {/* Some property rates include meals. */}
           {room.property === "hotel" && (
             <>
               <span className="inline-flex w-fit items-center gap-1 rounded-full bg-turquoise/10 px-2.5 py-1 text-[11px] font-semibold text-teal-deep">

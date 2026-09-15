@@ -15,7 +15,7 @@ const plural = (n: number, one: string, many: string) => (n > 1 ? many : one);
 const DICT = {
   // ── Header / global ──────────────────────────────────────────────────────
   "header.bestPrice": { fr: "Meilleur prix garanti en direct", en: "Best price guaranteed, direct" },
-  "header.home": { fr: "AccueilUrban Cowboy", en: "Bambou Resort home" },
+  "header.home": { fr: "Accueil Urban Cowboy", en: "Urban Cowboy home" },
   "hotelError.msg": { fr: "Impossible de charger la configuration de l'hôtel.", en: "Couldn't load the hotel configuration." },
   "common.retry": { fr: "Réessayer", en: "Try again" },
   "common.restoring": { fr: "Restauration de votre sélection…", en: "Restoring your selection…" },
@@ -171,7 +171,7 @@ const DICT = {
   "extras.taxesIncl": { fr: "taxes incl.", en: "incl. taxes" },
   "extras.skip": { fr: "Passer", en: "Skip" },
   "extras.continueToPayment": { fr: "Continuer vers le paiement", en: "Continue to payment" },
-  "extras.serviceSection": { fr: "Service Bambou", en: "Bambou service" },
+  "extras.serviceSection": { fr: "Service Urban Cowboy", en: "Urban Cowboy service" },
   "extras.transferTitle": { fr: "Transfert aéroport", en: "Airport transfer" },
   "extras.transferDesc": {
     fr: "Cochez pour recevoir par e-mail le lien de réservation de votre transfert depuis / vers l'aéroport Aimé Césaire. Sans engagement.",
@@ -234,7 +234,7 @@ const DICT = {
   },
   "confirmation.shuttleCta": { fr: "Réserver ma navette", en: "Book my shuttle" },
   "confirmation.newSearch": { fr: "Effectuer une nouvelle recherche", en: "Start a new search" },
-  "confirmation.footer": { fr: "Bambou Resort · Martinique — au plaisir de vous accueillir les pieds dans l'eau.", en: "Bambou Resort · Martinique — we can't wait to welcome you, steps from the water." },
+  "confirmation.footer": { fr: "Urban Cowboy — au plaisir de vous accueillir.", en: "Urban Cowboy — we can't wait to welcome you." },
   "confirmation.verifyingPayment": { fr: "Vérification du paiement…", en: "Verifying payment…" },
   "results.nights": { fr: (p) => `${p.count} nuit${Number(p.count) > 1 ? "s" : ""}`, en: (p) => `${p.count} night${Number(p.count) > 1 ? "s" : ""}` },
   "results.adults": { fr: (p) => `${p.count} adulte${Number(p.count) > 1 ? "s" : ""}`, en: (p) => `${p.count} adult${Number(p.count) > 1 ? "s" : ""}` },
@@ -343,8 +343,8 @@ const DICT = {
 
   // ── Méta (titre d'onglet) ─────────────────────────────────────────────────
   "meta.title": {
-    fr: "Bambou Resort — Réservez votre séjour les pieds dans l'eau",
-    en: "Bambou Resort — Book your stay, steps from the water",
+    fr: "Urban Cowboy — Réservez votre séjour",
+    en: "Urban Cowboy — Book your stay",
   },
 
   // ── Messages d'erreur API (api.ts) ────────────────────────────────────────

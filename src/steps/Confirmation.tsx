@@ -9,9 +9,8 @@ import { t } from "../i18n";
 
 const MAX_POLLS = 5;
 
-// Réservation de la navette aéroport : plateforme EXTERNE (SimplyBook), hors Mews.
-// Lien sortant proposé sur l'écran de confirmation une fois la réservation validée.
-const SHUTTLE_BOOKING_URL = "https://transfertshbambou.simplybook.me/v2/";
+// Demo placeholder. Replace with a property-owned booking URL before production use.
+const SHUTTLE_BOOKING_URL = "https://example.com/airport-transfer";
 
 export function Confirmation() {
   const { rgid, created, checkIn, checkOut, guest, grandTotal, selectedRate, airportTransfer, resetAll, goTo, track } =

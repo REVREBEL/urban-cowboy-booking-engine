@@ -28,7 +28,7 @@ export type CartStatus = "etape" | "paiement_initie" | "paiement_valide";
 
 // Identifiant de panier — persistant (localStorage) pour survivre à la redirection
 // paiement (Mews → /confirmation). Régénéré à chaque nouvelle recherche (resetAll).
-const CART_ID_KEY = "bambou_cart_id";
+const CART_ID_KEY = "urban_cowboy_cart_id";
 function newCartId(): string {
   const id =
     typeof crypto !== "undefined" && "randomUUID" in crypto

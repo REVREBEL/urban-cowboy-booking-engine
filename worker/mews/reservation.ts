@@ -122,7 +122,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const Booker = cleanCustomer(b.booker);
 
   const res = await mewsJson<any>(env, "reservationGroups/create", {
-    // Config de l'hébergement choisi (Bambou/Créole/Villas) ; défaut = config primaire.
+    // Selected property configuration; default to the primary configuration.
     ConfigurationId: propertyByKey(b.property)?.configId ?? env.MEWS_CONFIG_ID,
     HotelId: env.MEWS_HOTEL_ID,
     // Fixe la langue de la page de paiement hébergée + des e-mails de confirmation Mews.

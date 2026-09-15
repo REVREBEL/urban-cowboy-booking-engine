@@ -171,26 +171,24 @@ Several reassurance elements are **generated**, not sourced from Mews. Good to k
 ## 9. Tools, Locations & Accounts
 
 > ⚠️ This table lists **where** things live, **never secrets** (the repo is public).
-> Sensitive values remain in Cloudflare (secrets), `.dev.vars` (local), and n8n credentials — see "Where secrets live" below.
+> This repository contains demo defaults only. Project-specific accounts and identifiers must be provisioned separately.
 
 | Tool | Role | Where (console) | Account |
 | --- | --- | --- | --- |
-| **GitHub** | Source code | [github.com/valentin-nocodefactory/bambou-resort-booking-engine](https://github.com/valentin-nocodefactory/bambou-resort-booking-engine) | `valentin-nocodefactory` |
-| **Cloudflare Workers** | Hosting + deployment | dash.cloudflare.com → Worker `bambou-resort-booking-engine` | `valentin7732` account (`*.valentin7732.workers.dev` subdomain) |
-| **Mews** | PMS / availability / pricing / payment | [app.mews.com](https://app.mews.com) (Commander) · `api.mews.com` (Distributor v1) | Hôtel Bambou Mews account (3 configurations) |
-| **n8n** | Automation / funnel tracking | [n8n.srv842183.hstgr.cloud](https://n8n.srv842183.hstgr.cloud) (self-hosted Hostinger, `srv842183`) | Project n8n instance |
-| **Supabase** | Database + Auth + API | [supabase.com/dashboard/project/wrakgyuiihxlcaxinckm](https://supabase.com/dashboard/project/wrakgyuiihxlcaxinckm) | Project `wrakgyuiihxlcaxinckm` |
-| **Showcase Website** | Brand guidelines (fonts, colors, photos, contact) | [bambouresort.com](https://www.bambouresort.com) (Webflow) | — |
-| **NocodeFactory** | Development | Footer credit | — |
+| **GitHub** | Source code | `REVREBEL/urban-cowboy-booking-engine` | REVREBEL |
+| **Cloudflare Workers** | Hosting + deployment | Provision for this project | Not configured in this repository |
+| **Mews** | PMS / availability / pricing / payment | Public demo API by default | Production account not configured |
+| **n8n** | Optional funnel tracking | Provision for this project | Not configured |
+| **Supabase** | Optional database + Auth + API | Provision for this project | Not configured |
 
 ### Key URLs
 
 | What | URL |
 | --- | --- |
 | Booking Engine (Prod) | 
-| Back-Office Dashboard | `…workers.dev/dashboard` |
-| Tracking Endpoint → n8n | 
-| Supabase API (REST auto) |
+| Back-Office Dashboard | `/dashboard` on the deployed project origin |
+| Tracking Endpoint → n8n | Not configured |
+| Supabase API (REST auto) | Not configured |
 
 ### Deployment
 
@@ -205,14 +203,11 @@ same build (`/dashboard`).
 | `MEWS_CLIENT` | Mews Distributor Token | `.dev.vars` (local) **+** Cloudflare Secret (prod) |
 | Supabase `service_role` | Full database access (bypasses RLS) | **Only** in n8n credentials |
 | Supabase `anon` (public) | Frontend read via RLS + Auth | `src/dashboard/config.ts` (public by design) |
-| Public Mews IDs + `WEBHOOK_EVENTS` | Non-secrets (hotel/config/age categories) | `wrangler.toml` → `[vars]` |
-
-> 🔑 **To do**: the `service_role` key was exposed once → **regenerate** it in Supabase (Settings → API) and update it in n8n.
+| Public Mews IDs + `WEBHOOK_EVENTS` | Non-secrets (hotel/config/age categories) | Deployment environment; repository values are demo-only |
 
 ### Reception Contact (Displayed in the Booking Engine)
 
-Phone `123-456-7890` · Email `reservation@hotel.com'
-(Alternatives: `reservation@hotel.com`, `eservation@hotel.com`). Editable in a single place: `src/components/ContactBar.tsx`.
+The repository uses non-routable demo contact details. Replace them with property-owned values in `src/components/ContactBar.tsx` before production use.
 
 ---
 

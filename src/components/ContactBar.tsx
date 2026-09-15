@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { t } from "../i18n";
 import { IconPhone, IconMail, IconShare, IconClose } from "./icons";
 
-// ⚙️ Contact réception (bambouresort.com). Modifiable ici en un seul endroit.
-const RECEPTION_PHONE = "+33768308396"; // format tel: (E.164)
-const RECEPTION_PHONE_DISPLAY = "+33 7 68 30 83 96";
-const RECEPTION_EMAIL = "reservation@hotelbambou.fr";
+// Demo contact values. Replace with property-owned details before production use.
+const RECEPTION_PHONE = "+15555550100"; // format tel: (E.164)
+const RECEPTION_PHONE_DISPLAY = "+1 555 555 0100";
+const RECEPTION_EMAIL = "reservations@example.com";
 
 // Accès permanent (bouton flottant bas-droite) pour joindre la réception à toute
 // étape : APPELER (tel:), ÉCRIRE (mailto:) ou PARTAGER le lien courant — qui

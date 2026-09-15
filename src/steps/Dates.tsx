@@ -16,12 +16,12 @@ import {
   IconWave,
 } from "../components/icons";
 
-// Hébergements sélectionnables (libellé + accroche + photo, reprise de bambouresort.com).
+// Selectable property cards (label, description, and demo image).
 // `desc` = clé i18n résolue AU RENDU via t() (pas au niveau module, sinon figée en fr
 // avant initLang()). `label` = nom propre, non traduit.
 type PropertyOption = { key: string; label: string; desc: TKey; image: string };
 const PROPERTY_OPTIONS: PropertyOption[] = [
-  { key: "hotel", label: "Hôtel Bambou", desc: "dates.propHotelDesc", image: "/img/properties/hotel.webp" },
+  { key: "hotel", label: "Urban Cowboy", desc: "dates.propHotelDesc", image: "/img/properties/hotel.webp" },
   { key: "creole", label: "Culture Créole", desc: "dates.propCreoleDesc", image: "/img/properties/creole.webp" },
   { key: "villas", label: "Villas", desc: "dates.propVillasDesc", image: "/img/properties/villas.webp" },
 ];
@@ -120,7 +120,7 @@ export function Dates() {
           {error && <p className="mt-2 px-1 text-sm font-medium text-red-600">{error}</p>}
         </form>
 
-        {/* Nos promesses — arguments de marque repris de bambouresort.com */}
+        {/* Brand promises */}
         <div className="mt-14">
           <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-corail">
             {t("dates.artDeVivre")}

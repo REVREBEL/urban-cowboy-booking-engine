@@ -161,7 +161,7 @@ Then retrieve (Settings → API): **Project URL** + **`service_role`** key (secr
 
 ---
 
-## 2) n8n — Workflow "Bambou — Booking Events"
+## 2) n8n — Workflow "Urban Cowboy — Booking Events"
 
 1. **Webhook** (node): `POST` method, path e.g. `booking-events`. Copy the **Production URL** → this is what goes into `WEBHOOK_EVENTS`.
 2. **Supabase** (node) → **Insert** operation, table `booking_events`. Map (the body usually arrives under `{{$json.body}}` — check what n8n displays):
