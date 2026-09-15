@@ -1,28 +1,28 @@
 name = "urban-cowboy-booking-engine"
 main = "worker/index.ts"
 compatibility_date = "2025-05-01"
-# fetch() est global sur le runtime Workers — pas besoin de nodejs_compat.
+# fetch() is global on the Workers runtime — no need for nodejs_compat.
 
-# Static Assets : le front buildé (dist/) est servi par le binding ASSETS.
-# not_found_handling = SPA → /confirmation et autres routes client renvoient index.html.
+# Static Assets: the built frontend (dist/) is served by the ASSETS binding.
+# not_found_handling = SPA → /confirmation and other client routes return index.html.
 [assets]
 directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
 
-# ⚠️ PRODUCTION —Urban Cowboy Martinique (identifiants publics, NON secrets).
-# Le secret MEWS_CLIENT n'est PAS ici : .dev.vars en local, secret Cloudflare en prod.
-# ⚠️⚠️ Une réservation créée depuis cette config est une VRAIE réservation dans le PMS.
+# ⚠️ PRODUCTION — Urban Cowboy Martinique (public identifiers, NOT secrets).
+# The MEWS_CLIENT secret is NOT here: .dev.vars locally, Cloudflare secret in prod.
+# ⚠️⚠️ A booking created with this config is a REAL booking in the PMS.
 [vars]
-MEWS_BASE_URL = "https://api.mews.com"
-MEWS_APP_BASE_URL = "https://app.mews.com"
-MEWS_HOTEL_ID = "d81c0909-af62-4227-9cfe-b2cf00fea600"
-MEWS_CONFIG_ID = "43ec5bf8-09e2-4ae8-83d2-b39900e86b9b"
-# Catégories d'âge réelles de l'entreprise (vérifiées en live).
+MEWS_BASE_URL = "https://api.mews-demo.com"
+MEWS_APP_BASE_URL = "https://api.mews-demo.com"
+MEWS_HOTEL_ID="3edbe1b4-6739-40b7-81b3-d369d9469c48"
+MEWS_CONFIG_ID="93e27b6f-cba7-4e0b-a24a-819e1b7b388a"
+# Actual enterprise age categories (verified live).
 MEWS_ADULT_AGE_CATEGORY_ID = "3b9bdb28-d9e1-4fac-904f-b2cf00febb8f"
 MEWS_CHILD_AGE_CATEGORY_ID = "5cd331e0-0069-4f46-a20f-b2cf00febb8f"
 
-# ★ UNIQUE endpoint de suivi (funnel complet) → n8n → Supabase. TOUS les events y passent.
-# Repo public → l'URL est visible ; pour la garder privée, la définir en Secret Cloudflare
-# (dashboard) et retirer cette ligne.
+# ★ SINGLE tracking endpoint (full funnel) → n8n → Supabase. ALL events go through it.
+# Public repo → the URL is visible; to keep it private, set it as a Cloudflare Secret
+# (dashboard) and remove this line.
 WEBHOOK_EVENTS = "https://n8n.srv842183.hstgr.cloud/webhook/booking-event"

@@ -6,7 +6,7 @@ function useApiLog(): ApiLogEntry[] {
   return useSyncExternalStore(apiLog.subscribe, apiLog.getAll, apiLog.getAll);
 }
 
-// ── Arbre JSON repliable (ouvrir/fermer chaque objet & array) ────────────────
+// ── Collapsible JSON Tree (expand/collapse objects & arrays) ──────────────────
 function Primitive({ value }: { value: unknown }) {
   if (value === null) return <span className="text-pink-300">null</span>;
   if (value === undefined) return <span className="text-cream/40">undefined</span>;
@@ -18,7 +18,7 @@ function Primitive({ value }: { value: unknown }) {
 }
 
 function JsonNode({ name, value, depth }: { name?: string; value: unknown; depth: number }) {
-  const [open, setOpen] = useState(depth < 1); // racine ouverte, le reste replié
+  const [open, setOpen] = useState(depth < 1); // root open, rest collapsed
   const isObj = value !== null && typeof value === "object";
 
   if (!isObj) {
@@ -57,7 +57,7 @@ function JsonNode({ name, value, depth }: { name?: string; value: unknown; depth
             <JsonNode key={k} name={k} value={v} depth={depth + 1} />
           ))}
           {entries.length > 200 && (
-            <div className="text-[10px] text-cream/30">… {entries.length - 200} éléments de plus</div>
+            <div className="text-[10px] text-cream/30">… {entries.length - 200} more items</div>
           )}
         </div>
       )}
@@ -86,7 +86,7 @@ export function DevPanel() {
         onClick={() => setOpen((v) => !v)}
         className="fixed bottom-4 left-4 z-[60] inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 font-mono text-xs font-semibold text-cream shadow-float transition hover:bg-teal-deep"
         aria-expanded={open}
-        aria-label="Journal des appels API"
+        aria-label="API call log"
       >
         <span className="relative flex h-2 w-2">
           {pending && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-turquoise-vivid opacity-75" />}
@@ -101,15 +101,15 @@ export function DevPanel() {
       {open && (
         <section
           className="fixed bottom-16 left-4 z-[60] flex max-h-[74vh] w-[min(460px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink text-cream shadow-float"
-          aria-label="Journal des appels API Mews"
+          aria-label="Mews API call log"
         >
           <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <div className="flex items-center gap-1.5">
               <Tab active={view === "calls"} onClick={() => setView("calls")}>
-                Appels{entries.length ? ` (${entries.length})` : ""}
+                Calls{entries.length ? ` (${entries.length})` : ""}
               </Tab>
               <Tab active={view === "sources"} onClick={() => setView("sources")}>
-                Sources des données
+                Data sources
               </Tab>
             </div>
             <div className="flex items-center gap-1">
@@ -125,7 +125,7 @@ export function DevPanel() {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Fermer"
+                aria-label="Close"
                 className="grid h-7 w-7 place-items-center rounded-md text-cream/60 hover:bg-white/10 hover:text-cream"
               >
                 <IconClose className="h-4 w-4" />
@@ -138,7 +138,7 @@ export function DevPanel() {
           </div>
 
           <footer className="border-t border-white/10 px-4 py-2 text-center text-[10px] text-cream/35">
-            Les appels Mews passent par le Worker — le Client & les IDs restent côté serveur.
+            Mews calls pass through the Worker — Client & IDs remain server-side.
           </footer>
         </section>
       )}
@@ -172,9 +172,9 @@ function CallsView({
   if (entries.length === 0) {
     return (
       <p className="px-4 py-8 text-center text-sm text-cream/40">
-        Aucun appel pour l'instant.
+        No calls yet.
         <br />
-        Lancez une recherche pour voir les appels Mews apparaître ici.
+        Run a search to see Mews calls appear here.
       </p>
     );
   }
@@ -203,21 +203,21 @@ function CallsView({
             </button>
             {isOpen && (
               <div className="space-y-3 bg-black/20 px-4 py-3">
-                <Field title="Pourquoi cet appel ?">
+                <Field title="Why this call?">
                   <p className="text-[12px] leading-relaxed text-cream/75">{e.why}</p>
                 </Field>
                 {e.request != null && (
-                  <Field title="Requête (envoyée au proxy)">
+                  <Field title="Request (sent to proxy)">
                     <JsonTree value={e.request} />
                   </Field>
                 )}
                 {e.error && (
-                  <Field title="Erreur">
+                  <Field title="Error">
                     <pre className="rounded-lg bg-black/40 p-2.5 font-mono text-[11px] text-red-300">{e.error}</pre>
                   </Field>
                 )}
                 {e.response != null && (
-                  <Field title="Réponse Mews (cliquez pour déplier les arrays)">
+                  <Field title="Mews response (click to expand arrays)">
                     <JsonTree value={e.response} />
                   </Field>
                 )}
@@ -230,38 +230,38 @@ function CallsView({
   );
 }
 
-// ── Onglet « Sources » : ce qui est réel (Mews) vs en dur (démo) ─────────────
+// ── "Sources" Tab: real (Mews) vs hardcoded (demo) ───────────────────────────
 const LIVE: string[] = [
-  "Chambres : nom, description, photos, capacité (lits)",
-  "Disponibilité : « Plus que N chambres » = AvailableRoomCount réel",
-  "Prix : « à partir de », par tarif, /nuit, total, prix barré (MaxPrice) → le −% en découle",
-  "Tarifs : nom, description, privé/public, mode de règlement",
-  "Extras : nom, description, prix EUR, facturation",
-  "Réservation : n° de confirmation, total, état du paiement",
+  "Rooms: name, description, photos, capacity (beds)",
+  "Availability: 'Only N rooms left' = actual AvailableRoomCount",
+  "Prices: 'starting at', per rate, /night, total, strikethrough price (MaxPrice) → discount derived",
+  "Rates: name, description, private/public, payment mode",
+  "Extras: name, description, EUR price, billing",
+  "Booking: confirmation #, total, payment status",
 ];
 const MOCK: string[] = [
-  "Notes & avis (« 9,4 · 1 248 », « 9,0 · 129 ») — aucune API avis branchée",
-  "« X personnes consultent », « réservé N fois » — générés (déterministe par chambre)",
-  "« Coup de cœur voyageurs », « Très demandé » — badges marketing",
-  "Bandeau « Forte demande pour vos dates » — copie",
-  "« Annulation gratuite / sans frais » — copie (vraie politique = RateGroups Mews, non branchée)",
-  "Minuteur « Nous gardons votre chambre 09:58 » — cosmétique",
-  "Équipements du détail (Wi-Fi, clim, terrasse, vue) — génériques",
-  "Visuels de la page d'accueil — placeholders (CDN du site)",
+  "Ratings & reviews ('9.4 · 1,248', '9.0 · 129') — no review API connected",
+  "'X people viewing', 'booked N times' — generated (deterministic per room)",
+  "'Guest favorite', 'High demand' — marketing badges",
+  "'High demand for your dates' banner — copy",
+  "'Free cancellation' — copy (actual policy = Mews RateGroups, not connected)",
+  "'Holding your room for 09:58' timer — cosmetic",
+  "Detailed amenities (Wi-Fi, AC, terrace, view) — generic",
+  "Homepage visuals — placeholders (site CDN)",
 ];
 
 function SourcesView() {
   return (
     <div className="space-y-4 px-4 py-3 text-[12px] leading-relaxed">
       <p className="text-cream/60">
-        Règle simple : <strong className="text-cream">tout ce qui apparaît dans l'onglet « Appels » est réel</strong>{" "}
-        (réponses Mews en direct). Le reste de l'interface listé ci-dessous est <strong className="text-cream">en dur</strong>{" "}
-        (démo conversion, à brancher en prod).
+        Simple rule: <strong className="text-cream">everything in the 'Calls' tab is real</strong>{" "}
+        (live Mews responses). The rest of the interface listed below is <strong className="text-cream">hardcoded</strong>{" "}
+        (conversion demo, to be connected in prod).
       </p>
 
       <div>
         <p className="mb-1.5 inline-flex items-center gap-2 font-semibold text-emerald-300">
-          <span className="h-2 w-2 rounded-full bg-emerald-400" /> Données en direct · Mews
+          <span className="h-2 w-2 rounded-full bg-emerald-400" /> Live Data · Mews
         </p>
         <ul className="space-y-1">
           {LIVE.map((t) => (
@@ -275,7 +275,7 @@ function SourcesView() {
 
       <div>
         <p className="mb-1.5 inline-flex items-center gap-2 font-semibold text-amber-300">
-          <span className="h-2 w-2 rounded-full bg-amber-400" /> Données de démonstration · en dur
+          <span className="h-2 w-2 rounded-full bg-amber-400" /> Demo Data · Hardcoded
         </p>
         <ul className="space-y-1">
           {MOCK.map((t) => (
@@ -286,9 +286,9 @@ function SourcesView() {
           ))}
         </ul>
         <p className="mt-2 text-[11px] text-cream/40">
-          Centralisé dans <code className="text-cream/60">src/components/conversion.tsx</code> (+ équipements dans{" "}
-          <code className="text-cream/60">RoomDetailDrawer</code>). À remplacer par de vraies sources (avis,
-          politique d'annulation Mews, équipements) en production.
+          Centralized in <code className="text-cream/60">src/components/conversion.tsx</code> (+ amenities in{" "}
+          <code className="text-cream/60">RoomDetailDrawer</code>). Replace with real sources (reviews,
+          Mews cancellation policy, amenities) in production.
         </p>
       </div>
     </div>
