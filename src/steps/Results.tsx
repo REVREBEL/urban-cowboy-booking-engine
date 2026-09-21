@@ -10,6 +10,8 @@ import { InlineUpsell } from "../components/UpsellCard";
 import { RatingPill, UrgencyBanner } from "../components/conversion";
 import { IconCalendar, IconUsers, IconChevron } from "../components/icons";
 import { t } from "../i18n";
+import { TopMatchPanel } from "../components/TopMatchPanel";
+import { parseRecommendationPreferences } from "../lib/topMatch";
 
 export function Results() {
   const {
@@ -126,6 +128,18 @@ export function Results() {
   // Upsell inline : un extra de l'hébergement de la 1re chambre (sinon il serait
   // refusé à la réservation, cf. produits rattachés à une config Mews).
   const inlineProduct = products.find((p) => !p.property || p.property === rooms[0]?.property) ?? null;
+  const topMatch = rooms[0] ?? null;
+  const topMatchPreferences = useMemo(
+    () =>
+      topMatch
+        ? parseRecommendationPreferences(window.location.search, {
+            adults,
+            children,
+            roomName: topMatch.name,
+          })
+        : null,
+    [topMatch, adults, children],
+  );
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
@@ -180,24 +194,37 @@ export function Results() {
 
       {!loading && !error && rooms.length > 0 && (
         <div className="mt-5 space-y-4">
-          {rooms.map((room, i) => (
+          {topMatch && topMatchPreferences && (
+            <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.85fr)]">
+              <div className="space-y-4">
+                <RoomCard
+                  room={topMatch}
+                  imageBaseUrl={imageBaseUrl}
+                  nightsCount={nightsCount}
+                  featured
+                  onChoose={() => choose(topMatch, topMatch.rates[0])}
+                  onDetails={() => setOpenRoom(topMatch)}
+                />
+                {inlineProduct && (
+                  <InlineUpsell
+                    product={inlineProduct}
+                    added={productIds.includes(inlineProduct.id)}
+                    onToggle={() => toggleProduct(inlineProduct.id)}
+                  />
+                )}
+              </div>
+              <TopMatchPanel room={topMatch} preferences={topMatchPreferences} checkIn={checkIn} />
+            </div>
+          )}
+          {rooms.slice(1, 3).map((room) => (
             <div key={room.categoryId} className="space-y-4">
               <RoomCard
                 room={room}
                 imageBaseUrl={imageBaseUrl}
                 nightsCount={nightsCount}
-                featured={i === 0}
                 onChoose={() => choose(room, room.rates[0])}
                 onDetails={() => setOpenRoom(room)}
               />
-              {/* Suggestion d'upsell inline après la 1re carte */}
-              {i === 0 && inlineProduct && (
-                <InlineUpsell
-                  product={inlineProduct}
-                  added={productIds.includes(inlineProduct.id)}
-                  onToggle={() => toggleProduct(inlineProduct.id)}
-                />
-              )}
             </div>
           ))}
         </div>

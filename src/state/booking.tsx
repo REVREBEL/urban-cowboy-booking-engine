@@ -139,6 +139,7 @@ function readGuest(): Partial<Guest> {
 
 function writeUrl(s: BookingState, g: Guest) {
   if (typeof window === "undefined") return;
+  const current = new URLSearchParams(window.location.search);
   const q = new URLSearchParams();
   if (s.checkIn) q.set("in", s.checkIn);
   if (s.checkOut) q.set("out", s.checkOut);
@@ -163,6 +164,13 @@ function writeUrl(s: BookingState, g: Guest) {
   if (g.sendMarketingEmails) q.set("mk", "1");
   // Préserve la langue non-défaut dans l'URL (writeUrl reconstruit les params à zéro).
   if (getLang() === "en") q.set("lang", "en");
+  // REV-102 recommendation inputs are owned by the quiz/ranking layer. Preserve
+  // them while this booking state serializes its own fields so REV-103 can explain
+  // the actual ranked result without losing the guest's choices.
+  for (const key of ["party", "dog", "interest", "interest2"] as const) {
+    const value = current.get(key);
+    if (value) q.set(key, value);
+  }
   const qs = q.toString();
   const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
   window.history.replaceState(null, "", url);
