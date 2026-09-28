@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useBooking } from "../state/booking";
 import { api, errorMessage } from "../lib/api";
-import { eur, fmtDate } from "../lib/format";
+import { money, fmtDate } from "../lib/format";
 import type { ReservationStatusResult } from "../types/mews";
 import { Brand } from "../components/Brand";
 import { IconArrowRight, IconCalendar, IconCheck, IconShield } from "../components/icons";
@@ -13,7 +13,7 @@ const MAX_POLLS = 5;
 const SHUTTLE_BOOKING_URL = "https://example.com/airport-transfer";
 
 export function Confirmation() {
-  const { rgid, created, checkIn, checkOut, guest, grandTotal, selectedRate, airportTransfer, resetAll, goTo, track } =
+  const { rgid, created, checkIn, checkOut, guest, grandTotal, currency, selectedRate, airportTransfer, resetAll, goTo, track } =
     useBooking();
 
   const [status, setStatus] = useState<ReservationStatusResult | null>(null);
@@ -129,9 +129,9 @@ export function Confirmation() {
               </Line>
             )}
             {guest.email && <Line label={t("confirmation.travelerEmail")}>{guest.email}</Line>}
-            {selectedRate && grandTotal > 0 && <Line label={t("confirmation.total")}>{eur(grandTotal)}</Line>}
+            {selectedRate && grandTotal > 0 && <Line label={t("confirmation.total")}>{money(grandTotal, currency)}</Line>}
             {created?.totalAmount?.gross != null && !selectedRate && (
-              <Line label={t("confirmation.total")}>{eur(created.totalAmount.gross)}</Line>
+              <Line label={t("confirmation.total")}>{money(created.totalAmount.gross, created.totalAmount.currency)}</Line>
             )}
           </div>
 
