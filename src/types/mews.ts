@@ -4,12 +4,28 @@
 
 export type Localized = Record<string, string>;
 
+export interface MewsTaxValue {
+  TaxRateCode?: string | null;
+  Value: number;
+}
+
+export interface MewsBreakdownItem {
+  TaxRateCode?: string | null;
+  NetValue?: number | null;
+  TaxValue?: number | null;
+}
+
 export interface MewsAmount {
-  Currency: string;
+  // Amounts nested in a multi-currency map may omit Currency because the object key
+  // itself is the ISO 4217 code. Single Amount responses include it explicitly.
+  Currency?: string;
   GrossValue: number | null;
   NetValue: number | null;
+  TaxValues?: MewsTaxValue[];
+  Breakdown?: { Items?: MewsBreakdownItem[] };
 }
-export type EurAmount = { EUR?: MewsAmount };
+
+export type MultiCurrencyAmount = Record<string, MewsAmount | undefined>;
 
 // ── hotels/get ──────────────────────────────────────────────────────────────
 export interface RoomCategory {
@@ -61,8 +77,12 @@ export interface RateGroup {
   Id: string;
   SettlementType: "Automatic" | "Manual" | string;
   SettlementAction: "ChargeCreditCard" | "CreatePreauthorization" | string;
-  SettlementTrigger?: string;
-  SettlementValue?: number;
+  SettlementTrigger?: "Confirmation" | "Start" | "End" | "StartDate" | "EndDate" | string;
+  SettlementOffset?: string | null;
+  SettlementValue?: number | null;
+  SettlementFlatValue?: number | null;
+  SettlementCurrencyCode?: string | null;
+  SettlementMaximumTimeUnits?: number | null;
 }
 
 export interface Rate {
@@ -75,8 +95,11 @@ export interface Rate {
 }
 
 export interface PriceBlock {
-  TotalAmount?: EurAmount;
-  AverageAmountPerNight?: EurAmount;
+  TotalAmount?: MultiCurrencyAmount;
+  // Current Mews Booking Engine API field.
+  AverageAmountPerTimeUnit?: MultiCurrencyAmount;
+  // Backward-compatible alias observed in older/demo responses.
+  AverageAmountPerNight?: MultiCurrencyAmount;
 }
 
 export interface RatePricing {
@@ -107,9 +130,11 @@ export interface AvailabilityResponse {
 
 // ── Réponses curées des Functions ────────────────────────────────────────────
 export interface CuratedAmount {
-  currency: "EUR";
+  currency: string;
   gross: number | null;
   net: number | null;
+  taxTotal: number | null;
+  taxes: { taxRateCode: string | null; value: number }[];
 }
 
 export interface PricingResult {
@@ -162,13 +187,34 @@ export interface ShapedRate {
   name: string;
   description: string;
   isPrivate: boolean;
+  currency: string;
+
   totalGross: number | null;
+  totalNet: number | null;
+  totalTax: number | null;
+
   perNightGross: number | null;
+  perNightNet: number | null;
+  perNightTax: number | null;
+
   maxGross: number | null; // prix barré (avant remise) si présent
-  // Taxe de séjour incluse dans le tarif (ligne TVA 0 % renvoyée par Mews), pour
-  // l'occupation recherchée. null si aucune. Sert à détailler le prix sur le récap.
+  maxNet: number | null;
+  maxTax: number | null;
+
+  // Legacy property-specific line retained temporarily for the old demo UI.
   citySejour: number | null;
-  settlement: { type: string; action: string; isAutomatic: boolean };
+
+  settlement: {
+    type: string;
+    action: string;
+    isAutomatic: boolean;
+    trigger: string | null;
+    offset: string | null;
+    value: number | null;
+    flatValue: number | null;
+    currencyCode: string | null;
+    maximumTimeUnits: number | null;
+  };
 }
 
 export interface ShapedRoom {
