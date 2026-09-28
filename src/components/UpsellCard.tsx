@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { productLineTotal } from "../state/booking";
-import { eur, imgUrl } from "../lib/format";
+import { money, imgUrl } from "../lib/format";
 import { chargingLabel } from "../lib/shaping";
 import type { ShapedProduct } from "../types/mews";
 import { Photo } from "./Photo";
@@ -81,12 +81,12 @@ export function UpsellCard({
           )}
           <div className="mt-auto flex items-end justify-between gap-2 pt-2">
             <div className="text-sm">
-              <span className="font-display text-lg text-teal-deep">{eur(product.priceEur)}</span>
+              <span className="font-display text-lg text-teal-deep">{money(product.price, product.currency)}</span>
               {chargingLabel(product.chargingMode) && (
                 <span className="text-xs text-ink/45"> {chargingLabel(product.chargingMode)}</span>
               )}
-              {lineTotal !== product.priceEur && (
-                <span className="text-xs text-ink/45"> · {eur(lineTotal)} {t("upsell.total")}</span>
+              {lineTotal !== product.price && (
+                <span className="text-xs text-ink/45"> · {money(lineTotal, product.currency)} {t("upsell.total")}</span>
               )}
             </div>
             {/* stopPropagation : ouvrir le détail sans (dé)cocher l'extra. */}
@@ -176,12 +176,12 @@ function ExtraDetailModal({
         <div className="p-5">
           <h3 className="font-display text-xl text-ink">{product.name}</h3>
           <p className="mt-1 text-sm">
-            <span className="font-display text-lg text-teal-deep">{eur(product.priceEur)}</span>
+            <span className="font-display text-lg text-teal-deep">{money(product.price, product.currency)}</span>
             {chargingLabel(product.chargingMode) && (
               <span className="text-ink/50"> {chargingLabel(product.chargingMode)}</span>
             )}
-            {lineTotal !== product.priceEur && (
-              <span className="text-ink/50"> · {eur(lineTotal)} {t("upsell.total")}</span>
+            {lineTotal !== product.price && (
+              <span className="text-ink/50"> · {money(lineTotal, product.currency)} {t("upsell.total")}</span>
             )}
           </p>
           {product.description && (
@@ -236,7 +236,7 @@ export function InlineUpsell({
         </p>
         <p className="text-xs text-ink/60">
           {product.description || t("upsell.descFallback")} ·{" "}
-          <span className="font-semibold text-teal-deep">{eur(product.priceEur)}</span>
+          <span className="font-semibold text-teal-deep">{money(product.price, product.currency)}</span>
         </p>
       </div>
       <button
