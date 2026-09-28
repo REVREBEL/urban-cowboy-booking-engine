@@ -10,6 +10,8 @@ import type {
   HotelConfig,
   Product,
   RateGroup,
+  MewsAmount,
+  MultiCurrencyAmount,
   ShapedProduct,
   ShapedRate,
   ShapedRoom,
@@ -18,18 +20,44 @@ import { loc } from "./format";
 import { getLang } from "./lang";
 import { t } from "../i18n";
 
-const grossOf = (a: { EUR?: { GrossValue: number | null } } | undefined | null): number | null => {
-  const g = a?.EUR?.GrossValue;
-  return typeof g === "number" ? g : null;
+type MoneyParts = {
+  currency: string;
+  gross: number | null;
+  net: number | null;
+  tax: number | null;
+  source: MewsAmount | null;
 };
 
-// Taxe de séjour incluse dans le tarif = ligne(s) à TVA 0 % du breakdown Mews (vérifié :
-// Hôtel 1,20 € / Créole 1,70 € par adulte/nuit). TVA 0 % → gross = net. Renvoyée telle
-// quelle par Mews (jamais « en dur ») pour l'occupation recherchée. null si absente.
-function taxeSejourGross(amount: unknown): number | null {
-  const items = (
-    amount as { EUR?: { Breakdown?: { Items?: { TaxRateCode?: string; NetValue?: number; TaxValue?: number }[] } } } | null
-  )?.EUR?.Breakdown?.Items;
+function amountFor(amount: MultiCurrencyAmount | undefined | null, preferredCurrency: string): MoneyParts {
+  const entries = amount ? Object.entries(amount).filter(([, v]) => !!v) as [string, MewsAmount][] : [];
+  const selected =
+    (amount?.[preferredCurrency] ? [preferredCurrency, amount[preferredCurrency] as MewsAmount] : null) ??
+    entries[0] ??
+    null;
+
+  if (!selected) {
+    return { currency: preferredCurrency, gross: null, net: null, tax: null, source: null };
+  }
+
+  const [currency, source] = selected;
+  const gross = typeof source.GrossValue === "number" ? source.GrossValue : null;
+  const net = typeof source.NetValue === "number" ? source.NetValue : null;
+  const taxValues = Array.isArray(source.TaxValues) ? source.TaxValues : [];
+  const taxFromValues = taxValues.reduce((sum, item) => sum + (typeof item?.Value === "number" ? item.Value : 0), 0);
+  const tax =
+    taxValues.length > 0
+      ? +taxFromValues.toFixed(2)
+      : gross != null && net != null
+        ? +(gross - net).toFixed(2)
+        : null;
+
+  return { currency, gross, net, tax, source };
+}
+
+// Legacy demo-only city-tax extraction. Kept temporarily so the existing Martinique
+// breakdown remains stable while the generic net/tax model becomes the primary source.
+function taxeSejourGross(source: MewsAmount | null): number | null {
+  const items = source?.Breakdown?.Items;
   if (!Array.isArray(items)) return null;
   const gross = items
     .filter((i) => typeof i?.TaxRateCode === "string" && /-0%$/.test(i.TaxRateCode))
@@ -51,21 +79,49 @@ export function buildRooms(avail: AvailabilityResponse, hotel: HotelConfig | nul
 
   for (const rca of avail.RoomCategoryAvailabilities) {
     // Meilleur prix par tarif (min sur toutes les occupations renvoyées).
+    const currency = hotel?.DefaultCurrencyCode || "EUR";
     const byRate = new Map<
       string,
-      { total: number | null; perNight: number | null; max: number | null; citySejour: number | null }
+      {
+        currency: string;
+        totalGross: number | null;
+        totalNet: number | null;
+        totalTax: number | null;
+        perNightGross: number | null;
+        perNightNet: number | null;
+        perNightTax: number | null;
+        maxGross: number | null;
+        maxNet: number | null;
+        maxTax: number | null;
+        citySejour: number | null;
+      }
     >();
 
     for (const occ of rca.RoomOccupancyAvailabilities ?? []) {
       for (const p of occ.Pricing ?? []) {
-        const total = grossOf(p.Price?.TotalAmount);
-        if (total == null) continue; // ⚠️ ignorer les GrossValue null
-        const perNight = grossOf(p.Price?.AverageAmountPerNight);
-        const max = grossOf(p.MaxPrice?.TotalAmount);
-        const citySejour = taxeSejourGross(p.Price?.TotalAmount);
+        const total = amountFor(p.Price?.TotalAmount, currency);
+        if (total.gross == null) continue; // ignore null/unpriced combinations
+        const perNight = amountFor(
+          p.Price?.AverageAmountPerTimeUnit ?? p.Price?.AverageAmountPerNight,
+          total.currency,
+        );
+        const max = amountFor(p.MaxPrice?.TotalAmount, total.currency);
+        const citySejour = taxeSejourGross(total.source);
         const prev = byRate.get(p.RateId);
-        if (!prev || (prev.total != null && total < prev.total)) {
-          byRate.set(p.RateId, { total, perNight, max, citySejour });
+        if (!prev || (prev.totalGross != null && total.gross < prev.totalGross)) {
+          byRate.set(p.RateId, {
+            currency: total.currency,
+            totalGross: total.gross,
+            totalNet: total.net,
+            totalTax: total.tax,
+            perNightGross: perNight.gross,
+            perNightNet: perNight.net,
+            perNightTax: perNight.tax,
+            maxGross: max.gross,
+            maxNet: max.net,
+            maxTax: max.tax,
+            citySejour,
+          });
         }
       }
     }
@@ -76,21 +132,38 @@ export function buildRooms(avail: AvailabilityResponse, hotel: HotelConfig | nul
       const name = loc(rate?.Name, "Tarif");
       if (isBookingExcludedRate(name)) continue; // tarif CSE/partenaires : non réservable ici
       const group = rate ? groupById.get(rate.RateGroupId) : undefined;
+      const useMax =
+        price.maxGross != null &&
+        price.totalGross != null &&
+        price.maxGross > price.totalGross;
+
       rates.push({
         rateId,
         rateGroupId: rate?.RateGroupId ?? "",
         name,
         description: loc(rate?.Description ?? null, ""),
         isPrivate: rate?.IsPrivate ?? false,
-        totalGross: price.total,
-        perNightGross: price.perNight,
-        // n'afficher le prix barré que s'il est strictement supérieur au prix réel
-        maxGross: price.max != null && price.total != null && price.max > price.total ? price.max : null,
+        currency: price.currency,
+        totalGross: price.totalGross,
+        totalNet: price.totalNet,
+        totalTax: price.totalTax,
+        perNightGross: price.perNightGross,
+        perNightNet: price.perNightNet,
+        perNightTax: price.perNightTax,
+        maxGross: useMax ? price.maxGross : null,
+        maxNet: useMax ? price.maxNet : null,
+        maxTax: useMax ? price.maxTax : null,
         citySejour: price.citySejour,
         settlement: {
           type: group?.SettlementType ?? "Automatic",
           action: group?.SettlementAction ?? "ChargeCreditCard",
           isAutomatic: (group?.SettlementType ?? "Automatic") === "Automatic",
+          trigger: group?.SettlementTrigger ?? null,
+          offset: group?.SettlementOffset ?? null,
+          value: group?.SettlementValue ?? null,
+          flatValue: group?.SettlementFlatValue ?? null,
+          currencyCode: group?.SettlementCurrencyCode ?? null,
+          maximumTimeUnits: group?.SettlementMaximumTimeUnits ?? null,
         },
       });
     }
@@ -187,15 +260,20 @@ export function roomBenefits(room: { name: string }): string[] {
   return out;
 }
 
-// Produits → upsells. On retient les extras optionnels avec un prix EUR.
+// Produits → upsells. On retient les extras optionnels dans la devise par défaut
+// de l'établissement afin de ne jamais mélanger des devises dans le panier.
 export function shapeProducts(hotel: HotelConfig | null, lang = "fr-FR"): ShapedProduct[] {
   if (!hotel?.Products) return [];
-  return hotel.Products.filter((p: Product) => !p.AlwaysIncluded && typeof p.Prices?.EUR === "number" && p.Prices.EUR > 0)
+  const currency = hotel.DefaultCurrencyCode || "EUR";
+  return hotel.Products.filter(
+    (p: Product) => !p.AlwaysIncluded && typeof p.Prices?.[currency] === "number" && p.Prices[currency] > 0,
+  )
     .map((p) => ({
       id: p.Id,
       name: loc(p.Name, "Extra").trim(),
       description: loc(p.Description ?? null, ""),
-      priceEur: p.Prices.EUR,
+      price: p.Prices[currency],
+      currency,
       chargingMode: p.ChargingMode ?? "",
       imageId: p.ImageId,
       property: p.Property ?? null,
@@ -206,7 +284,7 @@ export function shapeProducts(hotel: HotelConfig | null, lang = "fr-FR"): Shaped
       (p, i, arr) =>
         arr.findIndex((q) => q.property === p.property && q.name.toLowerCase() === p.name.toLowerCase()) === i,
     )
-    .sort((a, b) => a.priceEur - b.priceEur);
+    .sort((a, b) => a.price - b.price);
 }
 
 // Catégorisation heuristique des extras par mots-clés (Mews n'expose pas les noms
@@ -249,7 +327,7 @@ export function cheapestDrinkProduct(products: ShapedProduct[], property: string
           (!p.property || p.property === property) &&
           /boisson|drink|beverage|forfait|cr[ée]dit/i.test(`${p.name} ${p.description}`),
       )
-      .sort((a, b) => a.priceEur - b.priceEur)[0] ?? null
+      .sort((a, b) => a.price - b.price)[0] ?? null
   );
 }
 
