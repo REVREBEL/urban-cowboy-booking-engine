@@ -64,6 +64,7 @@ export function RoomDetailDrawer({
         roomCategoryId: room.categoryId,
         adults: search.adults,
         children: search.children,
+        currencyCode: room.rates[0]?.currency,
       })
       .then((res) => {
         if (!alive) return;
