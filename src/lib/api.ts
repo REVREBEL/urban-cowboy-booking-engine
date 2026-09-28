@@ -81,6 +81,7 @@ export interface SearchParams {
   infants: number; // bébés en berceau — gratuits + non décomptés
   voucherCode?: string;
   properties?: string[]; // hébergements cochés (hotel/creole/villas)
+  currencyCode?: string;
 }
 
 export interface GuestPayload {
@@ -124,6 +125,7 @@ export const api = {
         languageCode: mewsLang(),
         ...(p.voucherCode ? { voucherCode: p.voucherCode } : {}),
         ...(p.properties?.length ? { properties: p.properties } : {}),
+        ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
       },
       {
         label: "Disponibilités & prix",
@@ -139,6 +141,7 @@ export const api = {
     children: number;
     productIds?: string[];
     voucherCode?: string;
+    currencyCode?: string;
   }) =>
     post<PricingResult>(
       "pricing",
@@ -151,6 +154,7 @@ export const api = {
         languageCode: mewsLang(),
         ...(p.productIds?.length ? { productIds: p.productIds } : {}),
         ...(p.voucherCode ? { voucherCode: p.voucherCode } : {}),
+        ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
       },
       {
         label: "Prix exact du type de chambre",
