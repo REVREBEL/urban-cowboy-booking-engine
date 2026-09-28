@@ -41,7 +41,7 @@ export function StayBreakdown() {
   );
 
   const accommodation =
-    totalNet != null
+    quote && totalNet != null
       ? Math.max(0, +(totalNet - quotedProductNet).toFixed(2))
       : Math.max(0, roomTotal - taxe);
 
