@@ -247,5 +247,9 @@ export const currencyAmount = (amount: unknown, preferredCurrency = "EUR"): Norm
   return null;
 };
 
+/** Normalize either a single Amount object or a multi-currency amount map. */
+export const anyAmount = (amount: unknown, preferredCurrency = "EUR"): NormalizedAmount | null =>
+  normalizeAmount(amount, preferredCurrency) ?? currencyAmount(amount, preferredCurrency);
+
 /** Backward-compatible helper while legacy worker code is migrated. */
-export const eurAmount = (amount: unknown): NormalizedAmount | null => currencyAmount(amount, "EUR");
+export const eurAmount = (amount: unknown): NormalizedAmount | null => anyAmount(amount, "EUR");
