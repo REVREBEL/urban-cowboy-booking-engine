@@ -4,7 +4,7 @@ const locStr = (v: unknown): string | null =>
   typeof v === "string" ? v : v && typeof v === "object" ? ((v as any)["fr-FR"] ?? (v as any)["en-GB"] ?? Object.values(v as any)[0] ?? null) : null;
 
 // configuration/get — native Mews catalog for configured properties.
-// Culture Créole, Villas) en UN seul appel. On cure en HotelConfig léger (EUR-only) :
+// Culture Créole, Villas) en UN seul appel. On cure en HotelConfig léger dans la devise par défaut :
 //  • RoomCategories de TOUS les hébergements, chacune taguée `Property` (clé),
 //  • Products fusionnés (dédup par Id), ImageBaseUrl, CGV, liste des hébergements.
 // Caché 5 min (public) — la config bouge rarement. Aucun input front.
@@ -43,6 +43,15 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
     }
     for (const p of ent.Products ?? []) {
       if (!productMap.has(p.Id)) {
+        const legacyPrice =
+          typeof p.Prices?.[defaultCurrencyCode] === "number"
+            ? p.Prices[defaultCurrencyCode]
+            : null;
+        const absolutePrice =
+          p.Pricing?.Discriminator === "Absolute"
+            ? p.Pricing?.Value?.[defaultCurrencyCode]?.GrossValue
+            : null;
+
         productMap.set(p.Id, {
           Id: p.Id,
           Name: p.Name,
@@ -51,10 +60,12 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
           ImageId: p.ImageId ?? null,
           AlwaysIncluded: !!p.AlwaysIncluded,
           Prices: {
+            // Current Mews configuration/get exposes absolute product prices under
+            // Pricing.Value. Retain the legacy Prices fallback for older fixtures.
             [defaultCurrencyCode]:
-              typeof p.Prices?.[defaultCurrencyCode] === "number"
-                ? p.Prices[defaultCurrencyCode]
-                : null,
+              typeof absolutePrice === "number"
+                ? absolutePrice
+                : legacyPrice,
           },
           ChargingMode: p.ChargingMode ?? "",
           Property: key, // hébergement de la config d'origine → filtrage des extras côté front
