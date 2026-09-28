@@ -212,6 +212,11 @@ const DICT = {
   "payment.unavailable": { fr: "Cette chambre vient d'être réservée pour ces dates. Relancez une recherche pour voir les disponibilités à jour.", en: "This room was just booked for these dates. Run a new search to see up-to-date availability." },
   "payment.editSearch": { fr: "Modifier la recherche", en: "Edit search" },
   "payment.processing": { fr: "Traitement…", en: "Processing…" },
+  "payment.verifyingPrice": { fr: "Vérification du prix…", en: "Verifying price…" },
+  "payment.quoteUnavailable": {
+    fr: "Le prix final n'a pas pu être revérifié. Réessayez avant de confirmer la réservation.",
+    en: "The final price could not be reverified. Please retry before confirming the booking.",
+  },
   "payment.pay": { fr: "Payer", en: "Pay" },
   "payment.confirmBooking": { fr: "Confirmer la réservation", en: "Confirm booking" },
   "confirmation.confirmedTitle": { fr: "Réservation confirmée", en: "Booking confirmed" },
