@@ -23,7 +23,6 @@ export function Payment() {
     productIds,
     products,
     guest,
-    grandTotal,
     currency,
     amountDueNow,
     quoteLoading,
