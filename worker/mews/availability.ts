@@ -21,6 +21,7 @@ interface Body {
   properties?: string[]; // clés d'hébergements (hotel/creole/villas). Vide/absent = tous.
   voucherCode?: string;
   languageCode?: string; // fr-FR | en-GB — localise noms/descriptions de chambres & tarifs.
+  currencyCode?: string; // ISO 4217; defaults to EUR for legacy callers.
 }
 
 // hotels/getAvailability — dispo + prix EUR, interrogée PAR hébergement sélectionné
@@ -50,6 +51,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   const voucher = typeof b.voucherCode === "string" && b.voucherCode ? b.voucherCode : undefined;
   const LanguageCode = mewsLang(b.languageCode);
+  const CurrencyCode =
+    typeof b.currencyCode === "string" && /^[A-Z]{3}$/.test(b.currencyCode)
+      ? b.currencyCode
+      : "EUR";
 
   const results = await Promise.all(
     selected.map((prop) =>
@@ -58,7 +63,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         HotelId: env.MEWS_HOTEL_ID,
         StartUtc: b.startUtc,
         EndUtc: b.endUtc,
-        CurrencyCode: "EUR",
+        CurrencyCode,
         LanguageCode,
         OccupancyData: occupancyForProperty(prop, adults, children, infants),
         ...(voucher ? { VoucherCode: voucher } : {}),
