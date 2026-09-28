@@ -25,7 +25,10 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        # Wrangler currently declares a newer optional workers-types peer than this
+        # repository pins. Use the lockfile exactly while ignoring that optional peer
+        # conflict; typecheck/build still validate the installed code.
+        run: npm ci --legacy-peer-deps
 
       - name: Typecheck
         run: npm run typecheck
