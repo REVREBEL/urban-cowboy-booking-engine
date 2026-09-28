@@ -75,7 +75,7 @@ export function Results() {
     return () => {
       alive = false;
     };
-  }, [checkIn, checkOut, adults, children, infants, voucherCode, reloadKey]);
+  }, [checkIn, checkOut, adults, children, infants, voucherCode, hotel?.DefaultCurrencyCode, reloadKey]);
 
   // Toutes les chambres dispos (tous hébergements), taguées par `property`.
   const allRooms = useMemo(() => (data ? buildRooms(data, hotel) : []), [data, hotel]);
