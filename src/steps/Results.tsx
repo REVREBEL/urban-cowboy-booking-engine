@@ -56,6 +56,7 @@ export function Results() {
   // le filtre est appliqué à l'affichage, ce qui permet de compter les hébergements
   // NON cochés dispos et de les proposer en teaser (bascule instantanée, sans refetch).
   useEffect(() => {
+    if (!hotel) return;
     let alive = true;
     setLoading(true);
     setError(null);
