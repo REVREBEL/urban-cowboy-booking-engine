@@ -272,7 +272,7 @@ export function shapeProducts(hotel: HotelConfig | null, lang = "fr-FR"): Shaped
       id: p.Id,
       name: loc(p.Name, "Extra").trim(),
       description: loc(p.Description ?? null, ""),
-      price: p.Prices[currency],
+      price: p.Prices[currency] as number,
       currency,
       chargingMode: p.ChargingMode ?? "",
       imageId: p.ImageId,
