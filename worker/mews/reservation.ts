@@ -76,7 +76,7 @@ function cleanCustomer(c: InCustomer | undefined) {
 
 // reservationGroups/create — ÉCRIT dans Mews. On reconstruit entièrement le payload
 // à partir de champs whitelistés ; jamais de forward du body brut. Renvoie au front
-// une réponse curée (Id, PaymentRequestId, numéros de confirmation, total EUR).
+// une réponse curée (Id, PaymentRequestId, numéros de confirmation, montants dans leur devise Mews).
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const b = await readJson<Body>(request);
 
