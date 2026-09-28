@@ -211,11 +211,19 @@ export const normalizeAmount = (amount: unknown, fallbackCurrency = "EUR"): Norm
   if (a.GrossValue == null && a.NetValue == null && !a.Currency) return null;
 
   const currency = typeof a.Currency === "string" && a.Currency ? a.Currency : fallbackCurrency;
-  const taxes = Array.isArray(a.TaxValues)
+  // reservations/price now documents Breakdown.Items as the primary tax source;
+  // TaxValues remains as a backward-compatible fallback on older responses.
+  const breakdownTaxes = Array.isArray(a.Breakdown?.Items)
+    ? a.Breakdown.Items
+        .filter((x) => typeof x?.TaxValue === "number" && x.TaxValue !== 0)
+        .map((x) => ({ taxRateCode: x.TaxRateCode ?? null, value: x.TaxValue as number }))
+    : [];
+  const legacyTaxes = Array.isArray(a.TaxValues)
     ? a.TaxValues
         .filter((x) => typeof x?.Value === "number")
         .map((x) => ({ taxRateCode: x.TaxRateCode ?? null, value: x.Value as number }))
     : [];
+  const taxes = breakdownTaxes.length ? breakdownTaxes : legacyTaxes;
 
   const taxTotal =
     taxes.length > 0
