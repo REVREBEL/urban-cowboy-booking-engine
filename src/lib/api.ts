@@ -130,7 +130,7 @@ export const api = {
       },
       {
         label: "Disponibilités & prix",
-        why: "Le cœur du moteur : interroge Mews pour les chambres disponibles et leurs tarifs en EUR, pour vos dates et occupants. Le front les groupe par type de chambre (prix « à partir de »).",
+        why: "Le cœur du moteur : interroge Mews pour les chambres disponibles et leurs tarifs dans la devise de l'établissement, pour vos dates et occupants. Le front les groupe par type de chambre (prix « à partir de »).",
       },
     ),
 
