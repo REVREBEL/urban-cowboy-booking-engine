@@ -24,6 +24,30 @@ let seq = 0;
 const subscribers = new Set<() => void>();
 const emit = () => subscribers.forEach((fn) => fn());
 
+
+const SENSITIVE_KEY =
+  /^(email|firstName|lastName|telephone|phone|notes?|nationalityCode|sendMarketingEmails|authorization|password|token|secret|cardNumber|creditCard|cvc|cvv)$/i;
+
+/**
+ * Keep the developer log useful without retaining guest PII or credentials.
+ * The log is client-side diagnostics only, so truncate unusually deep/large payloads too.
+ */
+export function redactForLog(value: unknown, depth = 0): unknown {
+  if (value == null || typeof value !== "object") return value;
+  if (depth >= 6) return "[truncated]";
+
+  if (Array.isArray(value)) {
+    const items = value.slice(0, 50).map((item) => redactForLog(item, depth + 1));
+    return value.length > 50 ? [...items, `[+${value.length - 50} more]`] : items;
+  }
+
+  const out: Record<string, unknown> = {};
+  for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+    out[key] = SENSITIVE_KEY.test(key) ? "[REDACTED]" : redactForLog(item, depth + 1);
+  }
+  return out;
+}
+
 // Résumé compact d'une réponse (1 niveau) pour ne pas garder des Mo en mémoire.
 export function summarize(data: unknown): unknown {
   if (data == null) return null;
@@ -45,12 +69,20 @@ export function summarize(data: unknown): unknown {
 export const apiLog = {
   start(method: string, path: string, label: string, why: string, request?: unknown): number {
     const id = ++seq;
-    entries = [{ id, ts: Date.now(), method, path, label, why, request, pending: true }, ...entries].slice(0, MAX);
+    entries = [
+      { id, ts: Date.now(), method, path, label, why, request: redactForLog(request), pending: true },
+      ...entries,
+    ].slice(0, MAX);
     emit();
     return id;
   },
   finish(id: number, patch: Partial<ApiLogEntry>) {
-    entries = entries.map((e) => (e.id === id ? { ...e, ...patch, pending: false } : e));
+    const safePatch: Partial<ApiLogEntry> = {
+      ...patch,
+      ...(patch.request !== undefined ? { request: redactForLog(patch.request) } : {}),
+      ...(patch.response !== undefined ? { response: redactForLog(patch.response) } : {}),
+    };
+    entries = entries.map((e) => (e.id === id ? { ...e, ...safePatch, pending: false } : e));
     emit();
   },
   getAll(): ApiLogEntry[] {
