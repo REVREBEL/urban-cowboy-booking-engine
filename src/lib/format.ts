@@ -35,15 +35,16 @@ export function regionName(code: string): string {
   }
 }
 
-// Formatters Intl mémoïsés par (locale, décimales) — reconstruits si la locale change.
+// Currency formatters cached by locale + ISO currency + decimals.
 const numCache = new Map<string, Intl.NumberFormat>();
-const eurFmt = (decimals: number) => {
-  const key = `${locale()}:${decimals}`;
+const moneyFmt = (currency: string, decimals: number) => {
+  const code = currency || "USD";
+  const key = `${locale()}:${code}:${decimals}`;
   let f = numCache.get(key);
   if (!f) {
     f = new Intl.NumberFormat(locale(), {
       style: "currency",
-      currency: "EUR",
+      currency: code,
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     });
@@ -52,11 +53,26 @@ const eurFmt = (decimals: number) => {
   return f;
 };
 
-// Prix EUR. Par défaut : 0 décimale si entier (« à partir de 126 € »), sinon 2.
-export function eur(value: number | null | undefined, opts?: { decimals?: 0 | 2 }): string {
+// Generic ISO-4217 formatter. Default decimal behavior preserves the existing UI:
+// whole values omit cents, fractional values show two.
+export function money(
+  value: number | null | undefined,
+  currency: string,
+  opts?: { decimals?: 0 | 2 },
+): string {
   if (value == null || !Number.isFinite(value)) return "—";
   const d = opts?.decimals ?? (Number.isInteger(value) ? 0 : 2);
-  return eurFmt(d).format(value);
+  try {
+    return moneyFmt(currency, d).format(value);
+  } catch {
+    return `${currency} ${value.toFixed(d)}`;
+  }
+}
+
+// Backward-compatible alias used by legacy Martinique-only UI while the remaining
+// property-specific screens are migrated to generic currency formatting.
+export function eur(value: number | null | undefined, opts?: { decimals?: 0 | 2 }): string {
+  return money(value, "EUR", opts);
 }
 
 // Normalise une date (yyyy-mm-dd ou ISO) en ISO 8601 UTC minuit.
