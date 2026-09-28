@@ -1,5 +1,5 @@
 import { productLineTotal, useBooking } from "../state/booking";
-import { eur, fmtDate } from "../lib/format";
+import { money, fmtDate } from "../lib/format";
 import { chargingLabel, spaceLabel } from "../lib/shaping";
 import { SavingsLine } from "./conversion";
 import { IconBed, IconCalendar, IconCheck, IconLock, IconUsers } from "./icons";
@@ -20,6 +20,11 @@ export function BookingSummary() {
     roomTotal,
     productsTotal,
     grandTotal,
+    currency,
+    amountDueNow,
+    remainingBalance,
+    quoteLoading,
+    quoteError,
   } = useBooking();
 
   const savings =
@@ -62,7 +67,7 @@ export function BookingSummary() {
 
       <div className="border-t border-ink/10 px-5 py-4 text-sm">
         {selectedRate && (
-          <Line label={t("summary.accommodation", { count: nightsCount })} value={eur(roomTotal)} />
+          <Line label={t("summary.accommodation", { count: nightsCount })} value={money(roomTotal, currency)} />
         )}
         {selectedProducts.map((p) => (
           <Line
@@ -75,7 +80,7 @@ export function BookingSummary() {
                 ) : null}
               </>
             }
-            value={eur(productLineTotal(p, nightsCount, guestsCount))}
+            value={money(productLineTotal(p, nightsCount, guestsCount), p.currency)}
           />
         ))}
         {!selectedRate && !selectedProducts.length && (
@@ -86,14 +91,30 @@ export function BookingSummary() {
       <div className="flex items-end justify-between border-t border-ink/10 bg-cream/60 px-5 py-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-teal-deep/70">{t("summary.total")}</p>
-          <p className="text-[11px] text-ink/50">{t("summary.taxesIncluded")}{productsTotal > 0 ? t("summary.extrasNote", { amount: eur(productsTotal) }) : ""}</p>
+          <p className="text-[11px] text-ink/50">
+            {quoteLoading
+              ? t("summary.verifyingTotal")
+              : quoteError
+                ? t("summary.estimatedTotal")
+                : t("summary.taxesIncluded")}
+            {productsTotal > 0 ? t("summary.extrasNote", { amount: money(productsTotal, currency) }) : ""}
+          </p>
         </div>
-        <p className="font-display text-2xl text-teal-deep">{grandTotal > 0 ? eur(grandTotal) : "—"}</p>
+        <p className="font-display text-2xl text-teal-deep">{grandTotal > 0 ? money(grandTotal, currency) : "—"}</p>
       </div>
+
+      {amountDueNow != null && grandTotal > 0 && (
+        <div className="space-y-1.5 border-t border-ink/10 px-5 py-3 text-sm">
+          <Line label={t("summary.dueNow")} value={money(amountDueNow, currency)} />
+          {remainingBalance != null && remainingBalance > 0 && (
+            <Line label={t("summary.remainingBalance")} value={money(remainingBalance, currency)} />
+          )}
+        </div>
+      )}
 
       {savings > 0 && (
         <div className="border-t border-ink/10 px-5 py-2.5">
-          <SavingsLine amount={savings} />
+          <SavingsLine amount={savings} currency={currency} />
         </div>
       )}
 
