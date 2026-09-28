@@ -12,7 +12,7 @@ import { IconArrowRight, IconBed, IconCheck, IconSparkles, IconUsers } from "../
 // On part du choix initial (le moins cher si l'utilisateur a cliqué « Choisir »)
 // et on propose les chambres plus haut de gamme avec leur différentiel de prix.
 export function Upgrade() {
-  const { availableRooms, selectedRoom, selectedRate, selectRoomRate, imageBaseUrl, nightsCount, goTo } = useBooking();
+  const { availableRooms, selectedRoom, selectedRate, selectRoomRate, imageBaseUrl, nightsCount, currency, goTo } = useBooking();
 
   useEffect(() => {
     if (!selectedRoom || !selectedRate) goTo("results");
