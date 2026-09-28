@@ -180,6 +180,7 @@ interface BookingContextValue extends BookingState {
   quote: ReservationQuoteResult | null;
   quoteLoading: boolean;
   quoteError: boolean;
+  refreshQuote: () => void;
   // dérivés
   nightsCount: number;
   guestsCount: number;
@@ -253,6 +254,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [quote, setQuote] = useState<ReservationQuoteResult | null>(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState(false);
+  const [quoteRefreshKey, setQuoteRefreshKey] = useState(0);
   const [cartId, setCartId] = useState<string>(loadCartId);
 
   const [hotel, setHotel] = useState<HotelConfig | null>(null);
@@ -434,6 +436,10 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     if (r) setState((s) => ({ ...s, rgid: r.id }));
   }, []);
 
+  const refreshQuote = useCallback(() => {
+    setQuoteRefreshKey((key) => key + 1);
+  }, []);
+
   const goTo: BookingContextValue["goTo"] = useCallback((step) => patch({ step }), [patch]);
 
   const resetAll = useCallback(() => {
@@ -589,6 +595,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     state.productIds,
     state.voucherCode,
     hotel?.DefaultCurrencyCode,
+    quoteRefreshKey,
   ]);
 
   const roomTotal = selectedRate?.totalGross ?? 0;
@@ -676,6 +683,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     quote,
     quoteLoading,
     quoteError,
+    refreshQuote,
     nightsCount,
     guestsCount,
     selectedProducts,
