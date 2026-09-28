@@ -50,7 +50,12 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, waitUnti
         ? { rateId: str(b.rate.rateId, 60), name: str(b.rate.name, 200), totalGross: num(b.rate.totalGross) }
         : null,
     products: Array.isArray(b.products)
-      ? b.products.slice(0, 30).map((p: any) => ({ id: str(p?.id, 60), name: str(p?.name, 200), priceEur: num(p?.priceEur) }))
+      ? b.products.slice(0, 30).map((p: any) => ({
+          id: str(p?.id, 60),
+          name: str(p?.name, 200),
+          price: num(p?.price),
+          currency: str(p?.currency, 3),
+        }))
       : [],
     totals:
       b.totals && typeof b.totals === "object"
