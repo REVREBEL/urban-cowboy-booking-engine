@@ -12,6 +12,7 @@ import type { Env } from "./mews/_lib";
 import { onRequestGet as hotelGet, onRequestPost as hotelPost } from "./mews/hotel";
 import { onRequestPost as availability } from "./mews/availability";
 import { onRequestPost as pricing } from "./mews/pricing";
+import { onRequestPost as reservationPrice } from "./mews/reservation-price";
 import { onRequestPost as reservation } from "./mews/reservation";
 import { onRequestPost as reservationStatus } from "./mews/reservation-status";
 import { onRequestPost as paymentLink } from "./mews/payment-link";
@@ -29,6 +30,7 @@ const ROUTES: Record<string, Partial<Record<string, Handler>>> = {
   hotel: { GET: h(hotelGet), POST: h(hotelPost) },
   availability: { POST: h(availability) },
   pricing: { POST: h(pricing) },
+  "reservation-price": { POST: h(reservationPrice) },
   reservation: { POST: h(reservation) },
   "reservation-status": { POST: h(reservationStatus) },
   "payment-link": { POST: h(paymentLink) },
