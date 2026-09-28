@@ -431,18 +431,15 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     if (geoDoneRef.current) return;
     geoDoneRef.current = true;
     const u = readUrl();
-    const g = readGuest();
-    // Visite fraîche : aucune sélection ni info encodée dans l'URL → on peut pré-remplir.
-    // (Un lien restauré avec ?nat=… déjà présent n'est PAS écrasé.)
-    const fresh = !u.roomId && !u.rgid && (!u.step || u.step === "dates") && !g.nationalityCode;
+    // Fresh visit: no room/payment/deep-link state to preserve. Guest nationality is
+    // intentionally not restored from the URL because personal data is never serialized.
+    const fresh = !u.roomId && !u.rgid && (!u.step || u.step === "dates");
     let alive = true;
     // On appelle toujours /geo (léger, no-store) pour tracer le pays détecté en debug.
     void api.geo().then((r) => {
       // eslint-disable-next-line no-console
       console.log(
-        `[geo] pays détecté (IP): ${r.country ?? "—"} · visite fraîche: ${fresh} · nationalité en cours: ${
-          g.nationalityCode || "FR (défaut)"
-        }`,
+        `[geo] pays détecté (IP): ${r.country ?? "—"} · visite fraîche: ${fresh}`,
       );
       if (!alive || !fresh || !r.country) return;
       // Indicatif : on n'écrase pas un choix explicite (uniquement si encore défaut FR).
