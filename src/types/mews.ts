@@ -149,6 +149,15 @@ export interface PricingResult {
   }[];
 }
 
+export interface ReservationQuoteResult {
+  total: CuratedAmount | null;
+  amountToChargeOnConfirmation: CuratedAmount | null;
+  productOrderPrices: {
+    productId: string | null;
+    total: CuratedAmount | null;
+  }[];
+}
+
 export interface CreatedReservation {
   id: string;
   number: string;
