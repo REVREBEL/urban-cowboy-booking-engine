@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useBooking } from "../state/booking";
 import { t } from "../i18n";
-import { eur } from "../lib/format";
+import { money } from "../lib/format";
 import { groupProducts, upgradeRooms, isHotelIncludedMeal, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
 import { StepLayout } from "../components/StepLayout";
 import { UpsellCard } from "../components/UpsellCard";
@@ -24,6 +24,7 @@ export function Extras() {
     selectedRate,
     availableRooms,
     grandTotal,
+    currency,
     goTo,
   } = useBooking();
 
@@ -161,7 +162,7 @@ export function Extras() {
           <div className="flex items-center justify-between gap-3">
             <div>
               <span className="text-xs text-ink/55">{t("extras.total")}</span>
-              <span className="font-display text-lg text-teal-deep">{eur(grandTotal)}</span>
+              <span className="font-display text-lg text-teal-deep">{money(grandTotal, currency)}</span>
               <span className="ml-1 text-[11px] text-ink/45">{t("extras.taxesIncl")}</span>
             </div>
             <div className="flex items-center gap-2">
