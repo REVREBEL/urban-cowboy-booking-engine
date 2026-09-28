@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ApiError, api, errorMessage } from "../lib/api";
-import { eur, fmtDate, toUtc } from "../lib/format";
+import { money, fmtDate, toUtc } from "../lib/format";
 import { StepLayout } from "../components/StepLayout";
 import { SecureBadge } from "../components/DataBadge";
 import { StayBreakdown } from "../components/StayBreakdown";
@@ -24,6 +24,10 @@ export function Payment() {
     products,
     guest,
     grandTotal,
+    currency,
+    amountDueNow,
+    quoteLoading,
+    quoteError,
     nightsCount,
     setCreated,
     goTo,
@@ -197,6 +201,9 @@ export function Payment() {
           </div>
         )}
         {error && <p className="text-sm font-medium text-red-600">{error}</p>}
+        {quoteError && (
+          <p className="text-sm font-medium text-red-600">{t("payment.quoteUnavailable")}</p>
+        )}
 
         <div className="rounded-xl2 bg-cream/70 p-4">
           <TrustRow compact />
@@ -207,14 +214,16 @@ export function Payment() {
           <button
             type="button"
             onClick={pay}
-            disabled={!accepted || submitting}
+            disabled={!accepted || submitting || quoteLoading || quoteError}
             className="btn-accent min-w-56 text-base"
           >
             {submitting ? (
               t("payment.processing")
-            ) : onSession ? (
+            ) : quoteLoading ? (
+              t("payment.verifyingPrice")
+            ) : onSession && amountDueNow != null ? (
               <>
-                {t("payment.pay")} {eur(grandTotal)} <IconArrowRight className="h-4 w-4" />
+                {t("payment.pay")} {money(amountDueNow, currency)} <IconArrowRight className="h-4 w-4" />
               </>
             ) : (
               <>
