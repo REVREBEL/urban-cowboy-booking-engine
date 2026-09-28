@@ -47,7 +47,7 @@ export interface Product {
   ImageId: string | null;
   IncludedByDefault: boolean;
   AlwaysIncluded: boolean;
-  Prices: Record<string, number>; // { EUR: 12.6, ... }
+  Prices: Record<string, number | null>; // keyed by ISO 4217 currency
   ChargingMode?: string;
   Property?: string | null; // hébergement (hotel/creole/villas) — un produit n'est réservable qu'avec une chambre de SA config
 }
