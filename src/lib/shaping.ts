@@ -29,11 +29,11 @@ type MoneyParts = {
 };
 
 function amountFor(amount: MultiCurrencyAmount | undefined | null, preferredCurrency: string): MoneyParts {
-  const entries = amount ? Object.entries(amount).filter(([, v]) => !!v) as [string, MewsAmount][] : [];
-  const selected =
-    (amount?.[preferredCurrency] ? [preferredCurrency, amount[preferredCurrency] as MewsAmount] : null) ??
-    entries[0] ??
-    null;
+  const entries = amount ? (Object.entries(amount).filter(([, v]) => !!v) as [string, MewsAmount][]) : [];
+  let selected: [string, MewsAmount] | null = null;
+  const preferred = amount?.[preferredCurrency];
+  if (preferred) selected = [preferredCurrency, preferred];
+  else selected = entries[0] ?? null;
 
   if (!selected) {
     return { currency: preferredCurrency, gross: null, net: null, tax: null, source: null };
