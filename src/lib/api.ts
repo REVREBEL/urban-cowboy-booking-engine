@@ -8,6 +8,7 @@ import type {
   AvailabilityResponse,
   HotelConfig,
   PricingResult,
+  ReservationQuoteResult,
   ReservationCreateResult,
   ReservationStatusResult,
 } from "../types/mews";
@@ -158,7 +159,41 @@ export const api = {
       },
       {
         label: "Prix exact du type de chambre",
-        why: "À l'ouverture du panneau détail : confirme le prix précis de ce type de chambre selon l'occupation choisie. La réponse Mews (~80 devises) est curée en EUR par le serveur.",
+        why: "À l'ouverture du panneau détail : confirme le prix précis de ce type de chambre selon l'occupation choisie, dans la devise sélectionnée.",
+      },
+    ),
+
+  reservationPrice: (p: {
+    checkIn: string;
+    checkOut: string;
+    roomCategoryId: string;
+    rateId: string;
+    adults: number;
+    children: number;
+    infants: number;
+    property?: string | null;
+    productIds?: string[];
+    voucherCode?: string;
+    currencyCode?: string;
+  }) =>
+    post<ReservationQuoteResult>(
+      "reservation-price",
+      {
+        startUtc: toUtc(p.checkIn),
+        endUtc: toUtc(p.checkOut),
+        roomCategoryId: p.roomCategoryId,
+        rateId: p.rateId,
+        adults: p.adults,
+        children: p.children,
+        infants: p.infants,
+        ...(p.property ? { property: p.property } : {}),
+        ...(p.productIds?.length ? { productIds: p.productIds } : {}),
+        ...(p.voucherCode ? { voucherCode: p.voucherCode } : {}),
+        ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
+      },
+      {
+        label: "Devis final de la réservation",
+        why: "Calcule le total exact du tarif sélectionné et le montant que Mews indique comme dû à la confirmation, avec les extras choisis.",
       },
     ),
 
