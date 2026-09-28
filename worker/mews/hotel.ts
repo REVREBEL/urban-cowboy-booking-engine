@@ -19,6 +19,10 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
   const d = res.data;
   const configs: any[] = Array.isArray(d.Configurations) ? d.Configurations : [];
   const primary = configs.find((c) => c.Id === env.MEWS_CONFIG_ID)?.Enterprise ?? configs[0]?.Enterprise ?? {};
+  const defaultCurrencyCode =
+    (typeof primary.DefaultCurrencyCode === "string" && primary.DefaultCurrencyCode) ||
+    (typeof d.CurrencyCode === "string" && d.CurrencyCode) ||
+    "EUR";
 
   const RoomCategories: any[] = [];
   const productMap = new Map<string, any>();
@@ -46,7 +50,12 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
           CategoryId: p.CategoryId ?? null,
           ImageId: p.ImageId ?? null,
           AlwaysIncluded: !!p.AlwaysIncluded,
-          Prices: { EUR: p.Prices?.EUR ?? null }, // cure EUR-only (réponse brute = ~80 devises)
+          Prices: {
+            [defaultCurrencyCode]:
+              typeof p.Prices?.[defaultCurrencyCode] === "number"
+                ? p.Prices[defaultCurrencyCode]
+                : null,
+          },
           ChargingMode: p.ChargingMode ?? "",
           Property: key, // hébergement de la config d'origine → filtrage des extras côté front
         });
@@ -60,7 +69,7 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
       Id: primary.Id ?? env.MEWS_HOTEL_ID,
       Name: primary.Name ?? {},
       Description: primary.Description ?? null,
-      DefaultCurrencyCode: d.CurrencyCode ?? "EUR",
+      DefaultCurrencyCode: defaultCurrencyCode,
       RoomCategories,
       Products: [...productMap.values()],
       PaymentGateway: null, // non fourni par configuration/get ; inutile pour la Voie A
