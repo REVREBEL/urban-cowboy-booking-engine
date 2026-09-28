@@ -284,6 +284,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         children: state.children,
         infants: state.infants,
         voucherCode: state.voucherCode,
+        currencyCode: hotel.DefaultCurrencyCode,
       })
       .then((res) => {
         if (!alive) return;
