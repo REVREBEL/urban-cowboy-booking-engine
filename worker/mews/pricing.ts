@@ -12,7 +12,7 @@ interface Body {
 }
 
 // reservations/getPricing — devis exact pour un type précis selon l'occupation.
-// La réponse Mews brute contient ~80 devises (≈ 380 Ko) → on CURE en EUR-only.
+// La réponse Mews brute peut contenir de nombreuses devises → on ne renvoie que la devise demandée.
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const b = await readJson<Body>(request);
   if (!isIsoDate(b.startUtc) || !isIsoDate(b.endUtc)) return bad("missing_or_invalid_dates");
