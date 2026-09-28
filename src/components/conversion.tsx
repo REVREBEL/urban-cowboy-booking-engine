@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { eur } from "../lib/format";
+import { money } from "../lib/format";
 import { t, type TKey } from "../i18n";
 import { IconCheck, IconClock, IconFlame, IconHeart, IconLock, IconStar, IconTag, IconUsers } from "./icons";
 
@@ -134,11 +134,11 @@ export function SavingsBadge({ from, max }: { from: number | null; max: number |
   );
 }
 
-export function SavingsLine({ amount }: { amount: number }) {
+export function SavingsLine({ amount, currency }: { amount: number; currency: string }) {
   if (amount <= 0) return null;
   return (
     <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700">
-      <IconTag className="h-4 w-4" /> {t("conv.savings", { amount: eur(amount) })}
+      <IconTag className="h-4 w-4" /> {t("conv.savings", { amount: money(amount, currency) })}
     </p>
   );
 }
