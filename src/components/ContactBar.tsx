@@ -30,18 +30,19 @@ export function ContactBar() {
     };
   }, [open]);
 
-  // URL partageable : reprend TOUS les choix ET l'étape courante (dates, hébergements,
-  // chambre, tarif, extras, étape, langue) → le destinataire arrive au même endroit
-  // avec la même sélection. On retire juste le retour de paiement (rgid), propre à la
-  // session de l'expéditeur.
+  // URL partageable : conserve uniquement l'état de réservation non personnel.
+  // Les anciens paramètres de profil client sont aussi supprimés par précaution afin
+  // qu'un lien créé depuis une ancienne URL ne partage jamais de PII.
   function shareUrl(): string {
     const url = new URL(window.location.href);
-    url.searchParams.delete("rgid");
+    for (const key of ["rgid", "fn", "ln", "em", "tel", "nat", "note", "mk"]) {
+      url.searchParams.delete(key);
+    }
     return url.toString();
   }
 
   async function share() {
-    const url = shareUrl(); // état complet + étape courante encodés dans l'URL
+    const url = shareUrl(); // sélection réservable sans données personnelles
     if (navigator.share) {
       try {
         await navigator.share({ title: t("contact.shareTitle"), text: t("contact.shareText"), url });

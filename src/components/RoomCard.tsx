@@ -3,7 +3,7 @@ import { spaceLabel } from "../lib/shaping";
 import type { ShapedRoom } from "../types/mews";
 import { Photo } from "./Photo";
 import { RoomBenefitsOverlay } from "./RoomTags";
-import { FavoriteBadge, HotBadge, SavingsBadge, ScarcityBadge, ViewersNudge, seeded } from "./conversion";
+import { SavingsBadge, ScarcityBadge } from "./conversion";
 import { IconArrowRight, IconBed, IconCheck, IconCloche, IconCroissant, IconUsers } from "./icons";
 import { t } from "../i18n";
 
@@ -32,11 +32,12 @@ export function RoomCard({
   const cheapest = room.rates[0];
   // RÉEL (Mews) : AvailableRoomCount → « Plus que N chambres ».
   const lowStock = room.availableRoomCount > 0 && room.availableRoomCount <= 3;
-  // ⚠️ DÉMO (en dur) : « Très demandé » — généré, pas issu de Mews.
-  const hot = !lowStock && seeded(room.categoryId, 0, 2) === 0;
-
   return (
-    <article className="card group flex flex-col overflow-hidden transition hover:shadow-float sm:h-80 sm:flex-row">
+    <article
+      className={`card group flex flex-col overflow-hidden transition hover:shadow-float sm:h-80 sm:flex-row ${
+        featured ? "ring-1 ring-turquoise/30" : ""
+      }`}
+    >
       <button
         type="button"
         onClick={onDetails}
@@ -51,11 +52,6 @@ export function RoomCard({
         <span className="absolute left-3 top-3 rounded-full bg-teal-deep/85 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-cream backdrop-blur">
           {(room.property && PROPERTY_LABELS[room.property]) || spaceLabel(room.spaceType)}
         </span>
-        {featured && (
-          <span className="absolute bottom-3 left-3">
-            <FavoriteBadge />
-          </span>
-        )}
         {room.imageIds.length > 1 && (
           <span className="absolute bottom-3 right-3 rounded-full bg-ink/55 px-2 py-0.5 text-[11px] font-medium text-cream backdrop-blur">
             {t("roomCard.photos", { count: room.imageIds.length })}
@@ -82,17 +78,12 @@ export function RoomCard({
           </div>
           <div className="flex shrink-0 flex-col items-end gap-1.5">
             {lowStock && <ScarcityBadge count={room.availableRoomCount} />}
-            {hot && <HotBadge />}
           </div>
         </div>
 
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink/65">
           {room.description || t("roomCard.descFallback")}
         </p>
-
-        <div className="mt-2.5">
-          <ViewersNudge seed={room.categoryId} />
-        </div>
 
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">

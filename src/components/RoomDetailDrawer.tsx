@@ -5,18 +5,9 @@ import { spaceLabel } from "../lib/shaping";
 import type { ShapedRate, ShapedRoom } from "../types/mews";
 import { Photo } from "./Photo";
 import { RoomTagsPanel } from "./RoomTags";
-import { FavoriteBadge, ScarcityBadge, ViewersNudge } from "./conversion";
-import { IconBed, IconCheck, IconClose, IconLeaf, IconShield, IconSun, IconUsers, IconWave } from "./icons";
+import { ScarcityBadge } from "./conversion";
+import { IconBed, IconCheck, IconClose, IconShield, IconUsers } from "./icons";
 import { t } from "../i18n";
-
-// ⚠️ DÉMO (en dur) : Mews n'expose pas d'équipements structurés sur les RoomCategories ici.
-// À remplacer par de vraies données équipements en production.
-const AMENITIES = [
-  { icon: IconWave, key: "roomDetail.amenityView" },
-  { icon: IconSun, key: "roomDetail.amenityTerrace" },
-  { icon: IconLeaf, key: "roomDetail.amenityAc" },
-  { icon: IconCheck, key: "roomDetail.amenityWifi" },
-] as const;
 
 // Panneau détail qui glisse depuis la DROITE — large, miniatures au-dessus de la
 // photo, détails sur 2 colonnes (infos à gauche, tarifs à droite).
@@ -39,6 +30,8 @@ export function RoomDetailDrawer({
   const [active, setActive] = useState(0);
   const [confirmed, setConfirmed] = useState<Record<string, number>>({});
   const [confirming, setConfirming] = useState(false);
+  const [confirmError, setConfirmError] = useState(false);
+  const [pricingAttempt, setPricingAttempt] = useState(0);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -60,7 +53,10 @@ export function RoomDetailDrawer({
 
   useEffect(() => {
     let alive = true;
+    setConfirmed({});
+    setConfirmError(false);
     setConfirming(true);
+    setActive(0);
     api
       .pricing({
         checkIn: search.checkIn,
@@ -76,12 +72,14 @@ export function RoomDetailDrawer({
           for (const p of op.pricing ?? []) if (p.total?.gross != null) map[p.rateId] = p.total.gross;
         setConfirmed(map);
       })
-      .catch(() => void 0)
+      .catch(() => {
+        if (alive) setConfirmError(true);
+      })
       .finally(() => alive && setConfirming(false));
     return () => {
       alive = false;
     };
-  }, [room.categoryId, search.checkIn, search.checkOut, search.adults, search.children]);
+  }, [room.categoryId, search.checkIn, search.checkOut, search.adults, search.children, pricingAttempt]);
 
   const images = room.imageIds.length ? room.imageIds : [null];
   const lowStock = room.availableRoomCount > 0 && room.availableRoomCount <= 4;
@@ -154,7 +152,6 @@ export function RoomDetailDrawer({
                 </span>
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                <FavoriteBadge />
                 {lowStock && <ScarcityBadge count={room.availableRoomCount} />}
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
                   <IconCheck className="h-3.5 w-3.5" /> {t("roomDetail.noFees")}
@@ -165,33 +162,40 @@ export function RoomDetailDrawer({
               <div className="mt-3">
                 <RoomTagsPanel room={room} />
               </div>
-              <div className="mt-3">
-                <ViewersNudge seed={room.categoryId} />
-              </div>
-
               {room.description && (
                 <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink/75">{room.description}</p>
               )}
-
-              <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-teal-deep/60">{t("roomDetail.amenities")}</p>
-              <ul className="mt-2 grid grid-cols-2 gap-2.5">
-                {AMENITIES.map((a) => (
-                  <li key={a.key} className="inline-flex items-center gap-2 text-sm text-ink/75">
-                    <a.icon className="h-4 w-4 shrink-0 text-turquoise" /> {t(a.key)}
-                  </li>
-                ))}
-              </ul>
             </div>
 
             {/* Colonne droite : tarifs */}
             <div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <h3 className="font-display text-lg text-teal-deep">{t("roomDetail.chooseRate")}</h3>
-                <span className="text-[11px] text-ink/45">{confirming ? t("roomDetail.confirming") : t("roomDetail.livePrice")}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[11px] ${confirmError ? "text-red-600" : "text-ink/45"}`}>
+                    {confirming
+                      ? t("roomDetail.confirming")
+                      : confirmError
+                        ? t("roomDetail.priceCheckFailed")
+                        : t("roomDetail.livePrice")}
+                  </span>
+                  {confirmError && (
+                    <button
+                      type="button"
+                      onClick={() => setPricingAttempt((n) => n + 1)}
+                      className="text-[11px] font-semibold text-teal-deep underline underline-offset-2"
+                    >
+                      {t("common.retry")}
+                    </button>
+                  )}
+                </div>
               </div>
               <ul className="mt-3 space-y-3">
                 {room.rates.map((rate, i) => {
-                  const total = confirmed[rate.rateId] ?? rate.totalGross;
+                  const verifiedTotal = confirmed[rate.rateId];
+                  const verified = verifiedTotal != null;
+                  const total = verifiedTotal ?? rate.totalGross;
+                  const selectable = !confirming && !confirmError && verified;
                   const best = i === 0;
                   return (
                     <li
@@ -227,10 +231,15 @@ export function RoomDetailDrawer({
                       </div>
                       <button
                         type="button"
-                        onClick={() => onSelectRate({ ...rate, totalGross: total ?? rate.totalGross })}
-                        className={`mt-3 w-full ${best ? "btn-primary" : "btn-ghost"}`}
+                        disabled={!selectable}
+                        onClick={() => verified && onSelectRate({ ...rate, totalGross: verifiedTotal })}
+                        className={`mt-3 w-full disabled:cursor-not-allowed disabled:opacity-50 ${best ? "btn-primary" : "btn-ghost"}`}
                       >
-                        {t("roomDetail.bookRate")}
+                        {confirming
+                          ? t("roomDetail.confirming")
+                          : !confirmError && !verified
+                            ? t("roomDetail.rateUnavailable")
+                            : t("roomDetail.bookRate")}
                       </button>
                     </li>
                   );

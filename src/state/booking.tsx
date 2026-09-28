@@ -120,24 +120,9 @@ function readUrl(): Partial<BookingState> {
   return out;
 }
 
-// Infos client encodées dans l'URL (lien partageable / reprise). ⚠️ Contient des
-// données perso (e-mail, nom, téléphone) : visibles dans l'historique, les logs et
-// par toute personne ayant le lien — c'est le compromis assumé du partage de panier.
-function readGuest(): Partial<Guest> {
-  if (typeof window === "undefined") return {};
-  const q = new URLSearchParams(window.location.search);
-  const g: Partial<Guest> = {};
-  if (q.get("fn")) g.firstName = q.get("fn")!;
-  if (q.get("ln")) g.lastName = q.get("ln")!;
-  if (q.get("em")) g.email = q.get("em")!;
-  if (q.get("tel")) g.telephone = q.get("tel")!;
-  if (q.get("nat")) g.nationalityCode = q.get("nat")!;
-  if (q.get("note")) g.notes = q.get("note")!;
-  if (q.has("mk")) g.sendMarketingEmails = q.get("mk") === "1";
-  return g;
-}
-
-function writeUrl(s: BookingState, g: Guest) {
+// Guest PII intentionally stays out of the URL. Shareable/deep links only contain
+// booking criteria and non-personal selection state.
+function writeUrl(s: BookingState) {
   if (typeof window === "undefined") return;
   const current = new URLSearchParams(window.location.search);
   const q = new URLSearchParams();
@@ -154,14 +139,6 @@ function writeUrl(s: BookingState, g: Guest) {
   if (s.productIds.length) q.set("products", s.productIds.join(","));
   if (s.airportTransfer) q.set("transfer", "1");
   if (s.rgid) q.set("rgid", s.rgid);
-  // Infos client (pour restaurer la saisie sur un lien partagé).
-  if (g.firstName) q.set("fn", g.firstName);
-  if (g.lastName) q.set("ln", g.lastName);
-  if (g.email) q.set("em", g.email);
-  if (g.telephone) q.set("tel", g.telephone);
-  if (g.nationalityCode && g.nationalityCode !== "FR") q.set("nat", g.nationalityCode);
-  if (g.notes) q.set("note", g.notes);
-  if (g.sendMarketingEmails) q.set("mk", "1");
   // Préserve la langue non-défaut dans l'URL (writeUrl reconstruit les params à zéro).
   if (getLang() === "en") q.set("lang", "en");
   // REV-102 recommendation inputs are owned by the quiz/ranking layer. Preserve
@@ -256,7 +233,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     const deep = u.step === "guest" || u.step === "upgrade" || u.step === "extras" || u.step === "payment";
     return !!(deep && u.roomId && u.checkIn && u.checkOut);
   });
-  const [guest, setGuestState] = useState<Guest>(() => ({ ...emptyGuest, ...readGuest() }));
+  const [guest, setGuestState] = useState<Guest>(() => ({ ...emptyGuest }));
   const [created, setCreatedState] = useState<ReservationCreateResult | null>(null);
   const [cartId, setCartId] = useState<string>(loadCartId);
 
@@ -264,8 +241,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [hotelLoading, setHotelLoading] = useState(true);
   const [hotelError, setHotelError] = useState(false);
 
-  // garde l'URL synchronisée (état de résa + infos client saisies)
-  useEffect(() => writeUrl(state, guest), [state, guest]);
+  // Keep only non-personal booking state in the shareable URL.
+  useEffect(() => writeUrl(state), [state]);
 
   const loadHotel = useCallback(() => {
     setHotelLoading(true);
@@ -454,18 +431,15 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     if (geoDoneRef.current) return;
     geoDoneRef.current = true;
     const u = readUrl();
-    const g = readGuest();
-    // Visite fraîche : aucune sélection ni info encodée dans l'URL → on peut pré-remplir.
-    // (Un lien restauré avec ?nat=… déjà présent n'est PAS écrasé.)
-    const fresh = !u.roomId && !u.rgid && (!u.step || u.step === "dates") && !g.nationalityCode;
+    // Fresh visit: no room/payment/deep-link state to preserve. Guest nationality is
+    // intentionally not restored from the URL because personal data is never serialized.
+    const fresh = !u.roomId && !u.rgid && (!u.step || u.step === "dates");
     let alive = true;
     // On appelle toujours /geo (léger, no-store) pour tracer le pays détecté en debug.
     void api.geo().then((r) => {
       // eslint-disable-next-line no-console
       console.log(
-        `[geo] pays détecté (IP): ${r.country ?? "—"} · visite fraîche: ${fresh} · nationalité en cours: ${
-          g.nationalityCode || "FR (défaut)"
-        }`,
+        `[geo] pays détecté (IP): ${r.country ?? "—"} · visite fraîche: ${fresh}`,
       );
       if (!alive || !fresh || !r.country) return;
       // Indicatif : on n'écrase pas un choix explicite (uniquement si encore défaut FR).

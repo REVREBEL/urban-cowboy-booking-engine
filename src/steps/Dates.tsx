@@ -3,7 +3,6 @@ import { useBooking, DEFAULT_PROPERTIES } from "../state/booking";
 import { nights } from "../lib/format";
 import { t, type TKey } from "../i18n";
 import { DateRangePicker } from "../components/DateRangePicker";
-import { RatingPill } from "../components/conversion";
 import {
   IconArrowRight,
   IconCheck,
@@ -71,7 +70,6 @@ export function Dates() {
             {t("dates.subtitle")}
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-            <RatingPill />
             <span className="inline-flex items-center gap-1.5 text-sm text-teal-deep">
               <IconLeaf className="h-4 w-4 text-turquoise" /> {t("dates.directBooking")}
             </span>

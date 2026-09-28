@@ -5,7 +5,7 @@ import { eur, fmtDate, toUtc } from "../lib/format";
 import { StepLayout } from "../components/StepLayout";
 import { SecureBadge } from "../components/DataBadge";
 import { StayBreakdown } from "../components/StayBreakdown";
-import { HoldTimer, TrustRow } from "../components/conversion";
+import { TrustRow } from "../components/conversion";
 import { IconArrowRight, IconCheck, IconShield } from "../components/icons";
 import { t } from "../i18n";
 
@@ -119,7 +119,6 @@ export function Payment() {
       <div className="space-y-5">
         {/* Réassurance / urgence */}
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <HoldTimer minutes={10} />
           <span className="text-xs text-ink/55">{t("payment.reassurance")}</span>
         </div>
 
