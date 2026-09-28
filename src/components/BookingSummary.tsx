@@ -23,6 +23,7 @@ export function BookingSummary() {
     currency,
     amountDueNow,
     remainingBalance,
+    quote,
     quoteLoading,
     quoteError,
   } = useBooking();
@@ -31,6 +32,24 @@ export function BookingSummary() {
     selectedRate?.maxGross != null && selectedRate.totalGross != null
       ? Math.max(0, selectedRate.maxGross - selectedRate.totalGross)
       : 0;
+
+  const quotedProducts = new Map(
+    (quote?.productOrderPrices ?? [])
+      .filter((p) => p.productId)
+      .map((p) => [p.productId as string, p.total] as const),
+  );
+  const quotedSelectedProductsGross = selectedProducts.reduce(
+    (sum, product) => sum + (quotedProducts.get(product.id)?.gross ?? 0),
+    0,
+  );
+  const accommodationGross =
+    quote?.total?.gross != null
+      ? Math.max(0, +(quote.total.gross - quotedSelectedProductsGross).toFixed(2))
+      : roomTotal;
+  const displayedProductsTotal =
+    quote
+      ? quotedSelectedProductsGross
+      : productsTotal;
 
   return (
     <aside className="card overflow-hidden">
@@ -67,7 +86,7 @@ export function BookingSummary() {
 
       <div className="border-t border-ink/10 px-5 py-4 text-sm">
         {selectedRate && (
-          <Line label={t("summary.accommodation", { count: nightsCount })} value={money(roomTotal, currency)} />
+          <Line label={t("summary.accommodation", { count: nightsCount })} value={money(accommodationGross, currency)} />
         )}
         {selectedProducts.map((p) => (
           <Line
@@ -80,7 +99,10 @@ export function BookingSummary() {
                 ) : null}
               </>
             }
-            value={money(productLineTotal(p, nightsCount, guestsCount), p.currency)}
+            value={money(
+              quotedProducts.get(p.id)?.gross ?? productLineTotal(p, nightsCount, guestsCount),
+              quotedProducts.get(p.id)?.currency ?? p.currency,
+            )}
           />
         ))}
         {!selectedRate && !selectedProducts.length && (
@@ -97,7 +119,9 @@ export function BookingSummary() {
               : quoteError
                 ? t("summary.estimatedTotal")
                 : t("summary.taxesIncluded")}
-            {productsTotal > 0 ? t("summary.extrasNote", { amount: money(productsTotal, currency) }) : ""}
+            {displayedProductsTotal > 0
+              ? t("summary.extrasNote", { amount: money(displayedProductsTotal, currency) })
+              : ""}
           </p>
         </div>
         <p className="font-display text-2xl text-teal-deep">{grandTotal > 0 ? money(grandTotal, currency) : "—"}</p>
