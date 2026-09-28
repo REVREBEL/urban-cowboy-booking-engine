@@ -187,11 +187,65 @@ export const clampInt = (v: unknown, min: number, max: number, dflt: number): nu
   return Math.max(min, Math.min(max, Math.trunc(n)));
 };
 
-/** Extrait { gross, net } EUR d'un objet Amount Mews { EUR: { GrossValue, NetValue } }. */
-export const eurAmount = (
-  amount: unknown,
-): { currency: "EUR"; gross: number | null; net: number | null } | null => {
-  const e = (amount as { EUR?: { GrossValue?: number; NetValue?: number } } | null)?.EUR;
-  if (!e) return null;
-  return { currency: "EUR", gross: e.GrossValue ?? null, net: e.NetValue ?? null };
+type RawTaxValue = { TaxRateCode?: string | null; Value?: number | null };
+type RawAmount = {
+  Currency?: string;
+  GrossValue?: number | null;
+  NetValue?: number | null;
+  TaxValues?: RawTaxValue[];
+  Breakdown?: { Items?: { TaxRateCode?: string | null; NetValue?: number | null; TaxValue?: number | null }[] };
 };
+
+export interface NormalizedAmount {
+  currency: string;
+  gross: number | null;
+  net: number | null;
+  taxTotal: number | null;
+  taxes: { taxRateCode: string | null; value: number }[];
+}
+
+/** Normalize a single Mews Amount object. */
+export const normalizeAmount = (amount: unknown, fallbackCurrency = "EUR"): NormalizedAmount | null => {
+  if (!amount || typeof amount !== "object") return null;
+  const a = amount as RawAmount;
+  if (a.GrossValue == null && a.NetValue == null && !a.Currency) return null;
+
+  const currency = typeof a.Currency === "string" && a.Currency ? a.Currency : fallbackCurrency;
+  const taxes = Array.isArray(a.TaxValues)
+    ? a.TaxValues
+        .filter((x) => typeof x?.Value === "number")
+        .map((x) => ({ taxRateCode: x.TaxRateCode ?? null, value: x.Value as number }))
+    : [];
+
+  const taxTotal =
+    taxes.length > 0
+      ? +taxes.reduce((sum, x) => sum + x.value, 0).toFixed(2)
+      : typeof a.GrossValue === "number" && typeof a.NetValue === "number"
+        ? +(a.GrossValue - a.NetValue).toFixed(2)
+        : null;
+
+  return {
+    currency,
+    gross: typeof a.GrossValue === "number" ? a.GrossValue : null,
+    net: typeof a.NetValue === "number" ? a.NetValue : null,
+    taxTotal,
+    taxes,
+  };
+};
+
+/** Normalize a Mews multi-currency amount map, preferring the requested ISO code. */
+export const currencyAmount = (amount: unknown, preferredCurrency = "EUR"): NormalizedAmount | null => {
+  if (!amount || typeof amount !== "object") return null;
+  const map = amount as Record<string, unknown>;
+  const direct = map[preferredCurrency];
+  if (direct && typeof direct === "object") return normalizeAmount(direct, preferredCurrency);
+
+  for (const [currency, value] of Object.entries(map)) {
+    const normalized = normalizeAmount(value, currency);
+    if (normalized) return normalized;
+  }
+  return null;
+};
+
+/** Backward-compatible helper while legacy worker code is migrated. */
+export const eurAmount = (amount: unknown): NormalizedAmount | null => currencyAmount(amount, "EUR");
