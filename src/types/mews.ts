@@ -236,7 +236,8 @@ export interface ShapedProduct {
   id: string;
   name: string;
   description: string;
-  priceEur: number;
+  price: number;
+  currency: string;
   chargingMode: string;
   imageId: string | null;
   property: string | null; // hébergement (hotel/creole/villas) auquel l'extra est rattaché
