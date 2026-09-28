@@ -81,7 +81,7 @@ function Shell() {
 
       <Footer />
       <ContactBar />
-      <DevPanel />
+      {import.meta.env.DEV && <DevPanel />}
     </div>
   );
 }
