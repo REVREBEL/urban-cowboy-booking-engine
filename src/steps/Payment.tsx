@@ -27,6 +27,7 @@ export function Payment() {
     amountDueNow,
     quoteLoading,
     quoteError,
+    refreshQuote,
     nightsCount,
     setCreated,
     goTo,
@@ -201,7 +202,12 @@ export function Payment() {
         )}
         {error && <p className="text-sm font-medium text-red-600">{error}</p>}
         {quoteError && (
-          <p className="text-sm font-medium text-red-600">{t("payment.quoteUnavailable")}</p>
+          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm">
+            <p className="font-medium text-red-700">{t("payment.quoteUnavailable")}</p>
+            <button type="button" onClick={refreshQuote} className="btn-link">
+              {t("common.retry")}
+            </button>
+          </div>
         )}
 
         <div className="rounded-xl2 bg-cream/70 p-4">
