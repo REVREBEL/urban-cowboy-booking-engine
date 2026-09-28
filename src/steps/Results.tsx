@@ -60,7 +60,15 @@ export function Results() {
     setLoading(true);
     setError(null);
     api
-      .availability({ checkIn, checkOut, adults, children, infants, voucherCode })
+      .availability({
+        checkIn,
+        checkOut,
+        adults,
+        children,
+        infants,
+        voucherCode,
+        currencyCode: hotel?.DefaultCurrencyCode,
+      })
       .then((res) => alive && setData(res))
       .catch((e) => alive && setError(errorMessage(e)))
       .finally(() => alive && setLoading(false));
