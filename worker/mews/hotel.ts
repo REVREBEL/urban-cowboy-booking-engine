@@ -20,8 +20,10 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
   const configs: any[] = Array.isArray(d.Configurations) ? d.Configurations : [];
   const primary = configs.find((c) => c.Id === env.MEWS_CONFIG_ID)?.Enterprise ?? configs[0]?.Enterprise ?? {};
   const defaultCurrencyCode =
-    (typeof primary.DefaultCurrencyCode === "string" && primary.DefaultCurrencyCode) ||
+    // Booking Engine configuration currency wins when explicitly set; otherwise use
+    // the enterprise default currency.
     (typeof d.CurrencyCode === "string" && d.CurrencyCode) ||
+    (typeof primary.DefaultCurrencyCode === "string" && primary.DefaultCurrencyCode) ||
     "EUR";
 
   const RoomCategories: any[] = [];
