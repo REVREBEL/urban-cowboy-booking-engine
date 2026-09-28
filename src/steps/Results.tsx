@@ -7,7 +7,6 @@ import type { AvailabilityResponse, ShapedRate, ShapedRoom } from "../types/mews
 import { RoomCard } from "../components/RoomCard";
 import { RoomDetailDrawer } from "../components/RoomDetailDrawer";
 import { InlineUpsell } from "../components/UpsellCard";
-import { RatingPill, UrgencyBanner } from "../components/conversion";
 import { IconCalendar, IconUsers, IconChevron } from "../components/icons";
 import { t } from "../i18n";
 import { TopMatchPanel } from "../components/TopMatchPanel";
@@ -167,7 +166,6 @@ export function Results() {
 
       {!loading && !error && rooms.length > 0 && (
         <div className="mt-5">
-          <UrgencyBanner />
         </div>
       )}
 
@@ -177,7 +175,6 @@ export function Results() {
             {rooms.length > 0 ? t("results.availableCount", { count: rooms.length }) : t("results.ourAccommodations")}
           </h1>
           <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink/55">
-            <RatingPill />
             <span>{t("results.subtitle")}</span>
           </div>
         </div>
