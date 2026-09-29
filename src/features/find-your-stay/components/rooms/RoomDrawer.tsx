@@ -788,6 +788,7 @@ export default function RoomDrawer({
   const allAmenities = [...staticAmenities, ...amenities]
 
   function handleBook(rate: RateOffer) {
+    if (!drawerRoom) return
     onBook(drawerRoom, rate)
     onClose()
   }
