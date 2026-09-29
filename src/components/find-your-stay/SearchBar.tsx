@@ -1,5 +1,5 @@
 // SearchBar.tsx
-import React, { useState } from 'react';
+import React from 'react';
 
 export type SearchBarVariant = 'circle' | 'square';
 
