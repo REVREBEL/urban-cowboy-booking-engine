@@ -11,7 +11,7 @@ import { Upgrade } from "./steps/Upgrade";
 import { Extras } from "./steps/Extras";
 import { Payment } from "./steps/Payment";
 import { Confirmation } from "./steps/Confirmation";
-import { IconLeaf, IconTag } from "./components/icons";
+import { IconLeaf, IconTag } from "@/components/icons/cowboy-icons";
 import { t } from "./i18n";
 import { getLang, setLangAndReload, type Lang } from "./lib/lang";
 
