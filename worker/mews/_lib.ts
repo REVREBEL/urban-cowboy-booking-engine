@@ -43,30 +43,34 @@ const AGE_FALLBACK = {
   child: "fece4b6b-39fa-4ccd-9909-afba0092eeb1",
 };
 
-// Configured properties. Demo IDs are public fixtures; production IDs come from the environment.
+// Configured properties are derived from the deployment environment so production
+// identifiers cannot drift away from MEWS_CONFIG_ID / age-category bindings.
 export interface Property {
-  key: string; // "hotel" | "creole" | "villas"
+  key: string;
   label: string;
   configId: string;
   adultAgeCategoryId: string;
-  childAgeCategoryId: string | null; // null = pas d'enfants (ex. Culture Créole)
+  childAgeCategoryId: string | null;
   // Infants are sent only when the selected property exposes an infant age category.
   infantAgeCategoryId: string | null;
 }
-export const PROPERTIES: Property[] = [
+
+export const propertiesForEnv = (env: Env): Property[] => [
   {
     key: "hotel",
-    label: "Mews Demo Hotel",
-    configId: "93e27b6f-cba7-4e0b-a24a-819e1b7b388a",
-    adultAgeCategoryId: "5485e2f3-4034-4ca1-8a8f-ade30114c61f",
-    childAgeCategoryId: "fece4b6b-39fa-4ccd-9909-afba0092eeb1",
+    label: "Urban Cowboy Lodge Catskills",
+    configId: env.MEWS_CONFIG_ID,
+    adultAgeCategoryId: env.MEWS_ADULT_AGE_CATEGORY_ID || AGE_FALLBACK.adult,
+    childAgeCategoryId: env.MEWS_CHILD_AGE_CATEGORY_ID || AGE_FALLBACK.child,
     infantAgeCategoryId: null,
   },
 ];
 
-export const propertyByKey = (key: unknown): Property | undefined =>
-  typeof key === "string" ? PROPERTIES.find((p) => p.key === key) : undefined;
-export const propertyByConfig = (configId: string): Property | undefined => PROPERTIES.find((p) => p.configId === configId);
+export const propertyByKey = (env: Env, key: unknown): Property | undefined =>
+  typeof key === "string" ? propertiesForEnv(env).find((p) => p.key === key) : undefined;
+
+export const propertyByConfig = (env: Env, configId: string): Property | undefined =>
+  propertiesForEnv(env).find((p) => p.configId === configId);
 
 // Build Mews occupancy using the selected property's age categories.
 export function occupancyForProperty(prop: Property, adults: number, children = 0, infants = 0) {
