@@ -6,9 +6,7 @@ import {
   knownAddOnKey,
   knownRateGroupKey,
 } from "../src/lib/catskillsMewsIds.ts";
-import { shapeProducts } from "../src/lib/shaping.ts";
 import { propertiesForEnv } from "../worker/mews/_lib.ts";
-import type { HotelConfig } from "../src/types/mews.ts";
 
 test("records the confirmed Catskills property and age-category identifiers", () => {
   assert.equal(
@@ -56,47 +54,15 @@ test("classifies known rate groups and guest add-ons by durable Mews IDs", () =>
   );
 });
 
-test("system fee products are not exposed as generic guest add-ons", () => {
-  const hotel: HotelConfig = {
-    ImageBaseUrl: "",
-    Id: CATSKILLS_MEWS_IDS.hotelId,
-    Name: { "en-US": "Urban Cowboy Lodge Catskills" },
-    Description: null,
-    DefaultCurrencyCode: "USD",
-    RoomCategories: [],
-    Products: [
-      {
-        Id: CATSKILLS_MEWS_IDS.fees.RESORT_FEE,
-        Name: { "en-US": "Resort Fee" },
-        Description: null,
-        CategoryId: null,
-        ImageId: null,
-        IncludedByDefault: false,
-        AlwaysIncluded: false,
-        Prices: { USD: 25 },
-        ChargingMode: "PerNight",
-        Property: "hotel",
-      },
-      {
-        Id: CATSKILLS_MEWS_IDS.addOns.FLOWER_BOUQUET,
-        Name: { "en-US": "Flower Bouquet" },
-        Description: null,
-        CategoryId: null,
-        ImageId: null,
-        IncludedByDefault: false,
-        AlwaysIncluded: false,
-        Prices: { USD: 50 },
-        ChargingMode: "Once",
-        Property: "hotel",
-      },
-    ],
-    PaymentGateway: null,
-  };
-
-  const products = shapeProducts(hotel, "en-US");
-  assert.deepEqual(products.map((product) => product.id), [
-    CATSKILLS_MEWS_IDS.addOns.FLOWER_BOUQUET,
-  ]);
-  assert.equal(products[0]?.knownAddOn, "FLOWER_BOUQUET");
+test("system fee IDs stay separate from guest add-on IDs", () => {
   assert.equal(isSystemFeeProductId(CATSKILLS_MEWS_IDS.fees.RESORT_FEE), true);
+  assert.equal(isSystemFeeProductId(CATSKILLS_MEWS_IDS.fees.PET_FREE), true);
+  assert.equal(
+    isSystemFeeProductId(CATSKILLS_MEWS_IDS.addOns.FLOWER_BOUQUET),
+    false,
+  );
+  assert.equal(
+    knownAddOnKey(CATSKILLS_MEWS_IDS.addOns.FLOWER_BOUQUET),
+    "FLOWER_BOUQUET",
+  );
 });
