@@ -5,7 +5,7 @@ import {
   json,
   occupancyForProperty,
   propertyByKey,
-  PROPERTIES,
+  propertiesForEnv,
   isIsoDate,
   clampInt,
   mewsLang,
@@ -40,10 +40,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const infants = clampInt(b.infants, 0, 10, 0);
 
   // Hébergements demandés (whitelist stricte). Vide/absent → tous.
+  const properties = propertiesForEnv(env);
   const requested =
     Array.isArray(b.properties) && b.properties.length
-      ? b.properties.map(propertyByKey).filter((p): p is NonNullable<typeof p> => !!p)
-      : PROPERTIES;
+      ? b.properties
+          .map((key) => propertyByKey(env, key))
+          .filter((p): p is NonNullable<typeof p> => !!p)
+      : properties;
   // Un hébergement sans catégorie enfant ne peut pas accueillir d'enfants → écarté si children > 0.
   const selected = requested.filter((p) => children === 0 || p.childAgeCategoryId);
   const empty = { RateGroups: [], Rates: [], RoomCategoryAvailabilities: [], ViolatedRestrictions: [] };
