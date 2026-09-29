@@ -1,4 +1,4 @@
-import { mewsJson, json, mewsLang, PROPERTIES, propertyByConfig, type Env } from "./_lib";
+import { mewsJson, json, mewsLang, propertiesForEnv, propertyByConfig, type Env } from "./_lib";
 
 const locStr = (v: unknown): string | null =>
   typeof v === "string" ? v : v && typeof v === "object" ? ((v as any)["fr-FR"] ?? (v as any)["en-GB"] ?? Object.values(v as any)[0] ?? null) : null;
@@ -10,8 +10,9 @@ const locStr = (v: unknown): string | null =>
 // Caché 5 min (public) — la config bouge rarement. Aucun input front.
 const handler: PagesFunction<Env> = async ({ env, request }) => {
   const lang = mewsLang(new URL(request.url).searchParams.get("lang"));
+  const properties = propertiesForEnv(env);
   const res = await mewsJson<any>(env, "configuration/get", {
-    Ids: PROPERTIES.map((p) => p.configId),
+    Ids: properties.map((p) => p.configId),
     PrimaryId: env.MEWS_CONFIG_ID,
     LanguageCode: lang,
   });
@@ -29,7 +30,7 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
   const RoomCategories: any[] = [];
   const productMap = new Map<string, any>();
   for (const cfg of configs) {
-    const key = propertyByConfig(cfg.Id)?.key ?? null;
+    const key = propertyByConfig(env, cfg.Id)?.key ?? null;
     const ent = cfg.Enterprise ?? {};
     for (const c of ent.Categories ?? []) {
       RoomCategories.push({
@@ -88,7 +89,9 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
       PaymentGateway: null, // non fourni par configuration/get ; inutile pour la Voie A
       TermsAndConditionsUrl: locStr(primary.TermsAndConditionsUrl),
       // Liste des hébergements présents → alimente le sélecteur front.
-      Properties: PROPERTIES.filter((p) => configs.some((c) => c.Id === p.configId)).map((p) => ({ key: p.key, label: p.label })),
+      Properties: properties
+        .filter((p) => configs.some((c) => c.Id === p.configId))
+        .map((p) => ({ key: p.key, label: p.label })),
     },
     200,
     "public, max-age=300",
