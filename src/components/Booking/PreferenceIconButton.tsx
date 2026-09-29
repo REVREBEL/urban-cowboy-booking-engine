@@ -1,6 +1,8 @@
 import {
   PREFERENCE_ICON,
+  PREFERENCE_ICON_SELECTED,
   PREFERENCE_LABEL,
+  PREFERENCE_LABEL_SELECTED,
 } from "@/lib/booking/cowboy";
 import type { PreferenceId } from "@/lib/booking/rooms";
 import { cn } from "@/lib/utils";
@@ -14,8 +16,9 @@ type Props = {
 };
 
 export function PreferenceIconButton({ id, label, description, selected, onToggle }: Props) {
-  const icon = PREFERENCE_ICON[id];
-  const labelArt = PREFERENCE_LABEL[id];
+  const icon = (selected ? PREFERENCE_ICON_SELECTED[id] : undefined) ?? PREFERENCE_ICON[id];
+  const labelArt =
+    (selected ? PREFERENCE_LABEL_SELECTED[id] : undefined) ?? PREFERENCE_LABEL[id];
 
   return (
     <button
