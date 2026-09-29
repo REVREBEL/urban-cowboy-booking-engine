@@ -1,4 +1,4 @@
-import EmptyState from "@/components/feedback/EmptyState";
+import EmptyState from "@/components/feedback/empty-state";
 import type { RecommendationResult } from "../../types";
 import RoomCard from "../rooms/RoomCard";
 import TopMatchPanel from "../rooms/TopMatchPanel";
