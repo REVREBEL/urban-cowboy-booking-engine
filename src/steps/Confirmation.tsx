@@ -3,8 +3,8 @@ import { useBooking } from "../state/booking";
 import { api, errorMessage } from "../lib/api";
 import { money, fmtDate } from "../lib/format";
 import type { ReservationStatusResult } from "../types/mews";
-import { Brand } from "../components/Brand";
-import { IconArrowRight, IconCalendar, IconCheck, IconShield } from "../components/icons";
+import { Brand } from "@/components/brand/brand";
+import { IconArrowRight, IconCalendar, IconCheck, IconShield } from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
 
 const MAX_POLLS = 5;
