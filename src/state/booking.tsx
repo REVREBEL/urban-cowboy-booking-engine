@@ -606,8 +606,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     selectedRate?.currency ??
     hotel?.DefaultCurrencyCode ??
     "EUR";
-  const totalNet = quote?.total?.net ?? selectedRate?.totalNet ?? null;
-  const totalTax = quote?.total?.taxTotal ?? selectedRate?.totalTax ?? null;
+  // Once a final quote exists, never mix its values with availability pricing.
+  // If a quoted field is missing, keep it missing rather than silently falling back
+  // to a different pricing response.
+  const totalNet = quote ? quote.total?.net ?? null : selectedRate?.totalNet ?? null;
+  const totalTax = quote ? quote.total?.taxTotal ?? null : selectedRate?.totalTax ?? null;
   const amountDueNow = quote?.amountToChargeOnConfirmation?.gross ?? null;
   const remainingBalance =
     quote?.total?.gross != null && amountDueNow != null
