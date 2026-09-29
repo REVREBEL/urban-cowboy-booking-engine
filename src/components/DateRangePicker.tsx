@@ -161,11 +161,9 @@ export function DateRangePicker({
     if (!target || target < minDate) target = minDate;
 
     const p = dateParts(target);
-    const next = { y: view.y + (view.m === 11 ? 1 : 0), m: (view.m + 1) % 12 };
-    const visible =
-      (p.y === view.y && p.m === view.m) ||
-      (p.y === next.y && p.m === next.m);
-    if (!visible) setView({ y: p.y, m: p.m });
+    // Keep the keyboard target in the first rendered month. This also works on
+    // mobile, where the second desktop month is present in the DOM but hidden.
+    if (p.y !== view.y || p.m !== view.m) setView({ y: p.y, m: p.m });
     focusDay(target);
   }
 
