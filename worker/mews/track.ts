@@ -59,7 +59,12 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, waitUnti
       : [],
     totals:
       b.totals && typeof b.totals === "object"
-        ? { room: num(b.totals.room), products: num(b.totals.products), grand: num(b.totals.grand), currency: "EUR" }
+        ? {
+            room: num(b.totals.room),
+            products: num(b.totals.products),
+            grand: num(b.totals.grand),
+            currency: str(b.totals.currency, 3) ?? "EUR",
+          }
         : null,
     customer:
       b.customer && typeof b.customer === "object"
