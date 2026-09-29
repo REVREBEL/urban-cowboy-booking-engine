@@ -241,6 +241,86 @@ export const normalizeAmount = (amount: unknown, fallbackCurrency = "EUR"): Norm
   };
 };
 
+export interface NormalizedReservationQuote {
+  total: NormalizedAmount | null;
+  amountToChargeOnConfirmation: NormalizedAmount | null;
+  productOrderPrices: {
+    productId: string | null;
+    total: NormalizedAmount | null;
+  }[];
+}
+
+function addNormalizedAmounts(
+  a: NormalizedAmount | null,
+  b: NormalizedAmount | null,
+): NormalizedAmount | null {
+  if (!a) return b;
+  if (!b) return a;
+
+  const taxByCode = new Map<string | null, number>();
+  for (const tax of [...a.taxes, ...b.taxes]) {
+    taxByCode.set(tax.taxRateCode, (taxByCode.get(tax.taxRateCode) ?? 0) + tax.value);
+  }
+
+  return {
+    currency: a.currency,
+    gross: a.gross != null && b.gross != null ? +(a.gross + b.gross).toFixed(2) : null,
+    net: a.net != null && b.net != null ? +(a.net + b.net).toFixed(2) : null,
+    taxTotal:
+      a.taxTotal != null && b.taxTotal != null
+        ? +(a.taxTotal + b.taxTotal).toFixed(2)
+        : null,
+    taxes: [...taxByCode].map(([taxRateCode, value]) => ({
+      taxRateCode,
+      value: +value.toFixed(2),
+    })),
+  };
+}
+
+/** Shape the documented Booking Engine reservations/price response. */
+export function shapeReservationPriceResponse(
+  data: unknown,
+  currencyCode: string,
+): NormalizedReservationQuote | null {
+  const root = data as { ReservationPrice?: unknown[] } | null;
+  const quote =
+    root && Array.isArray(root.ReservationPrice)
+      ? (root.ReservationPrice[0] as Record<string, any> | undefined)
+      : undefined;
+  if (!quote) return null;
+
+  const total = normalizeAmount(quote.TotalAmount, currencyCode);
+  if (total?.gross == null) return null;
+
+  const grouped = new Map<string, NormalizedAmount | null>();
+  const withoutId: NormalizedReservationQuote["productOrderPrices"] = [];
+
+  for (const row of Array.isArray(quote.ProductOrderPrices) ? quote.ProductOrderPrices : []) {
+    const amount = normalizeAmount(row?.TotalAmount, currencyCode);
+    const productId = typeof row?.ProductId === "string" ? row.ProductId : null;
+    if (!productId) {
+      withoutId.push({ productId: null, total: amount });
+      continue;
+    }
+    grouped.set(productId, addNormalizedAmounts(grouped.get(productId) ?? null, amount));
+  }
+
+  return {
+    total,
+    amountToChargeOnConfirmation: normalizeAmount(
+      quote.AmountToChargeOnConfirmation,
+      currencyCode,
+    ),
+    productOrderPrices: [
+      ...[...grouped].map(([productId, productTotal]) => ({
+        productId,
+        total: productTotal,
+      })),
+      ...withoutId,
+    ],
+  };
+}
+
 /** Normalize a Mews multi-currency amount map, preferring the requested ISO code. */
 export const currencyAmount = (amount: unknown, preferredCurrency = "EUR"): NormalizedAmount | null => {
   if (!amount || typeof amount !== "object") return null;
