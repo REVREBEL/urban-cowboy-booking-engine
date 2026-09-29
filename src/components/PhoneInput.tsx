@@ -54,6 +54,7 @@ export function PhoneInput({
   id,
   name,
   required,
+  invalid = false,
   ariaDescribedBy,
 }: {
   value: string;
@@ -62,6 +63,7 @@ export function PhoneInput({
   id?: string;
   name?: string;
   required?: boolean;
+  invalid?: boolean;
   ariaDescribedBy?: string;
 }) {
   const init = safeParse(value);
@@ -180,7 +182,7 @@ export function PhoneInput({
           inputMode="tel"
           autoComplete="tel-national"
           required={required}
-          aria-invalid={showInvalid || undefined}
+          aria-invalid={invalid || showInvalid || undefined}
           aria-describedby={ariaDescribedBy}
           className="h-full w-full border-0 bg-transparent px-3 py-3 pr-9 text-marine outline-none placeholder:text-marine/35"
           placeholder={country_.example}
