@@ -23,8 +23,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm install --package-lock-only --legacy-peer-deps
-      - name: Commit lockfile if changed
+      - name: Commit lockfile against latest branch head
         run: |
+          cp package-lock.json /tmp/package-lock.json
+          git fetch origin chatgpt/prepare-kept-components-main
+          git reset --hard origin/chatgpt/prepare-kept-components-main
+          cp /tmp/package-lock.json package-lock.json
           if git diff --quiet package-lock.json; then
             exit 0
           fi
@@ -32,4 +36,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package-lock.json
           git commit -m "Update lockfile for kept component dependencies"
-          git push
+          git push origin HEAD:chatgpt/prepare-kept-components-main
