@@ -151,6 +151,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   const quotedIds = new Set(
     shaped.productOrderPrices
+      .filter((p) => p.total?.gross != null)
       .map((p) => p.productId)
       .filter((id): id is string => typeof id === "string"),
   );
