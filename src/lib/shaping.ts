@@ -19,6 +19,7 @@ import type {
 import { loc } from "./format";
 import { getLang } from "./lang";
 import { resolveRoomMerchandising } from "./roomMerchandising";
+import { isSystemFeeProductId, knownAddOnKey, knownRateGroupKey } from "./catskillsMewsIds";
 import { t } from "../i18n";
 
 type MoneyParts = {
@@ -141,6 +142,7 @@ export function buildRooms(avail: AvailabilityResponse, hotel: HotelConfig | nul
       rates.push({
         rateId,
         rateGroupId: rate?.RateGroupId ?? "",
+        knownRateGroup: rate?.RateGroupId ? knownRateGroupKey(rate.RateGroupId) : null,
         name,
         description: loc(rate?.Description ?? null, ""),
         isPrivate: rate?.IsPrivate ?? false,
@@ -256,10 +258,15 @@ export function shapeProducts(hotel: HotelConfig | null, lang = "fr-FR"): Shaped
   if (!hotel?.Products) return [];
   const currency = hotel.DefaultCurrencyCode || "EUR";
   return hotel.Products.filter(
-    (p: Product) => !p.AlwaysIncluded && typeof p.Prices?.[currency] === "number" && p.Prices[currency] > 0,
+    (p: Product) =>
+      !p.AlwaysIncluded &&
+      !isSystemFeeProductId(p.Id) &&
+      typeof p.Prices?.[currency] === "number" &&
+      p.Prices[currency] > 0,
   )
     .map((p) => ({
       id: p.Id,
+      knownAddOn: knownAddOnKey(p.Id),
       name: loc(p.Name, "Extra").trim(),
       description: loc(p.Description ?? null, ""),
       price: p.Prices[currency] as number,
