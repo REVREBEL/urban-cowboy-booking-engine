@@ -183,6 +183,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
         border: `1px solid ${
           state === 'default' ? colors.containerBorder : 'transparent'
         }`,
+        fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
         ...style,
       }}
       {...buttonProps}
@@ -226,11 +227,11 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
               <CheckIcon size={8} color={colors.circleText} />
             ) : (
               <span
-                className="select-none flex items-center justify-center leading-none text-center"
+                className="select-none inline-flex items-center justify-center text-center w-full h-full"
                 style={{
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
                   fontSize: '9px',
-                  lineHeight: '1',
+                  lineHeight: '16px',
                   color: colors.circleText,
                 }}
               >
@@ -241,11 +242,11 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
 
           {/* Step Label: matching 16px flex height aligned on center axis */}
           <span
-            className="select-none capitalize tracking-[0.2px] flex items-center justify-center leading-none"
+            className="select-none capitalize tracking-[0.2px] inline-flex items-center justify-center h-[16px] text-center"
             style={{
-              height: '16px',
               fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
               fontSize: '11px',
+              lineHeight: '16px',
               color: colors.labelText,
             }}
           >
