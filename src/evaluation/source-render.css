@@ -1,0 +1,81 @@
+@font-face {
+  font-family: "UC Arvo";
+  src: url("https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/fonts/Arvo-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "UC Arvo";
+  src: url("https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/fonts/Arvo-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "UC Brothers";
+  src: url("https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/fonts/Brothers_OT-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "UC Brothers";
+  src: url("https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/fonts/Brothers_OT-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "UC Desert Rain";
+  src: url("https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/fonts/DesertRain-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "UC Bianco Sans";
+  src: url("https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/fonts/Bianco_Sans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "UC Bianco Sans";
+  src: url("https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/fonts/Bianco_Sans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+.booking-source {
+  background: #ebe8e0;
+  color: #343833;
+  font-family: "UC Arvo", Georgia, serif;
+}
+
+.booking-source .font-display {
+  font-family: "UC Desert Rain", Georgia, serif !important;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.booking-source .font-brand,
+.booking-source .font-label,
+.booking-source .font-button,
+.booking-source .eyebrow {
+  font-family: "UC Brothers", "Arial Narrow", sans-serif !important;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.booking-source .font-topic {
+  font-family: "UC Bianco Sans", ui-sans-serif, system-ui, sans-serif !important;
+  font-weight: 700;
+}
+
+.booking-source button,
+.booking-source input,
+.booking-source select,
+.booking-source textarea {
+  font: inherit;
+}

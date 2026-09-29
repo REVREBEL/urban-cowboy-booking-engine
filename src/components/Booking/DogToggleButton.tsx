@@ -1,4 +1,4 @@
-import { DOG_ICON } from "@/lib/booking/cowboy";
+import { DOG_ICON, DOG_ICON_SELECTED } from "@/lib/booking/cowboy";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -22,7 +22,7 @@ export function DogToggleButton({ selected, onToggle }: Props) {
         )}
       >
         <img
-          src={DOG_ICON}
+          src={selected ? DOG_ICON_SELECTED : DOG_ICON}
           alt=""
           aria-hidden="true"
           className={cn(
