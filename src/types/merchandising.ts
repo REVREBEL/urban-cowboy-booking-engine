@@ -3,6 +3,12 @@ export type MatchInterest = "iconTub" | "outdoorSoak" | "ownPlace" | "scenic" | 
 export type DogPolicy = "allowed" | "notAllowed" | "unknown";
 export type AgePolicy = "adultsOnly21" | "adult21Required" | "none";
 
+export type RecommendationPreferences = {
+  party: PartyType;
+  dog: boolean;
+  interests: [MatchInterest, MatchInterest?];
+};
+
 export type RoomFeatureKey =
   | "indoorTub"
   | "outdoorSoak"
