@@ -3,7 +3,7 @@ name: Update component library lockfile
 on:
   push:
     branches:
-      - chatgpt/merge-kept-component-library
+      - chatgpt/reconcile-main-components
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: chatgpt/merge-kept-component-library
+          ref: chatgpt/reconcile-main-components
       - uses: actions/setup-node@v7
         with:
           node-version: 24
