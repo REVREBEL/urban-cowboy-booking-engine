@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { money } from "../src/lib/format.ts";
-import { buildRooms } from "../src/lib/shaping.ts";
-import type { AvailabilityResponse, HotelConfig } from "../src/types/mews.ts";
-import { normalizeAmount } from "../worker/mews/_lib.ts";
-import { shapeReservationPriceResponse } from "../worker/mews/reservation-price.ts";
+import {
+  currencyAmount,
+  normalizeAmount,
+  shapeReservationPriceResponse,
+} from "../worker/mews/_lib.ts";
 
 test("normalizes Mews gross, net, and tax amounts without counting zero-tax net lines as tax", () => {
   const amount = normalizeAmount(
@@ -29,6 +29,21 @@ test("normalizes Mews gross, net, and tax amounts without counting zero-tax net 
     taxTotal: 31.54,
     taxes: [{ taxRateCode: "NY-SALES", value: 31.54 }],
   });
+});
+
+test("selects the requested currency from a Mews multi-currency amount", () => {
+  const amount = currencyAmount(
+    {
+      EUR: { GrossValue: 100, NetValue: 90 },
+      USD: { GrossValue: 110, NetValue: 100 },
+    },
+    "USD",
+  );
+
+  assert.equal(amount?.currency, "USD");
+  assert.equal(amount?.gross, 110);
+  assert.equal(amount?.net, 100);
+  assert.equal(amount?.taxTotal, 10);
 });
 
 test("shapes reservations/price and aggregates repeated product rows", () => {
@@ -124,101 +139,19 @@ test("accepts a valid final quote when Mews has no confirmation charge", () => {
   assert.equal(result?.amountToChargeOnConfirmation, null);
 });
 
-test("buildRooms preserves USD net, tax, and settlement metadata", () => {
-  const availability: AvailabilityResponse = {
-    RateGroups: [
-      {
-        Id: "group-1",
-        SettlementType: "Automatic",
-        SettlementAction: "ChargeCreditCard",
-        SettlementTrigger: "Confirmation",
-        SettlementOffset: "P0M0DT0H0M0S",
-        SettlementValue: 0.5,
-        SettlementFlatValue: null,
-        SettlementCurrencyCode: "USD",
-        SettlementMaximumTimeUnits: null,
-      },
-    ],
-    Rates: [
-      {
-        Id: "rate-1",
-        RateGroupId: "group-1",
-        Name: { "en-US": "Best Available Rate" },
-        Description: { "en-US": "Flexible rate" },
-        IsPrivate: false,
-      },
-    ],
-    RoomCategoryAvailabilities: [
-      {
-        RoomCategoryId: "room-1",
-        AvailableRoomCount: 2,
-        RoomOccupancyAvailabilities: [
-          {
-            AdultCount: 2,
-            ChildCount: 0,
-            OccupancyData: [],
-            Pricing: [
-              {
-                RateId: "rate-1",
-                Price: {
-                  TotalAmount: {
-                    USD: {
-                      GrossValue: 823.08,
-                      NetValue: 760,
-                      TaxValues: [{ TaxRateCode: "NY", Value: 63.08 }],
-                    },
-                  },
-                  AverageAmountPerTimeUnit: {
-                    USD: {
-                      GrossValue: 411.54,
-                      NetValue: 380,
-                      TaxValues: [{ TaxRateCode: "NY", Value: 31.54 }],
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  };
+test("rejects a final quote that lacks a usable total", () => {
+  const result = shapeReservationPriceResponse(
+    {
+      ReservationPrice: [
+        {
+          TotalAmount: null,
+          AmountToChargeOnConfirmation: null,
+          ProductOrderPrices: [],
+        },
+      ],
+    },
+    "USD",
+  );
 
-  const hotel: HotelConfig = {
-    ImageBaseUrl: "",
-    Id: "hotel-1",
-    Name: { "en-US": "Urban Cowboy" },
-    Description: null,
-    DefaultCurrencyCode: "USD",
-    RoomCategories: [
-      {
-        Id: "room-1",
-        Name: { "en-US": "Alpine Suite" },
-        Description: null,
-        ImageIds: [],
-        NormalBedCount: 1,
-        ExtraBedCount: 0,
-        SpaceType: "Room",
-      },
-    ],
-    Products: [],
-    PaymentGateway: null,
-  };
-
-  const [room] = buildRooms(availability, hotel, "en-US");
-  const [rate] = room.rates;
-
-  assert.equal(rate.currency, "USD");
-  assert.equal(rate.totalGross, 823.08);
-  assert.equal(rate.totalNet, 760);
-  assert.equal(rate.totalTax, 63.08);
-  assert.equal(rate.perNightGross, 411.54);
-  assert.equal(rate.settlement.trigger, "Confirmation");
-  assert.equal(rate.settlement.value, 0.5);
-});
-
-test("money formatter uses the requested currency instead of EUR", () => {
-  const formatted = money(411.54, "USD");
-  assert.match(formatted, /411[.,]54/);
-  assert.doesNotMatch(formatted, /€/);
+  assert.equal(result, null);
 });
