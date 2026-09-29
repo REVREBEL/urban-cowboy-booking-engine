@@ -86,6 +86,7 @@ export type RateOffer = {
   headline: string;
   description: string;
   cancellationPolicy: string;
+  nightlyRate: number;
   breakfastIncluded?: boolean;
   available: boolean;
   pricing: RatePricing;
