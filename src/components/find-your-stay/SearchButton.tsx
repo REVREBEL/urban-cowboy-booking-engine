@@ -1,5 +1,5 @@
 // SearchButton.tsx
-import React, { useState } from 'react';
+import React from 'react';
 
 export type SearchButtonVariant =
   | 'full-circle'
