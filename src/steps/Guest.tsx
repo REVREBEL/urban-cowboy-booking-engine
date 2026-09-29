@@ -3,11 +3,11 @@ import { useBooking } from "../state/booking";
 import { t } from "../i18n";
 import { EMAIL_RE } from "../lib/format";
 import { upgradeRooms } from "../lib/shaping";
-import { StepLayout } from "../components/StepLayout";
-import { IconArrowRight } from "../components/icons";
+import { StepLayout } from "@/components/booking/layout/step-layout";
+import { IconArrowRight } from "@/components/icons/cowboy-icons";
 
 // Code-split : libphonenumber-js (~38 Ko gzip) n'est chargé qu'à cette étape.
-const PhoneInput = lazy(() => import("../components/PhoneInput").then((m) => ({ default: m.PhoneInput })));
+const PhoneInput = lazy(() => import("@/components/forms/phone-input").then((m) => ({ default: m.PhoneInput })));
 
 export function Guest() {
   const { selectedRoom, selectedRate, availableRooms, guest, setGuest, goTo } = useBooking();

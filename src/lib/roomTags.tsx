@@ -1,5 +1,5 @@
 import type { RoomMerchandising } from "../types/merchandising";
-import type { RoomTag } from "../components/RoomTags";
+import type { RoomTag } from "@/components/rooms/room-tags";
 import {
   IconCheck,
   IconFlame,
@@ -9,7 +9,7 @@ import {
   IconSparkles,
   IconSun,
   IconWave,
-} from "../components/icons";
+} from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
 
 export function roomBenefitTags(merchandising: RoomMerchandising | null): RoomTag[] {

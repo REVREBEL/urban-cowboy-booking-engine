@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
-import { Brand } from "./components/Brand";
-import { StepProgress, type ProgressStep } from "./components/StepProgress";
-import { DevPanel } from "./components/DevPanel";
-import { ContactBar } from "./components/ContactBar";
+import { Brand } from "@/components/brand/brand";
+import { StepProgress, type ProgressStep } from "@/components/booking/layout/step-progress";
+import { DevPanel } from "@/components/dev/dev-panel";
+import { ContactBar } from "@/components/booking/chrome/contact-bar";
 import { Dates } from "./steps/Dates";
 import { Results } from "./steps/Results";
 import { Guest } from "./steps/Guest";

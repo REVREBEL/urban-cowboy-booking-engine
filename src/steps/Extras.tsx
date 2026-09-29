@@ -3,10 +3,10 @@ import { useBooking } from "../state/booking";
 import { t } from "../i18n";
 import { money } from "../lib/format";
 import { groupProducts, upgradeRooms, isHotelIncludedMeal, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
-import { StepLayout } from "../components/StepLayout";
-import { UpsellCard } from "../components/UpsellCard";
-import { DataBadge } from "../components/DataBadge";
-import { IconArrowRight, IconCheck, IconSparkles } from "../components/icons";
+import { StepLayout } from "@/components/booking/layout/step-layout";
+import { UpsellCard } from "@/components/booking/extras/upsell-card";
+import { DataBadge } from "@/components/dev/data-badge";
+import { IconArrowRight, IconCheck, IconSparkles } from "@/components/icons/cowboy-icons";
 
 export function Extras() {
   const {

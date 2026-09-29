@@ -3,10 +3,10 @@ import { useBooking } from "../state/booking";
 import { t } from "../i18n";
 import { money, imgUrl } from "../lib/format";
 import { spaceLabel, upgradeBenefits, upgradeRooms } from "../lib/shaping";
-import { StepLayout } from "../components/StepLayout";
-import { CreoleUpsellStories } from "../components/CreoleUpsellStories";
-import { Photo } from "../components/Photo";
-import { IconArrowRight, IconBed, IconCheck, IconSparkles, IconUsers } from "../components/icons";
+import { StepLayout } from "@/components/booking/layout/step-layout";
+import { CreoleUpsellStories } from "@/components/booking/extras/creole-upsell-stories";
+import { Photo } from "@/components/media/photo";
+import { IconArrowRight, IconBed, IconCheck, IconSparkles, IconUsers } from "@/components/icons/cowboy-icons";
 
 // Étape de surclassement (upsell chambre) — proposée APRÈS les infos client.
 // On part du choix initial (le moins cher si l'utilisateur a cliqué « Choisir »)

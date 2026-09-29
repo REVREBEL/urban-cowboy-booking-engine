@@ -1,3 +1,5 @@
+import animate from "tailwindcss-animate";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
@@ -13,24 +15,20 @@ export default {
         sand: "#f3ecd9",
         cream: "#fffbf0",
         ink: "#061a2d",
-        linen: "#ebe8e0",
-        paper: "#faf9f9",
-        snow: "#ffffff",
-        forest: "#0e301a",
-        smoke: "#343833",
-        copper: "#9a5636",
+
+        // Cowboy design tokens used by the imported component library.
         umber: "#4e332d",
         oxblood: "#69253a",
+        linen: "#ebe8e0",
+        forest: "#0e301a",
+
+        // Semantic shadcn-style tokens. Values resolve through CSS variables so
+        // primitives stay themeable instead of baking property colors into UI code.
+        border: "hsl(var(--border) / <alpha-value>)",
+        input: "hsl(var(--input) / <alpha-value>)",
+        ring: "hsl(var(--ring) / <alpha-value>)",
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
-        card: {
-          DEFAULT: "hsl(var(--card) / <alpha-value>)",
-          foreground: "hsl(var(--card-foreground) / <alpha-value>)",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover) / <alpha-value>)",
-          foreground: "hsl(var(--popover-foreground) / <alpha-value>)",
-        },
         primary: {
           DEFAULT: "hsl(var(--primary) / <alpha-value>)",
           foreground: "hsl(var(--primary-foreground) / <alpha-value>)",
@@ -38,6 +36,10 @@ export default {
         secondary: {
           DEFAULT: "hsl(var(--secondary) / <alpha-value>)",
           foreground: "hsl(var(--secondary-foreground) / <alpha-value>)",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
+          foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
         },
         muted: {
           DEFAULT: "hsl(var(--muted) / <alpha-value>)",
@@ -47,31 +49,22 @@ export default {
           DEFAULT: "hsl(var(--accent) / <alpha-value>)",
           foreground: "hsl(var(--accent-foreground) / <alpha-value>)",
         },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
-          foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
+        popover: {
+          DEFAULT: "hsl(var(--popover) / <alpha-value>)",
+          foreground: "hsl(var(--popover-foreground) / <alpha-value>)",
         },
-        border: "hsl(var(--border) / <alpha-value>)",
-        input: "hsl(var(--input) / <alpha-value>)",
-        ring: "hsl(var(--ring) / <alpha-value>)",
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar) / <alpha-value>)",
-          foreground: "hsl(var(--sidebar-foreground) / <alpha-value>)",
-          primary: "hsl(var(--sidebar-primary) / <alpha-value>)",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground) / <alpha-value>)",
-          accent: "hsl(var(--sidebar-accent) / <alpha-value>)",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground) / <alpha-value>)",
-          border: "hsl(var(--sidebar-border) / <alpha-value>)",
-          ring: "hsl(var(--sidebar-ring) / <alpha-value>)",
+        card: {
+          DEFAULT: "hsl(var(--card) / <alpha-value>)",
+          foreground: "hsl(var(--card-foreground) / <alpha-value>)",
         },
       },
       fontFamily: {
         display: ['"UC Desert Rain"', '"Instrument Serif"', "ui-serif", "Georgia", "serif"],
         body: ['"Urbanist"', "ui-sans-serif", "system-ui", "sans-serif"],
-        brand: ['"Brothers OT"', '"Arial Narrow"', "sans-serif"],
-        label: ['"Brothers OT"', '"Arial Narrow"', "sans-serif"],
-        topic: ['"Bianco Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
-        accent: ['"Tequila Blanco"', '"Brothers OT"', "sans-serif"],
+        brand: ['"DesertRain"', '"Instrument Serif"', "Georgia", "serif"],
+        label: ['"Brothers OT"', '"League Spartan"', "ui-sans-serif", "system-ui", "sans-serif"],
+        topic: ['"Bianco Sans"', '"Urbanist"', "ui-sans-serif", "system-ui", "sans-serif"],
+        button: ['"Urbanist"', "ui-sans-serif", "system-ui", "sans-serif"],
       },
       boxShadow: {
         card: "0 10px 40px -12px rgba(6, 26, 45, 0.18)",
@@ -100,5 +93,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [animate],
 };
