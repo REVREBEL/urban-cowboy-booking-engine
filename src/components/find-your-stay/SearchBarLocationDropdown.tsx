@@ -1,5 +1,5 @@
 // SearchBarLocationDropdown.tsx
-import React, { useState, useRef, useEffect, useId } from 'react';
+import React, { useState, useRef, useId } from 'react';
 
 export type CowboyLocation = 'CATSKILLS' | 'NASHVILLE' | 'DENVER' | string;
 
