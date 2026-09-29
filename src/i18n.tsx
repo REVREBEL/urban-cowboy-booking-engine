@@ -325,8 +325,8 @@ const DICT = {
 
   // ── conversion / DataBadge / PhoneInput / DateRangePicker ──────────────────
   "conv.reviewsCount": { fr: (p) => `· ${p.count} avis`, en: (p) => `· ${p.count} reviews` },
-  "conv.trustNoFeesLabel": { fr: "0 € de frais", en: "0€ in fees" },
-  "conv.trustNoFeesSub": { fr: "ni commission plateforme", en: "no platform commission" },
+  "conv.trustNoFeesLabel": { fr: "Sans frais de réservation", en: "No booking fees" },
+  "conv.trustNoFeesSub": { fr: "réservation directe", en: "booked direct" },
   "conv.trustBestPriceLabel": { fr: "Meilleur prix garanti", en: "Best price guaranteed" },
   "conv.trustBestPriceSub": { fr: "réservé en direct", en: "booked direct" },
   "conv.trustSecurePayLabel": { fr: "Paiement sécurisé", en: "Secure payment" },
