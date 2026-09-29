@@ -228,9 +228,10 @@ const ALL_PREVIEWS: PreviewItem[] = [
   })),
 ];
 
-const DEFAULT_DECISIONS: Record<string, Decision> = Object.fromEntries(
-  PREVIEWS.map((item) => [item.path, "keep" as Decision]),
-);
+const DEFAULT_DECISIONS: Record<string, Decision> = {
+  ...Object.fromEntries(PREVIEWS.map((item) => [item.path, "keep" as Decision])),
+  "src/components/Booking/DogToggleButton.tsx": "keep",
+};
 
 const DECISION_KEY = "uc-component-evaluation-decisions";
 
