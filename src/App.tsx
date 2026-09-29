@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { Brand } from "./components/Brand";
-import { StepProgress } from "./components/StepProgress";
+import { StepProgress, type ProgressStep } from "./components/StepProgress";
 import { DevPanel } from "./components/DevPanel";
 import { ContactBar } from "./components/ContactBar";
 import { Dates } from "./steps/Dates";
@@ -14,6 +14,32 @@ import { Confirmation } from "./steps/Confirmation";
 import { IconLeaf, IconTag } from "./components/icons";
 import { t } from "./i18n";
 import { getLang, setLangAndReload, type Lang } from "./lib/lang";
+
+const BOOKING_PROGRESS: ProgressStep[] = [
+  { key: "stay", label: t("stepProgress.stay") },
+  { key: "room", label: t("stepProgress.room") },
+  { key: "details", label: t("stepProgress.details") },
+  { key: "extras", label: t("stepProgress.extras") },
+  { key: "pay", label: t("stepProgress.pay") },
+];
+
+const STAGE_FOR_STEP: Record<Step, string | null> = {
+  dates: "stay",
+  results: "room",
+  guest: "details",
+  upgrade: "details",
+  extras: "extras",
+  payment: "pay",
+  confirmation: null,
+};
+
+const STEP_FOR_STAGE: Record<string, Step> = {
+  stay: "dates",
+  room: "results",
+  details: "guest",
+  extras: "extras",
+  pay: "payment",
+};
 
 const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
   dates: Dates,
@@ -56,7 +82,14 @@ function Shell() {
           </button>
           {showProgress ? (
             <div className="sm:max-w-xl sm:flex-1">
-              <StepProgress />
+              <StepProgress
+                steps={BOOKING_PROGRESS}
+                currentKey={STAGE_FOR_STEP[step]}
+                onStepSelect={(key) => {
+                  const target = STEP_FOR_STAGE[key];
+                  if (target) goTo(target);
+                }}
+              />
             </div>
           ) : (
             <span className="hidden items-center gap-1.5 text-sm font-medium text-teal-deep sm:inline-flex">
