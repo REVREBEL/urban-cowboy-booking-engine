@@ -1,5 +1,5 @@
 const CONFIGURATION_ID =
-  process.env.MEWS_CATS_KILLS_CONFIG_ID || "af94d1f9-0d56-469f-8b15-b10600706974";
+  process.env.MEWS_CATSKILLS_CONFIG_ID || "4725ace3-6b93-439f-a549-b4bc00ae1d10";
 const CLIENT = process.env.MEWS_CLIENT;
 
 if (!CLIENT) {
