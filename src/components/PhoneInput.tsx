@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { AsYouType, getCountryCallingCode, isValidPhoneNumber, parsePhoneNumber, type CountryCode } from "libphonenumber-js";
 import { t } from "../i18n";
 import { regionName } from "../lib/format";
@@ -51,16 +51,53 @@ export function PhoneInput({
   value,
   defaultCountry,
   onChange,
+  id,
+  name,
+  required,
+  ariaDescribedBy,
 }: {
   value: string;
   defaultCountry?: string;
   onChange: (e164: string, valid: boolean) => void;
+  id?: string;
+  name?: string;
+  required?: boolean;
+  ariaDescribedBy?: string;
 }) {
   const init = safeParse(value);
   const fallback = (COUNTRIES.find((c) => c.code === defaultCountry)?.code ?? "FR") as CountryCode;
   const [country, setCountry] = useState<CountryCode>(init?.country ?? fallback);
   const [text, setText] = useState(init?.national ?? "");
   const [valid, setValid] = useState(true);
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+  const lastEmitted = useRef<string | null>(null);
+
+  // Keep this controlled component synchronized when the parent restores or clears
+  // a value. Ignore the immediate echo of our own onChange so partially typed
+  // national numbers are not erased while they are still invalid.
+  useEffect(() => {
+    if (lastEmitted.current === value) {
+      lastEmitted.current = null;
+      return;
+    }
+
+    const parsed = safeParse(value);
+    if (parsed) {
+      setCountry(parsed.country);
+      setText(parsed.national);
+      setValid(true);
+    } else if (!value) {
+      setText("");
+      setValid(true);
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (value || text.trim()) return;
+    const next = COUNTRIES.find((item) => item.code === defaultCountry)?.code ?? "FR";
+    setCountry(next as CountryCode);
+  }, [defaultCountry, value, text]);
 
   function compute(c: CountryCode, raw: string) {
     const digits = raw.replace(/\D/g, "").slice(0, 18);
@@ -81,6 +118,7 @@ export function PhoneInput({
     const { formatted, ok, e164 } = compute(c, raw);
     setText(formatted);
     setValid(ok);
+    lastEmitted.current = e164;
     onChange(e164, ok);
   }
 
@@ -136,9 +174,14 @@ export function PhoneInput({
 
       <div className="relative flex-1">
         <input
+          id={inputId}
+          name={name}
           type="tel"
           inputMode="tel"
           autoComplete="tel-national"
+          required={required}
+          aria-invalid={showInvalid || undefined}
+          aria-describedby={ariaDescribedBy}
           className="h-full w-full border-0 bg-transparent px-3 py-3 pr-9 text-marine outline-none placeholder:text-marine/35"
           placeholder={country_.example}
           value={text}
