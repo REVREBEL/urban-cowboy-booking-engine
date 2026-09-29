@@ -74,6 +74,7 @@ export type RoomProduct = {
 export type RateOffer = {
   id: string;
   roomId: string;
+  variant?: "ride-easy" | "plan-ahead" | "sunup" | "stay-a-while" | "outfit";
   name: string;
   eyebrow?: string;
   headline?: string;
