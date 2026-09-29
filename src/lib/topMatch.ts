@@ -1,30 +1,12 @@
-export type PartyType = "partner" | "friends" | "family" | "solo";
-export type MatchInterest = "iconTub" | "outdoorSoak" | "ownPlace" | "scenic" | "simpleCozy";
+import type {
+  MatchInterest,
+  PartyType,
+  RecommendationPreferences,
+  RoomFeatures,
+  RoomMerchandising,
+} from "../types/merchandising";
+
 export type Season = "winter" | "spring" | "summer" | "fall";
-
-export type RecommendationPreferences = {
-  party: PartyType;
-  dog: boolean;
-  interests: [MatchInterest, MatchInterest?];
-};
-
-export type RoomFeatures = {
-  dogFriendly?: boolean;
-  heatedFloors?: boolean;
-  fireplace?: boolean;
-  outdoorSoak?: boolean;
-  indoorTub?: boolean;
-  privateDeck?: boolean;
-  scenicView?: boolean;
-  ownPlace?: boolean;
-  simpleCozy?: boolean;
-};
-
-export type RoomMatchContent = {
-  names: string[];
-  matchReasons: Partial<Record<MatchInterest, string>>;
-  features: RoomFeatures;
-};
 
 export type TopMatchCopy = {
   match_badge: string;
@@ -79,89 +61,6 @@ const FALLBACK_INTEREST_COPY: Record<MatchInterest, string> = {
 
 const DOG_BENEFIT = "It is also confirmed as a dog-friendly choice, so your dog can come along for the stay.";
 
-// Structured merchandising facts. Keep claims conservative; an omitted feature is never inferred.
-export const ROOM_MATCH_CONTENT: RoomMatchContent[] = [
-  {
-    names: ["Alpine Bathing Suite", "Alpine Bathing Suite with Den", "Alpine Penthouse Bathing Suite"],
-    matchReasons: {
-      iconTub: "its signature indoor soaking tub",
-      scenic: "its elevated connection to the surrounding mountain landscape",
-    },
-    features: { dogFriendly: true, indoorTub: true, scenicView: true },
-  },
-  {
-    names: ["Walden Forest Bathing Suite", "Walden Sunrise Bathing Suite"],
-    matchReasons: {
-      outdoorSoak: "its outdoor soaking setup among the trees",
-      scenic: "its strong connection to the surrounding landscape",
-    },
-    features: { dogFriendly: true, outdoorSoak: true, scenicView: true },
-  },
-  {
-    names: ["Walden Forest Bathing Suite with Den"],
-    matchReasons: {
-      outdoorSoak: "its outdoor soaking setup among the trees",
-      scenic: "its strong connection to the surrounding landscape",
-    },
-    features: { outdoorSoak: true, scenicView: true },
-  },
-  {
-    names: ["Walden King", "Forest House Queen", "Forest House King", "Lodge King", "Slide Mountain Haus Double Queen"],
-    matchReasons: { simpleCozy: "its comfortable, easygoing room experience" },
-    features: { simpleCozy: true },
-  },
-  {
-    names: ["Cabin"],
-    matchReasons: { iconTub: "its signature indoor tub", ownPlace: "its more independent cabin setting" },
-    features: { dogFriendly: true, indoorTub: true, ownPlace: true },
-  },
-  {
-    names: ["Chalet"],
-    matchReasons: { outdoorSoak: "its outdoor soaking setup", ownPlace: "its standalone chalet setting" },
-    features: { dogFriendly: true, outdoorSoak: true, ownPlace: true },
-  },
-  {
-    names: ["Mountain View Haus 2 Bedroom", "Mountain View Haus 4 Bedroom"],
-    matchReasons: { ownPlace: "its independent house setting", scenic: "its confirmed mountain-view setting" },
-    features: { ownPlace: true, scenicView: true },
-  },
-  {
-    names: ["Opa’s Cabin 2 Bedroom", "Opa's Cabin 2 Bedroom", "Opa’s Cabin 4 Bedroom", "Opa's Cabin 4 Bedroom"],
-    matchReasons: { ownPlace: "its independent cabin setting" },
-    features: { ownPlace: true },
-  },
-  {
-    names: ["Slide Mountain Haus 5 Room", "Slide Mountain Haus 2 Bedroom"],
-    matchReasons: { ownPlace: "its more independent house-style setup" },
-    features: { ownPlace: true },
-  },
-  {
-    names: ["Lodge Penthouse Suite", "Lodge 3 Bedroom Suite"],
-    matchReasons: { iconTub: "its indoor soaking experience", scenic: "its elevated setting" },
-    features: { dogFriendly: true, indoorTub: true, scenicView: true },
-  },
-  {
-    names: ["Lodge 2 Bedroom"],
-    matchReasons: { simpleCozy: "its comfortable shared-stay setup" },
-    features: { dogFriendly: true, simpleCozy: true },
-  },
-];
-
-function normalized(value: string): string {
-  return value.trim().toLocaleLowerCase().replace(/[’]/g, "'");
-}
-
-export function roomMatchContent(roomName: string): RoomMatchContent {
-  const key = normalized(roomName);
-  return (
-    ROOM_MATCH_CONTENT.find((entry) => entry.names.some((name) => normalized(name) === key)) ?? {
-      names: [roomName],
-      matchReasons: {},
-      features: {},
-    }
-  );
-}
-
 export function seasonForDate(checkIn: string): Season {
   const month = Number(checkIn.slice(5, 7));
   if (month === 12 || month <= 2) return "winter";
@@ -209,20 +108,23 @@ function interestList(interests: [MatchInterest, MatchInterest?]): string {
     : INTEREST_LABELS[interests[0]];
 }
 
+const EMPTY_FEATURES: RoomFeatures = {};
+
 export function buildTopMatchCopy(
   roomName: string,
   preferences: RecommendationPreferences,
   checkIn: string,
-  metadata = roomMatchContent(roomName),
+  metadata: RoomMerchandising | null,
 ): TopMatchCopy {
   const [primary, secondary] = preferences.interests;
-  const primaryMatch = supportsInterest(metadata.features, primary);
-  const secondaryMatch = secondary ? supportsInterest(metadata.features, secondary) : false;
+  const features = metadata?.features ?? EMPTY_FEATURES;
+  const primaryMatch = supportsInterest(features, primary);
+  const secondaryMatch = secondary ? supportsInterest(features, secondary) : false;
   const reasonInterest = primaryMatch ? primary : secondaryMatch && secondary ? secondary : null;
   const reason = reasonInterest
-    ? metadata.matchReasons[reasonInterest] ?? INTEREST_BENEFITS[reasonInterest].toLocaleLowerCase()
+    ? metadata?.matchReasons[reasonInterest] ?? INTEREST_BENEFITS[reasonInterest].toLocaleLowerCase()
     : "being the strongest available overall recommendation for these dates";
-  const dogEligible = preferences.dog && metadata.features.dogFriendly === true;
+  const dogEligible = preferences.dog && metadata?.dogPolicy === "allowed";
   const partySummary = PARTY_FRAMING[preferences.party][dogEligible ? "dog" : "plain"];
   const season = seasonForDate(checkIn);
 
@@ -232,7 +134,7 @@ export function buildTopMatchCopy(
   }
   if (dogEligible) benefits.push(DOG_BENEFIT);
   else benefits.push(PARTY_BENEFITS[preferences.party]);
-  benefits.push(seasonalBenefit(season, metadata.features));
+  benefits.push(seasonalBenefit(season, features));
 
   return {
     match_badge: "YOUR TOP MATCH",
@@ -248,16 +150,19 @@ export function buildTopMatchCopy(
   };
 }
 
-export function inferredInterest(roomName: string): MatchInterest {
-  const metadata = roomMatchContent(roomName);
-  return (Object.keys(metadata.matchReasons)[0] as MatchInterest | undefined) ?? "simpleCozy";
-}
-
 export function parseRecommendationPreferences(
   search: string,
-  fallback: { adults: number; children: number; roomName: string },
-): RecommendationPreferences {
+  fallback: { adults: number; children: number },
+): RecommendationPreferences | null {
   const params = new URLSearchParams(search);
+  const validInterests: MatchInterest[] = ["iconTub", "outdoorSoak", "ownPlace", "scenic", "simpleCozy"];
+  const primaryRaw = params.get("interest") as MatchInterest | null;
+
+  // No explicit interest means the guest is browsing normally, not using the matcher.
+  // In that case keep the standard availability/price order rather than inventing a
+  // preference from the room name.
+  if (!primaryRaw || !validInterests.includes(primaryRaw)) return null;
+
   const partyRaw = params.get("party") as PartyType | null;
   const validParties: PartyType[] = ["partner", "friends", "family", "solo"];
   const party = validParties.includes(partyRaw as PartyType)
@@ -269,11 +174,18 @@ export function parseRecommendationPreferences(
         : fallback.adults === 2
           ? "partner"
           : "friends";
-  const validInterests: MatchInterest[] = ["iconTub", "outdoorSoak", "ownPlace", "scenic", "simpleCozy"];
-  const primaryRaw = params.get("interest") as MatchInterest | null;
+
   const secondaryRaw = params.get("interest2") as MatchInterest | null;
-  const primary = validInterests.includes(primaryRaw as MatchInterest) ? (primaryRaw as MatchInterest) : inferredInterest(fallback.roomName);
   const secondary: MatchInterest | undefined =
-    secondaryRaw && validInterests.includes(secondaryRaw) && secondaryRaw !== primary ? secondaryRaw : undefined;
-  return { party, dog: params.get("dog") === "yes" || params.get("dog") === "1", interests: [primary, secondary] };
+    secondaryRaw && validInterests.includes(secondaryRaw) && secondaryRaw !== primaryRaw
+      ? secondaryRaw
+      : undefined;
+
+  return {
+    party,
+    dog: params.get("dog") === "yes" || params.get("dog") === "1",
+    interests: [primaryRaw, secondary],
+  };
 }
+
+export type { MatchInterest, PartyType, RecommendationPreferences, RoomMerchandising };
