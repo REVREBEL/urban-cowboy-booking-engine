@@ -443,7 +443,7 @@ function FilterBar({
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AllRoomsGrid() {
-  const { state, dispatch, setView, goBack, openDrawer } = useBooking();
+  const { state, goBack, openDrawer } = useBooking();
 
   const [sort, setSort] = useState<SortKey>(null);
   const [filterBeds, setFilterBeds] = useState<Set<string>>(new Set());
