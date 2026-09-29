@@ -8,6 +8,7 @@ import type {
 export type RecommendationSearchContext = {
   children: number;
   infants: number;
+  dogRequested?: boolean;
 };
 
 function interestScore(merchandising: RoomMerchandising, interest: MatchInterest): number {
@@ -37,7 +38,7 @@ export function isRoomRecommendationEligible(
     return false;
   }
 
-  if (preferences?.dog) {
+  if (preferences?.dog || search.dogRequested) {
     // "Dog = yes" is a hard eligibility constraint. Unknown is intentionally not
     // treated as dog-friendly until the property/CRS confirms it.
     if (!merchandising || merchandising.dogPolicy !== "allowed") return false;
