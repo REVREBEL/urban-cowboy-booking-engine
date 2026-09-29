@@ -9,7 +9,7 @@ import {
   occupancyData,
   occupancyForProperty,
   propertyByKey,
-  PROPERTIES,
+  propertiesForEnv,
   type Env,
 } from "./_lib";
 
@@ -40,7 +40,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const adults = clampInt(b.adults, 1, 30, 2);
   const children = clampInt(b.children, 0, 20, 0);
   const infants = clampInt(b.infants, 0, 10, 0);
-  const prop = propertyByKey(b.property) ?? PROPERTIES[0];
+  const prop = propertyByKey(env, b.property) ?? propertiesForEnv(env)[0];
   const occupancy = prop
     ? occupancyForProperty(prop, adults, children, infants)
     : occupancyData(env, adults, children);

@@ -4,13 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        beige: { DEFAULT: "#fffbf0", deep: "#f3ecd9" }, 
-        corail: { DEFAULT: "#ff6f62", soft: "#ff8a7f", dark: "#e85b4f" }, 
-        marine: { DEFAULT: "#061a2d", soft: "#0e2c47" }, 
-
-        turquoise: { DEFAULT: "#061a2d", vivid: "#ff6f62" }, 
-        teal: { deep: "#061a2d" }, // fonds sombres / hero → marine
-        creole: { DEFAULT: "#ff6f62", soft: "#ff8a7f" }, 
+        beige: { DEFAULT: "#fffbf0", deep: "#f3ecd9" },
+        corail: { DEFAULT: "#ff6f62", soft: "#ff8a7f", dark: "#e85b4f" },
+        marine: { DEFAULT: "#061a2d", soft: "#0e2c47" },
+        turquoise: { DEFAULT: "#061a2d", vivid: "#ff6f62" },
+        teal: { deep: "#061a2d" },
+        creole: { DEFAULT: "#ff6f62", soft: "#ff8a7f" },
         sand: "#f3ecd9",
         cream: "#fffbf0",
         ink: "#061a2d",
@@ -67,7 +66,7 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Instrument Serif"', "ui-serif", "Georgia", "serif"],
+        display: ['"UC Desert Rain"', '"Instrument Serif"', "ui-serif", "Georgia", "serif"],
         body: ['"Urbanist"', "ui-sans-serif", "system-ui", "sans-serif"],
         brand: ['"Brothers OT"', '"Arial Narrow"', "sans-serif"],
         label: ['"Brothers OT"', '"Arial Narrow"', "sans-serif"],
