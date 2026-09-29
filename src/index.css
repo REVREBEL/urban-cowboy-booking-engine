@@ -5,6 +5,38 @@
 @layer base {
   :root {
     color-scheme: light;
+
+    /* Semantic UI tokens used by src/components/ui. */
+    --background: 40 23% 95%;
+    --foreground: 13 24% 24%;
+    --card: 0 0% 100%;
+    --card-foreground: 13 24% 24%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 13 24% 24%;
+    --primary: 13 24% 24%;
+    --primary-foreground: 40 23% 95%;
+    --secondary: 40 16% 90%;
+    --secondary-foreground: 13 24% 24%;
+    --muted: 40 12% 91%;
+    --muted-foreground: 30 3% 46%;
+    --accent: 18 46% 41%;
+    --accent-foreground: 40 23% 95%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 28 13% 80%;
+    --input: 28 13% 80%;
+    --ring: 18 46% 41%;
+    --radius: 0.5rem;
+
+    /* Imported Cowboy component font hooks. Webfonts may be supplied by the host. */
+    --font-brothers: "Brothers OT", "League Spartan", sans-serif;
+    --font-desert: "DesertRain", "Instrument Serif", Georgia, serif;
+    --font-uchen: "Uchen", Georgia, serif;
+    --font-inter: "Inter", "Urbanist", sans-serif;
+    --font-bianco: "Bianco Sans", "Urbanist", sans-serif;
+    --font-lato: "Lato", "Urbanist", sans-serif;
+    --font-dm-sans: "DM Sans", "Urbanist", sans-serif;
+    --font-league-spartan: "League Spartan", "Urbanist", sans-serif;
   }
 
   html {
