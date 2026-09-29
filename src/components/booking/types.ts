@@ -1,3 +1,5 @@
+import type { TopMatchCopy } from "../../lib/topMatch";
+
 export type PartyType = "partner" | "friends" | "family" | "solo";
 
 export type MatchInterest =
@@ -7,8 +9,6 @@ export type MatchInterest =
   | "scenic"
   | "simpleCozy"
   | "social";
-
-export type Season = "winter" | "spring" | "summer" | "fall";
 
 export type RecommendationPreferences = {
   party: PartyType;
@@ -53,12 +53,10 @@ export type RoomExperience =
   | "Chalet"
   | "Opa's"
   | "Slide Mountain"
-  | "Mountain View"
-  | string;
+  | "Mountain View";
 
 export type RoomProduct = {
   id: string;
-  categoryId?: string;
   name: string;
   experience: RoomExperience;
   tagline: string;
@@ -67,44 +65,32 @@ export type RoomProduct = {
   images: string[];
   thumbImage: string;
   startingFrom: number;
-  currency?: string;
-  available?: boolean;
+  available: boolean;
+  matchScores?: Partial<Record<MatchInterest, number>>;
 };
 
 export type RateOffer = {
   id: string;
   roomId: string;
-  variant?: "ride-easy" | "plan-ahead" | "sunup" | "stay-a-while" | "outfit";
   name: string;
-  eyebrow?: string;
-  headline?: string;
-  description?: string;
-  nightlyRate?: number | null;
-  totalStay?: number | null;
-  currency?: string;
-  cancellationPolicy?: string;
-  paymentPolicy?: string;
-  amountDueNow?: number | null;
-  remainingBalance?: number | null;
-  taxTotal?: number | null;
-  breakfastIncluded?: boolean;
+  variant:
+    | "ride-easy"
+    | "plan-ahead"
+    | "sunup"
+    | "stay-a-while"
+    | "outfit";
+  eyebrow: string;
+  headline: string;
+  description: string;
+  nightlyRate: number;
+  totalStay: number;
+  cancellationPolicy: string;
+  breakfastIncluded: boolean;
   minNights?: number;
   advanceDays?: number;
   memberOnly?: boolean;
-  available?: boolean;
-};
-
-export type TopMatchCopy = {
-  match_badge: string;
-  room_type: string;
-  party_summary: string;
-  interest_summary: string;
-  top_match_reason: string;
-  benefit_1: string;
-  benefit_2: string;
-  benefit_3: string;
-  season_label: Season;
-  alternate_match_heading: string;
+  available: boolean;
+  currency?: string;
 };
 
 export type RecommendationResult = {
@@ -114,16 +100,12 @@ export type RecommendationResult = {
   explanation?: TopMatchCopy;
 };
 
-export type StaySummaryData = {
-  arrival: string;
-  departure: string;
+export type StaySelection = {
+  checkIn: string;
+  checkOut: string;
   adults: number;
   children: number;
-  dog: boolean;
-  roomName?: string | null;
-  rateName?: string | null;
-  nightlyRate?: number | null;
-  nights?: number;
-  total?: number | null;
-  currency?: string;
+  infants?: number;
+  dog?: boolean;
+  promoCode?: string;
 };

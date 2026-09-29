@@ -1,20 +1,6 @@
-import {
-  PREFERENCE_ICON,
-  PREFERENCE_ICON_SELECTED,
-  PREFERENCE_LABEL,
-  PREFERENCE_LABEL_SELECTED,
-} from "../assets";
+import { PREFERENCE_ART } from "../assets";
 import type { MatchInterest } from "../types";
-import { cn } from "@/lib/utils";
-
-type Props = {
-  id: MatchInterest;
-  label: string;
-  description: string;
-  selected: boolean;
-  onToggle: () => void;
-  className?: string;
-};
+import { cn } from "../../../lib/utils";
 
 export function PreferenceIconButton({
   id,
@@ -22,10 +8,18 @@ export function PreferenceIconButton({
   description,
   selected,
   onToggle,
-  className,
-}: Props) {
-  const icon = selected ? PREFERENCE_ICON_SELECTED[id] : PREFERENCE_ICON[id];
-  const labelArt = selected ? PREFERENCE_LABEL_SELECTED[id] : PREFERENCE_LABEL[id];
+  disabled = false,
+}: {
+  id: MatchInterest;
+  label: string;
+  description: string;
+  selected: boolean;
+  onToggle: () => void;
+  disabled?: boolean;
+}) {
+  const art = PREFERENCE_ART[id];
+  const icon = selected ? art.selectedIcon : art.icon;
+  const labelArt = selected ? art.selectedLabel : art.label;
 
   return (
     <button
@@ -35,10 +29,8 @@ export function PreferenceIconButton({
       aria-describedby={`preference-${id}-description`}
       title={`${label}: ${description}`}
       onClick={onToggle}
-      className={cn(
-        "flex size-52 flex-row items-center border-[0.386px] border-oxblood p-0.5",
-        className,
-      )}
+      disabled={disabled}
+      className="flex size-52 flex-row items-center border-[0.386px] border-oxblood p-0.5 disabled:cursor-not-allowed disabled:opacity-50"
     >
       <span
         className={cn(
@@ -55,22 +47,24 @@ export function PreferenceIconButton({
             selected ? "opacity-100" : "opacity-50",
           )}
         />
-        <img
-          src={labelArt}
-          alt=""
-          aria-hidden="true"
-          className={cn(
-            "h-[45px] w-[120px] object-contain transition-opacity duration-200",
-            selected ? "opacity-100" : "opacity-50",
-          )}
-        />
+        {labelArt ? (
+          <img
+            src={labelArt}
+            alt=""
+            aria-hidden="true"
+            className={cn(
+              "h-[45px] w-[120px] object-contain transition-opacity duration-200",
+              selected ? "opacity-100" : "opacity-50",
+            )}
+          />
+        ) : (
+          <span className={cn("text-[11px] leading-tight", selected ? "text-umber" : "text-umber/40")}>
+            {label}
+          </span>
+        )}
       </span>
-      <span id={`preference-${id}-label`} className="sr-only">
-        {label}
-      </span>
-      <span id={`preference-${id}-description`} className="sr-only">
-        {description}
-      </span>
+      <span id={`preference-${id}-label`} className="sr-only">{label}</span>
+      <span id={`preference-${id}-description`} className="sr-only">{description}</span>
     </button>
   );
 }

@@ -1,23 +1,24 @@
 import { DOG_ICON, DOG_ICON_SELECTED } from "../assets";
-import { cn } from "@/lib/utils";
+import { cn } from "../../../lib/utils";
 
-type Props = {
+export function DogToggleButton({
+  selected,
+  onToggle,
+  disabled = false,
+}: {
   selected: boolean;
   onToggle: () => void;
-  className?: string;
-};
-
-export function DogToggleButton({ selected, onToggle, className }: Props) {
+  disabled?: boolean;
+}) {
   return (
     <button
       type="button"
       aria-pressed={selected}
+      aria-label="Bringing the dog"
       title="Bringing the dog: only show places that welcome dogs"
       onClick={onToggle}
-      className={cn(
-        "flex size-36 flex-row items-center border-[0.386px] border-oxblood p-0.5 md:size-40",
-        className,
-      )}
+      disabled={disabled}
+      className="flex size-36 flex-row items-center border-[0.386px] border-oxblood p-0.5 disabled:cursor-not-allowed disabled:opacity-50 md:size-40"
     >
       <span
         className={cn(
@@ -35,7 +36,6 @@ export function DogToggleButton({ selected, onToggle, className }: Props) {
           )}
         />
       </span>
-      <span className="sr-only">Bringing the dog</span>
     </button>
   );
 }
