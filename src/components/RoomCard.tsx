@@ -2,23 +2,19 @@ import { money, imgUrl } from "../lib/format";
 import { spaceLabel } from "../lib/shaping";
 import type { ShapedRoom } from "../types/mews";
 import { Photo } from "./Photo";
-import { RoomBenefitsOverlay } from "./RoomTags";
+import { RoomBenefitsOverlay, RoomTagsPanel, type RoomTag } from "./RoomTags";
 import { SavingsBadge, ScarcityBadge } from "./conversion";
-import { IconArrowRight, IconBed, IconCheck, IconCloche, IconCroissant, IconUsers } from "./icons";
+import { IconArrowRight, IconBed, IconCheck, IconUsers } from "./icons";
 import { t } from "../i18n";
-
-// Libellés d'hébergement (pour le badge sur la carte, quand plusieurs sont affichés).
-const PROPERTY_LABELS: Record<string, string> = {
-  hotel: "Urban Cowboy",
-  creole: "Culture Créole",
-  villas: "Villas",
-};
 
 export function RoomCard({
   room,
   imageBaseUrl,
   nightsCount,
   featured = false,
+  propertyLabel,
+  benefitTags = [],
+  detailTags = [],
   onChoose,
   onDetails,
 }: {
@@ -26,6 +22,9 @@ export function RoomCard({
   imageBaseUrl: string;
   nightsCount: number;
   featured?: boolean;
+  propertyLabel?: string;
+  benefitTags?: RoomTag[];
+  detailTags?: RoomTag[];
   onChoose: () => void;
   onDetails: () => void;
 }) {
@@ -50,7 +49,7 @@ export function RoomCard({
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
         <span className="absolute left-3 top-3 rounded-full bg-teal-deep/85 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-cream backdrop-blur">
-          {(room.property && PROPERTY_LABELS[room.property]) || spaceLabel(room.spaceType)}
+          {propertyLabel || spaceLabel(room.spaceType)}
         </span>
         {room.imageIds.length > 1 && (
           <span className="absolute bottom-3 right-3 rounded-full bg-ink/55 px-2 py-0.5 text-[11px] font-medium text-cream backdrop-blur">
@@ -58,7 +57,7 @@ export function RoomCard({
           </span>
         )}
         {/* Tags bénéfice (Vue mer / Sans vis-à-vis / 1er étage) EN OVERLAY sur la photo. */}
-        <RoomBenefitsOverlay room={room} />
+        <RoomBenefitsOverlay tags={benefitTags} />
       </button>
 
       <div className="flex flex-1 flex-col p-5">
@@ -87,19 +86,9 @@ export function RoomCard({
 
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <span className="inline-flex w-fit items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
-            <IconCheck className="h-3.5 w-3.5" /> {t("roomCard.noFees")}
+            <IconCheck aria-hidden="true" className="h-3.5 w-3.5" /> {t("roomCard.noFees")}
           </span>
-          {/* Some property rates include meals. */}
-          {room.property === "hotel" && (
-            <>
-              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-turquoise/10 px-2.5 py-1 text-[11px] font-semibold text-teal-deep">
-                <IconCroissant className="h-3.5 w-3.5" /> {t("roomCard.breakfastIncl")}
-              </span>
-              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-turquoise/10 px-2.5 py-1 text-[11px] font-semibold text-teal-deep">
-                <IconCloche className="h-3.5 w-3.5" /> {t("roomCard.dinnerIncl")}
-              </span>
-            </>
-          )}
+          <RoomTagsPanel tags={detailTags} />
         </div>
 
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 pt-4">
