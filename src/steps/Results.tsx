@@ -90,20 +90,27 @@ export function Results() {
   // merchandising Urban Cowboy au moment du shaping.
   const allRooms = useMemo(() => (data ? buildRooms(data, hotel) : []), [data, hotel]);
 
+  const recommendationSearch = window.location.search;
   const recommendationPreferences = useMemo(
-    () => parseRecommendationPreferences(window.location.search, { adults, children }),
-    [adults, children],
+    () => parseRecommendationPreferences(recommendationSearch, { adults, children }),
+    [recommendationSearch, adults, children],
   );
+  const dogRequested = useMemo(() => {
+    const value = new URLSearchParams(recommendationSearch).get("dog");
+    return value === "yes" || value === "1";
+  }, [recommendationSearch]);
 
-  // Eligibility first, then preference ranking. When the guest did not use
-  // Help Me Choose, rankRecommendedRooms preserves the normal Mews/price order.
+  // Eligibility first, then preference ranking. Dog eligibility is independent
+  // from whether the guest selected an interest. When Help Me Choose was not used,
+  // rankRecommendedRooms otherwise preserves the normal Mews/price order.
   const eligibleAllRooms = useMemo(
     () =>
       rankRecommendedRooms(allRooms, recommendationPreferences, {
         children,
         infants,
+        dogRequested,
       }),
-    [allRooms, recommendationPreferences, children, infants],
+    [allRooms, recommendationPreferences, children, infants, dogRequested],
   );
 
   // Filtre d'affichage : hébergements cochés (une chambre sans property reste visible).
@@ -144,7 +151,7 @@ export function Results() {
 
   // Publie la liste visible pour l'étape de surclassement (upsell chambre après Guest).
   useEffect(() => {
-    if (rooms.length) setAvailableRooms(rooms);
+    setAvailableRooms(rooms);
   }, [rooms, setAvailableRooms]);
 
   // Réhydrate la sélection depuis l'URL (lien partagé / retour arrière) — depuis
@@ -242,9 +249,17 @@ export function Results() {
         <ErrorBox message={error} onRetry={() => setReloadKey((k) => k + 1)} />
       )}
 
-      {!loading && !hotelError && !error && rooms.length === 0 && (
+      {!loading && !hotelError && !error && allRooms.length === 0 && (
         <EmptyBox onModify={() => goTo("dates")} />
       )}
+
+      {!loading &&
+        !hotelError &&
+        !error &&
+        allRooms.length > 0 &&
+        eligibleAllRooms.length === 0 && (
+          <NoEligibleMatchBox onModify={() => goTo("dates")} />
+        )}
 
       {!loading && !hotelError && !error && rooms.length > 0 && (
         <div className="mt-5 space-y-4">
@@ -402,6 +417,18 @@ function EmptyBox({ onModify }: { onModify: () => void }) {
       <p className="mt-2 text-sm text-ink/60">
         {t("results.emptyBody")}
       </p>
+      <button type="button" onClick={onModify} className="btn-primary mt-5">
+        {t("results.editSearch")}
+      </button>
+    </div>
+  );
+}
+
+function NoEligibleMatchBox({ onModify }: { onModify: () => void }) {
+  return (
+    <div className="mt-6 rounded-xl2 border border-ink/10 bg-white p-10 text-center shadow-card">
+      <p className="font-display text-xl text-ink">{t("results.noEligibleTitle")}</p>
+      <p className="mt-2 text-sm text-ink/60">{t("results.noEligibleBody")}</p>
       <button type="button" onClick={onModify} className="btn-primary mt-5">
         {t("results.editSearch")}
       </button>
