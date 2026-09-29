@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ApiError, api, errorMessage } from "../lib/api";
 import { money, fmtDate, toUtc } from "../lib/format";
-import { StepLayout } from "../components/StepLayout";
-import { SecureBadge } from "../components/DataBadge";
-import { StayBreakdown } from "../components/StayBreakdown";
-import { TrustRow } from "../components/conversion";
-import { IconArrowRight, IconCheck, IconShield } from "../components/icons";
+import { StepLayout } from "@/components/booking/layout/step-layout";
+import { SecureBadge } from "@/components/dev/data-badge";
+import { StayBreakdown } from "@/components/booking/summary/stay-breakdown";
+import { TrustRow } from "@/components/booking/conversion";
+import { IconArrowRight, IconCheck, IconShield } from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
 
 export function Payment() {
