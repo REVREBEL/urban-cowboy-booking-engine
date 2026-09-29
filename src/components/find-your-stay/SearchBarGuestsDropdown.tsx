@@ -1,5 +1,5 @@
 // SearchBarGuestDropdown.tsx
-import React, { useState, useRef, useEffect, useId } from 'react';
+import React, { useState, useId } from 'react';
 
 export interface GuestCounts {
   adults: number;
