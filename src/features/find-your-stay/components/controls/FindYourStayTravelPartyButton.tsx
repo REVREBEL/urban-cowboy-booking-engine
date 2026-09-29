@@ -10,7 +10,7 @@ export interface TravelPartyItem {
 }
 
 export interface FindYourStayTravelPartyButtonProps
-  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'onSelect'> {
   /** Unique identifier for the party type */
   id: TravelPartyOption | string;
   /** Primary bold headline (e.g., 'PARTNER') */
