@@ -5,6 +5,11 @@ import react from "@vitejs/plugin-react";
 // Pages Functions (functions/api/mews/*), servies par wrangler sur la même origine.
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      "@": new URL("./src", import.meta.url).pathname,
+    },
+  },
   build: {
     outDir: "dist",
     sourcemap: false,

@@ -5,6 +5,59 @@
 @layer base {
   :root {
     color-scheme: light;
+
+    /* Shared Cowboy / shadcn component tokens. */
+    --radius: 0.75rem;
+    --linen: #ebe8e0;
+    --paper: #faf9f9;
+    --snow: #ffffff;
+    --forest: #0e301a;
+    --smoke: #343833;
+    --copper: #9a5636;
+    --umber: #4e332d;
+    --oxblood: #69253a;
+    --ink: #061a2d;
+
+    --background: var(--linen);
+    --foreground: var(--smoke);
+    --card: var(--paper);
+    --card-foreground: var(--smoke);
+    --popover: var(--snow);
+    --popover-foreground: var(--smoke);
+    --primary: var(--umber);
+    --primary-foreground: #faf9f9;
+    --secondary: #f2efe8;
+    --secondary-foreground: var(--umber);
+    --muted: #efede7;
+    --muted-foreground: #767470;
+    --accent: var(--forest);
+    --accent-foreground: #faf9f9;
+    --destructive: #b53b32;
+    --destructive-foreground: #ffffff;
+    --border: #d5cfc5;
+    --input: #d5cfc5;
+    --ring: var(--copper);
+    --chart-1: var(--copper);
+    --chart-2: var(--forest);
+    --chart-3: #c39350;
+    --chart-4: var(--umber);
+    --chart-5: #c7aa80;
+    --sidebar: var(--linen);
+    --sidebar-foreground: var(--smoke);
+    --sidebar-primary: var(--umber);
+    --sidebar-primary-foreground: #faf9f9;
+    --sidebar-accent: #f2efe8;
+    --sidebar-accent-foreground: var(--umber);
+    --sidebar-border: #d5cfc5;
+    --sidebar-ring: var(--copper);
+
+    --font-brothers: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    --font-desert: "Instrument Serif", Georgia, serif;
+    --font-uchen: "Instrument Serif", Georgia, serif;
+    --font-lato: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    --font-inter: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    --font-quattrocento: "Instrument Serif", Georgia, serif;
+    --font-league-spartan: "Urbanist", ui-sans-serif, system-ui, sans-serif;
   }
 
   html {
