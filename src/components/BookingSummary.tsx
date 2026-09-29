@@ -100,7 +100,9 @@ export function BookingSummary() {
               </>
             }
             value={money(
-              quotedProducts.get(p.id)?.gross ?? productLineTotal(p, nightsCount, guestsCount),
+              quote
+                ? quotedProducts.get(p.id)?.gross ?? null
+                : productLineTotal(p, nightsCount, guestsCount),
               quotedProducts.get(p.id)?.currency ?? p.currency,
             )}
           />
