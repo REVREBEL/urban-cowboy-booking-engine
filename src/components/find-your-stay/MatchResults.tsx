@@ -7,7 +7,7 @@ import RoomCard from './RoomCard';
 import EmptyState from '../states/EmptyState';
 
 export default function MatchResults() {
-  const { state, dispatch, setView, goBack, openDrawer } = useBooking();
+  const { state, setView, goBack, openDrawer } = useBooking();
   const prefs = state.recommendationPreferences;
 
   const results = useMemo(() => {
