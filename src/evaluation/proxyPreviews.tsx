@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 const ink = "#4e332d";
 const copper = "#9a5636";
 const linen = "#ebe8e0";
-const snow = "#faf9f9";
 const muted = "#767470";
 
 function Frame({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
