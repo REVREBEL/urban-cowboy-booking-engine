@@ -13,6 +13,8 @@ import { getLang } from "../lib/lang";
 import { getUtms } from "../lib/utm";
 import { nights as countNights } from "../lib/format";
 import { buildRooms, shapeProducts, cheapestDrinkProduct, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
+import { rankRecommendedRooms } from "../lib/roomMatching";
+import { parseRecommendationPreferences } from "../lib/topMatch";
 import type {
   HotelConfig,
   ReservationCreateResult,
@@ -308,7 +310,18 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       })
       .then((res) => {
         if (!alive) return;
-        const rooms = buildRooms(res, hotel);
+        const shapedRooms = buildRooms(res, hotel);
+        const recommendationSearch = window.location.search;
+        const preferences = parseRecommendationPreferences(recommendationSearch, {
+          adults: state.adults,
+          children: state.children,
+        });
+        const dogValue = new URLSearchParams(recommendationSearch).get("dog");
+        const rooms = rankRecommendedRooms(shapedRooms, preferences, {
+          children: state.children,
+          infants: state.infants,
+          dogRequested: dogValue === "yes" || dogValue === "1",
+        });
         setAvailableRoomsState(rooms);
         const room = rooms.find((r) => r.categoryId === state.roomId);
         const rate = room?.rates.find((rt) => rt.rateId === state.rateId) ?? room?.rates[0] ?? null;
