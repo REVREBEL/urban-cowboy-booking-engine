@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { fmtDate, isoDay, nights } from "../lib/format";
 import { t } from "../i18n";
 import { getLang, LOCALE } from "../lib/lang";
@@ -13,7 +13,6 @@ const monthLabel = (y: number, m: number) =>
     new Date(Date.UTC(y, m, 1)),
   );
 
-// Cellules d'un mois (Monday-first), `null` pour les jours vides en tête.
 function monthCells(y: number, m: number): (string | null)[] {
   const startWeekday = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7;
   const count = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
@@ -22,10 +21,26 @@ function monthCells(y: number, m: number): (string | null)[] {
   return cells;
 }
 
-/**
- * Sélecteur de plage de dates à la Airbnb : popover calendrier (2 mois desktop,
- * 1 mois mobile), sélection début → fin, surbrillance de plage + aperçu au survol.
- */
+function dateParts(day: string) {
+  const d = new Date(`${day}T00:00:00Z`);
+  return { y: d.getUTCFullYear(), m: d.getUTCMonth(), d: d.getUTCDate() };
+}
+
+function addDays(day: string, amount: number): string {
+  const d = new Date(`${day}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + amount);
+  return iso(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+}
+
+function addMonths(day: string, amount: number): string {
+  const current = dateParts(day);
+  const first = new Date(Date.UTC(current.y, current.m + amount, 1));
+  const lastDay = new Date(
+    Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0),
+  ).getUTCDate();
+  return iso(first.getUTCFullYear(), first.getUTCMonth(), Math.min(current.d, lastDay));
+}
+
 export function DateRangePicker({
   checkIn,
   checkOut,
@@ -37,23 +52,68 @@ export function DateRangePicker({
   onChange: (checkIn: string, checkOut: string) => void;
   minDate?: string;
 }) {
+  const pickerId = useId();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState<string | null>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const [focusedDay, setFocusedDay] = useState(checkIn || minDate);
 
-  // Mois affiché en premier (par défaut : mois du check-in ou mois courant).
   const seed = checkIn || minDate;
   const [view, setView] = useState(() => {
-    const d = new Date(`${seed}T00:00:00Z`);
-    return { y: d.getUTCFullYear(), m: d.getUTCMonth() };
+    const d = dateParts(seed);
+    return { y: d.y, m: d.m };
   });
+
+  function setViewForDay(day: string) {
+    const d = dateParts(day);
+    setView({ y: d.y, m: d.m });
+  }
+
+  function focusDay(day: string) {
+    setFocusedDay(day);
+    requestAnimationFrame(() => {
+      popoverRef.current
+        ?.querySelector<HTMLButtonElement>(`button[data-date="${day}"]`)
+        ?.focus();
+    });
+  }
+
+  function openPicker() {
+    const target = checkIn && checkIn >= minDate ? checkIn : minDate;
+    setViewForDay(target);
+    setFocusedDay(target);
+    setOpen(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => focusDay(target));
+    });
+  }
+
+  function closePicker(restoreFocus = true) {
+    setOpen(false);
+    setHover(null);
+    if (restoreFocus) requestAnimationFrame(() => triggerRef.current?.focus());
+  }
+
+  useEffect(() => {
+    if (open) return;
+    const target = checkIn && checkIn >= minDate ? checkIn : minDate;
+    setViewForDay(target);
+    setFocusedDay(target);
+  }, [checkIn, minDate, open]);
 
   useEffect(() => {
     if (!open) return;
     const onDoc = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) closePicker(false);
     };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closePicker(true);
+      }
+    };
     document.addEventListener("mousedown", onDoc);
     window.addEventListener("keydown", onKey);
     return () => {
@@ -67,20 +127,48 @@ export function DateRangePicker({
 
   function pick(day: string) {
     if (day < minDate) return;
-    if (!checkIn || (checkIn && checkOut)) {
-      onChange(day, ""); // démarre une nouvelle plage
+    if (!checkIn || checkOut) {
+      onChange(day, "");
+      setFocusedDay(day);
     } else if (day <= checkIn) {
-      onChange(day, ""); // recommence si on clique avant l'arrivée
+      onChange(day, "");
+      setFocusedDay(day);
     } else {
-      onChange(checkIn, day); // fin de plage
-      setTimeout(() => setOpen(false), 180);
+      onChange(checkIn, day);
+      setTimeout(() => closePicker(true), 180);
     }
   }
 
-  const previewEnd = !checkOut && hover && checkIn && hover > checkIn ? hover : checkOut;
+  function moveKeyboard(day: string, event: React.KeyboardEvent<HTMLButtonElement>) {
+    let target: string | null = null;
+    if (event.key === "ArrowLeft") target = addDays(day, -1);
+    else if (event.key === "ArrowRight") target = addDays(day, 1);
+    else if (event.key === "ArrowUp") target = addDays(day, -7);
+    else if (event.key === "ArrowDown") target = addDays(day, 7);
+    else if (event.key === "PageUp") target = addMonths(day, -1);
+    else if (event.key === "PageDown") target = addMonths(day, 1);
+    else if (event.key === "Home") {
+      const weekday = (new Date(`${day}T00:00:00Z`).getUTCDay() + 6) % 7;
+      target = addDays(day, -weekday);
+    } else if (event.key === "End") {
+      const weekday = (new Date(`${day}T00:00:00Z`).getUTCDay() + 6) % 7;
+      target = addDays(day, 6 - weekday);
+    } else {
+      return;
+    }
 
-  const inRange = (d: string) =>
-    checkIn && previewEnd && d > checkIn && d < previewEnd;
+    event.preventDefault();
+    if (!target || target < minDate) target = minDate;
+
+    const p = dateParts(target);
+    // Keep the keyboard target in the first rendered month. This also works on
+    // mobile, where the second desktop month is present in the DOM but hidden.
+    if (p.y !== view.y || p.m !== view.m) setView({ y: p.y, m: p.m });
+    focusDay(target);
+  }
+
+  const previewEnd = !checkOut && hover && checkIn && hover > checkIn ? hover : checkOut;
+  const inRange = (day: string) => !!checkIn && !!previewEnd && day > checkIn && day < previewEnd;
 
   function shiftMonth(delta: number) {
     setView((v) => {
@@ -88,25 +176,44 @@ export function DateRangePicker({
       return { y: v.y + Math.floor(m / 12), m: ((m % 12) + 12) % 12 };
     });
   }
-  const canGoPrev = iso(view.y, view.m, 1) > minDate;
 
+  const canGoPrev = iso(view.y, view.m, 1) > minDate;
   const months = [view, { y: view.y + (view.m === 11 ? 1 : 0), m: (view.m + 1) % 12 }];
 
   return (
     <div ref={wrapRef} className="relative">
-      {/* Déclencheur : deux segments Arrivée / Départ */}
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-controls={pickerId}
+        onClick={() => (open ? closePicker(false) : openPicker())}
         className="flex w-full items-stretch overflow-hidden rounded-2xl border border-ink/15 bg-white text-left transition hover:border-turquoise"
       >
-        <Segment label={t("datePicker.checkIn")} value={checkIn ? fmtDate(checkIn) : t("datePicker.when")} active={open && !checkIn} icon />
+        <Segment
+          label={t("datePicker.checkIn")}
+          value={checkIn ? fmtDate(checkIn) : t("datePicker.when")}
+          active={open && !checkIn}
+          icon
+        />
         <span className="my-2 w-px bg-ink/10" />
-        <Segment label={t("datePicker.checkOut")} value={checkOut ? fmtDate(checkOut) : t("datePicker.when")} active={open && !!checkIn && !checkOut} />
+        <Segment
+          label={t("datePicker.checkOut")}
+          value={checkOut ? fmtDate(checkOut) : t("datePicker.when")}
+          active={open && !!checkIn && !checkOut}
+        />
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 z-50 mt-2 animate-scale-in rounded-2xl border border-ink/10 bg-white p-4 shadow-float sm:left-auto sm:right-auto sm:w-[640px] sm:p-5">
+        <div
+          id={pickerId}
+          ref={popoverRef}
+          role="dialog"
+          aria-modal="false"
+          aria-label={t("datePicker.selectDates")}
+          className="absolute left-0 right-0 z-50 mt-2 animate-scale-in rounded-2xl border border-ink/10 bg-white p-4 shadow-float sm:left-auto sm:right-auto sm:w-[640px] sm:p-5"
+        >
           <div className="mb-3 flex items-center justify-between">
             <button
               type="button"
@@ -115,38 +222,45 @@ export function DateRangePicker({
               aria-label={t("datePicker.prevMonth")}
               className="grid h-8 w-8 place-items-center rounded-full text-teal-deep transition hover:bg-turquoise/10 disabled:opacity-25"
             >
-              <IconChevron className="h-4 w-4 rotate-180" />
+              <IconChevron aria-hidden="true" className="h-4 w-4 rotate-180" />
             </button>
-            <p className="font-display text-base capitalize text-ink">{n > 0 ? t("datePicker.nights", { count: n }) : t("datePicker.selectDates")}</p>
+            <p className="font-display text-base capitalize text-ink">
+              {n > 0 ? t("datePicker.nights", { count: n }) : t("datePicker.selectDates")}
+            </p>
             <button
               type="button"
               onClick={() => shiftMonth(1)}
               aria-label={t("datePicker.nextMonth")}
               className="grid h-8 w-8 place-items-center rounded-full text-teal-deep transition hover:bg-turquoise/10"
             >
-              <IconChevron className="h-4 w-4" />
+              <IconChevron aria-hidden="true" className="h-4 w-4" />
             </button>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
             {months.map((mv, idx) => (
               <div key={`${mv.y}-${mv.m}`} className={idx === 1 ? "hidden sm:block" : ""}>
-                <p className="mb-2 text-center text-sm font-semibold capitalize text-ink">{monthLabel(mv.y, mv.m)}</p>
-                <div className="grid grid-cols-7 gap-y-1 text-center">
+                <p className="mb-2 text-center text-sm font-semibold capitalize text-ink">
+                  {monthLabel(mv.y, mv.m)}
+                </p>
+                <div role="grid" className="grid grid-cols-7 gap-y-1 text-center">
                   {weekdays.map((w) => (
-                    <span key={w} className="pb-1 text-[11px] font-medium uppercase text-ink/35">
+                    <span
+                      key={w}
+                      role="columnheader"
+                      aria-label={w}
+                      className="pb-1 text-[11px] font-medium uppercase text-ink/35"
+                    >
                       {w.charAt(0)}
                     </span>
                   ))}
                   {monthCells(mv.y, mv.m).map((day, i) => {
-                    if (!day) return <span key={`b${i}`} className="h-10" />;
+                    if (!day) return <span key={`b${i}`} role="gridcell" className="h-10" />;
                     const disabled = day < minDate;
                     const isStart = !!checkIn && day === checkIn;
                     const isEnd = !!previewEnd && day === previewEnd && day !== checkIn;
                     const between = inRange(day);
                     const edge = isStart || isEnd;
-                    // Bande de fond sur la CELLULE pleine largeur → plage continue.
-                    // Demi-dégradé aux extrémités (côté intérieur de la plage uniquement).
                     const band = between
                       ? "bg-turquoise/15"
                       : isStart && previewEnd
@@ -155,20 +269,31 @@ export function DateRangePicker({
                           ? "bg-[linear-gradient(to_right,#061a2d26_50%,transparent_50%)]"
                           : "";
                     return (
-                      <div key={day} onMouseEnter={() => setHover(day)} className="relative h-10">
+                      <div
+                        key={day}
+                        role="gridcell"
+                        aria-selected={edge || between}
+                        onMouseEnter={() => setHover(day)}
+                        className="relative h-10"
+                      >
                         {band && (
                           <span
                             className={`pointer-events-none absolute inset-x-0 top-1/2 h-9 -translate-y-1/2 ${band}`}
-                            aria-hidden
+                            aria-hidden="true"
                           />
                         )}
                         <button
+                          data-date={day}
                           type="button"
                           disabled={disabled}
+                          tabIndex={!disabled && day === focusedDay ? 0 : -1}
+                          onFocus={() => setFocusedDay(day)}
+                          onKeyDown={(e) => moveKeyboard(day, e)}
                           onClick={() => pick(day)}
                           aria-label={fmtDate(day)}
                           aria-pressed={isStart || day === checkOut}
-                          className={`absolute inset-0 m-auto grid h-9 w-9 place-items-center rounded-full text-sm transition ${
+                          aria-current={day === isoDay(0) ? "date" : undefined}
+                          className={`absolute inset-0 m-auto grid h-9 w-9 place-items-center rounded-full text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
                             disabled
                               ? "cursor-not-allowed text-ink/25 line-through"
                               : edge
@@ -192,12 +317,15 @@ export function DateRangePicker({
               onClick={() => {
                 onChange("", "");
                 setHover(null);
+                setFocusedDay(minDate);
+                setViewForDay(minDate);
+                focusDay(minDate);
               }}
               className="text-sm font-semibold text-ink/60 underline-offset-4 hover:text-ink hover:underline"
             >
               {t("datePicker.clear")}
             </button>
-            <button type="button" onClick={() => setOpen(false)} className="btn-primary px-5 py-2 text-sm">
+            <button type="button" onClick={() => closePicker(true)} className="btn-primary px-5 py-2 text-sm">
               {checkIn && checkOut ? t("datePicker.apply") : t("datePicker.close")}
             </button>
           </div>
@@ -220,10 +348,14 @@ function Segment({
 }) {
   return (
     <span className={`flex flex-1 items-center gap-2 px-4 py-3 transition ${active ? "bg-turquoise/5" : ""}`}>
-      {icon && <IconCalendar className="h-4 w-4 shrink-0 text-turquoise" />}
+      {icon && <IconCalendar aria-hidden="true" className="h-4 w-4 shrink-0 text-turquoise" />}
       <span className="min-w-0">
         <span className="block text-[11px] font-semibold uppercase tracking-wide text-teal-deep/60">{label}</span>
-        <span className={`block truncate text-sm ${value === t("datePicker.when") ? "text-ink/40" : "font-medium text-ink"}`}>
+        <span
+          className={`block truncate text-sm ${
+            value === t("datePicker.when") ? "text-ink/40" : "font-medium text-ink"
+          }`}
+        >
           {value}
         </span>
       </span>

@@ -45,38 +45,58 @@ export function Guest() {
     >
       <form onSubmit={submit} className="card space-y-5 p-5 sm:p-6" noValidate>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label={t("guest.firstName")} error={errors.firstName} required>
+          <Field htmlFor="guest-first-name" label={t("guest.firstName")} error={errors.firstName} required>
             <input
+              id="guest-first-name"
+              name="firstName"
               className="field-input"
               value={guest.firstName}
               autoComplete="given-name"
+              required
+              aria-invalid={!!errors.firstName || undefined}
+              aria-describedby={errors.firstName ? "guest-first-name-error" : undefined}
               onChange={(e) => setGuest({ firstName: e.target.value })}
             />
           </Field>
-          <Field label={t("guest.lastName")} error={errors.lastName} required>
+          <Field htmlFor="guest-last-name" label={t("guest.lastName")} error={errors.lastName} required>
             <input
+              id="guest-last-name"
+              name="lastName"
               className="field-input"
               value={guest.lastName}
               autoComplete="family-name"
+              required
+              aria-invalid={!!errors.lastName || undefined}
+              aria-describedby={errors.lastName ? "guest-last-name-error" : undefined}
               onChange={(e) => setGuest({ lastName: e.target.value })}
             />
           </Field>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label={t("guest.email")} error={errors.email} required>
+          <Field htmlFor="guest-email" label={t("guest.email")} error={errors.email} required>
             <input
+              id="guest-email"
+              name="email"
               type="email"
               className="field-input"
               value={guest.email}
               autoComplete="email"
+              required
+              aria-invalid={!!errors.email || undefined}
+              aria-describedby={errors.email ? "guest-email-error" : undefined}
               placeholder={t("guest.emailPlaceholder")}
               onChange={(e) => setGuest({ email: e.target.value })}
             />
           </Field>
-          <Field label={t("guest.phone")} error={errors.telephone} required>
+          <Field htmlFor="guest-phone" label={t("guest.phone")} error={errors.telephone} required>
             <Suspense fallback={<div className="field-input animate-pulse text-ink/30">…</div>}>
               <PhoneInput
+                id="guest-phone"
+                name="telephone"
+                required
+                invalid={!!errors.telephone}
+                ariaDescribedBy={errors.telephone ? "guest-phone-error" : undefined}
                 value={guest.telephone}
                 defaultCountry={guest.nationalityCode}
                 onChange={(val, valid) => {
@@ -88,8 +108,10 @@ export function Guest() {
           </Field>
         </div>
 
-        <Field label={t("guest.notes")}>
+        <Field htmlFor="guest-notes" label={t("guest.notes")}>
           <textarea
+            id="guest-notes"
+            name="notes"
             className="field-input min-h-[90px] resize-y"
             value={guest.notes}
             placeholder={t("guest.notesPlaceholder")}
@@ -118,11 +140,13 @@ export function Guest() {
 }
 
 function Field({
+  htmlFor,
   label,
   error,
   required,
   children,
 }: {
+  htmlFor: string;
   label: string;
   error?: string;
   required?: boolean;
@@ -130,11 +154,15 @@ function Field({
 }) {
   return (
     <div>
-      <label className="field-label">
+      <label htmlFor={htmlFor} className="field-label">
         {label} {required && <span className="text-creole">*</span>}
       </label>
       {children}
-      {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
+      {error && (
+        <p id={`${htmlFor}-error`} role="alert" className="mt-1 text-xs font-medium text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

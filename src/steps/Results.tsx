@@ -10,7 +10,7 @@ import { InlineUpsell } from "../components/UpsellCard";
 import { IconCalendar, IconUsers, IconChevron } from "../components/icons";
 import { t } from "../i18n";
 import { TopMatchPanel } from "../components/TopMatchPanel";
-import { parseRecommendationPreferences } from "../lib/topMatch";
+import { buildTopMatchCopy, parseRecommendationPreferences } from "../lib/topMatch";
 
 export function Results() {
   const {
@@ -153,6 +153,13 @@ export function Results() {
         : null,
     [topMatch, adults, children],
   );
+  const topMatchCopy = useMemo(
+    () =>
+      topMatch && topMatchPreferences
+        ? buildTopMatchCopy(topMatch.name, topMatchPreferences, checkIn)
+        : null,
+    [topMatch, topMatchPreferences, checkIn],
+  );
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
@@ -211,7 +218,7 @@ export function Results() {
 
       {!loading && !hotelError && !error && rooms.length > 0 && (
         <div className="mt-5 space-y-4">
-          {topMatch && topMatchPreferences && (
+          {topMatch && topMatchCopy && (
             <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.85fr)]">
               <div className="space-y-4">
                 <RoomCard
@@ -230,7 +237,7 @@ export function Results() {
                   />
                 )}
               </div>
-              <TopMatchPanel room={topMatch} preferences={topMatchPreferences} checkIn={checkIn} />
+              <TopMatchPanel copy={topMatchCopy} />
             </div>
           )}
           {rooms.slice(1, 3).map((room) => (
