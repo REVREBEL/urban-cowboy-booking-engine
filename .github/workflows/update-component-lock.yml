@@ -1,39 +1,34 @@
-name: Update component dependency lockfile
+name: Update component library lockfile
 
 on:
   push:
     branches:
-      - chatgpt/prepare-kept-components-main
-    paths:
-      - package.json
-      - .github/workflows/update-component-lock.yml
+      - chatgpt/merge-kept-component-library
 
 permissions:
   contents: write
 
 jobs:
-  update-lock:
+  lockfile:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: chatgpt/prepare-kept-components-main
-      - uses: actions/setup-node@v6
+          ref: chatgpt/merge-kept-component-library
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
       - run: npm install --package-lock-only --legacy-peer-deps
-      - name: Commit lockfile against latest branch head
+      - name: Commit lockfile
         run: |
-          cp package-lock.json /tmp/package-lock.json
-          git fetch origin chatgpt/prepare-kept-components-main
-          git reset --hard origin/chatgpt/prepare-kept-components-main
-          cp /tmp/package-lock.json package-lock.json
           if git diff --quiet package-lock.json; then
+            echo "Lockfile already current."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package-lock.json
-          git commit -m "Update lockfile for kept component dependencies"
-          git push origin HEAD:chatgpt/prepare-kept-components-main
+          git commit -m "Update lockfile for retained component library"
+          git push
