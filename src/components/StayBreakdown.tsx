@@ -30,53 +30,127 @@ export function StayBreakdown() {
   const isHotel = selectedRoom.property === "hotel";
   const taxe = selectedRate.citySejour ?? 0;
 
-  const quotedProducts = new Map(
-    (quote?.productOrderPrices ?? [])
-      .filter((p) => p.productId)
-      .map((p) => [p.productId as string, p.total] as const),
-  );
-  const quotedProductNet = selectedProducts.reduce(
-    (sum, product) => sum + (quotedProducts.get(product.id)?.net ?? 0),
+  // A final Mews quote is one pricing source. Never mix quote values with
+  // availability/client-calculated values. ProductOrderPrices may contain multiple
+  // rows for the same product (for example, age-category pricing), so aggregate them.
+  const quotedNetByProduct = new Map<string, number>();
+  let allQuotedProductNet = 0;
+  let quoteProductsHaveCompleteNet = true;
+
+  for (const row of quote?.productOrderPrices ?? []) {
+    if (!row.productId || row.total?.net == null) {
+      quoteProductsHaveCompleteNet = false;
+      continue;
+    }
+    allQuotedProductNet += row.total.net;
+    quotedNetByProduct.set(
+      row.productId,
+      (quotedNetByProduct.get(row.productId) ?? 0) + row.total.net,
+    );
+  }
+
+  const selectedQuotedNet = selectedProducts.reduce(
+    (sum, product) => sum + (quotedNetByProduct.get(product.id) ?? 0),
     0,
   );
+  const selectedProductsQuoted =
+    !!quote &&
+    selectedProducts.every((product) => quotedNetByProduct.has(product.id));
 
-  const accommodation =
-    quote && totalNet != null
-      ? Math.max(0, +(totalNet - quotedProductNet).toFixed(2))
-      : Math.max(0, roomTotal - taxe);
+  const canItemizeQuote =
+    !!quote &&
+    totalNet != null &&
+    quoteProductsHaveCompleteNet &&
+    selectedProductsQuoted;
+
+  const quotedAccommodationNet =
+    canItemizeQuote && totalNet != null
+      ? Math.max(0, +(totalNet - allQuotedProductNet).toFixed(2))
+      : null;
+
+  const otherQuotedChargesNet =
+    canItemizeQuote
+      ? Math.max(0, +(allQuotedProductNet - selectedQuotedNet).toFixed(2))
+      : 0;
+
+  const taxesAndOtherCharges =
+    canItemizeQuote
+      ? +(otherQuotedChargesNet + (totalTax ?? 0)).toFixed(2)
+      : null;
 
   return (
     <dl className="space-y-1.5 text-sm">
-      <Row label={t("breakdown.accommodation", { nights: nightsCount })} value={money(accommodation, currency)} />
-      {isHotel && (
+      {quote ? (
+        <>
+          {canItemizeQuote && quotedAccommodationNet != null ? (
+            <>
+              <Row
+                label={t("breakdown.accommodation", { nights: nightsCount })}
+                value={money(quotedAccommodationNet, currency)}
+              />
+              {selectedProducts.map((p) => (
+                <Row
+                  key={p.id}
+                  label={p.name}
+                  value={money(quotedNetByProduct.get(p.id) ?? 0, currency)}
+                />
+              ))}
+              {taxesAndOtherCharges != null && taxesAndOtherCharges > 0 && (
+                <Row
+                  label={t("breakdown.taxesAndOtherCharges")}
+                  value={money(taxesAndOtherCharges, currency)}
+                />
+              )}
+            </>
+          ) : (
+            <>
+              {totalNet != null && (
+                <Row label={t("breakdown.subtotal")} value={money(totalNet, currency)} />
+              )}
+              {totalTax != null && totalTax > 0 && (
+                <Row label={t("breakdown.taxes")} value={money(totalTax, currency)} />
+              )}
+            </>
+          )}
+
+          <div className="mt-1.5 border-t border-ink/10 pt-2.5">
+            <Row label={t("breakdown.total")} value={money(grandTotal, currency)} strong />
+          </div>
+        </>
+      ) : (
         <>
           <Row
-            icon={<IconCroissant className="h-4 w-4" />}
-            label={t("breakdown.breakfast", { count: nightsCount })}
-            note={t("breakdown.included")}
+            label={t("breakdown.accommodation", { nights: nightsCount })}
+            value={money(Math.max(0, roomTotal - taxe), currency)}
           />
-          <Row
-            icon={<IconCloche className="h-4 w-4" />}
-            label={t("breakdown.dinner", { count: nightsCount })}
-            note={t("breakdown.included")}
-          />
+          {isHotel && (
+            <>
+              <Row
+                icon={<IconCroissant className="h-4 w-4" />}
+                label={t("breakdown.breakfast", { count: nightsCount })}
+                note={t("breakdown.included")}
+              />
+              <Row
+                icon={<IconCloche className="h-4 w-4" />}
+                label={t("breakdown.dinner", { count: nightsCount })}
+                note={t("breakdown.included")}
+              />
+            </>
+          )}
+          {selectedProducts.map((p) => (
+            <Row
+              key={p.id}
+              label={p.name}
+              value={money(productLineTotal(p, nightsCount, guestsCount), p.currency)}
+            />
+          ))}
+          {taxe > 0 && <Row label={t("breakdown.cityTax")} value={money(taxe, currency)} />}
+          <div className="mt-1.5 border-t border-ink/10 pt-2.5">
+            <Row label={t("breakdown.total")} value={money(grandTotal, currency)} strong />
+          </div>
         </>
       )}
-      {selectedProducts.map((p) => {
-        const quoted = quotedProducts.get(p.id);
-        const value =
-          quoted?.net ??
-          productLineTotal(p, nightsCount, guestsCount);
-        return <Row key={p.id} label={p.name} value={money(value, currency)} />;
-      })}
-      {quote
-        ? totalTax != null && totalTax > 0 && (
-            <Row label={t("breakdown.taxes")} value={money(totalTax, currency)} />
-          )
-        : taxe > 0 && <Row label={t("breakdown.cityTax")} value={money(taxe, currency)} />}
-      <div className="mt-1.5 border-t border-ink/10 pt-2.5">
-        <Row label={t("breakdown.total")} value={money(grandTotal, currency)} strong />
-      </div>
+
       {amountDueNow != null && (
         <div className="mt-1.5 border-t border-ink/10 pt-2.5">
           <Row label={t("breakdown.dueNow")} value={money(amountDueNow, currency)} strong />
@@ -88,7 +162,6 @@ export function StayBreakdown() {
     </dl>
   );
 }
-
 function Row({
   label,
   value,
