@@ -238,9 +238,13 @@ function sourceUrl(path: string) {
 
 function EvaluationApp() {
   const urlSelected = new URLSearchParams(window.location.search).get("component");
-  const initial = ALL_PREVIEWS.find((item) => item.id === urlSelected)?.id ?? ALL_PREVIEWS[0].id;
+  const initial =
+    ALL_PREVIEWS.find((item) => item.id === urlSelected)?.id ??
+    ALL_PREVIEWS.find((item) => item.group === "Booking")?.id ??
+    ALL_PREVIEWS[0].id;
   const [selectedId, setSelectedId] = useState(initial);
   const [query, setQuery] = useState("");
+  const [groupFilter, setGroupFilter] = useState<"All" | PreviewItem["group"]>("Booking");
   const [inventoryOpen, setInventoryOpen] = useState(false);
   const [decisions, setDecisions] = useState<Record<string, Decision>>(() => {
     try {
@@ -259,8 +263,10 @@ function EvaluationApp() {
     [selected.id, selected.load],
   );
 
-  const visible = ALL_PREVIEWS.filter((item) =>
-    `${item.name} ${item.group} ${item.path}`.toLowerCase().includes(query.toLowerCase()),
+  const visible = ALL_PREVIEWS.filter(
+    (item) =>
+      (groupFilter === "All" || item.group === groupFilter) &&
+      `${item.name} ${item.group} ${item.path}`.toLowerCase().includes(query.toLowerCase()),
   );
 
   useEffect(() => {
@@ -316,8 +322,24 @@ function EvaluationApp() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Filter components…"
-              className="mb-4 w-full rounded-lg border border-[#4e332d]/20 bg-white/60 px-3 py-2 text-sm outline-none focus:border-[#9a5636]"
+              className="mb-3 w-full rounded-lg border border-[#4e332d]/20 bg-white/60 px-3 py-2 text-sm outline-none focus:border-[#9a5636]"
             />
+            <div className="mb-4 flex flex-wrap gap-1">
+              {(["All", "Booking", "UI", "FindYourStay", "States"] as const).map((group) => (
+                <button
+                  key={group}
+                  type="button"
+                  onClick={() => setGroupFilter(group)}
+                  className={`rounded-full border px-2.5 py-1 text-[9px] font-semibold uppercase tracking-wider ${
+                    groupFilter === group
+                      ? "border-[#4e332d] bg-[#4e332d] text-[#ebe8e0]"
+                      : "border-[#4e332d]/20 bg-white/40"
+                  }`}
+                >
+                  {group === "FindYourStay" ? "Find Stay" : group}
+                </button>
+              ))}
+            </div>
             <div className="space-y-1">
               {visible.map((item) => {
                 const active = item.id === selectedId;
@@ -488,7 +510,7 @@ function Inventory({ decisions }: { decisions: Record<string, Decision> }) {
         "Booking",
         "src/components/Booking",
         BOOKING_FILES,
-        "All ten Booking components now have faithful visual proxies in the lab. They preserve the structure and styling intent of the imported source while avoiding fake production wiring to the missing support library.",
+        "All ten Booking components now have source-guided visual proxies in the lab. They preserve the layout and styling intent visible in the imported source while avoiding fake production wiring to the missing support library.",
         "preview",
       )}
 
