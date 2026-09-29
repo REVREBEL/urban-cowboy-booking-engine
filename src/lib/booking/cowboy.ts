@@ -1,9 +1,6 @@
 import type { FeatureKind, PreferenceId } from "./rooms";
 
-const RAW =
-  "https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/assets";
-
-const asset = (path: string) => `${RAW}/${path}`;
+const asset = (path: string) => `/assets/${path}`;
 
 export const BRAND = {
   wordmarkForest: asset("logo-wordmark.svg"),
