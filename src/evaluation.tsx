@@ -1,7 +1,9 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { BookingProxy, UIProxy } from "./evaluation/proxyPreviews";
+import { UIProxy } from "./evaluation/proxyPreviews";
+import { BookingSourcePreview } from "./evaluation/BookingSourcePreview";
 import "./index.css";
+import "./evaluation/source-render.css";
 
 type Decision = "keep" | "maybe" | "drop";
 type PreviewItem = {
@@ -380,7 +382,7 @@ function EvaluationApp() {
                     {selected.group}
                   </p>
                   <span className="rounded-full bg-[#4e332d]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider">
-                    {selected.proxy ? "visual proxy" : "source render"}
+                    {selected.proxy === "ui" ? "visual proxy" : "source render"}
                   </span>
                 </div>
                 <h2 className="mt-1 text-2xl font-semibold">{selected.name}</h2>
@@ -413,7 +415,7 @@ function EvaluationApp() {
 
             <div className="min-h-[720px] overflow-auto rounded-xl border border-[#4e332d]/15 bg-[#faf9f9] shadow-sm">
               {selected.proxy === "booking" ? (
-                <BookingProxy component={selected.path.split("/").pop() ?? ""} />
+                <BookingSourcePreview component={selected.path.split("/").pop() ?? ""} />
               ) : selected.proxy === "ui" ? (
                 <UIProxy component={selected.path.split("/").pop() ?? ""} />
               ) : Preview ? (
@@ -510,7 +512,7 @@ function Inventory({ decisions }: { decisions: Record<string, Decision> }) {
         "Booking",
         "src/components/Booking",
         BOOKING_FILES,
-        "All ten Booking components now have source-guided visual proxies in the lab. They preserve the layout and styling intent visible in the imported source while avoiding fake production wiring to the missing support library.",
+        "All ten Booking components now render from the original component source. The lab supplies only evaluation shims for the missing router/icons plus the Cowboy design assets recovered from the full source project.",
         "preview",
       )}
 
