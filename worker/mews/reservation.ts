@@ -123,7 +123,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   const res = await mewsJson<any>(env, "reservationGroups/create", {
     // Selected property configuration; default to the primary configuration.
-    ConfigurationId: propertyByKey(b.property)?.configId ?? env.MEWS_CONFIG_ID,
+    ConfigurationId: propertyByKey(env, b.property)?.configId ?? env.MEWS_CONFIG_ID,
     HotelId: env.MEWS_HOTEL_ID,
     // Fixe la langue de la page de paiement hébergée + des e-mails de confirmation Mews.
     LanguageCode,

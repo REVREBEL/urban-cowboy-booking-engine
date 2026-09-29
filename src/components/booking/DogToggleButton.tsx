@@ -26,7 +26,7 @@ export function DogToggleButton({ selected, onToggle }: Props) {
           alt=""
           aria-hidden="true"
           className={cn(
-            "size-24 rotate-180 object-contain transition-opacity duration-200 md:size-28",
+            "size-24 object-contain transition-opacity duration-200 md:size-28",
             selected ? "opacity-100" : "opacity-30",
           )}
         />

@@ -3,12 +3,12 @@ import {
   PREFERENCE_ICON_SELECTED,
   PREFERENCE_LABEL,
   PREFERENCE_LABEL_SELECTED,
-  type PreferenceArtworkId,
 } from "@/lib/booking/cowboy";
+import type { PreferenceId } from "@/lib/booking/rooms";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  id: PreferenceArtworkId;
+  id: PreferenceId;
   label: string;
   description: string;
   selected: boolean;
