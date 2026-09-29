@@ -69,6 +69,25 @@ test("dog requested is a hard filter and unknown dog policy is not treated as el
   );
 });
 
+test("dog eligibility still applies when no interest ranking is active", () => {
+  const rooms = [
+    room("mountain-view-haus-2-bedroom"),
+    room("forest-house-queen"),
+    room("cabin"),
+    room("chalet"),
+  ];
+  const ranked = rankRecommendedRooms(
+    rooms,
+    null,
+    { children: 0, infants: 0, dogRequested: true },
+  );
+
+  assert.deepEqual(
+    ranked.map((r) => r.merchandising?.key),
+    ["cabin", "chalet"],
+  );
+});
+
 test("children remove adults-only Alpine and Walden inventory regardless of party label", () => {
   const rooms = [
     room("alpine-bathing-suite"),
