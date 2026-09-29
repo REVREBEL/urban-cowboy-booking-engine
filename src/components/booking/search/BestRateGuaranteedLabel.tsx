@@ -40,7 +40,7 @@ export const SheriffBadgeIcon: React.FC<{
 /**
  * BestRateGuaranteedLabel Component
  * Strictly conforms to BestRateGuaranteedLabel.css and BestRateGuaranteedLabel.pdf:
- * - Dimensions: 179px width x 17px height, gap 8px
+ * - Minimum dimensions: 179px width x 17px height, gap 8px
  * - Icon container: 17px x 17px, icon: 15px x 15px, background #4E332D
  * - Text container: 154px x 16px, 'Brothers OT', 13px / 16px line-height, uppercase, #4E332D
  */
@@ -62,7 +62,7 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       onFocus={() => setShowTooltip(true)}
       onBlur={() => setShowTooltip(false)}
       tabIndex={0}
-      className={`box-border relative flex flex-row justify-center items-center p-0 gap-[8px] w-[179px] h-[17px] select-none cursor-default group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4E332D] rounded-[2px] ${className}`}
+      className={`box-border relative inline-flex w-max min-w-[179px] flex-row items-center justify-center gap-[8px] p-0 h-[17px] select-none cursor-default group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4E332D] rounded-[2px] ${className}`}
     >
       {/* 1. best-rate-guaranteed-icon (17px x 17px, padding: 1px, gap: 10px) */}
       <div className="box-border flex flex-row justify-center items-center p-[1px] gap-[10px] w-[17px] h-[17px] shrink-0">
@@ -75,11 +75,11 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
         )}
       </div>
 
-      {/* 2. best-rate-guaranteed text wrapper (154px x 16px) */}
-      <div className="flex flex-col justify-center items-center p-0 w-[154px] h-[16px] shrink-0">
+      {/* 2. Text keeps the original 154px minimum but may grow to fit the full label. */}
+      <div className="flex h-[16px] min-w-[154px] w-max shrink-0 flex-col items-center justify-center p-0">
         <span
           style={{ color }}
-          className="w-[154px] h-[16px] font-brothers text-[13px] leading-[16px] font-normal uppercase flex items-center tracking-[0.5px] truncate"
+          className="flex h-[16px] w-max min-w-[154px] items-center whitespace-nowrap font-brothers text-[13px] font-normal uppercase leading-[16px] tracking-[0.5px]"
         >
           {text}
         </span>
@@ -148,9 +148,9 @@ export default function App() {
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center justify-between w-full max-w-[320px] px-2">
             <span className="text-[11px] font-brothers uppercase tracking-wider text-[#4E332D]">
-              Figma Component (179px × 17px)
+              Figma Component (min 179px × 17px)
             </span>
-            <span className="text-[11px] text-gray-500 font-mono">w:179 h:17</span>
+            <span className="text-[11px] text-gray-500 font-mono">min-w:179 h:17</span>
           </div>
 
           <div className="p-8 bg-[#FAF9F9] border border-dashed border-[#9747FF] rounded-lg shadow-sm flex items-center justify-center">
