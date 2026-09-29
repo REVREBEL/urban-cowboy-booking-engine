@@ -295,7 +295,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   // Section button style
   const sectionBaseStyle =
-    'box-border flex flex-col justify-center items-start px-[24px] py-0 gap-[2px] h-[54px] bg-[#FAF9F9] transition-colors rounded-[9999px] hover:bg-[#f3f2ee] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#343833] cursor-pointer text-left';
+    'box-border flex flex-col justify-center items-start min-w-0 px-[24px] py-0 gap-[2px] h-[54px] bg-[#FAF9F9] transition-colors rounded-[9999px] hover:bg-[#f3f2ee] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#343833] cursor-pointer text-left';
 
   return (
     <div
@@ -378,8 +378,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         </div>
       </button>
 
-      {/* 4. Button Slot (Dedicated 48px x 48px Component Slot) */}
-      <div className="box-border flex flex-row items-center justify-center p-0 w-[48px] h-[48px] shrink-0">
+      {/* 4. Button Slot — expands to the custom button width while remaining inside the 692px bar */}
+      <div
+        className={`box-border flex flex-row items-center justify-center p-0 shrink-0 ${
+          buttonSlot ? 'w-fit h-[56px]' : 'w-[48px] h-[48px]'
+        }`}
+      >
         {buttonSlot ? (
           buttonSlot
         ) : (
