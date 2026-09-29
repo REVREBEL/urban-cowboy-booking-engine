@@ -4,7 +4,7 @@ const locStr = (v: unknown): string | null =>
   typeof v === "string" ? v : v && typeof v === "object" ? ((v as any)["fr-FR"] ?? (v as any)["en-GB"] ?? Object.values(v as any)[0] ?? null) : null;
 
 // configuration/get — native Mews catalog for configured properties.
-// Culture Créole, Villas) en UN seul appel. On cure en HotelConfig léger (EUR-only) :
+// Culture Créole, Villas) en UN seul appel. On cure en HotelConfig léger dans la devise par défaut :
 //  • RoomCategories de TOUS les hébergements, chacune taguée `Property` (clé),
 //  • Products fusionnés (dédup par Id), ImageBaseUrl, CGV, liste des hébergements.
 // Caché 5 min (public) — la config bouge rarement. Aucun input front.
@@ -19,6 +19,12 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
   const d = res.data;
   const configs: any[] = Array.isArray(d.Configurations) ? d.Configurations : [];
   const primary = configs.find((c) => c.Id === env.MEWS_CONFIG_ID)?.Enterprise ?? configs[0]?.Enterprise ?? {};
+  const defaultCurrencyCode =
+    // Booking Engine configuration currency wins when explicitly set; otherwise use
+    // the enterprise default currency.
+    (typeof d.CurrencyCode === "string" && d.CurrencyCode) ||
+    (typeof primary.DefaultCurrencyCode === "string" && primary.DefaultCurrencyCode) ||
+    "EUR";
 
   const RoomCategories: any[] = [];
   const productMap = new Map<string, any>();
@@ -39,6 +45,15 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
     }
     for (const p of ent.Products ?? []) {
       if (!productMap.has(p.Id)) {
+        const legacyPrice =
+          typeof p.Prices?.[defaultCurrencyCode] === "number"
+            ? p.Prices[defaultCurrencyCode]
+            : null;
+        const absolutePrice =
+          p.Pricing?.Discriminator === "Absolute"
+            ? p.Pricing?.Value?.[defaultCurrencyCode]?.GrossValue
+            : null;
+
         productMap.set(p.Id, {
           Id: p.Id,
           Name: p.Name,
@@ -46,7 +61,14 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
           CategoryId: p.CategoryId ?? null,
           ImageId: p.ImageId ?? null,
           AlwaysIncluded: !!p.AlwaysIncluded,
-          Prices: { EUR: p.Prices?.EUR ?? null }, // cure EUR-only (réponse brute = ~80 devises)
+          Prices: {
+            // Current Mews configuration/get exposes absolute product prices under
+            // Pricing.Value. Retain the legacy Prices fallback for older fixtures.
+            [defaultCurrencyCode]:
+              typeof absolutePrice === "number"
+                ? absolutePrice
+                : legacyPrice,
+          },
           ChargingMode: p.ChargingMode ?? "",
           Property: key, // hébergement de la config d'origine → filtrage des extras côté front
         });
@@ -60,7 +82,7 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
       Id: primary.Id ?? env.MEWS_HOTEL_ID,
       Name: primary.Name ?? {},
       Description: primary.Description ?? null,
-      DefaultCurrencyCode: d.CurrencyCode ?? "EUR",
+      DefaultCurrencyCode: defaultCurrencyCode,
       RoomCategories,
       Products: [...productMap.values()],
       PaymentGateway: null, // non fourni par configuration/get ; inutile pour la Voie A

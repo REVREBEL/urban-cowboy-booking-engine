@@ -187,11 +187,157 @@ export const clampInt = (v: unknown, min: number, max: number, dflt: number): nu
   return Math.max(min, Math.min(max, Math.trunc(n)));
 };
 
-/** Extrait { gross, net } EUR d'un objet Amount Mews { EUR: { GrossValue, NetValue } }. */
-export const eurAmount = (
-  amount: unknown,
-): { currency: "EUR"; gross: number | null; net: number | null } | null => {
-  const e = (amount as { EUR?: { GrossValue?: number; NetValue?: number } } | null)?.EUR;
-  if (!e) return null;
-  return { currency: "EUR", gross: e.GrossValue ?? null, net: e.NetValue ?? null };
+type RawTaxValue = { TaxRateCode?: string | null; Value?: number | null };
+type RawAmount = {
+  Currency?: string;
+  GrossValue?: number | null;
+  NetValue?: number | null;
+  TaxValues?: RawTaxValue[];
+  Breakdown?: { Items?: { TaxRateCode?: string | null; NetValue?: number | null; TaxValue?: number | null }[] };
 };
+
+export interface NormalizedAmount {
+  currency: string;
+  gross: number | null;
+  net: number | null;
+  taxTotal: number | null;
+  taxes: { taxRateCode: string | null; value: number }[];
+}
+
+/** Normalize a single Mews Amount object. */
+export const normalizeAmount = (amount: unknown, fallbackCurrency = "EUR"): NormalizedAmount | null => {
+  if (!amount || typeof amount !== "object") return null;
+  const a = amount as RawAmount;
+  if (a.GrossValue == null && a.NetValue == null && !a.Currency) return null;
+
+  const currency = typeof a.Currency === "string" && a.Currency ? a.Currency : fallbackCurrency;
+  // reservations/price now documents Breakdown.Items as the primary tax source;
+  // TaxValues remains as a backward-compatible fallback on older responses.
+  const breakdownTaxes = Array.isArray(a.Breakdown?.Items)
+    ? a.Breakdown.Items
+        .filter((x) => typeof x?.TaxValue === "number" && x.TaxValue !== 0)
+        .map((x) => ({ taxRateCode: x.TaxRateCode ?? null, value: x.TaxValue as number }))
+    : [];
+  const legacyTaxes = Array.isArray(a.TaxValues)
+    ? a.TaxValues
+        .filter((x) => typeof x?.Value === "number")
+        .map((x) => ({ taxRateCode: x.TaxRateCode ?? null, value: x.Value as number }))
+    : [];
+  const taxes = breakdownTaxes.length ? breakdownTaxes : legacyTaxes;
+
+  const taxTotal =
+    taxes.length > 0
+      ? +taxes.reduce((sum, x) => sum + x.value, 0).toFixed(2)
+      : typeof a.GrossValue === "number" && typeof a.NetValue === "number"
+        ? +(a.GrossValue - a.NetValue).toFixed(2)
+        : null;
+
+  return {
+    currency,
+    gross: typeof a.GrossValue === "number" ? a.GrossValue : null,
+    net: typeof a.NetValue === "number" ? a.NetValue : null,
+    taxTotal,
+    taxes,
+  };
+};
+
+export interface NormalizedReservationQuote {
+  total: NormalizedAmount | null;
+  amountToChargeOnConfirmation: NormalizedAmount | null;
+  productOrderPrices: {
+    productId: string | null;
+    total: NormalizedAmount | null;
+  }[];
+}
+
+function addNormalizedAmounts(
+  a: NormalizedAmount | null,
+  b: NormalizedAmount | null,
+): NormalizedAmount | null {
+  if (!a) return b;
+  if (!b) return a;
+
+  const taxByCode = new Map<string | null, number>();
+  for (const tax of [...a.taxes, ...b.taxes]) {
+    taxByCode.set(tax.taxRateCode, (taxByCode.get(tax.taxRateCode) ?? 0) + tax.value);
+  }
+
+  return {
+    currency: a.currency,
+    gross: a.gross != null && b.gross != null ? +(a.gross + b.gross).toFixed(2) : null,
+    net: a.net != null && b.net != null ? +(a.net + b.net).toFixed(2) : null,
+    taxTotal:
+      a.taxTotal != null && b.taxTotal != null
+        ? +(a.taxTotal + b.taxTotal).toFixed(2)
+        : null,
+    taxes: [...taxByCode].map(([taxRateCode, value]) => ({
+      taxRateCode,
+      value: +value.toFixed(2),
+    })),
+  };
+}
+
+/** Shape the documented Booking Engine reservations/price response. */
+export function shapeReservationPriceResponse(
+  data: unknown,
+  currencyCode: string,
+): NormalizedReservationQuote | null {
+  const root = data as { ReservationPrice?: unknown[] } | null;
+  const quote =
+    root && Array.isArray(root.ReservationPrice)
+      ? (root.ReservationPrice[0] as Record<string, any> | undefined)
+      : undefined;
+  if (!quote) return null;
+
+  const total = normalizeAmount(quote.TotalAmount, currencyCode);
+  if (total?.gross == null) return null;
+
+  const grouped = new Map<string, NormalizedAmount | null>();
+  const withoutId: NormalizedReservationQuote["productOrderPrices"] = [];
+
+  for (const row of Array.isArray(quote.ProductOrderPrices) ? quote.ProductOrderPrices : []) {
+    const amount = normalizeAmount(row?.TotalAmount, currencyCode);
+    const productId = typeof row?.ProductId === "string" ? row.ProductId : null;
+    if (!productId) {
+      withoutId.push({ productId: null, total: amount });
+      continue;
+    }
+    grouped.set(productId, addNormalizedAmounts(grouped.get(productId) ?? null, amount));
+  }
+
+  return {
+    total,
+    amountToChargeOnConfirmation: normalizeAmount(
+      quote.AmountToChargeOnConfirmation,
+      currencyCode,
+    ),
+    productOrderPrices: [
+      ...[...grouped].map(([productId, productTotal]) => ({
+        productId,
+        total: productTotal,
+      })),
+      ...withoutId,
+    ],
+  };
+}
+
+/** Normalize a Mews multi-currency amount map, preferring the requested ISO code. */
+export const currencyAmount = (amount: unknown, preferredCurrency = "EUR"): NormalizedAmount | null => {
+  if (!amount || typeof amount !== "object") return null;
+  const map = amount as Record<string, unknown>;
+  const direct = map[preferredCurrency];
+  if (direct && typeof direct === "object") return normalizeAmount(direct, preferredCurrency);
+
+  for (const [currency, value] of Object.entries(map)) {
+    const normalized = normalizeAmount(value, currency);
+    if (normalized) return normalized;
+  }
+  return null;
+};
+
+/** Normalize either a single Amount object or a multi-currency amount map. */
+export const anyAmount = (amount: unknown, preferredCurrency = "EUR"): NormalizedAmount | null =>
+  normalizeAmount(amount, preferredCurrency) ?? currencyAmount(amount, preferredCurrency);
+
+/** Backward-compatible helper while legacy worker code is migrated. */
+export const eurAmount = (amount: unknown): NormalizedAmount | null => anyAmount(amount, "EUR");

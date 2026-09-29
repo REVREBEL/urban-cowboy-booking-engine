@@ -1,4 +1,4 @@
-import { mewsJson, readJson, bad, json, occupancyData, isIsoDate, clampInt, eurAmount, type Env } from "./_lib";
+import { mewsJson, readJson, bad, json, occupancyData, isIsoDate, clampInt, currencyAmount, type Env } from "./_lib";
 
 interface Body {
   startUtc?: string;
@@ -8,10 +8,11 @@ interface Body {
   children?: number;
   productIds?: string[];
   voucherCode?: string;
+  currencyCode?: string;
 }
 
 // reservations/getPricing — devis exact pour un type précis selon l'occupation.
-// La réponse Mews brute contient ~80 devises (≈ 380 Ko) → on CURE en EUR-only.
+// La réponse Mews brute peut contenir de nombreuses devises → on ne renvoie que la devise demandée.
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const b = await readJson<Body>(request);
   if (!isIsoDate(b.startUtc) || !isIsoDate(b.endUtc)) return bad("missing_or_invalid_dates");
@@ -19,6 +20,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   const occupancy = occupancyData(env, clampInt(b.adults, 1, 30, 2), clampInt(b.children, 0, 20, 0));
   const productIds = Array.isArray(b.productIds) ? b.productIds.filter((x) => typeof x === "string") : undefined;
+  const currencyCode =
+    typeof b.currencyCode === "string" && /^[A-Z]{3}$/.test(b.currencyCode)
+      ? b.currencyCode
+      : "EUR";
 
   const res = await mewsJson<{ OccupancyPrices?: unknown[] }>(env, "reservations/getPricing", {
     HotelId: env.MEWS_HOTEL_ID,
@@ -36,9 +41,12 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     occupancy: op.OccupancyData ?? null,
     pricing: (op.Pricing ?? []).map((p: any) => ({
       rateId: p.RateId,
-      total: eurAmount(p.Price?.TotalAmount),
-      perNight: eurAmount(p.Price?.AverageAmountPerNight),
-      max: p.MaxPrice ? eurAmount(p.MaxPrice.TotalAmount) : null,
+      total: currencyAmount(p.Price?.TotalAmount, currencyCode),
+      perNight: currencyAmount(
+        p.Price?.AverageAmountPerTimeUnit ?? p.Price?.AverageAmountPerNight,
+        currencyCode,
+      ),
+      max: p.MaxPrice ? currencyAmount(p.MaxPrice.TotalAmount, currencyCode) : null,
     })),
   }));
   return json({ occupancyPrices });

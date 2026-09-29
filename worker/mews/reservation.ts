@@ -1,4 +1,4 @@
-import { mewsJson, readJson, bad, json, isIsoDate, clampInt, eurAmount, propertyByKey, mewsLang, type Env } from "./_lib";
+import { mewsJson, readJson, bad, json, isIsoDate, clampInt, anyAmount, propertyByKey, mewsLang, type Env } from "./_lib";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -76,7 +76,7 @@ function cleanCustomer(c: InCustomer | undefined) {
 
 // reservationGroups/create — ÉCRIT dans Mews. On reconstruit entièrement le payload
 // à partir de champs whitelistés ; jamais de forward du body brut. Renvoie au front
-// une réponse curée (Id, PaymentRequestId, numéros de confirmation, total EUR).
+// une réponse curée (Id, PaymentRequestId, numéros de confirmation, montants dans leur devise Mews).
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const b = await readJson<Body>(request);
 
@@ -162,7 +162,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     paymentRequestId: d.PaymentRequestId ?? null,
     paymentUrl,
     creditCardAvailable: d.CreditCardAvailable ?? null,
-    totalAmount: eurAmount(d.TotalAmount),
+    totalAmount: anyAmount(d.TotalAmount),
     reservations: (d.Reservations ?? []).map((r: any) => ({
       id: r.Id,
       number: r.Number,
@@ -173,8 +173,21 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       adultCount: r.AdultCount,
       childCount: r.ChildCount,
       amount:
-        eurAmount(r.Amount) ??
-        (typeof r.Cost?.EUR === "number" ? { currency: "EUR", gross: r.Cost.EUR, net: null } : null),
+        anyAmount(r.Amount) ??
+        (r.Cost && typeof r.Cost === "object"
+          ? (() => {
+              const first = Object.entries(r.Cost as Record<string, unknown>).find(([, value]) => typeof value === "number");
+              return first
+                ? {
+                    currency: first[0],
+                    gross: first[1] as number,
+                    net: null,
+                    taxTotal: null,
+                    taxes: [],
+                  }
+                : null;
+            })()
+          : null),
     })),
   });
 };

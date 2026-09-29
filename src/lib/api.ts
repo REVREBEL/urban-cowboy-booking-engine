@@ -8,6 +8,7 @@ import type {
   AvailabilityResponse,
   HotelConfig,
   PricingResult,
+  ReservationQuoteResult,
   ReservationCreateResult,
   ReservationStatusResult,
 } from "../types/mews";
@@ -81,6 +82,7 @@ export interface SearchParams {
   infants: number; // bébés en berceau — gratuits + non décomptés
   voucherCode?: string;
   properties?: string[]; // hébergements cochés (hotel/creole/villas)
+  currencyCode?: string;
 }
 
 export interface GuestPayload {
@@ -124,10 +126,11 @@ export const api = {
         languageCode: mewsLang(),
         ...(p.voucherCode ? { voucherCode: p.voucherCode } : {}),
         ...(p.properties?.length ? { properties: p.properties } : {}),
+        ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
       },
       {
         label: "Disponibilités & prix",
-        why: "Le cœur du moteur : interroge Mews pour les chambres disponibles et leurs tarifs en EUR, pour vos dates et occupants. Le front les groupe par type de chambre (prix « à partir de »).",
+        why: "Le cœur du moteur : interroge Mews pour les chambres disponibles et leurs tarifs dans la devise de l'établissement, pour vos dates et occupants. Le front les groupe par type de chambre (prix « à partir de »).",
       },
     ),
 
@@ -139,6 +142,7 @@ export const api = {
     children: number;
     productIds?: string[];
     voucherCode?: string;
+    currencyCode?: string;
   }) =>
     post<PricingResult>(
       "pricing",
@@ -151,10 +155,45 @@ export const api = {
         languageCode: mewsLang(),
         ...(p.productIds?.length ? { productIds: p.productIds } : {}),
         ...(p.voucherCode ? { voucherCode: p.voucherCode } : {}),
+        ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
       },
       {
         label: "Prix exact du type de chambre",
-        why: "À l'ouverture du panneau détail : confirme le prix précis de ce type de chambre selon l'occupation choisie. La réponse Mews (~80 devises) est curée en EUR par le serveur.",
+        why: "À l'ouverture du panneau détail : confirme le prix précis de ce type de chambre selon l'occupation choisie, dans la devise sélectionnée.",
+      },
+    ),
+
+  reservationPrice: (p: {
+    checkIn: string;
+    checkOut: string;
+    roomCategoryId: string;
+    rateId: string;
+    adults: number;
+    children: number;
+    infants: number;
+    property?: string | null;
+    productIds?: string[];
+    voucherCode?: string;
+    currencyCode?: string;
+  }) =>
+    post<ReservationQuoteResult>(
+      "reservation-price",
+      {
+        startUtc: toUtc(p.checkIn),
+        endUtc: toUtc(p.checkOut),
+        roomCategoryId: p.roomCategoryId,
+        rateId: p.rateId,
+        adults: p.adults,
+        children: p.children,
+        infants: p.infants,
+        ...(p.property ? { property: p.property } : {}),
+        ...(p.productIds?.length ? { productIds: p.productIds } : {}),
+        ...(p.voucherCode ? { voucherCode: p.voucherCode } : {}),
+        ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
+      },
+      {
+        label: "Devis final de la réservation",
+        why: "Calcule le total exact du tarif sélectionné et le montant que Mews indique comme dû à la confirmation, avec les extras choisis.",
       },
     ),
 

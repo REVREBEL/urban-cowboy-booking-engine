@@ -13,7 +13,14 @@ import { getLang } from "../lib/lang";
 import { getUtms } from "../lib/utm";
 import { nights as countNights } from "../lib/format";
 import { buildRooms, shapeProducts, cheapestDrinkProduct, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
-import type { HotelConfig, ReservationCreateResult, ShapedProduct, ShapedRate, ShapedRoom } from "../types/mews";
+import type {
+  HotelConfig,
+  ReservationCreateResult,
+  ReservationQuoteResult,
+  ShapedProduct,
+  ShapedRate,
+  ShapedRoom,
+} from "../types/mews";
 
 export type Step = "dates" | "results" | "guest" | "upgrade" | "extras" | "payment" | "confirmation";
 export const STEP_ORDER: Step[] = ["dates", "results", "guest", "upgrade", "extras", "payment", "confirmation"];
@@ -170,6 +177,10 @@ interface BookingContextValue extends BookingState {
   availableRooms: ShapedRoom[]; // liste des résultats (pour le surclassement)
   guest: Guest;
   created: ReservationCreateResult | null;
+  quote: ReservationQuoteResult | null;
+  quoteLoading: boolean;
+  quoteError: boolean;
+  refreshQuote: () => void;
   // dérivés
   nightsCount: number;
   guestsCount: number;
@@ -177,6 +188,11 @@ interface BookingContextValue extends BookingState {
   productsTotal: number;
   roomTotal: number;
   grandTotal: number;
+  currency: string;
+  totalNet: number | null;
+  totalTax: number | null;
+  amountDueNow: number | null;
+  remainingBalance: number | null;
   // actions
   setSearch: (
     p: Partial<
@@ -235,6 +251,10 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   });
   const [guest, setGuestState] = useState<Guest>(() => ({ ...emptyGuest }));
   const [created, setCreatedState] = useState<ReservationCreateResult | null>(null);
+  const [quote, setQuote] = useState<ReservationQuoteResult | null>(null);
+  const [quoteLoading, setQuoteLoading] = useState(false);
+  const [quoteError, setQuoteError] = useState(false);
+  const [quoteRefreshKey, setQuoteRefreshKey] = useState(0);
   const [cartId, setCartId] = useState<string>(loadCartId);
 
   const [hotel, setHotel] = useState<HotelConfig | null>(null);
@@ -284,6 +304,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         children: state.children,
         infants: state.infants,
         voucherCode: state.voucherCode,
+        currencyCode: hotel.DefaultCurrencyCode,
       })
       .then((res) => {
         if (!alive) return;
@@ -324,6 +345,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
           setSelectedRoom(null);
           setSelectedRate(null);
           setAvailableRoomsState([]);
+          setQuote(null);
+          setQuoteError(false);
         }
         return {
           ...s,
@@ -349,6 +372,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     (room, rate) => {
       setSelectedRoom(room);
       setSelectedRate(rate);
+      setQuote(null);
+      setQuoteError(false);
       setState((s) => ({
         ...s,
         roomId: room.categoryId,
@@ -385,6 +410,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const clearSelection = useCallback(() => {
     setSelectedRoom(null);
     setSelectedRate(null);
+    setQuote(null);
+    setQuoteError(false);
     setState((s) => ({ ...s, roomId: null, rateId: null }));
   }, []);
 
@@ -409,6 +436,10 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     if (r) setState((s) => ({ ...s, rgid: r.id }));
   }, []);
 
+  const refreshQuote = useCallback(() => {
+    setQuoteRefreshKey((key) => key + 1);
+  }, []);
+
   const goTo: BookingContextValue["goTo"] = useCallback((step) => patch({ step }), [patch]);
 
   const resetAll = useCallback(() => {
@@ -416,6 +447,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setSelectedRate(null);
     setGuestState(emptyGuest);
     setCreatedState(null);
+    setQuote(null);
+    setQuoteError(false);
     setState({ ...defaults });
     setCartId(newCartId()); // nouveau panier
   }, []);
@@ -504,8 +537,85 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     [selectedProducts, nightsCount, guestsCount],
   );
 
+  // Final selected-rate quote. Mews reservations/price is authoritative for the
+  // complete reservation total and AmountToChargeOnConfirmation.
+  useEffect(() => {
+    if (
+      !selectedRoom ||
+      !selectedRate ||
+      !state.checkIn ||
+      !state.checkOut
+    ) {
+      setQuote(null);
+      setQuoteLoading(false);
+      setQuoteError(false);
+      return;
+    }
+
+    let alive = true;
+    setQuoteLoading(true);
+    setQuoteError(false);
+    api
+      .reservationPrice({
+        checkIn: state.checkIn,
+        checkOut: state.checkOut,
+        roomCategoryId: selectedRoom.categoryId,
+        rateId: selectedRate.rateId,
+        adults: state.adults,
+        children: state.children,
+        infants: state.infants,
+        property: selectedRoom.property,
+        productIds: state.productIds,
+        voucherCode: state.voucherCode,
+        currencyCode: selectedRate.currency || hotel?.DefaultCurrencyCode,
+      })
+      .then((result) => {
+        if (alive) setQuote(result);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setQuote(null);
+        setQuoteError(true);
+      })
+      .finally(() => {
+        if (alive) setQuoteLoading(false);
+      });
+
+    return () => {
+      alive = false;
+    };
+  }, [
+    selectedRoom,
+    selectedRate,
+    state.checkIn,
+    state.checkOut,
+    state.adults,
+    state.children,
+    state.infants,
+    state.productIds,
+    state.voucherCode,
+    hotel?.DefaultCurrencyCode,
+    quoteRefreshKey,
+  ]);
+
   const roomTotal = selectedRate?.totalGross ?? 0;
-  const grandTotal = roomTotal + productsTotal;
+  const fallbackGrandTotal = roomTotal + productsTotal;
+  const grandTotal = quote?.total?.gross ?? fallbackGrandTotal;
+  const currency =
+    quote?.total?.currency ??
+    selectedRate?.currency ??
+    hotel?.DefaultCurrencyCode ??
+    "EUR";
+  // Once a final quote exists, never mix its values with availability pricing.
+  // If a quoted field is missing, keep it missing rather than silently falling back
+  // to a different pricing response.
+  const totalNet = quote ? quote.total?.net ?? null : selectedRate?.totalNet ?? null;
+  const totalTax = quote ? quote.total?.taxTotal ?? null : selectedRate?.totalTax ?? null;
+  const amountDueNow = quote?.amountToChargeOnConfirmation?.gross ?? null;
+  const remainingBalance =
+    quote?.total?.gross != null && amountDueNow != null
+      ? Math.max(0, +(quote.total.gross - amountDueNow).toFixed(2))
+      : null;
 
   // ── Suivi de panier → n8n (via /api/mews/track) ──────────────────────────────
   // Snapshot whitelisté de l'état courant du panier.
@@ -525,10 +635,10 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     rate: selectedRate
       ? { rateId: selectedRate.rateId, name: selectedRate.name, totalGross: selectedRate.totalGross }
       : null,
-    products: selectedProducts.map((p) => ({ id: p.id, name: p.name, priceEur: p.priceEur })),
+    products: selectedProducts.map((p) => ({ id: p.id, name: p.name, price: p.price, currency: p.currency })),
     // Extra hors Mews : intérêt « transfert aéroport » (booléen) → n8n déclenche la relance.
     airportTransfer: state.airportTransfer,
-    totals: { room: roomTotal, products: productsTotal, grand: grandTotal },
+    totals: { room: roomTotal, products: productsTotal, grand: grandTotal, currency },
     customer: {
       firstName: guest.firstName,
       lastName: guest.lastName,
@@ -573,12 +683,21 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     availableRooms,
     guest,
     created,
+    quote,
+    quoteLoading,
+    quoteError,
+    refreshQuote,
     nightsCount,
     guestsCount,
     selectedProducts,
     productsTotal,
     roomTotal,
     grandTotal,
+    currency,
+    totalNet,
+    totalTax,
+    amountDueNow,
+    remainingBalance,
     setSearch,
     selectRoomRate,
     hydrateSelection,
@@ -611,14 +730,14 @@ export function productLineTotal(p: ShapedProduct, nights: number, guests: numbe
   switch (p.chargingMode) {
     case "PerNight":
     case "PerTimeUnit": // TimeUnit = nuit sur un hébergement
-      return p.priceEur * n;
+      return p.price * n;
     case "PerPerson":
-      return p.priceEur * g;
+      return p.price * g;
     case "PerPersonPerNight":
     case "PerNightPerPerson":
     case "PerPersonPerTimeUnit": // ex. « Déjeuner (Pension complète) »
-      return p.priceEur * g * n;
+      return p.price * g * n;
     default: // Once / inconnu
-      return p.priceEur;
+      return p.price;
   }
 }
