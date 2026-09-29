@@ -15,7 +15,8 @@
     "preview": "npm run build && wrangler dev --port 8787 --ip 127.0.0.1",
     "deploy": "npm run build && wrangler deploy",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/*.test.ts"
+    "test": "node --test tests/*.test.ts",
+    "room-ids": "node scripts/fetch-room-category-ids.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.0",
