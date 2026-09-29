@@ -788,7 +788,7 @@ export default function RoomDrawer({
   const allAmenities = [...staticAmenities, ...amenities]
 
   function handleBook(rate: RateOffer) {
-    onBook(drawerRoom, rate)
+    onBook(drawerRoom!, rate)
     onClose()
   }
 
