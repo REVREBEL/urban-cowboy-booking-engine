@@ -95,6 +95,7 @@ export function Guest() {
                 id="guest-phone"
                 name="telephone"
                 required
+                invalid={!!errors.telephone}
                 ariaDescribedBy={errors.telephone ? "guest-phone-error" : undefined}
                 value={guest.telephone}
                 defaultCountry={guest.nationalityCode}
