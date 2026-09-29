@@ -78,16 +78,18 @@ export type RateOffer = {
   currency?: string;
 };
 
+export type FindStayInterest = MatchInterest | "social";
+
 export type RecommendationPreferences = {
   party: PartyType;
   dog: boolean;
-  interests: [MatchInterest, MatchInterest?];
+  interests: [FindStayInterest, FindStayInterest?];
 };
 
 export type RecommendationResult = {
   room: RoomProduct;
   score?: number;
-  matchedInterests: MatchInterest[];
+  matchedInterests: FindStayInterest[];
   explanation?: TopMatchCopy;
 };
 
