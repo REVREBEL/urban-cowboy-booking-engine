@@ -2,21 +2,26 @@ import { Check } from "lucide-react";
 import { useState } from "react";
 
 import pointingHandAsset from "@/assets/cowboy/response-card-pointing-hand.svg.asset.json";
-import topMatchAsset from "@/assets/cowboy/response-card-top-match.png.asset.json";
 import { Button } from "@/components/ui/button";
-import type { Room } from "@/lib/booking/rooms";
+
+export type MatchBenefitsRoom = {
+  name: string;
+  headline: string;
+  blurb: string;
+  featureLabels?: string[];
+};
 
 export function MatchBenefitsCard({
   room,
   reasons,
 }: {
-  room: Room;
+  room: MatchBenefitsRoom;
   reasons: string[];
 }) {
   const [saved, setSaved] = useState(false);
   const intro = `${room.name} feels made for this stay—${room.blurb.charAt(0).toLowerCase()}${room.blurb.slice(1)}`;
   const firstReason = reasons[0] ?? room.headline;
-  const secondReason = reasons[1] ?? room.features.slice(0, 2).map((feature) => feature.label).join(" and ");
+  const secondReason = reasons[1] ?? room.featureLabels?.slice(0, 2).join(" and ") ?? room.headline;
 
   async function handleShare() {
     const shareData = { title: room.name, text: room.headline, url: window.location.href };
@@ -29,11 +34,12 @@ export function MatchBenefitsCard({
 
   return (
     <aside className="flex h-full min-h-[620px] flex-col overflow-hidden border-[1.5px] border-oxblood bg-white/80 p-6 text-oxblood">
-      <img
-        src={topMatchAsset.url}
-        alt="Top match"
-        className="h-auto w-[200px] shrink-0 object-contain"
-      />
+      <div
+        aria-label="Top match"
+        className="w-fit -rotate-2 border-2 border-oxblood px-5 py-2 font-label text-sm font-black uppercase tracking-[0.18em]"
+      >
+        Top Match
+      </div>
 
       <p className="mt-10 max-w-[20rem] self-center text-base leading-tight text-oxblood">
         {intro}
