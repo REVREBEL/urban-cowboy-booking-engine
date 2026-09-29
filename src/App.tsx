@@ -54,7 +54,7 @@ const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
 function Shell() {
   const { step, hotelError, reloadHotel, resetAll, goTo, hydrating } = useBooking();
   const StepView = STEP_COMPONENTS[step];
-  const showProgress = ["results", "guest", "upgrade", "extras", "payment"].includes(step);
+  const showProgress = step !== "confirmation";
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
