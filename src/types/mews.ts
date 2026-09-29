@@ -1,3 +1,5 @@
+import type { MerchandisingBindingSource, RoomMerchandising } from "./merchandising";
+
 // Types des réponses Mews (Booking Engine / Distributor API v1), modélisés d'après
 // les réponses live vérifiées sur l'environnement demo. Les Functions passent la
 // réponse brute (hotel/availability/pricing) ou une version curée (reservation*).
@@ -239,6 +241,8 @@ export interface ShapedRoom {
   rates: ShapedRate[]; // triés prix croissant, prix null exclus
   fromGross: number | null; // min des totaux non-null
   property?: string | null; // hébergement (hotel/creole/villas)
+  merchandising: RoomMerchandising | null;
+  merchandisingSource: MerchandisingBindingSource | null;
 }
 
 export interface ShapedProduct {
