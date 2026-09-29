@@ -18,6 +18,7 @@ import type {
 } from "../types/mews";
 import { loc } from "./format";
 import { getLang } from "./lang";
+import { resolveRoomMerchandising } from "./roomMerchandising";
 import { t } from "../i18n";
 
 type MoneyParts = {
@@ -182,9 +183,11 @@ export function buildRooms(avail: AvailabilityResponse, hotel: HotelConfig | nul
     // (catégorie masquée / edge Mews) → aucune donnée présentable (nom, photo,
     // hébergement) → on l'ignore plutôt que d'afficher une carte « Hébergement » vide.
     if (!cat) continue;
+    const roomName = loc(cat.Name, "Hébergement");
+    const merchandisingResolution = resolveRoomMerchandising(rca.RoomCategoryId, roomName);
     rooms.push({
       categoryId: rca.RoomCategoryId,
-      name: loc(cat.Name, "Hébergement"),
+      name: roomName,
       description: loc(cat.Description ?? null, ""),
       imageIds: cat?.ImageIds ?? [],
       normalBedCount: cat?.NormalBedCount ?? 0,
@@ -195,6 +198,8 @@ export function buildRooms(avail: AvailabilityResponse, hotel: HotelConfig | nul
       rates: payableRates,
       fromGross,
       property: cat?.Property ?? null,
+      merchandising: merchandisingResolution?.merchandising ?? null,
+      merchandisingSource: merchandisingResolution?.source ?? null,
     });
   }
 

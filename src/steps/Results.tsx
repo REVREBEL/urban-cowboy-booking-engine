@@ -11,6 +11,9 @@ import { IconCalendar, IconUsers, IconChevron } from "../components/icons";
 import { t } from "../i18n";
 import { TopMatchPanel } from "../components/TopMatchPanel";
 import { buildTopMatchCopy, parseRecommendationPreferences } from "../lib/topMatch";
+import { rankRecommendedRooms } from "../lib/roomMatching";
+import { roomBenefitTags, roomDetailTags } from "../lib/roomTags";
+import { unresolvedCategoryBindings } from "../lib/roomMerchandising";
 
 export function Results() {
   const {
@@ -83,23 +86,58 @@ export function Results() {
     };
   }, [checkIn, checkOut, adults, children, infants, voucherCode, hotel, hotelError, reloadKey]);
 
-  // Toutes les chambres dispos (tous hébergements), taguées par `property`.
+  // Toutes les chambres dispos (tous hébergements), enrichies avec la couche
+  // merchandising Urban Cowboy au moment du shaping.
   const allRooms = useMemo(() => (data ? buildRooms(data, hotel) : []), [data, hotel]);
+
+  const recommendationSearch = window.location.search;
+  const recommendationPreferences = useMemo(
+    () => parseRecommendationPreferences(recommendationSearch, { adults, children }),
+    [recommendationSearch, adults, children],
+  );
+  const dogRequested = useMemo(() => {
+    const value = new URLSearchParams(recommendationSearch).get("dog");
+    return value === "yes" || value === "1";
+  }, [recommendationSearch]);
+
+  // Eligibility first, then preference ranking. Dog eligibility is independent
+  // from whether the guest selected an interest. When Help Me Choose was not used,
+  // rankRecommendedRooms otherwise preserves the normal Mews/price order.
+  const eligibleAllRooms = useMemo(
+    () =>
+      rankRecommendedRooms(allRooms, recommendationPreferences, {
+        children,
+        infants,
+        dogRequested,
+      }),
+    [allRooms, recommendationPreferences, children, infants, dogRequested],
+  );
 
   // Filtre d'affichage : hébergements cochés (une chambre sans property reste visible).
   const rooms = useMemo(
-    () => allRooms.filter((r) => !r.property || properties.includes(r.property)),
-    [allRooms, properties],
+    () => eligibleAllRooms.filter((r) => !r.property || properties.includes(r.property)),
+    [eligibleAllRooms, properties],
   );
+
+  // During the migration to permanent RoomCategoryId bindings, surface exact IDs in
+  // development without ever making the matcher itself depend on room names.
+  useEffect(() => {
+    if (!import.meta.env.DEV || !hotel) return;
+    const unresolved = unresolvedCategoryBindings(hotel.RoomCategories);
+    if (unresolved.length) {
+      console.info("[room-merchandising] Add these Mews RoomCategoryId bindings:");
+      console.table(unresolved);
+    }
+  }, [hotel]);
 
   // Teaser : hébergements NON cochés mais dispos sur ces dates (nom + nombre).
   const teasers = useMemo(() => {
     const labels: { key: string; label: string }[] = hotel?.Properties ?? [];
     return labels
       .filter((p) => !properties.includes(p.key))
-      .map((p) => ({ ...p, count: allRooms.filter((r) => r.property === p.key).length }))
+      .map((p) => ({ ...p, count: eligibleAllRooms.filter((r) => r.property === p.key).length }))
       .filter((p) => p.count > 0);
-  }, [hotel, properties, allRooms]);
+  }, [hotel, properties, eligibleAllRooms]);
 
   // Aucun logement dispo dans les hébergements cochés → on ouvre AUTOMATIQUEMENT les
   // accordéons « aussi disponibles sur vos dates » (les seuls résultats à montrer).
@@ -113,14 +151,14 @@ export function Results() {
 
   // Publie la liste visible pour l'étape de surclassement (upsell chambre après Guest).
   useEffect(() => {
-    if (rooms.length) setAvailableRooms(rooms);
+    setAvailableRooms(rooms);
   }, [rooms, setAvailableRooms]);
 
   // Réhydrate la sélection depuis l'URL (lien partagé / retour arrière) — depuis
   // TOUTES les chambres, même si l'hébergement de la chambre n'est pas coché.
   useEffect(() => {
-    if (!selectedRoom && roomId && allRooms.length) {
-      const room = allRooms.find((r) => r.categoryId === roomId);
+    if (!selectedRoom && roomId && eligibleAllRooms.length) {
+      const room = eligibleAllRooms.find((r) => r.categoryId === roomId);
       const rate = room?.rates.find((rt) => rt.rateId === rateId) ?? room?.rates[0] ?? null;
       if (room && rate) {
         hydrateSelection(room, rate);
@@ -128,7 +166,7 @@ export function Results() {
         if (room.property && !properties.includes(room.property)) setProperties([...properties, room.property]);
       }
     }
-  }, [allRooms, roomId, rateId, selectedRoom, hydrateSelection, properties, setProperties]);
+  }, [eligibleAllRooms, roomId, rateId, selectedRoom, hydrateSelection, properties, setProperties]);
 
   const search = { checkIn, checkOut, adults, children };
 
@@ -141,25 +179,24 @@ export function Results() {
   // Upsell inline : un extra de l'hébergement de la 1re chambre (sinon il serait
   // refusé à la réservation, cf. produits rattachés à une config Mews).
   const inlineProduct = products.find((p) => !p.property || p.property === rooms[0]?.property) ?? null;
-  const topMatch = rooms[0] ?? null;
-  const topMatchPreferences = useMemo(
-    () =>
-      topMatch
-        ? parseRecommendationPreferences(window.location.search, {
-            adults,
-            children,
-            roomName: topMatch.name,
-          })
-        : null,
-    [topMatch, adults, children],
-  );
+  const topMatch = recommendationPreferences ? rooms[0] ?? null : null;
   const topMatchCopy = useMemo(
     () =>
-      topMatch && topMatchPreferences
-        ? buildTopMatchCopy(topMatch.name, topMatchPreferences, checkIn)
+      topMatch && recommendationPreferences
+        ? buildTopMatchCopy(
+            topMatch.name,
+            recommendationPreferences,
+            checkIn,
+            topMatch.merchandising,
+          )
         : null,
-    [topMatch, topMatchPreferences, checkIn],
+    [topMatch, recommendationPreferences, checkIn],
   );
+
+  const propertyLabelFor = (room: ShapedRoom) =>
+    room.property
+      ? hotel?.Properties?.find((property) => property.key === room.property)?.label
+      : undefined;
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
@@ -212,13 +249,21 @@ export function Results() {
         <ErrorBox message={error} onRetry={() => setReloadKey((k) => k + 1)} />
       )}
 
-      {!loading && !hotelError && !error && rooms.length === 0 && (
+      {!loading && !hotelError && !error && allRooms.length === 0 && (
         <EmptyBox onModify={() => goTo("dates")} />
       )}
 
+      {!loading &&
+        !hotelError &&
+        !error &&
+        allRooms.length > 0 &&
+        eligibleAllRooms.length === 0 && (
+          <NoEligibleMatchBox onModify={() => goTo("dates")} />
+        )}
+
       {!loading && !hotelError && !error && rooms.length > 0 && (
         <div className="mt-5 space-y-4">
-          {topMatch && topMatchCopy && (
+          {topMatch && topMatchCopy ? (
             <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.85fr)]">
               <div className="space-y-4">
                 <RoomCard
@@ -226,6 +271,9 @@ export function Results() {
                   imageBaseUrl={imageBaseUrl}
                   nightsCount={nightsCount}
                   featured
+                  propertyLabel={propertyLabelFor(topMatch)}
+                  benefitTags={roomBenefitTags(topMatch.merchandising)}
+                  detailTags={roomDetailTags(topMatch.merchandising)}
                   onChoose={() => choose(topMatch, topMatch.rates[0])}
                   onDetails={() => setOpenRoom(topMatch)}
                 />
@@ -239,13 +287,27 @@ export function Results() {
               </div>
               <TopMatchPanel copy={topMatchCopy} />
             </div>
-          )}
+          ) : rooms[0] ? (
+            <RoomCard
+              room={rooms[0]}
+              imageBaseUrl={imageBaseUrl}
+              nightsCount={nightsCount}
+              propertyLabel={propertyLabelFor(rooms[0])}
+              benefitTags={roomBenefitTags(rooms[0].merchandising)}
+              detailTags={roomDetailTags(rooms[0].merchandising)}
+              onChoose={() => choose(rooms[0], rooms[0].rates[0])}
+              onDetails={() => setOpenRoom(rooms[0])}
+            />
+          ) : null}
           {rooms.slice(1, 3).map((room) => (
             <div key={room.categoryId} className="space-y-4">
               <RoomCard
                 room={room}
                 imageBaseUrl={imageBaseUrl}
                 nightsCount={nightsCount}
+                propertyLabel={propertyLabelFor(room)}
+                benefitTags={roomBenefitTags(room.merchandising)}
+                detailTags={roomDetailTags(room.merchandising)}
                 onChoose={() => choose(room, room.rates[0])}
                 onDetails={() => setOpenRoom(room)}
               />
@@ -288,6 +350,9 @@ export function Results() {
                           room={room}
                           imageBaseUrl={imageBaseUrl}
                           nightsCount={nightsCount}
+                          propertyLabel={propertyLabelFor(room)}
+                          benefitTags={roomBenefitTags(room.merchandising)}
+                          detailTags={roomDetailTags(room.merchandising)}
                           onChoose={() => choose(room, room.rates[0])}
                           onDetails={() => setOpenRoom(room)}
                         />
@@ -307,6 +372,7 @@ export function Results() {
           imageBaseUrl={imageBaseUrl}
           search={search}
           nightsCount={nightsCount}
+          tags={roomDetailTags(openRoom.merchandising)}
           onClose={() => setOpenRoom(null)}
           onSelectRate={(rate) => choose(openRoom, rate)}
         />
@@ -351,6 +417,18 @@ function EmptyBox({ onModify }: { onModify: () => void }) {
       <p className="mt-2 text-sm text-ink/60">
         {t("results.emptyBody")}
       </p>
+      <button type="button" onClick={onModify} className="btn-primary mt-5">
+        {t("results.editSearch")}
+      </button>
+    </div>
+  );
+}
+
+function NoEligibleMatchBox({ onModify }: { onModify: () => void }) {
+  return (
+    <div className="mt-6 rounded-xl2 border border-ink/10 bg-white p-10 text-center shadow-card">
+      <p className="font-display text-xl text-ink">{t("results.noEligibleTitle")}</p>
+      <p className="mt-2 text-sm text-ink/60">{t("results.noEligibleBody")}</p>
       <button type="button" onClick={onModify} className="btn-primary mt-5">
         {t("results.editSearch")}
       </button>
