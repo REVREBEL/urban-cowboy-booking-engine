@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { api } from "../lib/api";
 import { money, imgUrl } from "../lib/format";
 import { spaceLabel } from "../lib/shaping";
+import { focusFirst, trapTab } from "../lib/focus";
 import type { ShapedRate, ShapedRoom } from "../types/mews";
 import { Photo } from "./Photo";
-import { RoomTagsPanel } from "./RoomTags";
+import { RoomTagsPanel, type RoomTag } from "./RoomTags";
 import { ScarcityBadge } from "./conversion";
 import { IconBed, IconCheck, IconClose, IconShield, IconUsers } from "./icons";
 import { t } from "../i18n";
@@ -16,6 +17,7 @@ export function RoomDetailDrawer({
   imageBaseUrl,
   search,
   nightsCount,
+  tags = [],
   onClose,
   onSelectRate,
 }: {
@@ -23,6 +25,7 @@ export function RoomDetailDrawer({
   imageBaseUrl: string;
   search: { checkIn: string; checkOut: string; adults: number; children: number };
   nightsCount: number;
+  tags?: RoomTag[];
   onClose: () => void;
   onSelectRate: (rate: ShapedRate) => void;
 }) {
@@ -32,23 +35,43 @@ export function RoomDetailDrawer({
   const [confirming, setConfirming] = useState(false);
   const [confirmError, setConfirmError] = useState(false);
   const [pricingAttempt, setPricingAttempt] = useState(0);
+  const titleId = useId();
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
+    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const raf = requestAnimationFrame(() => setEntered(true));
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+
+    const raf = requestAnimationFrame(() => {
+      setEntered(true);
+      focusFirst(drawerRef.current);
+    });
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+        return;
+      }
+      trapTab(drawerRef.current, e);
+    };
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
       cancelAnimationFrame(raf);
       window.removeEventListener("keydown", onKey);
+      requestAnimationFrame(() => returnFocusRef.current?.focus());
     };
+    // close uses the latest callback through onCloseRef.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function close() {
     setEntered(false);
-    setTimeout(onClose, 240);
+    window.setTimeout(() => onCloseRef.current(), 240);
   }
 
   useEffect(() => {
@@ -86,12 +109,14 @@ export function RoomDetailDrawer({
   const lowStock = room.availableRoomCount > 0 && room.availableRoomCount <= 4;
 
   return (
-    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t("roomDetail.dialogAria", { name: room.name })}>
+    <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-labelledby={titleId}>
       <div
         onClick={close}
+        aria-hidden="true"
         className={`absolute inset-0 bg-ink/55 transition-opacity duration-300 ${entered ? "opacity-100" : "opacity-0"}`}
       />
       <div
+        ref={drawerRef}
         className={`absolute right-0 top-0 flex h-full w-full max-w-3xl flex-col bg-cream shadow-float transition-transform duration-300 ease-out ${
           entered ? "translate-x-0" : "translate-x-full"
         }`}
@@ -141,7 +166,7 @@ export function RoomDetailDrawer({
           <div className="grid gap-x-7 gap-y-6 px-5 py-5 sm:grid-cols-2 sm:px-6">
             {/* Colonne gauche : infos */}
             <div>
-              <h2 className="font-display text-2xl text-ink">{room.name}</h2>
+              <h2 id={titleId} className="font-display text-2xl text-ink">{room.name}</h2>
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-teal-deep/85">
                 {room.capacity > 0 && (
                   <span className="inline-flex items-center gap-1.5">
@@ -161,7 +186,7 @@ export function RoomDetailDrawer({
 
               {/* Tags bénéfice (Vue mer / Sans vis-à-vis / 1er étage) + repas inclus (Hôtel). */}
               <div className="mt-3">
-                <RoomTagsPanel room={room} />
+                <RoomTagsPanel tags={tags} />
               </div>
               {room.description && (
                 <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink/75">{room.description}</p>
