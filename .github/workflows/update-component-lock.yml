@@ -15,7 +15,7 @@ jobs:
   update-lock:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: chatgpt/prepare-kept-components-main
       - uses: actions/setup-node@v6
