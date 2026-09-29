@@ -60,6 +60,18 @@
   .accent {
     @apply font-display italic text-corail;
   }
+
+  .font-brand,
+  .font-label,
+  .font-button,
+  .eyebrow {
+    font-family: var(--font-brothers);
+  }
+
+  .font-topic {
+    font-family: var(--font-bianco);
+    font-weight: 700;
+  }
 }
 
 @layer components {

@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath, URL } from "node:url";
@@ -14,7 +15,6 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
-    // Multi-page : le moteur de résa (index) + le back-office funnel (dashboard).
     rollupOptions: {
       input: {
         main: "index.html",
@@ -25,9 +25,6 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
-    // En dev : Vite sert le front (HMR) et proxie /api/* vers le Worker lancé en
-    // parallèle par `wrangler dev` sur le port 8787.
-    // En prod (Cloudflare Workers) le Worker sert le front ET /api sur la même origine.
     proxy: {
       "/api": {
         target: "http://127.0.0.1:8787",
