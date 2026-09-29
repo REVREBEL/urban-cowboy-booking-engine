@@ -93,8 +93,6 @@ export const TopMatchRibbon: React.FC<{
     -58 -18 -58 78 -51 103 9 98 6 82 47 -15 38 -41 448 -29 462 8 9 108 3 148
     -10 28 -8 26 9 -9 90 -21 51 -27 52 -312 37z"/>
     </g>
-    </svg>
-
 
     {/* "TOP MATCH" Hand-drawn Display Typography */}
     <text
