@@ -1,4 +1,4 @@
-import type { RoomProduct } from '../../booking/types';
+import type { RoomProduct } from './internal/types';
 
 type Props = {
   room: RoomProduct;
