@@ -28,8 +28,7 @@ export const SheriffBadgeIcon: React.FC<{
     width="15"
     height="15"
     viewBox="0 0 100 100"
-    fill={color}
-    viewBox="0 0 100 100" 
+    fill={color} 
     xmlns="http://www.w3.org/2000/svg"
     className={className}
     aria-hidden="true"
