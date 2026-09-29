@@ -5,6 +5,44 @@
 @layer base {
   :root {
     color-scheme: light;
+
+    /* Shared semantic tokens used by the retained Cowboy/shadcn component library. */
+    --background: 43.6 21.6% 90%;
+    --foreground: 108 4.7% 21%;
+    --card: 0 9.1% 97.8%;
+    --card-foreground: 108 4.7% 21%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 108 4.7% 21%;
+    --primary: 10.9 26.8% 24.1%;
+    --primary-foreground: 43.6 21.6% 90%;
+    --secondary: 42 18% 94%;
+    --secondary-foreground: 10.9 26.8% 24.1%;
+    --muted: 42 15% 93%;
+    --muted-foreground: 30 5% 45%;
+    --accent: 141.2 54.8% 12.2%;
+    --accent-foreground: 43.6 21.6% 90%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 14% 82%;
+    --input: 40 14% 82%;
+    --ring: 19.2 48.1% 40.8%;
+    --sidebar: 43.6 21.6% 90%;
+    --sidebar-foreground: 108 4.7% 21%;
+    --sidebar-primary: 10.9 26.8% 24.1%;
+    --sidebar-primary-foreground: 43.6 21.6% 90%;
+    --sidebar-accent: 42 18% 94%;
+    --sidebar-accent-foreground: 10.9 26.8% 24.1%;
+    --sidebar-border: 40 14% 82%;
+    --sidebar-ring: 19.2 48.1% 40.8%;
+
+    /* Brand font aliases. Actual licensed font files can be wired independently. */
+    --font-brothers: "Brothers OT", "Arial Narrow", sans-serif;
+    --font-desert: "Instrument Serif", Georgia, serif;
+    --font-uchen: "Instrument Serif", Georgia, serif;
+    --font-inter: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    --font-lato: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    --font-bianco: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    --font-league-spartan: "Urbanist", ui-sans-serif, system-ui, sans-serif;
   }
 
   html {
@@ -27,6 +65,18 @@
   /* Accents éditoriaux en italique (ex. « à l'essentiel ») — Instrument Serif italique, corail */
   .accent {
     @apply font-display italic text-corail;
+  }
+
+  .font-brand,
+  .font-label,
+  .font-button,
+  .eyebrow {
+    font-family: var(--font-brothers);
+  }
+
+  .font-topic {
+    font-family: var(--font-bianco);
+    font-weight: 700;
   }
 }
 
