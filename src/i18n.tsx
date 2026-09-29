@@ -256,6 +256,8 @@ const DICT = {
   "results.retry": { fr: "Réessayer", en: "Try again" },
   "results.emptyTitle": { fr: "Aucune disponibilité pour ces dates", en: "No availability for these dates" },
   "results.emptyBody": { fr: "Essayez d'autres dates ou ajustez le nombre de voyageurs — nos plus beaux bungalows partent vite.", en: "Try other dates or adjust the number of guests — our finest bungalows go fast." },
+  "results.noEligibleTitle": { fr: "Aucun hébergement ne correspond à tous vos critères", en: "No stays match all of your requirements" },
+  "results.noEligibleBody": { fr: "Des chambres sont disponibles à ces dates, mais aucune ne correspond à l'ensemble de vos critères actuels. Modifiez les voyageurs ou vos préférences pour voir plus d'options.", en: "Rooms are available for these dates, but none match all of your current requirements. Adjust your guests or preferences to see more options." },
 
   // ── RoomCard / RoomDetailDrawer / UpsellCard / BookingSummary ──────────────
   "roomCard.viewPhotosAria": { fr: (p) => `Voir les photos — ${p.name}`, en: (p) => `View photos — ${p.name}` },
