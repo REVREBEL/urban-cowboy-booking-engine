@@ -1,4 +1,23 @@
-import type { FeatureKind, PreferenceId } from "./rooms";
+export type PreferenceArtworkId =
+  | "iconic-tub"
+  | "bathe-outside"
+  | "my-own-place"
+  | "near-everything"
+  | "simple-cozy"
+  | "mountain-views"
+  | "bringing-my-people";
+
+type FeatureKind =
+  | "kitchen"
+  | "heating"
+  | "water"
+  | "room"
+  | "bed"
+  | "basic"
+  | "building"
+  | "badge";
+
+type PreferenceId = PreferenceArtworkId;
 
 const RAW =
   "https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/assets";
