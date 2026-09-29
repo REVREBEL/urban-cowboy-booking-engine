@@ -18,17 +18,15 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
   },
   "include": [
     "src"
-  ],
-  "exclude": [
-    "src/components/Booking",
-    "src/components/FindYourStay",
-    "src/components/States",
-    "src/components/UI",
-    "src/evaluation",
-    "src/evaluation.tsx"
   ]
 }
