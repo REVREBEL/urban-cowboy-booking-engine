@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { RoomExperience, RoomProduct } from "../../types";
-import EmptyState from "@/components/feedback/EmptyState";
+import EmptyState from "@/components/feedback/empty-state";
 
 // ── Feature icon mapping for card display ────────────────────────────────────
 const CARD_FEATURE_ICONS: { key: keyof RoomProduct['features']; icon: string; label: string }[] = [
