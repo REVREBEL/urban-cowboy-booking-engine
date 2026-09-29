@@ -1,4 +1,5 @@
 import type { MerchandisingBindingSource, RoomMerchandising } from "./merchandising";
+import type { KnownAddOnKey, KnownRateGroupKey } from "../lib/catskillsMewsIds";
 
 // Types des réponses Mews (Booking Engine / Distributor API v1), modélisés d'après
 // les réponses live vérifiées sur l'environnement demo. Les Functions passent la
@@ -195,6 +196,7 @@ export interface ReservationStatusResult {
 export interface ShapedRate {
   rateId: string;
   rateGroupId: string;
+  knownRateGroup: KnownRateGroupKey | null;
   name: string;
   description: string;
   isPrivate: boolean;
@@ -247,6 +249,7 @@ export interface ShapedRoom {
 
 export interface ShapedProduct {
   id: string;
+  knownAddOn: KnownAddOnKey | null;
   name: string;
   description: string;
   price: number;
