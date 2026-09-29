@@ -51,6 +51,7 @@ export const PREFERENCE_LABEL_SELECTED: Partial<Record<PreferenceId, string>> = 
 };
 
 export const DOG_ICON = asset("dog-toggle-off.svg");
+export const DOG_ICON_SELECTED = asset("dog-toggle-on.svg");
 
 export const FEATURE_ICON: Record<FeatureKind, string> = {
   water: asset("simple-icons/copper_clawfoot_soaking_tub.svg"),
