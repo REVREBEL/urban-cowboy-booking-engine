@@ -6,57 +6,42 @@
   :root {
     color-scheme: light;
 
-    /* Shared Cowboy / shadcn component tokens. */
-    --radius: 0.75rem;
-    --linen: #ebe8e0;
-    --paper: #faf9f9;
-    --snow: #ffffff;
-    --forest: #0e301a;
-    --smoke: #343833;
-    --copper: #9a5636;
-    --umber: #4e332d;
-    --oxblood: #69253a;
-    --ink: #061a2d;
+    /* Shared semantic tokens used by the retained Cowboy/shadcn component library. */
+    --background: 43.6 21.6% 90%;
+    --foreground: 108 4.7% 21%;
+    --card: 0 9.1% 97.8%;
+    --card-foreground: 108 4.7% 21%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 108 4.7% 21%;
+    --primary: 10.9 26.8% 24.1%;
+    --primary-foreground: 43.6 21.6% 90%;
+    --secondary: 42 18% 94%;
+    --secondary-foreground: 10.9 26.8% 24.1%;
+    --muted: 42 15% 93%;
+    --muted-foreground: 30 5% 45%;
+    --accent: 141.2 54.8% 12.2%;
+    --accent-foreground: 43.6 21.6% 90%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 14% 82%;
+    --input: 40 14% 82%;
+    --ring: 19.2 48.1% 40.8%;
+    --sidebar: 43.6 21.6% 90%;
+    --sidebar-foreground: 108 4.7% 21%;
+    --sidebar-primary: 10.9 26.8% 24.1%;
+    --sidebar-primary-foreground: 43.6 21.6% 90%;
+    --sidebar-accent: 42 18% 94%;
+    --sidebar-accent-foreground: 10.9 26.8% 24.1%;
+    --sidebar-border: 40 14% 82%;
+    --sidebar-ring: 19.2 48.1% 40.8%;
 
-    --background: var(--linen);
-    --foreground: var(--smoke);
-    --card: var(--paper);
-    --card-foreground: var(--smoke);
-    --popover: var(--snow);
-    --popover-foreground: var(--smoke);
-    --primary: var(--umber);
-    --primary-foreground: #faf9f9;
-    --secondary: #f2efe8;
-    --secondary-foreground: var(--umber);
-    --muted: #efede7;
-    --muted-foreground: #767470;
-    --accent: var(--forest);
-    --accent-foreground: #faf9f9;
-    --destructive: #b53b32;
-    --destructive-foreground: #ffffff;
-    --border: #d5cfc5;
-    --input: #d5cfc5;
-    --ring: var(--copper);
-    --chart-1: var(--copper);
-    --chart-2: var(--forest);
-    --chart-3: #c39350;
-    --chart-4: var(--umber);
-    --chart-5: #c7aa80;
-    --sidebar: var(--linen);
-    --sidebar-foreground: var(--smoke);
-    --sidebar-primary: var(--umber);
-    --sidebar-primary-foreground: #faf9f9;
-    --sidebar-accent: #f2efe8;
-    --sidebar-accent-foreground: var(--umber);
-    --sidebar-border: #d5cfc5;
-    --sidebar-ring: var(--copper);
-
-    --font-brothers: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    /* Brand font aliases. Actual licensed font files can be wired independently. */
+    --font-brothers: "Brothers OT", "Arial Narrow", sans-serif;
     --font-desert: "Instrument Serif", Georgia, serif;
     --font-uchen: "Instrument Serif", Georgia, serif;
-    --font-lato: "Urbanist", ui-sans-serif, system-ui, sans-serif;
     --font-inter: "Urbanist", ui-sans-serif, system-ui, sans-serif;
-    --font-quattrocento: "Instrument Serif", Georgia, serif;
+    --font-lato: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    --font-bianco: "Urbanist", ui-sans-serif, system-ui, sans-serif;
     --font-league-spartan: "Urbanist", ui-sans-serif, system-ui, sans-serif;
   }
 
@@ -80,6 +65,18 @@
   /* Accents éditoriaux en italique (ex. « à l'essentiel ») — Instrument Serif italique, corail */
   .accent {
     @apply font-display italic text-corail;
+  }
+
+  .font-brand,
+  .font-label,
+  .font-button,
+  .eyebrow {
+    font-family: var(--font-brothers);
+  }
+
+  .font-topic {
+    font-family: var(--font-bianco);
+    font-weight: 700;
   }
 }
 
