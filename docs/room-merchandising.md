@@ -21,9 +21,14 @@ The resolver always tries `categoryIds` first. The name fallback is intentionall
 
 The repository does not currently contain the production Catskills room-category UUIDs, so no UUIDs are invented here.
 
-The public Catskills Mews booking URL currently exposes Booking Engine Configuration ID:
+The confirmed Catskills identifiers are:
 
-`af94d1f9-0d56-469f-8b15-b10600706974`
+- Booking Engine Configuration ID: `4725ace3-6b93-439f-a549-b4bc00ae1d10`
+- Hotel / Enterprise ID: `8bd38131-c371-4625-9c29-b10600705d34`
+- Adult age category: `8f3ceb39-5c40-417a-b9a5-b106007064f8`
+- Child age category: `db093f0b-738e-4afe-9191-b106007065ff`
+
+The Mews subscription number `16703` is an account/subscription reference and is not used in Booking Engine API request payloads.
 
 To retrieve the category IDs with the registered production Booking Engine client:
 
