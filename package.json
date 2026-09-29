@@ -11,6 +11,7 @@
     "dev": "npm run build && concurrently -k -n worker,web -c magenta,cyan \"npm:dev:worker\" \"npm:dev:web\"",
     "dev:worker": "wrangler dev --port 8787 --ip 127.0.0.1",
     "dev:web": "vite",
+    "evaluation": "vite --open /evaluation.html",
     "build": "vite build",
     "preview": "npm run build && wrangler dev --port 8787 --ip 127.0.0.1",
     "deploy": "npm run build && wrangler deploy",

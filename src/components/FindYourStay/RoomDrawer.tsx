@@ -112,7 +112,7 @@ const AMENITY_ICONS: {
 
 // ── Pricing Detail Panel ──────────────────────────────────────────────────────
 
-function PricingDetail({ rate, nights }: { rate: RateOffer nights: number }) {
+function PricingDetail({ rate, nights }: { rate: RateOffer; nights: number }) {
   const p = getPricing(rate, nights)
   const isFullPrepay = rate.variant === "plan-ahead"
 
