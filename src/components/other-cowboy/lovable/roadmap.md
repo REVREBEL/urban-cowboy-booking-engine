@@ -1,8 +1,0 @@
-- [x] Incorporate uploaded Room Photos into room recommendations and room detail views
-- [x] Rebuild step 1 (Stay) from the Availability Criteria design: header, "Book your stay" headline, three icon value props, footer, expanded search bar
-- [x] Room step: inline reveal of the help questions; "what matters most" as horizontal visual icon buttons; styling mirrors step 1
-- [x] Room cards follow the Single Room Card design (large gallery, arrows, people/bed specs, View details + Select room)
-- [x] Room details expands to the Full Page Room Details layout (breadcrumb, gallery, building icon, badges, room features, check availability panel)
-- [x] Keep the rate display, restyled to the Cowboy palette
-- [x] Separate the dog-friendly trip criterion from the six room-preference choices
-- [x] Replace the top-match benefits panel with the supplied Response Card design
