@@ -1,14 +1,16 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { BookingProxy, UIProxy } from "./evaluation/proxyPreviews";
 import "./index.css";
 
 type Decision = "keep" | "maybe" | "drop";
 type PreviewItem = {
   id: string;
   name: string;
-  group: "FindYourStay" | "States";
+  group: "FindYourStay" | "States" | "Booking" | "UI";
   path: string;
-  load: () => Promise<{ default: React.ComponentType }>;
+  load?: () => Promise<{ default: React.ComponentType }>;
+  proxy?: "booking" | "ui";
 };
 
 function lazyModule(
@@ -206,6 +208,28 @@ const UI_FILES = [
   "Textarea.tsx", "Toggle.tsx", "ToggleGroup.tsx", "Tooltip.tsx",
 ];
 
+const ALL_PREVIEWS: PreviewItem[] = [
+  ...PREVIEWS,
+  ...BOOKING_FILES.map((file) => ({
+    id: `booking-${file.replace(/\.tsx$/, "").toLowerCase()}`,
+    name: file.replace(/\.tsx$/, ""),
+    group: "Booking" as const,
+    path: `src/components/Booking/${file}`,
+    proxy: "booking" as const,
+  })),
+  ...UI_FILES.map((file) => ({
+    id: `ui-${file.replace(/\.tsx$/, "").toLowerCase()}`,
+    name: file.replace(/\.tsx$/, ""),
+    group: "UI" as const,
+    path: `src/components/UI/${file}`,
+    proxy: "ui" as const,
+  })),
+];
+
+const DEFAULT_DECISIONS: Record<string, Decision> = Object.fromEntries(
+  PREVIEWS.map((item) => [item.path, "keep" as Decision]),
+);
+
 const DECISION_KEY = "uc-component-evaluation-decisions";
 
 function sourceUrl(path: string) {
@@ -214,22 +238,28 @@ function sourceUrl(path: string) {
 
 function EvaluationApp() {
   const urlSelected = new URLSearchParams(window.location.search).get("component");
-  const initial = PREVIEWS.find((item) => item.id === urlSelected)?.id ?? PREVIEWS[0].id;
+  const initial = ALL_PREVIEWS.find((item) => item.id === urlSelected)?.id ?? ALL_PREVIEWS[0].id;
   const [selectedId, setSelectedId] = useState(initial);
   const [query, setQuery] = useState("");
   const [inventoryOpen, setInventoryOpen] = useState(false);
   const [decisions, setDecisions] = useState<Record<string, Decision>>(() => {
     try {
-      return JSON.parse(localStorage.getItem(DECISION_KEY) || "{}");
+      return {
+        ...DEFAULT_DECISIONS,
+        ...JSON.parse(localStorage.getItem(DECISION_KEY) || "{}"),
+      };
     } catch {
       return {};
     }
   });
 
-  const selected = PREVIEWS.find((item) => item.id === selectedId) ?? PREVIEWS[0];
-  const Preview = useMemo(() => lazy(selected.load), [selected.id]);
+  const selected = ALL_PREVIEWS.find((item) => item.id === selectedId) ?? ALL_PREVIEWS[0];
+  const Preview = useMemo(
+    () => (selected.load ? lazy(selected.load) : null),
+    [selected.id, selected.load],
+  );
 
-  const visible = PREVIEWS.filter((item) =>
+  const visible = ALL_PREVIEWS.filter((item) =>
     `${item.name} ${item.group} ${item.path}`.toLowerCase().includes(query.toLowerCase()),
   );
 
@@ -323,9 +353,14 @@ function EvaluationApp() {
           <main className="min-w-0 p-4 md:p-7">
             <div className="mb-4 flex flex-wrap items-start justify-between gap-4 rounded-xl border border-[#4e332d]/15 bg-white/45 p-4">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9a5636]">
-                  {selected.group}
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9a5636]">
+                    {selected.group}
+                  </p>
+                  <span className="rounded-full bg-[#4e332d]/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider">
+                    {selected.proxy ? "visual proxy" : "source render"}
+                  </span>
+                </div>
                 <h2 className="mt-1 text-2xl font-semibold">{selected.name}</h2>
                 <a
                   href={sourceUrl(selected.path)}
@@ -355,15 +390,21 @@ function EvaluationApp() {
             </div>
 
             <div className="min-h-[720px] overflow-auto rounded-xl border border-[#4e332d]/15 bg-[#faf9f9] shadow-sm">
-              <Suspense
-                fallback={
-                  <div className="grid min-h-[720px] place-items-center text-sm opacity-50">
-                    Loading preview…
-                  </div>
-                }
-              >
-                <Preview />
-              </Suspense>
+              {selected.proxy === "booking" ? (
+                <BookingProxy component={selected.path.split("/").pop() ?? ""} />
+              ) : selected.proxy === "ui" ? (
+                <UIProxy component={selected.path.split("/").pop() ?? ""} />
+              ) : Preview ? (
+                <Suspense
+                  fallback={
+                    <div className="grid min-h-[720px] place-items-center text-sm opacity-50">
+                      Loading preview…
+                    </div>
+                  }
+                >
+                  <Preview />
+                </Suspense>
+              ) : null}
             </div>
           </main>
         </div>
@@ -447,8 +488,8 @@ function Inventory({ decisions }: { decisions: Record<string, Decision> }) {
         "Booking",
         "src/components/Booking",
         BOOKING_FILES,
-        "This is a separate component system. Its files reference support modules and packages that were not included with the folder, so I have intentionally not altered the source just to force a preview.",
-        "blocked",
+        "All ten Booking components now have faithful visual proxies in the lab. They preserve the structure and styling intent of the imported source while avoiding fake production wiring to the missing support library.",
+        "preview",
       )}
 
       {renderList(
@@ -463,8 +504,8 @@ function Inventory({ decisions }: { decisions: Record<string, Decision> }) {
         "UI",
         "src/components/UI",
         UI_FILES,
-        "These are mostly generic shadcn/Radix implementation primitives rather than unique Cowboy design concepts. I would evaluate them as a dependency strategy, not choose them one by one by appearance.",
-        "library",
+        "Every UI primitive now has a visual proxy in the lab. These are structure previews because the imported shadcn/Radix package set and design-token layer were not included with the folder.",
+        "preview",
       )}
     </main>
   );
