@@ -72,10 +72,14 @@ export type RateOffer = {
   description?: string;
   nightlyRate: number;
   totalStay: number;
+  totalTax?: number | null;
+  amountDueNow?: number | null;
+  remainingBalance?: number | null;
   cancellationPolicy?: string;
   breakfastIncluded?: boolean;
   available?: boolean;
   currency?: string;
+  pricingVerified?: boolean;
 };
 
 export type FindStayInterest = MatchInterest | "social";
