@@ -447,9 +447,21 @@ export function unresolvedCategoryBindings(
   const out: { key: string; categoryId: string; name: string }[] = [];
   for (const category of categories) {
     if (BY_CATEGORY_ID.has(category.Id)) continue;
-    const name = Object.values(category.Name ?? {}).find(Boolean) ?? "";
-    const legacy = BY_LEGACY_NAME.get(normalizeName(name));
-    if (legacy) out.push({ key: legacy.key, categoryId: category.Id, name });
+
+    const names = Object.values(category.Name ?? {}).filter(
+      (value): value is string => typeof value === "string" && value.trim().length > 0,
+    );
+    const match = names
+      .map((name) => ({ name, legacy: BY_LEGACY_NAME.get(normalizeName(name)) }))
+      .find((entry) => !!entry.legacy);
+
+    if (match?.legacy) {
+      out.push({
+        key: match.legacy.key,
+        categoryId: category.Id,
+        name: match.name,
+      });
+    }
   }
   return out;
 }
