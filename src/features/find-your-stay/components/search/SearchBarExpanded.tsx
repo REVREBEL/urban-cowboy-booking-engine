@@ -158,7 +158,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   isLoading = false,
   className = '',
 }) => {
-  const [internalValues, setInternalValues] = useState<SearchBarExpandedValues>({
+  const [internalValues] = useState<SearchBarExpandedValues>({
     property: initialValues?.property ?? 'CATSKILLS',
     checkInDate: initialValues?.checkInDate ?? '14 Oct 2026',
     checkOutDate: initialValues?.checkOutDate ?? '17 Oct 2026',
