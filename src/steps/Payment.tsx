@@ -25,6 +25,7 @@ export function Payment() {
     guest,
     currency,
     amountDueNow,
+    quote,
     quoteLoading,
     quoteError,
     refreshQuote,
@@ -45,10 +46,32 @@ export function Payment() {
 
   if (!selectedRoom || !selectedRate) return null;
 
-  const onSession = selectedRate.settlement.isAutomatic;
+  const settlementOffset = selectedRate.settlement.offset;
+  const zeroSettlementOffset =
+    settlementOffset == null ||
+    settlementOffset === "" ||
+    settlementOffset === "P0M0DT0H0M0S" ||
+    settlementOffset === "P0D" ||
+    settlementOffset === "PT0S";
+
+  // Mews documents AmountToChargeOnConfirmation as optional. It is required for
+  // this checkout only when the selected automatic rate settles immediately on
+  // confirmation. Future-settlement rates may legitimately return null.
+  const confirmationChargeRequired =
+    selectedRate.settlement.isAutomatic &&
+    selectedRate.settlement.trigger === "Confirmation" &&
+    zeroSettlementOffset &&
+    (quote?.total?.gross ?? 0) > 0;
+
+  const quoteUsable =
+    quote?.total?.gross != null &&
+    (!confirmationChargeRequired || amountDueNow != null);
+  const quoteInvalid = !quoteLoading && quote != null && !quoteUsable;
+  const quoteProblem = quoteError || quoteInvalid;
+  const onSession = (amountDueNow ?? 0) > 0;
 
   async function pay() {
-    if (!accepted || !selectedRoom || !selectedRate) return;
+    if (!accepted || !selectedRoom || !selectedRate || !quoteUsable) return;
     setSubmitting(true);
     setError(null);
     setUnavailable(false);
@@ -201,7 +224,7 @@ export function Payment() {
           </div>
         )}
         {error && <p className="text-sm font-medium text-red-600">{error}</p>}
-        {quoteError && (
+        {quoteProblem && (
           <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm">
             <p className="font-medium text-red-700">{t("payment.quoteUnavailable")}</p>
             <button type="button" onClick={refreshQuote} className="btn-link">
@@ -219,12 +242,12 @@ export function Payment() {
           <button
             type="button"
             onClick={pay}
-            disabled={!accepted || submitting || quoteLoading || quoteError}
+            disabled={!accepted || submitting || quoteLoading || quoteProblem || !quoteUsable}
             className="btn-accent min-w-56 text-base"
           >
             {submitting ? (
               t("payment.processing")
-            ) : quoteLoading ? (
+            ) : quoteLoading || (!quote && !quoteProblem) ? (
               t("payment.verifyingPrice")
             ) : onSession && amountDueNow != null ? (
               <>
