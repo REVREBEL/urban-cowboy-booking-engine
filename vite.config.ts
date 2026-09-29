@@ -1,3 +1,4 @@
+import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -5,6 +6,30 @@ import react from "@vitejs/plugin-react";
 // Pages Functions (functions/api/mews/*), servies par wrangler sur la même origine.
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: [
+      {
+        find: "@/components/booking",
+        replacement: fileURLToPath(new URL("./src/components/Booking", import.meta.url)),
+      },
+      {
+        find: "@/components/ui/button",
+        replacement: fileURLToPath(new URL("./src/evaluation/shims/button.tsx", import.meta.url)),
+      },
+      {
+        find: "lucide-react",
+        replacement: fileURLToPath(new URL("./src/evaluation/shims/lucide-react.tsx", import.meta.url)),
+      },
+      {
+        find: "@tanstack/react-router",
+        replacement: fileURLToPath(new URL("./src/evaluation/shims/tanstack-react-router.tsx", import.meta.url)),
+      },
+      {
+        find: "@",
+        replacement: fileURLToPath(new URL("./src", import.meta.url)),
+      },
+    ],
+  },
   build: {
     outDir: "dist",
     sourcemap: false,
