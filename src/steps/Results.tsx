@@ -15,6 +15,8 @@ import { parseRecommendationPreferences } from "../lib/topMatch";
 export function Results() {
   const {
     hotel,
+    hotelError,
+    reloadHotel,
     imageBaseUrl,
     products,
     checkIn,
@@ -56,7 +58,10 @@ export function Results() {
   // le filtre est appliqué à l'affichage, ce qui permet de compter les hébergements
   // NON cochés dispos et de les proposer en teaser (bascule instantanée, sans refetch).
   useEffect(() => {
-    if (!hotel) return;
+    if (!hotel) {
+      if (hotelError) setLoading(false);
+      return;
+    }
     let alive = true;
     setLoading(true);
     setError(null);
@@ -76,7 +81,7 @@ export function Results() {
     return () => {
       alive = false;
     };
-  }, [checkIn, checkOut, adults, children, infants, voucherCode, hotel?.DefaultCurrencyCode, reloadKey]);
+  }, [checkIn, checkOut, adults, children, infants, voucherCode, hotel, hotelError, reloadKey]);
 
   // Toutes les chambres dispos (tous hébergements), taguées par `property`.
   const allRooms = useMemo(() => (data ? buildRooms(data, hotel) : []), [data, hotel]);
@@ -190,15 +195,21 @@ export function Results() {
       </div>
 
       {/* États */}
-      {loading && <SkeletonList />}
+      {loading && !hotelError && <SkeletonList />}
 
-      {!loading && error && <ErrorBox message={error} onRetry={() => setReloadKey((k) => k + 1)} />}
+      {!loading && hotelError && (
+        <ErrorBox message={t("hotelError.msg")} onRetry={reloadHotel} />
+      )}
 
-      {!loading && !error && rooms.length === 0 && (
+      {!loading && !hotelError && error && (
+        <ErrorBox message={error} onRetry={() => setReloadKey((k) => k + 1)} />
+      )}
+
+      {!loading && !hotelError && !error && rooms.length === 0 && (
         <EmptyBox onModify={() => goTo("dates")} />
       )}
 
-      {!loading && !error && rooms.length > 0 && (
+      {!loading && !hotelError && !error && rooms.length > 0 && (
         <div className="mt-5 space-y-4">
           {topMatch && topMatchPreferences && (
             <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.85fr)]">
@@ -237,7 +248,7 @@ export function Results() {
       )}
 
       {/* Autres hébergements dispos sur ces dates — accordéons, EN BAS. */}
-      {!loading && !error && teasers.length > 0 && (
+      {!loading && !hotelError && !error && teasers.length > 0 && (
         <div className="mt-10">
           <h2 className="font-display text-xl text-ink">{t("results.alsoAvailable")}</h2>
           <div className="mt-3 space-y-3">
