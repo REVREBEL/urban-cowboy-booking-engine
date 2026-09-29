@@ -4,13 +4,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        beige: { DEFAULT: "#fffbf0", deep: "#f3ecd9" }, 
-        corail: { DEFAULT: "#ff6f62", soft: "#ff8a7f", dark: "#e85b4f" }, 
-        marine: { DEFAULT: "#061a2d", soft: "#0e2c47" }, 
-
-        turquoise: { DEFAULT: "#061a2d", vivid: "#ff6f62" }, 
-        teal: { deep: "#061a2d" }, // fonds sombres / hero → marine
-        creole: { DEFAULT: "#ff6f62", soft: "#ff8a7f" }, 
+        beige: { DEFAULT: "#fffbf0", deep: "#f3ecd9" },
+        corail: { DEFAULT: "#ff6f62", soft: "#ff8a7f", dark: "#e85b4f" },
+        marine: { DEFAULT: "#061a2d", soft: "#0e2c47" },
+        turquoise: { DEFAULT: "#061a2d", vivid: "#ff6f62" },
+        teal: { deep: "#061a2d" },
+        creole: { DEFAULT: "#ff6f62", soft: "#ff8a7f" },
         sand: "#f3ecd9",
         cream: "#fffbf0",
         ink: "#061a2d",
@@ -41,8 +40,16 @@ export default {
         oxblood: "#69253a",
       },
       fontFamily: {
-        display: ['"Instrument Serif"', "ui-serif", "Georgia", "serif"],
+        display: ['"UC Desert Rain"', '"Instrument Serif"', "ui-serif", "Georgia", "serif"],
         body: ['"Urbanist"', "ui-sans-serif", "system-ui", "sans-serif"],
+        brand: ['"UC Brothers"', '"Arial Narrow"', "sans-serif"],
+        label: ['"UC Brothers"', '"Arial Narrow"', "sans-serif"],
+        button: ['"UC Brothers"', '"Arial Narrow"', "sans-serif"],
+        topic: ['"UC Bianco Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
+        brothers: ['"UC Brothers"', '"Arial Narrow"', "sans-serif"],
+        desert: ['"UC Desert Rain"', "Georgia", "serif"],
+        uchen: ['"UC Arvo"', "Georgia", "serif"],
+        urbanist: ['"Urbanist"', "ui-sans-serif", "system-ui", "sans-serif"],
       },
       boxShadow: {
         card: "0 10px 40px -12px rgba(6, 26, 45, 0.18)",
