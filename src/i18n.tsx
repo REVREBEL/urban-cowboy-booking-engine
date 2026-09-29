@@ -199,6 +199,7 @@ const DICT = {
   "breakdown.included": { fr: "Inclus", en: "Included" },
   "breakdown.subtotal": { fr: "Sous-total", en: "Subtotal" },
   "breakdown.taxes": { fr: "Taxes", en: "Taxes" },
+  "breakdown.taxesAndOtherCharges": { fr: "Taxes et autres frais", en: "Taxes & other charges" },
   "breakdown.dueNow": { fr: "Dû maintenant", en: "Due now" },
   "breakdown.remainingBalance": { fr: "Solde restant", en: "Remaining balance" },
   "breakdown.total": { fr: "Total", en: "Total" },
@@ -320,7 +321,7 @@ const DICT = {
   "summary.dueNow": { fr: "Dû maintenant", en: "Due now" },
   "summary.remainingBalance": { fr: "Solde restant", en: "Remaining balance" },
   "summary.extrasNote": { fr: (p) => ` · dont ${p.amount} d'extras`, en: (p) => ` · incl. ${p.amount} in extras` },
-  "summary.noFees": { fr: "0 € de frais et commission", en: "€0 fees and commission" },
+  "summary.noFees": { fr: "Aucun frais de réservation", en: "No booking fees" },
   "summary.securePayment": { fr: "Paiement sécurisé · 3-D Secure", en: "Secure payment · 3-D Secure" },
 
   // ── conversion / DataBadge / PhoneInput / DateRangePicker ──────────────────
