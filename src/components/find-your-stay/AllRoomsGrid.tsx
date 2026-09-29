@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { useBooking } from '../../booking/BookingContext';
-import { getRoomsForAvailability } from '../../booking/mockData';
-import type { RoomExperience, RoomProduct } from '../../booking/types';
+import { useBooking } from './internal/BookingContext';
+import { getRoomsForAvailability } from './internal/mockData';
+import type { RoomExperience, RoomProduct } from './internal/types';
 import EmptyState from '../states/EmptyState';
 
 // ── Feature icon mapping for card display ────────────────────────────────────
@@ -443,7 +443,7 @@ function FilterBar({
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AllRoomsGrid() {
-  const { state, goBack, openDrawer } = useBooking();
+  const { state, dispatch, setView, goBack, openDrawer } = useBooking();
 
   const [sort, setSort] = useState<SortKey>(null);
   const [filterBeds, setFilterBeds] = useState<Set<string>>(new Set());

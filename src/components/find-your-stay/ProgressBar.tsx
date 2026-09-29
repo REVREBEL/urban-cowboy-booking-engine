@@ -349,3 +349,176 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     </nav>
   );
 };
+
+export default function App() {
+  const [activeStep, setActiveStep] = useState<number>(2);
+  const [asyncMode, setAsyncMode] = useState<boolean>(true);
+  const [showCheck, setShowCheck] = useState<boolean>(false);
+  const [useCustomSlot, setUseCustomSlot] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState<string | null>(
+    'Current active step: 2 (Room)'
+  );
+
+  const handleStepTransition = async (nextStep: number) => {
+    setFeedback(null);
+
+    if (asyncMode) {
+      await new Promise((resolve) => setTimeout(resolve, 550));
+    }
+
+    setActiveStep(nextStep);
+    const target = DEFAULT_BOOKING_STEPS.find((s) => s.step === nextStep);
+    setFeedback(`Transitioned to Step ${nextStep} (${target?.label})`);
+  };
+
+  const handleNext = () => {
+    if (activeStep < DEFAULT_BOOKING_STEPS.length) {
+      handleStepTransition(activeStep + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (activeStep > 1) {
+      handleStepTransition(activeStep - 1);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#1E2420] text-[#EBE8E0] py-12 px-6 flex flex-col items-center">
+      {/* Header Lockup */}
+      <div className="w-full max-w-3xl flex flex-col items-center text-center gap-4 mb-8">
+        <h1
+          className="text-3xl font-bold uppercase tracking-[2px]"
+          style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+        >
+          Progress Bar Component
+        </h1>
+        <p className="text-sm text-[#EBE8E0]/70 max-w-lg">
+          Booking step bar with hug-content slots and optical baseline centering.
+        </p>
+
+        {/* Interactive Controls Bar */}
+        <div className="flex flex-wrap items-center justify-center gap-4 bg-black/25 p-3.5 rounded-2xl border border-white/10 mt-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs uppercase font-semibold text-[#EBE8E0]/60">
+              Navigation:
+            </span>
+            <button
+              type="button"
+              onClick={handlePrev}
+              disabled={activeStep === 1}
+              className="px-3 py-1 text-xs rounded-full uppercase font-bold text-[#EBE8E0] border border-white/20 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={activeStep === DEFAULT_BOOKING_STEPS.length}
+              className="px-3 py-1 text-xs rounded-full uppercase font-bold text-[#EBE8E0] border border-white/20 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              Next Step
+            </button>
+          </div>
+
+          <label className="flex items-center gap-2 cursor-pointer select-none text-xs uppercase font-semibold text-[#EBE8E0]/80 ml-2">
+            <input
+              type="checkbox"
+              checked={asyncMode}
+              onChange={(e) => setAsyncMode(e.target.checked)}
+              className="rounded accent-[#9A5636]"
+            />
+            Async Delay (550ms)
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer select-none text-xs uppercase font-semibold text-[#EBE8E0]/80 ml-2">
+            <input
+              type="checkbox"
+              checked={showCheck}
+              onChange={(e) => setShowCheck(e.target.checked)}
+              className="rounded accent-[#9A5636]"
+            />
+            Checkmark on Complete
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer select-none text-xs uppercase font-semibold text-[#EBE8E0]/80 ml-2">
+            <input
+              type="checkbox"
+              checked={useCustomSlot}
+              onChange={(e) => setUseCustomSlot(e.target.checked)}
+              className="rounded accent-[#9A5636]"
+            />
+            Inject Custom Slot on Step 3
+          </label>
+        </div>
+
+        {feedback && (
+          <div className="text-xs font-semibold text-amber-200 bg-amber-950/80 border border-amber-700/60 px-4 py-1.5 rounded-full shadow-md">
+            {feedback}
+          </div>
+        )}
+      </div>
+
+      {/* Main Interactive Stage */}
+      <div className="w-full max-w-3xl p-10 rounded-[35px] bg-[#2E332F] border-2 border-white/10 shadow-2xl flex flex-col items-center gap-10">
+        {/* Live Hugging Progress Bar */}
+        <div className="w-full flex flex-col items-center gap-4">
+          <span className="text-xs uppercase font-bold tracking-widest text-[#EBE8E0]/60">
+            Auto-Layout Hugging Progress Bar
+          </span>
+
+          <div className="w-full flex justify-center p-6 rounded-2xl bg-black/30 border border-white/5 overflow-x-auto">
+            <ProgressBar
+              currentStep={activeStep}
+              onStepChange={handleStepTransition}
+              showCheckOnComplete={showCheck}
+              slots={
+                useCustomSlot
+                  ? {
+                      3: (
+                        <div
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#69253A] border border-[#F2AAA9]/40 text-[#EBE8E0] text-[10px] font-bold uppercase tracking-wider shadow-sm animate-pulse flex-shrink-0"
+                          title="Custom Slot Injected into Step 3"
+                        >
+                          <span>★</span>
+                          <span>VIP Reservation Details</span>
+                        </div>
+                      ),
+                    }
+                  : undefined
+              }
+            />
+          </div>
+
+          <span className="text-[11px] text-[#EBE8E0]/50 text-center">
+            Pills expand naturally based on character count while maintaining consistent 10px margins around each slash separator.
+          </span>
+        </div>
+
+        {/* Multi-Step Showcase */}
+        <div className="w-full flex flex-col items-center gap-4 pt-6 border-t border-white/10">
+          <span className="text-xs uppercase font-bold tracking-widest text-[#EBE8E0]/60">
+            Flow Simulation Across Steps
+          </span>
+
+          <div className="w-full flex flex-col gap-4">
+            {[1, 3, 5].map((demoStep) => (
+              <div
+                key={`demo-${demoStep}`}
+                className="p-4 rounded-xl bg-black/20 border border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 overflow-x-auto"
+              >
+                <span className="text-xs font-mono text-[#EBE8E0]/70 uppercase flex-shrink-0">
+                  Active at Step {demoStep}:
+                </span>
+                <ProgressBar
+                  currentStep={demoStep}
+                  showCheckOnComplete={showCheck}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

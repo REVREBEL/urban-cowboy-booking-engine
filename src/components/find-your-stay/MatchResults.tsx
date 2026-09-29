@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
-import { useBooking } from '../../booking/BookingContext';
-import { rankFromState } from '../../booking/recommendationAdapter';
-import { getRoomsForAvailability } from '../../booking/mockData';
+import { useBooking } from './internal/BookingContext';
+import { rankFromState } from './internal/recommendationAdapter';
+import { getRoomsForAvailability } from './internal/mockData';
 import TopMatchPanel from './TopMatchPanel';
 import RoomCard from './RoomCard';
 import EmptyState from '../states/EmptyState';
 
 export default function MatchResults() {
-  const { state, setView, goBack, openDrawer } = useBooking();
+  const { state, dispatch, setView, goBack, openDrawer } = useBooking();
   const prefs = state.recommendationPreferences;
 
   const results = useMemo(() => {

@@ -255,3 +255,107 @@ SearchButton.displayName = 'SearchButton';
 /**
  * Showcase / Preview Component matching SearchButton.pdf layout
  */
+export default function App() {
+  const [simulateLoading, setSimulateLoading] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+
+  const handleClick = () => {
+    setClickCount((prev) => prev + 1);
+  };
+
+  const handleSimulateAsync = () => {
+    setSimulateLoading(true);
+    setTimeout(() => {
+      setSimulateLoading(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-[#F4F3F0] flex flex-col items-center justify-center p-6 text-[#343833]">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700&display=swap');
+        .font-urbanist {
+          font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+      `}</style>
+
+      <div className="w-full max-w-md flex flex-col items-center gap-8 bg-[#FAF9F9] border border-[#E1E0E0] p-8 shadow-sm rounded-lg">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="font-urbanist font-bold text-xl tracking-tight text-[#343833]">
+            Search Button Component
+          </h1>
+          <p className="text-xs text-gray-500 mt-1">
+            Exact design specifications from SearchButton.css & PDF
+          </p>
+        </div>
+
+        {/* Button Variants Display matching SearchButton.pdf */}
+        <div className="flex flex-col gap-6 items-center w-full py-4 border-y border-[#E1E0E0]">
+          {/* Row 1: Circle Variants */}
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-gray-400">
+              Circle Variants (border-radius: 9999px)
+            </span>
+            <div className="flex items-center gap-4">
+              <SearchButton
+                variant="full-circle"
+                isLoading={simulateLoading}
+                onClick={handleClick}
+              />
+              <SearchButton
+                variant="icon-circle"
+                isLoading={simulateLoading}
+                onClick={handleClick}
+              />
+            </div>
+          </div>
+
+          {/* Row 2: Square Variants */}
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-gray-400">
+              Square Variants (border-radius: 5px)
+            </span>
+            <div className="flex items-center gap-4">
+              <SearchButton
+                variant="full-square"
+                isLoading={simulateLoading}
+                onClick={handleClick}
+              />
+              <SearchButton
+                variant="icon-square"
+                isLoading={simulateLoading}
+                onClick={handleClick}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Interactive Controls & SKILL.md Testing */}
+        <div className="flex flex-col gap-3 w-full items-center">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleSimulateAsync}
+              disabled={simulateLoading}
+              className="px-3 py-1.5 text-xs font-medium bg-[#343833] text-[#EBE8E0] rounded hover:bg-[#272a26] transition-colors disabled:opacity-50"
+            >
+              {simulateLoading ? 'Loading (1.5s)...' : 'Test Async Loading'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setClickCount(0)}
+              className="px-3 py-1.5 text-xs font-medium border border-[#343833] text-[#343833] rounded hover:bg-gray-100 transition-colors"
+            >
+              Reset Counter
+            </button>
+          </div>
+          <span className="text-xs text-gray-600">
+            Button Clicks Detected:{' '}
+            <strong className="text-[#343833] font-semibold">{clickCount}</strong>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
-import { useBooking } from "../../booking/BookingContext"
-import { getRatesForRoom } from "../../booking/mockData"
-import type { RateOffer, RoomProduct } from "../../booking/types"
+import { useBooking } from "./internal/BookingContext"
+import { getRatesForRoom } from "./internal/mockData"
+import type { RateOffer, RoomProduct } from "./internal/types"
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

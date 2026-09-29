@@ -1,5 +1,5 @@
 // SearchBarLocationDropdown.tsx
-import React, { useState, useRef, useId } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 
 export type CowboyLocation = 'CATSKILLS' | 'NASHVILLE' | 'DENVER' | string;
 
@@ -211,3 +211,269 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
  * 2. Full Search Bar Integration with Live Location Popover
  * 3. State Inspector for Location Selection
  */
+export default function App() {
+  const [selectedLocation, setSelectedLocation] = useState<string>('CATSKILLS');
+  const [isLocationOpen, setIsLocationOpen] = useState<boolean>(false);
+  const [activeDate] = useState<string>('Add dates');
+  const [activeGuests] = useState<string>('2 guests');
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node)
+      ) {
+        setIsLocationOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSearch = async () => {
+    if (isSearching) return;
+    setIsSearching(true);
+    setToastMessage(`Searching accommodations in ${selectedLocation}...`);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      setToastMessage(`Found available cowboy stays in ${selectedLocation}!`);
+    } catch {
+      setToastMessage('Search request failed. Please retry.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-[#EAE8E3] flex flex-col items-center justify-start py-10 px-4 text-[#343833]">
+      {/* Design System Typography */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&family=Uchen&family=Cinzel:wght@600;700&family=Playfair+Display:wght@700;800&display=swap');
+
+        .font-brothers {
+          font-family: 'Brothers OT', 'Cinzel', Georgia, serif;
+          letter-spacing: 0.04em;
+        }
+        .font-desert {
+          font-family: 'DesertRain', 'Playfair Display', Georgia, serif;
+          font-weight: 700;
+        }
+        .font-uchen {
+          font-family: 'Uchen', Georgia, serif;
+        }
+        .font-urbanist {
+          font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+      `}</style>
+
+      <div className="w-full max-w-4xl flex flex-col items-center gap-10">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="font-brothers text-2xl tracking-wide uppercase text-[#343833]">
+            Search Bar Location Dropdown
+          </h1>
+          <p className="text-xs text-[#4E332D] mt-1 font-urbanist">
+            Exact design specifications from SearchBarLocationDropdown.css & PDF
+          </p>
+        </div>
+
+        {/* Status Toast */}
+        {toastMessage && (
+          <div
+            role="status"
+            className="w-full max-w-[692px] text-xs font-urbanist bg-[#343833] text-[#EBE8E0] px-4 py-2.5 rounded shadow flex items-center justify-between transition-all"
+          >
+            <span>{toastMessage}</span>
+            <button
+              type="button"
+              onClick={() => setToastMessage(null)}
+              className="text-[#EBE8E0] underline ml-3 font-semibold"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {/* Section 1: Attached Live Search Bar Integration */}
+        <div className="flex flex-col items-center gap-3 w-full" ref={popoverRef}>
+          <span className="text-[11px] font-brothers uppercase tracking-wider text-[#4E332D]">
+            Live Attached Preview (Click Location to toggle dropdown)
+          </span>
+
+          <div className="relative">
+            {/* 692px Search Bar */}
+            <div
+              role="search"
+              aria-label="Accommodation search bar"
+              className="box-border flex flex-row items-center justify-between w-[692px] h-[56px] bg-[#FAF9F9] border border-[#DDDDDD] rounded-[9999px] pr-[5px] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)]"
+            >
+              {/* WHERE / LOCATION (Trigger for Dropdown) */}
+              <button
+                type="button"
+                onClick={() => setIsLocationOpen((prev) => !prev)}
+                aria-expanded={isLocationOpen}
+                aria-haspopup="dialog"
+                className={`box-border flex flex-col justify-center items-start px-[24px] py-0 gap-[2px] w-[201px] h-[54px] rounded-[9999px] transition-colors text-left focus:outline-none ${
+                  isLocationOpen
+                    ? 'bg-[#EAE8E3]'
+                    : 'bg-[#FAF9F9] hover:bg-[#F3F2EE]'
+                }`}
+              >
+                <span className="font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+                  LOCATION
+                </span>
+                <span className="font-desert text-[12px] leading-[22px] tracking-[1px] text-[#4E332D] font-bold truncate">
+                  {selectedLocation}
+                </span>
+              </button>
+
+              <div className="w-[1px] h-[30px] bg-[#DDDDDD] shrink-0" />
+
+              {/* WHEN (Dates) */}
+              <button
+                type="button"
+                className="box-border flex flex-col justify-center items-start px-[24px] py-0 gap-[2px] w-[201px] h-[54px] bg-[#FAF9F9] rounded-[9999px] hover:bg-[#F3F2EE] transition-colors text-left focus:outline-none"
+              >
+                <span className="font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+                  WHEN
+                </span>
+                <span className="font-uchen text-[12px] leading-[22px] text-[#1C1917] truncate">
+                  {activeDate}
+                </span>
+              </button>
+
+              <div className="w-[1px] h-[30px] bg-[#DDDDDD] shrink-0" />
+
+              {/* GUESTS */}
+              <button
+                type="button"
+                className="box-border flex flex-col justify-center items-start px-[24px] py-0 gap-[2px] w-[201px] h-[54px] bg-[#FAF9F9] rounded-[9999px] hover:bg-[#F3F2EE] transition-colors text-left focus:outline-none"
+              >
+                <span className="font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+                  GUESTS
+                </span>
+                <span className="font-uchen text-[12px] leading-[22px] text-[#1C1917] truncate">
+                  {activeGuests}
+                </span>
+              </button>
+
+              {/* Search Button (48px) */}
+              <button
+                type="button"
+                onClick={handleSearch}
+                disabled={isSearching}
+                aria-label="Search"
+                aria-busy={isSearching}
+                className="box-border flex items-center justify-center w-[48px] h-[48px] bg-[#343833] text-[#EBE8E0] rounded-[9999px] hover:bg-[#272A26] active:scale-95 transition-all focus:outline-none shrink-0 disabled:opacity-60"
+              >
+                {isSearching ? (
+                  <div className="w-4 h-4 border-2 border-[#EBE8E0] border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 13 13"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      cx="5.5"
+                      cy="5.5"
+                      r="4.25"
+                      stroke="#EBE8E0"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="8.8"
+                      y1="8.8"
+                      x2="12"
+                      y2="12"
+                      stroke="#EBE8E0"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            {/* Attached Dropdown Popover */}
+            {isLocationOpen && (
+              <div className="absolute top-[64px] left-[0px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                <SearchBarLocationDropdown
+                  value={selectedLocation}
+                  onChange={(loc) => {
+                    setSelectedLocation(loc);
+                    setToastMessage(`Location selected: ${loc}`);
+                  }}
+                  onClose={() => setIsLocationOpen(false)}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Section 2: Isolated Figma Specification View */}
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-[11px] font-brothers uppercase tracking-wider text-[#4E332D]">
+            Figma Component Isolated Spec (362px × 259px, border: 2px solid #4E332D)
+          </span>
+
+          <SearchBarLocationDropdown
+            value={selectedLocation}
+            onChange={(loc) => {
+              setSelectedLocation(loc);
+              setToastMessage(`Location selected: ${loc}`);
+            }}
+          />
+        </div>
+
+        {/* Section 3: Interactive State Inspector */}
+        <div className="w-full max-w-[500px] bg-[#FAF9F9] border border-[#DDDDDD] rounded-lg p-4 shadow-sm text-xs font-urbanist flex flex-col gap-3">
+          <div className="flex items-center justify-between border-b border-[#DDDDDD] pb-2">
+            <span className="font-semibold text-sm text-[#343833]">
+              Location State Inspector
+            </span>
+            <span className="text-gray-500 text-[11px]">Click a chip to change</span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-gray-500">Selected Cowboy:</span>
+            <span className="font-desert font-bold tracking-wider text-sm text-[#4E332D] bg-[#EAE8E3] px-2.5 py-1 rounded">
+              {selectedLocation}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 pt-1">
+            {DEFAULT_LOCATIONS.map((loc) => (
+              <button
+                key={loc.id}
+                type="button"
+                onClick={() => {
+                  setSelectedLocation(loc.name);
+                  setToastMessage(`Location set to ${loc.name}`);
+                }}
+                className={`px-3 py-1 rounded border text-xs font-desert font-bold tracking-wider transition-colors ${
+                  selectedLocation === loc.name
+                    ? 'bg-[#4E332D] text-[#FAF9F9] border-[#4E332D]'
+                    : 'bg-white border-[#DDDDDD] text-[#4E332D] hover:bg-gray-50'
+                }`}
+              >
+                {loc.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

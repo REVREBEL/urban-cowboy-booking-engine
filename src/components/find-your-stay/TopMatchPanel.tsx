@@ -1,4 +1,4 @@
-import type { TopMatchCopy, RecommendationResult } from '../../booking/types';
+import type { TopMatchCopy, RecommendationResult } from './internal/types';
 
 type Props = {
   result: RecommendationResult;

@@ -1,5 +1,5 @@
-import { useBooking } from '../../booking/BookingContext';
-import { getRoomsForAvailability } from '../../booking/mockData';
+import { useBooking } from './internal/BookingContext';
+import { getRoomsForAvailability } from './internal/mockData';
 
 function fmt(d: string) {
   if (!d) return '';

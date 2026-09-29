@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useBooking } from '../../booking/BookingContext';
-import type { PartyType, MatchInterest } from '../../booking/types';
+import { useBooking } from './internal/BookingContext';
+import type { PartyType, MatchInterest } from './internal/types';
 
 const PARTY_OPTIONS: { value: PartyType; label: string; sub: string }[] = [
   { value: 'partner', label: 'Partner',  sub: 'Just the two of us'  },

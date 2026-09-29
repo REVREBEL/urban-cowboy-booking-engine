@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 
 export type SearchBarExpandedVariant = 'circle' | 'square';
 
@@ -158,7 +158,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   isLoading = false,
   className = '',
 }) => {
-  const [internalValues] = useState<SearchBarExpandedValues>({
+  const [internalValues, setInternalValues] = useState<SearchBarExpandedValues>({
     property: initialValues?.property ?? 'CATSKILLS',
     checkInDate: initialValues?.checkInDate ?? '14 Oct 2026',
     checkOutDate: initialValues?.checkOutDate ?? '17 Oct 2026',
@@ -421,3 +421,235 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
     </div>
   );
 };
+
+export default function App() {
+  const [activeProperty, setActiveProperty] = useState<string>('CATSKILLS');
+  const [checkIn, setCheckIn] = useState<string>('14 Oct 2026');
+  const [checkOut, setCheckOut] = useState<string>('17 Oct 2026');
+  const [guests, setGuests] = useState<number>(2);
+  const [promo, setPromo] = useState<string>('add code');
+
+  const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Click outside listener to dismiss active dropdown
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setActiveSection(null);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSearch = async (values: SearchBarExpandedValues) => {
+    if (isSearching) return;
+    setIsSearching(true);
+    setToastMessage(`Searching accommodations in ${values.property}...`);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      setToastMessage(
+        `Search confirmed for ${values.property} (${values.checkInDate} - ${values.checkOutDate}, ${values.guests} Guests)!`
+      );
+    } catch {
+      setToastMessage('Search request failed. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleCycleProperty = () => {
+    const locations = ['CATSKILLS', 'NASHVILLE', 'DENVER'];
+    const nextIdx = (locations.indexOf(activeProperty) + 1) % locations.length;
+    setActiveProperty(locations[nextIdx]);
+  };
+
+  const handleCycleGuests = () => {
+    setGuests((prev) => (prev >= 6 ? 1 : prev + 1));
+  };
+
+  const handleCyclePromo = () => {
+    const codes = ['add code', 'FALL2026', 'VIPGUEST', 'SAVE20'];
+    const nextIdx = (codes.indexOf(promo) + 1) % codes.length;
+    setPromo(codes[nextIdx]);
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-[#EAE8E3] flex flex-col items-center justify-start py-10 px-4 text-[#343833]">
+      {/* Design System Typography Imports */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&family=Uchen&family=Cinzel:wght@600;700&family=Playfair+Display:wght@700;800&display=swap');
+
+        .font-brothers {
+          font-family: 'Brothers OT', 'Cinzel', Georgia, serif;
+          letter-spacing: 0.04em;
+        }
+        .font-desert {
+          font-family: 'DesertRain', 'Playfair Display', Georgia, serif;
+          font-weight: 700;
+        }
+        .font-uchen {
+          font-family: 'Uchen', Georgia, serif;
+        }
+        .font-urbanist {
+          font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+      `}</style>
+
+      <div className="w-full max-w-6xl flex flex-col items-center gap-10">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="font-brothers text-2xl tracking-wide uppercase text-[#343833]">
+            Expanded Search Bar
+          </h1>
+          <p className="text-xs text-[#4E332D] mt-1 font-urbanist">
+            Exact design specifications from SearchBarExpanded.css & PDF
+          </p>
+        </div>
+
+        {/* Global Toast Feedback (SKILL.md) */}
+        {toastMessage && (
+          <div
+            role="status"
+            className="w-full max-w-[1057px] text-xs font-urbanist bg-[#343833] text-[#EBE8E0] px-4 py-2.5 rounded shadow flex items-center justify-between transition-all"
+          >
+            <span>{toastMessage}</span>
+            <button
+              type="button"
+              onClick={() => setToastMessage(null)}
+              className="text-[#EBE8E0] underline ml-3 font-semibold"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {/* Section 1: Figma Artboard Container Spec View (1097px x 224px, dashed border: #9747FF) */}
+        <div className="flex flex-col items-center gap-3" ref={containerRef}>
+          <span className="text-[11px] font-brothers uppercase tracking-wider text-[#4E332D]">
+            Figma Artboard (1097px × 224px, dashed border: #9747FF)
+          </span>
+
+          <div className="box-border relative w-[1097px] h-[224px] border border-dashed border-[#9747FF] rounded-[5px] bg-[#FAF9F9]/40 p-0 overflow-visible">
+            {/* Property 1=Default (Pill / Circle at top: 20px, left: 20px) */}
+            <div className="absolute top-[20px] left-[20px]">
+              <SearchBarExpanded
+                variant="circle"
+                values={{
+                  property: activeProperty,
+                  checkInDate: checkIn,
+                  checkOutDate: checkOut,
+                  guests,
+                  promoCode: promo,
+                }}
+                activeSection={activeSection}
+                onSectionClick={setActiveSection}
+                isLoading={isSearching}
+                onSearch={handleSearch}
+              />
+            </div>
+
+            {/* Property 1=Square (Square at top: 123px, left: 60px) */}
+            <div className="absolute top-[123px] left-[60px]">
+              <SearchBarExpanded
+                variant="square"
+                values={{
+                  property: activeProperty,
+                  checkInDate: checkIn,
+                  checkOutDate: checkOut,
+                  guests,
+                  promoCode: promo,
+                }}
+                activeSection={activeSection}
+                onSectionClick={setActiveSection}
+                isLoading={isSearching}
+                onSearch={handleSearch}
+              />
+            </div>
+          </div>
+        </div>
+
+        {}
+        <div className="w-full max-w-[1057px] bg-[#FAF9F9] border border-[#DDDDDD] rounded-lg p-5 shadow-sm flex flex-col gap-4 text-xs font-urbanist">
+          <div className="flex items-center justify-between border-b border-[#DDDDDD] pb-3">
+            <span className="font-semibold text-sm text-[#343833]">
+              Expanded Search Bar State & Simulation Controls
+            </span>
+            <span className="text-[11px] text-gray-500">
+              Click any section in the search bar above or use the test chips below
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Property Switcher */}
+            <div className="flex flex-col gap-1.5">
+              <span className="font-medium text-[#4E332D]">Property / Cowboy:</span>
+              <button
+                type="button"
+                onClick={handleCycleProperty}
+                className="px-3 py-1.5 bg-white border border-[#DDDDDD] rounded hover:bg-gray-100 font-desert font-bold tracking-wider text-[#4E332D] text-left transition-colors"
+              >
+                {activeProperty} ↻
+              </button>
+            </div>
+
+            {/* Guest Counter Switcher */}
+            <div className="flex flex-col gap-1.5">
+              <span className="font-medium text-[#4E332D]">Guests:</span>
+              <button
+                type="button"
+                onClick={handleCycleGuests}
+                className="px-3 py-1.5 bg-white border border-[#DDDDDD] rounded hover:bg-gray-100 font-uchen text-left transition-colors"
+              >
+                {guests} Guests ↻
+              </button>
+            </div>
+
+            {/* Promo Code Switcher */}
+            <div className="flex flex-col gap-1.5">
+              <span className="font-medium text-[#4E332D]">Promo Code:</span>
+              <button
+                type="button"
+                onClick={handleCyclePromo}
+                className="px-3 py-1.5 bg-white border border-[#DDDDDD] rounded hover:bg-gray-100 font-mono text-left transition-colors"
+              >
+                {promo} ↻
+              </button>
+            </div>
+
+            {/* Active Trigger */}
+            <div className="flex flex-col gap-1.5">
+              <span className="font-medium text-[#4E332D]">Simulation Action:</span>
+              <button
+                type="button"
+                onClick={() =>
+                  handleSearch({
+                    property: activeProperty,
+                    checkInDate: checkIn,
+                    checkOutDate: checkOut,
+                    guests,
+                    promoCode: promo,
+                  })
+                }
+                disabled={isSearching}
+                className="px-3 py-1.5 bg-[#4E332D] text-[#FAF9F9] rounded hover:bg-[#3D2723] disabled:opacity-50 transition-colors font-semibold"
+              >
+                {isSearching ? 'Executing Search...' : 'Trigger Search'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

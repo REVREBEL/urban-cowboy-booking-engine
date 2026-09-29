@@ -1,5 +1,5 @@
 // SearchBarGuestDropdown.tsx
-import React, { useState, useId } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 
 export interface GuestCounts {
   adults: number;
@@ -333,3 +333,296 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
  * 2. Search Bar Integration with Live Popover Dropdown
  * 3. State & Sync Controls compliant with SKILL.md
  */
+export default function App() {
+  const [counts, setCounts] = useState<GuestCounts>({
+    adults: 2,
+    children: 0,
+    accessible: false,
+  });
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [searchFeedback, setSearchFeedback] = useState<string | null>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const totalGuests = counts.adults + counts.children;
+  const guestDisplayString = `${totalGuests} guest${
+    totalGuests === 1 ? '' : 's'
+  }${counts.accessible ? ' • ADA' : ''}`;
+
+  const handleSimulateSearch = async () => {
+    if (isSearching) return;
+    setIsSearching(true);
+    setSearchFeedback(null);
+
+    try {
+      // Follow SKILL.md async operation and loading patterns
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      setSearchFeedback(
+        `Search confirmed: ${counts.adults} Adults, ${counts.children} Children${
+          counts.accessible ? ' with ADA accessible room' : ''
+        }`
+      );
+    } catch {
+      setSearchFeedback('Search failed. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen w-full bg-[#EAE8E3] flex flex-col items-center justify-start py-10 px-4 text-[#343833]">
+      {/* Typography Styles matching design specs */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&family=Uchen&family=Cinzel:wght@600;700&display=swap');
+
+        .font-brothers {
+          font-family: 'Brothers OT', 'Cinzel', Georgia, serif;
+          letter-spacing: 0.04em;
+        }
+        .font-uchen {
+          font-family: 'Uchen', Georgia, serif;
+        }
+        .font-urbanist {
+          font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+      `}</style>
+
+      <div className="w-full max-w-4xl flex flex-col items-center gap-10">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="font-brothers text-2xl tracking-wide uppercase text-[#343833]">
+            Search Bar Guest Dropdown
+          </h1>
+          <p className="text-xs text-[#4E332D] mt-1 font-urbanist">
+            Exact layout specs from SearchBarGuestDropdown_2.css & SearchBarGuestDropdown.pdf
+          </p>
+        </div>
+
+        {/* Toast / Status banner according to SKILL.md */}
+        {searchFeedback && (
+          <div
+            role="status"
+            className="w-full max-w-[692px] text-xs font-urbanist bg-[#343833] text-[#EBE8E0] px-4 py-2.5 rounded shadow flex items-center justify-between transition-all"
+          >
+            <span>{searchFeedback}</span>
+            <button
+              type="button"
+              onClick={() => setSearchFeedback(null)}
+              className="text-[#EBE8E0] underline ml-3 font-semibold"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {/* Section 1: Live Attached Search Bar Integration */}
+        <div className="flex flex-col items-center gap-3 w-full" ref={popoverRef}>
+          <span className="text-[11px] font-brothers uppercase tracking-wider text-[#4E332D]">
+            Interactive Attached Preview (Click "GUESTS" to toggle dropdown)
+          </span>
+
+          <div className="relative">
+            {/* 692px Search Bar matching SearchBar.css */}
+            <div
+              role="search"
+              aria-label="Accommodation search bar"
+              className="box-border flex flex-row items-center justify-between w-[692px] h-[56px] bg-[#FAF9F9] border border-[#DDDDDD] rounded-[9999px] pr-[5px] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)]"
+            >
+              {/* Date Section */}
+              <button
+                type="button"
+                className="box-border flex flex-col justify-center items-start px-[24px] py-0 gap-[2px] w-[201px] h-[54px] bg-[#FAF9F9] rounded-[9999px] hover:bg-[#F3F2EE] transition-colors text-left focus:outline-none"
+              >
+                <span className="font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+                  WHEN
+                </span>
+                <span className="font-uchen text-[12px] leading-[22px] text-[#1C1917] truncate">
+                  Add dates
+                </span>
+              </button>
+
+              {/* Vertical Rule */}
+              <div className="w-[1px] h-[30px] bg-[#DDDDDD] shrink-0" />
+
+              {/* Guest Section (Active Trigger) */}
+              <button
+                type="button"
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
+                aria-expanded={isDropdownOpen}
+                aria-haspopup="dialog"
+                className={`box-border flex flex-col justify-center items-start px-[24px] py-0 gap-[2px] w-[201px] h-[54px] rounded-[9999px] transition-colors text-left focus:outline-none ${
+                  isDropdownOpen
+                    ? 'bg-[#EAE8E3]'
+                    : 'bg-[#FAF9F9] hover:bg-[#F3F2EE]'
+                }`}
+              >
+                <span className="font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+                  GUESTS
+                </span>
+                <span className="font-uchen text-[12px] leading-[22px] text-[#1C1917] truncate font-medium">
+                  {guestDisplayString}
+                </span>
+              </button>
+
+              {/* Vertical Rule */}
+              <div className="w-[1px] h-[30px] bg-[#DDDDDD] shrink-0" />
+
+              {/* Promo Section */}
+              <button
+                type="button"
+                className="box-border flex flex-col justify-center items-start px-[24px] py-0 gap-[2px] w-[201px] h-[54px] bg-[#FAF9F9] rounded-[9999px] hover:bg-[#F3F2EE] transition-colors text-left focus:outline-none"
+              >
+                <span className="font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+                  PROMO
+                </span>
+                <span className="font-urbanist text-[12px] leading-[14px] text-[#1C1917] truncate">
+                  Add promo
+                </span>
+              </button>
+
+              {/* Slotted 48px Search Button */}
+              <button
+                type="button"
+                onClick={handleSimulateSearch}
+                disabled={isSearching}
+                aria-label="Search"
+                aria-busy={isSearching}
+                className="box-border flex items-center justify-center w-[48px] h-[48px] bg-[#343833] text-[#EBE8E0] rounded-[9999px] hover:bg-[#272A26] active:scale-95 transition-all focus:outline-none shrink-0 disabled:opacity-60"
+              >
+                {isSearching ? (
+                  <svg
+                    className="animate-spin h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="#EBE8E0"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="#EBE8E0"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 13 13"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      cx="5.5"
+                      cy="5.5"
+                      r="4.25"
+                      stroke="#EBE8E0"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                    />
+                    <line
+                      x1="8.8"
+                      y1="8.8"
+                      x2="12"
+                      y2="12"
+                      stroke="#EBE8E0"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            {/* Anchored Dropdown Popover */}
+            {isDropdownOpen && (
+              <div className="absolute top-[64px] left-[175px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                <SearchBarGuestDropdown
+                  counts={counts}
+                  onChange={setCounts}
+                  onClose={() => setIsDropdownOpen(false)}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Section 2: Isolated Standalone Component Card View */}
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-[11px] font-brothers uppercase tracking-wider text-[#4E332D]">
+            Figma Component Isolated Spec (360px × 274px, border: 2px solid #343833)
+          </span>
+
+          <SearchBarGuestDropdown counts={counts} onChange={setCounts} />
+        </div>
+
+        {/* Section 3: Live State Inspector & Controls */}
+        <div className="w-full max-w-[500px] bg-[#FAF9F9] border border-[#DDDDDD] rounded-lg p-4 shadow-sm text-xs font-urbanist flex flex-col gap-3">
+          <div className="flex items-center justify-between border-b border-[#DDDDDD] pb-2">
+            <span className="font-semibold text-sm text-[#343833]">
+              Dropdown State Inspector
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                setCounts({ adults: 2, children: 0, accessible: false })
+              }
+              className="px-2.5 py-1 bg-white border border-[#DDDDDD] rounded hover:bg-gray-50 text-[#343833] transition-colors"
+            >
+              Reset to Defaults
+            </button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="bg-[#F4F3F0] p-2.5 rounded border border-[#E1E0E0]">
+              <span className="text-gray-500 block text-[10px] uppercase font-bold">
+                Adults
+              </span>
+              <strong className="text-base text-[#343833] font-uchen">
+                {counts.adults}
+              </strong>
+            </div>
+            <div className="bg-[#F4F3F0] p-2.5 rounded border border-[#E1E0E0]">
+              <span className="text-gray-500 block text-[10px] uppercase font-bold">
+                Children
+              </span>
+              <strong className="text-base text-[#343833] font-uchen">
+                {counts.children}
+              </strong>
+            </div>
+            <div className="bg-[#F4F3F0] p-2.5 rounded border border-[#E1E0E0]">
+              <span className="text-gray-500 block text-[10px] uppercase font-bold">
+                Accessible
+              </span>
+              <strong className="text-base text-[#343833] font-uchen">
+                {counts.accessible ? 'YES' : 'NO'}
+              </strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
