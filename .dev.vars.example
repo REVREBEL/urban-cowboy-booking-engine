@@ -1,22 +1,17 @@
 # Copy this file to `.dev.vars` (gitignored) for local development.
 # `wrangler dev` reads it automatically. NEVER COMMIT `.dev.vars`.
 #
-# Safe Mews demo defaults. Replace these only with identifiers issued for the
-# intended Urban Cowboy environment.
-MEWS_BASE_URL=https://api.mews-demo.com
-MEWS_APP_BASE_URL=https://api.mews-demo.com
+# Confirmed Urban Cowboy Lodge Catskills production identifiers.
+MEWS_BASE_URL=https://api.mews.com
+MEWS_APP_BASE_URL=https://app.mews.com
 
-# Booking Engine API — Client string enabled by Mews on the Urban Cowboy enterprise.
-MEWS_CLIENT=<Client string provided by Mews — DO NOT commit the real value>
+# Booking Engine API client string registered with Mews.
+MEWS_CLIENT=<Client string provided/registered with Mews — DO NOT commit the real value>
 
-MEWS_HOTEL_ID=3edbe1b4-6739-40b7-81b3-d369d9469c48
-MEWS_CONFIG_ID=93e27b6f-cba7-4e0b-a24a-819e1b7b388a
-MEWS_ADULT_AGE_CATEGORY_ID=5485e2f3-4034-4ca1-8a8f-ade30114c61f
-MEWS_CHILD_AGE_CATEGORY_ID=fece4b6b-39fa-4ccd-9909-afba0092eeb1
-
-# Webhook (optional): POST URL notified on every initiated payment (payment.initiated)
-# and on every paid reservation (reservation.paid). Leave empty = disabled.
-# WEBHOOK_URL=https://example.com/mews-webhook
+MEWS_HOTEL_ID=8bd38131-c371-4625-9c29-b10600705d34
+MEWS_CONFIG_ID=4725ace3-6b93-439f-a549-b4bc00ae1d10
+MEWS_ADULT_AGE_CATEGORY_ID=8f3ceb39-5c40-417a-b9a5-b106007064f8
+MEWS_CHILD_AGE_CATEGORY_ID=db093f0b-738e-4afe-9191-b106007065ff
 
 # Funnel tracking is disabled unless this project provisions its own endpoint.
 # WEBHOOK_EVENTS=https://example.com/webhook/booking-events
