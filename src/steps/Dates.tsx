@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useBooking, DEFAULT_PROPERTIES } from "../state/booking";
 import { nights } from "../lib/format";
 import { t, type TKey } from "../i18n";
-import { DateRangePicker } from "../components/DateRangePicker";
+import { DateRangePicker } from "@/components/forms/date-range-picker";
 import {
   IconArrowRight,
   IconCheck,
@@ -13,7 +13,7 @@ import {
   IconPlus,
   IconUsers,
   IconWave,
-} from "../components/icons";
+} from "@/components/icons/cowboy-icons";
 
 // Selectable property cards (label, description, and demo image).
 // `desc` = clé i18n résolue AU RENDU via t() (pas au niveau module, sinon figée en fr
