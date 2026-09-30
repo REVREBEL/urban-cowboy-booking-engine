@@ -16,6 +16,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmptyState from "@/components/feedback/empty-state";
 import ErrorState from "@/components/feedback/error-state";
 import LoadingState from "@/components/feedback/loading-state";
+import { BookingHeader } from "@/components/booking/chrome/header";
+import { BookingFooter } from "@/components/booking/chrome/footer";
+import { ContactBar } from "@/components/booking/chrome/contact-bar";
 
 import { DogToggleButton } from "@/components/booking/discovery/DogToggleButton";
 import { MatchBenefitsCard } from "@/components/booking/results/MatchBenefitsCard";
@@ -45,6 +48,7 @@ import { SearchButton } from "@/components/booking/search/SearchButton";
 import { demoMatchRoom, demoStaySummary } from "./fixtures";
 
 type SectionId =
+  | "chrome"
   | "find-controls"
   | "find-search"
   | "find-progress"
@@ -58,6 +62,7 @@ type PreviewWidth = "desktop" | "tablet" | "mobile" | "fluid";
 type PreviewSurface = "cream" | "white" | "forest" | "transparent";
 
 const sections: { id: SectionId; label: string; kicker: string }[] = [
+  { id: "chrome", label: "Booking · Chrome", kicker: "Chrome" },
   { id: "find-controls", label: "Find Your Stay · Controls", kicker: "Controls" },
   { id: "find-search", label: "Find Your Stay · Search", kicker: "Search" },
   { id: "find-progress", label: "Find Your Stay · Progress", kicker: "Progress" },
@@ -83,6 +88,9 @@ const surfaceClasses: Record<PreviewSurface, string> = {
 };
 
 const renderedPaths = new Set([
+  "src/components/booking/chrome/header.tsx",
+  "src/components/booking/chrome/footer.tsx",
+  "src/components/booking/chrome/contact-bar.tsx",
   "src/components/booking/discovery/DogToggleButton.tsx",
   "src/components/booking/results/MatchBenefitsCard.tsx",
   "src/components/booking/discovery/PreferenceIconButton.tsx",
@@ -256,6 +264,56 @@ function Toolbar({
         </div>
       </div>
     </div>
+  );
+}
+
+function ChromeSection({ width }: { width: PreviewWidth }) {
+  return (
+    <section id="chrome" className="scroll-mt-24">
+      <SectionHeader
+        kicker="Booking"
+        title="Chrome"
+        body="Global booking shell components used across the booking journey."
+      />
+
+      <Preview
+        title="BookingHeader"
+        path="src/components/booking/chrome/header.tsx"
+        surface="cream"
+      >
+        <WidthFrame width={width} centered={false}>
+          <BookingHeader
+            step="results"
+            onNavigate={() => undefined}
+            onHome={() => undefined}
+            canNavigate={() => true}
+          />
+        </WidthFrame>
+      </Preview>
+
+      <Preview
+        title="BookingFooter"
+        path="src/components/booking/chrome/footer.tsx"
+        surface="cream"
+      >
+        <WidthFrame width={width} centered={false}>
+          <BookingFooter />
+        </WidthFrame>
+      </Preview>
+
+      <Preview
+        title="ContactBar"
+        path="src/components/booking/chrome/contact-bar.tsx"
+        surface="cream"
+        description="Rendered in preview mode so the floating contact control stays inside this component card."
+      >
+        <WidthFrame width={width}>
+          <div className="relative min-h-72 overflow-hidden rounded-xl border border-[#4e332d]/10 bg-[#ebe8e0]">
+            <ContactBar preview />
+          </div>
+        </WidthFrame>
+      </Preview>
+    </section>
   );
 }
 
@@ -615,6 +673,27 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
       />
 
       <Preview
+        title="Typography"
+        path="src/index.css"
+        surface={surface}
+        description="Semantic typography variables used across the booking engine."
+      >
+        <WidthFrame width={width}>
+          <div className="grid max-w-3xl gap-5 text-[#4e332d]">
+            <div>
+              <p className="font-eyebrow text-xs uppercase tracking-[0.18em]">Eyebrow · Bianco Sans</p>
+              <h2 className="mt-1 font-display text-4xl">Heading · DesertRain</h2>
+            </div>
+            <p className="text-base">Body · Uchen Regular. Built for the quieter reading moments between decisions.</p>
+            <p className="font-label text-sm uppercase">Label · Brothers OT</p>
+            <Button variant="outline" color="dark">Button · Brothers OT</Button>
+            <p className="font-number text-2xl">$425.00 · Oct 14–17 · 2 Guests</p>
+            <blockquote className="text-3xl">Blockquote · Cedarville</blockquote>
+          </div>
+        </WidthFrame>
+      </Preview>
+
+      <Preview
         title="Buttons + Badges"
         path="src/components/ui/button.tsx"
         surface={surface}
@@ -821,6 +900,7 @@ export default function ComponentLibrary() {
             </p>
           </div>
 
+          <ChromeSection width={width} />
           <FindControlsSection width={width} surface={surface} />
           <FindSearchSection width={width} surface={surface} />
           <FindProgressSection width={width} surface={surface} />
