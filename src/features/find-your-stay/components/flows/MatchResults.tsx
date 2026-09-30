@@ -1,175 +1,166 @@
-import EmptyState from "@/components/feedback/empty-state";
-import type { RecommendationResult } from "../../types";
+import { useState, type ReactNode } from "react";
+import type { ShapedRoom } from "@/types/mews";
+import type { MatchInterest, RecommendationPreferences } from "@/types/merchandising";
+import { buildTopMatchCopy } from "@/lib/topMatch";
 
 export type MatchResultsProps = {
-  results: RecommendationResult[];
+  rooms: ShapedRoom[];
+  preferences: RecommendationPreferences;
+  checkIn: string;
   totalAvailable: number;
-  hasPreferences: boolean;
   onBack: () => void;
-  onStartQuiz: () => void;
-  onViewRoom: (roomId: string) => void;
   onBrowseAll: () => void;
+  renderRoom: (room: ShapedRoom, options: { top: boolean; index: number }) => ReactNode;
+  afterTop?: ReactNode;
 };
 
-function MatchRoomResult({
-  result,
-  top = false,
-  onViewRoom,
+const INTEREST_LABELS: Record<MatchInterest, string> = {
+  iconTub: "an iconic copper-tub soak",
+  outdoorSoak: "bathing outside",
+  ownPlace: "a place of your own",
+  scenic: "mountain and forest views",
+  simpleCozy: "something simple and cozy",
+  social: "room to gather",
+};
+
+function listChoices(interests: [MatchInterest, MatchInterest?]) {
+  const labels = interests.filter(Boolean).map((interest) => INTEREST_LABELS[interest as MatchInterest]);
+  return labels.length === 2 ? labels[0] + " and " + labels[1] : labels[0];
+}
+
+function MatchReasonCard({
+  room,
+  checkIn,
+  preferences,
 }: {
-  result: RecommendationResult;
-  top?: boolean;
-  onViewRoom: (roomId: string) => void;
+  room: ShapedRoom;
+  checkIn: string;
+  preferences: RecommendationPreferences;
 }) {
-  const copy = result.explanation;
+  const [saved, setSaved] = useState(false);
+  const copy = buildTopMatchCopy(room.name, preferences, checkIn, room.merchandising);
+  const choices = listChoices(preferences.interests);
+
+  async function share() {
+    const data = { title: room.name, text: copy.top_match_reason, url: window.location.href };
+    if (navigator.share) {
+      await navigator.share(data).catch(() => undefined);
+      return;
+    }
+    await navigator.clipboard?.writeText(window.location.href).catch(() => undefined);
+  }
 
   return (
-    <article
-      className={`rounded-2xl border bg-white p-6 shadow-sm ${top ? "border-[#9a5636]" : "border-[#ccc7bb]"}`}
-    >
-      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <div className="min-w-0">
-          {top && (
-            <p
-              className="mb-2 text-[10px] uppercase tracking-[0.2em] text-[#9a5636]"
-              style={{ fontFamily: "var(--font-brothers)" }}
-            >
-              {copy?.match_badge || "Top Match"}
-            </p>
-          )}
-          <h2
-            className="text-3xl leading-none text-[#4e332d]"
-            style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}
-          >
-            {result.room.name}
-          </h2>
-          <p
-            className="mt-2 max-w-xl text-sm leading-relaxed text-[#767470]"
-            style={{ fontFamily: "var(--font-uchen)" }}
-          >
-            {copy?.top_match_reason || result.room.description}
-          </p>
-          {result.matchedInterests.length > 0 && (
-            <p
-              className="mt-3 text-[10px] uppercase tracking-widest text-[#9a5636]"
-              style={{ fontFamily: "var(--font-brothers)" }}
-            >
-              {result.matchedInterests.length} preference
-              {result.matchedInterests.length === 1 ? "" : "s"} matched
-            </p>
-          )}
-        </div>
+    <aside className="flex h-full min-h-[320px] flex-col border border-[#8C2340] bg-[#FAF9F9] p-4 text-[#4E332D] sm:p-5">
+      <img src="/assets/labels/top_match.svg" alt="Top Match" className="h-auto w-28 object-contain" />
 
-        <button
-          type="button"
-          onClick={() => onViewRoom(result.room.id)}
-          className="shrink-0 rounded-full bg-[#9a5636] px-5 py-2.5 text-xs uppercase tracking-widest text-white transition-opacity hover:opacity-80"
-          style={{ fontFamily: "var(--font-brothers)" }}
-        >
-          View Room
+      <p className="mx-auto mt-4 max-w-[18rem] font-editorial text-xs leading-[1.45]">
+        This room feels made for {copy.party_summary}, with {choices} shaping the match.
+      </p>
+
+      <div className="mt-4 border-t border-[#8C2340]/45 pt-4">
+        <h2 className="font-brothers text-lg font-bold uppercase leading-none text-[#8C2340]">
+          You&apos;ll Love It Because …
+        </h2>
+      </div>
+
+      <div className="mt-4 space-y-4">
+        <section>
+          <h3 className="font-bianco text-xs font-bold text-[#8C2340]">Your Choices, Reflected</h3>
+          <p className="mt-1 font-editorial text-[11px] leading-[1.45]">{copy.benefit_1}</p>
+        </section>
+        <section>
+          <h3 className="font-bianco text-xs font-bold text-[#8C2340]">Your Stay, Considered</h3>
+          <p className="mt-1 font-editorial text-[11px] leading-[1.45]">{copy.benefit_2}</p>
+        </section>
+        <section>
+          <h3 className="font-bianco text-xs font-bold text-[#8C2340]">
+            Even Better in {copy.season_label.charAt(0).toUpperCase() + copy.season_label.slice(1)}
+          </h3>
+          <p className="mt-1 font-editorial text-[11px] leading-[1.45]">{copy.benefit_3}</p>
+        </section>
+      </div>
+
+      <div className="mt-auto flex justify-end gap-2 pt-5">
+        <button type="button" onClick={share} className="rounded-full border border-[#4E332D] px-4 pb-1.5 pt-2 font-bianco text-[10px] font-bold uppercase tracking-[1px] hover:bg-[#4E332D] hover:text-[#FAF9F9]">
+          Share
+        </button>
+        <button type="button" aria-pressed={saved} onClick={() => setSaved((value) => !value)} className="rounded-full bg-[#8C2340] px-4 pb-1.5 pt-2 font-bianco text-[10px] font-bold uppercase tracking-[1px] text-[#FAF9F9] hover:bg-[#6E1B32]">
+          {saved ? "Saved" : "Save"}
         </button>
       </div>
-    </article>
+    </aside>
   );
 }
 
 export default function MatchResults({
-  results,
+  rooms,
+  preferences,
+  checkIn,
   totalAvailable,
-  hasPreferences,
   onBack,
-  onStartQuiz,
-  onViewRoom,
   onBrowseAll,
+  renderRoom,
+  afterTop,
 }: MatchResultsProps) {
-  if (!hasPreferences) {
-    return (
-      <EmptyState
-        heading="No preferences found"
-        body="Go back and answer the questions first."
-        action={{ label: "Help Me Choose", onClick: onStartQuiz }}
-      />
-    );
-  }
-
-  if (results.length === 0) {
-    return (
-      <main className="min-h-screen bg-[#ebe8e0]">
-        <div className="booking-shell pb-20 pt-10">
-          <button
-            type="button"
-            onClick={onBack}
-            className="mb-8 text-xs uppercase tracking-widest text-[#767470] transition-colors hover:text-[#4e332d]"
-            style={{ fontFamily: "var(--font-brothers)" }}
-          >
-            ← Back
-          </button>
-          <EmptyState
-            heading="No rooms match these criteria"
-            body="Your current filters removed all options. Try adjusting your search or browsing all rooms."
-            action={{ label: "Browse All Rooms", onClick: onBrowseAll }}
-          />
-        </div>
-      </main>
-    );
-  }
-
-  const [top, ...alternates] = results;
+  const [top, ...alternates] = rooms;
 
   return (
-    <main className="min-h-screen bg-[#ebe8e0]">
-      <div className="booking-shell pb-20 pt-10">
-        <button
-          type="button"
-          onClick={onBack}
-          className="mb-8 text-xs uppercase tracking-widest text-[#767470] transition-colors hover:text-[#4e332d]"
-          style={{ fontFamily: "var(--font-brothers)" }}
-        >
-          ← Back
+    <section className="min-h-screen bg-[#EBE8E0] pb-24 pt-10">
+      <div className="booking-shell !max-w-[1800px]">
+        <button type="button" onClick={onBack} className="mb-10 font-bianco text-xs font-bold uppercase tracking-[2px] text-[#6B6259] hover:text-[#4E332D]">
+          ← Adjust Preferences
         </button>
 
-        <div className="mb-8">
-          <p
-            className="mb-2 text-xs uppercase tracking-widest text-[#9a5636]"
-            style={{ fontFamily: "var(--font-brothers)" }}
-          >
-            Matched for You
-          </p>
-          <h1
-            className="text-4xl leading-none text-[#4e332d] md:text-5xl"
-            style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}
-          >
-            Your Best Match
-          </h1>
-        </div>
+        <header className="mb-8">
+          <div className="mb-5 flex items-center gap-3 text-[#9A5636]" aria-hidden="true">
+            <span className="size-2.5 rounded-full bg-current" />
+            <span className="h-px w-8 bg-current" />
+            <span className="size-2.5 rounded-full bg-current" />
+            <span className="h-px w-8 bg-current" />
+            <span className="size-2.5 rounded-full bg-current" />
+          </div>
+          <p className="mb-4 font-bianco text-xs font-bold uppercase tracking-[5px] text-[#9A5636]">Step 1 of 3</p>
+          <h1 className="font-desert text-5xl font-bold uppercase leading-none text-[#4E332D] md:text-6xl">Your Matches</h1>
+        </header>
 
-        <div className="space-y-5">
-          <MatchRoomResult result={top} top onViewRoom={onViewRoom} />
-          {alternates.map((result) => (
-            <MatchRoomResult
-              key={result.room.id}
-              result={result}
-              onViewRoom={onViewRoom}
-            />
-          ))}
-        </div>
+        {top ? (
+          <>
+            <div className="grid w-full items-stretch gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(20rem,1fr)]">
+              {renderRoom(top, { top: true, index: 0 })}
+              <MatchReasonCard room={top} checkIn={checkIn} preferences={preferences} />
+            </div>
 
-        <div className="mt-10 border-t border-[#ccc7bb] pt-4 text-center">
-          <p
-            className="mb-3 text-sm text-[#767470]"
-            style={{ fontFamily: "var(--font-uchen)" }}
-          >
-            Not seeing what you&apos;re after?
-          </p>
-          <button
-            type="button"
-            onClick={onBrowseAll}
-            className="text-xs uppercase tracking-widest text-[#9a5636] hover:underline"
-            style={{ fontFamily: "var(--font-brothers)" }}
-          >
-            Browse All {totalAvailable} Rooms →
+            {afterTop}
+
+            {alternates.length > 0 && (
+              <div className="mt-10">
+                <h2 className="font-desert text-2xl font-bold uppercase tracking-[1px] text-[#4E332D] md:text-3xl">
+                  Other High Matching Options
+                </h2>
+                <div className="mt-5 space-y-5">
+                  {alternates.slice(0, 2).map((room, index) => (
+                    <div key={room.categoryId}>{renderRoom(room, { top: false, index: index + 1 })}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="rounded-2xl border-2 border-[#4E332D] bg-[#FAF9F9] p-10 text-center">
+            <h2 className="font-desert text-3xl font-bold uppercase text-[#4E332D]">No exact matches yet</h2>
+            <p className="mx-auto mt-3 max-w-lg font-editorial text-sm text-[#6B6259]">
+              Try adjusting your party or preference selections, or browse every available room.
+            </p>
+          </div>
+        )}
+
+        <div className="mt-10 border-t border-[#4E332D]/20 pt-6 text-center">
+          <button type="button" onClick={onBrowseAll} className="font-bianco text-xs font-bold uppercase tracking-[2px] text-[#4E332D] underline underline-offset-4">
+            View All {totalAvailable} Rooms
           </button>
         </div>
       </div>
-    </main>
+    </section>
   );
 }

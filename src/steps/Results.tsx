@@ -16,6 +16,7 @@ import { roomDetailTags } from "../lib/roomTags";
 import { unresolvedCategoryBindings } from "../lib/roomMerchandising";
 import FindYourStay from "@/features/find-your-stay/components/flows/FindYourStay";
 import HelpMeChoose from "@/features/find-your-stay/components/flows/HelpMeChoose";
+import MatchResults from "@/features/find-your-stay/components/flows/MatchResults";
 import type { RecommendationPreferences } from "@/types/merchandising";
 
 export function Results() {
@@ -240,6 +241,64 @@ export function Results() {
           setDiscoveryView("results");
         }}
       />
+    );
+  }
+
+  if (
+    !loading &&
+    !hotelError &&
+    !error &&
+    rooms.length > 0 &&
+    recommendationPreferences &&
+    topMatchCopy &&
+    discoveryView === "results"
+  ) {
+    return (
+      <>
+        <MatchResults
+          rooms={rooms}
+          preferences={recommendationPreferences}
+          checkIn={checkIn}
+          totalAvailable={eligibleAllRooms.length}
+          onBack={() => setDiscoveryView("quiz")}
+          onBrowseAll={() => {
+            clearRecommendationPreferences();
+            setDiscoveryView("results");
+          }}
+          renderRoom={(room, options) => (
+            <ResultRoomPreview
+              room={room}
+              imageBaseUrl={imageBaseUrl}
+              topMatch={options.top}
+              imageRight={!options.top && options.index % 2 === 0}
+              onChoose={() => choose(room, room.rates[0])}
+              onDetails={() => setOpenRoom(room)}
+            />
+          )}
+          afterTop={
+            inlineProduct ? (
+              <div className="mt-5">
+                <InlineUpsell
+                  product={inlineProduct}
+                  added={productIds.includes(inlineProduct.id)}
+                  onToggle={() => toggleProduct(inlineProduct.id)}
+                />
+              </div>
+            ) : null
+          }
+        />
+        {openRoom && (
+          <RoomDetailDrawer
+            room={openRoom}
+            imageBaseUrl={imageBaseUrl}
+            search={search}
+            nightsCount={nightsCount}
+            tags={roomDetailTags(openRoom.merchandising)}
+            onClose={() => setOpenRoom(null)}
+            onSelectRate={(rate) => choose(openRoom, rate)}
+          />
+        )}
+      </>
     );
   }
 
