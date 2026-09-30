@@ -74,7 +74,7 @@ export function PreferenceIconButton({ id, label, description, selected, onToggl
     >
       <span
         className={cn(
-          "flex flex-1 flex-col items-center justify-center gap-1 self-stretch overflow-hidden border-[0.386px] transition-colors",
+          "flex flex-1 flex-col items-center justify-center self-stretch overflow-hidden border-[0.386px] transition-colors",
           selected
             ? "border-oxblood bg-white/70"
             : "border-umber/30 bg-white/25 group-hover:border-umber/50",
