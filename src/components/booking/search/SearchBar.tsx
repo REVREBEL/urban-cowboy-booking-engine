@@ -158,7 +158,7 @@ export const SearchButton = React.forwardRef<
     const isInteractive = !disabled && !isLoading;
 
     const baseClasses =
-      'box-border inline-flex items-center justify-center bg-[#343833] text-[#EBE8E0] transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] focus-visible:ring-offset-2';
+      'box-border inline-flex items-center justify-center text-center bg-[#343833] text-[#EBE8E0] transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] focus-visible:ring-offset-2';
 
     const stateClasses = isInteractive
       ? 'cursor-pointer hover:bg-[#272a26] active:bg-[#1a1c19] active:scale-[0.98]'
@@ -225,7 +225,7 @@ export const SearchButton = React.forwardRef<
             <ButtonSpinner />
           ) : (
             <>
-              <span className="w-[44px] h-[20px] font-button font-semibold text-[14px] leading-[20px] text-center text-[#EBE8E0]">
+              <span className="flex h-[20px] w-[44px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-[#EBE8E0]">
                 {children || 'Search'}
               </span>
               <div className="relative w-[15px] h-[11px] shrink-0 flex items-center justify-center">
@@ -252,7 +252,7 @@ export const SearchButton = React.forwardRef<
           <ButtonSpinner />
         ) : (
           <>
-            <span className="w-[44px] h-[20px] font-button font-semibold text-[14px] leading-[20px] text-center text-[#EBE8E0]">
+            <span className="flex h-[20px] w-[44px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-[#EBE8E0]">
               {children || 'Search'}
             </span>
             <div className="relative w-[15px] h-[11px] shrink-0 flex items-center justify-center">
@@ -313,12 +313,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         aria-label={`${dateLabel}: ${dateValue}`}
       >
         <div className="flex flex-row items-center p-0 w-[153px] h-[12px] self-stretch">
-          <span className="w-auto h-[12px] font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+          <span className="h-[12px] w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-[#4E332D]/60">
             {dateLabel}
           </span>
         </div>
         <div className="flex flex-row items-center p-0 w-[153px] h-[22px] max-h-[28px] self-stretch">
-          <span className="font-number text-[12px] leading-[22px] text-[#1C1917] truncate">
+          <span className="truncate font-body text-[12px] font-normal leading-[22px] normal-case text-[#4E332D]">
             {dateValue}
           </span>
         </div>
@@ -340,12 +340,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         aria-label={`${guestLabel}: ${guestValue}`}
       >
         <div className="flex flex-row items-center p-0 w-[153px] h-[12px] self-stretch">
-          <span className="w-auto h-[12px] font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+          <span className="h-[12px] w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-[#4E332D]/60">
             {guestLabel}
           </span>
         </div>
         <div className="flex flex-row items-center p-0 w-[153px] h-[22px] max-h-[28px] self-stretch">
-          <span className="font-number text-[12px] leading-[22px] text-[#1C1917] truncate">
+          <span className="truncate font-body text-[12px] font-normal leading-[22px] normal-case text-[#4E332D]">
             {guestValue}
           </span>
         </div>
@@ -367,12 +367,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         aria-label={`${promoLabel}: ${promoValue}`}
       >
         <div className="flex flex-row items-center p-0 w-[153px] h-[12px] self-stretch">
-          <span className="w-auto h-[12px] font-brothers text-[10px] leading-[12px] uppercase text-[#4E332D]">
+          <span className="h-[12px] w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-[#4E332D]/60">
             {promoLabel}
           </span>
         </div>
         <div className="flex flex-row items-center p-0 w-[153px] h-[14px] max-h-[28px] self-stretch">
-          <span className="font-urbanist text-[12px] leading-[14px] text-[#1C1917] truncate">
+          <span className="truncate font-body text-[12px] font-normal leading-[14px] normal-case text-[#4E332D]">
             {promoValue}
           </span>
         </div>
