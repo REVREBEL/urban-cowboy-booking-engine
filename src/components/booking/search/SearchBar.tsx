@@ -225,7 +225,7 @@ export const SearchButton = React.forwardRef<
             <ButtonSpinner />
           ) : (
             <>
-              <span className="w-[44px] h-[20px] font-urbanist font-semibold text-[14px] leading-[20px] text-center text-[#EBE8E0]">
+              <span className="w-[44px] h-[20px] font-button font-semibold text-[14px] leading-[20px] text-center text-[#EBE8E0]">
                 {children || 'Search'}
               </span>
               <div className="relative w-[15px] h-[11px] shrink-0 flex items-center justify-center">
@@ -252,7 +252,7 @@ export const SearchButton = React.forwardRef<
           <ButtonSpinner />
         ) : (
           <>
-            <span className="w-[44px] h-[20px] font-urbanist font-semibold text-[14px] leading-[20px] text-center text-[#EBE8E0]">
+            <span className="w-[44px] h-[20px] font-button font-semibold text-[14px] leading-[20px] text-center text-[#EBE8E0]">
               {children || 'Search'}
             </span>
             <div className="relative w-[15px] h-[11px] shrink-0 flex items-center justify-center">
@@ -318,7 +318,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </span>
         </div>
         <div className="flex flex-row items-center p-0 w-[153px] h-[22px] max-h-[28px] self-stretch">
-          <span className="font-uchen text-[12px] leading-[22px] text-[#1C1917] truncate">
+          <span className="font-number text-[12px] leading-[22px] text-[#1C1917] truncate">
             {dateValue}
           </span>
         </div>
@@ -345,7 +345,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </span>
         </div>
         <div className="flex flex-row items-center p-0 w-[153px] h-[22px] max-h-[28px] self-stretch">
-          <span className="font-uchen text-[12px] leading-[22px] text-[#1C1917] truncate">
+          <span className="font-number text-[12px] leading-[22px] text-[#1C1917] truncate">
             {guestValue}
           </span>
         </div>
