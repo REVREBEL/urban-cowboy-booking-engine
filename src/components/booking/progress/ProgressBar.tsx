@@ -183,7 +183,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
         border: `1px solid ${
           state === 'default' ? colors.containerBorder : 'transparent'
         }`,
-        fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
+        fontFamily: "var(--font-label)",
         ...style,
       }}
       {...buttonProps}
@@ -229,7 +229,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
               <span
                 className="select-none inline-flex items-center justify-center text-center w-full h-full"
                 style={{
-                  fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
+                  fontFamily: "var(--font-number)",
                   fontSize: '9px',
                   lineHeight: '16px',
                   color: colors.circleText,
@@ -244,7 +244,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
           <span
             className="select-none capitalize tracking-[0.2px] inline-flex items-center justify-center h-[16px] text-center"
             style={{
-              fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
+              fontFamily: "var(--font-label)",
               fontSize: '11px',
               lineHeight: '16px',
               color: colors.labelText,
@@ -267,7 +267,7 @@ const ProgressSlashSeparator: React.FC<{ className?: string }> = ({
     style={{
       width: '3px',
       height: '17px',
-      fontFamily: "'Uchen', 'Noto Serif Tibetan', Georgia, serif",
+      fontFamily: "var(--font-body)",
       fontSize: '11px',
       lineHeight: '16px',
       color: '#CCC7BB',
