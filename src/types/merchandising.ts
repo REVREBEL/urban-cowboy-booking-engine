@@ -1,5 +1,5 @@
 export type PartyType = "partner" | "friends" | "family" | "solo";
-export type MatchInterest = "iconTub" | "outdoorSoak" | "ownPlace" | "scenic" | "simpleCozy";
+export type MatchInterest = "iconTub" | "outdoorSoak" | "ownPlace" | "scenic" | "simpleCozy" | "social";
 export type DogPolicy = "allowed" | "notAllowed" | "unknown";
 export type AgePolicy = "adultsOnly21" | "adult21Required" | "none";
 
@@ -38,7 +38,7 @@ export interface RoomMerchandising {
   dogPolicy: DogPolicy;
   agePolicy: AgePolicy;
   partyScores: Record<PartyType, number>;
-  interestScores: Record<MatchInterest, number>;
+  interestScores: Partial<Record<MatchInterest, number>>;
   interestPriority: Partial<Record<MatchInterest, number>>;
   features: RoomFeatures;
   matchReasons: Partial<Record<MatchInterest, string>>;
