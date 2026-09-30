@@ -16,7 +16,7 @@ export function StudioRoomDetailModal({ room, imageBaseUrl, onClose, onProceedTo
   useEffect(() => setActiveImageIndex(0), [room?.categoryId]);
 
   if (!room) return null;
-  const images = room.imageIds.map((id) => imgUrl(imageBaseUrl, id, 1200));
+  const images = room.imageIds\n    .map((id) => imgUrl(imageBaseUrl, id, 1200))\n    .filter((image): image is string => Boolean(image));
   const tags = roomDetailTags(room.merchandising);
   const nightly = room.rates[0]?.perNightGross ?? null;
 

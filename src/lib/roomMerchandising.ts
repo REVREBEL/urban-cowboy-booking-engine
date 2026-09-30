@@ -337,7 +337,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
 ];
 
-const INTEREST_LADDERS: Record<MatchInterest, string[]> = {
+const INTEREST_LADDERS: Partial<Record<MatchInterest, string[]>> = {
   iconTub: [
     "alpine-bathing-suite",
     "alpine-bathing-suite-den",
