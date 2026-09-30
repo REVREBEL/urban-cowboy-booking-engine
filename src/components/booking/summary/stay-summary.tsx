@@ -58,7 +58,7 @@ export function StaySummary({
           <CalendarDays aria-hidden="true" className="mt-0.5 size-4 text-muted-foreground" />
           <div>
             <dt className="font-label text-xs text-muted-foreground">Dates</dt>
-            <dd>
+            <dd className="font-number">
               {formatDate(checkIn)} → {formatDate(checkOut)}
               {stayNights > 0 && ` · ${stayNights} night${stayNights === 1 ? "" : "s"}`}
             </dd>
@@ -68,7 +68,7 @@ export function StaySummary({
           <Users aria-hidden="true" className="mt-0.5 size-4 text-muted-foreground" />
           <div>
             <dt className="font-label text-xs text-muted-foreground">Party</dt>
-            <dd>{partyLine(adults, children, dog)}</dd>
+            <dd className="font-number">{partyLine(adults, children, dog)}</dd>
           </div>
         </div>
         {dog && (
@@ -83,7 +83,7 @@ export function StaySummary({
       </dl>
 
       {calculatedTotal != null && (
-        <div className="mt-6 border-t border-border pt-4 text-sm">
+        <div className="mt-6 border-t border-border pt-4 font-number text-sm">
           {nightlyRate != null && stayNights > 0 && (
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">
@@ -94,7 +94,7 @@ export function StaySummary({
           )}
           <div className="mt-2 flex items-baseline justify-between">
             <span className="font-label text-xs text-muted-foreground">Stay total</span>
-            <span className="text-2xl">{money(calculatedTotal, currency)}</span>
+            <span className="font-number text-2xl">{money(calculatedTotal, currency)}</span>
           </div>
         </div>
       )}
