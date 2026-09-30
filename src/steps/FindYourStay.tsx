@@ -3,6 +3,7 @@ export type FindYourStayProps = {
   checkOut: string;
   adults: number;
   children: number;
+  infants?: number;
   availableCount: number;
   onChangeSearch: () => void;
   onHelpMeChoose: () => void;
@@ -22,6 +23,7 @@ export default function FindYourStay({
   checkOut,
   adults,
   children,
+  infants = 0,
   availableCount,
   onChangeSearch,
   onHelpMeChoose,
@@ -48,7 +50,7 @@ export default function FindYourStay({
             {nights > 0 && <span className="opacity-60">· {nights} night{nights !== 1 ? "s" : ""}</span>}
             <span className="opacity-60">
               · {adults} adult{adults !== 1 ? "s" : ""}
-              {children > 0 ? ` · ${children} child${children !== 1 ? "ren" : ""}` : ""}
+              {children + infants > 0 ? ` · ${children + infants} child${children + infants !== 1 ? "ren" : ""}` : ""}
             </span>
           </div>
           <button

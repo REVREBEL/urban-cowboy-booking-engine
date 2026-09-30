@@ -4,6 +4,7 @@ import React, { useState, useId } from 'react';
 export interface GuestCounts {
   adults: number;
   children: number;
+  infants: number;
   accessible: boolean;
 }
 
@@ -87,12 +88,13 @@ export const ToggleCheckIcon: React.FC<{ color?: string }> = ({
 /**
  * SearchBarGuestDropdown Component
  * Strictly conforms to SearchBarGuestDropdown_2.css & SearchBarGuestDropdown.pdf:
- * - Dimensions: 360px width, 274px height, 24px padding
+ * - Dimensions: 360px width, 345px height, 24px padding
  * - Background: #FAF9F9, Border: 2px solid #343833, Radius: 0px
  * - Shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)
  * - Row 1: Adults (Age 13+)
- * - Row 2: Children (Age up to 12)
- * - Row 3: Accessible (ADA Rooms)
+ * - Row 2: Children (Ages 4–12)
+ * - Row 3: Infants (Under 4)
+ * - Row 4: Accessible (ADA Rooms)
  */
 export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
   counts: controlledCounts,
@@ -105,6 +107,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
   const [internalCounts, setInternalCounts] = useState<GuestCounts>({
     adults: initialCounts?.adults ?? 2,
     children: initialCounts?.children ?? 0,
+    infants: initialCounts?.infants ?? 0,
     accessible: initialCounts?.accessible ?? false,
   });
 
@@ -113,6 +116,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
   const adultId = useId();
   const childrenId = useId();
+  const infantsId = useId();
   const accessibleId = useId();
 
   const updateCounts = (updated: GuestCounts) => {
@@ -132,21 +136,28 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
     updateCounts({ ...currentCounts, children: nextVal });
   };
 
+  const handleInfantsChange = (delta: number) => {
+    const nextVal = Math.min(10, Math.max(0, currentCounts.infants + delta));
+    updateCounts({ ...currentCounts, infants: nextVal });
+  };
+
   const handleToggleAccessible = () => {
     updateCounts({ ...currentCounts, accessible: !currentCounts.accessible });
   };
 
   const isAdultMinusDisabled = currentCounts.adults <= 1;
   const isChildrenMinusDisabled = currentCounts.children <= 0;
+  const isInfantsMinusDisabled = currentCounts.infants <= 0;
+  const isInfantsPlusDisabled = currentCounts.infants >= 10;
 
   return (
     <div
       role="dialog"
       aria-label="Guest selection"
-      className={`box-border relative flex flex-col items-start p-[24px] w-[360px] max-w-[2089px] h-[274px] max-h-[520px] bg-[#FAF9F9] border-2 border-[#343833] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none ${className}`}
+      className={`box-border relative flex h-[345px] max-h-[520px] w-[360px] max-w-full flex-col items-start border-2 border-[#343833] bg-[#FAF9F9] p-[24px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none ${className}`}
     >
-      {/* guests-dropdown (308px x 222px, gap: 12px) */}
-      <div className="flex flex-col items-start p-0 gap-[12px] w-[308px] h-[222px] self-stretch">
+      {/* guests-dropdown (308px x 293px, gap: 12px) */}
+      <div className="flex h-[293px] w-full flex-col items-start gap-[12px] p-0 self-stretch">
         {/* ROW 1: Adults (308px x 57px, padding: 8px 0px) */}
         <div className="flex flex-row items-center py-[8px] px-0 w-[308px] h-[57px] self-stretch">
           {/* Text block: Adults + Age 13+ (196px x 41px) */}
@@ -224,7 +235,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               Children
             </p>
             <p className="font-uchen text-[12.9px] leading-[24px] text-[#AFAEAE] m-0 w-[196px] h-[24px] flex items-center">
-              Age up to 12
+              Ages 4–12
             </p>
           </div>
 
@@ -283,7 +294,70 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
           aria-hidden="true"
         />
 
-        {/* ROW 3: Accessible (308px x 57px, padding: 8px 0px) */}
+        {/* ROW 3: Infants (308px x 58px, padding: 8px 0px) */}
+        <div className="flex h-[58px] w-full flex-row items-center px-0 py-[8px] self-stretch">
+          <div className="flex h-[42px] flex-1 flex-col items-start gap-[1px] p-0">
+            <p
+              id={infantsId}
+              className="m-0 flex h-[17px] items-center font-brothers text-[14px] uppercase leading-[17px] text-[#343833]"
+            >
+              Infants
+            </p>
+            <p className="m-0 flex h-[24px] items-center font-uchen text-[12.9px] leading-[24px] text-[#AFAEAE]">
+              Under 4 · in a cot
+            </p>
+          </div>
+
+          <div className="flex h-[32px] w-[112px] shrink-0 flex-col items-start py-0 pl-[12px] pr-0">
+            <div className="flex h-[32px] w-[100px] flex-row items-center justify-between p-0">
+              <button
+                type="button"
+                onClick={() => handleInfantsChange(-1)}
+                disabled={isInfantsMinusDisabled}
+                aria-label="Decrease infant guests"
+                className={`box-border flex h-[32px] w-[32px] flex-row items-center justify-center rounded-[17px] bg-[#FAF9F9] p-[5.5px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] ${
+                  isInfantsMinusDisabled
+                    ? 'cursor-not-allowed border border-[#F2F2F2] opacity-40'
+                    : 'cursor-pointer border border-[#343833] hover:bg-[#F0EFEB] active:scale-95'
+                }`}
+              >
+                <div className="flex h-[18px] w-[18px] items-center justify-center opacity-80">
+                  <StepperMinusIcon color={isInfantsMinusDisabled ? '#F2F2F2' : '#343833'} />
+                </div>
+              </button>
+
+              <p
+                aria-live="polite"
+                className="m-0 flex h-[30px] w-[36px] items-center justify-center text-center font-number text-[16px] leading-[30px] text-[#343833]"
+              >
+                {currentCounts.infants}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => handleInfantsChange(1)}
+                disabled={isInfantsPlusDisabled}
+                aria-label="Increase infant guests"
+                className={`box-border flex h-[32px] w-[32px] flex-row items-center justify-center rounded-[17px] bg-[#FAF9F9] p-[5.5px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] ${
+                  isInfantsPlusDisabled
+                    ? 'cursor-not-allowed border border-[#F2F2F2] opacity-40'
+                    : 'cursor-pointer border border-[#343833] hover:bg-[#F0EFEB] active:scale-95'
+                }`}
+              >
+                <div className="flex h-[18px] w-[18px] items-center justify-center opacity-80">
+                  <StepperPlusIcon color={isInfantsPlusDisabled ? '#F2F2F2' : '#343833'} />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="h-[1px] w-full shrink-0 self-stretch bg-[#E1E0E0]"
+          aria-hidden="true"
+        />
+
+        {/* ROW 4: Accessible (308px x 57px, padding: 8px 0px) */}
         <div className="flex flex-row items-center py-[8px] px-0 w-[308px] h-[57px] self-stretch">
           {/* Text block: Accessible + ADA Rooms (258px x 41px, pr: 16px) */}
           <div className="flex flex-col items-start pr-[16px] py-0 w-[258px] h-[41px] flex-1">
@@ -329,7 +403,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 /**
  * Interactive Preview Application
  * Displays:
- * 1. Isolated Figma Specification View of SearchBarGuestDropdown (360px x 274px)
+ * 1. Isolated Figma Specification View of SearchBarGuestDropdown (360px x 345px)
  * 2. Search Bar Integration with Live Popover Dropdown
  * 3. State & Sync Controls compliant with SKILL.md
  */

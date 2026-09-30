@@ -47,10 +47,11 @@ export function Dates() {
   const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
   const [error, setError] = useState("");
 
-  const guestCount = form.adults + form.children;
+  const displayedChildCount = form.children + form.infants;
+  const guestCount = form.adults + displayedChildCount;
   const nightCount = nights(form.checkIn, form.checkOut);
   const guestLabel = `${form.adults} adult${form.adults === 1 ? "" : "s"}${
-    form.children ? ` · ${form.children} child${form.children === 1 ? "" : "ren"}` : ""
+    displayedChildCount ? ` · ${displayedChildCount} child${displayedChildCount === 1 ? "" : "ren"}` : ""
   }`;
 
   function setDates(checkIn: string, checkOut: string, close = false) {
@@ -110,24 +111,35 @@ export function Dates() {
                       <button type="button" onClick={() => setActiveSection(null)} aria-label="Close date picker" className="grid h-8 w-8 place-items-center rounded-full text-xl text-[#4E332D] hover:bg-[#EBE8E0]">×</button>
                     </div>
                     <InlineDateRangePicker checkIn={form.checkIn} checkOut={form.checkOut} onChange={(checkIn, checkOut) => setDates(checkIn, checkOut)} />
-                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-[#4E332D]/10 pt-4 text-left">
-                      <span className="font-bianco text-[10px] font-bold uppercase tracking-[1.5px] text-[#4E332D]/60">Quick Select</span>
-                      <div className="flex flex-wrap gap-2">
-                        {[
-                          ["Fall Foliage (Oct 14–17)", "2026-10-14", "2026-10-17"],
-                          ["Summer Solstice (Jun 2–5)", "2027-06-02", "2027-06-05"],
-                          ["Cozy Fireside Weekend (Nov 5–8)", "2026-11-05", "2026-11-08"],
-                        ].map(([label, checkIn, checkOut]) => (
-                          <button
-                            key={label}
-                            type="button"
-                            onClick={() => setDates(checkIn, checkOut, true)}
-                            className="rounded-full border border-[#4E332D] bg-transparent px-3 pb-1 pt-1.5 font-uchen text-xs leading-none text-[#4E332D] transition-colors hover:bg-[#4E332D] hover:text-[#FAF9F9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9A5636]"
-                          >
-                            {label}
-                          </button>
-                        ))}
+                    <div className="mt-4 flex flex-col gap-4 border-t border-[#4E332D]/10 pt-4 text-left sm:flex-row sm:items-end sm:justify-between">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                        <span className="font-bianco text-[10px] font-bold uppercase tracking-[1.5px] text-[#4E332D]/60">Quick Select</span>
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            ["Fall Foliage (Oct 14–17)", "2026-10-14", "2026-10-17"],
+                            ["Summer Solstice (Jun 2–5)", "2027-06-02", "2027-06-05"],
+                            ["Cozy Fireside Weekend (Nov 5–8)", "2026-11-05", "2026-11-08"],
+                          ].map(([label, checkIn, checkOut]) => (
+                            <button
+                              key={label}
+                              type="button"
+                              onClick={() => setDates(checkIn, checkOut)}
+                              className="rounded-full border border-[#4E332D] bg-transparent px-3 pb-1 pt-1.5 font-uchen text-xs leading-none text-[#4E332D] transition-colors hover:bg-[#4E332D] hover:text-[#FAF9F9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9A5636]"
+                            >
+                              {label}
+                            </button>
+                          ))}
+                        </div>
                       </div>
+
+                      <button
+                        type="button"
+                        disabled={!form.checkIn || !form.checkOut || form.checkOut <= form.checkIn}
+                        onClick={() => setActiveSection(null)}
+                        className="self-end rounded-full bg-[#4E332D] px-6 pb-2.5 pt-3 font-bianco text-xs font-bold uppercase tracking-[1.5px] text-[#FAF9F9] transition-colors hover:bg-[#9A5636] disabled:cursor-not-allowed disabled:opacity-35 sm:shrink-0"
+                      >
+                        Confirm dates
+                      </button>
                     </div>
                   </div>
                 )}
@@ -135,10 +147,15 @@ export function Dates() {
                 {activeSection === "guests" && (
                   <div className="flex justify-end">
                     <SearchBarGuestDropdown
-                      counts={{ adults: form.adults, children: form.children, accessible }}
+                      counts={{ adults: form.adults, children: form.children, infants: form.infants, accessible }}
                       onChange={(values) => {
                         setAccessible(values.accessible);
-                        setForm((current) => ({ ...current, adults: values.adults, children: values.children }));
+                        setForm((current) => ({
+                          ...current,
+                          adults: values.adults,
+                          children: values.children,
+                          infants: values.infants,
+                        }));
                       }}
                       onClose={() => setActiveSection(null)}
                       className="max-w-full"
@@ -166,7 +183,7 @@ export function Dates() {
           {error && <p role="alert" className="mt-3 text-left font-editorial text-sm font-semibold text-[#8C2340]">{error}</p>}
           {!error && nightCount > 0 && (
             <p className="mt-3 text-left font-editorial text-xs text-[#4E332D]/65">
-              {nightCount} night{nightCount === 1 ? "" : "s"} · {guestCount} guest{guestCount === 1 ? "" : "s"}{form.infants ? ` · ${form.infants} infant${form.infants === 1 ? "" : "s"}` : ""}
+              {nightCount} night{nightCount === 1 ? "" : "s"} · {guestCount} guest{guestCount === 1 ? "" : "s"}
             </p>
           )}
         </div>

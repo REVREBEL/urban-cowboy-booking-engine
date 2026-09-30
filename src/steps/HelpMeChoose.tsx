@@ -1,88 +1,56 @@
 import { useState } from 'react';
-import { cn } from "@/lib/utils";
 import type { PartyType, MatchInterest, RecommendationPreferences } from "@/types/find-your-stay";
-
-const PARTY_OPTIONS: { value: PartyType; label: string; sub: string }[] = [
-  { value: 'partner', label: 'Partner',  sub: 'Just the two of us'  },
-  { value: 'friends', label: 'Friends',  sub: 'A crew weekend'       },
-  { value: 'family',  label: 'Family',   sub: 'Grown-ups and kids'   },
-  { value: 'solo',    label: 'Solo',     sub: 'Time to myself'       },
-];
+import type { PreferenceId } from "@/types/booking-ui";
+import { TravelPartyGroup } from "@/components/booking/discovery/FindYourStayTravelPartyButton";
+import { PreferenceIconButton } from "@/components/booking/discovery/PreferenceIconButton";
 
 type InterestMeta = {
   value: MatchInterest;
   label: string;
-  illustration: string;
-  labelArt: string;
+  description: string;
 };
-
-type MaskedArtworkProps = {
-  src: string;
-  selected: boolean;
-  className?: string;
-};
-
-function MaskedArtwork({ src, selected, className }: MaskedArtworkProps) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "block shrink-0 bg-current transition-all duration-200",
-        selected ? "text-oxblood opacity-100" : "text-umber opacity-50",
-        className,
-      )}
-      style={{
-        WebkitMaskImage: `url("${src}")`,
-        maskImage: `url("${src}")`,
-        WebkitMaskRepeat: "no-repeat",
-        maskRepeat: "no-repeat",
-        WebkitMaskPosition: "center",
-        maskPosition: "center",
-        WebkitMaskSize: "contain",
-        maskSize: "contain",
-      }}
-    />
-  );
-}
 
 const INTEREST_OPTIONS: InterestMeta[] = [
   {
     value: 'iconTub',
     label: 'Iconic Copper Tub',
-    illustration: "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
-    labelArt: "/assets/labels/copper_clawfoot_soaking_tub.svg",
+    description: 'The signature Cowboy bathing ritual.',
   },
   {
     value: 'ownPlace',
     label: 'My Own Place',
-    illustration: "/assets/icons/amenities/buttons/cabin.svg",
-    labelArt: "/assets/labels/my-own-place-label-unselected.svg",
+    description: 'A private place to settle in.',
   },
   {
     value: 'scenic',
     label: 'Scenic Views',
-    illustration: "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
-    labelArt: "/assets/labels/scenic-views-label-unselected.svg",
+    description: 'Mountain and forest views.',
   },
   {
     value: 'outdoorSoak',
     label: 'Soak Outside',
-    illustration: "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
-    labelArt: "/assets/labels/soak-outside-label.svg",
+    description: 'A soak in the open air.',
   },
   {
     value: 'simpleCozy',
     label: 'Simple + Cozy',
-    illustration: "/assets/icons/amenities/buttons/letter_writing_desk.svg",
-    labelArt: "/assets/labels/simple-cozy-label-unselected.svg",
+    description: 'Something easy, warm, and unfussy.',
   },
   {
     value: 'social',
     label: 'Spaces to Gather',
-    illustration: "/assets/icons/amenities/buttons/separate_living_room.svg",
-    labelArt: "/assets/labels/spaces-to-gather-label-unselected.svg",
+    description: 'Room for everyone to gather.',
   },
 ];
+
+const PREFERENCE_IDS: Record<MatchInterest, PreferenceId> = {
+  iconTub: 'iconic-tub',
+  outdoorSoak: 'bathe-outside',
+  ownPlace: 'my-own-place',
+  scenic: 'mountain-views',
+  simpleCozy: 'simple-cozy',
+  social: 'bringing-my-people',
+};
 
 const STEP_LABELS = ["Who's Coming", 'Bringing a Dog?', 'What Matters'];
 
@@ -178,47 +146,7 @@ export default function HelpMeChoose({
               This helps us match the right size and vibe.
             </p>
 
-            <div className="grid grid-cols-2 gap-4" role="radiogroup" aria-label="Travel party type">
-              {PARTY_OPTIONS.map((opt) => {
-                const selected = party === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() => setParty(opt.value)}
-                    className="relative flex flex-col justify-center gap-1.5 px-6 py-7 rounded-[20px] border-2 cursor-pointer transition-all text-left"
-                    style={{
-                      background: selected ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.25)',
-                      borderColor: selected ? '#4e332d' : '#a79996',
-                      minHeight: 100,
-                    }}
-                  >
-                    <span
-                      className="text-[22px] leading-none uppercase"
-                      style={{
-                        fontFamily: 'var(--font-brothers)',
-                        fontWeight: 700,
-                        color: selected ? '#4e332d' : '#ebe8e0',
-                        letterSpacing: '0.05em',
-                      }}
-                    >
-                      {opt.label}
-                    </span>
-                    <span
-                      className="text-[12px] leading-snug"
-                      style={{
-                        fontFamily: 'var(--font-uchen)',
-                        color: selected ? '#6b4c42' : 'rgba(235,232,224,0.7)',
-                      }}
-                    >
-                      {opt.sub}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <TravelPartyGroup value={party} onChange={(value) => setParty(value as PartyType)} className="max-w-none" />
           </section>
         )}
 
@@ -348,59 +276,25 @@ export default function HelpMeChoose({
               Pick up to 2 — we'll find rooms that nail both.
             </p>
 
-            <div
-              className="flex flex-wrap gap-4 justify-center"
-              role="group"
-              aria-label="Room interests, select up to 2"
-            >
+            <div className="flex flex-wrap justify-center gap-4" role="group" aria-label="Room interests, select up to 2">
               {INTEREST_OPTIONS.map((opt) => {
                 const selected = interests.includes(opt.value);
                 const dimmed = !selected && interests.length >= 2;
 
                 return (
-                  <button
+                  <div
                     key={opt.value}
-                    type="button"
-                    aria-pressed={selected}
-                    onClick={() => !dimmed && toggleInterest(opt.value)}
-                    className="flex flex-col items-center transition-all duration-200"
-                    style={{
-                      width: 200,
-                      padding: '1.5px',
-                      border: selected ? '2px solid #4e332d' : '1.5px solid #715c57',
-                      borderRadius: '2px',
-                      opacity: dimmed ? 0.35 : 1,
-                      cursor: dimmed ? 'not-allowed' : 'pointer',
-                    }}
-                    aria-label={opt.label}
-                    aria-disabled={dimmed}
                   >
-                    {/* Inner card */}
-                    <div
-                      className="flex flex-col items-center justify-center gap-2.5 w-full h-full"
-                      style={{
-                        background: selected ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.25)',
-                        minHeight: 196,
-                        padding: '12px 8px 10px',
-                      }}
-                    >
-                      {/* Sketch illustration */}
-                      <div className="relative flex flex-1 items-end justify-center" style={{ minHeight: 97 }}>
-                        <MaskedArtwork
-                          src={opt.illustration}
-                          selected={selected}
-                          className="h-[97px] w-full pointer-events-none"
-                        />
-                      </div>
-
-                      {/* Ribbon label */}
-                      <MaskedArtwork
-                        src={opt.labelArt}
+                    <div className={dimmed ? 'pointer-events-none opacity-35' : ''}>
+                      <PreferenceIconButton
+                        id={PREFERENCE_IDS[opt.value]}
+                        label={opt.label}
+                        description={opt.description}
                         selected={selected}
-                        className="h-[45px] w-[120px]"
+                        onToggle={() => toggleInterest(opt.value)}
                       />
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>

@@ -14,6 +14,22 @@ import { buildTopMatchCopy, parseRecommendationPreferences } from "../lib/topMat
 import { rankRecommendedRooms } from "../lib/roomMatching";
 import { roomDetailTags } from "../lib/roomTags";
 import { unresolvedCategoryBindings } from "../lib/roomMerchandising";
+import FindYourStay from "./FindYourStay";
+import HelpMeChoose from "./HelpMeChoose";
+import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
+import type { RecommendationPreferences as MatcherPreferences } from "../types/merchandising";
+
+// The discovery UI retains the Studio label "Spaces to Gather" (`social`).
+// The live merchandising catalogue predates that label and represents the same
+// room-space signal as `ownPlace`; keep the UI vocabulary without changing the
+// existing Mews matcher contract.
+function toMatcherPreferences(preferences: DiscoveryPreferences | null): MatcherPreferences | null {
+  if (!preferences) return null;
+  return {
+    ...preferences,
+    interests: preferences.interests.map((interest) => (interest === "social" ? "ownPlace" : interest)) as MatcherPreferences["interests"],
+  };
+}
 
 export function Results() {
   const {
@@ -49,6 +65,12 @@ export function Results() {
   const [reloadKey, setReloadKey] = useState(0);
   // Accordéons « autres hébergements » (ouverts/fermés par clé d'hébergement).
   const [openProps, setOpenProps] = useState<string[]>([]);
+  const [discoveryView, setDiscoveryView] = useState<"explore" | "quiz" | "matches" | "rooms">(() =>
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).has("interest")
+      ? "matches"
+      : "explore",
+  );
+  const [quizPreferences, setQuizPreferences] = useState<DiscoveryPreferences | null>(null);
   const toggleProp = (key: string) =>
     setOpenProps((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
 
@@ -91,10 +113,11 @@ export function Results() {
   const allRooms = useMemo(() => (data ? buildRooms(data, hotel) : []), [data, hotel]);
 
   const recommendationSearch = window.location.search;
-  const recommendationPreferences = useMemo(
+  const urlRecommendationPreferences = useMemo(
     () => parseRecommendationPreferences(recommendationSearch, { adults, children }),
     [recommendationSearch, adults, children],
   );
+  const recommendationPreferences = toMatcherPreferences(quizPreferences ?? urlRecommendationPreferences);
   const dogRequested = useMemo(() => {
     const value = new URLSearchParams(recommendationSearch).get("dog");
     return value === "yes" || value === "1";
@@ -186,6 +209,44 @@ export function Results() {
     return buildTopMatchCopy(room.name, recommendationPreferences, checkIn, room.merchandising);
   }, [rooms, recommendationPreferences, checkIn]);
 
+  // Date search now opens the discovery choice first. The room catalogue remains
+  // this component's source of truth; the discovery screens only choose whether
+  // to browse it or rank it with the existing live matcher.
+  if (!loading && !hotelError && !error && discoveryView === "explore") {
+    return (
+      <FindYourStay
+        checkIn={checkIn}
+        checkOut={checkOut}
+        adults={adults}
+        children={children}
+        infants={infants}
+        availableCount={rooms.length}
+        onChangeSearch={() => {
+          setQuizPreferences(null);
+          goTo("dates");
+        }}
+        onHelpMeChoose={() => setDiscoveryView("quiz")}
+        onBrowseAll={() => {
+          setQuizPreferences(null);
+          setDiscoveryView("rooms");
+        }}
+      />
+    );
+  }
+
+  if (!loading && !hotelError && !error && discoveryView === "quiz") {
+    return (
+      <HelpMeChoose
+        initialPreferences={quizPreferences ?? undefined}
+        onBack={() => setDiscoveryView("explore")}
+        onSubmit={(preferences) => {
+          setQuizPreferences(preferences);
+          setDiscoveryView("matches");
+        }}
+      />
+    );
+  }
+
   return (
     <div className="booking-shell py-8">
       {/* Barre de recherche / résumé */}
@@ -248,6 +309,13 @@ export function Results() {
 
       {!loading && !hotelError && !error && rooms.length > 0 && recommendationPreferences && topMatchCopy && (
         <section className="mx-auto mt-10 max-w-4xl">
+          <button
+            type="button"
+            onClick={() => setDiscoveryView("quiz")}
+            className="mb-6 text-xs uppercase tracking-widest text-ink/60 transition-colors hover:text-ink"
+          >
+            ← Adjust Preferences
+          </button>
           <div className="mb-8">
             <div className="mb-5 flex items-center gap-3 text-umber" aria-hidden="true">
               <span className="size-2.5 rounded-full bg-umber" />
