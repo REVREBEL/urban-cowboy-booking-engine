@@ -17,7 +17,9 @@
     "deploy": "npm run build && wrangler deploy",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.ts",
-    "room-ids": "node scripts/fetch-room-category-ids.mjs"
+    "room-ids": "node scripts/fetch-room-category-ids.mjs",
+    "normalize:svgs": "node scripts/normalize-svg-assets.mjs --write",
+    "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
