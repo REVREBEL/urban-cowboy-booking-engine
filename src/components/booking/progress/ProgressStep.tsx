@@ -195,7 +195,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
               <span
                 className="select-none flex items-center justify-center leading-none text-center"
                 style={{
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: "var(--font-number)",
                   fontSize: '9px',
                   lineHeight: 1,
                   color: colors.circleText,
@@ -216,7 +216,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
             <span
               className="tracking-[0.2px] select-none leading-none inline-flex items-center"
               style={{
-                fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
+                fontFamily: "var(--font-label)",
                 fontSize: '11px',
                 lineHeight: 1,
                 color: colors.labelText,
