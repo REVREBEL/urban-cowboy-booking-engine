@@ -56,7 +56,7 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
         onClick={onClick}
         aria-label="Search accommodations"
         aria-busy={isLoading}
-        className={`grid h-12 w-12 shrink-0 place-items-center bg-[#4E332D] text-[#FAF9F9] transition md:flex md:h-14 md:w-[116px] md:gap-2 ${rounded} ${
+        className={`grid h-12 w-12 shrink-0 place-items-center text-center bg-[#4E332D] text-[#FAF9F9] transition md:flex md:h-14 md:w-[116px] md:items-center md:justify-center md:gap-2 ${rounded} ${
           isInteractive
             ? "cursor-pointer hover:bg-[#343833] active:scale-[0.98]"
             : "cursor-not-allowed opacity-60"
@@ -67,7 +67,7 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#FAF9F9]/35 border-t-[#FAF9F9]" aria-hidden="true" />
         ) : (
           <>
-            <span className="hidden font-brothers text-sm uppercase tracking-[1.5px] md:inline">
+            <span className="hidden text-center font-button text-sm uppercase tracking-[1.5px] md:inline-flex md:items-center md:justify-center">
               {children || "Search"}
             </span>
             <span
@@ -105,10 +105,10 @@ function SearchSection({ label, value, section, activeSection, onClick, classNam
       onClick={() => onClick(section)}
       className={`group relative flex min-h-[64px] min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-[#4E332D] transition-colors hover:text-[#9A5636] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#9A5636] md:min-h-[58px] ${className}`}
     >
-      <span className="font-label text-[10px] font-bold uppercase leading-4 tracking-[1.5px] text-current/75">
+      <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-[#4E332D]/60">
         {label}
       </span>
-      <span className="mt-0.5 block max-w-full truncate text-sm leading-5 text-current">
+      <span className="mt-0.5 block max-w-full truncate font-body text-[14px] font-normal leading-5 normal-case text-[#4E332D]">
         {value}
       </span>
       <span
@@ -167,13 +167,13 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
         className={`grid w-full grid-cols-1 overflow-hidden border-2 border-[#4E332D] bg-[#FAF9F9] p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${rounded} md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)_auto] md:items-center md:overflow-visible md:p-1.5 md:pl-4`}
       >
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
-          <SearchSection label="Property" value={<span className="font-desert font-bold uppercase tracking-[2px]">{currentValues.property}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection label="Property" value={<span>{currentValues.property}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
-          <SearchSection label="When" value={<span className="font-number">{dateValue}</span>} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection label="When" value={<span>{dateValue}</span>} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
-          <SearchSection label="Guests" value={<span className="font-number">{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection label="Guests" value={<span>{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
           <SearchSection label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
