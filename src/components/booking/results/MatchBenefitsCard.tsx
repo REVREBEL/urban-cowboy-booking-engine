@@ -43,7 +43,7 @@ export function MatchBenefitsCard({
       <img
         src="/assets/labels/top_match.svg"
         alt="Top Match"
-        className={`h-auto w-full object-contain ${compact ? "max-w-28" : "max-w-[15rem]"}`}
+        className={`h-auto w-full text-oxblood object-contain ${compact ? "max-w-28" : "max-w-[15rem]"}`}
       />
 
       <p className={`${compact ? "mt-4 text-xs" : "mt-10 text-base"} max-w-[20rem] self-center leading-tight text-oxblood`}>
@@ -56,7 +56,7 @@ export function MatchBenefitsCard({
             src="/assets/icons/ui/left_hand_pointing.svg"
             alt=""
             aria-hidden="true"
-            className={`${compact ? "h-6 w-12" : "h-10 w-[82px]"} shrink-0 object-contain`}
+            className={`${compact ? "h-6 w-12" : "h-10 w-[82px]"} text-oxblood shrink-0 object-contain`}
           />
           <h3 className={`${compact ? "text-base" : "text-2xl"} max-w-48 font-display leading-[1.08] text-oxblood`}>
             You’ll love it because …
