@@ -105,10 +105,10 @@ function SearchSection({ label, value, section, activeSection, onClick, classNam
       onClick={() => onClick(section)}
       className={`group relative flex min-h-[64px] min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-[#4E332D] transition-colors hover:text-[#9A5636] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#9A5636] md:min-h-[58px] ${className}`}
     >
-      <span className="font-bianco text-[10px] font-bold uppercase leading-4 tracking-[1.5px] text-current/75">
+      <span className="font-label text-[10px] font-bold uppercase leading-4 tracking-[1.5px] text-current/75">
         {label}
       </span>
-      <span className="mt-0.5 block max-w-full truncate font-uchen text-sm leading-5 text-current">
+      <span className="mt-0.5 block max-w-full truncate text-sm leading-5 text-current">
         {value}
       </span>
       <span
