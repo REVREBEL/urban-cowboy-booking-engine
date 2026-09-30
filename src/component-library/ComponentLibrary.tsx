@@ -621,11 +621,11 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
       >
         <WidthFrame width={width}>
           <div className="flex flex-wrap items-center gap-3">
-            <Button>Default</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="destructive">Destructive</Button>
+            <Button variant="filled" color="dark">Dark Filled</Button>
+            <Button variant="outline" color="dark">Dark Outline</Button>
+            <Button variant="transparent" color="dark">Dark Transparent</Button>
+            <Button variant="filled" color="light">Light Filled</Button>
+            <Button variant="filled" color="bandana-red">Bandana Red</Button>
             <Badge>Top Match</Badge>
             <Badge variant="outline">21+</Badge>
             <Badge variant="secondary">Dog Friendly</Badge>
