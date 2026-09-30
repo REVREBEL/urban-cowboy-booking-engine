@@ -64,10 +64,10 @@ function Shell() {
       {hotelError && (
         <Banner
           color="whiskey-sour"
-          actionLabel={t("common.retry")}
+          actionLabel="Try again"
           onAction={reloadHotel}
         >
-          {t("hotelError.msg")}
+          Unable to load the hotel configuration.
         </Banner>
       )}
 
