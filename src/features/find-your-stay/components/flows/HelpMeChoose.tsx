@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { cn } from "@/lib/utils";
 import type { PartyType, MatchInterest, RecommendationPreferences } from "../../types";
 
 const PARTY_OPTIONS: { value: PartyType; label: string; sub: string }[] = [
@@ -11,79 +12,75 @@ const PARTY_OPTIONS: { value: PartyType; label: string; sub: string }[] = [
 type InterestMeta = {
   value: MatchInterest;
   label: string;
-  illustrationOn: string;
-  illustrationOff: string;
-  labelOn: string;
-  labelOff: string;
+  illustration: string;
+  labelArt: string;
 };
 
-
-const ICON: Record<InterestMeta, string> = {
-  "iconic-tub": "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
-  "bathe-outside": "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
-  "my-own-place": "/assets/icons/amenities/buttons/cabin.svg",
-  "near-everything": "/assets/icons/amenities/buttons/separate_living_room.svg",
-  "simple-cozy": "/assets/icons/amenities/buttons/letter_writing_desk.svg",
-  "mountain-views": "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
+type MaskedArtworkProps = {
+  src: string;
+  selected: boolean;
+  className?: string;
 };
 
-const LABEL: Partial<Record<InterestMeta, string>> = {
-  "iconic-tub": "/assets/labels/copper_clawfoot_soaking_tub.svg",
-  "bathe-outside": "/assets/labels/soak-outside-label.svg",
-  "my-own-place": "/assets/labels/my-own-place-label-unselected.svg",
-  "near-everything": "/assets/labels/spaces-to-gather-label-unselected.svg",
-  "simple-cozy": "/assets/labels/simple-cozy-label-unselected.svg",
-  "mountain-views": "/assets/labels/scenic-views-label-unselected.svg",
-};
+function MaskedArtwork({ src, selected, className }: MaskedArtworkProps) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "block shrink-0 bg-current transition-all duration-200",
+        selected ? "text-oxblood opacity-100" : "text-umber opacity-50",
+        className,
+      )}
+      style={{
+        WebkitMaskImage: `url("${src}")`,
+        maskImage: `url("${src}")`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+      }}
+    />
+  );
+}
 
 const INTEREST_OPTIONS: InterestMeta[] = [
   {
     value: 'iconTub',
     label: 'Iconic Copper Tub',
-    illustrationOn:  "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
-    illustrationOff: "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
-    labelOn:  "/assets/labels/copper_clawfoot_soaking_tub.svg",
-    labelOff: "/assets/labels/copper_clawfoot_soaking_tub.svg",
+    illustration: "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
+    labelArt: "/assets/labels/copper_clawfoot_soaking_tub.svg",
   },
   {
     value: 'ownPlace',
     label: 'My Own Place',
-    illustrationOn:  "/assets/icons/amenities/buttons/cabin.svg",
-    illustrationOff: "/assets/icons/amenities/buttons/cabin.svg",
-    labelOn:  "/assets/labels/my-own-place-label-unselected.svg",
-    labelOff: "/assets/labels/my-own-place-label-unselected.svg",
+    illustration: "/assets/icons/amenities/buttons/cabin.svg",
+    labelArt: "/assets/labels/my-own-place-label-unselected.svg",
   },
   {
     value: 'scenic',
     label: 'Scenic Views',
-    illustrationOn:  "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
-    illustrationOff: "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
-    labelOn:  "/assets/labels/scenic-views-label-unselected.svg",
-    labelOff: "/assets/labels/scenic-views-label-unselected.svg",
+    illustration: "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
+    labelArt: "/assets/labels/scenic-views-label-unselected.svg",
   },
   {
     value: 'outdoorSoak',
     label: 'Soak Outside',
-    illustrationOn:  "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
-    illustrationOff: "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
-    labelOn:  "/assets/labels/soak-outside-label.svg",
-    labelOff: "/assets/labels/soak-outside-label.svg",
+    illustration: "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
+    labelArt: "/assets/labels/soak-outside-label.svg",
   },
   {
     value: 'simpleCozy',
     label: 'Simple + Cozy',
-    illustrationOn:  "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
-    illustrationOff: "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
-    labelOn:  "/assets/labels/simple-cozy-label-unselected.svg",
-    labelOff: "/assets/labels/simple-cozy-label-unselected.svg",
+    illustration: "/assets/icons/amenities/buttons/letter_writing_desk.svg",
+    labelArt: "/assets/labels/simple-cozy-label-unselected.svg",
   },
   {
     value: 'social',
     label: 'Spaces to Gather',
-    illustrationOn:  "/assets/icons/amenities/buttons/separate_living_room.svg",
-    illustrationOff: "/assets/icons/amenities/buttons/separate_living_room.svg",
-    labelOn:  "/assets/labels/spaces-to-gather-label-unselected.svg",
-    labelOff: "/assets/labels/spaces-to-gather-label-unselected.svg",
+    illustration: "/assets/icons/amenities/buttons/separate_living_room.svg",
+    labelArt: "/assets/labels/spaces-to-gather-label-unselected.svg",
   },
 ];
 
@@ -376,29 +373,20 @@ export default function HelpMeChoose({
                       }}
                     >
                       {/* Sketch illustration */}
-                      <div className="relative flex-1 flex items-end justify-center" style={{ minHeight: 97 }}>
-                        <img
-                          src={selected ? opt.illustrationOn : opt.illustrationOff}
-                          alt=""
-                          aria-hidden="true"
-                          className="object-bottom pointer-events-none"
-                          style={{
-                            maxHeight: 97,
-                            maxWidth: '100%',
-                            opacity: selected ? 1 : 0.5,
-                            objectFit: 'contain',
-                          }}
+                      <div className="relative flex flex-1 items-end justify-center" style={{ minHeight: 97 }}>
+                        <MaskedArtwork
+                          src={opt.illustration}
+                          selected={selected}
+                          className="h-[97px] w-full pointer-events-none"
                         />
                       </div>
 
                       {/* Ribbon label */}
-                      <div className="relative flex-shrink-0" style={{ height: 45, width: 120 }}>
-                        <img
-                          src={selected ? opt.labelOn : opt.labelOff}
-                          alt={opt.label}
-                          className="absolute inset-0 w-full h-full object-contain"
-                        />
-                      </div>
+                      <MaskedArtwork
+                        src={opt.labelArt}
+                        selected={selected}
+                        className="h-[45px] w-[120px]"
+                      />
                     </div>
                   </button>
                 );
