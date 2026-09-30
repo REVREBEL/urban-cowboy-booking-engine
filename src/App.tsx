@@ -6,20 +6,20 @@ import { StudioHeader } from "@/components/studio-booking/StudioHeader";
 import { StudioFooter } from "@/components/studio-booking/StudioFooter";
 import { StudioDates } from "./steps/StudioDates";
 import { StudioResults } from "./steps/StudioResults";
-import { Guest } from "./steps/Guest";
-import { Upgrade } from "./steps/Upgrade";
-import { Extras } from "./steps/Extras";
-import { Payment } from "./steps/Payment";
+import { StudioGuest } from "./steps/StudioGuest";
+import { StudioUpgrade } from "./steps/StudioUpgrade";
+import { StudioExtras } from "./steps/StudioExtras";
+import { StudioPayment } from "./steps/StudioPayment";
 import { Confirmation } from "./steps/Confirmation";
 import { t } from "./i18n";
 
 const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
   dates: StudioDates,
   results: StudioResults,
-  guest: Guest,
-  upgrade: Upgrade,
-  extras: Extras,
-  payment: Payment,
+  guest: StudioGuest,
+  upgrade: StudioUpgrade,
+  extras: StudioExtras,
+  payment: StudioPayment,
   confirmation: Confirmation,
 };
 

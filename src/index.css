@@ -233,3 +233,31 @@
     scrollbar-width: none;
   }
 }
+
+
+@layer components {
+  .studio-field {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    border: 0;
+    border-bottom: 2px solid #4e332d;
+    border-radius: 0;
+    background: transparent;
+    padding: 10px 2px;
+    color: #4e332d;
+    font-family: "Uchen", Georgia, serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .studio-field::placeholder {
+    color: rgba(78, 51, 45, 0.45);
+  }
+
+  .studio-field:focus {
+    outline: none;
+    border-bottom-color: #9a5636;
+    box-shadow: 0 2px 0 0 #9a5636;
+  }
+}
