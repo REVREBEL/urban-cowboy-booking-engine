@@ -25,14 +25,14 @@ const ICON: Record<PreferenceId, string> = {
   "bringing-my-people": "/assets/labels/top_match.svg",
 };
 
-const LABEL: Partial<Record<PreferenceId, string>> = {
-  "iconic-tub": "/assets/labels/copper_clawfoot_soaking_tub.svg",
-  "bathe-outside": "/assets/labels/soak-outside-label.svg",
-  "my-own-place": "/assets/labels/my-own-place-label-unselected.svg",
-  "near-everything": "/assets/labels/spaces-to-gather-label-unselected.svg",
-  "simple-cozy": "/assets/labels/simple-cozy-label-unselected.svg",
-  "mountain-views": "/assets/labels/scenic-views-label-unselected.svg",
-  "bringing-my-people": "/assets/labels/spaces-to-gather-label-unselected.svg",
+const LABEL: Partial<Record<PreferenceId, string> = {
+  "iconic-tub": "/assets/labels/copper_clawfoot_soaking_tub_label.svg",
+  "bathe-outside": "/assets/labels/soak_outside-label.svg",
+  "my-own-place": "/assets/labels/my_own_place_label.svg",
+  "near-everything": "/assets/labels/spaces_to_gather-label.svg",
+  "simple-cozy": "/assets/labels/simple_cozy-label.svg",
+  "mountain-views": "/assets/labels/scenic_views_label.svg",
+  "bringing-my-people": "/assets/labels/spaces_to_gather_label.svg",
 };
 
 function MaskedArtwork({ src, selected, className }: MaskedArtworkProps) {
