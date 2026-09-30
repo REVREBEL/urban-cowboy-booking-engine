@@ -14,6 +14,9 @@ import { buildTopMatchCopy, parseRecommendationPreferences } from "../lib/topMat
 import { rankRecommendedRooms } from "../lib/roomMatching";
 import { roomDetailTags } from "../lib/roomTags";
 import { unresolvedCategoryBindings } from "../lib/roomMerchandising";
+import FindYourStay from "@/features/find-your-stay/components/flows/FindYourStay";
+import HelpMeChoose from "@/features/find-your-stay/components/flows/HelpMeChoose";
+import type { RecommendationPreferences } from "@/types/merchandising";
 
 export function Results() {
   const {
@@ -47,6 +50,10 @@ export function Results() {
   const [error, setError] = useState<string | null>(null);
   const [openRoom, setOpenRoom] = useState<ShapedRoom | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [discoveryView, setDiscoveryView] = useState<"explore" | "quiz" | "results">(() =>
+    new URLSearchParams(window.location.search).has("interest") ? "results" : "explore",
+  );
+  const [recommendationSearch, setRecommendationSearch] = useState(() => window.location.search);
   // Accordéons « autres hébergements » (ouverts/fermés par clé d'hébergement).
   const [openProps, setOpenProps] = useState<string[]>([]);
   const toggleProp = (key: string) =>
@@ -90,7 +97,6 @@ export function Results() {
   // merchandising Urban Cowboy au moment du shaping.
   const allRooms = useMemo(() => (data ? buildRooms(data, hotel) : []), [data, hotel]);
 
-  const recommendationSearch = window.location.search;
   const recommendationPreferences = useMemo(
     () => parseRecommendationPreferences(recommendationSearch, { adults, children }),
     [recommendationSearch, adults, children],
@@ -170,6 +176,26 @@ export function Results() {
 
   const search = { checkIn, checkOut, adults, children };
 
+  function writeRecommendationPreferences(preferences: RecommendationPreferences) {
+    const query = new URLSearchParams(window.location.search);
+    query.set("party", preferences.party);
+    query.set("dog", preferences.dog ? "yes" : "no");
+    query.set("interest", preferences.interests[0]);
+    if (preferences.interests[1]) query.set("interest2", preferences.interests[1]);
+    else query.delete("interest2");
+    const next = "?" + query.toString();
+    window.history.replaceState(null, "", window.location.pathname + next);
+    setRecommendationSearch(next);
+  }
+
+  function clearRecommendationPreferences() {
+    const query = new URLSearchParams(window.location.search);
+    for (const key of ["party", "dog", "interest", "interest2"]) query.delete(key);
+    const suffix = query.toString() ? "?" + query.toString() : "";
+    window.history.replaceState(null, "", window.location.pathname + suffix);
+    setRecommendationSearch(suffix);
+  }
+
   function choose(room: ShapedRoom, rate: ShapedRate) {
     selectRoomRate(room, rate);
     setOpenRoom(null);
@@ -185,6 +211,37 @@ export function Results() {
     if (!recommendationPreferences || !room) return null;
     return buildTopMatchCopy(room.name, recommendationPreferences, checkIn, room.merchandising);
   }, [rooms, recommendationPreferences, checkIn]);
+
+  if (!loading && !hotelError && !error && allRooms.length > 0 && discoveryView === "explore") {
+    return (
+      <FindYourStay
+        checkIn={checkIn}
+        checkOut={checkOut}
+        adults={adults}
+        children={children}
+        availableCount={eligibleAllRooms.length}
+        onChangeSearch={() => goTo("dates")}
+        onHelpMeChoose={() => setDiscoveryView("quiz")}
+        onBrowseAll={() => {
+          clearRecommendationPreferences();
+          setDiscoveryView("results");
+        }}
+      />
+    );
+  }
+
+  if (discoveryView === "quiz") {
+    return (
+      <HelpMeChoose
+        initialPreferences={recommendationPreferences}
+        onBack={() => setDiscoveryView("explore")}
+        onSubmit={(preferences) => {
+          writeRecommendationPreferences(preferences);
+          setDiscoveryView("results");
+        }}
+      />
+    );
+  }
 
   return (
     <div className="booking-shell py-8">
@@ -248,6 +305,13 @@ export function Results() {
 
       {!loading && !hotelError && !error && rooms.length > 0 && recommendationPreferences && topMatchCopy && (
         <section className="mx-auto mt-10 max-w-4xl">
+          <button
+            type="button"
+            onClick={() => setDiscoveryView("quiz")}
+            className="mb-8 font-bianco text-xs font-bold uppercase tracking-[2px] text-[#6B6259] hover:text-[#4E332D]"
+          >
+            ← Adjust Preferences
+          </button>
           <div className="mb-8">
             <div className="mb-5 flex items-center gap-3 text-umber" aria-hidden="true">
               <span className="size-2.5 rounded-full bg-umber" />

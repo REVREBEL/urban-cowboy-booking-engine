@@ -118,8 +118,21 @@
   .booking-shell {
     width: 100%;
     max-width: 1800px;
+    box-sizing: border-box;
     margin-inline: auto;
     padding-inline: clamp(1rem, 2.5vw, 3rem);
+  }
+
+  .font-bianco {
+    font-family: var(--font-bianco);
+  }
+
+  .font-desert {
+    font-family: var(--font-desert);
+  }
+
+  .font-editorial {
+    font-family: var(--font-uchen);
   }
 
   /* Léger grain / fondu pour les fonds sombres du hero */
