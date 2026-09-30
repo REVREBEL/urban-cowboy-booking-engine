@@ -22,15 +22,15 @@ const ICON: Record<PreferenceId, string> = {
   "near-everything": "/assets/icons/amenities/buttons/separate_living_room.svg",
   "simple-cozy": "/assets/icons/amenities/buttons/letter_writing_desk.svg",
   "mountain-views": "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
-  "bringing-my-people": "/assets/labels/top_match.svg",
+  "bringing-my-people": "/assets/icons/amenities/buttons/separate_living_room.svg",
 };
 
 const LABEL: Partial<Record<PreferenceId, string>> = {
   "iconic-tub": "/assets/labels/copper_clawfoot_soaking_tub_label.svg",
-  "bathe-outside": "/assets/labels/soak_outside-label.svg",
+  "bathe-outside": "/assets/labels/soak_outside_label.svg",
   "my-own-place": "/assets/labels/my_own_place_label.svg",
-  "near-everything": "/assets/labels/spaces_to_gather-label.svg",
-  "simple-cozy": "/assets/labels/simple_cozy-label.svg",
+  "near-everything": "/assets/labels/spaces_to_gather_label.svg",
+  "simple-cozy": "/assets/labels/simple_cozy_label.svg",
   "mountain-views": "/assets/labels/scenic_views_label.svg",
   "bringing-my-people": "/assets/labels/spaces_to_gather_label.svg",
 };
@@ -84,7 +84,7 @@ export function PreferenceIconButton({ id, label, description, selected, onToggl
           src={icon}
           selected={selected}
           className={cn(
-            "h-24 w-32",
+            "h-32 w-32",
             !selected && "group-hover:opacity-65",
           )}
         />
