@@ -10,40 +10,39 @@ type Props = {
 };
 
 const ICON: Record<PreferenceId, string> = {
-  "iconic-tub": "/assets/copper-tub-illustration-unselected.png",
-  "bathe-outside": "/assets/soak-outside-illustration-unselected.png",
-  "my-own-place": "/assets/my-own-place-illustration-unselected.png",
-  "near-everything": "/assets/spaces-to-gather-illustration-unselected.png",
-  "simple-cozy": "/assets/simple-cozy-illustration-unselected.png",
-  "mountain-views": "/assets/scenic-views-illustration-unselected.png",
-  "bringing-my-people": "/assets/party-card-bg-wide.svg",
+  "iconic-tub": "/public/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
+  "bathe-outside": "/public/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
+  "my-own-place": "/public/assets/icons/amenities/buttons/cabin.svg",
+  "near-everything": "/public/assets/icons/amenities/buttons/separate_living_room.svg",
+  "simple-cozy": "/public/assets/icons/amenities/buttons/letter_writing_desk.svg",
+  "mountain-views": "/public/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
 };
 
 const ICON_SELECTED: Partial<Record<PreferenceId, string>> = {
-  "iconic-tub": "/assets/copper-tub-illustration-selected.png",
-  "bathe-outside": "/assets/soak-outside-illustration-selected.png",
-  "my-own-place": "/assets/my-own-place-illustration-selected.png",
-  "near-everything": "/assets/spaces-to-gather-illustration-selected.png",
-  "simple-cozy": "/assets/simple-cozy-illustration-selected.png",
-  "mountain-views": "/assets/scenic-views-illustration-selected.png",
+  "iconic-tub": "/public/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
+  "bathe-outside": "/public/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
+  "my-own-place": "/public/assets/icons/amenities/buttons/cabin.svg",
+  "near-everything": "/public/assets/icons/amenities/buttons/separate_living_room.svg",
+  "simple-cozy": "/public/assets/icons/amenities/buttons/letter_writing_desk.svg",
+  "mountain-views": "/public/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
 };
 
 const LABEL: Partial<Record<PreferenceId, string>> = {
-  "iconic-tub": "/assets/copper-tub-label-unselected.svg",
-  "bathe-outside": "/assets/soak-outside-label.svg",
-  "my-own-place": "/assets/my-own-place-label-unselected.svg",
-  "near-everything": "/assets/spaces-to-gather-label-unselected.svg",
-  "simple-cozy": "/assets/simple-cozy-label-unselected.svg",
-  "mountain-views": "/assets/scenic-views-label-unselected.svg",
+  "iconic-tub": "/public/assets/labels/copper_clawfoot_soaking_tub.svg",
+  "bathe-outside": "/public/assets/labels/soak-outside-label.svg",
+  "my-own-place": "/public/assets/labels/my-own-place-label-unselected.svg",
+  "near-everything": "/public/assets/labels/spaces-to-gather-label-unselected.svg",
+  "simple-cozy": "/public/assets/labels/simple-cozy-label-unselected.svg",
+  "mountain-views": "/public/assets/labels/scenic-views-label-unselected.svg",
 };
 
 const LABEL_SELECTED: Partial<Record<PreferenceId, string>> = {
-  "iconic-tub": "/assets/copper-tub-label-selected.svg",
-  "bathe-outside": "/assets/soak-outside-label.svg",
-  "my-own-place": "/assets/my-own-place-label-selected.svg",
-  "near-everything": "/assets/spaces-to-gather-label-selected.svg",
-  "simple-cozy": "/assets/simple-cozy-label-selected.svg",
-  "mountain-views": "/assets/scenic-views-label-selected.svg",
+  "iconic-tub": "/public/assets/labels/copper_clawfoot_soaking_tub.svg",
+  "bathe-outside": "/public/assets/labels/soak-outside-label.svg",
+  "my-own-place": "/public/assets/labels/my-own-place-label-unselected.svg",
+  "near-everything": "/public/assets/labels/spaces-to-gather-label-unselected.svg",
+  "simple-cozy": "/public/assets/labels/simple-cozy-label-unselected.svg",
+  "mountain-views": "/public/assets/labels/scenic-views-label-unselected.svg",
 };
 
 export function PreferenceIconButton({ id, label, description, selected, onToggle }: Props) {
