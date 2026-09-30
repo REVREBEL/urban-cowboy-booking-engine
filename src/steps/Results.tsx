@@ -4,15 +4,17 @@ import { api, errorMessage } from "../lib/api";
 import { fmtDate } from "../lib/format";
 import { buildRooms } from "../lib/shaping";
 import type { AvailabilityResponse, ShapedRate, ShapedRoom } from "../types/mews";
-import { RoomCard } from "@/components/rooms/room-card";
+import RoomCard from "@/features/find-your-stay/components/rooms/RoomCard";
+import TopMatchPanel from "@/features/find-your-stay/components/rooms/TopMatchPanel";
+import { roomProductFromShapedRoom } from "@/features/find-your-stay/adapters/mews-room";
+import type { RecommendationResult } from "@/features/find-your-stay/types";
 import { RoomDetailDrawer } from "@/components/rooms/room-detail-drawer";
 import { InlineUpsell } from "@/components/booking/extras/upsell-card";
 import { IconCalendar, IconUsers, IconChevron } from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
-import { TopMatchPanel } from "@/components/rooms/top-match-panel";
 import { buildTopMatchCopy, parseRecommendationPreferences } from "../lib/topMatch";
 import { rankRecommendedRooms } from "../lib/roomMatching";
-import { roomBenefitTags, roomDetailTags } from "../lib/roomTags";
+import { roomDetailTags } from "../lib/roomTags";
 import { unresolvedCategoryBindings } from "../lib/roomMerchandising";
 
 export function Results() {
@@ -193,10 +195,16 @@ export function Results() {
     [topMatch, recommendationPreferences, checkIn],
   );
 
-  const propertyLabelFor = (room: ShapedRoom) =>
-    room.property
-      ? hotel?.Properties?.find((property) => property.key === room.property)?.label
-      : undefined;
+  const topMatchResult = useMemo<RecommendationResult | null>(() => {
+    if (!topMatch || !topMatchCopy || !recommendationPreferences) return null;
+    return {
+      room: roomProductFromShapedRoom(topMatch, imageBaseUrl),
+      matchedInterests: recommendationPreferences.interests.filter(
+        (interest) => interest !== undefined,
+      ),
+      explanation: topMatchCopy,
+    };
+  }, [topMatch, topMatchCopy, recommendationPreferences, imageBaseUrl]);
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
@@ -263,53 +271,31 @@ export function Results() {
 
       {!loading && !hotelError && !error && rooms.length > 0 && (
         <div className="mt-5 space-y-4">
-          {topMatch && topMatchCopy ? (
-            <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,0.85fr)]">
-              <div className="space-y-4">
-                <RoomCard
-                  room={topMatch}
-                  imageBaseUrl={imageBaseUrl}
-                  nightsCount={nightsCount}
-                  featured
-                  propertyLabel={propertyLabelFor(topMatch)}
-                  benefitTags={roomBenefitTags(topMatch.merchandising)}
-                  detailTags={roomDetailTags(topMatch.merchandising)}
-                  onChoose={() => choose(topMatch, topMatch.rates[0])}
-                  onDetails={() => setOpenRoom(topMatch)}
+          {topMatch && topMatchResult ? (
+            <div className="space-y-4">
+              <TopMatchPanel
+                result={topMatchResult}
+                onViewRoom={() => setOpenRoom(topMatch)}
+              />
+              {inlineProduct && (
+                <InlineUpsell
+                  product={inlineProduct}
+                  added={productIds.includes(inlineProduct.id)}
+                  onToggle={() => toggleProduct(inlineProduct.id)}
                 />
-                {inlineProduct && (
-                  <InlineUpsell
-                    product={inlineProduct}
-                    added={productIds.includes(inlineProduct.id)}
-                    onToggle={() => toggleProduct(inlineProduct.id)}
-                  />
-                )}
-              </div>
-              <TopMatchPanel copy={topMatchCopy} />
+              )}
             </div>
           ) : rooms[0] ? (
             <RoomCard
-              room={rooms[0]}
-              imageBaseUrl={imageBaseUrl}
-              nightsCount={nightsCount}
-              propertyLabel={propertyLabelFor(rooms[0])}
-              benefitTags={roomBenefitTags(rooms[0].merchandising)}
-              detailTags={roomDetailTags(rooms[0].merchandising)}
-              onChoose={() => choose(rooms[0], rooms[0].rates[0])}
-              onDetails={() => setOpenRoom(rooms[0])}
+              room={roomProductFromShapedRoom(rooms[0], imageBaseUrl)}
+              onSelect={() => setOpenRoom(rooms[0])}
             />
           ) : null}
           {rooms.slice(1, 3).map((room) => (
             <div key={room.categoryId} className="space-y-4">
               <RoomCard
-                room={room}
-                imageBaseUrl={imageBaseUrl}
-                nightsCount={nightsCount}
-                propertyLabel={propertyLabelFor(room)}
-                benefitTags={roomBenefitTags(room.merchandising)}
-                detailTags={roomDetailTags(room.merchandising)}
-                onChoose={() => choose(room, room.rates[0])}
-                onDetails={() => setOpenRoom(room)}
+                room={roomProductFromShapedRoom(room, imageBaseUrl)}
+                onSelect={() => setOpenRoom(room)}
               />
             </div>
           ))}
@@ -347,14 +333,8 @@ export function Results() {
                       {propRooms.map((room) => (
                         <RoomCard
                           key={room.categoryId}
-                          room={room}
-                          imageBaseUrl={imageBaseUrl}
-                          nightsCount={nightsCount}
-                          propertyLabel={propertyLabelFor(room)}
-                          benefitTags={roomBenefitTags(room.merchandising)}
-                          detailTags={roomDetailTags(room.merchandising)}
-                          onChoose={() => choose(room, room.rates[0])}
-                          onDetails={() => setOpenRoom(room)}
+                          room={roomProductFromShapedRoom(room, imageBaseUrl)}
+                          onSelect={() => setOpenRoom(room)}
                         />
                       ))}
                     </div>
