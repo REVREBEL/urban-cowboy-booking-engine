@@ -28,15 +28,24 @@
     --ring: 18 46% 41%;
     --radius: 0.5rem;
 
-    /* Imported Cowboy component font hooks. Webfonts may be supplied by the host. */
-    --font-brothers: "Brothers OT", "League Spartan", sans-serif;
-    --font-desert: "DesertRain", "Instrument Serif", Georgia, serif;
-    --font-uchen: "Uchen", Georgia, serif;
-    --font-inter: "Inter", "Urbanist", sans-serif;
-    --font-bianco: "Bianco Sans", "Urbanist", sans-serif;
-    --font-lato: "Lato", "Urbanist", sans-serif;
-    --font-dm-sans: "DM Sans", "Urbanist", sans-serif;
-    --font-league-spartan: "League Spartan", "Urbanist", sans-serif;
+    /* Cowboy typography system. Components consume semantic variables, not font names. */
+    --font-body: "Uchen", Georgia, serif;
+    --font-heading: "DesertRain", Georgia, serif;
+    --font-button: "BrothersOT", "League Spartan", sans-serif;
+    --font-label: "BrothersOT", "League Spartan", sans-serif;
+    --font-eyebrow: "Bianco Sans", "League Spartan", sans-serif;
+    --font-number: "Bianco Sans", "League Spartan", sans-serif;
+    --font-blockquote: "Cedarville", cursive;
+
+    /* Backward-compatible aliases while the UI is being consolidated. */
+    --font-brothers: var(--font-button);
+    --font-desert: var(--font-heading);
+    --font-uchen: var(--font-body);
+    --font-bianco: var(--font-number);
+    --font-inter: var(--font-body);
+    --font-lato: var(--font-body);
+    --font-dm-sans: var(--font-body);
+    --font-league-spartan: var(--font-label);
   }
 
   html {
@@ -44,33 +53,57 @@
   }
 
   body {
-    @apply bg-cream font-body text-ink antialiased;
+    @apply bg-cream text-ink antialiased;
+    font-family: var(--font-body);
     font-feature-settings: "ss01";
   }
 
-  /* Titres : serif Fraunces, optical sizing pour l'élégance éditoriale */
   h1,
   h2,
-  h3 {
-    @apply font-display;
-    font-optical-sizing: auto;
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-display,
+  .font-heading,
+  .font-brand {
+    font-family: var(--font-heading);
+    letter-spacing: 2px;
   }
 
-  /* Accents éditoriaux en italique (ex. « à l'essentiel ») — Instrument Serif italique, corail */
-  .accent {
-    @apply font-display italic text-corail;
+  button,
+  .font-button {
+    font-family: var(--font-button);
   }
 
-  .font-brand,
-  .font-label,
-  .font-button,
-  .eyebrow {
-    font-family: var(--font-brothers);
+  label,
+  .font-label {
+    font-family: var(--font-label);
   }
 
+  .eyebrow,
+  .font-eyebrow,
   .font-topic {
-    font-family: var(--font-bianco);
-    font-weight: 700;
+    font-family: var(--font-eyebrow);
+  }
+
+  .font-number,
+  .numeric,
+  .tabular-nums,
+  [data-typography="number"] {
+    font-family: var(--font-number) !important;
+    font-variant-numeric: tabular-nums;
+  }
+
+  blockquote,
+  .font-blockquote {
+    font-family: var(--font-blockquote);
+  }
+
+  .accent {
+    @apply italic text-corail;
+    font-family: var(--font-heading);
+    letter-spacing: 2px;
   }
 }
 
@@ -79,6 +112,7 @@
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
       transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-corail
       focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    font-family: var(--font-button);
   }
   /* Primaire : marine (blanc dessus = contraste AAA), élégant et luxe */
   .btn-primary {
@@ -101,6 +135,7 @@
 
   .field-label {
     @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-marine/60;
+    font-family: var(--font-label);
   }
   .field-input {
     @apply w-full rounded-xl border border-marine/15 bg-white px-4 py-3 text-marine shadow-sm outline-none
@@ -109,6 +144,7 @@
 
   .chip {
     @apply inline-flex items-center gap-1.5 rounded-full bg-corail/10 px-3 py-1 text-xs font-semibold text-marine;
+    font-family: var(--font-label);
   }
 }
 
@@ -195,23 +231,32 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Cedarville";
+  src: url("/fonts/Cedarville/Cedarville-Cursive.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer utilities {
   .font-brothers,
   .font-woodblock {
-    font-family: "BrothersOT", "League Spartan", sans-serif;
+    font-family: var(--font-label);
   }
 
   .font-desert {
-    font-family: "DesertRain", Georgia, serif;
+    font-family: var(--font-heading);
+    letter-spacing: 2px;
   }
 
   .font-bianco {
-    font-family: "Bianco Sans", "League Spartan", sans-serif;
+    font-family: var(--font-number);
   }
 
   .font-uchen,
   .font-editorial {
-    font-family: "Uchen", Georgia, serif;
+    font-family: var(--font-body);
   }
 
   .texture-linen {
@@ -246,7 +291,7 @@
     background: transparent;
     padding: 10px 2px;
     color: #4e332d;
-    font-family: "Uchen", Georgia, serif;
+    font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.5;
   }
