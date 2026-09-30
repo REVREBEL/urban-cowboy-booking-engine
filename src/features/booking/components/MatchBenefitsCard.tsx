@@ -76,10 +76,10 @@ export function MatchBenefitsCard({
       </div>
 
       <div className={`mt-auto flex justify-end gap-3 ${compact ? "pt-4" : "pt-8"}`}>
-        <Button type="button" variant="outline" onClick={handleShare} className="h-10 rounded-full border-umber bg-transparent px-7 text-xs text-umber shadow-none hover:bg-umber hover:text-primary-foreground">
+        <Button type="button" variant="outline" onClick={handleShare} className={`${compact ? "h-8 px-4 text-[10px]" : "h-10 px-7 text-xs"} rounded-full border-umber bg-transparent text-umber shadow-none hover:bg-umber hover:text-primary-foreground`}>
           Share
         </Button>
-        <Button type="button" aria-pressed={saved} onClick={() => setSaved((current) => !current)} className="h-10 rounded-full bg-oxblood px-7 text-xs text-primary-foreground shadow-none hover:bg-oxblood/90">
+        <Button type="button" aria-pressed={saved} onClick={() => setSaved((current) => !current)} className={`${compact ? "h-8 px-4 text-[10px]" : "h-10 px-7 text-xs"} rounded-full bg-oxblood text-primary-foreground shadow-none hover:bg-oxblood/90`}>
           {saved ? <Check aria-hidden="true" /> : null}
           {saved ? "Saved" : "Save"}
         </Button>
