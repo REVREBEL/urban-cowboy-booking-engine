@@ -22,6 +22,7 @@ const ICON: Record<PreferenceId, string> = {
   "near-everything": "/assets/icons/amenities/buttons/separate_living_room.svg",
   "simple-cozy": "/assets/icons/amenities/buttons/letter_writing_desk.svg",
   "mountain-views": "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
+  "bringing-my-people": "/assets/icons/amenities/buttons/separate_living_room.svg",
 };
 
 const LABEL: Partial<Record<PreferenceId, string>> = {
@@ -31,6 +32,7 @@ const LABEL: Partial<Record<PreferenceId, string>> = {
   "near-everything": "/assets/labels/spaces-to-gather-label-unselected.svg",
   "simple-cozy": "/assets/labels/simple-cozy-label-unselected.svg",
   "mountain-views": "/assets/labels/scenic-views-label-unselected.svg",
+  "bringing-my-people": "/assets/labels/spaces-to-gather-label-unselected.svg",
 };
 
 function MaskedArtwork({ src, selected, className }: MaskedArtworkProps) {
