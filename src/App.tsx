@@ -3,6 +3,7 @@ import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { Brand } from "@/components/brand/brand";
 import { StepProgress, type ProgressStep } from "@/components/booking/layout/step-progress";
 import { DevPanel } from "@/components/dev/dev-panel";
+import { Banner } from "@/components/ui/banner";
 import { ContactBar } from "@/components/booking/chrome/contact-bar";
 import { Dates } from "./steps/Dates";
 import { Results } from "./steps/Results";
@@ -100,12 +101,13 @@ function Shell() {
       </header>
 
       {hotelError && (
-        <div className="bg-amber-50 px-5 py-2 text-center text-sm text-amber-800">
-          {t("hotelError.msg")}{" "}
-          <button type="button" onClick={reloadHotel} className="font-semibold underline">
-            {t("common.retry")}
-          </button>
-        </div>
+        <Banner
+          color="whiskey-sour"
+          actionLabel={t("common.retry")}
+          onAction={reloadHotel}
+        >
+          {t("hotelError.msg")}
+        </Banner>
       )}
 
       <main className="flex-1">
