@@ -75,7 +75,7 @@ export function MatchBenefitsCard({
         </section>
       </div>
 
-      <div className={`mt-auto flex justify-end gap-3 ${compact ? "pt-4" : "pt-8"}`}>
+      <div className={`mt-auto flex justify-end gap-3 ${compact ? "pt-4" : "pt-4"}`}>
         <Button type="button" variant="outline" onClick={handleShare} className={`${compact ? "h-8 px-4 text-[10px]" : "h-10 px-7 text-xs"} rounded-full border-umber bg-transparent text-umber shadow-none hover:bg-umber hover:text-primary-foreground`}>
           Share
         </Button>
