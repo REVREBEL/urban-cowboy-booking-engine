@@ -571,8 +571,50 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
         <WidthFrame width={width}>
           <div className="flex min-h-64 items-center justify-center">
             <PreferenceIconButton
+              id="iconic-tub"
+              label="iconic-tub"
+              description="A private cedar soaking tub outside among the trees."
+              selected={preference}
+              onToggle={() => setPreference((value) => !value)}
+            />
+            <PreferenceIconButton
               id="bathe-outside"
               label="Outdoor Soak"
+              description="A private cedar soaking tub outside among the trees."
+              selected={preference}
+              onToggle={() => setPreference((value) => !value)}
+            />
+            <PreferenceIconButton
+              id="my-own-place"
+              label="my-own-place"
+              description="A private cedar soaking tub outside among the trees."
+              selected={preference}
+              onToggle={() => setPreference((value) => !value)}
+            />
+            <PreferenceIconButton
+              id="near-everything"
+              label="near-everything"
+              description="A private cedar soaking tub outside among the trees."
+              selected={preference}
+              onToggle={() => setPreference((value) => !value)}
+            />
+            <PreferenceIconButton
+              id="simple-cozy"
+              label="simple-cozy"
+              description="A private cedar soaking tub outside among the trees."
+              selected={preference}
+              onToggle={() => setPreference((value) => !value)}
+            />
+            <PreferenceIconButton
+              id="mountain-views"
+              label="mountain-views"
+              description="A private cedar soaking tub outside among the trees."
+              selected={preference}
+              onToggle={() => setPreference((value) => !value)}
+            />
+            <PreferenceIconButton
+              id="bringing-my-people"
+              label="bringing-my-people"
               description="A private cedar soaking tub outside among the trees."
               selected={preference}
               onToggle={() => setPreference((value) => !value)}
