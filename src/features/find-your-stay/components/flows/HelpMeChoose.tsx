@@ -17,54 +17,73 @@ type InterestMeta = {
   labelOff: string;
 };
 
+
+const ICON: Record<InterestMeta, string> = {
+  "iconic-tub": "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
+  "bathe-outside": "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
+  "my-own-place": "/assets/icons/amenities/buttons/cabin.svg",
+  "near-everything": "/assets/icons/amenities/buttons/separate_living_room.svg",
+  "simple-cozy": "/assets/icons/amenities/buttons/letter_writing_desk.svg",
+  "mountain-views": "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
+};
+
+const LABEL: Partial<Record<InterestMeta, string>> = {
+  "iconic-tub": "/assets/labels/copper_clawfoot_soaking_tub.svg",
+  "bathe-outside": "/assets/labels/soak-outside-label.svg",
+  "my-own-place": "/assets/labels/my-own-place-label-unselected.svg",
+  "near-everything": "/assets/labels/spaces-to-gather-label-unselected.svg",
+  "simple-cozy": "/assets/labels/simple-cozy-label-unselected.svg",
+  "mountain-views": "/assets/labels/scenic-views-label-unselected.svg",
+};
+
 const INTEREST_OPTIONS: InterestMeta[] = [
   {
     value: 'iconTub',
     label: 'Iconic Copper Tub',
-    illustrationOn:  '/assets/copper-tub-illustration-selected.png',
-    illustrationOff: '/assets/copper-tub-illustration-unselected.png',
-    labelOn:  '/assets/copper-tub-label-selected.svg',
-    labelOff: '/assets/copper-tub-label-unselected.svg',
+    illustrationOn:  "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
+    illustrationOff: "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
+    labelOn:  "/assets/labels/copper_clawfoot_soaking_tub.svg",
+    labelOff: "/assets/labels/copper_clawfoot_soaking_tub.svg",
   },
   {
     value: 'ownPlace',
     label: 'My Own Place',
-    illustrationOn:  '/assets/my-own-place-illustration-selected.png',
-    illustrationOff: '/assets/my-own-place-illustration-unselected.png',
-    labelOn:  '/assets/my-own-place-label-selected.svg',
-    labelOff: '/assets/my-own-place-label-unselected.svg',
+    illustrationOn:  "/assets/icons/amenities/buttons/cabin.svg",
+    illustrationOff: "/assets/icons/amenities/buttons/cabin.svg",
+    labelOn:  "/assets/labels/my-own-place-label-unselected.svg",
+    labelOff: "/assets/labels/my-own-place-label-unselected.svg",
   },
   {
     value: 'scenic',
     label: 'Scenic Views',
-    illustrationOn:  '/assets/scenic-views-illustration-selected.png',
-    illustrationOff: '/assets/scenic-views-illustration-unselected.png',
-    labelOn:  '/assets/scenic-views-label-selected.svg',
-    labelOff: '/assets/scenic-views-label-unselected.svg',
+    illustrationOn:  "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
+    illustrationOff: "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
+    labelOn:  "/assets/labels/scenic-views-label-unselected.svg",
+    labelOff: "/assets/labels/scenic-views-label-unselected.svg",
   },
   {
     value: 'outdoorSoak',
     label: 'Soak Outside',
-    illustrationOn:  '/assets/soak-outside-illustration-selected.png',
-    illustrationOff: '/assets/soak-outside-illustration-unselected.png',
-    labelOn:  '/assets/soak-outside-label.svg',
-    labelOff: '/assets/soak-outside-label.svg',
+    illustrationOn:  "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
+    illustrationOff: "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
+    labelOn:  "/assets/labels/soak-outside-label.svg",
+    labelOff: "/assets/labels/soak-outside-label.svg",
   },
   {
     value: 'simpleCozy',
     label: 'Simple + Cozy',
-    illustrationOn:  '/assets/simple-cozy-illustration-selected.png',
-    illustrationOff: '/assets/simple-cozy-illustration-unselected.png',
-    labelOn:  '/assets/simple-cozy-label-selected.svg',
-    labelOff: '/assets/simple-cozy-label-unselected.svg',
+    illustrationOn:  "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
+    illustrationOff: "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
+    labelOn:  "/assets/labels/simple-cozy-label-unselected.svg",
+    labelOff: "/assets/labels/simple-cozy-label-unselected.svg",
   },
   {
     value: 'social',
     label: 'Spaces to Gather',
-    illustrationOn:  '/assets/spaces-to-gather-illustration-selected.png',
-    illustrationOff: '/assets/spaces-to-gather-illustration-unselected.png',
-    labelOn:  '/assets/spaces-to-gather-label-selected.svg',
-    labelOff: '/assets/spaces-to-gather-label-unselected.svg',
+    illustrationOn:  "/assets/icons/amenities/buttons/separate_living_room.svg",
+    illustrationOff: "/assets/icons/amenities/buttons/separate_living_room.svg",
+    labelOn:  "/assets/labels/spaces-to-gather-label-unselected.svg",
+    labelOff: "/assets/labels/spaces-to-gather-label-unselected.svg",
   },
 ];
 
