@@ -12,6 +12,14 @@ export type RecommendationSearchContext = {
 };
 
 function interestScore(merchandising: RoomMerchandising, interest: MatchInterest): number {
+  if (interest === "social") {
+    return Math.max(
+      merchandising.interestScores.social ?? 0,
+      merchandising.features.fullKitchen ? 5 : 0,
+      merchandising.partyScores.friends ?? 0,
+      merchandising.partyScores.family ?? 0,
+    );
+  }
   return merchandising.interestScores[interest] ?? 0;
 }
 
