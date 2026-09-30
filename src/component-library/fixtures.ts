@@ -1,5 +1,5 @@
-import type { RateOffer, RecommendationResult, RoomProduct } from "@/features/find-your-stay/types";
-import type { MatchRoomSummary, StaySummaryData } from "@/features/booking/types";
+import type { RateOffer, RecommendationResult, RoomProduct } from "@/types/find-your-stay";
+import type { MatchRoomSummary } from "@/types/booking-ui";
 
 export const demoRooms: RoomProduct[] = [
   {
@@ -188,15 +188,15 @@ export const demoMatchRoom: MatchRoomSummary = {
   ],
 };
 
-export const demoStaySummary: StaySummaryData = {
+export const demoStaySummary = {
   roomName: "Walden King",
   rateName: "Ride Easy",
-  arrival: "2026-10-14",
-  departure: "2026-10-17",
+  checkIn: "2026-10-14",
+  checkOut: "2026-10-17",
   adults: 2,
   children: 0,
-  pets: true,
-  nightlyAmount: 395,
-  totalAmount: 1327.2,
+  dog: true,
+  nightlyRate: 395,
+  total: 1327.2,
   currency: "USD",
 };

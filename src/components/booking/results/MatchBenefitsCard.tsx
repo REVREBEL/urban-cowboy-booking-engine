@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import type { MatchRoomSummary } from "../types";
+import type { MatchRoomSummary } from "@/types/booking-ui";
 
 export function MatchBenefitsCard({
   room,

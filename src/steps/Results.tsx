@@ -8,7 +8,7 @@ import { RoomDetailDrawer } from "@/components/rooms/room-detail-drawer";
 import { InlineUpsell } from "@/components/booking/extras/upsell-card";
 import { IconCalendar, IconUsers, IconChevron } from "@/components/icons/cowboy-icons";
 import { Photo } from "@/components/media/photo";
-import { MatchBenefitsCard } from "@/features/booking/components/MatchBenefitsCard";
+import { MatchBenefitsCard } from "@/components/booking/results/MatchBenefitsCard";
 import { t } from "../i18n";
 import { buildTopMatchCopy, parseRecommendationPreferences } from "../lib/topMatch";
 import { rankRecommendedRooms } from "../lib/roomMatching";

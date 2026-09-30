@@ -1,5 +1,5 @@
 import EmptyState from "@/components/feedback/empty-state";
-import type { RecommendationResult } from "../../types";
+import type { RecommendationResult } from "@/types/find-your-stay";
 
 export type MatchResultsProps = {
   results: RecommendationResult[];

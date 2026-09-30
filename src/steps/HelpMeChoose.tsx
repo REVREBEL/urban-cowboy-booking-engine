@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { cn } from "@/lib/utils";
-import type { PartyType, MatchInterest, RecommendationPreferences } from "../../types";
+import type { PartyType, MatchInterest, RecommendationPreferences } from "@/types/find-your-stay";
 
 const PARTY_OPTIONS: { value: PartyType; label: string; sub: string }[] = [
   { value: 'partner', label: 'Partner',  sub: 'Just the two of us'  },

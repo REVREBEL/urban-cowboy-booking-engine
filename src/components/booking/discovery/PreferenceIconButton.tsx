@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import type { PreferenceId } from "../types";
+import type { PreferenceId } from "@/types/booking-ui";
 
 type Props = {
   id: PreferenceId;
