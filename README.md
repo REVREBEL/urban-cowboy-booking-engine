@@ -81,7 +81,7 @@ From the browser's perspective, everything is served from the same origin (`:517
 | Script | Purpose |
 | --- | --- |
 | `npm run dev` | Build frontend + Worker (`wrangler dev`, :8787) + Vite (HMR, :5173), with `/api` proxied. |
-| `npm run build` | Static frontend build → `dist/`. |
+| `npm run components` | Open the development component library at `/components.html`. |\n| `npm run build` | Static frontend build → `dist/` (including the component library entry). |
 | `npm run preview` | Build then run `wrangler dev` (:8787), testing the Worker, frontend, and `/api` from a single origin just like production. |
 | `npm run deploy` | Build then `wrangler deploy`, manually deploying the Worker + assets. |
 | `npm run typecheck` | Run `tsc --noEmit` against `src/`. |
