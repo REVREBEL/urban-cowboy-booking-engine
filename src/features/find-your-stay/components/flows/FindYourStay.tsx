@@ -42,7 +42,7 @@ export default function FindYourStay({
   return (
     <main className="min-h-screen bg-[#ebe8e0]">
       <div className="bg-[#4e332d] px-5 py-4 text-[#ebe8e0] md:px-10">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4">
+        <div className="booking-shell flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4 text-sm" style={{ fontFamily: "var(--font-uchen)" }}>
             <span>{fmt(checkIn)} → {fmt(checkOut)}</span>
             {nights > 0 && <span className="opacity-60">· {nights} night{nights !== 1 ? "s" : ""}</span>}
@@ -62,7 +62,7 @@ export default function FindYourStay({
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-5 pb-8 pt-12 md:px-10">
+      <div className="booking-shell pb-8 pt-12">
         <p className="mb-3 text-xs uppercase tracking-[0.25em] text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>
           {availableCount} Room Experience{availableCount !== 1 ? "s" : ""} Available
         </p>
@@ -74,7 +74,7 @@ export default function FindYourStay({
         </p>
       </div>
 
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 px-5 pb-16 md:grid-cols-2 md:px-10">
+      <div className="booking-shell grid grid-cols-1 gap-5 pb-16 md:grid-cols-2">
         <button
           type="button"
           onClick={onHelpMeChoose}

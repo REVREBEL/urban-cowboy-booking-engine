@@ -126,7 +126,7 @@ export default function HelpMeChoose({
 
   return (
     <main className={`min-h-screen ${stepBg} transition-colors duration-500`}>
-      <div className="max-w-3xl mx-auto px-5 md:px-10 pt-10 pb-20">
+      <div className="booking-shell max-w-5xl pt-10 pb-20">
 
         {/* Back */}
         <button

@@ -94,7 +94,7 @@ export default function MatchResults({
   if (results.length === 0) {
     return (
       <main className="min-h-screen bg-[#ebe8e0]">
-        <div className="mx-auto max-w-4xl px-5 pb-20 pt-10 md:px-10">
+        <div className="booking-shell pb-20 pt-10">
           <button
             type="button"
             onClick={onBack}
@@ -117,7 +117,7 @@ export default function MatchResults({
 
   return (
     <main className="min-h-screen bg-[#ebe8e0]">
-      <div className="mx-auto max-w-5xl px-5 pb-20 pt-10 md:px-10">
+      <div className="booking-shell pb-20 pt-10">
         <button
           type="button"
           onClick={onBack}

@@ -113,6 +113,15 @@
 }
 
 @layer utilities {
+  /* Shared responsive canvas: use the available monitor width while keeping
+     comfortable gutters and a hard upper bound for very wide displays. */
+  .booking-shell {
+    width: 100%;
+    max-width: 1800px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 2.5vw, 3rem);
+  }
+
   /* Léger grain / fondu pour les fonds sombres du hero */
   .text-balance {
     text-wrap: balance;
