@@ -9,12 +9,12 @@ export type FindYourStayProps = {
   onBrowseAll: () => void;
 };
 
-function fmt(value: string) {
+function shortDate(value: string) {
   if (!value) return "";
-  return new Date(`${value}T00:00:00`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
+  const [year, month, day] = value.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(
+    new Date(year, month - 1, day),
+  );
 }
 
 export default function FindYourStay({
@@ -32,95 +32,90 @@ export default function FindYourStay({
       ? Math.max(
           1,
           Math.round(
-            (new Date(`${checkOut}T00:00:00Z`).getTime() -
-              new Date(`${checkIn}T00:00:00Z`).getTime()) /
+            (new Date(checkOut + "T00:00:00Z").getTime() -
+              new Date(checkIn + "T00:00:00Z").getTime()) /
               86_400_000,
           ),
         )
       : 0;
 
   return (
-    <main className="min-h-screen bg-[#ebe8e0]">
-      <div className="bg-[#4e332d] px-5 py-4 text-[#ebe8e0] md:px-10">
-        <div className="booking-shell flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-sm" style={{ fontFamily: "var(--font-uchen)" }}>
-            <span>{fmt(checkIn)} → {fmt(checkOut)}</span>
-            {nights > 0 && <span className="opacity-60">· {nights} night{nights !== 1 ? "s" : ""}</span>}
-            <span className="opacity-60">
-              · {adults} adult{adults !== 1 ? "s" : ""}
-              {children > 0 ? ` · ${children} child${children !== 1 ? "ren" : ""}` : ""}
+    <section className="min-h-[calc(100vh-120px)] bg-[#EBE8E0] pb-24 pt-8 md:pt-12">
+      <div className="booking-shell">
+        <div className="mb-16 flex flex-wrap items-center justify-between gap-4 border-y border-[#4E332D]/20 py-4">
+          <div className="font-editorial text-sm text-[#4E332D]">
+            {shortDate(checkIn)} → {shortDate(checkOut)}
+            <span className="mx-3 text-[#4E332D]/35">·</span>
+            <span className="text-[#4E332D]/60">{nights} night{nights === 1 ? "" : "s"}</span>
+            <span className="mx-3 text-[#4E332D]/35">·</span>
+            <span className="text-[#4E332D]/60">
+              {adults} adult{adults === 1 ? "" : "s"}
+              {children > 0 ? " · " + children + " child" + (children === 1 ? "" : "ren") : ""}
             </span>
           </div>
           <button
             type="button"
             onClick={onChangeSearch}
-            className="text-xs uppercase tracking-widest text-[#ccc7bb] underline underline-offset-2 transition-colors hover:text-white"
-            style={{ fontFamily: "var(--font-brothers)" }}
+            className="font-bianco text-xs font-bold uppercase tracking-[2px] underline underline-offset-4"
           >
             Change
           </button>
         </div>
-      </div>
 
-      <div className="booking-shell pb-8 pt-12">
-        <p className="mb-3 text-xs uppercase tracking-[0.25em] text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>
-          {availableCount} Room Experience{availableCount !== 1 ? "s" : ""} Available
-        </p>
-        <h1 className="mb-4 text-4xl leading-none text-[#4e332d] md:text-6xl" style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}>
-          How Would You Like<br className="hidden md:block" /> to Find Your Stay?
-        </h1>
-        <p className="max-w-xl text-base text-[#767470]" style={{ fontFamily: "var(--font-uchen)" }}>
-          Answer a few questions and we&apos;ll match you to the right room, or browse everything available.
-        </p>
-      </div>
+        <header className="mb-12 max-w-5xl">
+          <p className="mb-3 font-bianco text-xs font-bold uppercase tracking-[5px] text-[#9A5636]">
+            {availableCount} Room Experience{availableCount === 1 ? "" : "s"} Available
+          </p>
+          <h1 className="font-desert text-[clamp(42px,5.2vw,74px)] font-bold uppercase leading-[0.98] tracking-[1px] text-[#4E332D]">
+            How Would You Like to Explore the Options?
+          </h1>
+          <p className="mt-4 max-w-4xl font-editorial text-base text-[#6B6259] md:text-lg">
+            Answer a few questions and we&apos;ll match you to the right room, or browse everything available.
+          </p>
+        </header>
 
-      <div className="booking-shell grid grid-cols-1 gap-5 pb-16 md:grid-cols-2">
-        <button
-          type="button"
-          onClick={onHelpMeChoose}
-          className="group relative overflow-hidden rounded-2xl bg-[#4e332d] text-left text-[#ebe8e0] transition-shadow hover:shadow-xl"
-        >
-          <div className="absolute inset-0 opacity-10">
-            <img src="/assets/hammock.svg" alt="" aria-hidden="true" className="absolute bottom-0 right-0 h-full object-cover" />
-          </div>
-          <div className="relative flex min-h-[260px] h-full flex-col justify-between p-8 md:p-10">
-            <div>
-              <p className="mb-3 text-xs uppercase tracking-widest text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>Recommended</p>
-              <h2 className="mb-3 text-3xl leading-tight md:text-4xl" style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}>Help Me Choose</h2>
-              <p className="max-w-xs text-sm leading-relaxed opacity-70" style={{ fontFamily: "var(--font-uchen)" }}>
-                Tell us who&apos;s coming and what matters most. We&apos;ll find your match in 3 questions.
-              </p>
-            </div>
-            <div className="mt-6 flex items-center gap-2">
-              <span className="text-xs uppercase tracking-widest text-[#9a5636] transition-colors group-hover:text-[#ccc7bb]" style={{ fontFamily: "var(--font-brothers)" }}>Get Matched</span>
-              <img src="/assets/icon-arrow.svg" alt="" aria-hidden="true" className="h-3 opacity-60 transition-transform group-hover:translate-x-1" />
-            </div>
-          </div>
-        </button>
+        <div className="grid gap-5 lg:grid-cols-2">
+          <button
+            type="button"
+            onClick={onHelpMeChoose}
+            className="group relative min-h-[300px] overflow-hidden rounded-2xl bg-[#563730] p-8 text-left text-[#EBE8E0] shadow-sm transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A5636] focus-visible:ring-offset-4 md:p-10"
+          >
+            <img src="/assets/hammock.svg" alt="" className="absolute bottom-0 right-0 h-[88%] opacity-[0.06]" />
+            <span className="relative flex h-full flex-col justify-between">
+              <span>
+                <span className="mb-5 block font-bianco text-xs font-bold uppercase tracking-[3px] text-[#BE5B35]">Recommended</span>
+                <span className="block font-desert text-4xl font-bold uppercase leading-none md:text-5xl">Help Me Choose</span>
+                <span className="mt-6 block max-w-sm font-editorial text-sm leading-6 text-[#EBE8E0]/70">
+                  Tell us who&apos;s coming and what matters most. We&apos;ll find your match in two quick steps.
+                </span>
+              </span>
+              <span className="mt-8 flex items-center gap-3 font-bianco text-xs font-bold uppercase tracking-[2px] text-[#BE5B35]">
+                Get Matched <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </span>
+          </button>
 
-        <button
-          type="button"
-          onClick={onBrowseAll}
-          className="group relative overflow-hidden rounded-2xl border-2 border-[#ccc7bb] bg-[#ebe8e0] text-left text-[#4e332d] transition-all hover:border-[#4e332d] hover:shadow-xl"
-        >
-          <div className="absolute inset-0 opacity-5">
-            <img src="/assets/steam-bath-icon.svg" alt="" aria-hidden="true" className="absolute bottom-0 right-0 h-full object-cover" />
-          </div>
-          <div className="relative flex min-h-[260px] h-full flex-col justify-between p-8 md:p-10">
-            <div>
-              <p className="mb-3 text-xs uppercase tracking-widest text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>Browse All</p>
-              <h2 className="mb-3 text-3xl leading-tight md:text-4xl" style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}>Show All Rooms</h2>
-              <p className="max-w-xs text-sm leading-relaxed text-[#767470]" style={{ fontFamily: "var(--font-uchen)" }}>
-                Browse all {availableCount} available room experiences.
-              </p>
-            </div>
-            <div className="mt-6 flex items-center gap-2">
-              <span className="text-xs uppercase tracking-widest text-[#9a5636] transition-colors group-hover:text-[#4e332d]" style={{ fontFamily: "var(--font-brothers)" }}>See All Rooms</span>
-              <img src="/assets/icon-arrow.svg" alt="" aria-hidden="true" className="h-3 opacity-40 transition-transform group-hover:translate-x-1" />
-            </div>
-          </div>
-        </button>
+          <button
+            type="button"
+            onClick={onBrowseAll}
+            className="group relative min-h-[300px] overflow-hidden rounded-2xl border-2 border-[#CCC7BB] bg-[#EBE8E0] p-8 text-left text-[#4E332D] transition-all hover:-translate-y-1 hover:border-[#4E332D] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A5636] focus-visible:ring-offset-4 md:p-10"
+          >
+            <img src="/assets/icons/amenities/simple/estonian_sauna.svg" alt="" className="absolute -bottom-10 right-4 h-[105%] opacity-[0.06]" />
+            <span className="relative flex h-full flex-col justify-between">
+              <span>
+                <span className="mb-5 block font-bianco text-xs font-bold uppercase tracking-[3px] text-[#9A5636]">Browse All</span>
+                <span className="block font-desert text-4xl font-bold uppercase leading-none md:text-5xl">Show All Rooms</span>
+                <span className="mt-6 block max-w-sm font-editorial text-sm leading-6 text-[#6B6259]">
+                  Browse all {availableCount} available room experiences, sorted using live availability.
+                </span>
+              </span>
+              <span className="mt-8 flex items-center gap-3 font-bianco text-xs font-bold uppercase tracking-[2px] text-[#9A5636]">
+                See All Rooms <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </span>
+          </button>
+        </div>
       </div>
-    </main>
+    </section>
   );
 }
