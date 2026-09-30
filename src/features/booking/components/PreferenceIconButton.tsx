@@ -22,7 +22,7 @@ const ICON: Record<PreferenceId, string> = {
   "near-everything": "/assets/icons/amenities/buttons/separate_living_room.svg",
   "simple-cozy": "/assets/icons/amenities/buttons/letter_writing_desk.svg",
   "mountain-views": "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
-  "bringing-my-people": "/assets/icons/amenities/buttons/separate_living_room.svg",
+  "bringing-my-people": "/assets/labels/top_match.svg",
 };
 
 const LABEL: Partial<Record<PreferenceId, string>> = {

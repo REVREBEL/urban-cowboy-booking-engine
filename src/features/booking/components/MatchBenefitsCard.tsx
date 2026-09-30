@@ -7,14 +7,23 @@ import type { MatchRoomSummary } from "../types";
 export function MatchBenefitsCard({
   room,
   reasons,
+  intro,
+  reasonHeadings,
+  compact = false,
 }: {
   room: MatchRoomSummary;
   reasons: string[];
+  intro?: string;
+  reasonHeadings?: [string, string];
+  compact?: boolean;
 }) {
   const [saved, setSaved] = useState(false);
-  const intro = `${room.name} feels made for this stay—${room.blurb.charAt(0).toLowerCase()}${room.blurb.slice(1)}`;
+  const recommendationIntro =
+    intro ??
+    `${room.name} feels made for this stay—${room.blurb.charAt(0).toLowerCase()}${room.blurb.slice(1)}`;
   const firstReason = reasons[0] ?? room.headline;
   const secondReason = reasons[1] ?? room.features.slice(0, 2).map((feature) => feature.label).join(" and ");
+  const [firstHeading, secondHeading] = reasonHeadings ?? ["Made for Your Stay", "The Details You Asked For"];
 
   async function handleShare() {
     const shareData = { title: room.name, text: room.headline, url: window.location.href };
@@ -26,32 +35,47 @@ export function MatchBenefitsCard({
   }
 
   return (
-    <aside className="flex h-full min-h-[620px] flex-col overflow-hidden border-[1.5px] border-oxblood bg-white/80 p-6 text-oxblood">
-      <div className="w-fit -rotate-2 border-2 border-oxblood px-5 py-2 font-label text-sm font-bold tracking-[0.18em]">
-        TOP MATCH
-      </div>
+    <aside
+      className={`flex h-full flex-col overflow-hidden border-[1.5px] border-oxblood bg-white/80 text-oxblood ${
+        compact ? "min-h-[310px] p-4" : "min-h-[620px] p-6"
+      }`}
+    >
+      <img
+        src="/assets/labels/top_match.svg"
+        alt="Top Match"
+        className={`h-auto w-full object-contain ${compact ? "max-w-28" : "max-w-[15rem]"}`}
+      />
 
-      <p className="mt-10 max-w-[20rem] self-center text-base leading-tight text-oxblood">{intro}</p>
+      <p className={`${compact ? "mt-4 text-xs" : "mt-10 text-base"} max-w-[20rem] self-center leading-tight text-oxblood`}>
+        {recommendationIntro}
+      </p>
 
-      <div className="mt-9 border-t border-oxblood pt-7">
-        <div className="flex items-center gap-4">
-          <img src="/assets/pointing-hand-1.svg" alt="" aria-hidden="true" className="h-10 w-[82px] shrink-0 object-contain" />
-          <h3 className="max-w-48 font-display text-2xl leading-[1.08] text-oxblood">You’ll love it because …</h3>
+      <div className={`${compact ? "mt-4 pt-4" : "mt-9 pt-7"} border-t border-oxblood`}>
+        <div className={`flex items-center ${compact ? "gap-2" : "gap-4"}`}>
+          <img
+            src="/assets/icons/ui/left_hand_pointing.svg"
+            alt=""
+            aria-hidden="true"
+            className={`${compact ? "h-6 w-12" : "h-10 w-[82px]"} shrink-0 object-contain`}
+          />
+          <h3 className={`${compact ? "text-base" : "text-2xl"} max-w-48 font-display leading-[1.08] text-oxblood`}>
+            You’ll love it because …
+          </h3>
         </div>
       </div>
 
-      <div className="mt-7 space-y-7">
+      <div className={`${compact ? "mt-4 space-y-3" : "mt-7 space-y-7"}`}>
         <section>
-          <h4 className="font-topic text-base text-oxblood">Made for Your Stay</h4>
-          <p className="mt-2 text-sm leading-tight text-oxblood">{firstReason}</p>
+          <h4 className={`font-topic text-oxblood ${compact ? "text-xs" : "text-base"}`}>{firstHeading}</h4>
+          <p className={`${compact ? "mt-1 text-[11px]" : "mt-2 text-sm"} leading-tight text-oxblood`}>{firstReason}</p>
         </section>
         <section>
-          <h4 className="font-topic text-base text-oxblood">The Details You Asked For</h4>
-          <p className="mt-2 text-sm leading-tight text-oxblood">{secondReason}</p>
+          <h4 className={`font-topic text-oxblood ${compact ? "text-xs" : "text-base"}`}>{secondHeading}</h4>
+          <p className={`${compact ? "mt-1 text-[11px]" : "mt-2 text-sm"} leading-tight text-oxblood`}>{secondReason}</p>
         </section>
       </div>
 
-      <div className="mt-auto flex justify-end gap-3 pt-8">
+      <div className={`mt-auto flex justify-end gap-3 ${compact ? "pt-4" : "pt-8"}`}>
         <Button type="button" variant="outline" onClick={handleShare} className="h-10 rounded-full border-umber bg-transparent px-7 text-xs text-umber shadow-none hover:bg-umber hover:text-primary-foreground">
           Share
         </Button>
