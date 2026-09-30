@@ -59,6 +59,7 @@ const FALLBACK_INTEREST_COPY: Record<MatchInterest, string> = {
   ownPlace: "It is the strongest available overall match, without implying a fully standalone stay.",
   scenic: "It is the strongest available overall match, without promising a room-specific view.",
   simpleCozy: "It is the strongest available overall match, without overstating the room's size or price point.",
+  social: "It is the strongest available overall match for gathering, without implying shared-space features that are not confirmed.",
 };
 
 const DOG_BENEFIT = "It is also confirmed as a dog-friendly choice, so your dog can come along for the stay.";
