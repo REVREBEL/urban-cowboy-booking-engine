@@ -67,10 +67,10 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
                       aria-current={state === "current" ? "step" : undefined}
                       className="flex items-center gap-2 px-2 py-1 disabled:cursor-not-allowed disabled:opacity-35"
                     >
-                      <span className={"grid h-6 w-6 place-items-center rounded-full border font-bianco text-[10px] font-bold " + circleClass}>
+                      <span className={"grid h-6 w-6 place-items-center rounded-full border font-number text-[10px] font-bold " + circleClass}>
                         {state === "complete" ? "✓" : item.number}
                       </span>
-                      <span className={"font-bianco text-[10px] font-bold uppercase tracking-[1.5px] " + (state === "current" ? "text-[#4E332D]" : "text-[#767470]")}>
+                      <span className={"font-label text-[10px] font-bold uppercase tracking-[1.5px] " + (state === "current" ? "text-[#4E332D]" : "text-[#767470]")}>
                         {item.label}
                       </span>
                     </button>
@@ -108,10 +108,10 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
                       onClick={() => onNavigate(item.target)}
                       className="flex items-center gap-1.5 px-2 disabled:opacity-35"
                     >
-                      <span className={"grid h-5 w-5 place-items-center rounded-full border font-bianco text-[9px] font-bold " + (state === "current" ? "border-[#4E332D] bg-[#4E332D] text-white" : state === "complete" ? "border-[#9A5636] bg-[#9A5636] text-white" : "border-[#B9B0A6] text-[#767470]")}>
+                      <span className={"grid h-5 w-5 place-items-center rounded-full border font-number text-[9px] font-bold " + (state === "current" ? "border-[#4E332D] bg-[#4E332D] text-white" : state === "complete" ? "border-[#9A5636] bg-[#9A5636] text-white" : "border-[#B9B0A6] text-[#767470]")}>
                         {state === "complete" ? "✓" : item.number}
                       </span>
-                      <span className="font-bianco text-[9px] font-bold uppercase tracking-wider text-[#4E332D]">{item.label}</span>
+                      <span className="font-label text-[9px] font-bold uppercase tracking-wider text-[#4E332D]">{item.label}</span>
                     </button>
                     {index < PROGRESS.length - 1 && <span className="h-px w-3 bg-[#D1C9BE]" />}
                   </div>
