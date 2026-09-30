@@ -68,19 +68,19 @@ export function BookingSummary() {
         )}
         <Row icon={<IconCalendar className="h-4 w-4" />} label={t("summary.stay")}>
           {checkIn && checkOut ? (
-            <>
+            <span className="font-number">
               {fmtDate(checkIn)} → {fmtDate(checkOut)}
               <span className="text-ink/50">
                 {" "}
                 · {t("summary.nights", { count: nightsCount })}
               </span>
-            </>
+            </span>
           ) : (
             "—"
           )}
         </Row>
         <Row icon={<IconUsers className="h-4 w-4" />} label={t("summary.travelers")}>
-          {t("summary.guests", { adults, children })}
+          <span className="font-number">{t("summary.guests", { adults, children })}</span>
         </Row>
       </div>
 
@@ -126,7 +126,7 @@ export function BookingSummary() {
               : ""}
           </p>
         </div>
-        <p className="font-display text-2xl text-teal-deep">{grandTotal > 0 ? money(grandTotal, currency) : "—"}</p>
+        <p className="font-number text-2xl text-teal-deep">{grandTotal > 0 ? money(grandTotal, currency) : "—"}</p>
       </div>
 
       {amountDueNow != null && grandTotal > 0 && (
@@ -172,7 +172,7 @@ function Line({ label, value }: { label: React.ReactNode; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-3 py-1">
       <span className="text-ink/75">{label}</span>
-      <span className="shrink-0 font-semibold text-ink">{value}</span>
+      <span className="shrink-0 font-number font-semibold text-ink">{value}</span>
     </div>
   );
 }
