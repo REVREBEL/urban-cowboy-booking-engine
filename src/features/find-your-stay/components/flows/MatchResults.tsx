@@ -1,7 +1,5 @@
 import EmptyState from "@/components/feedback/empty-state";
 import type { RecommendationResult } from "../../types";
-import RoomCard from "../rooms/RoomCard";
-import TopMatchPanel from "../rooms/TopMatchPanel";
 
 export type MatchResultsProps = {
   results: RecommendationResult[];
@@ -12,6 +10,67 @@ export type MatchResultsProps = {
   onViewRoom: (roomId: string) => void;
   onBrowseAll: () => void;
 };
+
+function MatchRoomResult({
+  result,
+  top = false,
+  onViewRoom,
+}: {
+  result: RecommendationResult;
+  top?: boolean;
+  onViewRoom: (roomId: string) => void;
+}) {
+  const copy = result.explanation;
+
+  return (
+    <article
+      className={`rounded-2xl border bg-white p-6 shadow-sm ${top ? "border-[#9a5636]" : "border-[#ccc7bb]"}`}
+    >
+      <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="min-w-0">
+          {top && (
+            <p
+              className="mb-2 text-[10px] uppercase tracking-[0.2em] text-[#9a5636]"
+              style={{ fontFamily: "var(--font-brothers)" }}
+            >
+              {copy?.match_badge || "Top Match"}
+            </p>
+          )}
+          <h2
+            className="text-3xl leading-none text-[#4e332d]"
+            style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}
+          >
+            {result.room.name}
+          </h2>
+          <p
+            className="mt-2 max-w-xl text-sm leading-relaxed text-[#767470]"
+            style={{ fontFamily: "var(--font-uchen)" }}
+          >
+            {copy?.top_match_reason || result.room.description}
+          </p>
+          {result.matchedInterests.length > 0 && (
+            <p
+              className="mt-3 text-[10px] uppercase tracking-widest text-[#9a5636]"
+              style={{ fontFamily: "var(--font-brothers)" }}
+            >
+              {result.matchedInterests.length} preference
+              {result.matchedInterests.length === 1 ? "" : "s"} matched
+            </p>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onViewRoom(result.room.id)}
+          className="shrink-0 rounded-full bg-[#9a5636] px-5 py-2.5 text-xs uppercase tracking-widest text-white transition-opacity hover:opacity-80"
+          style={{ fontFamily: "var(--font-brothers)" }}
+        >
+          View Room
+        </button>
+      </div>
+    </article>
+  );
+}
 
 export default function MatchResults({
   results,
@@ -69,40 +128,36 @@ export default function MatchResults({
         </button>
 
         <div className="mb-8">
-          <p className="mb-2 text-xs uppercase tracking-widest text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>
+          <p
+            className="mb-2 text-xs uppercase tracking-widest text-[#9a5636]"
+            style={{ fontFamily: "var(--font-brothers)" }}
+          >
             Matched for You
           </p>
-          <h1 className="text-4xl leading-none text-[#4e332d] md:text-5xl" style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}>
+          <h1
+            className="text-4xl leading-none text-[#4e332d] md:text-5xl"
+            style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}
+          >
             Your Best Match
           </h1>
         </div>
 
-        <div className="mb-10">
-          <TopMatchPanel result={top} onViewRoom={() => onViewRoom(top.room.id)} />
+        <div className="space-y-5">
+          <MatchRoomResult result={top} top onViewRoom={onViewRoom} />
+          {alternates.map((result) => (
+            <MatchRoomResult
+              key={result.room.id}
+              result={result}
+              onViewRoom={onViewRoom}
+            />
+          ))}
         </div>
 
-        {alternates.length > 0 && (
-          <>
-            <div className="mb-5">
-              <p className="text-xs uppercase tracking-widest text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>
-                {top.explanation?.alternate_match_heading || "Also a Strong Fit"}
-              </p>
-            </div>
-            <div className="mb-10 grid grid-cols-1 gap-5 md:grid-cols-2">
-              {alternates.map((result) => (
-                <RoomCard
-                  key={result.room.id}
-                  room={result.room}
-                  matchBadge={result.matchedInterests.length > 0 ? "GREAT FIT" : undefined}
-                  onSelect={() => onViewRoom(result.room.id)}
-                />
-              ))}
-            </div>
-          </>
-        )}
-
-        <div className="border-t border-[#ccc7bb] pt-4 text-center">
-          <p className="mb-3 text-sm text-[#767470]" style={{ fontFamily: "var(--font-uchen)" }}>
+        <div className="mt-10 border-t border-[#ccc7bb] pt-4 text-center">
+          <p
+            className="mb-3 text-sm text-[#767470]"
+            style={{ fontFamily: "var(--font-uchen)" }}
+          >
             Not seeing what you&apos;re after?
           </p>
           <button
