@@ -170,10 +170,10 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
           <SearchSection label="Property" value={<span className="font-desert font-bold uppercase tracking-[2px]">{currentValues.property}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
-          <SearchSection label="When" value={dateValue} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection label="When" value={<span className="font-number">{dateValue}</span>} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
-          <SearchSection label="Guests" value={currentValues.guests} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection label="Guests" value={<span className="font-number">{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
           <SearchSection label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
