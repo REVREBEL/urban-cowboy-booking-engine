@@ -21,7 +21,7 @@ export function DogToggleButton({ selected, onToggle }: Props) {
         )}
       >
         <img
-          src={selected ? "/assets/dog-toggle-on.svg" : "/assets/dog-toggle-off.svg"}
+          src={selected ? "assets/icons/amenities/detailed/dog_friendly.svg" : "assets/icons/amenities/detailed/dog_friendly.svg"}
           alt=""
           aria-hidden="true"
           className={cn(
