@@ -7,7 +7,7 @@ import type { AvailabilityResponse, ShapedRate, ShapedRoom } from "../types/mews
 import RoomCard from "@/features/find-your-stay/components/rooms/RoomCard";
 import TopMatchPanel from "@/features/find-your-stay/components/rooms/TopMatchPanel";
 import { roomProductFromShapedRoom } from "@/features/find-your-stay/adapters/mews-room";
-import type { MatchInterest, RecommendationResult } from "@/features/find-your-stay/types";
+import type { RecommendationResult } from "@/features/find-your-stay/types";
 import { RoomDetailDrawer } from "@/components/rooms/room-detail-drawer";
 import { InlineUpsell } from "@/components/booking/extras/upsell-card";
 import { IconCalendar, IconUsers, IconChevron } from "@/components/icons/cowboy-icons";
@@ -200,7 +200,7 @@ export function Results() {
     return {
       room: roomProductFromShapedRoom(topMatch, imageBaseUrl),
       matchedInterests: recommendationPreferences.interests.filter(
-        (interest): interest is MatchInterest => Boolean(interest),
+        (interest) => interest !== undefined,
       ),
       explanation: topMatchCopy,
     };
