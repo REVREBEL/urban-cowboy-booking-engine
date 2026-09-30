@@ -295,7 +295,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   // Section button style
   const sectionBaseStyle =
-    'box-border flex flex-col justify-center items-start min-w-0 px-[24px] py-0 gap-[2px] h-[54px] bg-[#FAF9F9] transition-colors rounded-[9999px] hover:bg-[#f3f2ee] focus:outline-none focus-visible:ring-1 focus-visible:ring-[#343833] cursor-pointer text-left';
+    'group relative box-border flex flex-col justify-center items-start min-w-0 px-[24px] py-0 gap-[2px] h-[54px] bg-[#FAF9F9] transition-colors rounded-[9999px] hover:bg-[#f3f2ee] focus:outline-none cursor-pointer text-left';
 
   return (
     <div
@@ -322,6 +322,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             {dateValue}
           </span>
         </div>
+        <span
+          aria-hidden="true"
+          className="absolute bottom-1.5 left-4 right-4 h-0.5 origin-left scale-x-0 bg-[#9A5636] transition-transform group-hover:scale-x-100 group-focus-visible:scale-x-100"
+        />
       </button>
 
       {/* Vertical Rule */}
@@ -349,6 +353,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             {guestValue}
           </span>
         </div>
+        <span
+          aria-hidden="true"
+          className="absolute bottom-1.5 left-4 right-4 h-0.5 origin-left scale-x-0 bg-[#9A5636] transition-transform group-hover:scale-x-100 group-focus-visible:scale-x-100"
+        />
       </button>
 
       {/* Vertical Rule */}
@@ -376,6 +384,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             {promoValue}
           </span>
         </div>
+        <span
+          aria-hidden="true"
+          className="absolute bottom-1.5 left-4 right-4 h-0.5 origin-left scale-x-0 bg-[#9A5636] transition-transform group-hover:scale-x-100 group-focus-visible:scale-x-100"
+        />
       </button>
 
       {/* 4. Button Slot — expands to the custom button width while remaining inside the 692px bar */}
