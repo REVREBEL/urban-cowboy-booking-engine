@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { Brand } from "@/components/brand/brand";
-import { StepProgress, type ProgressStep } from "@/components/booking/layout/step-progress";
+import { BookingHeader } from "@/components/booking/chrome/header";
 import { DevPanel } from "@/components/dev/dev-panel";
 import { Banner } from "@/components/ui/banner";
 import { ContactBar } from "@/components/booking/chrome/contact-bar";
@@ -12,34 +12,18 @@ import { Upgrade } from "./steps/Upgrade";
 import { Extras } from "./steps/Extras";
 import { Payment } from "./steps/Payment";
 import { Confirmation } from "./steps/Confirmation";
-import { IconLeaf, IconTag } from "@/components/icons/cowboy-icons";
+import { IconLeaf } from "@/components/icons/cowboy-icons";
 import { t } from "./i18n";
 import { getLang, setLangAndReload, type Lang } from "./lib/lang";
 
-const BOOKING_PROGRESS: ProgressStep[] = [
-  { key: "stay", label: t("stepProgress.stay") },
-  { key: "room", label: t("stepProgress.room") },
-  { key: "details", label: t("stepProgress.details") },
-  { key: "extras", label: t("stepProgress.extras") },
-  { key: "pay", label: t("stepProgress.pay") },
-];
-
-const STAGE_FOR_STEP: Record<Step, string | null> = {
-  dates: "stay",
-  results: "room",
-  guest: "details",
-  upgrade: "details",
-  extras: "extras",
-  payment: "pay",
-  confirmation: null,
-};
-
-const STEP_FOR_STAGE: Record<string, Step> = {
-  stay: "dates",
-  room: "results",
-  details: "guest",
-  extras: "extras",
-  pay: "payment",
+const PROGRESS_NUMBER: Record<Step, number> = {
+  dates: 1,
+  results: 2,
+  guest: 3,
+  upgrade: 3,
+  extras: 4,
+  payment: 5,
+  confirmation: 6,
 };
 
 const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
@@ -55,7 +39,6 @@ const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
 function Shell() {
   const { step, hotelError, reloadHotel, resetAll, goTo, hydrating } = useBooking();
   const StepView = STEP_COMPONENTS[step];
-  const showProgress = step !== "confirmation";
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -68,37 +51,15 @@ function Shell() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-cream">
-      <header className="sticky top-0 z-30 border-b border-ink/5 bg-cream/85 backdrop-blur">
-        <div className="booking-shell flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <button
-            type="button"
-            onClick={() => {
-              resetAll();
-              goTo("dates");
-            }}
-            className="self-start"
-            aria-label={t("header.home")}
-          >
-            <Brand className="text-teal-deep" />
-          </button>
-          {showProgress ? (
-            <div className="sm:max-w-xl sm:flex-1">
-              <StepProgress
-                steps={BOOKING_PROGRESS}
-                currentKey={STAGE_FOR_STEP[step]}
-                onStepSelect={(key) => {
-                  const target = STEP_FOR_STAGE[key];
-                  if (target) goTo(target);
-                }}
-              />
-            </div>
-          ) : (
-            <span className="hidden items-center gap-1.5 text-sm font-medium text-teal-deep sm:inline-flex">
-              <IconTag className="h-4 w-4 text-turquoise" /> {t("header.bestPrice")}
-            </span>
-          )}
-        </div>
-      </header>
+      <BookingHeader
+        step={step}
+        onNavigate={goTo}
+        onHome={() => {
+          resetAll();
+          goTo("dates");
+        }}
+        canNavigate={(target) => PROGRESS_NUMBER[target] < PROGRESS_NUMBER[step]}
+      />
 
       {hotelError && (
         <Banner
