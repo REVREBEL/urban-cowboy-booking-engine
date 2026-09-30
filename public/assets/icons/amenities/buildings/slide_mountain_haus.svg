@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="slide_mountain_haus" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="2752.000000pt" height="1536.000000pt" viewBox="0 0 2752.000000 1536.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1536.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M13754 14506 c-285 -146 -1349 -716 -3269 -1751 -1262 -681 -1680
 -903 -1686 -897 -4 4 -4 116 -1 250 4 217 6 242 21 242 31 0 41 23 41 91 0 37
 -3 74 -6 83 -3 8 -53 56 -110 107 l-104 91 0 183 c0 202 -2 195 66 195 l34 0

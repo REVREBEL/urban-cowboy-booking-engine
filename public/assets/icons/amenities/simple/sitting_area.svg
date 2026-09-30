@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="sitting_area" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1004.000000pt" height="654.000000pt" viewBox="0 0 1004.000000 654.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,654.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M5067 6259 c-16 -9 -17 -20 -11 -97 8 -107 -4 -171 -59 -312 l-41
 -105 -1 -95 0 -95 33 -66 c26 -55 32 -78 32 -132 0 -46 5 -70 16 -81 8 -9 20
 -16 25 -16 5 0 9 -11 9 -24 0 -20 -12 -31 -61 -57 -77 -41 -109 -86 -109 -152

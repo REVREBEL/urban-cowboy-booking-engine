@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="alcove" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="1024.000000pt" viewBox="0 0 1024.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M5182 9210 c-154 -16 -208 -41 -244 -115 -48 -95 -278 -666 -278
 -688 0 -85 161 -161 408 -193 64 -9 118 -17 120 -18 1 -2 1 -118 0 -258 l-3
 -255 -62 41 c-41 26 -69 53 -80 76 -21 43 -20 120 0 177 19 51 12 81 -20 89

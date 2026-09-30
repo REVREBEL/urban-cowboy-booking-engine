@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="pool_full" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1254.000000pt" height="654.000000pt" viewBox="0 0 1254.000000 654.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,654.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M2405 6210 c-198 -88 -520 -231 -715 -317 -195 -86 -363 -164 -374
 -172 -32 -27 -46 -74 -36 -113 20 -71 24 -72 309 -85 141 -6 451 -15 689 -19
 l432 -7 0 -569 c0 -486 -2 -568 -14 -568 -8 0 -99 122 -203 271 -185 268 -221

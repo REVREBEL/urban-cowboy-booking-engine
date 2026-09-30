@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="copper_clawfoot_soaking_tub" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1635.000000pt" height="677.000000pt" viewBox="0 0 1635.000000 677.000000"
  preserveAspectRatio="xMidYMid meet">
 <g transform="translate(0.000000,677.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M3085 6289 c-104 -4 -341 -21 -525 -38 -377 -34 -553 -47 -750 -56
 -560 -25 -783 -51 -1137 -135 -189 -45 -248 -84 -248 -164 0 -62 11 -73 605
 -666 373 -372 548 -554 600 -623 74 -99 74 -99 45 -150 -139 -249 -468 -786

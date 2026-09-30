@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="private_balcony_for_two" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="1024.000000pt" viewBox="0 0 1024.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M1646 8548 c-14 -13 -100 -158 -192 -323 -92 -165 -296 -532 -454
 -816 -158 -283 -299 -538 -314 -567 l-26 -51 2 -2403 3 -2403 4449 -3 c3281
 -1 4452 1 4462 9 12 10 14 404 14 2401 l0 2390 -104 187 c-57 102 -260 467

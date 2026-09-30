@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="cowboy_robe" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1312.000000pt" height="2048.000000pt" viewBox="0 0 1312.000000 2048.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,2048.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M5639 19975 c-147 -25 -285 -77 -386 -146 -26 -18 -163 -149 -304
 -290 -168 -170 -268 -262 -293 -273 -42 -17 -302 -268 -401 -386 l-63 -75
 -133 -60 c-168 -74 -573 -275 -699 -345 -234 -131 -420 -283 -533 -434 -108

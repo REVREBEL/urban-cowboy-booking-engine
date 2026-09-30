@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="esopus_creek_access1" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1122.000000pt" height="1402.000000pt" viewBox="0 0 1122.000000 1402.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1402.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M5425 13729 c-248 -14 -553 -60 -835 -125 -328 -76 -691 -190 -1450
 -454 -626 -218 -718 -241 -962 -245 l-167 -3 -30 -21 c-33 -24 -42 -47 -66
 -170 -38 -191 -141 -435 -243 -574 -149 -204 -328 -355 -557 -469 -171 -86

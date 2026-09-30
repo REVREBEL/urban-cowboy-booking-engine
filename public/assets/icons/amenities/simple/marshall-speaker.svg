@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="marshall-speaker" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1254.000000pt" height="1254.000000pt" viewBox="0 0 1254.000000 1254.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1254.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M2390 9730 l-435 -5 -67 -33 c-36 -18 -87 -51 -112 -75 -34 -32 -131
 -185 -394 -623 -213 -356 -356 -604 -368 -640 l-19 -59 0 -2445 0 -2445 37
 -76 c27 -54 54 -91 93 -127 77 -71 143 -94 277 -100 l107 -4 5 -27 c3 -14 11

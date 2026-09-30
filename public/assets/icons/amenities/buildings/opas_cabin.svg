@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="opas_cabin" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="2704.000000pt" height="1536.000000pt" viewBox="0 0 2704.000000 1536.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1536.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M13508 14760 c-2 -64 2 -93 18 -138 l22 -57 46 -3 46 -3 0 -169 0
 -169 -107 -3 -108 -3 -3 -90 c-2 -64 3 -120 19 -195 25 -121 32 -138 63 -150
 l24 -9 -3 -83 c-1 -46 -3 -118 -3 -160 l-2 -78 -3759 0 -3758 0 -37 -95 c-20

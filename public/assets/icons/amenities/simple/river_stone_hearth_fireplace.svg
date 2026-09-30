@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="river_stone_hearth_fireplace" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="808.000000pt" height="902.000000pt" viewBox="0 0 808.000000 902.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,902.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M3730 8894 c-19 -3 -96 -11 -170 -20 -158 -18 -222 -34 -275 -69
 l-38 -26 -26 25 c-51 49 -91 57 -321 67 -118 6 -242 7 -275 3 -117 -12 -192
 -64 -210 -145 l-6 -27 -28 14 c-37 18 -67 7 -108 -39 -39 -45 -70 -126 -93

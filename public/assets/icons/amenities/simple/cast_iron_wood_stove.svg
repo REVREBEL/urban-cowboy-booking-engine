@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="cast_iron_wood_stove" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="1024.000000pt" viewBox="0 0 1024.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M3694 9855 c-17 -7 -39 -23 -48 -36 l-16 -23 0 -684 0 -684 29 -29
 29 -29 411 0 411 0 0 -95 0 -94 30 -34 30 -35 0 -601 0 -601 -1172 0 -1173 0
 -41 -19 c-51 -23 -118 -91 -146 -150 -12 -24 -23 -65 -26 -91 -4 -42 -1 -49
