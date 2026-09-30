@@ -140,6 +140,7 @@ function CalendarDayButton({
   className,
   day,
   modifiers,
+  color: _nativeColor,
   ...props
 }: React.ComponentProps<typeof DayButton>) {
   const defaultClassNames = getDefaultClassNames();
