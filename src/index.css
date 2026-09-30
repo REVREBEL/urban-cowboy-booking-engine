@@ -134,3 +134,102 @@
     scrollbar-width: none;
   }
 }
+
+
+/* Studio visual system, ported from Cowboy-Studio-AI/dev while retaining the
+   production Tailwind 3 pipeline and existing semantic tokens. */
+@font-face {
+  font-family: "BrothersOT";
+  src: url("/fonts/BrothersOT/BrothersOT-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "BrothersOT";
+  src: url("/fonts/BrothersOT/BrothersOT-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DesertRain";
+  src: url("/fonts/DesertRain/DesertRain-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DesertRain";
+  src: url("/fonts/DesertRain/DesertRain-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DesertRain";
+  src: url("/fonts/DesertRain/DesertRain-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Uchen";
+  src: url("/fonts/Uchen/Uchen-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Bianco Sans";
+  src: url("/fonts/Bianco%20Sans/Bianco%20Sans%20Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Bianco Sans";
+  src: url("/fonts/Bianco%20Sans/Bianco%20Sans%20Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer utilities {
+  .font-brothers,
+  .font-woodblock {
+    font-family: "BrothersOT", "League Spartan", sans-serif;
+  }
+
+  .font-desert {
+    font-family: "DesertRain", Georgia, serif;
+  }
+
+  .font-bianco {
+    font-family: "Bianco Sans", "League Spartan", sans-serif;
+  }
+
+  .font-uchen,
+  .font-editorial {
+    font-family: "Uchen", Georgia, serif;
+  }
+
+  .texture-linen {
+    background-color: #ebe8e0;
+    background-image:
+      radial-gradient(rgba(78, 51, 45, 0.1) 0.75px, transparent 0.75px),
+      radial-gradient(rgba(78, 51, 45, 0.06) 0.75px, #ebe8e0 0.75px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+    background-blend-mode: soft-light;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
