@@ -260,10 +260,22 @@ export default function HelpMeChoose({
                     background: 'rgba(255,255,255,0.1)',
                   }}
                 >
-                  <img
-                    src="/assets/dog-toggle-on.svg"
-                    alt="Yes, bringing a dog"
-                    className="w-full h-full object-contain"
+                  <span
+                    role="img"
+                    aria-label="Yes, bringing a dog"
+                    className="block h-full w-full bg-current transition-opacity duration-300"
+                    style={{
+                      color: '#ebe8e0',
+                      opacity: dog === true ? 1 : 0.5,
+                      WebkitMaskImage: 'url("/assets/icons/amenities/detailed/dog_friendly.svg")',
+                      maskImage: 'url("/assets/icons/amenities/detailed/dog_friendly.svg")',
+                      WebkitMaskRepeat: 'no-repeat',
+                      maskRepeat: 'no-repeat',
+                      WebkitMaskPosition: 'center',
+                      maskPosition: 'center',
+                      WebkitMaskSize: 'contain',
+                      maskSize: 'contain',
+                    }}
                   />
                 </div>
                 <span
