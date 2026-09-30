@@ -4,7 +4,7 @@
 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="1024.000000pt" viewBox="0 0 1024.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M5048 9825 c-73 -68 -146 -102 -329 -153 -240 -67 -396 -143 -541
 -265 l-78 -65 -117 -37 c-295 -92 -628 -245 -881 -403 -73 -46 -235 -160 -360
 -254 -206 -155 -314 -224 -333 -213 -3 3 -9 18 -12 34 -4 16 -21 46 -38 66
