@@ -158,7 +158,7 @@ export const SearchButton = React.forwardRef<
     const isInteractive = !disabled && !isLoading;
 
     const baseClasses =
-      'box-border inline-flex items-center justify-center text-center bg-[#343833] text-[#EBE8E0] transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] focus-visible:ring-offset-2';
+      'box-border inline-flex items-center justify-center text-center font-button bg-[#343833] text-[#EBE8E0] transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] focus-visible:ring-offset-2';
 
     const stateClasses = isInteractive
       ? 'cursor-pointer hover:bg-[#272a26] active:bg-[#1a1c19] active:scale-[0.98]'
