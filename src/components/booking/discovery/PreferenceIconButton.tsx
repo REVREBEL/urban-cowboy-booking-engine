@@ -25,7 +25,7 @@ const ICON: Record<PreferenceId, string> = {
   "bringing-my-people": "/assets/labels/top_match.svg",
 };
 
-const LABEL: Partial<Record<PreferenceId, string> = {
+const LABEL: Partial<Record<PreferenceId, string>> = {
   "iconic-tub": "/assets/labels/copper_clawfoot_soaking_tub_label.svg",
   "bathe-outside": "/assets/labels/soak_outside-label.svg",
   "my-own-place": "/assets/labels/my_own_place_label.svg",
