@@ -71,6 +71,54 @@ const JsonTree = ({ value }: { value: unknown }) => (
   </div>
 );
 
+const CALL_META: Record<string, { label: string; why: string }> = {
+  hotel: {
+    label: "Hotel configuration",
+    why: "Loads the hotel configuration (room categories, photos, products/extras, currency, policies, and payment gateway) in the current language. Called once at startup and cached server-side for 5 minutes.",
+  },
+  availability: {
+    label: "Availability & pricing",
+    why: "Core booking-engine call: queries Mews for available rooms and rates in the property currency for the selected dates and occupancy. The frontend groups results by room type and derives starting rates.",
+  },
+  pricing: {
+    label: "Exact room-type pricing",
+    why: "When room details open, confirms the exact price for that room type using the selected occupancy and currency.",
+  },
+  "reservation-price": {
+    label: "Final reservation quote",
+    why: "Calculates the exact total for the selected rate and extras, including the amount Mews says is due at confirmation.",
+  },
+  reservation: {
+    label: "Create reservation",
+    why: "Creates the reservation in Mews and prepares payment. Mews returns the payment request used to build the secure hosted-payment URL.",
+  },
+  "reservation-status": {
+    label: "Payment verification",
+    why: "After returning from the payment page, verifies that payment completed successfully and rechecks while payment remains pending.",
+  },
+  "payment-link": {
+    label: "Resume payment",
+    why: "Rebuilds the Mews payment link for a reservation with payment still pending.",
+  },
+  voucher: {
+    label: "Promo code validation",
+    why: "Checks whether a promo code is valid so a new availability search can expose eligible private rates.",
+  },
+  geo: {
+    label: "Visitor country (IP)",
+    why: "Infers the visitor country from Cloudflare IP metadata, with no external API, to preselect the phone country code and support US/Canada-specific presets.",
+  },
+  track: {
+    label: "Cart tracking → n8n",
+    why: "Sends cart state (status, selection, and contact details) to n8n throughout the funnel to support abandoned, payment-started, and completed booking records.",
+  },
+};
+
+function callMeta(entry: ApiLogEntry) {
+  const endpoint = entry.path.split("?")[0];
+  return CALL_META[endpoint] ?? { label: entry.label, why: entry.why };
+}
+
 // ── Dev Panel ─────────────────────────────────────────────────────────────────
 export function DevPanel() {
   const entries = useApiLog();
@@ -182,6 +230,7 @@ function CallsView({
     <ul className="divide-y divide-white/5">
       {entries.map((e) => {
         const isOpen = expanded === e.id;
+        const meta = callMeta(e);
         return (
           <li key={e.id}>
             <button
@@ -191,7 +240,7 @@ function CallsView({
             >
               <StatusDot e={e} />
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-medium text-cream">{e.label}</span>
+                <span className="block truncate text-[13px] font-medium text-cream">{meta.label}</span>
                 <span className="block truncate font-mono text-[11px] text-cream/45">
                   {e.method} /{e.path}
                 </span>
@@ -204,7 +253,7 @@ function CallsView({
             {isOpen && (
               <div className="space-y-3 bg-black/20 px-4 py-3">
                 <Field title="Why this call?">
-                  <p className="text-[12px] leading-relaxed text-cream/75">{e.why}</p>
+                  <p className="text-[12px] leading-relaxed text-cream/75">{meta.why}</p>
                 </Field>
                 {e.request != null && (
                   <Field title="Request (sent to proxy)">
