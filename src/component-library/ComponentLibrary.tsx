@@ -33,35 +33,21 @@ import {
 } from "@/features/find-your-stay/components/controls/FindYourStayTravelPartyButton";
 import FindYourStay from "@/features/find-your-stay/components/flows/FindYourStay";
 import HelpMeChoose from "@/features/find-your-stay/components/flows/HelpMeChoose";
-import MatchResults from "@/features/find-your-stay/components/flows/MatchResults";
 import { ProgressBar } from "@/features/find-your-stay/components/progress/ProgressBar";
 import { ProgressStep } from "@/features/find-your-stay/components/progress/ProgressStep";
-import AllRoomsGrid from "@/features/find-your-stay/components/rooms/AllRoomsGrid";
-import RoomCard from "@/features/find-your-stay/components/rooms/RoomCard";
-import RoomDrawer from "@/features/find-your-stay/components/rooms/RoomDrawer";
-import TopMatchPanel from "@/features/find-your-stay/components/rooms/TopMatchPanel";
 import { SearchBar } from "@/features/find-your-stay/components/search/SearchBar";
 import { SearchBarExpanded } from "@/features/find-your-stay/components/search/SearchBarExpanded";
 import { SearchBarGuestDropdown } from "@/features/find-your-stay/components/search/SearchBarGuestsDropdown";
 import { SearchBarLocationDropdown } from "@/features/find-your-stay/components/search/SearchBarLocationDropdown";
 import { SearchBarPromoDropdown } from "@/features/find-your-stay/components/search/SearchBarPromoDropdown";
 import { SearchButton } from "@/features/find-your-stay/components/search/SearchButton";
-import type { RoomProduct } from "@/features/find-your-stay/types";
 
-import {
-  demoMatchRoom,
-  demoRates,
-  demoRecommendation,
-  demoResults,
-  demoRooms,
-  demoStaySummary,
-} from "./fixtures";
+import { demoMatchRoom, demoStaySummary } from "./fixtures";
 
 type SectionId =
   | "find-controls"
   | "find-search"
   | "find-progress"
-  | "find-rooms"
   | "find-flows"
   | "booking"
   | "feedback"
@@ -75,7 +61,6 @@ const sections: { id: SectionId; label: string; kicker: string }[] = [
   { id: "find-controls", label: "Find Your Stay · Controls", kicker: "Controls" },
   { id: "find-search", label: "Find Your Stay · Search", kicker: "Search" },
   { id: "find-progress", label: "Find Your Stay · Progress", kicker: "Progress" },
-  { id: "find-rooms", label: "Find Your Stay · Rooms", kicker: "Rooms" },
   { id: "find-flows", label: "Find Your Stay · Flows", kicker: "Flows" },
   { id: "booking", label: "Booking", kicker: "Booking" },
   { id: "feedback", label: "Feedback", kicker: "Feedback" },
@@ -107,13 +92,8 @@ const renderedPaths = new Set([
   "src/features/find-your-stay/components/controls/PropertyLocationLabel.tsx",
   "src/features/find-your-stay/components/flows/FindYourStay.tsx",
   "src/features/find-your-stay/components/flows/HelpMeChoose.tsx",
-  "src/features/find-your-stay/components/flows/MatchResults.tsx",
   "src/features/find-your-stay/components/progress/ProgressBar.tsx",
   "src/features/find-your-stay/components/progress/ProgressStep.tsx",
-  "src/features/find-your-stay/components/rooms/AllRoomsGrid.tsx",
-  "src/features/find-your-stay/components/rooms/RoomCard.tsx",
-  "src/features/find-your-stay/components/rooms/RoomDrawer.tsx",
-  "src/features/find-your-stay/components/rooms/TopMatchPanel.tsx",
   "src/features/find-your-stay/components/search/SearchBar.tsx",
   "src/features/find-your-stay/components/search/SearchBarExpanded.tsx",
   "src/features/find-your-stay/components/search/SearchBarGuestsDropdown.tsx",
@@ -454,91 +434,6 @@ function FindProgressSection({ width, surface }: { width: PreviewWidth; surface:
   );
 }
 
-function FindRoomsSection({ width, surface }: { width: PreviewWidth; surface: PreviewSurface }) {
-  const [drawerRoom, setDrawerRoom] = useState<RoomProduct | null>(null);
-
-  return (
-    <section id="find-rooms" className="scroll-mt-24">
-      <SectionHeader
-        kicker="Find Your Stay"
-        title="Room Merchandising"
-        body="Room cards, top-match presentation, full browse view, and the room/rate drawer using shared fixture data."
-      />
-
-      <Preview
-        title="RoomCard"
-        path="src/features/find-your-stay/components/rooms/RoomCard.tsx"
-        surface={surface}
-      >
-        <WidthFrame width={width}>
-          <div className="mx-auto max-w-sm">
-            <RoomCard
-              room={demoRooms[1]}
-              matchBadge="Great Fit"
-              onSelect={() => setDrawerRoom(demoRooms[1])}
-            />
-          </div>
-        </WidthFrame>
-      </Preview>
-
-      <Preview
-        title="TopMatchPanel"
-        path="src/features/find-your-stay/components/rooms/TopMatchPanel.tsx"
-        surface={surface}
-      >
-        <WidthFrame width={width}>
-          <TopMatchPanel
-            result={demoRecommendation}
-            onViewRoom={() => setDrawerRoom(demoRecommendation.room)}
-          />
-        </WidthFrame>
-      </Preview>
-
-      <Preview
-        title="AllRoomsGrid"
-        path="src/features/find-your-stay/components/rooms/AllRoomsGrid.tsx"
-        surface="cream"
-        tall
-        description="Scrollable full-surface preview using four representative room experiences."
-      >
-        <WidthFrame width={width}>
-          <AllRoomsGrid
-            rooms={demoRooms}
-            onBack={() => undefined}
-            onSelectRoom={setDrawerRoom}
-          />
-        </WidthFrame>
-      </Preview>
-
-      <Preview
-        title="RoomDrawer"
-        path="src/features/find-your-stay/components/rooms/RoomDrawer.tsx"
-        surface={surface}
-        description="Open the live overlay to inspect gallery, amenities, rate cards, and pricing disclosure."
-      >
-        <WidthFrame width={width}>
-          <div className="flex min-h-36 items-center justify-center">
-            <Button type="button" onClick={() => setDrawerRoom(demoRooms[1])}>
-              Open Room Drawer
-            </Button>
-          </div>
-        </WidthFrame>
-      </Preview>
-
-      <RoomDrawer
-        room={drawerRoom}
-        rates={demoRates}
-        checkIn="2026-10-14"
-        checkOut="2026-10-17"
-        adults={2}
-        children={0}
-        onClose={() => setDrawerRoom(null)}
-        onBook={() => setDrawerRoom(null)}
-      />
-    </section>
-  );
-}
-
 function FindFlowsSection({ width }: { width: PreviewWidth }) {
   return (
     <section id="find-flows" className="scroll-mt-24">
@@ -582,24 +477,6 @@ function FindFlowsSection({ width }: { width: PreviewWidth }) {
         </WidthFrame>
       </Preview>
 
-      <Preview
-        title="MatchResults"
-        path="src/features/find-your-stay/components/flows/MatchResults.tsx"
-        surface="cream"
-        tall
-      >
-        <WidthFrame width={width}>
-          <MatchResults
-            results={demoResults}
-            totalAvailable={7}
-            hasPreferences
-            onBack={() => undefined}
-            onStartQuiz={() => undefined}
-            onViewRoom={() => undefined}
-            onBrowseAll={() => undefined}
-          />
-        </WidthFrame>
-      </Preview>
     </section>
   );
 }
@@ -944,7 +821,6 @@ export default function ComponentLibrary() {
           <FindControlsSection width={width} surface={surface} />
           <FindSearchSection width={width} surface={surface} />
           <FindProgressSection width={width} surface={surface} />
-          <FindRoomsSection width={width} surface={surface} />
           <FindFlowsSection width={width} />
           <BookingSection width={width} surface={surface} />
           <FeedbackSection width={width} surface={surface} />
