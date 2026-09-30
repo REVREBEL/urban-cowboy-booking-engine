@@ -27,7 +27,7 @@ export function DogToggleButton({ selected, onToggle }: Props) {
         <span
           aria-hidden="true"
           className={cn(
-            "block size-24 bg-current transition-all duration-200 md:size-28",
+            "block size-24 rotate-180 bg-current transition-all duration-200 md:size-28",
             selected
               ? "text-oxblood opacity-100"
               : "text-umber opacity-30 group-hover:opacity-50",
