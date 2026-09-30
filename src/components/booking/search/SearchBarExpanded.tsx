@@ -56,7 +56,7 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
         onClick={onClick}
         aria-label="Search accommodations"
         aria-busy={isLoading}
-        className={`grid h-12 w-12 shrink-0 place-items-center text-center bg-[#4E332D] text-[#FAF9F9] transition md:flex md:h-14 md:w-[116px] md:items-center md:justify-center md:gap-2 ${rounded} ${
+        className={`grid h-12 w-12 shrink-0 place-items-center text-center font-button bg-[#4E332D] text-[#FAF9F9] transition md:flex md:h-14 md:w-[116px] md:items-center md:justify-center md:gap-2 ${rounded} ${
           isInteractive
             ? "cursor-pointer hover:bg-[#343833] active:scale-[0.98]"
             : "cursor-not-allowed opacity-60"
@@ -67,7 +67,7 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#FAF9F9]/35 border-t-[#FAF9F9]" aria-hidden="true" />
         ) : (
           <>
-            <span className="hidden text-center font-button text-sm uppercase tracking-[1.5px] md:inline-flex md:items-center md:justify-center">
+            <span className="hidden h-[20px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] md:inline-flex">
               {children || "Search"}
             </span>
             <span
@@ -86,6 +86,12 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
 );
 
 ExpandedSearchButton.displayName = "ExpandedSearchButton";
+
+function properCase(value: string) {
+  return value
+    .toLocaleLowerCase()
+    .replace(/(^|[\s-])([a-z])/g, (_match, prefix, letter) => `${prefix}${letter.toLocaleUpperCase()}`);
+}
 
 type SearchSectionProps = {
   label: string;
@@ -135,7 +141,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   className = "",
 }) => {
   const [internalValues] = useState<SearchBarExpandedValues>({
-    property: initialValues?.property ?? "CATSKILLS",
+    property: initialValues?.property ?? "Catskills",
     checkInDate: initialValues?.checkInDate ?? "Add dates",
     checkOutDate: initialValues?.checkOutDate ?? "Add dates",
     guests: initialValues?.guests ?? "2 adults",
@@ -167,7 +173,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
         className={`grid w-full grid-cols-1 overflow-hidden border-2 border-[#4E332D] bg-[#FAF9F9] p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${rounded} md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)_auto] md:items-center md:overflow-visible md:p-1.5 md:pl-4`}
       >
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
-          <SearchSection label="Property" value={<span>{currentValues.property}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection label="Property" value={<span>{properCase(currentValues.property)}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
           <SearchSection label="When" value={<span>{dateValue}</span>} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
