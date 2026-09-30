@@ -60,7 +60,7 @@ export function Dates() {
 
   return (
     <div className="relative">
-      <div className="mx-auto max-w-5xl px-5 pb-16 pt-10 sm:pt-16">
+      <div className="booking-shell pb-16 pt-10 sm:pt-16">
         {/* En-tête éditorial compact */}
         <div className="max-w-2xl">
           <h1 className="font-display text-4xl leading-[1.07] text-ink text-balance sm:text-5xl">

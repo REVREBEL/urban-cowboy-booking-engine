@@ -68,7 +68,7 @@ function Shell() {
   return (
     <div className="flex min-h-dvh flex-col bg-cream">
       <header className="sticky top-0 z-30 border-b border-ink/5 bg-cream/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="booking-shell flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between">
           <button
             type="button"
             onClick={() => {
@@ -134,7 +134,7 @@ function HydrateLoader() {
 function Footer() {
   return (
     <footer className="border-t border-ink/10 bg-teal-deep text-cream/80">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-8 sm:flex-row sm:items-center sm:justify-between">
+      <div className="booking-shell flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Brand className="text-cream" />
           <p className="mt-2 max-w-sm text-sm text-cream/60">{t("footer.tagline")}</p>

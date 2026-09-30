@@ -19,7 +19,7 @@ export function StepLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="mx-auto max-w-5xl px-5 py-8">
+    <div className="booking-shell py-8">
       {onBack && (
         <button type="button" onClick={onBack} className="btn-link mb-3">
           <IconChevron className="h-4 w-4 rotate-180" />

@@ -325,7 +325,7 @@ function Panel({ email }: { email: string }) {
     <div className="min-h-dvh bg-cream text-ink">
       {/* Header */}
       <header className="sticky top-0 z-20 border-b border-ink/10 bg-cream/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3">
+        <div className="booking-shell flex flex-wrap items-center justify-between gap-3 py-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-corail">Urban Cowboy · Back-office</p>
             <h1 className="font-display text-xl text-ink">Dashboard funnel</h1>
@@ -358,7 +358,7 @@ function Panel({ email }: { email: string }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl space-y-6 px-5 py-6">
+      <main className="booking-shell space-y-6 py-6">
         {error && (
           <div className="rounded-xl2 border border-red-200 bg-red-50 p-4 text-sm text-red-700">
             <b>Erreur de lecture :</b> {error}

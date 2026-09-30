@@ -187,7 +187,7 @@ export function Results() {
   }, [rooms, recommendationPreferences, checkIn]);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 py-8">
+    <div className="booking-shell py-8">
       {/* Barre de recherche / résumé */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl2 border border-ink/10 bg-white p-4 shadow-card">
         <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-ink/80">
