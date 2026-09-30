@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useBooking } from "@/state/booking";
-import { upgradeRooms } from "@/lib/shaping";\nimport type { ShapedRoom } from "@/types/mews";
+import { upgradeRooms } from "@/lib/shaping";
+import type { ShapedRoom } from "@/types/mews";
 import { StudioRoomCard } from "@/components/studio-booking/StudioRoomCard";
 import { CreoleUpsellStories } from "@/components/booking/extras/creole-upsell-stories";
 
