@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="kitchen_with_breakfast_bar" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="918.000000pt" height="871.000000pt" viewBox="0 0 918.000000 871.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,871.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M935 8590 c-16 -4 -145 -33 -285 -64 -140 -32 -260 -62 -267 -68 -10
 -8 -13 -254 -13 -1209 l0 -1199 23 -14 c25 -16 566 -166 599 -166 20 0 491 63
 1427 191 162 22 301 45 308 51 10 8 13 70 13 274 0 145 1 264 3 264 1 0 55 -9

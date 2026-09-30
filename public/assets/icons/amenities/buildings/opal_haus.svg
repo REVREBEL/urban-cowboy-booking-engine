@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="opal_haus" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="1024.000000pt" viewBox="0 0 1024.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M6833 8796 c-17 -22 -222 -249 -363 -401 -36 -39 -294 -321 -573
 -628 l-509 -557 -1624 0 -1624 0 0 171 c0 143 3 173 16 186 22 23 11 87 -23
 133 -108 143 -134 170 -163 170 l-30 0 0 70 0 70 -27 17 c-21 14 -47 18 -113

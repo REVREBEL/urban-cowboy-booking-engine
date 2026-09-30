@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="wifi_badge" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1254.000000pt" height="1254.000000pt" viewBox="0 0 1254.000000 1254.000000"
  preserveAspectRatio="xMidYMid meet">
 <g transform="translate(0.000000,1254.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M1509 12129 c-605 -79 -1093 -537 -1149 -1080 -12 -118 -13 -7368 -1
 -8709 8 -835 8 -835 34 -930 128 -463 434 -786 880 -929 209 -67 -213 -62
 5001 -61 4691 0 4729 0 4826 20 533 109 946 511 1056 1030 16 77 21 9365 4

@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="04_day" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1080.000000pt" height="1350.000000pt" viewBox="0 0 1080.000000 1350.000000"
  preserveAspectRatio="xMidYMid meet">
 <g transform="translate(0.000000,1350.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M5170 10559 c-52 -11 -131 -35 -175 -53 -136 -55 -3529 -1830 -3592
 -1879 -128 -99 -220 -216 -293 -371 -92 -193 -85 -62 -85 -1511 0 -1280 0
 -1280 29 -1365 74 -221 213 -416 374 -524 84 -56 3516 -1844 3597 -1874 150

@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="alpine_haus" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1352.000000pt" height="768.000000pt" viewBox="0 0 1352.000000 768.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,768.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M6750 6865 c-19 -8 -116 -45 -215 -84 -99 -38 -413 -160 -698 -270
 -285 -111 -523 -201 -529 -201 -8 0 -9 27 -5 90 l6 89 -27 53 -27 53 -252 3
 c-199 2 -253 0 -254 -10 -1 -7 0 -121 1 -254 l2 -241 -68 -26 c-38 -14 -397

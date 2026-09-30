@@ -247,7 +247,7 @@ export function Results() {
         )}
 
       {!loading && !hotelError && !error && rooms.length > 0 && recommendationPreferences && topMatchCopy && (
-        <section className="mt-10">
+        <section className="mx-auto mt-10 max-w-4xl">
           <div className="mb-8">
             <div className="mb-5 flex items-center gap-3 text-umber" aria-hidden="true">
               <span className="size-2.5 rounded-full bg-umber" />
@@ -260,7 +260,7 @@ export function Results() {
             <h1 className="mt-3 font-display text-4xl text-oxblood sm:text-5xl">Your Matches</h1>
           </div>
 
-          <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,1.65fr)_minmax(18rem,0.9fr)]">
+          <div className="grid items-stretch gap-4 lg:grid-cols-[minmax(0,2.25fr)_minmax(14rem,0.95fr)]">
             <ResultRoomPreview
               room={rooms[0]}
               imageBaseUrl={imageBaseUrl}
@@ -276,7 +276,12 @@ export function Results() {
                 features: roomDetailTags(rooms[0].merchandising).map((tag) => ({ label: tag.label })),
               }}
               intro={`This room is our top match for ${topMatchCopy.party_summary}. You told us ${topMatchCopy.interest_summary.toLowerCase()} mattered, and ${topMatchCopy.top_match_reason}.`}
-              reasons={[topMatchCopy.benefit_1, topMatchCopy.benefit_2, topMatchCopy.benefit_3]}
+              reasons={[topMatchCopy.benefit_1, topMatchCopy.benefit_3]}
+              reasonHeadings={[
+                "Your Choices, Reflected",
+                `Even Better in ${topMatchCopy.season_label.charAt(0).toUpperCase()}${topMatchCopy.season_label.slice(1)}`,
+              ]}
+              compact
             />
           </div>
 
@@ -294,11 +299,12 @@ export function Results() {
             <div className="mt-12">
               <h2 className="font-display text-2xl text-oxblood sm:text-3xl">Other High Matching Options</h2>
               <div className="mt-5 space-y-4">
-                {rooms.slice(1, 3).map((room) => (
+                {rooms.slice(1, 3).map((room, index) => (
                   <ResultRoomPreview
                     key={room.categoryId}
                     room={room}
                     imageBaseUrl={imageBaseUrl}
+                    imageRight={index % 2 === 1}
                     onChoose={() => choose(room, room.rates[0])}
                     onDetails={() => setOpenRoom(room)}
                   />
@@ -397,12 +403,14 @@ function ResultRoomPreview({
   room,
   imageBaseUrl,
   topMatch = false,
+  imageRight = false,
   onChoose,
   onDetails,
 }: {
   room: ShapedRoom;
   imageBaseUrl: string;
   topMatch?: boolean;
+  imageRight?: boolean;
   onChoose: () => void;
   onDetails: () => void;
 }) {
@@ -414,11 +422,11 @@ function ResultRoomPreview({
   return (
     <article
       className={`overflow-hidden rounded-xl2 border bg-white shadow-card ${
-        topMatch ? "h-full min-h-[620px] border-teal-deep" : "border-ink/10"
+        topMatch ? "h-full min-h-[310px] border-teal-deep" : "border-ink/10"
       }`}
     >
-      <div className={`grid h-full ${topMatch ? "sm:grid-cols-[minmax(14rem,44%)_1fr]" : "sm:grid-cols-[minmax(13rem,38%)_1fr]"}`}>
-        <div className={`relative bg-sand ${topMatch ? "min-h-72 sm:min-h-full" : "min-h-56 sm:min-h-64"}`}>
+      <div className={`grid h-full ${topMatch ? "sm:grid-cols-[minmax(14rem,48%)_1fr]" : "sm:grid-cols-[minmax(13rem,48%)_1fr]"}`}>
+        <div className={`relative bg-sand ${topMatch ? "min-h-72 sm:min-h-full" : "min-h-56 sm:min-h-64"} ${imageRight ? "sm:order-2" : ""}`}>
           <Photo
             src={imgUrl(imageBaseUrl, room.imageIds[0], topMatch ? 1000 : 760)}
             alt={room.name}
@@ -426,7 +434,7 @@ function ResultRoomPreview({
           />
         </div>
 
-        <div className="flex min-w-0 flex-col p-5 sm:p-6">
+        <div className={`flex min-w-0 flex-col p-5 ${topMatch ? "sm:p-4" : "sm:p-5"}`}>
           <p className="font-topic text-[11px] uppercase tracking-[0.18em] text-umber">
             {room.property || "Catskills"}
           </p>
@@ -435,7 +443,7 @@ function ResultRoomPreview({
           </h2>
 
           {room.description && (
-            <p className="mt-4 text-sm leading-relaxed text-ink/65">
+            <p className={`${topMatch ? "line-clamp-6 text-xs" : "line-clamp-4 text-sm"} mt-4 leading-relaxed text-ink/65`}>
               {room.description}
             </p>
           )}

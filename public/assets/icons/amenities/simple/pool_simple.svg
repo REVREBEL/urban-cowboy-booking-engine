@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="pool_simple" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1254.000000pt" height="1254.000000pt" viewBox="0 0 1254.000000 1254.000000"
  preserveAspectRatio="xMidYMid meet">
 <g transform="translate(0.000000,1254.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M9095 8741 c-92 -24 -189 -104 -228 -189 -21 -45 -22 -61 -25 -409
 l-3 -363 -3612 -2 c-3612 -3 -3612 -3 -3679 -35 -82 -38 -138 -95 -180 -181
 -33 -67 -33 -67 -36 -2087 -2 -1486 0 -2036 8 -2080 25 -131 112 -240 228

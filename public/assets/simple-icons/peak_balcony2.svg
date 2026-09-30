@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="peak_balcony2" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="906.000000pt" height="894.000000pt" viewBox="0 0 906.000000 894.000000"
  preserveAspectRatio="xMidYMid meet">
 <g transform="translate(0.000000,894.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M1372 8903 c-10 -21 -65 -148 -122 -282 -57 -134 -109 -245 -116
 -248 -7 -2 -155 18 -330 46 -725 114 -724 114 -739 101 -8 -7 -15 -20 -15 -29
 1 -42 -33 -35 755 -157 127 -19 246 -38 266 -42 36 -7 36 -7 -118 -367 -84

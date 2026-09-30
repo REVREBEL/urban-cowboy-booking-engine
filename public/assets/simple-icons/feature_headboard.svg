@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="feature_headboard" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="1024.000000pt" viewBox="0 0 1024.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M4627 8823 l-3847 -3 -20 -33 c-62 -100 -84 -250 -56 -370 18 -76 46
 -137 77 -165 l20 -20 4317 0 c3669 1 4320 3 4339 14 29 18 67 94 82 162 14 68
 14 176 0 244 -13 61 -53 147 -76 166 -13 9 -126 11 -502 10 -267 -2 -2217 -4

@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="enameled_gas_fireplace" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="1024.000000pt" viewBox="0 0 1024.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M5030 9538 c-58 -11 -129 -27 -157 -34 -58 -16 -115 -60 -140 -107
 -13 -27 -51 -148 -67 -219 -7 -31 -17 -32 -110 -20 l-48 7 -62 105 c-46 78
 -69 107 -89 115 -33 11 -55 0 -77 -39 l-15 -27 38 -71 39 -71 -24 6 c-12 3

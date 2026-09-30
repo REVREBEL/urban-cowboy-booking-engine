@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="heated_floors" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1536.000000pt" height="1024.000000pt" viewBox="0 0 1536.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M7515 8684 c-71 -37 -115 -106 -115 -184 0 -56 25 -112 77 -170 54
 -61 140 -179 196 -270 103 -168 155 -320 164 -480 11 -204 -62 -374 -281 -660
 -170 -222 -183 -241 -236 -352 -144 -302 -139 -591 15 -903 83 -168 253 -406

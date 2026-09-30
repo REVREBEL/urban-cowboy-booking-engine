@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="estonian_sauna" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1210.000000pt" height="800.000000pt" viewBox="0 0 1210.000000 800.000000"
  preserveAspectRatio="xMidYMid meet">
 <g transform="translate(0.000000,800.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M4168 7606 c-61 -17 -119 -57 -179 -127 -49 -56 -49 -56 -182 -63
 -1529 -79 -2835 -916 -3317 -2126 -482 -1209 -289 -2520 513 -3483 54 -65 97
 -120 95 -121 -1 -2 -131 -86 -288 -186 -157 -101 -293 -190 -302 -198 -16 -14

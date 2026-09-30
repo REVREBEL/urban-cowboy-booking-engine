@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="outdoor_cedar_soaking_tub" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1016.000000pt" height="782.000000pt" viewBox="0 0 1016.000000 782.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,782.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M4490 7500 c-949 -30 -1772 -120 -2385 -261 -287 -66 -502 -138 -694
 -231 -122 -60 -153 -80 -211 -137 -37 -36 -76 -82 -86 -101 l-19 -35 -5 -859
 -5 -858 -57 -18 c-108 -33 -136 -59 -407 -375 -327 -382 -325 -379 -361 -456

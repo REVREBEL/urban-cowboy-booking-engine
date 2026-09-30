@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="chalet" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1352.000000pt" height="768.000000pt" viewBox="0 0 1352.000000 768.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,768.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M9680 6739 c-186 -71 -2558 -958 -3840 -1436 -140 -53 -268 -102
 -285 -111 -16 -9 -46 -14 -65 -13 -40 2 -1328 123 -1555 146 -82 8 -364 35
 -625 60 -261 25 -614 58 -785 75 -873 86 -1140 109 -1148 101 -5 -5 -52 -309

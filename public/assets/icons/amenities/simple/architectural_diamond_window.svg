@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="architectural_diamond_window" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="1024.000000pt" viewBox="0 0 1024.000000 1024.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,1024.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M4970 9472 c-74 -37 -299 -146 -500 -241 -201 -96 -491 -235 -645
 -309 -154 -74 -437 -210 -630 -302 -192 -92 -537 -257 -765 -367 -413 -199
 -1005 -483 -1655 -793 -187 -89 -348 -169 -357 -178 -16 -13 -18 -34 -18 -154

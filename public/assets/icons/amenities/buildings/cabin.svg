@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="cabin" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1352.000000pt" height="768.000000pt" viewBox="0 0 1352.000000 768.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,768.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M6715 7529 c-139 -72 -366 -191 -1625 -856 -333 -176 -672 -355 -755
 -398 -82 -43 -303 -159 -490 -258 -187 -98 -394 -207 -460 -242 -66 -35 -354
 -186 -640 -338 -286 -151 -754 -397 -1040 -547 -900 -472 -1030 -541 -1043

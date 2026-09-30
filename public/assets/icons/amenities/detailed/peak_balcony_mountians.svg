@@ -1,10 +1,10 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
  "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+<svg id="peak_balcony_mountians" version="1.0" xmlns="http://www.w3.org/2000/svg"
  width="1024.000000pt" height="819.000000pt" viewBox="0 0 1024.000000 819.000000"
  preserveAspectRatio="xMidYMid meet"><g transform="translate(0.000000,819.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
+fill="currentColor" stroke="none">
 <path d="M1405 8171 c124 -45 215 -85 215 -95 0 -12 -29 -86 -174 -456 -53
 -134 -98 -246 -100 -248 -4 -3 -221 62 -326 98 -14 5 -92 30 -175 55 -82 26
 -180 56 -217 68 -38 11 -68 26 -68 32 0 6 7 33 16 59 11 32 20 44 28 38 15
