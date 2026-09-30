@@ -51,7 +51,10 @@ export type RoomExperience =
   | "Forest House"
   | "Cabin"
   | "Chalet"
-  | "Opa's";
+  | "Opa's"
+  | "Slide Mountain"
+  | "Mountain View"
+  | "Other";
 
 export type RoomProduct = {
   id: string;
