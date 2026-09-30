@@ -1,18 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useBooking } from "../state/booking";
 import { api, errorMessage } from "../lib/api";
-import { fmtDate } from "../lib/format";
+import { fmtDate, money } from "../lib/format";
 import { buildRooms } from "../lib/shaping";
 import type { AvailabilityResponse, ShapedRate, ShapedRoom } from "../types/mews";
-import RoomCard from "@/features/find-your-stay/components/rooms/RoomCard";
-import TopMatchPanel from "@/features/find-your-stay/components/rooms/TopMatchPanel";
-import { roomProductFromShapedRoom } from "@/features/find-your-stay/adapters/mews-room";
-import type { RecommendationResult } from "@/features/find-your-stay/types";
 import { RoomDetailDrawer } from "@/components/rooms/room-detail-drawer";
 import { InlineUpsell } from "@/components/booking/extras/upsell-card";
 import { IconCalendar, IconUsers, IconChevron } from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
-import { buildTopMatchCopy, parseRecommendationPreferences } from "../lib/topMatch";
+import { parseRecommendationPreferences } from "../lib/topMatch";
 import { rankRecommendedRooms } from "../lib/roomMatching";
 import { roomDetailTags } from "../lib/roomTags";
 import { unresolvedCategoryBindings } from "../lib/roomMerchandising";
@@ -181,30 +177,7 @@ export function Results() {
   // Upsell inline : un extra de l'hébergement de la 1re chambre (sinon il serait
   // refusé à la réservation, cf. produits rattachés à une config Mews).
   const inlineProduct = products.find((p) => !p.property || p.property === rooms[0]?.property) ?? null;
-  const topMatch = recommendationPreferences ? rooms[0] ?? null : null;
-  const topMatchCopy = useMemo(
-    () =>
-      topMatch && recommendationPreferences
-        ? buildTopMatchCopy(
-            topMatch.name,
-            recommendationPreferences,
-            checkIn,
-            topMatch.merchandising,
-          )
-        : null,
-    [topMatch, recommendationPreferences, checkIn],
-  );
-
-  const topMatchResult = useMemo<RecommendationResult | null>(() => {
-    if (!topMatch || !topMatchCopy || !recommendationPreferences) return null;
-    return {
-      room: roomProductFromShapedRoom(topMatch, imageBaseUrl),
-      matchedInterests: recommendationPreferences.interests.filter(
-        (interest) => interest !== undefined,
-      ),
-      explanation: topMatchCopy,
-    };
-  }, [topMatch, topMatchCopy, recommendationPreferences, imageBaseUrl]);
+  const topMatchId = recommendationPreferences ? rooms[0]?.categoryId ?? null : null;
 
   return (
     <div className="mx-auto max-w-5xl px-5 py-8">
@@ -271,32 +244,21 @@ export function Results() {
 
       {!loading && !hotelError && !error && rooms.length > 0 && (
         <div className="mt-5 space-y-4">
-          {topMatch && topMatchResult ? (
-            <div className="space-y-4">
-              <TopMatchPanel
-                result={topMatchResult}
-                onViewRoom={() => setOpenRoom(topMatch)}
+          {rooms.slice(0, 3).map((room, index) => (
+            <div key={room.categoryId} className="space-y-4">
+              <ResultRoomPreview
+                room={room}
+                topMatch={room.categoryId === topMatchId}
+                onChoose={() => choose(room, room.rates[0])}
+                onDetails={() => setOpenRoom(room)}
               />
-              {inlineProduct && (
+              {index === 0 && inlineProduct && (
                 <InlineUpsell
                   product={inlineProduct}
                   added={productIds.includes(inlineProduct.id)}
                   onToggle={() => toggleProduct(inlineProduct.id)}
                 />
               )}
-            </div>
-          ) : rooms[0] ? (
-            <RoomCard
-              room={roomProductFromShapedRoom(rooms[0], imageBaseUrl)}
-              onSelect={() => setOpenRoom(rooms[0])}
-            />
-          ) : null}
-          {rooms.slice(1, 3).map((room) => (
-            <div key={room.categoryId} className="space-y-4">
-              <RoomCard
-                room={roomProductFromShapedRoom(room, imageBaseUrl)}
-                onSelect={() => setOpenRoom(room)}
-              />
             </div>
           ))}
         </div>
@@ -331,10 +293,11 @@ export function Results() {
                   {isOpen && (
                     <div className="space-y-4 border-t border-ink/10 bg-cream/40 p-4">
                       {propRooms.map((room) => (
-                        <RoomCard
+                        <ResultRoomPreview
                           key={room.categoryId}
-                          room={roomProductFromShapedRoom(room, imageBaseUrl)}
-                          onSelect={() => setOpenRoom(room)}
+                          room={room}
+                          onChoose={() => choose(room, room.rates[0])}
+                          onDetails={() => setOpenRoom(room)}
                         />
                       ))}
                     </div>
@@ -358,6 +321,60 @@ export function Results() {
         />
       )}
     </div>
+  );
+}
+
+function ResultRoomPreview({
+  room,
+  topMatch = false,
+  onChoose,
+  onDetails,
+}: {
+  room: ShapedRoom;
+  topMatch?: boolean;
+  onChoose: () => void;
+  onDetails: () => void;
+}) {
+  const rate = room.rates[0];
+  const currency = rate?.currency ?? "USD";
+
+  return (
+    <article className="rounded-xl2 border border-ink/10 bg-white p-5 shadow-card">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          {topMatch && (
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-turquoise">
+              Your Top Match
+            </p>
+          )}
+          <h2 className="font-display text-2xl text-ink">{room.name}</h2>
+          {room.description && (
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink/60">
+              {room.description}
+            </p>
+          )}
+          <p className="mt-3 text-xs text-ink/45">
+            {room.availableRoomCount} available
+            {room.capacity > 0 ? ` · sleeps ${room.capacity}` : ""}
+          </p>
+        </div>
+
+        <div className="shrink-0 sm:text-right">
+          <p className="font-display text-xl text-teal-deep">
+            {money(room.fromGross, currency)}
+          </p>
+          <p className="text-[11px] text-ink/45">stay total from current availability</p>
+          <div className="mt-3 flex gap-2 sm:justify-end">
+            <button type="button" onClick={onDetails} className="btn-ghost">
+              View Details
+            </button>
+            <button type="button" onClick={onChoose} className="btn-primary">
+              Select Room
+            </button>
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }
 
