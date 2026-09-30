@@ -224,7 +224,7 @@ export function DateRangePicker({
             >
               <IconChevron aria-hidden="true" className="h-4 w-4 rotate-180" />
             </button>
-            <p className="font-display text-base capitalize text-ink">
+            <p className="font-number text-base capitalize text-ink">
               {n > 0 ? t("datePicker.nights", { count: n }) : t("datePicker.selectDates")}
             </p>
             <button
@@ -240,7 +240,7 @@ export function DateRangePicker({
           <div className="grid gap-6 sm:grid-cols-2">
             {months.map((mv, idx) => (
               <div key={`${mv.y}-${mv.m}`} className={idx === 1 ? "hidden sm:block" : ""}>
-                <p className="mb-2 text-center text-sm font-semibold capitalize text-ink">
+                <p className="mb-2 text-center font-number text-sm font-semibold capitalize text-ink">
                   {monthLabel(mv.y, mv.m)}
                 </p>
                 <div role="grid" className="grid grid-cols-7 gap-y-1 text-center">
@@ -293,7 +293,7 @@ export function DateRangePicker({
                           aria-label={fmtDate(day)}
                           aria-pressed={isStart || day === checkOut}
                           aria-current={day === isoDay(0) ? "date" : undefined}
-                          className={`absolute inset-0 m-auto grid h-9 w-9 place-items-center rounded-full text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
+                          className={`absolute inset-0 m-auto grid h-9 w-9 place-items-center rounded-full font-number text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
                             disabled
                               ? "cursor-not-allowed text-ink/25 line-through"
                               : edge
@@ -352,7 +352,7 @@ function Segment({
       <span className="min-w-0">
         <span className="block text-[11px] font-semibold uppercase tracking-wide text-teal-deep/60">{label}</span>
         <span
-          className={`block truncate text-sm ${
+          className={`block truncate font-number text-sm ${
             value === t("datePicker.when") ? "text-ink/40" : "font-medium text-ink"
           }`}
         >
