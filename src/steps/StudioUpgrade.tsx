@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useBooking } from "@/state/booking";
-import { upgradeRooms } from "@/lib/shaping";
+import { upgradeRooms } from "@/lib/shaping";\nimport type { ShapedRoom } from "@/types/mews";
 import { StudioRoomCard } from "@/components/studio-booking/StudioRoomCard";
 import { CreoleUpsellStories } from "@/components/booking/extras/creole-upsell-stories";
 
@@ -30,7 +30,7 @@ export function StudioUpgrade() {
 
   if (!selectedRoom || !selectedRate || !base.room) return null;
 
-  function choose(room: typeof selectedRoom) {
+  function choose(room: ShapedRoom) {
     const rate = room.rates[0];
     if (rate) selectRoomRate(room, rate);
   }
