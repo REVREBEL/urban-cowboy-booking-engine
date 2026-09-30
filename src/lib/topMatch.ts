@@ -27,6 +27,7 @@ export const INTEREST_LABELS: Record<MatchInterest, string> = {
   ownPlace: "My Own Place",
   scenic: "Scenic Views",
   simpleCozy: "Simple + Cozy",
+  social: "Spaces to Gather",
 };
 
 const PARTY_FRAMING: Record<PartyType, { plain: string; dog: string }> = {
@@ -49,6 +50,7 @@ const INTEREST_BENEFITS: Record<MatchInterest, string> = {
   ownPlace: "This accommodation gives you a more private, independent way to stay.",
   scenic: "The setting and confirmed view keep the stay connected to the Catskills landscape.",
   simpleCozy: "This room keeps things easy, comfortable, and unfussy.",
+  social: "The room offers the strongest available setup for gathering, lingering, and spending time together.",
 };
 
 const FALLBACK_INTEREST_COPY: Record<MatchInterest, string> = {
@@ -57,6 +59,7 @@ const FALLBACK_INTEREST_COPY: Record<MatchInterest, string> = {
   ownPlace: "It is the strongest available overall match, without implying a fully standalone stay.",
   scenic: "It is the strongest available overall match, without promising a room-specific view.",
   simpleCozy: "It is the strongest available overall match, without overstating the room's size or price point.",
+  social: "It is the strongest available overall match for gathering, without implying shared-space features that are not confirmed.",
 };
 
 const DOG_BENEFIT = "It is also confirmed as a dog-friendly choice, so your dog can come along for the stay.";
@@ -76,6 +79,7 @@ function supportsInterest(features: RoomFeatures, interest: MatchInterest): bool
     ownPlace: features.ownPlace,
     scenic: features.scenicView,
     simpleCozy: features.simpleCozy,
+    social: features.fullKitchen,
   }[interest] === true;
 }
 
@@ -155,7 +159,7 @@ export function parseRecommendationPreferences(
   fallback: { adults: number; children: number },
 ): RecommendationPreferences | null {
   const params = new URLSearchParams(search);
-  const validInterests: MatchInterest[] = ["iconTub", "outdoorSoak", "ownPlace", "scenic", "simpleCozy"];
+  const validInterests: MatchInterest[] = ["iconTub", "outdoorSoak", "ownPlace", "scenic", "simpleCozy", "social"];
   const primaryRaw = params.get("interest") as MatchInterest | null;
 
   // No explicit interest means the guest is browsing normally, not using the matcher.
