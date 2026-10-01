@@ -1,21 +1,22 @@
-import React from 'react';
-import { RoomType } from '../types';
-import { ROOM_IMAGE_ASSETS } from '../data/roomImagePlaceholders';
-import { Sparkles } from 'lucide-react';
+import React from "react";
+import { Sparkles } from "lucide-react";
+import type { ShapedRoom } from "@/types/mews";
+import { imgUrl, money } from "@/lib/format";
+import { buildRoomCardPills } from "@/lib/roomCardPills";
 
-export type RoomCardColor = 'paper' | 'forest' | 'smoke' | 'copper';
-export type RoomCardLayout = 'left' | 'right';
+export type RoomCardColor = "paper" | "forest" | "smoke" | "copper";
+export type RoomCardLayout = "left" | "right";
 
 export interface RoomsListCardProps {
-  room: RoomType;
+  room: ShapedRoom;
+  imageBaseUrl: string;
   color?: RoomCardColor;
   layout?: RoomCardLayout;
-  onSelectRoom?: (room: RoomType) => void;
-  onOpenRoomDetails?: (room: RoomType) => void;
+  onSelectRoom?: (room: ShapedRoom) => void;
+  onOpenRoomDetails?: (room: ShapedRoom) => void;
   customImage?: string;
   isTopMatch?: boolean;
 
-  // Dedicated slots for maximum interchangeability and complex room types
   headerSlot?: React.ReactNode;
   mediaSlot?: React.ReactNode;
   bodySlot?: React.ReactNode;
@@ -27,10 +28,64 @@ export interface RoomsListCardProps {
   className?: string;
 }
 
+const COLOR_STYLES = {
+  paper: {
+    card: "bg-[#FAF9F9] border-2 border-[#0E301A]",
+    title: "text-[#4E332D]",
+    tagline: "text-[#9A5636]",
+    description: "text-[#4E332D]",
+    amenityBadge: "border border-[#4E332D] text-[#4E332D]",
+    highlightBadge: "border border-[#9A5636] text-[#9A5636]",
+    selectBtn: "bg-[#9A5636] hover:bg-[#783224] text-[#EBE8E0]",
+    detailsBtn: "border border-[#9A5636] text-[#9A5636] hover:bg-[#9A5636]/10",
+    price: "text-[#4E332D]",
+  },
+  forest: {
+    card: "bg-[#0E301A] border-2 border-[#0E301A]",
+    title: "text-[#FAF9F9]",
+    tagline: "text-[#F2AAA9]",
+    description: "text-[#FAF9F9]",
+    amenityBadge: "border border-[#FAF9F9] text-[#FAF9F9]",
+    highlightBadge: "border border-[#F2AAA9] text-[#F2AAA9]",
+    selectBtn: "bg-[#F2AAA9] hover:bg-[#F2AAA9]/85 text-[#0E301A] font-bold",
+    detailsBtn: "border border-[#F2AAA9] text-[#F2AAA9] hover:bg-[#F2AAA9]/10",
+    price: "text-[#FAF9F9]",
+  },
+  smoke: {
+    card: "bg-[#343833] border-2 border-[#343833]",
+    title: "text-[#EBE8E0]",
+    tagline: "text-[#A4674A]",
+    description: "text-[#EBE8E0]",
+    amenityBadge: "border border-[#EBE8E0] text-[#EBE8E0]",
+    highlightBadge: "border border-[#AE785E] text-[#AE785E]",
+    selectBtn: "bg-[#9A5636] hover:bg-[#783224] text-[#EBE8E0]",
+    detailsBtn: "border border-[#9A5636] text-[#D99373] hover:bg-[#9A5636]/10",
+    price: "text-[#EBE8E0]",
+  },
+  copper: {
+    card: "bg-[#9A5636] border-2 border-[#9A5636]",
+    title: "text-[#DDC5A4]",
+    tagline: "text-[#2F1F1B]",
+    description: "text-[#F2E3CF]",
+    amenityBadge: "border border-[#DDC5A4] text-[#DDC5A4]",
+    highlightBadge: "border border-[#2F1F1B] text-[#2F1F1B]",
+    selectBtn: "bg-[#2F1F1B] hover:bg-black text-[#DDC5A4]",
+    detailsBtn: "border border-[#2F1F1B] text-[#2F1F1B] hover:bg-[#2F1F1B]/10",
+    price: "text-[#DDC5A4]",
+  },
+} as const;
+
+function roomFamilyLabel(room: ShapedRoom): string {
+  const family = room.merchandising?.family;
+  if (!family) return "Catskills";
+  return family.replace(/-/g, " ");
+}
+
 export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   room,
-  color = 'paper',
-  layout = 'left',
+  imageBaseUrl,
+  color = "paper",
+  layout = "left",
   onSelectRoom,
   onOpenRoomDetails,
   customImage,
@@ -42,102 +97,46 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   actionsSlot,
   priceSlot,
   children,
-  className = ''
+  className = "",
 }) => {
-  // Exact Color Tokens from Figma Specification
-  const colorStyles = {
-    paper: {
-      card: 'bg-[#FAF9F9] border-2 border-[#0E301A]',
-      title: 'text-[#4E332D]',
-      tagline: 'text-[#9A5636]',
-      description: 'text-[#4E332D]',
-      amenityBadge: 'border border-[#4E332D] text-[#4E332D]',
-      highlightBadge: 'border border-[#9A5636] text-[#9A5636]',
-      selectBtn: 'bg-[#9A5636] hover:bg-[#783224] text-[#EBE8E0]',
-      detailsBtn: 'border border-[#9A5636] text-[#9A5636] hover:bg-[#9A5636]/10',
-      price: 'text-[#4E332D]'
-    },
-    forest: {
-      card: 'bg-[#0E301A] border-2 border-[#0E301A]',
-      title: 'text-[#FAF9F9]',
-      tagline: 'text-[#F2AAA9]',
-      description: 'text-[#FAF9F9]',
-      amenityBadge: 'border border-[#FAF9F9] text-[#FAF9F9]',
-      highlightBadge: 'border border-[#F2AAA9] text-[#F2AAA9]',
-      selectBtn: 'bg-[#F2AAA9] hover:bg-[#F2AAA9]/85 text-[#0E301A] font-bold',
-      detailsBtn: 'border border-[#F2AAA9] text-[#F2AAA9] hover:bg-[#F2AAA9]/10',
-      price: 'text-[#FAF9F9]'
-    },
-    smoke: {
-      card: 'bg-[#343833] border-2 border-[#343833]',
-      title: 'text-[#EBE8E0]',
-      tagline: 'text-[#A4674A]',
-      description: 'text-[#EBE8E0]',
-      amenityBadge: 'border border-[#EBE8E0] text-[#EBE8E0]',
-      highlightBadge: 'border border-[#AE785E] text-[#AE785E]',
-      selectBtn: 'bg-[#9A5636] hover:bg-[#783224] text-[#EBE8E0]',
-      detailsBtn: 'border border-[#9A5636] text-[#9A5636] hover:bg-[#9A5636]/10',
-      price: 'text-[#EBE8E0]'
-    },
-    copper: {
-      card: 'bg-[#9A5636] border-2 border-[#9A5636]',
-      title: 'text-[#DDC5A4]',
-      tagline: 'text-[#2F1F1B]',
-      description: 'text-[#DDC5A4]',
-      amenityBadge: 'border border-[#DDC5A4] text-[#DDC5A4]',
-      highlightBadge: 'border border-[#2F1F1B] text-[#2F1F1B]',
-      selectBtn: 'bg-[#2F1F1B] hover:bg-black text-[#DDC5A4]',
-      detailsBtn: 'border border-[#2F1F1B] text-[#2F1F1B] hover:bg-[#2F1F1B]/10',
-      price: 'text-[#DDC5A4]'
-    }
-  }[color];
+  const colorStyles = COLOR_STYLES[color];
+  const mewsImage = room.imageIds[0]
+    ? imgUrl(imageBaseUrl, room.imageIds[0], 1200)
+    : null;
+  const imageUrl = customImage || mewsImage;
+  const pills = buildRoomCardPills(room);
+  const firstRate = room.rates[0];
+  const nightlyRate = firstRate?.perNightGross ?? null;
+  const currency = firstRate?.currency ?? "USD";
 
-  const imageUrl = customImage || room.images?.[0] || ROOM_IMAGE_ASSETS.WALDEN_FOREST_BATHING_SUITE;
-
-  // Build automated badges if no custom slot passed
-  const getBadges = () => {
-    const list: Array<{ text: string; isHighlight?: boolean }> = [];
-    if (room.maxGuests) list.push({ text: `${room.maxGuests} Guests` });
-    if (room.bedType) list.push({ text: room.bedType });
-    if (room.soakHighlight) list.push({ text: room.soakHighlight });
-    if (room.soakType === 'clawfoot-window' || room.soakType === 'copper-den') {
-      list.push({ text: 'Clawfoot Bathtub' });
-    }
-    if (room.ageRestricted21) {
-      list.push({ text: '21+', isHighlight: true });
-    } else {
-      list.push({ text: 'Family Friendly', isHighlight: true });
-    }
-    if (room.isDogFriendly) {
-      list.push({ text: 'Dogs Welcome', isHighlight: true });
-    }
-    return list;
-  };
-
-  // If complete custom children provided, render within the styled card envelope
   if (children) {
     return (
       <div
-        data-room-card={room.id}
-        className={`w-full rounded-[16px] p-5 sm:p-6 shadow-sm relative transition-all duration-200 ${colorStyles.card} ${className}`}
+        data-room-card={room.categoryId}
+        className={`relative w-full rounded-[16px] p-5 shadow-sm transition-all duration-200 sm:p-6 ${colorStyles.card} ${className}`}
       >
         {children}
       </div>
     );
   }
 
-  // Media Slot or Default Media Element
   const mediaElement = mediaSlot ?? (
-    <div className="w-full lg:w-[46%] xl:w-[48%] self-stretch min-h-[260px] sm:min-h-[300px] lg:min-h-[336px] flex flex-col shrink-0">
-      <div className="w-full h-full flex-1 rounded-[17px] overflow-hidden relative group">
-        <img
-          src={imageUrl}
-          alt={room.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 select-none block absolute inset-0"
-        />
+    <div className="flex min-h-[260px] w-full shrink-0 flex-col self-stretch sm:min-h-[300px] lg:min-h-[336px] lg:w-[46%] xl:w-[48%]">
+      <div className="group relative h-full w-full flex-1 overflow-hidden rounded-[17px] bg-[#D7D0C7]">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={room.name}
+            className="absolute inset-0 block h-full w-full select-none object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 grid place-items-center font-eyebrow text-xs uppercase tracking-widest text-[#4E332D]/45">
+            Room imagery unavailable
+          </div>
+        )}
         {isTopMatch && (
-          <div className="absolute top-3 left-3 bg-[#0E301A]/90 backdrop-blur-xs text-[#FAF9F9] px-3 py-1 rounded-full text-[10px] font-brothers uppercase tracking-widest font-bold flex items-center gap-1.5 shadow-sm z-10">
-            <Sparkles className="w-3 h-3 text-[#F2AAA9]" />
+          <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-[#0E301A]/90 px-3 py-1 font-label text-[10px] font-bold uppercase tracking-widest text-[#FAF9F9] shadow-sm backdrop-blur-sm">
+            <Sparkles className="h-3 w-3 text-[#F2AAA9]" />
             <span>Top Pick</span>
           </div>
         )}
@@ -146,71 +145,65 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   );
 
   return (
-    <div
-      data-room-card={room.id}
-      className={`w-full rounded-[16px] p-5 sm:p-6 shadow-sm flex flex-col ${
-        layout === 'right' ? 'lg:flex-row-reverse' : 'lg:flex-row'
-      } items-stretch gap-6 lg:gap-8 transition-all duration-200 hover:shadow-md ${colorStyles.card} ${className}`}
+    <article
+      data-room-card={room.categoryId}
+      className={`flex w-full flex-col items-stretch gap-6 rounded-[16px] p-5 shadow-sm transition-all duration-200 hover:shadow-md sm:p-6 lg:gap-8 ${
+        layout === "right" ? "lg:flex-row-reverse" : "lg:flex-row"
+      } ${colorStyles.card} ${className}`}
     >
-      {/* Media Column */}
       {mediaElement}
 
-      {/* Content Column */}
-      <div className="flex-1 w-full flex flex-col justify-between self-stretch min-w-0 py-0.5">
+      <div className="flex min-w-0 flex-1 flex-col justify-between self-stretch py-0.5">
         <div>
-          {/* Header Slot or Default Heading & Subtitle */}
           {headerSlot ?? (
-            <div className="flex flex-col gap-1.5 mb-2.5">
+            <div className="mb-2.5 flex flex-col gap-1.5">
+              <p className={`font-eyebrow text-[10px] font-bold uppercase tracking-[2px] ${colorStyles.tagline}`}>
+                {roomFamilyLabel(room)}
+              </p>
               <h3
-                className={`font-brothers font-bold text-2xl sm:text-3xl md:text-[34px] leading-tight md:leading-[105%] tracking-[0.72px] uppercase ${colorStyles.title}`}
+                className={`font-heading text-2xl font-bold uppercase leading-tight tracking-[2px] sm:text-3xl md:text-[34px] md:leading-[105%] ${colorStyles.title}`}
               >
                 {room.name}
               </h3>
-              {room.tagline && (
-                <p
-                  className={`font-brothers text-xs sm:text-[13px] tracking-[2.5px] uppercase font-bold ${colorStyles.tagline}`}
-                >
-                  {room.tagline}
-                </p>
-              )}
             </div>
           )}
 
-          {/* Body Slot or Default Editorial Description */}
-          {bodySlot ?? (
-            <p
-              className={`font-editorial text-xs sm:text-sm leading-[22px] sm:leading-[23px] mb-4 line-clamp-3 md:line-clamp-4 ${colorStyles.description}`}
-            >
-              {room.description}
-            </p>
-          )}
+          {bodySlot ??
+            (room.description ? (
+              <p
+                className={`mb-4 line-clamp-3 font-body text-xs leading-[22px] sm:text-sm sm:leading-[23px] md:line-clamp-4 ${colorStyles.description}`}
+              >
+                {room.description}
+              </p>
+            ) : null)}
 
-          {/* Badges Slot or Default Pill Badges */}
           {badgesSlot ?? (
-            <div className="flex flex-wrap items-center gap-2 py-1 mb-4">
-              {getBadges().map((badge, idx) => (
-                <div
-                  key={idx}
-                  className={`px-2.5 py-1 rounded-[12px] text-[10px] font-brothers uppercase tracking-[1px] font-bold ${
-                    badge.isHighlight ? colorStyles.highlightBadge : colorStyles.amenityBadge
+            <div className="mb-4 flex flex-wrap items-center gap-2 py-1">
+              {pills.map((pill) => (
+                <span
+                  key={pill.key}
+                  data-pill-source={pill.source}
+                  className={`rounded-[12px] px-2.5 py-1 font-label text-[10px] font-bold uppercase tracking-[1px] ${
+                    pill.emphasis === "highlight"
+                      ? colorStyles.highlightBadge
+                      : colorStyles.amenityBadge
                   }`}
                 >
-                  {badge.text}
-                </div>
+                  {pill.label}
+                </span>
               ))}
             </div>
           )}
         </div>
 
-        {/* Action Buttons & Nightly Rate Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-current/15 mt-auto">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-current/15 pt-3">
           {actionsSlot ?? (
             <div className="flex items-center gap-3">
               {onSelectRoom && (
                 <button
                   type="button"
                   onClick={() => onSelectRoom(room)}
-                  className={`px-5 py-2.5 rounded-[17px] font-brothers font-bold text-[11px] tracking-[1.1px] uppercase cursor-pointer shadow-xs transition-transform active:scale-95 ${colorStyles.selectBtn}`}
+                  className={`rounded-[17px] px-5 py-2.5 font-button text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95 ${colorStyles.selectBtn}`}
                 >
                   Select Room
                 </button>
@@ -219,7 +212,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenRoomDetails(room)}
-                  className={`px-5 py-2 rounded-[17px] font-brothers font-bold text-[11px] tracking-[1.1px] uppercase cursor-pointer transition-colors ${colorStyles.detailsBtn}`}
+                  className={`rounded-[17px] px-5 py-2 font-button text-[11px] font-bold uppercase tracking-[1.1px] transition-colors ${colorStyles.detailsBtn}`}
                 >
                   View Details
                 </button>
@@ -228,14 +221,19 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           )}
 
           {priceSlot ?? (
-            <div className="text-right">
-              <span className={`font-brothers text-lg sm:text-xl md:text-2xl font-normal ${colorStyles.price}`}>
-                from ${room.basePrice}/night
-              </span>
+            <div className={`text-right ${colorStyles.price}`}>
+              {nightlyRate != null ? (
+                <span className="font-number text-lg sm:text-xl md:text-2xl">
+                  from {money(nightlyRate, currency)}
+                  <span className="font-body text-xs"> / night</span>
+                </span>
+              ) : (
+                <span className="font-body text-sm">Check rate</span>
+              )}
             </div>
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 };
