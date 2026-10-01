@@ -327,3 +327,18 @@
     box-shadow: 0 2px 0 0 #9a5636;
   }
 }
+
+
+/* Approved RoomListCard typography.
+   Kept explicit so global heading utilities cannot alter the card hierarchy. */
+.room-list-card__title,
+.room-list-card__tagline,
+.room-list-card__pill,
+.room-list-card__action,
+.room-list-card__price {
+  font-family: "BrothersOT", "League Spartan", sans-serif !important;
+}
+
+.room-list-card__body {
+  font-family: "Uchen", Georgia, serif !important;
+}
