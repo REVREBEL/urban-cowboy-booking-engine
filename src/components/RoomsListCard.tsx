@@ -179,7 +179,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
 
           {badgesSlot ?? (
             <div className="mb-4 flex flex-wrap items-center gap-2 py-1">
-              {pills.map((pill) => (
+              {pills.slice(0, 6).map((pill) => (
                 <span
                   key={pill.key}
                   data-pill-source={pill.source}
