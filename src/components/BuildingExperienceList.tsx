@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { SearchCriteria, RoomType } from '../types';
-import { BUILDINGS, ROOMS } from '../data/hotelData';
-import { StudioRoomsListCard } from '@/components/studio/StudioRoomsListCard';
+import type { SearchCriteria } from '../types';
+import type { ShapedRoom } from '@/types/mews';
+import { BUILDINGS } from '../data/hotelData';
+import { RoomsListCard, type RoomCardColor, type RoomCardLayout } from '@/components/RoomsListCard';
 import {
   AlpineHausWoodcut,
   WaldenHausWoodcut,
@@ -17,24 +18,28 @@ import {
 
 interface BuildingExperienceListProps {
   criteria: SearchCriteria;
+  rooms: ShapedRoom[];
+  imageBaseUrl: string;
   onUpdateCriteria: (c: SearchCriteria) => void;
-  onSelectRoom: (room: RoomType) => void;
-  onOpenRoomDetails: (room: RoomType) => void;
+  onSelectRoom: (room: ShapedRoom) => void;
+  onOpenRoomDetails: (room: ShapedRoom) => void;
   onOpenHelpMeChoose: () => void;
   onBackToSearch: () => void;
   /**
    * Slot allowing custom or specialized cards to be injected for complex room configurations
    */
   roomCardSlot?: (props: {
-    room: RoomType;
+    room: ShapedRoom;
     defaultCard: React.ReactNode;
-    onSelectRoom: (room: RoomType) => void;
-    onOpenRoomDetails: (room: RoomType) => void;
+    onSelectRoom: (room: ShapedRoom) => void;
+    onOpenRoomDetails: (room: ShapedRoom) => void;
   }) => React.ReactNode;
 }
 
 export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   criteria,
+  rooms,
+  imageBaseUrl,
   onUpdateCriteria,
   onSelectRoom,
   onOpenRoomDetails,
@@ -48,7 +53,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
 
   // Slot resolver for rooms list cards
   const renderRoomCard = (
-    room: RoomType | undefined,
+    room: ShapedRoom | undefined,
     defaultCard: React.ReactNode
   ) => {
     if (!room) return defaultCard;
@@ -58,20 +63,43 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
     return defaultCard;
   };
 
-  // Filter rooms
-  const filteredRooms = ROOMS.filter((room) => {
-    if (selectedBuildingId !== 'all' && room.buildingId !== selectedBuildingId) {
+  const roomFamily = (room: ShapedRoom) =>
+    room.merchandising?.family ?? room.property ?? "other";
+
+  // Filter only the live Mews room collection. Building/feature facts come from
+  // the resolved Cowboy merchandising record attached during room shaping.
+  const filteredRooms = rooms.filter((room) => {
+    if (selectedBuildingId !== "all" && roomFamily(room) !== selectedBuildingId) {
       return false;
     }
-    if (activeFeatureFilter === 'dog' && !room.isDogFriendly) return false;
-    if (activeFeatureFilter === 'cedar' && room.soakType !== 'outdoor-cedar-tub') return false;
-    if (
-      activeFeatureFilter === 'fireplace' &&
-      !room.features.some((f) => f.toLowerCase().includes('stove') || f.toLowerCase().includes('fire'))
-    )
-      return false;
+    if (activeFeatureFilter === "dog" && room.merchandising?.dogPolicy !== "allowed") return false;
+    if (activeFeatureFilter === "cedar" && !room.merchandising?.features.outdoorSoak) return false;
+    if (activeFeatureFilter === "fireplace" && !room.merchandising?.features.fireplace) return false;
     return true;
   });
+
+  const roomByKey = (key: string) =>
+    filteredRooms.find((room) => room.merchandising?.key === key);
+
+  const renderMappedRoom = (
+    key: string,
+    color: RoomCardColor,
+    layout: RoomCardLayout,
+  ) => {
+    const room = roomByKey(key);
+    if (!room) return null;
+    return renderRoomCard(
+      room,
+      <RoomsListCard
+        room={room}
+        imageBaseUrl={imageBaseUrl}
+        color={color}
+        layout={layout}
+        onSelectRoom={onSelectRoom}
+        onOpenRoomDetails={onOpenRoomDetails}
+      />,
+    );
+  };
 
   return (
     <div className="w-full texture-linen min-h-screen pb-24">
@@ -90,7 +118,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               Find Your Stay
             </h1>
             <p className="font-editorial text-sm sm:text-base text-[#4E332D]/80 mt-1 max-w-2xl">
-              8 Distinct Room Experiences Available. Each one with its own way of doing Cowboy.
+              {filteredRooms.length} Distinct Room Experiences Available. Each one with its own way of doing Cowboy.
               Whether you’re looking for a quiet retreat, a little adventure, or room to gather,
               explore the soul of each building.
             </p>
@@ -245,40 +273,13 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                 {/* Right Bento / Collage Grid: 3 Editorial Rooms + Photo Collages (Screenshot 1) */}
                 <div className="lg:col-span-8 space-y-6">
                   {/* Top Card: Alpine Bathing Suite with Den */}
-                  {renderRoomCard(
-                    ROOMS.find((r) => r.id === 'alpine-bathing-suite-den'),
-                    <StudioRoomsListCard
-                      room={ROOMS.find((r) => r.id === 'alpine-bathing-suite-den')!}
-                      color="paper"
-                      layout="left"
-                      onSelectRoom={onSelectRoom}
-                      onOpenRoomDetails={onOpenRoomDetails}
-                    />
-                  )}
+                  {renderMappedRoom("alpine-bathing-suite-den", "paper", "left")}
 
                   {/* Middle Card: Alpine Penthouse Bathing Suite */}
-                  {renderRoomCard(
-                    ROOMS.find((r) => r.id === 'alpine-penthouse'),
-                    <StudioRoomsListCard
-                      room={ROOMS.find((r) => r.id === 'alpine-penthouse')!}
-                      color="copper"
-                      layout="right"
-                      onSelectRoom={onSelectRoom}
-                      onOpenRoomDetails={onOpenRoomDetails}
-                    />
-                  )}
+                  {renderMappedRoom("alpine-penthouse-bathing-suite", "copper", "right")}
 
                   {/* Bottom Card: Alpine Bathing Suite */}
-                  {renderRoomCard(
-                    ROOMS.find((r) => r.id === 'alpine-bathing-suite'),
-                    <StudioRoomsListCard
-                      room={ROOMS.find((r) => r.id === 'alpine-bathing-suite')!}
-                      color="smoke"
-                      layout="left"
-                      onSelectRoom={onSelectRoom}
-                      onOpenRoomDetails={onOpenRoomDetails}
-                    />
-                  )}
+                  {renderMappedRoom("alpine-bathing-suite", "smoke", "left")}
                 </div>
               </div>
             </div>
@@ -318,28 +319,10 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                 {/* Right Rooms Grid for Walden */}
                 <div className="lg:col-span-8 space-y-6">
                   {/* Walden Forest Bathing Suite */}
-                  {renderRoomCard(
-                    ROOMS.find((r) => r.id === 'walden-forest-bathing'),
-                    <StudioRoomsListCard
-                      room={ROOMS.find((r) => r.id === 'walden-forest-bathing')!}
-                      color="paper"
-                      layout="left"
-                      onSelectRoom={onSelectRoom}
-                      onOpenRoomDetails={onOpenRoomDetails}
-                    />
-                  )}
+                  {renderMappedRoom("walden-forest-bathing-suite", "paper", "left")}
 
                   {/* Walden King (Simple, warm, cabin era) */}
-                  {renderRoomCard(
-                    ROOMS.find((r) => r.id === 'walden-king'),
-                    <StudioRoomsListCard
-                      room={ROOMS.find((r) => r.id === 'walden-king')!}
-                      color="forest"
-                      layout="right"
-                      onSelectRoom={onSelectRoom}
-                      onOpenRoomDetails={onOpenRoomDetails}
-                    />
-                  )}
+                  {renderMappedRoom("walden-king", "forest", "right")}
                 </div>
               </div>
             </div>
@@ -352,40 +335,13 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                 {/* Left/Middle Column: 3 Lodge Rooms Collage (Screenshot 4) */}
                 <div className="lg:col-span-8 order-2 lg:order-1 space-y-6">
                   {/* Card 1: Lodge Three-Bedroom Suite */}
-                  {renderRoomCard(
-                    ROOMS.find((r) => r.id === 'lodge-three-bedroom'),
-                    <StudioRoomsListCard
-                      room={ROOMS.find((r) => r.id === 'lodge-three-bedroom')!}
-                      color="paper"
-                      layout="left"
-                      onSelectRoom={onSelectRoom}
-                      onOpenRoomDetails={onOpenRoomDetails}
-                    />
-                  )}
+                  {renderMappedRoom("lodge-3-bedroom-suite", "paper", "left")}
 
                   {/* Card 2: Lodge Penthouse */}
-                  {renderRoomCard(
-                    ROOMS.find((r) => r.id === 'lodge-penthouse'),
-                    <StudioRoomsListCard
-                      room={ROOMS.find((r) => r.id === 'lodge-penthouse')!}
-                      color="copper"
-                      layout="right"
-                      onSelectRoom={onSelectRoom}
-                      onOpenRoomDetails={onOpenRoomDetails}
-                    />
-                  )}
+                  {renderMappedRoom("lodge-penthouse-suite", "copper", "right")}
 
                   {/* Card 3: Lodge King */}
-                  {renderRoomCard(
-                    ROOMS.find((r) => r.id === 'lodge-king'),
-                    <StudioRoomsListCard
-                      room={ROOMS.find((r) => r.id === 'lodge-king')!}
-                      color="smoke"
-                      layout="left"
-                      onSelectRoom={onSelectRoom}
-                      onOpenRoomDetails={onOpenRoomDetails}
-                    />
-                  )}
+                  {renderMappedRoom("lodge-king", "smoke", "left")}
                 </div>
 
                 {/* Right Column: Woodcut + Lodge Narrative (Screenshot 4 right) */}
@@ -426,7 +382,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           {BUILDINGS.filter(
             (b) => selectedBuildingId === 'all' || selectedBuildingId === b.id
           ).map((building) => {
-            const buildingRooms = filteredRooms.filter((r) => r.buildingId === building.id);
+            const buildingRooms = filteredRooms.filter((r) => roomFamily(r) === building.id);
             if (buildingRooms.length === 0) return null;
 
             return (
@@ -453,62 +409,18 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
 
                 {/* Rooms Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {buildingRooms.map((room) =>
+                  {buildingRooms.map((room, index) =>
                     renderRoomCard(
                       room,
-                      <div
-                        key={room.id}
-                        className="bg-white rounded-3xl border-stitched overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between"
-                      >
-                        <div className="h-56 relative overflow-hidden">
-                          <img
-                            src={room.images[0]}
-                            alt={room.name}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                          />
-                          <div className="absolute top-3 left-3 bg-[#FAF9F9]/90 px-3 py-1 rounded-full text-[10px] font-woodblock uppercase tracking-wider text-[#4E332D] font-bold">
-                            {room.soakHighlight}
-                          </div>
-                        </div>
-
-                        <div className="p-5 flex-1 flex flex-col justify-between">
-                          <div>
-                            <span className="font-woodblock text-[10px] uppercase tracking-wider text-[#9A5636] block mb-1 font-bold">
-                              {room.eyebrow}
-                            </span>
-                            <h3 className="font-brothers font-bold text-xl text-[#221C18] uppercase tracking-wide">
-                              {room.name}
-                            </h3>
-                            <p className="font-editorial text-xs text-[#4E332D]/80 mt-2 line-clamp-3">
-                              {room.description}
-                            </p>
-                          </div>
-
-                          <div className="pt-4 mt-4 border-t border-[#4E332D]/15 flex items-center justify-between">
-                            <div>
-                              <span className="font-woodblock text-sm font-bold text-[#4E332D]">
-                                ${room.basePrice}
-                              </span>
-                              <span className="text-[11px] text-[#73716D] font-sans"> / night</span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => onOpenRoomDetails(room)}
-                                className="font-woodblock text-xs uppercase tracking-wider text-[#4E332D] hover:underline cursor-pointer"
-                              >
-                                Details
-                              </button>
-                              <button
-                                onClick={() => onSelectRoom(room)}
-                                className="bg-[#4E332D] hover:bg-[#343833] text-white px-4 py-1.5 rounded-full font-woodblock text-xs uppercase tracking-wider cursor-pointer"
-                              >
-                                Rates →
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <RoomsListCard
+                        key={room.categoryId}
+                        room={room}
+                        imageBaseUrl={imageBaseUrl}
+                        color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
+                        layout={index % 2 === 0 ? "left" : "right"}
+                        onSelectRoom={onSelectRoom}
+                        onOpenRoomDetails={onOpenRoomDetails}
+                      />,
                     )
                   )}
                 </div>
