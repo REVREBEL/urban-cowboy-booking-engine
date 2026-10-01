@@ -75,6 +75,7 @@ export function StudioMatchResults({
           <RoomsListCard
             room={top}
             imageBaseUrl={imageBaseUrl}
+            isTopMatch
             onSelectRoom={onSelectRoom}
             onOpenRoomDetails={onOpenRoomDetails}
           />
