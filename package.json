@@ -19,7 +19,8 @@
     "test": "node --test tests/*.test.ts",
     "room-ids": "node scripts/fetch-room-category-ids.mjs",
     "normalize:svgs": "node scripts/normalize-svg-assets.mjs --write",
-    "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs"
+    "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs",
+    "mews:smoke": "bash scripts/test-mews-booking-api.sh"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
