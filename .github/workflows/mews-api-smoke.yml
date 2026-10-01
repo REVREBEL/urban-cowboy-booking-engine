@@ -1,0 +1,48 @@
+name: Mews API smoke test
+on:
+  push:
+    branches: ["test/mews-api-smoke-20261001"]
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      MEWS_CLIENT: ${{ secrets.MEWS_CLIENT }}
+      LIVE_CONFIG_ID: af94d1f9-0d56-469f-8b15-b10600706974
+      REPO_CONFIG_ID: 4725ace3-6b93-439f-a549-b4bc00ae1d10
+      REPO_HOTEL_ID: 8bd38131-c371-4625-9c29-b10600705d34
+    steps:
+      - name: Check secret
+        run: |
+          if [ -z "$MEWS_CLIENT" ]; then
+            echo "::error::MEWS_CLIENT GitHub secret is not configured"
+            exit 2
+          fi
+
+      - name: Test Mews production API
+        shell: bash
+        run: |
+          set -u
+          test_config () {
+            label="$1"; id="$2"; body="/tmp/$label.json"
+            status=$(curl -sS -o "$body" -w "%{http_code}"               -X POST "https://api.mews.com/api/distributor/v1/configuration/get"               -H "content-type: application/json"               --data-binary "{\"Client\":\"$MEWS_CLIENT\",\"Ids\":[\"$id\"],\"PrimaryId\":\"$id\",\"LanguageCode\":\"en-US\",\"CultureCode\":\"en-US\"}")
+            echo "$label configuration/get HTTP $status"
+            if [[ "$status" =~ ^2 ]]; then
+              jq '{configurationIds:[.Configurations[]?.Id], enterpriseIds:[.Configurations[]?.Enterprise?.Id], enterpriseNames:[.Configurations[]?.Enterprise?.Name]}' "$body"
+            else
+              jq -c '.' "$body" 2>/dev/null || cat "$body"
+            fi
+          }
+          test_config live_site "$LIVE_CONFIG_ID"
+          test_config repo "$REPO_CONFIG_ID"
+
+          body=/tmp/hotel.json
+          status=$(curl -sS -o "$body" -w "%{http_code}"             -X POST "https://api.mews.com/api/distributor/v1/hotels/get"             -H "content-type: application/json"             --data-binary "{\"Client\":\"$MEWS_CLIENT\",\"HotelId\":\"$REPO_HOTEL_ID\",\"LanguageCode\":\"en-US\",\"CultureCode\":\"en-US\"}")
+          echo "repo hotel/get HTTP $status"
+          if [[ "$status" =~ ^2 ]]; then
+            jq '{id:.Id,name:.Name,roomCategoryCount:(.RoomCategories|length),productCount:(.Products|length),currency:.DefaultCurrencyCode,imageBaseUrl:.ImageBaseUrl}' "$body"
+          else
+            jq -c '.' "$body" 2>/dev/null || cat "$body"
+          fi
