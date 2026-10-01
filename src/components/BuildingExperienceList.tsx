@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SearchCriteria, RoomType } from '../types';
 import { BUILDINGS, ROOMS } from '../data/hotelData';
-import { RoomsListCard } from './RoomsListCard';
+import { StudioRoomsListCard } from '@/components/studio/StudioRoomsListCard';
 import {
   AlpineHausWoodcut,
   WaldenHausWoodcut,
@@ -247,7 +247,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {/* Top Card: Alpine Bathing Suite with Den */}
                   {renderRoomCard(
                     ROOMS.find((r) => r.id === 'alpine-bathing-suite-den'),
-                    <RoomsListCard
+                    <StudioRoomsListCard
                       room={ROOMS.find((r) => r.id === 'alpine-bathing-suite-den')!}
                       color="paper"
                       layout="left"
@@ -259,7 +259,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {/* Middle Card: Alpine Penthouse Bathing Suite */}
                   {renderRoomCard(
                     ROOMS.find((r) => r.id === 'alpine-penthouse'),
-                    <RoomsListCard
+                    <StudioRoomsListCard
                       room={ROOMS.find((r) => r.id === 'alpine-penthouse')!}
                       color="copper"
                       layout="right"
@@ -271,7 +271,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {/* Bottom Card: Alpine Bathing Suite */}
                   {renderRoomCard(
                     ROOMS.find((r) => r.id === 'alpine-bathing-suite'),
-                    <RoomsListCard
+                    <StudioRoomsListCard
                       room={ROOMS.find((r) => r.id === 'alpine-bathing-suite')!}
                       color="smoke"
                       layout="left"
@@ -320,7 +320,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {/* Walden Forest Bathing Suite */}
                   {renderRoomCard(
                     ROOMS.find((r) => r.id === 'walden-forest-bathing'),
-                    <RoomsListCard
+                    <StudioRoomsListCard
                       room={ROOMS.find((r) => r.id === 'walden-forest-bathing')!}
                       color="paper"
                       layout="left"
@@ -332,7 +332,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {/* Walden King (Simple, warm, cabin era) */}
                   {renderRoomCard(
                     ROOMS.find((r) => r.id === 'walden-king'),
-                    <RoomsListCard
+                    <StudioRoomsListCard
                       room={ROOMS.find((r) => r.id === 'walden-king')!}
                       color="forest"
                       layout="right"
@@ -354,7 +354,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {/* Card 1: Lodge Three-Bedroom Suite */}
                   {renderRoomCard(
                     ROOMS.find((r) => r.id === 'lodge-three-bedroom'),
-                    <RoomsListCard
+                    <StudioRoomsListCard
                       room={ROOMS.find((r) => r.id === 'lodge-three-bedroom')!}
                       color="paper"
                       layout="left"
@@ -366,7 +366,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {/* Card 2: Lodge Penthouse */}
                   {renderRoomCard(
                     ROOMS.find((r) => r.id === 'lodge-penthouse'),
-                    <RoomsListCard
+                    <StudioRoomsListCard
                       room={ROOMS.find((r) => r.id === 'lodge-penthouse')!}
                       color="copper"
                       layout="right"
@@ -378,7 +378,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {/* Card 3: Lodge King */}
                   {renderRoomCard(
                     ROOMS.find((r) => r.id === 'lodge-king'),
-                    <RoomsListCard
+                    <StudioRoomsListCard
                       room={ROOMS.find((r) => r.id === 'lodge-king')!}
                       color="smoke"
                       layout="left"
