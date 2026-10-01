@@ -6,7 +6,7 @@ import { Sparkles } from 'lucide-react';
 export type RoomCardColor = 'paper' | 'forest' | 'smoke' | 'copper';
 export type RoomCardLayout = 'left' | 'right';
 
-export interface StudioStudioRoomsListCardProps {
+export interface StudioRoomsListCardProps {
   room: RoomType;
   color?: RoomCardColor;
   layout?: RoomCardLayout;
@@ -27,7 +27,7 @@ export interface StudioStudioRoomsListCardProps {
   className?: string;
 }
 
-export const StudioRoomsListCard: React.FC<StudioStudioRoomsListCardProps> = ({
+export const StudioRoomsListCard: React.FC<StudioRoomsListCardProps> = ({
   room,
   color = 'paper',
   layout = 'left',
