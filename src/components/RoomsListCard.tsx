@@ -76,30 +76,6 @@ const COLOR_STYLES = {
   },
 } as const;
 
-const FEATURE_TAGLINE_LABELS = {
-  indoorTub: "Iconic Indoor Soak",
-  outdoorSoak: "Outdoor Cedar Soak",
-  privateDeck: "Private Deck",
-  scenicView: "Mountain & Forest Views",
-  fireplace: "Fireside",
-  fullKitchen: "Full Kitchen",
-  heatedFloors: "Heated Floors",
-  ownPlace: "Your Own Place",
-  simpleCozy: "Simple + Cozy",
-} as const;
-
-function merchandisingTagline(room: ShapedRoom): string | null {
-  const features = room.merchandising?.features;
-  if (!features) return null;
-
-  const labels = Object.entries(FEATURE_TAGLINE_LABELS)
-    .filter(([key]) => features[key as keyof typeof features])
-    .map(([, label]) => label)
-    .slice(0, 2);
-
-  return labels.length ? labels.join(" · ") : null;
-}
-
 export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   room,
   imageBaseUrl,
@@ -124,7 +100,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     : null;
   const imageUrl = customImage || mewsImage;
   const pills = buildRoomCardPills(room).slice(0, 6);
-  const tagline = merchandisingTagline(room);
+  const tagline = room.merchandising?.cardTagline ?? null;
   const firstRate = room.rates[0];
   const nightlyRate = firstRate?.perNightGross ?? room.fromGross ?? null;
   const currency = firstRate?.currency ?? "USD";
@@ -180,13 +156,15 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           {headerSlot ?? (
             <div className="mb-2.5 flex flex-col gap-1.5">
               <h3
-                className={`font-brothers text-2xl font-bold uppercase leading-tight tracking-[0.72px] sm:text-3xl md:text-[34px] md:leading-[105%] ${colorStyles.title}`}
+                className={`text-2xl font-bold uppercase leading-tight tracking-[0.72px] sm:text-3xl md:text-[34px] md:leading-[105%] ${colorStyles.title}`}
+                style={{ fontFamily: "var(--font-button)" }}
               >
                 {room.name}
               </h3>
               {tagline && (
                 <p
-                  className={`font-brothers text-xs font-bold uppercase tracking-[2.5px] sm:text-[13px] ${colorStyles.tagline}`}
+                  className={`text-xs font-bold uppercase tracking-[2.5px] sm:text-[13px] ${colorStyles.tagline}`}
+                  style={{ fontFamily: "var(--font-button)" }}
                 >
                   {tagline}
                 </p>
@@ -197,7 +175,8 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           {bodySlot ??
             (room.description ? (
               <p
-                className={`mb-4 line-clamp-3 font-editorial text-xs leading-[22px] sm:text-sm sm:leading-[23px] md:line-clamp-4 ${colorStyles.description}`}
+                className={`mb-4 line-clamp-3 text-xs leading-[22px] sm:text-sm sm:leading-[23px] md:line-clamp-4 ${colorStyles.description}`}
+                style={{ fontFamily: "var(--font-body)" }}
               >
                 {room.description}
               </p>
@@ -209,11 +188,12 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <div
                   key={pill.key}
                   data-pill-source={pill.source}
-                  className={`rounded-[12px] px-2.5 py-1 font-brothers text-[10px] font-bold uppercase tracking-[1px] ${
+                  className={`rounded-[12px] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[1px] ${
                     pill.emphasis === "highlight"
                       ? colorStyles.highlightBadge
                       : colorStyles.amenityBadge
                   }`}
+                  style={{ fontFamily: "var(--font-button)" }}
                 >
                   {pill.label}
                 </div>
@@ -229,7 +209,8 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onSelectRoom(room)}
-                  className={`rounded-[17px] px-5 py-2.5 font-brothers text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95 ${colorStyles.selectBtn}`}
+                  className={`rounded-[17px] px-5 py-2.5 text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95 ${colorStyles.selectBtn}`}
+                  style={{ fontFamily: "var(--font-button)" }}
                 >
                   Select Room
                 </button>
@@ -238,7 +219,8 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenRoomDetails(room)}
-                  className={`rounded-[17px] px-5 py-2 font-brothers text-[11px] font-bold uppercase tracking-[1.1px] transition-colors ${colorStyles.detailsBtn}`}
+                  className={`rounded-[17px] px-5 py-2 text-[11px] font-bold uppercase tracking-[1.1px] transition-colors ${colorStyles.detailsBtn}`}
+                  style={{ fontFamily: "var(--font-button)" }}
                 >
                   View Details
                 </button>
@@ -249,12 +231,15 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           {priceSlot ?? (
             <div className="text-right">
               {nightlyRate != null ? (
-                <span className={`font-brothers text-lg font-normal sm:text-xl md:text-2xl ${colorStyles.price}`}>
+                <span
+                  className={`text-lg font-normal sm:text-xl md:text-2xl ${colorStyles.price}`}
+                  style={{ fontFamily: "var(--font-button)" }}
+                >
                   from {money(nightlyRate, currency)}
                   <span className="text-xs">/night</span>
                 </span>
               ) : (
-                <span className={`font-brothers text-sm ${colorStyles.price}`}>Check rate</span>
+                <span className={`text-sm ${colorStyles.price}`} style={{ fontFamily: "var(--font-button)" }}>Check rate</span>
               )}
             </div>
           )}
