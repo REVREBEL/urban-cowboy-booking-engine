@@ -13,7 +13,7 @@ import { unresolvedCategoryBindings } from "../lib/roomMerchandising";
 import HelpMeChoose from "./HelpMeChoose";
 import { StudioFindYourStay } from "./StudioFindYourStay";
 import { StudioMatchResults } from "./StudioMatchResults";
-import { StudioRoomCard, type StudioRoomCardColor } from "./StudioRoomCard";
+import { RoomsListCard, type RoomCardColor } from "@/components/RoomsListCard";
 import { BuildingExperienceList } from "@/components/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/RoomDetailModal";
 import type { RoomType as StudioRoomType } from "@/types";
@@ -412,10 +412,10 @@ export function Results() {
         <div className="mt-5 space-y-5">
           {rooms.map((room, index) => (
             <div key={room.categoryId} className="space-y-4">
-              <StudioRoomCard
+              <RoomsListCard
                 room={room}
                 imageBaseUrl={imageBaseUrl}
-                color={(["paper", "copper", "smoke", "forest"] as StudioRoomCardColor[])[index % 4]}
+                color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
                 layout={index % 2 === 0 ? "left" : "right"}
                 onSelectRoom={(selected) => {
                   const rate = selected.rates[0];
@@ -464,7 +464,7 @@ export function Results() {
                   {isOpen && (
                     <div className="space-y-4 border-t border-ink/10 bg-cream/40 p-4">
                       {propRooms.map((room) => (
-                        <StudioRoomCard
+                        <RoomsListCard
                           key={room.categoryId}
                           room={room}
                           imageBaseUrl={imageBaseUrl}
