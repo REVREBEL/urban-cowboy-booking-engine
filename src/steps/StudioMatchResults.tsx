@@ -3,7 +3,7 @@ import { buildTopMatchCopy } from "@/lib/topMatch";
 import { roomDetailTags } from "@/lib/roomTags";
 import type { MatchInterest, RecommendationPreferences } from "@/types/merchandising";
 import type { ShapedRoom } from "@/types/mews";
-import { StudioRoomCard } from "./StudioRoomCard";
+import { RoomsListCard } from "@/components/RoomsListCard";
 
 type StudioMatchResultsProps = {
   rooms: ShapedRoom[];
@@ -72,7 +72,7 @@ export function StudioMatchResults({
         </header>
 
         <div className="grid items-stretch gap-4 xl:grid-cols-[minmax(0,2.2fr)_minmax(18rem,0.9fr)]">
-          <StudioRoomCard
+          <RoomsListCard
             room={top}
             imageBaseUrl={imageBaseUrl}
             onSelectRoom={onSelectRoom}
@@ -97,7 +97,7 @@ export function StudioMatchResults({
             <h2 className="font-desert text-3xl font-bold uppercase text-[#4E332D]">Other High-Matching Options</h2>
             <div className="mt-5 space-y-5">
               {alternates.map((room, index) => (
-                <StudioRoomCard
+                <RoomsListCard
                   key={room.categoryId}
                   room={room}
                   imageBaseUrl={imageBaseUrl}
