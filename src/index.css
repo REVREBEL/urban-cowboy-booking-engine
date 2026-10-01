@@ -171,6 +171,27 @@
   }
 }
 
+/* The Studio room catalogue owns its original typography without changing the
+   production booking shell outside this experience. */
+.studio-room-experience .font-display {
+  font-family: var(--font-button);
+  letter-spacing: normal;
+}
+
+.studio-room-experience .font-woodblock,
+.studio-room-experience .font-brothers {
+  font-family: var(--font-label);
+}
+
+.studio-room-experience .font-editorial,
+.studio-room-experience .font-uchen {
+  font-family: var(--font-body);
+}
+
+.studio-room-experience .font-cedarville {
+  font-family: var(--font-blockquote);
+}
+
 
 /* Studio visual system, ported from Cowboy-Studio-AI/dev while retaining the
    production Tailwind 3 pipeline and existing semantic tokens. */

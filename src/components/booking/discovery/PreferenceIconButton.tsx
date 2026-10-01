@@ -27,7 +27,7 @@ const ICON: Record<PreferenceId, string> = {
 
 const LABEL: Partial<Record<PreferenceId, string>> = {
   "iconic-tub": "/assets/labels/copper_clawfoot_soaking_tub_label.svg",
-  "bathe-outside": "/assets/labels/soak_outside_label.svg",
+  "bathe-outside": "/assets/labels/soak-outside-label.svg",
   "my-own-place": "/assets/labels/my_own_place_label.svg",
   "near-everything": "/assets/labels/spaces_to_gather_label.svg",
   "simple-cozy": "/assets/labels/simple_cozy_label.svg",

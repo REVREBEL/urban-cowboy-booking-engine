@@ -4,7 +4,7 @@ export type FindYourStayProps = {
   adults: number;
   children: number;
   infants?: number;
-  availableCount: number;
+  availableCount?: number;
   onChangeSearch: () => void;
   onHelpMeChoose: () => void;
   onBrowseAll: () => void;
@@ -66,7 +66,9 @@ export default function FindYourStay({
 
       <div className="booking-shell pb-8 pt-12">
         <p className="mb-3 text-xs uppercase tracking-[0.25em] text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>
-          {availableCount} Room Experience{availableCount !== 1 ? "s" : ""} Available
+          {availableCount === undefined
+            ? "Room Experiences"
+            : `${availableCount} Room Experience${availableCount !== 1 ? "s" : ""} Available`}
         </p>
         <h1 className="mb-4 text-4xl leading-none text-[#4e332d] md:text-6xl" style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}>
           How Would You Like<br className="hidden md:block" /> to Find Your Stay?
@@ -90,7 +92,7 @@ export default function FindYourStay({
               <p className="mb-3 text-xs uppercase tracking-widest text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>Recommended</p>
               <h2 className="mb-3 text-3xl leading-tight md:text-4xl" style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}>Help Me Choose</h2>
               <p className="max-w-xs text-sm leading-relaxed opacity-70" style={{ fontFamily: "var(--font-uchen)" }}>
-                Tell us who&apos;s coming and what matters most. We&apos;ll find your match in 3 questions.
+                Tell us who&apos;s coming and what matters most. We&apos;ll find your match in 2 quick steps.
               </p>
             </div>
             <div className="mt-6 flex items-center gap-2">
@@ -113,7 +115,9 @@ export default function FindYourStay({
               <p className="mb-3 text-xs uppercase tracking-widest text-[#9a5636]" style={{ fontFamily: "var(--font-brothers)" }}>Browse All</p>
               <h2 className="mb-3 text-3xl leading-tight md:text-4xl" style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}>Show All Rooms</h2>
               <p className="max-w-xs text-sm leading-relaxed text-[#767470]" style={{ fontFamily: "var(--font-uchen)" }}>
-                Browse all {availableCount} available room experiences.
+                {availableCount === undefined
+                  ? "Browse every available room experience."
+                  : `Browse all ${availableCount} available room experiences.`}
               </p>
             </div>
             <div className="mt-6 flex items-center gap-2">

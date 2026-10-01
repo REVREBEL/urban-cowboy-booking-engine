@@ -87,10 +87,10 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
   };
 
   const colors = {
-    bg: isSelected ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.25)',
-    border: isSelected ? '#4E332D' : '#A79996',
-    title: isSelected ? '#4E332D' : '#A79996',
-    subtitle: isSelected ? '#4E332D' : '#A79996',
+    bg: isSelected ? 'rgba(255, 255, 255, 0.7)' : 'rgba(242, 180, 177, 0.58)',
+    border: isSelected ? '#4E332D' : '#365443',
+    title: isSelected ? '#4E332D' : '#365443',
+    subtitle: isSelected ? '#4E332D' : '#365443',
   };
 
   return (
