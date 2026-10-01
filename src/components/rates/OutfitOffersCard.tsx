@@ -86,6 +86,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const isCompact = variant === 'compact';
   const isSubmitting = externalLoading || internalLoading;
+  const displayedPrice = isUnlocked ? price : '$X?X?X?';
 
   const handleAction = async () => {
     if (disabled || isSubmitting) return;
@@ -212,18 +213,18 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
               </div>
 
               {/* Price Display */}
-              <div className="w-full flex flex-col justify-center px-[20px] box-border select-none mb-2">
+              <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
-                  className="w-full text-left font-normal uppercase select-none"
+                  className="w-full text-left font-normal uppercase select-none whitespace-nowrap"
                   style={{
                     color: '#F2AAA9',
                     fontFamily: "'League Gothic', 'Impact', sans-serif-condensed, sans-serif",
-                    fontSize: '46px',
+                    fontSize: 'clamp(30px, 10cqw, 46px)',
                     lineHeight: '46px',
                     letterSpacing: '0.08em',
                   }}
                 >
-                  {price} {priceUnit}
+                  {displayedPrice} {priceUnit}
                 </div>
                 <div
                   className="w-full text-right font-normal select-none mt-0.5"
@@ -260,8 +261,8 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3.5 rounded-full bg-[#F2AAA9] text-[#0E301A] font-bold text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-white whitespace-nowrap"
-                      style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+                      className="px-8 py-3.5 rounded-full bg-[#F2AAA9] text-[#0E301A] font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-white whitespace-nowrap"
+                      style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
@@ -349,18 +350,18 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
 
                 {/* Bottom Action Group */}
                 <div className="w-full flex flex-col items-center gap-4">
-                  <div className="w-full flex flex-col justify-center px-[24px] box-border select-none">
+                  <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
-                      className="w-full text-left font-normal uppercase select-none"
+                      className="w-full text-left font-normal uppercase select-none whitespace-nowrap"
                       style={{
                         color: '#F2AAA9',
                         fontFamily: "'League Gothic', 'Impact', sans-serif-condensed, sans-serif",
-                        fontSize: '46px',
+                        fontSize: 'clamp(30px, 10cqw, 46px)',
                         lineHeight: '46px',
                         letterSpacing: '0.08em',
                       }}
                     >
-                      {price} {priceUnit}
+                      {displayedPrice} {priceUnit}
                     </div>
                     <div
                       className="w-full text-right font-normal select-none mt-0.5"
@@ -379,7 +380,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                   <div className="w-full flex flex-col items-center gap-2">
                     {isUnlocked && (
                       <div className="w-full max-w-[380px] rounded-full border border-[#F2AAA9]/40 bg-[#1E2F28] px-4 py-3 text-center text-[#F2AAA9]" role="status">
-                        <span className="font-normal text-[18px] tracking-[1px] uppercase" style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}>
+                        <span className="font-normal text-[18px] tracking-[1px] uppercase" style={{ fontFamily: 'var(--font-button)' }}>
                           Member rate unlocked
                         </span>
                       </div>
@@ -403,7 +404,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                           disabled={disabled || isSubmitting}
                           className="w-full min-h-[64px] rounded-full bg-[#F2AAA9] px-6 py-3 text-[#1B2B24] transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
                         >
-                          <span className="font-normal text-[20px] tracking-[1.2px] uppercase" style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}>
+                          <span className="font-normal text-[20px] tracking-[1.2px] uppercase" style={{ fontFamily: 'var(--font-button)' }}>
                             {isSubmitting ? 'Unlocking…' : 'Confirm & Save'}
                           </span>
                         </button>
@@ -416,7 +417,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                       disabled={disabled || isSubmitting}
                       className={`group w-full max-w-[380px] min-h-[64px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#F2AAA9]/30 active:scale-[0.98] whitespace-nowrap ${
                         disabled
-                          ? 'opacity-50 cursor-not-allowed bg-[#F2AAA9]/50 text-[#0E301A]/60 border-[#F2AAA9]/50'
+                          ? 'cursor-not-allowed bg-[#F2AAA9] text-[#0E301A] border-[3px] border-[#F2AAA9]'
                           : isExpanded
                           ? 'bg-[#F2AAA9] text-[#0E301A]'
                           : isSubmitting
@@ -427,7 +428,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     >
                       {isSubmitting ? (
                         <span
-                          className="font-bold text-[18px] tracking-[1px] uppercase whitespace-nowrap"
+                          className="font-button font-normal text-[18px] tracking-[1px] uppercase whitespace-nowrap"
                           style={{ fontFamily: "'DM Sans', sans-serif" }}
                         >
                           Confirming...
@@ -435,7 +436,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                       ) : (
                         <span
                           className="font-normal text-[20px] sm:text-[22px] tracking-[1.2px] uppercase select-none transition-colors whitespace-nowrap"
-                          style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+                          style={{ fontFamily: 'var(--font-button)' }}
                         >
                           {isExpanded && isUnlocked ? confirmLabel : ctaLabel}
                         </span>

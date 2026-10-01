@@ -156,12 +156,12 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
               </div>
 
               {/* Price Display */}
-              <div className="w-full flex flex-col justify-center px-[20px] box-border select-none mb-2">
+              <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
-                  className="w-full text-left font-bold text-white uppercase select-none"
+                  className="w-full text-left font-bold text-white uppercase select-none whitespace-nowrap"
                   style={{
                     fontFamily: "'Quattrocento', serif",
-                    fontSize: '44px',
+                    fontSize: 'clamp(28px, 9cqw, 44px)',
                     lineHeight: '44px',
                     letterSpacing: '1px',
                   }}
@@ -203,8 +203,8 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3.5 rounded-full bg-[#EBE8E0] text-[#343833] font-bold text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-white whitespace-nowrap"
-                      style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+                      className="px-8 py-3.5 rounded-full bg-[#EBE8E0] text-[#343833] font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-white whitespace-nowrap"
+                      style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
@@ -285,12 +285,12 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                 </div>
 
                 <div className="w-full flex flex-col items-center gap-4">
-                  <div className="w-full flex flex-col justify-center px-[24px] box-border select-none">
+                  <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
-                      className="w-full text-left font-bold text-white uppercase select-none"
+                      className="w-full text-left font-bold text-white uppercase select-none whitespace-nowrap"
                       style={{
                         fontFamily: "'Quattrocento', serif",
-                        fontSize: '44px',
+                        fontSize: 'clamp(28px, 9cqw, 44px)',
                         lineHeight: '44px',
                         letterSpacing: '1px',
                       }}
@@ -332,7 +332,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                     >
                       {isSubmitting ? (
                         <span
-                          className="font-bold text-[18px] tracking-[1px] uppercase whitespace-nowrap"
+                          className="font-button font-normal text-[18px] tracking-[1px] uppercase whitespace-nowrap"
                           style={{ fontFamily: "'Bianco Sans', 'Lato', sans-serif" }}
                         >
                           Confirming...
@@ -340,7 +340,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                       ) : (
                         <span
                           className="font-normal text-[20px] sm:text-[22px] tracking-[1.2px] uppercase select-none transition-colors whitespace-nowrap"
-                          style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+                          style={{ fontFamily: 'var(--font-button)' }}
                         >
                           {isExpanded ? confirmLabel : ctaLabel}
                         </span>

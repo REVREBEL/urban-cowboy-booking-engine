@@ -139,12 +139,12 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
               </div>
 
               {/* Price Display */}
-              <div className="w-full flex flex-col justify-center px-[20px] box-border select-none mb-2">
+              <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
-                  className="w-full text-left font-semibold text-[#343833] uppercase select-none"
+                  className="w-full text-left font-semibold text-[#343833] uppercase select-none whitespace-nowrap"
                   style={{
                     fontFamily: "'League Spartan', sans-serif",
-                    fontSize: '44px',
+                    fontSize: 'clamp(28px, 9cqw, 44px)',
                     lineHeight: '44px',
                     letterSpacing: '1px',
                   }}
@@ -185,8 +185,8 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3.5 rounded-full bg-[#343833] text-[#F9F9F9] font-bold text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-[#221C18] whitespace-nowrap border-2 border-[#4E332D]"
-                      style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+                      className="px-8 py-3.5 rounded-full bg-[#343833] text-[#F9F9F9] font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-[#221C18] whitespace-nowrap border-2 border-[#4E332D]"
+                      style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
@@ -212,7 +212,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
               }}
             >
               <div
-                className="w-full h-full flex flex-col justify-between items-center transition-all duration-300"
+                className="w-full h-full flex flex-col justify-around items-center transition-all duration-300"
                 style={{
                   minHeight: '820px',
                 }}
@@ -250,12 +250,12 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                 </div>
 
                 <div className="w-full flex flex-col items-center gap-4">
-                  <div className="w-full flex flex-col justify-center px-[24px] box-border select-none">
+                  <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
-                      className="w-full text-left font-semibold text-[#343833] uppercase select-none"
+                      className="w-full text-left font-semibold text-[#343833] uppercase select-none whitespace-nowrap"
                       style={{
                         fontFamily: "'League Spartan', sans-serif",
-                        fontSize: '44px',
+                        fontSize: 'clamp(28px, 9cqw, 44px)',
                         lineHeight: '44px',
                         letterSpacing: '1px',
                       }}
@@ -296,15 +296,15 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                     >
                       {isSubmitting ? (
                         <span
-                          className="font-bold text-[18px] tracking-[1px] uppercase whitespace-nowrap"
-                          style={{ fontFamily: "'League Spartan', sans-serif" }}
+                          className="font-button font-normal text-[18px] tracking-[1px] uppercase whitespace-nowrap"
+                          style={{ fontFamily: 'var(--font-button)' }}
                         >
                           Confirming...
                         </span>
                       ) : (
                         <span
                           className="font-normal text-[20px] sm:text-[22px] tracking-[1.2px] uppercase select-none transition-colors whitespace-nowrap"
-                          style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+                          style={{ fontFamily: 'var(--font-button)' }}
                         >
                           {isExpanded ? confirmLabel : ctaLabel}
                         </span>

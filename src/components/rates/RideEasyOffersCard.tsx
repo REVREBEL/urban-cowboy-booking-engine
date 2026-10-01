@@ -243,19 +243,19 @@ export const OffersCard: React.FC<OffersCardProps> = ({
 
               {/* Price Display (414px x 70px) */}
               <div
-                className="w-full flex flex-col justify-center items-center select-none"
+                className="w-full flex flex-col justify-center select-none"
                 style={{
                   width: '414px',
                   maxWidth: '100%',
                   height: '70px',
-                  padding: '0px 30px',
+                  padding: '0 30px',
                 }}
               >
                 {/* Price Text */}
                 <div
-                  className="select-none text-center"
+                  className="w-full select-none text-left whitespace-nowrap"
                   style={{
-                    width: '330px',
+                    width: '100%',
                     height: '45px',
                     fontFamily: "'Quattrocento', serif",
                     fontWeight: 700,
@@ -272,7 +272,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                 <div
                   className="select-none text-right"
                   style={{
-                    width: '330px',
+                    width: '100%',
                     height: '25px',
                     fontFamily: "'Lato', sans-serif",
                     fontWeight: 400,
@@ -312,8 +312,8 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3 rounded-full bg-[#343833] text-[#EBE8E0] font-bold text-base sm:text-lg uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-[#221C18] whitespace-nowrap"
-                      style={{ fontFamily: "'Brothers OT', sans-serif" }}
+                      className="px-8 py-3 rounded-full bg-[#343833] text-[#EBE8E0] font-button font-normal text-base sm:text-lg uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-[#221C18] whitespace-nowrap"
+                      style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
@@ -346,26 +346,26 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   padding: '40px 30px 34px',
                 }}
               >
-                {/* 1. Top Eyebrow Tag */}
-                <div
-                  className="w-full uppercase font-bold tracking-[1.5px] leading-tight select-none"
-                  style={{
-                    color: '#D65241',
-                    fontFamily: "'Lato', sans-serif",
-                    fontSize: '25px',
-                  }}
-                >
-                  {eyebrow}
-                </div>
+                {/* Top editorial group: eyebrow, title lockup, and narrative. */}
+                <div className="w-full flex flex-col gap-8">
+                  <div
+                    className="w-full uppercase font-bold tracking-[1.5px] leading-tight select-none"
+                    style={{
+                      color: '#D65241',
+                      fontFamily: "'Lato', sans-serif",
+                      fontSize: '25px',
+                    }}
+                  >
+                    {eyebrow}
+                  </div>
 
-                {/* 2. Headline Lockup: Bold RIDE EASY + Stacked Keep Your Options Open. */}
-                <div className="w-full flex flex-row items-center justify-between min-h-[120px] select-none">
+                  <div className="w-full flex flex-row items-center justify-between min-h-[120px] select-none">
                   <div
                     className="font-bold tracking-[-2px] uppercase whitespace-pre-line leading-[0.85]"
                     style={{
                       color: '#343833',
                       fontFamily: "'Noto Serif', serif",
-                      fontSize: 'clamp(56px, 12vw, 76px)',
+                      fontSize: 'clamp(64px, 12vw, 90px)',
                     }}
                   >
                     {headlineMain}
@@ -384,7 +384,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                       </span>
                     ))}
                   </div>
-                </div>
+                  </div>
 
                 {/* 3. Prominent Narrative Paragraph */}
                 <div className="w-full">
@@ -397,12 +397,13 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   >
                     Our standard rate for guests who want a little more freedom around their plans.
                   </p>
+                  </div>
                 </div>
 
                 {/* 4. Cowboy Best Rate Guarantee Row with Sheriff Badge */}
                 <div className="w-full flex items-center justify-between">
                   <span
-                    className="font-bold uppercase tracking-[1.5px] text-[#221C18] leading-tight text-left"
+                    className="font-bold uppercase tracking-[1.5px] text-[#221C18] leading-tight text-left text-balance"
                     style={{
                       fontFamily: "'Lato', sans-serif",
                       fontSize: '22px',
@@ -416,18 +417,18 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                 </div>
 
                 {/* 5. Price Row */}
-                <div className="w-full flex flex-col items-center justify-center select-none">
+                <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
                   <div
-                    className="text-[#221C18] font-bold tracking-[0.5px] leading-tight text-center"
+                    className="w-full text-[#221C18] font-bold tracking-[0.5px] leading-tight text-left whitespace-nowrap"
                     style={{
                       fontFamily: "'Quattrocento', Georgia, serif",
-                      fontSize: '40px',
+                      fontSize: 'clamp(28px, 9cqw, 40px)',
                     }}
                   >
                     {price} {priceUnit}
                   </div>
                   <div
-                    className="w-full text-center text-[#343833] font-normal tracking-[0.5px] mt-1 text-sm opacity-90"
+                    className="w-full text-right text-[#343833] font-normal tracking-[0.5px] mt-1 text-sm opacity-90"
                     style={{ fontFamily: "'Lato', sans-serif" }}
                   >
                     {taxDisclaimer}
@@ -440,7 +441,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     type="button"
                     onClick={handleAction}
                     disabled={disabled || isSubmitting}
-                    className="w-full max-w-[420px] py-4 px-6 rounded-full bg-[#343833] hover:bg-[#221C18] text-white font-bold text-sm sm:text-base uppercase tracking-[0.1em] shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
+                    className="w-full max-w-[420px] py-4 px-6 rounded-full bg-[#343833] hover:bg-[#221C18] text-white font-button font-normal text-sm sm:text-base uppercase tracking-[0.1em] shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
                   >
                     {isSubmitting ? 'Confirming...' : isExpanded ? confirmLabel : ctaLabel}
                   </button>

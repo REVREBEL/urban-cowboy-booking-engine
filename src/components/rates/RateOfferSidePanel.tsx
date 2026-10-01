@@ -376,9 +376,9 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
               backgroundColor: themeConfig.btnBg,
               color: themeConfig.btnText,
               border: themeConfig.btnBorder ? `2px solid ${themeConfig.btnBorder}` : 'none',
-              fontFamily: themeConfig.fontFamily,
+              fontFamily: 'var(--font-button)',
             }}
-            className="h-[60px] px-8 sm:px-10 rounded-full text-xs sm:text-sm uppercase tracking-[0.12em] font-bold shadow-md hover:shadow-lg hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center whitespace-nowrap disabled:opacity-50"
+            className="h-[60px] px-8 sm:px-10 rounded-full font-button text-xs sm:text-sm uppercase tracking-[0.12em] font-normal shadow-md hover:shadow-lg hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center whitespace-nowrap disabled:opacity-50"
           >
             {isSubmitting ? 'Confirming...' : 'AGREE & CONFIRM BOOKING'}
           </button>
@@ -390,13 +390,14 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   // ================= NORMAL VARIANT (Normal Active Open.png) =================
   return (
     <div
-      className="w-[480px] rounded-r-[40px] rounded-l-none p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-xl relative box-border min-h-[820px] transition-colors duration-300 shrink-0"
+      className="w-[480px] h-[800px] rounded-r-[40px] rounded-l-none p-6 sm:p-8 lg:p-10 flex flex-col justify-around shadow-xl relative box-border transition-colors duration-300 shrink-0"
       style={{
         width: '480px',
         minWidth: '480px',
         backgroundColor: themeConfig.panelBg,
         border: `3.5px solid ${themeConfig.borderColor}`,
         fontFamily: themeConfig.fontFamily,
+        height: '800px',
       }}
     >
       {/* Top Close Icon */}

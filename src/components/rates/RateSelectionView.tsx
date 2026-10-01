@@ -16,9 +16,7 @@ import {
   ChevronDown,
   ChevronUp,
   ChevronLeft,
-  ChevronRight,
-  Sparkles,
-  X
+  ChevronRight
 } from 'lucide-react';
 
 const RATE_CARD_KEYS = ['ride-easy', 'member', 'sunup', 'stay-while', 'plan-ahead'] as const;
@@ -49,14 +47,12 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   selectedRate: _selectedRate,
   onSelectRate,
   onChangeRoom,
-  activeVersion = 'v2',
-  onSelectVersion,
   liveRates,
   onSelectLiveRate,
   memberRate = null,
   onUnlockMember,
 }) => {
-  const [rateCardsVariant, setRateCardsVariant] = useState<'default' | 'compact'>('default');
+  const [rateCardsVariant] = useState<'default' | 'compact'>('default');
   const [expandedRateId, setExpandedRateId] = useState<string | null>(null);
   const [showInclusionsMatrix, setShowInclusionsMatrix] = useState<boolean>(false);
 
@@ -384,20 +380,14 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
       <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="space-y-4">
           
-          {/* Header Bar: SELECT A RATE + VIEW SWITCHER + SPOTLIGHT CONTROLS */}
+          {/* Header Bar: SELECT A RATE + CAROUSEL CONTROLS */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-[#4E332D]">
             <div>
               <div className="flex items-center gap-3">
                 <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#221C18] uppercase tracking-[0.15em]">
                   Select a Rate
                 </h2>
-                <span className="text-xs font-mono uppercase bg-[#9A5636]/15 text-[#9A5636] px-2.5 py-0.5 rounded-full font-bold border border-[#9A5636]/30">
-                  Spotlight Carousel (Row 0.70x · Spotlight 0.85x · Staggered Offsets)
-                </span>
               </div>
-              <span className="font-woodblock text-xs uppercase tracking-wider text-[#73716D] block mt-0.5">
-                {criteria.checkIn} — {criteria.checkOut} · {criteria.nights} Nights · {criteria.guests} Adults · Click any offer to spotlight & expand
-              </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
@@ -423,60 +413,6 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                   title="Next rate"
                 >
                   <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Version Toggle (Version 1 vs Version 2) */}
-              <div className="flex items-center bg-[#FAF9F9] border border-[#4E332D]/20 rounded-full p-1 text-xs font-woodblock uppercase tracking-wider text-[#4E332D]">
-                <button
-                  type="button"
-                  onClick={() => onSelectVersion && onSelectVersion('v1')}
-                  className={`px-3 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
-                    activeVersion === 'v1'
-                      ? 'bg-[#343833] text-[#FAF9F9] shadow-xs font-bold'
-                      : 'text-[#73716D] hover:text-[#343833]'
-                  }`}
-                >
-                  <span>Version 1</span>
-                  <span className="text-[10px] opacity-75 font-mono">(Stored)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onSelectVersion && onSelectVersion('v2')}
-                  className={`px-3 py-1 rounded-full transition-all cursor-pointer flex items-center gap-1.5 ${
-                    activeVersion === 'v2'
-                      ? 'bg-[#D65241] text-white shadow-xs font-bold'
-                      : 'text-[#73716D] hover:text-[#D65241]'
-                  }`}
-                >
-                  <span>Version 2</span>
-                  <span className="text-[10px] opacity-75 font-mono">(Active)</span>
-                </button>
-              </div>
-
-              {/* View toggle (Default vs Compact) */}
-              <div className="flex items-center bg-[#FAF9F9] border border-[#4E332D]/20 rounded-full p-1 text-xs font-woodblock uppercase tracking-wider text-[#4E332D]">
-                <button
-                  type="button"
-                  onClick={() => setRateCardsVariant('default')}
-                  className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
-                    rateCardsVariant === 'default'
-                      ? 'bg-[#4E332D] text-[#EBE8E0] shadow-xs'
-                      : 'text-[#73716D] hover:text-[#4E332D]'
-                  }`}
-                >
-                  Normal
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRateCardsVariant('compact')}
-                  className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
-                    rateCardsVariant === 'compact'
-                      ? 'bg-[#4E332D] text-[#EBE8E0] shadow-xs'
-                      : 'text-[#73716D] hover:text-[#4E332D]'
-                  }`}
-                >
-                  Compact
                 </button>
               </div>
 
@@ -527,11 +463,10 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                   setExpandedRateId(null);
                 }
               }}
-              className="w-full flex flex-row items-start gap-8 sm:gap-10 overflow-x-auto pt-8 pb-36"
+              className="w-full flex flex-row items-start gap-8 sm:gap-10 overflow-x-auto py-8"
               style={{
                 scrollbarWidth: 'thin',
                 scrollbarColor: '#9A5636 #FAF9F9',
-                minHeight: '920px',
                 paddingLeft: 'max(48px, calc(50% - 250px))',
                 paddingRight: 'max(80px, calc(50% - 250px))',
               }}
@@ -558,35 +493,10 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
+                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
-                    {/* Spotlight / Expansion Indicator Badge */}
-                    <div className="h-9 mb-2 flex items-center justify-center transition-opacity duration-300">
-                      {isExpanded ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setExpandedRateId(null);
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#343833] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-wider shadow-sm hover:bg-[#D65241] transition-colors cursor-pointer group"
-                          title="Click to deselect and close rate details"
-                        >
-                          <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform" />
-                          <span>Expanded · Click to Deselect</span>
-                        </button>
-                      ) : isSpotlight ? (
-                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#9A5636] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-[0.2em] shadow-sm animate-pulse">
-                          <Sparkles className="w-3.5 h-3.5 text-[#FAF9F9]" />
-                          <span>Spotlight Offer</span>
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-woodblock uppercase tracking-wider text-[#73716D] opacity-40 hover:opacity-100 transition-opacity">
-                          Click to spotlight
-                        </span>
-                      )}
-                    </div>
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     <OffersCard
@@ -624,35 +534,10 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
+                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
-                    {/* Spotlight / Expansion Indicator Badge */}
-                    <div className="h-9 mb-2 flex items-center justify-center transition-opacity duration-300">
-                      {isExpanded ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setExpandedRateId(null);
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#343833] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-wider shadow-sm hover:bg-[#D65241] transition-colors cursor-pointer group"
-                          title="Click to deselect and close rate details"
-                        >
-                          <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform" />
-                          <span>Expanded · Click to Deselect</span>
-                        </button>
-                      ) : isSpotlight ? (
-                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#9A5636] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-[0.2em] shadow-sm animate-pulse">
-                          <Sparkles className="w-3.5 h-3.5 text-[#FAF9F9]" />
-                          <span>Spotlight Offer</span>
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-woodblock uppercase tracking-wider text-[#73716D] opacity-40 hover:opacity-100 transition-opacity">
-                          Click to spotlight
-                        </span>
-                      )}
-                    </div>
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     <OffersCardOutfit
@@ -693,35 +578,10 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
+                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
-                    {/* Spotlight / Expansion Indicator Badge */}
-                    <div className="h-9 mb-2 flex items-center justify-center transition-opacity duration-300">
-                      {isExpanded ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setExpandedRateId(null);
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#343833] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-wider shadow-sm hover:bg-[#D65241] transition-colors cursor-pointer group"
-                          title="Click to deselect and close rate details"
-                        >
-                          <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform" />
-                          <span>Expanded · Click to Deselect</span>
-                        </button>
-                      ) : isSpotlight ? (
-                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#9A5636] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-[0.2em] shadow-sm animate-pulse">
-                          <Sparkles className="w-3.5 h-3.5 text-[#FAF9F9]" />
-                          <span>Middle Spotlight Offer</span>
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-woodblock uppercase tracking-wider text-[#73716D] opacity-40 hover:opacity-100 transition-opacity">
-                          Click to spotlight
-                        </span>
-                      )}
-                    </div>
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     <OffersCardSunup
@@ -760,35 +620,10 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
+                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
-                    {/* Spotlight / Expansion Indicator Badge */}
-                    <div className="h-9 mb-2 flex items-center justify-center transition-opacity duration-300">
-                      {isExpanded ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setExpandedRateId(null);
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#343833] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-wider shadow-sm hover:bg-[#D65241] transition-colors cursor-pointer group"
-                          title="Click to deselect and close rate details"
-                        >
-                          <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform" />
-                          <span>Expanded · Click to Deselect</span>
-                        </button>
-                      ) : isSpotlight ? (
-                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#9A5636] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-[0.2em] shadow-sm animate-pulse">
-                          <Sparkles className="w-3.5 h-3.5 text-[#FAF9F9]" />
-                          <span>Spotlight Offer</span>
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-woodblock uppercase tracking-wider text-[#73716D] opacity-40 hover:opacity-100 transition-opacity">
-                          Click to spotlight
-                        </span>
-                      )}
-                    </div>
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     <OffersCardStayAWhile
@@ -827,41 +662,16 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
+                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
-                    {/* Spotlight / Expansion Indicator Badge */}
-                    <div className="h-9 mb-2 flex items-center justify-center transition-opacity duration-300">
-                      {isExpanded ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setExpandedRateId(null);
-                          }}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#343833] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-wider shadow-sm hover:bg-[#D65241] transition-colors cursor-pointer group"
-                          title="Click to deselect and close rate details"
-                        >
-                          <X className="w-3.5 h-3.5 group-hover:rotate-90 transition-transform" />
-                          <span>Expanded · Click to Deselect</span>
-                        </button>
-                      ) : isSpotlight ? (
-                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#9A5636] text-[#FAF9F9] font-woodblock text-[11px] uppercase tracking-[0.2em] shadow-sm animate-pulse">
-                          <Sparkles className="w-3.5 h-3.5 text-[#FAF9F9]" />
-                          <span>Spotlight Offer</span>
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-woodblock uppercase tracking-wider text-[#73716D] opacity-40 hover:opacity-100 transition-opacity">
-                          Click to spotlight
-                        </span>
-                      )}
-                    </div>
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     <OffersCardPlanAhead
                       variant={rateCardsVariant}
                       price={`$${pricing.nightly}`}
-                      priceUnit="NIGHTLY"
+                      priceUnit="Nightly"
                       isExpanded={isExpanded}
                       onToggleExpand={() => handleToggleExpandCard('plan-ahead', idx)}
                       onConfirmBooking={() => selectCardRate('plan-ahead', rate)}

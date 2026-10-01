@@ -1,6 +1,28 @@
 import React, { useState } from 'react';
 import { RateOfferSidePanel } from './RateOfferSidePanel';
 
+const SunupCornerFlourish = ({ className = '' }: { className?: string }) => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 42 42"
+    className={`absolute h-9 w-9 text-[#9A5636] ${className}`}
+    fill="none"
+  >
+    <path d="M1 20C12 20 20 12 20 1" stroke="currentColor" strokeWidth="3.5" />
+    <path d="M8 10c8 1 13 6 14 14M9 6c2 5 6 7 11 8M5 13c5 0 8 3 10 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M11 7c-4-5-8-4-9-3 1 4 4 6 9 3ZM7 15c-5-2-7 1-7 3 4 2 6 1 7-3ZM18 11c-1-5 2-7 4-7 2 4 0 6-4 7Z" fill="currentColor" />
+  </svg>
+);
+
+const SunupInsetFrame = () => (
+  <div aria-hidden="true" className="pointer-events-none absolute inset-[10px] z-10 rounded-[40px] border-[4px] border-[#9A5636]">
+    <SunupCornerFlourish className="-left-[11px] -top-[11px]" />
+    <SunupCornerFlourish className="-right-[11px] -top-[11px] rotate-90" />
+    <SunupCornerFlourish className="-bottom-[11px] -right-[11px] rotate-180" />
+    <SunupCornerFlourish className="-bottom-[11px] -left-[11px] -rotate-90" />
+  </div>
+);
+
 export interface OffersCardSunupProps {
   /** Variant of the card: 'default' displays full details; 'compact' displays condensed view */
   variant?: 'default' | 'compact';
@@ -157,13 +179,13 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
               </div>
 
               {/* Price Display */}
-              <div className="w-full flex flex-col justify-center px-[20px] box-border select-none mb-2">
+              <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
-                  className="w-full text-left font-bold uppercase select-none"
+                  className="w-full text-left font-bold uppercase select-none whitespace-nowrap"
                   style={{
                     color: '#9A5636',
                     fontFamily: "'Rundeck', 'League Spartan', sans-serif",
-                    fontSize: '44px',
+                    fontSize: 'clamp(28px, 9cqw, 44px)',
                     lineHeight: '44px',
                     letterSpacing: '-1.5px',
                   }}
@@ -205,8 +227,8 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3.5 rounded-full bg-[#9A5636] text-[#EBE8E0] font-bold text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:brightness-110 whitespace-nowrap"
-                      style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+                      className="px-8 py-3.5 rounded-full bg-[#9A5636] text-[#EBE8E0] font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:brightness-110 whitespace-nowrap"
+                      style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
@@ -230,13 +252,12 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 padding: '6px',
               }}
             >
+              <SunupInsetFrame />
               <div
-                className="w-full h-full flex flex-col justify-between items-center transition-all duration-300 relative box-border"
+                className="relative z-20 w-full h-full flex flex-col justify-between items-center transition-all duration-300 box-border"
                 style={{
-                  border: '4px solid #9A5636',
-                  borderRadius: '45px',
                   minHeight: '820px',
-                  padding: '38px 24px 38px',
+                  padding: '48px 34px 48px',
                 }}
               >
                 <div className="w-full flex flex-col items-center">
@@ -286,13 +307,13 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 </div>
 
                 <div className="w-full flex flex-col items-center gap-4">
-                  <div className="w-full flex flex-col justify-center px-[24px] box-border select-none">
+                  <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
-                      className="w-full text-left font-bold uppercase select-none"
+                      className="w-full text-left font-bold uppercase select-none whitespace-nowrap"
                       style={{
                         color: '#9A5636',
                         fontFamily: "'Rundeck', 'League Spartan', sans-serif",
-                        fontSize: '42px',
+                        fontSize: 'clamp(28px, 9cqw, 42px)',
                         lineHeight: '44px',
                         letterSpacing: '-2px',
                       }}
@@ -334,15 +355,15 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                     >
                       {isSubmitting ? (
                         <span
-                          className="font-bold text-[18px] tracking-[1px] uppercase whitespace-nowrap"
-                          style={{ fontFamily: "'Lato', sans-serif" }}
+                          className="font-button font-normal text-[18px] tracking-[1px] uppercase whitespace-nowrap"
+                          style={{ fontFamily: 'var(--font-button)' }}
                         >
                           Confirming...
                         </span>
                       ) : (
                         <span
                           className="font-normal text-[20px] sm:text-[22px] tracking-[1.2px] uppercase select-none transition-colors whitespace-nowrap"
-                          style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+                          style={{ fontFamily: 'var(--font-button)' }}
                         >
                           {isExpanded ? confirmLabel : ctaLabel}
                         </span>
