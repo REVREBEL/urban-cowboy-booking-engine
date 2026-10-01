@@ -28,5 +28,12 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "src/components/booking/extras/AddonCard.tsx",
+    "src/components/booking/extras/AddonCustomizerModal.tsx",
+    "src/components/booking/summary/CheckoutStep.tsx",
+    "src/components/booking/summary/ExtrasStep.tsx",
+    "src/components/rates/RideEasySoloPage.tsx"
   ]
 }

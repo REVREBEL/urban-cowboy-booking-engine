@@ -7,6 +7,7 @@ import { Banner } from "@/components/ui/banner";
 import { ContactBar } from "@/components/booking/chrome/contact-bar";
 import { Dates } from "./steps/Dates";
 import { Results } from "./steps/Results";
+import { Rates } from "./steps/Rates";
 import { Guest } from "./steps/Guest";
 import { Upgrade } from "./steps/Upgrade";
 import { Extras } from "./steps/Extras";
@@ -19,6 +20,7 @@ import { getLang, setLangAndReload, type Lang } from "./lib/lang";
 const PROGRESS_NUMBER: Record<Step, number> = {
   dates: 1,
   results: 2,
+  rates: 2,
   guest: 3,
   upgrade: 3,
   extras: 4,
@@ -29,6 +31,7 @@ const PROGRESS_NUMBER: Record<Step, number> = {
 const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
   dates: Dates,
   results: Results,
+  rates: Rates,
   guest: Guest,
   upgrade: Upgrade,
   extras: Extras,

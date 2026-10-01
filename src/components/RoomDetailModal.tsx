@@ -260,10 +260,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           </div>
 
           <button
-            onClick={() => {
-              onClose();
-              onProceedToRates(room);
-            }}
+            onClick={() => onProceedToRates(room)}
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#4E332D] hover:bg-[#343833] text-white px-8 py-3.5 rounded-full font-woodblock text-xs sm:text-sm uppercase tracking-widest shadow-md transition-all cursor-pointer"
           >
             <span>Proceed to Rate Selection</span>

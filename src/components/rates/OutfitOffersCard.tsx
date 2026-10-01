@@ -36,6 +36,8 @@ export interface OffersCardOutfitProps {
   onBook?: () => Promise<void> | void;
   /** Confirm handler from side panel */
   onConfirmBooking?: () => void;
+  /** Submit the email to the REV-115 eligibility Worker. */
+  onUnlock?: (email: string) => Promise<{ eligible: boolean }> | { eligible: boolean };
   /** Pricing calculation details */
   pricingDetails?: {
     nightly: number;
@@ -71,12 +73,17 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
   onToggleExpand,
   onBook,
   onConfirmBooking,
+  onUnlock,
   pricingDetails,
   isLoading: externalLoading = false,
   disabled = false,
   className = '',
 }) => {
   const [internalLoading, setInternalLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
   const isCompact = variant === 'compact';
   const isSubmitting = externalLoading || internalLoading;
 
@@ -88,6 +95,11 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
         onToggleExpand();
         return;
       }
+    }
+
+    if (onUnlock && !isUnlocked) {
+      setShowEmailInput(true);
+      return;
     }
 
     if (onConfirmBooking) {
@@ -107,6 +119,31 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
       } finally {
         setInternalLoading(false);
       }
+    }
+  };
+
+  const handleUnlock = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      setUnlockError('Please enter a valid email address.');
+      return;
+    }
+    if (!onUnlock) return;
+    setUnlockError(null);
+    setInternalLoading(true);
+    try {
+      const result = await onUnlock(value);
+      if (!result.eligible) {
+        setUnlockError('This email is not eligible for the Outfit rate.');
+        return;
+      }
+      setIsUnlocked(true);
+      setShowEmailInput(false);
+    } catch (error) {
+      setUnlockError(error instanceof Error ? error.message : 'Unable to unlock this rate. Please try again.');
+    } finally {
+      setInternalLoading(false);
     }
   };
 
@@ -340,6 +377,39 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                   </div>
 
                   <div className="w-full flex flex-col items-center gap-2">
+                    {isUnlocked && (
+                      <div className="w-full max-w-[380px] rounded-full border border-[#F2AAA9]/40 bg-[#1E2F28] px-4 py-3 text-center text-[#F2AAA9]" role="status">
+                        <span className="font-normal text-[18px] tracking-[1px] uppercase" style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}>
+                          Member rate unlocked
+                        </span>
+                      </div>
+                    )}
+                    {showEmailInput && !isUnlocked ? (
+                      <form onSubmit={handleUnlock} className="w-full max-w-[380px] flex flex-col gap-2.5">
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(event) => {
+                            setEmail(event.target.value);
+                            if (unlockError) setUnlockError(null);
+                          }}
+                          placeholder="Enter your email"
+                          autoFocus
+                          disabled={isSubmitting}
+                          className="w-full rounded-full bg-[#EBE8E0] px-5 py-3 text-sm font-medium text-[#384D43] placeholder-[#384D43]/60 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#F2AAA9] disabled:opacity-60"
+                        />
+                        <button
+                          type="submit"
+                          disabled={disabled || isSubmitting}
+                          className="w-full min-h-[64px] rounded-full bg-[#F2AAA9] px-6 py-3 text-[#1B2B24] transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
+                        >
+                          <span className="font-normal text-[20px] tracking-[1.2px] uppercase" style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}>
+                            {isSubmitting ? 'Unlocking…' : 'Confirm & Save'}
+                          </span>
+                        </button>
+                        {unlockError && <p className="text-center text-xs font-medium text-rose-200" role="alert">{unlockError}</p>}
+                      </form>
+                    ) : (
                     <button
                       type="button"
                       onClick={handleAction}
@@ -367,10 +437,11 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                           className="font-normal text-[20px] sm:text-[22px] tracking-[1.2px] uppercase select-none transition-colors whitespace-nowrap"
                           style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
                         >
-                          {isExpanded ? confirmLabel : ctaLabel}
+                          {isExpanded && isUnlocked ? confirmLabel : ctaLabel}
                         </span>
                       )}
                     </button>
+                    )}
 
                     <div
                       className="w-full text-center font-normal text-[13px] select-none whitespace-nowrap"

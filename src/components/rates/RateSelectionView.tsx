@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RoomType, RateOption, SearchCriteria } from '../../types';
+import type { ShapedRate } from '../../types/mews';
 import { RATE_OPTIONS } from '../../data/hotelData';
 import { OffersCard } from './RideEasyOffersCard';
 import { OffersCardOutfit } from './OutfitOffersCard';
@@ -33,6 +34,13 @@ interface RateSelectionViewProps {
   onOpenRoomDetails?: (room: RoomType) => void;
   activeVersion?: 'v1' | 'v2';
   onSelectVersion?: (version: 'v1' | 'v2') => void;
+  /** Live Mews rates for the selected room. When supplied, unavailable product cards are omitted. */
+  liveRates?: ShapedRate[];
+  onSelectLiveRate?: (rate: ShapedRate) => void;
+  /** Explicitly returned member rate after REV-115 eligibility + Mews retrieval. */
+  memberRate?: ShapedRate | null;
+  /** REV-115 eligibility operation. No client-side member unlock is assumed. */
+  onUnlockMember?: (email: string) => Promise<{ eligible: boolean }> | { eligible: boolean };
 }
 
 export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
@@ -42,7 +50,11 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   onSelectRate,
   onChangeRoom,
   activeVersion = 'v2',
-  onSelectVersion
+  onSelectVersion,
+  liveRates,
+  onSelectLiveRate,
+  memberRate = null,
+  onUnlockMember,
 }) => {
   const [rateCardsVariant, setRateCardsVariant] = useState<'default' | 'compact'>('default');
   const [expandedRateId, setExpandedRateId] = useState<string | null>(null);
@@ -54,7 +66,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const cardWrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isProgrammaticScrollRef = useRef<boolean>(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafIdRef = useRef<number | null>(null);
 
   const scrollToCard = (index: number, willBeExpanded?: boolean) => {
@@ -202,11 +214,47 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     scrollToCard(nextIdx);
   };
 
-  const calculateNightlyRate = (rate: RateOption) => {
+  const liveRateForCard = (cardId: typeof RATE_CARD_KEYS[number]): ShapedRate | null => {
+    if (!liveRates) return null;
+    const matching = (predicate: (rate: ShapedRate) => boolean) => liveRates.find(predicate) ?? null;
+    switch (cardId) {
+      case 'member':
+        // Mews `IsPrivate` describes rate retrieval, not Outfit/member eligibility.
+        // REV-115 must establish eligibility before this card can be unlocked.
+        return memberRate;
+      case 'sunup':
+        return matching((rate) => rate.knownRateGroup === 'PACKAGE') ?? matching((rate) => /breakfast|sunup/i.test(`${rate.name} ${rate.description}`));
+      case 'plan-ahead':
+        return matching((rate) => rate.knownRateGroup === 'NON_REFUNDABLE') ?? matching((rate) => /non.?refundable|prepay|covid/i.test(`${rate.name} ${rate.description}`));
+      case 'stay-while':
+        return matching((rate) => rate.knownRateGroup === 'DISCOUNTED_RATES' || rate.knownRateGroup === 'PROMOTIONS');
+      case 'ride-easy':
+        return matching((rate) => rate.knownRateGroup === 'FLEXIBLE') ?? liveRates[0] ?? null;
+    }
+  };
+
+  const calculateNightlyRate = (rate: RateOption, liveRate?: ShapedRate | null) => {
+    if (liveRates && liveRate) return liveRate.perNightGross ?? liveRate.totalGross ?? 0;
     return Math.round(room.basePrice * rate.rateMultiplier);
   };
 
-  const calculateStayTotal = (rate: RateOption) => {
+  const calculateStayTotal = (rate: RateOption, liveRate?: ShapedRate | null) => {
+    if (liveRates && liveRate) {
+      const total = liveRate.totalGross ?? 0;
+      const dueToday = liveRate.settlement.trigger === 'Confirmation'
+        ? total * (liveRate.settlement.value ?? 1)
+        : 0;
+      return {
+        nightly: liveRate.perNightGross ?? total,
+        subtotal: total,
+        taxes: liveRate.totalTax ?? 0,
+        resortFee: 0,
+        taxesAndFees: liveRate.totalTax ?? 0,
+        total,
+        dueToday,
+        remaining: Math.max(0, total - dueToday),
+      };
+    }
     const rawNightly = calculateNightlyRate(rate);
     const subtotal = rawNightly * criteria.nights;
     const taxes = Math.round(subtotal * 0.085);
@@ -222,6 +270,12 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
       dueToday: isHalfDeposit ? Math.round((subtotal + taxes + resortFee) * 0.5) : subtotal + taxes + resortFee,
       remaining: isHalfDeposit ? Math.round((subtotal + taxes + resortFee) * 0.5) : 0
     };
+  };
+
+  const selectCardRate = (cardId: typeof RATE_CARD_KEYS[number], fallback: RateOption) => {
+    const liveRate = liveRateForCard(cardId);
+    if (liveRate && onSelectLiveRate) onSelectLiveRate(liveRate);
+    else if (!liveRates) onSelectRate(fallback);
   };
 
   // Format date string for display (e.g. "Oct 14, 2026")
@@ -488,7 +542,9 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const isSpotlight = spotlightIndex === idx;
                 const isExpanded = expandedRateId === 'ride-easy';
                 const rate = RATE_OPTIONS.find((r) => r.id === 'ride-easy') || RATE_OPTIONS[0];
-                const pricing = calculateStayTotal(rate);
+                const liveRate = liveRateForCard('ride-easy');
+                if (liveRates && !liveRate) return null;
+                const pricing = calculateStayTotal(rate, liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -539,9 +595,9 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       priceUnit="Nightly"
                       isExpanded={isExpanded}
                       onToggleExpand={() => handleToggleExpandCard('ride-easy', idx)}
-                      onConfirmBooking={() => onSelectRate(rate)}
+                      onConfirmBooking={() => selectCardRate('ride-easy', rate)}
                       pricingDetails={pricing}
-                      cancellationText={`Free Cancellation until ${criteria.checkIn}`}
+                      cancellationText={liveRate?.description || `Free Cancellation until ${criteria.checkIn}`}
                     />
                   </div>
                 );
@@ -553,7 +609,8 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const isSpotlight = spotlightIndex === idx;
                 const isExpanded = expandedRateId === 'member';
                 const rate = RATE_OPTIONS.find((r) => r.id === 'member') || RATE_OPTIONS[4];
-                const pricing = calculateStayTotal(rate);
+                const liveRate = liveRateForCard('member');
+                const pricing = calculateStayTotal(rate, liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -600,13 +657,15 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     <OffersCardOutfit
                       variant={rateCardsVariant}
-                      price={`$${pricing.nightly}`}
+                      price={liveRate ? `${liveRate.currency} ${pricing.nightly}` : '—'}
                       priceUnit="NIGHTLY"
                       isExpanded={isExpanded}
                       onToggleExpand={() => handleToggleExpandCard('member', idx)}
-                      onConfirmBooking={() => onSelectRate(rate)}
-                      pricingDetails={pricing}
-                      cancellationText={`Free Cancellation until ${criteria.checkIn}`}
+                      onConfirmBooking={() => liveRate && selectCardRate('member', rate)}
+                      onUnlock={onUnlockMember}
+                      pricingDetails={liveRate ? pricing : undefined}
+                      disabled={!liveRate || !onUnlockMember}
+                      cancellationText={liveRate?.description || `Free Cancellation until ${criteria.checkIn}`}
                     />
                   </div>
                 );
@@ -618,7 +677,9 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const isSpotlight = spotlightIndex === idx;
                 const isExpanded = expandedRateId === 'sunup';
                 const rate = RATE_OPTIONS.find((r) => r.id === 'sunup') || RATE_OPTIONS[1];
-                const pricing = calculateStayTotal(rate);
+                const liveRate = liveRateForCard('sunup');
+                if (liveRates && !liveRate) return null;
+                const pricing = calculateStayTotal(rate, liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -669,9 +730,9 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       priceUnit="NIGHTLY"
                       isExpanded={isExpanded}
                       onToggleExpand={() => handleToggleExpandCard('sunup', idx)}
-                      onConfirmBooking={() => onSelectRate(rate)}
+                      onConfirmBooking={() => selectCardRate('sunup', rate)}
                       pricingDetails={pricing}
-                      cancellationText={`Free Cancellation until ${criteria.checkIn}`}
+                      cancellationText={liveRate?.description || `Free Cancellation until ${criteria.checkIn}`}
                     />
                   </div>
                 );
@@ -683,7 +744,9 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const isSpotlight = spotlightIndex === idx;
                 const isExpanded = expandedRateId === 'stay-while';
                 const rate = RATE_OPTIONS.find((r) => r.id === 'stay-while') || RATE_OPTIONS[3];
-                const pricing = calculateStayTotal(rate);
+                const liveRate = liveRateForCard('stay-while');
+                if (liveRates && !liveRate) return null;
+                const pricing = calculateStayTotal(rate, liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -734,9 +797,9 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       priceUnit="NIGHTLY"
                       isExpanded={isExpanded}
                       onToggleExpand={() => handleToggleExpandCard('stay-while', idx)}
-                      onConfirmBooking={() => onSelectRate(rate)}
+                      onConfirmBooking={() => selectCardRate('stay-while', rate)}
                       pricingDetails={pricing}
-                      cancellationText={`Free Cancellation until ${criteria.checkIn}`}
+                      cancellationText={liveRate?.description || `Free Cancellation until ${criteria.checkIn}`}
                     />
                   </div>
                 );
@@ -748,7 +811,9 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const isSpotlight = spotlightIndex === idx;
                 const isExpanded = expandedRateId === 'plan-ahead';
                 const rate = RATE_OPTIONS.find((r) => r.id === 'plan-ahead') || RATE_OPTIONS[2];
-                const pricing = calculateStayTotal(rate);
+                const liveRate = liveRateForCard('plan-ahead');
+                if (liveRates && !liveRate) return null;
+                const pricing = calculateStayTotal(rate, liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -799,7 +864,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       priceUnit="NIGHTLY"
                       isExpanded={isExpanded}
                       onToggleExpand={() => handleToggleExpandCard('plan-ahead', idx)}
-                      onConfirmBooking={() => onSelectRate(rate)}
+                      onConfirmBooking={() => selectCardRate('plan-ahead', rate)}
                       pricingDetails={pricing}
                     />
                   </div>

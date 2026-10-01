@@ -24,7 +24,7 @@ const PROGRESS_STEPS = PROGRESS.map(({ step, label }) => ({ step, label }));
 
 function currentNumber(step: Step): number {
   if (step === "dates") return 1;
-  if (step === "results") return 2;
+  if (step === "results" || step === "rates") return 2;
   if (step === "guest" || step === "upgrade") return 3;
   if (step === "extras") return 4;
   return 5;

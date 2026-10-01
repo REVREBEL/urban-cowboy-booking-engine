@@ -40,7 +40,7 @@ export function Guest() {
     <StepLayout
       title={t("guest.title")}
       subtitle={t("guest.subtitle")}
-      onBack={() => goTo("results")}
+      onBack={() => goTo("rates")}
       backLabel={t("guest.backLabel")}
     >
       <form onSubmit={submit} className="card space-y-5 p-5 sm:p-6" noValidate>

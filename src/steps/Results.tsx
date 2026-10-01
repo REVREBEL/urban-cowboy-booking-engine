@@ -3,7 +3,7 @@ import { useBooking } from "../state/booking";
 import { api, errorMessage } from "../lib/api";
 import { fmtDate, imgUrl } from "../lib/format";
 import { buildRooms } from "../lib/shaping";
-import type { AvailabilityResponse, ShapedRate, ShapedRoom } from "../types/mews";
+import type { AvailabilityResponse, ShapedRoom } from "../types/mews";
 import { InlineUpsell } from "@/components/booking/extras/upsell-card";
 import { IconCalendar, IconUsers, IconChevron } from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
@@ -20,6 +20,7 @@ import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type { RecommendationPreferences as MatcherPreferences } from "../types/merchandising";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
+import { ROOMS } from "@/data/hotelData";
 import { roomDetailTags } from "@/lib/roomTags";
 
 function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
@@ -87,7 +88,7 @@ export function Results() {
     roomId,
     rateId,
     selectedRoom,
-    selectRoomRate,
+    selectRoom,
     hydrateSelection,
     setAvailableRooms,
     setProperties,
@@ -230,10 +231,30 @@ export function Results() {
     }
   }, [eligibleAllRooms, roomId, rateId, selectedRoom, hydrateSelection, properties, setProperties]);
 
-  function choose(room: ShapedRoom, rate: ShapedRate) {
-    selectRoomRate(room, rate);
+  function choose(room: ShapedRoom) {
+    selectRoom(room);
     setOpenRoom(null);
-    goTo("guest");
+    setOpenStudioRoom(null);
+    goTo("rates");
+  }
+
+  function liveRoomForStudio(room: StudioRoomType) {
+    const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const name = normalize(room.name);
+    const exact = eligibleAllRooms.find(
+      (candidate) =>
+        candidate.categoryId === room.id ||
+        candidate.merchandising?.key === room.id ||
+        normalize(candidate.name) === name,
+    );
+    if (exact) return exact;
+
+    // The current Mews demo catalogue has placeholder category names and no
+    // production category-id bindings. Keep the Studio card ordering as a
+    // display-only bridge while selection still stores the corresponding live
+    // ShapedRoom (and its live ShapedRate[]).
+    const demoIndex = ROOMS.findIndex((candidate) => candidate.id === room.id);
+    return demoIndex >= 0 ? eligibleAllRooms[demoIndex] ?? null : null;
   }
 
   // Upsell inline : un extra de l'hébergement de la 1re chambre (sinon il serait
@@ -293,8 +314,7 @@ export function Results() {
             setDiscoveryView("rooms");
           }}
           onSelectRoom={(room) => {
-            const rate = room.rates[0];
-            if (rate) choose(room, rate);
+            if (room.rates.length) choose(room);
           }}
           onOpenRoomDetails={setOpenRoom}
         />
@@ -305,8 +325,7 @@ export function Results() {
               criteria={{ property: "catskills", checkIn, checkOut, nights: nightsCount, guests: adults, children: children + infants, rooms: 1 }}
               onClose={() => setOpenRoom(null)}
               onProceedToRates={() => {
-                const rate = openRoom.rates[0];
-                if (rate) choose(openRoom, rate);
+                if (openRoom.rates.length) choose(openRoom);
               }}
             />
           </div>
@@ -331,7 +350,10 @@ export function Results() {
         <BuildingExperienceList
           criteria={studioCriteria}
           onUpdateCriteria={() => goTo("dates")}
-          onSelectRoom={setOpenStudioRoom}
+          onSelectRoom={(studioRoom) => {
+            const room = liveRoomForStudio(studioRoom);
+            if (room?.rates.length) choose(room);
+          }}
           onOpenRoomDetails={setOpenStudioRoom}
           onOpenHelpMeChoose={() => setDiscoveryView("quiz")}
           onBackToSearch={() => goTo("dates")}
@@ -341,7 +363,10 @@ export function Results() {
             room={openStudioRoom}
             criteria={studioCriteria}
             onClose={() => setOpenStudioRoom(null)}
-            onProceedToRates={() => setOpenStudioRoom(null)}
+            onProceedToRates={(studioRoom) => {
+              const room = liveRoomForStudio(studioRoom);
+              if (room?.rates.length) choose(room);
+            }}
           />
         )}
       </div>
@@ -418,8 +443,7 @@ export function Results() {
                 color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
                 layout={index % 2 === 0 ? "left" : "right"}
                 onSelectRoom={(selected) => {
-                  const rate = selected.rates[0];
-                  if (rate) choose(selected, rate);
+                  if (selected.rates.length) choose(selected);
                 }}
                 onOpenRoomDetails={setOpenRoom}
               />
@@ -469,8 +493,7 @@ export function Results() {
                           room={room}
                           imageBaseUrl={imageBaseUrl}
                           onSelectRoom={(selected) => {
-                            const rate = selected.rates[0];
-                            if (rate) choose(selected, rate);
+                            if (selected.rates.length) choose(selected);
                           }}
                           onOpenRoomDetails={setOpenRoom}
                         />
@@ -491,8 +514,7 @@ export function Results() {
             criteria={{ property: "catskills", checkIn, checkOut, nights: nightsCount, guests: adults, children: children + infants, rooms: 1 }}
             onClose={() => setOpenRoom(null)}
             onProceedToRates={() => {
-              const rate = openRoom.rates[0];
-              if (rate) choose(openRoom, rate);
+              if (openRoom.rates.length) choose(openRoom);
             }}
           />
         </div>

@@ -24,8 +24,8 @@ import type {
   ShapedRoom,
 } from "../types/mews";
 
-export type Step = "dates" | "results" | "guest" | "upgrade" | "extras" | "payment" | "confirmation";
-export const STEP_ORDER: Step[] = ["dates", "results", "guest", "upgrade", "extras", "payment", "confirmation"];
+export type Step = "dates" | "results" | "rates" | "guest" | "upgrade" | "extras" | "payment" | "confirmation";
+export const STEP_ORDER: Step[] = ["dates", "results", "rates", "guest", "upgrade", "extras", "payment", "confirmation"];
 
 // Statuts de panier poussés vers n8n (base des paniers).
 // Events de suivi (funnel) → n8n → Supabase.
@@ -202,6 +202,7 @@ interface BookingContextValue extends BookingState {
     >,
   ) => void;
   selectRoomRate: (room: ShapedRoom, rate: ShapedRate) => void;
+  selectRoom: (room: ShapedRoom) => void;
   hydrateSelection: (room: ShapedRoom | null, rate: ShapedRate | null) => void;
   setAvailableRooms: (rooms: ShapedRoom[]) => void;
   // Filtre d'affichage des hébergements (page résultats) : change `properties`
@@ -291,7 +292,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     }
     if (!hotel) return; // attendre le catalogue (buildRooms en dépend)
     hydratedRef.current = true;
-    const deep = ["guest", "upgrade", "extras", "payment"].includes(state.step);
+    const deep = ["rates", "guest", "upgrade", "extras", "payment"].includes(state.step);
     if (!deep || selectedRoom || availableRooms.length || !state.roomId || !state.checkIn || !state.checkOut) {
       setHydrating(false);
       return;
@@ -324,8 +325,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         });
         setAvailableRoomsState(rooms);
         const room = rooms.find((r) => r.categoryId === state.roomId);
-        const rate = room?.rates.find((rt) => rt.rateId === state.rateId) ?? room?.rates[0] ?? null;
-        if (room && rate) {
+        // A Rates deep link may intentionally have a room but no rate yet. Do not
+        // silently select the first Mews rate; only rehydrate a rate when its id is
+        // present in the URL.
+        const rate = state.rateId ? room?.rates.find((rt) => rt.rateId === state.rateId) ?? null : null;
+        if (room) {
           setSelectedRoom(room);
           setSelectedRate(rate);
         }
@@ -396,6 +400,19 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     },
     [validProductsFor],
   );
+
+  const selectRoom: BookingContextValue["selectRoom"] = useCallback((room) => {
+    setSelectedRoom(room);
+    setSelectedRate(null);
+    setQuote(null);
+    setQuoteError(false);
+    setState((s) => ({
+      ...s,
+      roomId: room.categoryId,
+      rateId: null,
+      productIds: validProductsFor(s.productIds, room.property),
+    }));
+  }, [validProductsFor]);
 
   const hydrateSelection: BookingContextValue["hydrateSelection"] = useCallback(
     (room, rate) => {
@@ -713,6 +730,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     remainingBalance,
     setSearch,
     selectRoomRate,
+    selectRoom,
     hydrateSelection,
     setAvailableRooms,
     setProperties,

@@ -123,6 +123,13 @@ const renderedPaths = new Set([
 const componentModules = import.meta.glob([
   "../components/**/*.tsx",
   "../steps/**/*.tsx",
+  // Stored prototype pages are not production components and contain imports
+  // for an abandoned Extras implementation. Keep the catalog on canonical UI.
+  "!../components/booking/extras/AddonCard.tsx",
+  "!../components/booking/extras/AddonCustomizerModal.tsx",
+  "!../components/booking/summary/CheckoutStep.tsx",
+  "!../components/booking/summary/ExtrasStep.tsx",
+  "!../components/rates/RideEasySoloPage.tsx",
 ]);
 
 const allComponentPaths = Object.keys(componentModules)
