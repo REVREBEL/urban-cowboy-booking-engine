@@ -35,6 +35,8 @@ export interface RoomMerchandising {
    */
   legacyNames: string[];
   family: string;
+  /** Curated guest-facing subheadline used by the approved room-list card. */
+  cardTagline?: string;
   dogPolicy: DogPolicy;
   agePolicy: AgePolicy;
   partyScores: Record<PartyType, number>;
