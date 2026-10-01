@@ -1,4 +1,5 @@
 import { mewsJson, json, mewsLang, propertiesForEnv, propertyByConfig, type Env } from "./_lib";
+import { orderedCategoryImageIds } from "../../src/lib/mewsImages";
 
 const locStr = (v: unknown): string | null =>
   typeof v === "string" ? v : v && typeof v === "object" ? ((v as any)["fr-FR"] ?? (v as any)["en-GB"] ?? Object.values(v as any)[0] ?? null) : null;
@@ -32,12 +33,19 @@ const handler: PagesFunction<Env> = async ({ env, request }) => {
   for (const cfg of configs) {
     const key = propertyByConfig(env, cfg.Id)?.key ?? null;
     const ent = cfg.Enterprise ?? {};
+    const categoryImageAssignments = Array.isArray(ent.CategoryImageAssignments)
+      ? ent.CategoryImageAssignments
+      : [];
     for (const c of ent.Categories ?? []) {
       RoomCategories.push({
         Id: c.Id,
         Name: c.Name,
         Description: c.Description ?? null,
-        ImageIds: Array.isArray(c.ImageIds) ? c.ImageIds : [],
+        ImageIds: orderedCategoryImageIds(
+          c.Id,
+          categoryImageAssignments,
+          Array.isArray(c.ImageIds) ? c.ImageIds : [],
+        ),
         NormalBedCount: c.NormalBedCount ?? 0,
         ExtraBedCount: c.ExtraBedCount ?? 0,
         SpaceType: c.SpaceType ?? "Room",

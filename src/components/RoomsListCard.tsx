@@ -1,5 +1,5 @@
-import React from "react";
-import { Sparkles } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import type { ShapedRoom } from "@/types/mews";
 import { imgUrl, money } from "@/lib/format";
 import { buildRoomCardPills } from "@/lib/roomCardPills";
@@ -95,10 +95,20 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   className = "",
 }) => {
   const colorStyles = COLOR_STYLES[color];
-  const mewsImage = room.imageIds[0]
-    ? imgUrl(imageBaseUrl, room.imageIds[0], 1200)
-    : null;
-  const imageUrl = customImage || mewsImage;
+  const imageUrls = useMemo(() => {
+    const mewsImages = room.imageIds
+      .map((imageId) => imgUrl(imageBaseUrl, imageId, 1200))
+      .filter((image): image is string => Boolean(image));
+    return [...new Set(customImage ? [customImage, ...mewsImages] : mewsImages)];
+  }, [customImage, imageBaseUrl, room.imageIds]);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  useEffect(() => setActiveImageIndex(0), [room.categoryId, imageUrls.length]);
+  const imageUrl = imageUrls[activeImageIndex] ?? null;
+  const hasGallery = imageUrls.length > 1;
+  const showPreviousImage = () =>
+    setActiveImageIndex((index) => (index - 1 + imageUrls.length) % imageUrls.length);
+  const showNextImage = () =>
+    setActiveImageIndex((index) => (index + 1) % imageUrls.length);
   const pills = buildRoomCardPills(room).slice(0, 6);
   const tagline = room.merchandising?.cardTagline ?? null;
   const firstRate = room.rates[0];
@@ -126,7 +136,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           <img
             src={imageUrl}
             alt={room.name}
-            className="absolute inset-0 block h-full w-full select-none object-cover transition-transform duration-500 group-hover:scale-105"
+            className="absolute inset-0 block h-full w-full select-none object-contain"
           />
         ) : (
           <div className="absolute inset-0 grid place-items-center font-brothers text-[10px] font-bold uppercase tracking-widest text-[#4E332D]/45">
@@ -138,6 +148,29 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
             <Sparkles className="h-3 w-3 text-[#F2AAA9]" />
             <span>Top Pick</span>
           </div>
+        )}
+        {hasGallery && (
+          <>
+            <button
+              type="button"
+              onClick={showPreviousImage}
+              aria-label={`Previous photo of ${room.name}`}
+              className="absolute left-3 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[#FAF9F9]/60 bg-[#221C18]/75 text-[#FAF9F9] shadow-md backdrop-blur-sm transition hover:bg-[#221C18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2AAA9]"
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={showNextImage}
+              aria-label={`Next photo of ${room.name}`}
+              className="absolute right-3 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[#FAF9F9]/60 bg-[#221C18]/75 text-[#FAF9F9] shadow-md backdrop-blur-sm transition hover:bg-[#221C18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2AAA9]"
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <span className="absolute bottom-3 right-3 z-10 rounded-full bg-[#221C18]/75 px-2.5 py-1 font-brothers text-[9px] font-bold uppercase tracking-wider text-[#FAF9F9] backdrop-blur-sm">
+              {activeImageIndex + 1} / {imageUrls.length}
+            </span>
+          </>
         )}
       </div>
     </div>
@@ -158,7 +191,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           {headerSlot ?? (
             <div className="mb-2.5 flex flex-col gap-1.5">
               <h3
-                className={`room-list-card__title text-2xl font-bold uppercase leading-tight tracking-[0.72px] sm:text-3xl md:text-[34px] md:leading-[105%] ${colorStyles.title}`}
+                className={`room-list-card__title text-balance text-2xl font-bold uppercase leading-tight tracking-[0.72px] sm:text-3xl md:text-[34px] md:leading-[105%] ${colorStyles.title}`}
               >
                 {room.name}
               </h3>

@@ -38,11 +38,16 @@ export function regionName(code: string): string {
 // Currency formatters cached by locale + ISO currency + decimals.
 const numCache = new Map<string, Intl.NumberFormat>();
 const moneyFmt = (currency: string, decimals: number) => {
-  const code = currency || "USD";
-  const key = `${locale()}:${code}:${decimals}`;
+  const code = (currency || "USD").toUpperCase();
+  // USD prices belong to the Catskills property and should retain the familiar
+  // American price treatment ($282.24) in both language variants. Formatting
+  // USD with fr-FR/en-GB produces "$US"/"US$", which reads like an accidental
+  // currency conversion rather than the hotel's native rate.
+  const formatLocale = code === "USD" ? "en-US" : locale();
+  const key = `${formatLocale}:${code}:${decimals}`;
   let f = numCache.get(key);
   if (!f) {
-    f = new Intl.NumberFormat(locale(), {
+    f = new Intl.NumberFormat(formatLocale, {
       style: "currency",
       currency: code,
       minimumFractionDigits: decimals,

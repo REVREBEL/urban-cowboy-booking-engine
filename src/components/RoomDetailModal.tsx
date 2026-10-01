@@ -77,7 +77,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           {/* Room Title & Specs */}
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-[#4E332D]/15">
             <div>
-              <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-[#221C18] uppercase tracking-wide">
+              <h2 className="text-balance font-display font-extrabold text-3xl sm:text-4xl text-[#221C18] uppercase tracking-wide">
                 {room.name}
               </h2>
               <p className="font-editorial italic text-base text-[#9A5636] mt-1">
