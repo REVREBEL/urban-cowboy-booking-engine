@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ExtraItem, SearchCriteria, AddonSchedulePreference } from '../types';
-import { X, Check, Calendar, Clock, Heart, Gift, Wine, Dog, Sparkles, MessageSquare, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
+import type { ShapedProduct } from '@/types/mews';
+import { imgUrl, money } from '@/lib/format';
+import type { AddonSchedulePreference, AddonStayCriteria } from './addon-types';
+import { X, Check, Clock, Heart, Gift, Wine, Dog, Sparkles, ArrowRight } from 'lucide-react';
 
 interface AddonCustomizerModalProps {
   isOpen: boolean;
-  addon: ExtraItem;
-  searchCriteria: SearchCriteria;
+  addon: ShapedProduct;
+  imageBaseUrl: string;
+  searchCriteria: AddonStayCriteria;
   currentPreference?: AddonSchedulePreference;
   onSave: (preference: AddonSchedulePreference) => void;
   onClose: () => void;
@@ -14,11 +17,27 @@ interface AddonCustomizerModalProps {
 export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
   isOpen,
   addon,
+  imageBaseUrl,
   searchCriteria,
   currentPreference,
   onSave,
   onClose
 }) => {
+  const addonKind = useMemo(() => {
+    if (addon.knownAddOn === 'FLOWER_BOUQUET') return 'fresh-cut-flowers';
+    if (addon.knownAddOn === 'WELCOME_WINE') return 'wine-bottle';
+    if (addon.knownAddOn === 'HUMMUS_AND_CRUDITES') return 'hummus-crudites';
+    if (addon.knownAddOn === 'LETS_EAT_CHOCOLATE_TRUFFLES') return 'chocolate-truffles';
+
+    const searchable = `${addon.name} ${addon.description}`.toLowerCase();
+    if (/flower|bouquet|bloom/.test(searchable)) return 'fresh-cut-flowers';
+    if (/cake|birthday|anniversary/.test(searchable)) return 'celebration-cake';
+    if (/wine|bottle|sommelier/.test(searchable)) return 'wine-bottle';
+    if (/pup|pet|dog/.test(searchable)) return 'pup-stay';
+    if (/hummus|crudite/.test(searchable)) return 'hummus-crudites';
+    if (/chocolate|truffle/.test(searchable)) return 'chocolate-truffles';
+    return 'standard';
+  }, [addon]);
   // Generate list of nights for the stay
   const stayDates = useMemo(() => {
     const dates = [];
@@ -60,11 +79,11 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
 
   // State initialization with smart defaults
   const [deliveryType, setDeliveryType] = useState<'waiting-in-room' | 'scheduled-day' | 'gift-surprise'>(
-    currentPreference?.deliveryType || (addon.id === 'fresh-cut-flowers' ? 'waiting-in-room' : 'scheduled-day')
+    currentPreference?.deliveryType || (addonKind === 'fresh-cut-flowers' ? 'waiting-in-room' : 'scheduled-day')
   );
 
   const [isGift, setIsGift] = useState<boolean>(
-    currentPreference?.isGift ?? (addon.id === 'celebration-cake' ? true : false)
+    currentPreference?.isGift ?? (addonKind === 'celebration-cake')
   );
 
   const [selectedDateIso, setSelectedDateIso] = useState<string>(
@@ -82,7 +101,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
   );
 
   const [includeCard, setIncludeCard] = useState<boolean>(
-    currentPreference?.includeCard ?? (addon.id === 'celebration-cake' || addon.id === 'fresh-cut-flowers')
+    currentPreference?.includeCard ?? (addonKind === 'celebration-cake' || addonKind === 'fresh-cut-flowers')
   );
 
   const [cardMessage, setCardMessage] = useState<string>(
@@ -111,21 +130,21 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
         setItemCustomization(currentPreference.itemCustomization || '');
         setDietaryNote(currentPreference.dietaryNote || '');
       } else {
-        if (addon.id === 'fresh-cut-flowers') {
+        if (addonKind === 'fresh-cut-flowers') {
           setDeliveryType('waiting-in-room');
           setIsGift(false);
           setSelectedTime('Waiting in suite prior to 4:00 PM arrival');
           setIncludeCard(false);
-        } else if (addon.id === 'celebration-cake') {
+        } else if (addonKind === 'celebration-cake') {
           setDeliveryType('scheduled-day');
           setIsGift(true);
           setSelectedTime('Evening service (post-dinner, 8:00 PM)');
           setIncludeCard(true);
           setItemCustomization('');
-        } else if (addon.id === 'wine-bottle') {
+        } else if (addonKind === 'wine-bottle') {
           setItemCustomization('Natural Red (Earth & Fruit)');
           setSelectedTime('Chilled & waiting in suite upon check-in');
-        } else if (addon.id === 'pup-stay') {
+        } else if (addonKind === 'pup-stay') {
           setItemCustomization('');
           setSelectedTime('Ready in room prior to arrival');
         } else {
@@ -133,7 +152,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
         }
       }
     }
-  }, [isOpen, addon.id, currentPreference]);
+  }, [isOpen, addonKind, currentPreference, arrivalDateInfo.isoDate]);
 
   if (!isOpen) return null;
 
@@ -204,13 +223,13 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
               {/* Item Card Artwork */}
               <div className="relative rounded-2xl 2xl:rounded-3xl overflow-hidden shadow-md border border-[#4E332D]/15 group">
                 <img 
-                  src={addon.image} 
-                  alt={addon.title} 
+                  src={imgUrl(imageBaseUrl, addon.imageId, 900) ?? undefined}
+                  alt={addon.name}
                   className="w-full h-48 sm:h-56 2xl:h-72 object-cover transition-transform duration-700 group-hover:scale-105" 
                 />
                 <div className="absolute top-3.5 right-3.5 2xl:top-5 2xl:right-5 bg-white px-3.5 py-1.5 2xl:px-4 2xl:py-2 shadow-md">
                   <span className="font-bold text-lg sm:text-xl 2xl:text-2xl text-[#343833] tracking-tight">
-                    {addon.priceDisplay || `$${addon.price.toFixed(2)}`}
+                    {money(addon.price, addon.currency)}
                   </span>
                 </div>
               </div>
@@ -222,7 +241,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                   className="font-brothers text-xl sm:text-2xl lg:text-3xl 2xl:text-4xl text-[#1C1917] uppercase tracking-[-0.4px] leading-tight"
                   style={{ fontFamily: "'BrothersOT', 'Cinzel', serif" }}
                 >
-                  {addon.title}
+                  {addon.name}
                 </h3>
                 <p className="font-uchen text-xs sm:text-sm lg:text-base 2xl:text-lg text-[#60605E] mt-2.5 2xl:mt-4 leading-relaxed">
                   {addon.description}
@@ -246,7 +265,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                   <div className="flex items-center gap-2 font-bold text-[#4E332D]">
                     <div className="w-2.5 h-2.5 rounded-full bg-[#9A5636] animate-pulse" />
                     <span>
-                      {addon.id === 'fresh-cut-flowers' && !isGift
+                      {addonKind === 'fresh-cut-flowers' && !isGift
                         ? 'Arranged In Room Prior to Arrival'
                         : `${isOneNightStay ? arrivalDateInfo.dayName : selectedDateObj.dayName} · ${selectedTime.split('(')[0].trim()}`}
                     </span>
@@ -298,7 +317,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
           <div className="flex-1 p-5 sm:p-8 lg:p-10 2xl:p-14 space-y-6 sm:space-y-8 2xl:space-y-12 bg-[#FAF9F9]">
 
             {/* ================= 1. FLOWERS SPECIAL QUESTION: "JUST FOR YOU" VS "A GIFT" ================= */}
-            {addon.id === 'fresh-cut-flowers' && (
+            {addonKind === 'fresh-cut-flowers' && (
               <div className="space-y-4 2xl:space-y-6">
                 <div>
                   <h4 className="font-display text-xl sm:text-2xl lg:text-3xl 2xl:text-4xl text-[#1C1917] tracking-tight">
@@ -386,7 +405,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
             )}
 
             {/* ================= 2. SMART DATE & TIME SCHEDULING ================= */}
-            {(addon.id !== 'fresh-cut-flowers' || isGift) && (
+            {(addonKind !== 'fresh-cut-flowers' || isGift) && (
               <div className="space-y-5 sm:space-y-6 2xl:space-y-8 pt-1">
                 {/* Conversational Header */}
                 <div>
@@ -486,7 +505,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
             {/* ================= 3. BESPOKE ITEM CUSTOMIZATIONS ================= */}
 
             {/* CELEBRATION CAKE: Piped message */}
-            {addon.id === 'celebration-cake' && (
+            {addonKind === 'celebration-cake' && (
               <div className="space-y-3 2xl:space-y-4 bg-[#EBE8E0]/40 p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl border border-[#4E332D]/20">
                 <label className="block font-brothers text-base sm:text-lg 2xl:text-xl uppercase text-[#4E332D]">
                   Piped Cake Inscription (Optional)
@@ -506,7 +525,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
             )}
 
             {/* WINE BOTTLE: Varietal selection */}
-            {addon.id === 'wine-bottle' && (
+            {addonKind === 'wine-bottle' && (
               <div className="space-y-4 2xl:space-y-5 bg-[#EBE8E0]/40 p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl border border-[#4E332D]/20">
                 <label className="block font-brothers text-base sm:text-lg 2xl:text-xl uppercase text-[#4E332D] flex items-center gap-2">
                   <Wine className="w-5 h-5 2xl:w-6 2xl:h-6 text-[#9A5636]" />
@@ -541,7 +560,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
             )}
 
             {/* PUP STAY: Dog's Name & Details */}
-            {addon.id === 'pup-stay' && (
+            {addonKind === 'pup-stay' && (
               <div className="space-y-4 2xl:space-y-5 bg-[#EBE8E0]/40 p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl border border-[#4E332D]/20">
                 <label className="block font-brothers text-base sm:text-lg 2xl:text-xl uppercase text-[#4E332D] flex items-center gap-2">
                   <Dog className="w-5 h-5 2xl:w-6 2xl:h-6 text-[#9A5636]" />
@@ -580,7 +599,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
             )}
 
             {/* FOOD/SNACKS: Dietary notes */}
-            {(addon.id === 'hummus-crudites' || addon.id === 'chocolate-truffles') && (
+            {(addonKind === 'hummus-crudites' || addonKind === 'chocolate-truffles') && (
               <div className="space-y-2">
                 <label className="block font-brothers text-sm sm:text-base 2xl:text-lg uppercase text-[#4E332D]">
                   Dietary Preferences or Allergies (Optional)
@@ -596,7 +615,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
             )}
 
             {/* ================= 4. COMPLIMENTARY HANDWRITTEN LETTERPRESS CARD ================= */}
-            {(addon.id === 'celebration-cake' || addon.id === 'fresh-cut-flowers' || isGift) && (
+            {(addonKind === 'celebration-cake' || addonKind === 'fresh-cut-flowers' || isGift) && (
               <div className="border-2 border-[#4E332D]/20 rounded-2xl 2xl:rounded-3xl p-5 sm:p-6 2xl:p-8 bg-white space-y-4 shadow-2xs">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -660,7 +679,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
         <div className="bg-[#EBE8E0] px-5 sm:px-8 lg:px-10 2xl:px-14 py-4 sm:py-5 2xl:py-6 border-t border-[#4E332D]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-xs sm:text-sm lg:text-base 2xl:text-lg text-[#73716D] text-center sm:text-left font-sans">
             <span className="font-bold text-[#221C18]">Summary: </span>
-            {addon.id === 'fresh-cut-flowers' && !isGift ? (
+            {addonKind === 'fresh-cut-flowers' && !isGift ? (
               <span>Arranged in suite prior to check-in ({arrivalDateInfo.dayName})</span>
             ) : (
               <span>

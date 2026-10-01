@@ -1,299 +1,116 @@
-import React from 'react';
-import { ExtraItem, AddonSchedulePreference } from '../types';
-import { Plus, Minus, Check, Clock, Edit2 } from 'lucide-react';
+import { Check, Clock, Edit2, Minus } from "lucide-react";
+import { imgUrl, money } from "@/lib/format";
+import { chargingLabel } from "@/lib/shaping";
+import { productLineTotal } from "@/state/booking";
+import type { ShapedProduct } from "@/types/mews";
+import { Photo } from "@/components/media/photo";
+import type { AddonSchedulePreference } from "./addon-types";
 
 export interface AddonCardProps {
-  addon: ExtraItem;
-  count: number;
+  product: ShapedProduct;
+  imageBaseUrl: string;
+  selected: boolean;
+  locked?: boolean;
+  nightsCount: number;
+  guestsCount: number;
   preference?: AddonSchedulePreference;
-  onUpdateCount: (count: number) => void;
+  onToggle: () => void;
   onOpenCustomize?: () => void;
   className?: string;
 }
 
-function getPrefSummary(addon: ExtraItem, preference?: AddonSchedulePreference): string {
-  if (!preference) return 'Ready upon arrival';
-  if (addon.id === 'fresh-cut-flowers') {
-    if (!preference.isGift) {
-      return 'Waiting in suite prior to check-in';
-    }
-    return `Gift surprise${preference.giftRecipient ? ` for ${preference.giftRecipient}` : ''}`;
+function preferenceSummary(preference?: AddonSchedulePreference): string {
+  if (!preference) return "Ready upon arrival";
+  if (preference.isGift) {
+    return `Gift surprise${preference.giftRecipient ? ` for ${preference.giftRecipient}` : ""}`;
   }
-  if (addon.id === 'celebration-cake') {
-    const day = preference.selectedDate ? preference.selectedDate.split('(')[0].trim() : 'Arrival';
-    const hasCard = preference.includeCard && preference.cardMessage ? ' + Note' : '';
-    return `${day} delivery${hasCard}`;
-  }
-  if (preference.selectedDate) {
-    const day = preference.selectedDate.split('(')[0].trim();
-    return `${day}`;
-  }
-  return preference.selectedTime || 'Ready upon arrival';
+  if (preference.selectedDate) return preference.selectedDate.split("(")[0].trim();
+  return preference.selectedTime || "Ready upon arrival";
 }
 
-/**
- * AddonCard
- * Reconstructed based on exact Figma reference specification:
- * - Card: width 461.35px, height 449px, background #EBE8E0, border-radius 17px, padding 17px 20px, gap 21px, flex-col, items-end
- * - add-on-item: width 421.35px, height 346px, border-radius 16px, gap 12px, flex-col, items-start
- * - item-image-wrapper: width 421.35px, height 236.99px, border-radius 16px, overflow hidden
- * - item-price: absolute (top: 27.52px, right: 28px / left: 292.79px), width 91px, height 39px, background #FFFFFF, padding 5px, font 'Bianco Sans' 24px bold #343833
- * - item-name: height 28px, font 'Brothers OT' 28px regular #1C1917, letter-spacing -0.449px, padding-left 8px
- * - item-description: height 57px, font 'Uchen' 14px line-height 17px #60605E, letter-spacing -0.15px, padding 0 8px
- * - Button: width 151px, height 48px, background #4E332D, border-radius 25px, padding 2px 30px 0, font 'Brothers OT' 14px bold #FFFFFF, letter-spacing 0.05em
- */
-export const AddonCard: React.FC<AddonCardProps> = ({
-  addon,
-  count,
+export function AddonCard({
+  product,
+  imageBaseUrl,
+  selected,
+  locked = false,
+  nightsCount,
+  guestsCount,
   preference,
-  onUpdateCount,
+  onToggle,
   onOpenCustomize,
-  className = ''
-}) => {
-  const isSelected = count > 0;
-  const formattedPrice = addon.priceDisplay || `$${addon.price.toFixed(2)}`;
+  className = "",
+}: AddonCardProps) {
+  const lineTotal = productLineTotal(product, nightsCount, guestsCount);
+  const mode = chargingLabel(product.chargingMode);
 
-  const handleAddClick = () => {
-    onUpdateCount(1);
-    if (onOpenCustomize) {
-      onOpenCustomize();
-    }
+  const add = () => {
+    if (!selected && !locked) onToggle();
+    onOpenCustomize?.();
   };
 
   return (
-    <div
-      className={`bg-[#EBE8E0] rounded-[17px] flex flex-col items-end w-full max-w-[461.35px] h-[449px] transition-all duration-300 relative group shrink-0 ${
-        isSelected ? 'ring-2 ring-[#4E332D]' : 'hover:shadow-md'
+    <article
+      className={`group flex min-h-[449px] w-full max-w-[461px] flex-col rounded-[17px] bg-[#EBE8E0] p-[17px_20px] transition-all duration-300 ${
+        selected || locked ? "ring-2 ring-[#4E332D]" : "hover:-translate-y-0.5 hover:shadow-lg"
       } ${className}`}
-      style={{
-        width: '461.35px',
-        maxWidth: '100%',
-        height: '449px',
-        backgroundColor: '#EBE8E0',
-        borderRadius: '17px',
-        padding: '17px 20px',
-        gap: '21px',
-      }}
     >
-      {/* ================= ADD-ON ITEM (421.35px x 346px) ================= */}
-      <div
-        className="w-full flex flex-col items-start self-stretch shrink-0"
-        style={{
-          width: '100%',
-          maxWidth: '421.35px',
-          height: '346px',
-          gap: '12px',
-          borderRadius: '16px',
-        }}
-      >
-        {/* Item Image Wrapper (421.35px x 236.99px) */}
-        <div
-          className="w-full relative shrink-0 overflow-hidden"
-          style={{
-            width: '100%',
-            height: '236.99px',
-            borderRadius: '16px',
-          }}
-        >
-          <img
-            src={addon.image}
-            alt={addon.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-            loading="lazy"
-            style={{
-              width: '100%',
-              height: '236.99px',
-              borderRadius: '16px',
-            }}
+      <div className="flex flex-1 flex-col gap-3">
+        <div className="relative h-[237px] overflow-hidden rounded-2xl">
+          <Photo
+            src={imgUrl(imageBaseUrl, product.imageId, 900)}
+            alt={product.name}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            gradient="from-creole via-creole-soft to-turquoise-vivid"
           />
-
-          {/* Floating Price Tag (Exact: top 27.52px, right 28px / left 292.79px, width 91px, height 39px) */}
-          <div
-            className="absolute flex flex-col items-start justify-center shadow-xs"
-            style={{
-              position: 'absolute',
-              top: '27.52px',
-              right: '28px',
-              minWidth: '91px',
-              height: '39px',
-              padding: '5px 10px',
-              backgroundColor: '#FFFFFF',
-              gap: '10px',
-            }}
-          >
-            <span
-              className="select-none tracking-tight whitespace-nowrap"
-              style={{
-                fontFamily: "'Bianco Sans', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-                fontWeight: 700,
-                fontSize: '24px',
-                lineHeight: '29px',
-                color: '#343833',
-              }}
-            >
-              {formattedPrice}
+          <div className="absolute right-7 top-7 bg-white px-3 py-1.5 shadow-sm">
+            <span className="whitespace-nowrap text-2xl font-bold tracking-tight text-[#343833]">
+              {money(product.price, product.currency)}
             </span>
           </div>
         </div>
 
-        {/* Item Name (Exact: width 421.35px, height 28px, font 'Brothers OT' 28px, color #1C1917) */}
-        <div
-          className="w-full relative"
-          style={{
-            width: '100%',
-            height: '28px',
-            paddingLeft: '8px',
-            paddingRight: '8px',
-          }}
-        >
-          <h3
-            className="truncate uppercase"
-            style={{
-              fontFamily: "'BrothersOT', 'Brothers OT', 'Cinzel', serif",
-              fontWeight: 400,
-              fontSize: '28px',
-              lineHeight: '100%',
-              letterSpacing: '-0.449219px',
-              color: '#1C1917',
-              margin: 0,
-            }}
-            title={addon.title}
-          >
-            {addon.title}
+        <div className="px-2">
+          <h3 className="truncate font-brothers text-[28px] font-normal uppercase leading-none tracking-[-0.45px] text-[#1C1917]" title={product.name}>
+            {product.name}
           </h3>
-        </div>
-
-        {/* Item Description (Exact: width 421.35px, height 57px, font 'Uchen' 14px, line-height 17px, color #60605E) */}
-        <div
-          className="w-full flex flex-col items-start"
-          style={{
-            width: '100%',
-            height: '57px',
-            padding: '0px 8px',
-            gap: '4px',
-            overflow: 'hidden',
-          }}
-        >
-          <p
-            className="line-clamp-3 m-0"
-            style={{
-              fontFamily: "'Uchen', Georgia, serif",
-              fontWeight: 400,
-              fontSize: '14px',
-              lineHeight: '17px',
-              letterSpacing: '-0.150391px',
-              color: '#60605E',
-              maxWidth: '405px',
-              height: '50px',
-            }}
-          >
-            {addon.description}
+          <p className="mt-3 line-clamp-3 min-h-[51px] font-uchen text-sm leading-[17px] tracking-[-0.15px] text-[#60605E]">
+            {product.description}
           </p>
+          {(mode || lineTotal !== product.price) && (
+            <p className="mt-1 text-[11px] text-[#73716D]">
+              {mode}
+              {mode && lineTotal !== product.price ? " · " : ""}
+              {lineTotal !== product.price ? `${money(lineTotal, product.currency)} stay total` : ""}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* ================= BUTTON ROW ================= */}
-      <div
-        className={`w-full flex items-center ${count > 0 ? 'justify-between' : 'justify-end'}`}
-        style={{
-          width: '100%',
-          height: '48px',
-        }}
-      >
-        {count > 0 && onOpenCustomize && (
-          <button
-            type="button"
-            onClick={onOpenCustomize}
-            className="flex items-center gap-1.5 text-left text-xs font-sans text-[#73716D] hover:text-[#4E332D] transition-colors cursor-pointer group pr-2 shrink min-w-0"
-            title="Click to customize delivery day, timing, or card note"
-          >
-            <Clock className="w-3.5 h-3.5 text-[#9A5636] shrink-0" />
-            <span className="truncate max-w-[210px] text-[11px] leading-tight">
-              <span className="text-[#4E332D] font-bold block truncate">
-                {getPrefSummary(addon, preference)}
-              </span>
-              <span className="text-[#9A5636] underline group-hover:text-[#4E332D] font-medium inline-flex items-center gap-0.5">
-                <span>Customize</span>
-                <Edit2 className="w-2.5 h-2.5" />
-              </span>
+      <div className={`mt-4 flex min-h-12 items-center gap-3 ${selected || locked ? "justify-between" : "justify-end"}`}>
+        {(selected || locked) && onOpenCustomize && !locked && (
+          <button type="button" onClick={onOpenCustomize} className="flex min-w-0 items-center gap-2 text-left text-xs text-[#73716D] hover:text-[#4E332D]">
+            <Clock className="h-4 w-4 shrink-0 text-[#9A5636]" />
+            <span className="min-w-0">
+              <span className="block max-w-[210px] truncate font-bold text-[#4E332D]">{preferenceSummary(preference)}</span>
+              <span className="inline-flex items-center gap-1 text-[#9A5636] underline">Customize <Edit2 className="h-3 w-3" /></span>
             </span>
           </button>
         )}
 
-        {count === 0 ? (
-          <button
-            type="button"
-            onClick={handleAddClick}
-            className="hover:brightness-110 active:scale-[0.98] transition-all duration-200 cursor-pointer flex items-center justify-center shrink-0"
-            style={{
-              width: '151px',
-              height: '48px',
-              backgroundColor: '#4E332D',
-              borderRadius: '25px',
-              padding: '2px 30px 0px',
-              border: 'none',
-            }}
-            aria-label={`Add ${addon.title} to stay`}
-          >
-            <span
-              style={{
-                fontFamily: "'BrothersOT', 'Brothers OT', 'Cinzel', serif",
-                fontWeight: 700,
-                fontSize: '14px',
-                lineHeight: '14px',
-                letterSpacing: '0.05em',
-                color: '#FFFFFF',
-                textTransform: 'uppercase',
-                userSelect: 'none',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              ADD TO STAY
-            </span>
+        {!selected && !locked ? (
+          <button type="button" onClick={add} className="h-12 w-[151px] rounded-full bg-[#4E332D] px-5 pt-0.5 font-button text-sm uppercase tracking-[0.05em] text-white transition hover:brightness-110 active:scale-[0.98]">
+            Add to stay
           </button>
+        ) : locked ? (
+          <span className="inline-flex h-12 min-w-[151px] items-center justify-center gap-2 rounded-full bg-[#0E301A] px-5 font-button text-sm uppercase tracking-[0.05em] text-white">
+            <Check className="h-4 w-4 text-[#F2AAA9]" /> Included
+          </span>
         ) : (
-          <div
-            className="flex items-center justify-between px-3 shadow-xs transition-all shrink-0"
-            style={{
-              width: '151px',
-              height: '48px',
-              backgroundColor: '#0E301A',
-              borderRadius: '25px',
-              border: '1px solid #0E301A',
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => onUpdateCount(count - 1)}
-              className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/35 text-white flex items-center justify-center transition-colors cursor-pointer"
-              title="Remove one"
-              aria-label="Decrease quantity"
-            >
-              <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
-            </button>
-
-            <div className="flex items-center gap-1 select-none">
-              <Check className="w-3.5 h-3.5 text-[#F2AAA9]" />
-              <span
-                className="font-bold text-[13px] uppercase tracking-wider text-white"
-                style={{ fontFamily: "'BrothersOT', 'Cinzel', serif" }}
-              >
-                {count > 1 ? `${count}x` : 'ADDED'}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => onUpdateCount(count + 1)}
-              className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/35 text-white flex items-center justify-center transition-colors cursor-pointer"
-              title="Add another"
-              aria-label="Increase quantity"
-            >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            </button>
-          </div>
+          <button type="button" onClick={onToggle} className="inline-flex h-12 min-w-[151px] items-center justify-center gap-2 rounded-full bg-[#0E301A] px-4 font-button text-sm uppercase tracking-[0.05em] text-white transition hover:brightness-110" aria-label={`Remove ${product.name} from stay`}>
+            <Minus className="h-4 w-4" /> Added
+          </button>
         )}
       </div>
-    </div>
+    </article>
   );
-};
+}

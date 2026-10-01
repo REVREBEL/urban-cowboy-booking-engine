@@ -1,14 +1,19 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useBooking } from "../state/booking";
 import { t } from "../i18n";
 import { money } from "../lib/format";
 import { groupProducts, upgradeRooms, isHotelIncludedMeal, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
 import { StepLayout } from "@/components/booking/layout/step-layout";
-import { UpsellCard } from "@/components/booking/extras/upsell-card";
+import { AddonCard } from "@/components/booking/extras/AddonCard";
+import { AddonCustomizerModal } from "@/components/booking/extras/AddonCustomizerModal";
+import type { AddonSchedulePreference } from "@/components/booking/extras/addon-types";
+import type { ShapedProduct } from "@/types/mews";
 import { DataBadge } from "@/components/dev/data-badge";
 import { IconArrowRight, IconCheck, IconSparkles } from "@/components/icons/cowboy-icons";
 
 export function Extras() {
+  const [customizingProduct, setCustomizingProduct] = useState<ShapedProduct | null>(null);
+  const [preferences, setPreferences] = useState<Record<string, AddonSchedulePreference>>({});
   const {
     products,
     productIds,
@@ -134,9 +139,9 @@ export function Extras() {
                     {t("extras.optionCount", { count: g.items.length })}
                   </span>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
                   {g.items.map((p) => (
-                    <UpsellCard
+                    <AddonCard
                       key={p.id}
                       product={p}
                       imageBaseUrl={imageBaseUrl}
@@ -144,7 +149,9 @@ export function Extras() {
                       locked={forcedReveillonIds.has(p.id)}
                       nightsCount={nightsCount}
                       guestsCount={guestsCount}
+                      preference={preferences[p.id]}
                       onToggle={() => toggleProduct(p.id)}
+                      onOpenCustomize={forcedReveillonIds.has(p.id) ? undefined : () => setCustomizingProduct(p)}
                     />
                   ))}
                 </div>
@@ -176,6 +183,21 @@ export function Extras() {
           </div>
         </div>
       </div>
+
+      {customizingProduct && (
+        <AddonCustomizerModal
+          isOpen
+          addon={customizingProduct}
+          imageBaseUrl={imageBaseUrl}
+          searchCriteria={{ checkIn, checkOut, nights: nightsCount }}
+          currentPreference={preferences[customizingProduct.id]}
+          onSave={(preference) => {
+            setPreferences((current) => ({ ...current, [customizingProduct.id]: preference }));
+            if (!productIds.includes(customizingProduct.id)) toggleProduct(customizingProduct.id);
+          }}
+          onClose={() => setCustomizingProduct(null)}
+        />
+      )}
     </StepLayout>
   );
 }
