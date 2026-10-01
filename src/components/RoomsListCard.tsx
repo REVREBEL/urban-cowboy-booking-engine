@@ -110,7 +110,8 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     return (
       <div
         data-room-card={room.categoryId}
-        className={`relative w-full rounded-[16px] p-5 shadow-sm transition-all duration-200 sm:p-6 ${colorStyles.card} ${className}`}
+        data-room-card-version="approved-v4"
+        className={`room-list-card relative w-full rounded-[16px] p-5 shadow-sm transition-all duration-200 sm:p-6 ${colorStyles.card} ${className}`}
       >
         {children}
       </div>
@@ -145,7 +146,8 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   return (
     <div
       data-room-card={room.categoryId}
-      className={`flex w-full flex-col items-stretch gap-6 rounded-[16px] p-5 shadow-sm transition-all duration-200 hover:shadow-md sm:p-6 lg:gap-8 ${
+      data-room-card-version="approved-v4"
+      className={`room-list-card flex w-full flex-col items-stretch gap-6 rounded-[16px] p-5 shadow-sm transition-all duration-200 hover:shadow-md sm:p-6 lg:gap-8 ${
         layout === "right" ? "lg:flex-row-reverse" : "lg:flex-row"
       } ${colorStyles.card} ${className}`}
     >
@@ -156,15 +158,13 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           {headerSlot ?? (
             <div className="mb-2.5 flex flex-col gap-1.5">
               <h3
-                className={`text-2xl font-bold uppercase leading-tight tracking-[0.72px] sm:text-3xl md:text-[34px] md:leading-[105%] ${colorStyles.title}`}
-                style={{ fontFamily: "var(--font-button)" }}
+                className={`room-list-card__title text-2xl font-bold uppercase leading-tight tracking-[0.72px] sm:text-3xl md:text-[34px] md:leading-[105%] ${colorStyles.title}`}
               >
                 {room.name}
               </h3>
               {tagline && (
                 <p
-                  className={`text-xs font-bold uppercase tracking-[2.5px] sm:text-[13px] ${colorStyles.tagline}`}
-                  style={{ fontFamily: "var(--font-button)" }}
+                  className={`room-list-card__tagline text-xs font-bold uppercase tracking-[2.5px] sm:text-[13px] ${colorStyles.tagline}`}
                 >
                   {tagline}
                 </p>
@@ -175,8 +175,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           {bodySlot ??
             (room.description ? (
               <p
-                className={`mb-4 line-clamp-3 text-xs leading-[22px] sm:text-sm sm:leading-[23px] md:line-clamp-4 ${colorStyles.description}`}
-                style={{ fontFamily: "var(--font-body)" }}
+                className={`room-list-card__body mb-4 line-clamp-3 text-xs leading-[22px] sm:text-sm sm:leading-[23px] md:line-clamp-4 ${colorStyles.description}`}
               >
                 {room.description}
               </p>
@@ -188,12 +187,11 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <div
                   key={pill.key}
                   data-pill-source={pill.source}
-                  className={`rounded-[12px] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[1px] ${
+                  className={`room-list-card__pill rounded-[12px] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[1px] ${
                     pill.emphasis === "highlight"
                       ? colorStyles.highlightBadge
                       : colorStyles.amenityBadge
                   }`}
-                  style={{ fontFamily: "var(--font-button)" }}
                 >
                   {pill.label}
                 </div>
@@ -209,8 +207,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onSelectRoom(room)}
-                  className={`rounded-[17px] px-5 py-2.5 text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95 ${colorStyles.selectBtn}`}
-                  style={{ fontFamily: "var(--font-button)" }}
+                  className={`room-list-card__action rounded-[17px] px-5 py-2.5 text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95 ${colorStyles.selectBtn}`}
                 >
                   Select Room
                 </button>
@@ -219,8 +216,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenRoomDetails(room)}
-                  className={`rounded-[17px] px-5 py-2 text-[11px] font-bold uppercase tracking-[1.1px] transition-colors ${colorStyles.detailsBtn}`}
-                  style={{ fontFamily: "var(--font-button)" }}
+                  className={`room-list-card__action rounded-[17px] px-5 py-2 text-[11px] font-bold uppercase tracking-[1.1px] transition-colors ${colorStyles.detailsBtn}`}
                 >
                   View Details
                 </button>
@@ -232,14 +228,13 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
             <div className="text-right">
               {nightlyRate != null ? (
                 <span
-                  className={`text-lg font-normal sm:text-xl md:text-2xl ${colorStyles.price}`}
-                  style={{ fontFamily: "var(--font-button)" }}
+                  className={`room-list-card__price text-lg font-normal sm:text-xl md:text-2xl ${colorStyles.price}`}
                 >
                   from {money(nightlyRate, currency)}
                   <span className="text-xs">/night</span>
                 </span>
               ) : (
-                <span className={`text-sm ${colorStyles.price}`} style={{ fontFamily: "var(--font-button)" }}>Check rate</span>
+                <span className={`room-list-card__price text-sm ${colorStyles.price}`}>Check rate</span>
               )}
             </div>
           )}
