@@ -20,7 +20,6 @@ import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type { RecommendationPreferences as MatcherPreferences } from "../types/merchandising";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
-import { ROOMS } from "@/data/hotelData";
 import { roomDetailTags } from "@/lib/roomTags";
 
 function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
@@ -101,7 +100,6 @@ export function Results() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openRoom, setOpenRoom] = useState<ShapedRoom | null>(null);
-  const [openStudioRoom, setOpenStudioRoom] = useState<StudioRoomType | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   // Accordéons « autres hébergements » (ouverts/fermés par clé d'hébergement).
   const [openProps, setOpenProps] = useState<string[]>([]);
@@ -234,27 +232,7 @@ export function Results() {
   function choose(room: ShapedRoom) {
     selectRoom(room);
     setOpenRoom(null);
-    setOpenStudioRoom(null);
     goTo("rates");
-  }
-
-  function liveRoomForStudio(room: StudioRoomType) {
-    const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-    const name = normalize(room.name);
-    const exact = eligibleAllRooms.find(
-      (candidate) =>
-        candidate.categoryId === room.id ||
-        candidate.merchandising?.key === room.id ||
-        normalize(candidate.name) === name,
-    );
-    if (exact) return exact;
-
-    // The current Mews demo catalogue has placeholder category names and no
-    // production category-id bindings. Keep the Studio card ordering as a
-    // display-only bridge while selection still stores the corresponding live
-    // ShapedRoom (and its live ShapedRate[]).
-    const demoIndex = ROOMS.findIndex((candidate) => candidate.id === room.id);
-    return demoIndex >= 0 ? eligibleAllRooms[demoIndex] ?? null : null;
   }
 
   // Upsell inline : un extra de l'hébergement de la 1re chambre (sinon il serait
@@ -349,23 +327,23 @@ export function Results() {
       <div className="studio-room-experience">
         <BuildingExperienceList
           criteria={studioCriteria}
+          rooms={rooms}
+          imageBaseUrl={imageBaseUrl}
           onUpdateCriteria={() => goTo("dates")}
-          onSelectRoom={(studioRoom) => {
-            const room = liveRoomForStudio(studioRoom);
-            if (room?.rates.length) choose(room);
+          onSelectRoom={(room) => {
+            if (room.rates.length) choose(room);
           }}
-          onOpenRoomDetails={setOpenStudioRoom}
+          onOpenRoomDetails={setOpenRoom}
           onOpenHelpMeChoose={() => setDiscoveryView("quiz")}
           onBackToSearch={() => goTo("dates")}
         />
-        {openStudioRoom && (
+        {openRoom && (
           <RoomDetailModal
-            room={openStudioRoom}
+            room={toStudioRoom(openRoom, imageBaseUrl)}
             criteria={studioCriteria}
-            onClose={() => setOpenStudioRoom(null)}
-            onProceedToRates={(studioRoom) => {
-              const room = liveRoomForStudio(studioRoom);
-              if (room?.rates.length) choose(room);
+            onClose={() => setOpenRoom(null)}
+            onProceedToRates={() => {
+              if (openRoom.rates.length) choose(openRoom);
             }}
           />
         )}
