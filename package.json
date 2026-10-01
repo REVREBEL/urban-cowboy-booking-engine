@@ -20,7 +20,9 @@
     "room-ids": "node scripts/fetch-room-category-ids.mjs",
     "normalize:svgs": "node scripts/normalize-svg-assets.mjs --write",
     "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs",
-    "mews:smoke": "bash scripts/test-mews-booking-api.sh"
+    "mews:smoke": "bash scripts/test-mews-booking-api.sh",
+    "icons:build": "node scripts/build-icons.mjs",
+    "icons:clean": "node scripts/build-icons.mjs --clean"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
