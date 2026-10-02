@@ -94,7 +94,7 @@ export function Payment() {
         },
         reservations: [
           {
-            roomCategoryId: selectedRoom.categoryId,
+            roomCategoryId: selectedRoom.roomTypeId,
             startUtc: toUtc(checkIn),
             endUtc: toUtc(checkOut),
             rateId: selectedRate.rateId,
