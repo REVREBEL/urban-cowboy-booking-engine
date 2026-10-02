@@ -62,7 +62,7 @@ export function BookingSummary() {
 
       <div className="space-y-3 px-5 py-4 text-sm">
         {selectedRoom && (
-          <Row icon={<IconBed className="h-4 w-4" />} label={spaceLabel(selectedRoom.spaceType)}>
+          <Row icon={<IconBed className="h-4 w-4" />} label={spaceLabel(selectedRoom.roomClass)}>
             {selectedRate?.name ?? "—"}
           </Row>
         )}
