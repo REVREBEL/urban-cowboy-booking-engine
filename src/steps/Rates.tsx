@@ -3,19 +3,22 @@ import { RateSelectionView } from "@/components/rates/RateSelectionView";
 import type { RoomType } from "@/types";
 import { imgUrl } from "../lib/format";
 import { useBooking } from "../state/booking";
+import { roomTypeGroupName } from "@/data/roomTypeGroups";
 
 function toProductRoom(room: NonNullable<ReturnType<typeof useBooking>["selectedRoom"]>, imageBaseUrl: string): RoomType {
   const merchandising = room.merchandising;
+  const roomTypeGroupKey = merchandising?.roomTypeGroupKey ?? "other";
+  const groupName = roomTypeGroupName(roomTypeGroupKey);
   const images = room.imageIds
     .map((id) => imgUrl(imageBaseUrl, id, 1600))
     .filter((value): value is string => Boolean(value));
   return {
     id: room.roomTypeId,
-    buildingId: room.property || "catskills",
-    buildingName: room.property || "Catskills",
+    buildingId: roomTypeGroupKey,
+    buildingName: groupName,
     name: room.name,
-    eyebrow: merchandising?.roomTypeGroupKey || "A distinct room experience",
-    tagline: merchandising?.roomTypeGroupKey || "Stay a little differently",
+    eyebrow: groupName,
+    tagline: merchandising?.cardTagline || "Stay a little differently",
     description: room.description,
     longDescription: room.description,
     basePrice: room.rates[0]?.perNightGross ?? room.fromGross ?? 0,
