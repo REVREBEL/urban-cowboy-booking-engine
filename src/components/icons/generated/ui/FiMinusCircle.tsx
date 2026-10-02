@@ -1,0 +1,3 @@
+import type { SVGProps } from "react";
+const SvgFiMinusCircle = (props: SVGProps<SVGSVGElement>) => <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" {...props}><g fill="#231F20"><path d="M67.44 44.79H32.55c-.51 0-.92.41-.92.91v8.57c0 .5.41.91.91.91h34.88c.5 0 .91-.42.91-.92v-8.58c-.01-.51-.42-.92-.92-.92Z" /><path d="M50 22.44c15.19 0 27.56 12.36 27.56 27.56 0 15.19-12.37 27.55-27.56 27.55 -15.2 0-27.56-12.37-27.56-27.56 0-15.2 12.36-27.57 27.56-27.57m0-9.94c-20.71 0-37.5 16.79-37.5 37.5s16.79 37.49 37.5 37.49c20.7 0 37.5-16.79 37.5-37.5s-16.8-37.51-37.5-37.51v0Z" /></g></svg>;
+export default SvgFiMinusCircle;

@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { ShapedRoom } from "@/types/mews";
 import { imgUrl, money } from "@/lib/format";
 import { buildRoomCardPills } from "@/lib/roomCardPills";
+
+
+import { CaretLeftCowboyUmber, CaretRightCowboyUmber } from "@/components/icons/generated/ui";
 
 export type RoomCardColor = "paper" | "forest" | "smoke" | "copper";
 export type RoomCardLayout = "left" | "right";
@@ -155,17 +158,17 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
               type="button"
               onClick={showPreviousImage}
               aria-label={`Previous photo of ${room.name}`}
-              className="absolute left-3 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[#FAF9F9]/60 bg-[#221C18]/75 text-[#FAF9F9] shadow-md backdrop-blur-sm transition hover:bg-[#221C18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2AAA9]"
+              className="absolute left-3 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[#FAF9F9]/60 bg-[#9A5636]/75 text-[#FAF9F9] shadow-md backdrop-blur-sm transition hover:bg-[#221C18]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2AAA9]"
             >
-              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+              <CaretLeftCowboyUmber className="h-5 w-5" aria-hidden="true" />
             </button>
             <button
               type="button"
               onClick={showNextImage}
               aria-label={`Next photo of ${room.name}`}
-              className="absolute right-3 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[#FAF9F9]/60 bg-[#221C18]/75 text-[#FAF9F9] shadow-md backdrop-blur-sm transition hover:bg-[#221C18] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2AAA9]"
+              className="absolute right-3 top-1/2 z-10 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-[#FAF9F9]/60 bg-[#9A5636]/75 text-[#FAF9F9] shadow-md backdrop-blur-sm transition hover:bg-[#221C18]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2AAA9]"
             >
-              <ChevronRight className="h-5 w-5" aria-hidden="true" />
+              <CaretRightCowboyUmber className="h-5 w-5" aria-hidden="true" />
             </button>
             <span className="absolute bottom-3 right-3 z-10 rounded-full bg-[#221C18]/75 px-2.5 py-1 font-brothers text-[9px] font-bold uppercase tracking-wider text-[#FAF9F9] backdrop-blur-sm">
               {activeImageIndex + 1} / {imageUrls.length}
