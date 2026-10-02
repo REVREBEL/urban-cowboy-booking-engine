@@ -91,7 +91,7 @@ interface BookingState {
   infants: number; // bébés en berceau (0-3) — gratuits ET non décomptés de l'occupation
   voucherCode: string;
   properties: string[]; // hébergements cochés (hotel/creole/villas)
-  roomId: string | null;
+  roomTypeId: string | null;
   rateId: string | null;
   productIds: string[];
   // Extra HORS Mews : simple intérêt « transfert aéroport » (booléen). N'affecte ni le
@@ -118,7 +118,7 @@ function readUrl(): Partial<BookingState> {
   if (q.has("babies")) out.infants = num("babies", 0);
   if (q.get("voucher")) out.voucherCode = q.get("voucher")!;
   if (q.get("props")) out.properties = q.get("props")!.split(",").filter(Boolean);
-  if (q.get("cat")) out.roomId = q.get("cat");
+  if (q.get("cat")) out.roomTypeId = q.get("cat");
   if (q.get("rate")) out.rateId = q.get("rate");
   if (q.get("products")) out.productIds = q.get("products")!.split(",").filter(Boolean);
   if (q.has("transfer")) out.airportTransfer = q.get("transfer") === "1";
@@ -143,7 +143,7 @@ function writeUrl(s: BookingState) {
   if (s.voucherCode) q.set("voucher", s.voucherCode);
   if (s.properties.length && s.properties.length < DEFAULT_PROPERTIES.length) q.set("props", s.properties.join(","));
   if (s.step !== "dates") q.set("step", s.step);
-  if (s.roomId) q.set("cat", s.roomId);
+  if (s.roomTypeId) q.set("cat", s.roomTypeId);
   if (s.rateId) q.set("rate", s.rateId);
   if (s.productIds.length) q.set("products", s.productIds.join(","));
   if (s.airportTransfer) q.set("transfer", "1");
@@ -232,7 +232,7 @@ const defaults: BookingState = {
   infants: 0,
   voucherCode: "",
   properties: DEFAULT_PROPERTIES,
-  roomId: null,
+  roomTypeId: null,
   rateId: null,
   productIds: [],
   airportTransfer: false,
@@ -250,7 +250,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [hydrating, setHydrating] = useState<boolean>(() => {
     const u = readUrl();
     const deep = u.step === "guest" || u.step === "upgrade" || u.step === "extras" || u.step === "payment";
-    return !!(deep && u.roomId && u.checkIn && u.checkOut);
+    return !!(deep && u.roomTypeId && u.checkIn && u.checkOut);
   });
   const [guest, setGuestState] = useState<Guest>(() => ({ ...emptyGuest }));
   const [created, setCreatedState] = useState<ReservationCreateResult | null>(null);
@@ -293,7 +293,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     if (!hotel) return; // attendre le catalogue (buildRooms en dépend)
     hydratedRef.current = true;
     const deep = ["rates", "guest", "upgrade", "extras", "payment"].includes(state.step);
-    if (!deep || selectedRoom || availableRooms.length || !state.roomId || !state.checkIn || !state.checkOut) {
+    if (!deep || selectedRoom || availableRooms.length || !state.roomTypeId || !state.checkIn || !state.checkOut) {
       setHydrating(false);
       return;
     }
@@ -324,7 +324,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
           dogRequested: dogValue === "yes" || dogValue === "1",
         });
         setAvailableRoomsState(rooms);
-        const room = rooms.find((r) => r.categoryId === state.roomId);
+        const room = rooms.find((r) => r.roomTypeId === state.roomTypeId);
         // A Rates deep link may intentionally have a room but no rate yet. Do not
         // silently select the first Mews rate; only rehydrate a rate when its id is
         // present in the URL.
@@ -368,7 +368,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         return {
           ...s,
           ...p,
-          ...(searchChanged ? { roomId: null, rateId: null, productIds: [] } : {}),
+          ...(searchChanged ? { roomTypeId: null, rateId: null, productIds: [] } : {}),
         };
       }),
     [],
@@ -393,7 +393,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       setQuoteError(false);
       setState((s) => ({
         ...s,
-        roomId: room.categoryId,
+        roomTypeId: room.roomTypeId,
         rateId: rate.rateId,
         productIds: validProductsFor(s.productIds, room.property),
       }));
@@ -408,7 +408,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setQuoteError(false);
     setState((s) => ({
       ...s,
-      roomId: room.categoryId,
+      roomTypeId: room.roomTypeId,
       rateId: null,
       productIds: validProductsFor(s.productIds, room.property),
     }));
@@ -442,7 +442,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setSelectedRate(null);
     setQuote(null);
     setQuoteError(false);
-    setState((s) => ({ ...s, roomId: null, rateId: null }));
+    setState((s) => ({ ...s, roomTypeId: null, rateId: null }));
   }, []);
 
   const toggleProduct: BookingContextValue["toggleProduct"] = useCallback(
@@ -496,7 +496,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     const u = readUrl();
     // Fresh visit: no room/payment/deep-link state to preserve. Guest nationality is
     // intentionally not restored from the URL because personal data is never serialized.
-    const fresh = !u.roomId && !u.rgid && (!u.step || u.step === "dates");
+    const fresh = !u.roomTypeId && !u.rgid && (!u.step || u.step === "dates");
     let alive = true;
     // On appelle toujours /geo (léger, no-store) pour tracer le pays détecté en debug.
     void api.geo().then((r) => {
@@ -589,7 +589,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       .reservationPrice({
         checkIn: state.checkIn,
         checkOut: state.checkOut,
-        roomCategoryId: selectedRoom.categoryId,
+        roomCategoryId: selectedRoom.roomTypeId,
         rateId: selectedRate.rateId,
         adults: state.adults,
         children: state.children,
@@ -661,7 +661,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       children: state.children,
       infants: state.infants,
     },
-    room: selectedRoom ? { categoryId: selectedRoom.categoryId, name: selectedRoom.name } : null,
+    room: selectedRoom ? { categoryId: selectedRoom.roomTypeId, name: selectedRoom.name } : null,
     rate: selectedRate
       ? { rateId: selectedRate.rateId, name: selectedRate.name, totalGross: selectedRate.totalGross }
       : null,
