@@ -76,6 +76,6 @@ Mews exposes these lodging Room Types as `RoomCategoryId` values. In the applica
 | Walden King | `2f42029c-44ea-4058-ab0e-b10600706caf` |
 | Walden Sunrise Bathing Suite | `074257cb-3cce-4dc2-b74c-b10600706caf` |
 
-These bindings are stored in `src/lib/roomMerchandising.ts` under `mewsRoomTypeIds`.
+These bindings are stored in `src/lib/roomMerchandising.ts` under `mewsRoomTypeId`.
 
 The Room Type Group relationship is not supplied by Mews and is maintained by the Cowboy domain/content layer. See `docs/accommodation-domain-model.md`.
