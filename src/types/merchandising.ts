@@ -1,3 +1,5 @@
+import type { RoomTypeGroupKey } from "./accommodations";
+
 export type PartyType = "partner" | "friends" | "family" | "solo";
 export type MatchInterest = "iconTub" | "outdoorSoak" | "ownPlace" | "scenic" | "simpleCozy";
 export type DogPolicy = "allowed" | "notAllowed" | "unknown";
@@ -30,7 +32,7 @@ export interface RoomMerchandising {
    * Mews calls lodging Room Types "Space Categories" and exposes this value as
    * RoomCategoryId. Inside our hotel domain we call it a Room Type ID.
    */
-  mewsRoomTypeIds: string[];
+  mewsRoomTypeId: string;
   /**
    * Transitional name aliases only. UUID matching is authoritative.
    */
@@ -39,7 +41,7 @@ export interface RoomMerchandising {
    * Our higher-level Room Type Group. Mews has no equivalent hierarchy.
    * Examples: alpine, walden, lodge, forest-house.
    */
-  roomTypeGroupKey: string;
+  roomTypeGroupKey: RoomTypeGroupKey;
   /** Curated guest-facing subheadline used by the approved room-list card. */
   cardTagline?: string;
   dogPolicy: DogPolicy;
