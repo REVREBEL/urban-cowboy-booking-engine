@@ -7,7 +7,7 @@ export type MatchResultsProps = {
   hasPreferences: boolean;
   onBack: () => void;
   onStartQuiz: () => void;
-  onViewRoom: (roomId: string) => void;
+  onViewRoom: (roomTypeId: string) => void;
   onBrowseAll: () => void;
 };
 
@@ -18,7 +18,7 @@ function MatchRoomResult({
 }: {
   result: RecommendationResult;
   top?: boolean;
-  onViewRoom: (roomId: string) => void;
+  onViewRoom: (roomTypeId: string) => void;
 }) {
   const copy = result.explanation;
 
