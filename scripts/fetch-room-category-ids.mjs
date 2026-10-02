@@ -117,7 +117,7 @@ const rows = categories
 
 console.table(rows);
 
-console.log("\nCopy these UUIDs into src/lib/roomMerchandising.ts categoryIds:");
+console.log("\nCopy these UUIDs into src/lib/roomMerchandising.ts mewsRoomTypeIds:");
 for (const row of rows) {
   console.log(`${row.name}\n  ${row.id}`);
 }
