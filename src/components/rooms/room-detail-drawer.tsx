@@ -84,7 +84,7 @@ export function RoomDetailDrawer({
       .pricing({
         checkIn: search.checkIn,
         checkOut: search.checkOut,
-        roomCategoryId: room.categoryId,
+        roomCategoryId: room.roomTypeId,
         adults: search.adults,
         children: search.children,
         currencyCode: room.rates[0]?.currency,
@@ -103,7 +103,7 @@ export function RoomDetailDrawer({
     return () => {
       alive = false;
     };
-  }, [room.categoryId, search.checkIn, search.checkOut, search.adults, search.children, pricingAttempt]);
+  }, [room.roomTypeId, search.checkIn, search.checkOut, search.adults, search.children, pricingAttempt]);
 
   const images = room.imageIds.length ? room.imageIds : [null];
   const lowStock = room.availableRoomCount > 0 && room.availableRoomCount <= 4;
@@ -131,7 +131,7 @@ export function RoomDetailDrawer({
               className="aspect-[16/9] w-full object-cover"
             />
             <span className="absolute left-3 top-3 rounded-full bg-teal-deep/85 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cream">
-              {spaceLabel(room.spaceType)}
+              {spaceLabel(room.roomClass)}
             </span>
             <button
               type="button"
