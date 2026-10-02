@@ -25,16 +25,21 @@ export type RoomFeatures = Partial<Record<RoomFeatureKey, boolean>>;
 export interface RoomMerchandising {
   key: string;
   /**
-   * Durable Mews RoomCategoryId bindings. Add production UUIDs here as they are
-   * confirmed. Runtime logic always prefers these over legacy-name migration aliases.
+   * Durable Mews RoomCategoryId bindings.
+   *
+   * Mews calls lodging Room Types "Space Categories" and exposes this value as
+   * RoomCategoryId. Inside our hotel domain we call it a Room Type ID.
    */
-  categoryIds: string[];
+  mewsRoomTypeIds: string[];
   /**
-   * Transitional migration aliases only. These keep the current room catalogue
-   * functional until every production RoomCategoryId is captured.
+   * Transitional name aliases only. UUID matching is authoritative.
    */
   legacyNames: string[];
-  family: string;
+  /**
+   * Our higher-level Room Type Group. Mews has no equivalent hierarchy.
+   * Examples: alpine, walden, lodge, forest-house.
+   */
+  roomTypeGroupKey: string;
   /** Curated guest-facing subheadline used by the approved room-list card. */
   cardTagline?: string;
   dogPolicy: DogPolicy;
@@ -46,7 +51,7 @@ export interface RoomMerchandising {
   matchReasons: Partial<Record<MatchInterest, string>>;
 }
 
-export type MerchandisingBindingSource = "categoryId" | "legacyName";
+export type MerchandisingBindingSource = "mewsRoomTypeId" | "legacyName";
 
 export interface ResolvedRoomMerchandising {
   merchandising: RoomMerchandising;
