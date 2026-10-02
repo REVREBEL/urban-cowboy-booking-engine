@@ -9,7 +9,7 @@ import { IconCalendar, IconUsers, IconChevron } from "@/components/icons/cowboy-
 import { t } from "../i18n";
 import { parseRecommendationPreferences } from "../lib/topMatch";
 import { rankRecommendedRooms } from "../lib/roomMatching";
-import { unresolvedCategoryBindings } from "../lib/roomMerchandising";
+import { unresolvedRoomTypeBindings } from "../lib/roomMerchandising";
 import HelpMeChoose from "./HelpMeChoose";
 import { StudioFindYourStay } from "./StudioFindYourStay";
 import { StudioMatchResults } from "./StudioMatchResults";
@@ -35,12 +35,12 @@ function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
       : "clawfoot-window";
 
   return {
-    id: room.categoryId,
+    id: room.roomTypeId,
     buildingId: room.property || "catskills",
     buildingName: room.property || "Catskills",
     name: room.name,
-    eyebrow: merchandising?.family || "A distinct room experience",
-    tagline: merchandising?.family || "Stay a little differently",
+    eyebrow: merchandising?.roomTypeGroupKey || "A distinct room experience",
+    tagline: merchandising?.roomTypeGroupKey || "Stay a little differently",
     description: room.description,
     longDescription: room.description,
     basePrice: room.rates[0]?.perNightGross ?? room.fromGross ?? 0,
@@ -180,13 +180,13 @@ export function Results() {
     [eligibleAllRooms, properties],
   );
 
-  // During the migration to permanent RoomCategoryId bindings, surface exact IDs in
-  // development without ever making the matcher itself depend on room names.
+  // Mews exposes lodging Room Types as RoomCategoryId values. Surface any category
+  // that still resolves only by legacy name so the durable Room Type binding can be fixed.
   useEffect(() => {
     if (!import.meta.env.DEV || !hotel) return;
-    const unresolved = unresolvedCategoryBindings(hotel.RoomCategories);
+    const unresolved = unresolvedRoomTypeBindings(hotel.RoomCategories);
     if (unresolved.length) {
-      console.info("[room-merchandising] Add these Mews RoomCategoryId bindings:");
+      console.info("[room-types] Add these Mews Room Type (RoomCategoryId) bindings:");
       console.table(unresolved);
     }
   }, [hotel]);
@@ -219,7 +219,7 @@ export function Results() {
   // TOUTES les chambres, même si l'hébergement de la chambre n'est pas coché.
   useEffect(() => {
     if (!selectedRoom && roomId && eligibleAllRooms.length) {
-      const room = eligibleAllRooms.find((r) => r.categoryId === roomId);
+      const room = eligibleAllRooms.find((r) => r.roomTypeId === roomId);
       const rate = room?.rates.find((rt) => rt.rateId === rateId) ?? room?.rates[0] ?? null;
       if (room && rate) {
         hydrateSelection(room, rate);
@@ -414,7 +414,7 @@ export function Results() {
       {!loading && !hotelError && !error && rooms.length > 0 && !recommendationPreferences && (
         <div className="mt-5 space-y-5">
           {rooms.map((room, index) => (
-            <div key={room.categoryId} className="space-y-4">
+            <div key={room.roomTypeId} className="space-y-4">
               <RoomsListCard
                 room={room}
                 imageBaseUrl={imageBaseUrl}
@@ -467,7 +467,7 @@ export function Results() {
                     <div className="space-y-4 border-t border-ink/10 bg-cream/40 p-4">
                       {propRooms.map((room) => (
                         <RoomsListCard
-                          key={room.categoryId}
+                          key={room.roomTypeId}
                           room={room}
                           imageBaseUrl={imageBaseUrl}
                           onSelectRoom={(selected) => {
