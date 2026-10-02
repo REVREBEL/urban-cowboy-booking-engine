@@ -9,12 +9,12 @@ type BaseRoomMerchandising = Omit<RoomMerchandising, "interestPriority">;
 // Scores are copied from docs/match_logic.md. Feature flags are deliberately
 // conservative and only represent facts we are willing to surface as guest-facing copy.
 // Mews calls lodging room types "Space Categories" and exposes their IDs as RoomCategoryId.
-// In our hotel domain these are Room Types, so mewsRoomTypeIds stores that integration key.
+// In our hotel domain these are Room Types, so mewsRoomTypeId stores that integration key.
 // The Room Type Group is our own layer because Mews does not provide one.
 const BASE_ROOMS: BaseRoomMerchandising[] = [
   {
     key: "alpine-bathing-suite",
-    mewsRoomTypeIds: ["9cbb022a-742f-4abe-9586-b10600706caf"],
+    mewsRoomTypeId: "9cbb022a-742f-4abe-9586-b10600706caf",
     legacyNames: ["Alpine Bathing Suite"],
     roomTypeGroupKey: "alpine",
     cardTagline: "Clawfoot tub by the window overlooking the changing woods",
@@ -30,7 +30,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "alpine-bathing-suite-den",
-    mewsRoomTypeIds: ["7ed2f1d1-1bcc-4dd1-8ebf-b10600706caf"],
+    mewsRoomTypeId: "7ed2f1d1-1bcc-4dd1-8ebf-b10600706caf",
     legacyNames: ["Alpine Bathing Suite with Den"],
     roomTypeGroupKey: "alpine",
     cardTagline: "Hand-hammered copper soaking tub and built-in chaise den by the fire",
@@ -46,7 +46,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "alpine-penthouse-bathing-suite",
-    mewsRoomTypeIds: ["33536114-501b-40e9-87f2-b10600706caf"],
+    mewsRoomTypeId: "33536114-501b-40e9-87f2-b10600706caf",
     legacyNames: ["Alpine Penthouse Bathing Suite"],
     roomTypeGroupKey: "alpine",
     cardTagline: "Cathedral ceilings, private balcony, copper tub and crackling fireplace",
@@ -68,7 +68,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "walden-forest-bathing-suite",
-    mewsRoomTypeIds: ["c76c83ca-eeef-4c9a-80a5-b10600706caf"],
+    mewsRoomTypeId: "c76c83ca-eeef-4c9a-80a5-b10600706caf",
     legacyNames: ["Walden Forest Bathing Suite"],
     roomTypeGroupKey: "walden",
     cardTagline: "Hand-built cedar soaking tub on private deck with sunrise diamond window",
@@ -84,7 +84,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "walden-sunrise-bathing-suite",
-    mewsRoomTypeIds: ["074257cb-3cce-4dc2-b74c-b10600706caf"],
+    mewsRoomTypeId: "074257cb-3cce-4dc2-b74c-b10600706caf",
     legacyNames: ["Walden Sunrise Bathing Suite"],
     roomTypeGroupKey: "walden",
     dogPolicy: "allowed",
@@ -99,7 +99,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "walden-forest-bathing-suite-den",
-    mewsRoomTypeIds: ["a9deaf36-5ab1-47ce-ac68-b10600706caf"],
+    mewsRoomTypeId: "a9deaf36-5ab1-47ce-ac68-b10600706caf",
     legacyNames: ["Walden Forest Bathing Suite with Den"],
     roomTypeGroupKey: "walden",
     dogPolicy: "notAllowed",
@@ -114,7 +114,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "walden-king",
-    mewsRoomTypeIds: ["2f42029c-44ea-4058-ab0e-b10600706caf"],
+    mewsRoomTypeId: "2f42029c-44ea-4058-ab0e-b10600706caf",
     legacyNames: ["Walden King"],
     roomTypeGroupKey: "walden",
     cardTagline: "Simple, warm, tucked into the woods with private morning deck",
@@ -130,7 +130,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "cabin",
-    mewsRoomTypeIds: ["e90c2a72-1cf8-4246-84d7-b10600706caf"],
+    mewsRoomTypeId: "e90c2a72-1cf8-4246-84d7-b10600706caf",
     legacyNames: ["Cabin", "The Cabin"],
     roomTypeGroupKey: "cabin",
     dogPolicy: "allowed",
@@ -145,7 +145,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "chalet",
-    mewsRoomTypeIds: ["87342626-a461-444b-9a72-b10600706caf"],
+    mewsRoomTypeId: "87342626-a461-444b-9a72-b10600706caf",
     legacyNames: ["Chalet", "The Chalet"],
     roomTypeGroupKey: "chalet",
     dogPolicy: "allowed",
@@ -169,7 +169,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "forest-house-queen",
-    mewsRoomTypeIds: ["bce0e941-af9f-4239-8449-b1f101307a72"],
+    mewsRoomTypeId: "bce0e941-af9f-4239-8449-b1f101307a72",
     legacyNames: ["Forest House Queen", "Forest Haus Queen"],
     roomTypeGroupKey: "forest-house",
     dogPolicy: "notAllowed",
@@ -181,7 +181,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "forest-house-king",
-    mewsRoomTypeIds: ["38cebace-6f26-47fd-b7e0-b1f1012d30a6"],
+    mewsRoomTypeId: "38cebace-6f26-47fd-b7e0-b1f1012d30a6",
     legacyNames: ["Forest House King", "Forest Haus King"],
     roomTypeGroupKey: "forest-house",
     dogPolicy: "notAllowed",
@@ -196,7 +196,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "opas-cabin-2-bedroom",
-    mewsRoomTypeIds: ["a2230bdd-1770-41b6-8932-b202001df350"],
+    mewsRoomTypeId: "a2230bdd-1770-41b6-8932-b202001df350",
     legacyNames: ["Opa’s Cabin 2 Bedroom", "Opa's Cabin 2 Bedroom"],
     roomTypeGroupKey: "opas",
     dogPolicy: "unknown",
@@ -208,7 +208,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "opas-cabin-4-bedroom",
-    mewsRoomTypeIds: ["e26a0e14-0ce7-467d-a911-b1f1012b01b2"],
+    mewsRoomTypeId: "e26a0e14-0ce7-467d-a911-b1f1012b01b2",
     legacyNames: ["Opa’s Cabin 4 Bedroom", "Opa's Cabin 4 Bedroom"],
     roomTypeGroupKey: "opas",
     dogPolicy: "unknown",
@@ -220,7 +220,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "lodge-penthouse-suite",
-    mewsRoomTypeIds: ["1bcedebb-a880-4baf-86f3-b10600706caf"],
+    mewsRoomTypeId: "1bcedebb-a880-4baf-86f3-b10600706caf",
     legacyNames: ["Lodge Penthouse Suite"],
     roomTypeGroupKey: "lodge",
     cardTagline: "Handcrafted exposed branch headboard, copper clawfoot tub, private deck and wet bar",
@@ -236,7 +236,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "lodge-3-bedroom-suite",
-    mewsRoomTypeIds: ["92bd10f2-58bf-4e9a-8985-b10600706caf"],
+    mewsRoomTypeId: "92bd10f2-58bf-4e9a-8985-b10600706caf",
     legacyNames: ["Lodge 3 Bedroom Suite", "Lodge 3-Bedroom Suite"],
     roomTypeGroupKey: "lodge",
     cardTagline: "Three bedrooms, generous shared living parlor, stone fireplace and deck",
@@ -252,7 +252,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "lodge-2-bedroom",
-    mewsRoomTypeIds: ["be081636-bd06-4273-bdc3-b10600706caf"],
+    mewsRoomTypeId: "be081636-bd06-4273-bdc3-b10600706caf",
     legacyNames: ["Lodge 2 Bedroom", "Lodge 2-Bedroom"],
     roomTypeGroupKey: "lodge",
     dogPolicy: "allowed",
@@ -264,7 +264,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "lodge-king",
-    mewsRoomTypeIds: ["ea80fc33-3aa0-4a90-88db-b10600706caf"],
+    mewsRoomTypeId: "ea80fc33-3aa0-4a90-88db-b10600706caf",
     legacyNames: ["Lodge King"],
     roomTypeGroupKey: "lodge",
     cardTagline: "Comfortable King room directly above the dining parlor and evening fire",
@@ -277,7 +277,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "slide-mountain-haus-5-room",
-    mewsRoomTypeIds: ["d68e4504-7944-43a7-8e12-b1f1012d6350"],
+    mewsRoomTypeId: "d68e4504-7944-43a7-8e12-b1f1012d6350",
     legacyNames: ["Slide Mountain Haus 5 Room", "Slide Mountain Haus Full Haus"],
     roomTypeGroupKey: "slide-mountain",
     dogPolicy: "allowed",
@@ -289,7 +289,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "slide-mountain-haus-2-bedroom",
-    mewsRoomTypeIds: ["d0961acc-145f-4ad9-a965-b1f1012e7f00"],
+    mewsRoomTypeId: "d0961acc-145f-4ad9-a965-b1f1012e7f00",
     legacyNames: ["Slide Mountain Haus 2 Bedroom"],
     roomTypeGroupKey: "slide-mountain",
     dogPolicy: "notAllowed",
@@ -301,7 +301,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "slide-mountain-haus-double-queen",
-    mewsRoomTypeIds: ["1c035d90-e174-4af4-95a1-b1f1012ed296"],
+    mewsRoomTypeId: "1c035d90-e174-4af4-95a1-b1f1012ed296",
     legacyNames: ["Slide Mountain Haus Double Queen"],
     roomTypeGroupKey: "slide-mountain",
     dogPolicy: "unknown",
@@ -316,7 +316,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "mountain-view-haus-2-bedroom",
-    mewsRoomTypeIds: ["81ecc428-8c85-405e-8607-b2a500e66429"],
+    mewsRoomTypeId: "81ecc428-8c85-405e-8607-b2a500e66429",
     legacyNames: ["Mountain View Haus 2 Bedroom"],
     roomTypeGroupKey: "mountain-view",
     dogPolicy: "unknown",
@@ -331,7 +331,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   },
   {
     key: "mountain-view-haus-4-bedroom",
-    mewsRoomTypeIds: ["9f2f57b0-9533-46f0-9d9b-b282017b3741"],
+    mewsRoomTypeId: "9f2f57b0-9533-46f0-9d9b-b282017b3741",
     legacyNames: ["Mountain View Haus 4 Bedroom"],
     roomTypeGroupKey: "mountain-view",
     dogPolicy: "unknown",
@@ -422,10 +422,9 @@ function normalizeName(value: string): string {
 }
 
 for (const room of ROOM_MERCHANDISING) {
-  for (const id of room.mewsRoomTypeIds) {
-    if (BY_MEWS_ROOM_TYPE_ID.has(id)) throw new Error(`Duplicate Mews Room Type ID binding: ${id}`);
-    BY_MEWS_ROOM_TYPE_ID.set(id, room);
-  }
+  const id = room.mewsRoomTypeId;
+  if (BY_MEWS_ROOM_TYPE_ID.has(id)) throw new Error(`Duplicate Mews Room Type ID binding: ${id}`);
+  BY_MEWS_ROOM_TYPE_ID.set(id, room);
   for (const name of room.legacyNames) BY_LEGACY_NAME.set(normalizeName(name), room);
 }
 
