@@ -188,12 +188,14 @@ export function buildRooms(avail: AvailabilityResponse, hotel: HotelConfig | nul
     const roomName = loc(cat.Name, "Hébergement");
     const merchandisingResolution = resolveRoomMerchandising(rca.RoomCategoryId, roomName);
     rooms.push({
+      roomTypeId: rca.RoomCategoryId,
       categoryId: rca.RoomCategoryId,
       name: roomName,
       description: loc(cat.Description ?? null, ""),
       imageIds: cat?.ImageIds ?? [],
       normalBedCount: cat?.NormalBedCount ?? 0,
       extraBedCount: cat?.ExtraBedCount ?? 0,
+      roomClass: cat?.SpaceType ?? "Room",
       spaceType: cat?.SpaceType ?? "Room",
       availableRoomCount: rca.AvailableRoomCount,
       capacity: (cat?.NormalBedCount ?? 0) + (cat?.ExtraBedCount ?? 0),
@@ -217,7 +219,7 @@ export function upgradeRooms(rooms: ShapedRoom[], current: ShapedRoom | null, cu
   return rooms
     .filter(
       (r) =>
-        r.categoryId !== current.categoryId &&
+        r.roomTypeId !== current.roomTypeId &&
         // Upgrade within the same property group only; never cross properties.
         r.property === current.property &&
         r.fromGross != null &&
