@@ -10,12 +10,12 @@ function toProductRoom(room: NonNullable<ReturnType<typeof useBooking>["selected
     .map((id) => imgUrl(imageBaseUrl, id, 1600))
     .filter((value): value is string => Boolean(value));
   return {
-    id: room.categoryId,
+    id: room.roomTypeId,
     buildingId: room.property || "catskills",
     buildingName: room.property || "Catskills",
     name: room.name,
-    eyebrow: merchandising?.family || "A distinct room experience",
-    tagline: merchandising?.family || "Stay a little differently",
+    eyebrow: merchandising?.roomTypeGroupKey || "A distinct room experience",
+    tagline: merchandising?.roomTypeGroupKey || "Stay a little differently",
     description: room.description,
     longDescription: room.description,
     basePrice: room.rates[0]?.perNightGross ?? room.fromGross ?? 0,
@@ -33,13 +33,13 @@ function toProductRoom(room: NonNullable<ReturnType<typeof useBooking>["selected
 }
 
 export function Rates() {
-  const { selectedRoom, roomId, hydrating, imageBaseUrl, checkIn, checkOut, nightsCount, adults, children, selectRoomRate, goTo } = useBooking();
+  const { selectedRoom, roomTypeId, hydrating, imageBaseUrl, checkIn, checkOut, nightsCount, adults, children, selectRoomRate, goTo } = useBooking();
 
   useEffect(() => {
     // During URL rehydration the room id is available before the ShapedRoom is
     // restored. Do not bounce a valid Rates deep link back to Results in that gap.
-    if (!hydrating && !selectedRoom && !roomId) goTo("results");
-  }, [hydrating, selectedRoom, roomId, goTo]);
+    if (!hydrating && !selectedRoom && !roomTypeId) goTo("results");
+  }, [hydrating, selectedRoom, roomTypeId, goTo]);
 
   const productRoom = useMemo(
     () => (selectedRoom ? toProductRoom(selectedRoom, imageBaseUrl) : null),
