@@ -102,7 +102,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     return [...new Set(customImage ? [customImage, ...mewsImages] : mewsImages)];
   }, [customImage, imageBaseUrl, room.imageIds]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  useEffect(() => setActiveImageIndex(0), [room.categoryId, imageUrls.length]);
+  useEffect(() => setActiveImageIndex(0), [room.roomTypeId, imageUrls.length]);
   const imageUrl = imageUrls[activeImageIndex] ?? null;
   const hasGallery = imageUrls.length > 1;
   const showPreviousImage = () =>
@@ -119,7 +119,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   if (children) {
     return (
       <div
-        data-room-card={room.categoryId}
+        data-room-card={room.roomTypeId}
         data-room-card-version="approved-v4"
         className={`room-list-card relative w-full rounded-[16px] p-5 shadow-sm transition-all duration-200 sm:p-6 ${colorStyles.card} ${className}`}
       >
@@ -178,7 +178,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
 
   return (
     <div
-      data-room-card={room.categoryId}
+      data-room-card={room.roomTypeId}
       data-room-card-version="approved-v4"
       className={`room-list-card flex w-full flex-col items-stretch gap-6 rounded-[16px] p-5 shadow-sm transition-all duration-200 hover:shadow-md sm:p-6 lg:gap-8 ${
         layout === "right" ? "lg:flex-row-reverse" : "lg:flex-row"
