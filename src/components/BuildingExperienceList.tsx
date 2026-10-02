@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { SearchCriteria } from '../types';
 import type { ShapedRoom } from '@/types/mews';
 import { BUILDINGS } from '../data/hotelData';
+import { ROOM_TYPE_GROUPS } from '../data/roomTypeGroups';
 import { RoomsListCard, type RoomCardColor, type RoomCardLayout } from '@/components/RoomsListCard';
 import {
   AlpineHausWoodcut,
@@ -47,7 +48,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   onBackToSearch,
   roomCardSlot
 }) => {
-  const [selectedBuildingId, setSelectedBuildingId] = useState<string>('all');
+  const [selectedRoomTypeGroupKey, setSelectedRoomTypeGroupKey] = useState<string>('all');
   const [activeFeatureFilter, setActiveFeatureFilter] = useState<string>('all');
   const [layoutMode, setLayoutMode] = useState<'spread' | 'catalog'>('spread');
 
@@ -69,7 +70,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   // Filter the live Mews Room Types using our resolved lodging-domain profile.
   // Room Type Group is a Cowboy-defined hierarchy because Mews does not provide one.
   const filteredRooms = rooms.filter((room) => {
-    if (selectedBuildingId !== "all" && roomTypeGroup(room) !== selectedBuildingId) {
+    if (selectedRoomTypeGroupKey !== "all" && roomTypeGroup(room) !== selectedRoomTypeGroupKey) {
       return false;
     }
     if (activeFeatureFilter === "dog" && room.merchandising?.dogPolicy !== "allowed") return false;
@@ -84,6 +85,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   const hasRoomTypeGroup = (family: string) =>
     filteredRooms.some((room) => roomTypeGroup(room) === family);
 
+  // Only these three groups currently have bespoke editorial section layouts.
   const designedGroupKeys = new Set(BUILDINGS.map((building) => building.id));
   const additionalRooms = filteredRooms.filter(
     (room) => !designedGroupKeys.has(roomTypeGroup(room)),
@@ -185,26 +187,26 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               Filter by Building:
             </span>
             <button
-              onClick={() => setSelectedBuildingId('all')}
+              onClick={() => setSelectedRoomTypeGroupKey('all')}
               className={`px-3.5 py-1 rounded-full text-xs font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
-                selectedBuildingId === 'all'
+                selectedRoomTypeGroupKey === 'all'
                   ? 'bg-[#4E332D] text-[#EBE8E0]'
                   : 'bg-[#FAF9F9] text-[#4E332D] border border-[#4E332D]/20 hover:border-[#4E332D]'
               }`}
             >
               All Buildings
             </button>
-            {BUILDINGS.map((b) => (
+            {ROOM_TYPE_GROUPS.map((group) => (
               <button
-                key={b.id}
-                onClick={() => setSelectedBuildingId(b.id)}
+                key={group.key}
+                onClick={() => setSelectedRoomTypeGroupKey(group.key)}
                 className={`px-3.5 py-1 rounded-full text-xs font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
-                  selectedBuildingId === b.id
+                  selectedRoomTypeGroupKey === group.key
                     ? 'bg-[#4E332D] text-[#EBE8E0]'
                     : 'bg-[#FAF9F9] text-[#4E332D] border border-[#4E332D]/20 hover:border-[#4E332D]'
                 }`}
               >
-                {b.name}
+                {group.name}
               </button>
             ))}
           </div>
@@ -248,7 +250,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
       {layoutMode === 'spread' && (
         <div className="booking-shell space-y-20 py-10">
           {/* SECTION 1: ALPINE HAUS SPREAD (Exact layout from Screenshot 1!) */}
-          {(selectedBuildingId === 'all' || selectedBuildingId === 'alpine') && hasRoomTypeGroup("alpine") && (
+          {(selectedRoomTypeGroupKey === 'all' || selectedRoomTypeGroupKey === 'alpine') && hasRoomTypeGroup("alpine") && (
             <div className="relative">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left Column: Architectural Woodcut + Story (Screenshot 1 left) */}
@@ -294,7 +296,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           )}
 
           {/* SECTION 2: WALDEN HAUS SPREAD */}
-          {(selectedBuildingId === 'all' || selectedBuildingId === 'walden') && hasRoomTypeGroup("walden") && (
+          {(selectedRoomTypeGroupKey === 'all' || selectedRoomTypeGroupKey === 'walden') && hasRoomTypeGroup("walden") && (
             <div className="relative text-[#221C18] border-t border-[#4E332D]/15 pt-16">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left Column: Woodcut + Walden Story */}
@@ -337,7 +339,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           )}
 
           {/* SECTION 3: THE LODGE SPREAD (Exact layout from Screenshot 4!) */}
-          {(selectedBuildingId === 'all' || selectedBuildingId === 'lodge') && hasRoomTypeGroup("lodge") && (
+          {(selectedRoomTypeGroupKey === 'all' || selectedRoomTypeGroupKey === 'lodge') && hasRoomTypeGroup("lodge") && (
             <div className="relative border-t border-[#4E332D]/15 pt-16">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left/Middle Column: 3 Lodge Rooms Collage (Screenshot 4) */}
@@ -382,7 +384,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </div>
           )}
 
-          {selectedBuildingId === "all" && additionalRooms.length > 0 && (
+          {additionalRooms.length > 0 && (
             <div className="relative border-t border-[#4E332D]/15 pt-16">
               <div className="mb-6">
                 <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
@@ -417,7 +419,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
       {layoutMode === 'catalog' && (
         <div className="booking-shell space-y-12 py-10">
           {BUILDINGS.filter(
-            (b) => selectedBuildingId === 'all' || selectedBuildingId === b.id
+            (b) => selectedRoomTypeGroupKey === 'all' || selectedRoomTypeGroupKey === b.id
           ).map((building) => {
             const buildingRooms = filteredRooms.filter((r) => roomTypeGroup(r) === building.id);
             if (buildingRooms.length === 0) return null;
@@ -465,7 +467,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             );
           })}
 
-          {selectedBuildingId === "all" && additionalRooms.length > 0 && (
+          {additionalRooms.length > 0 && (
             <div className="space-y-6">
               <div className="rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] p-6 sm:p-8">
                 <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
