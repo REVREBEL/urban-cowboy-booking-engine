@@ -84,7 +84,7 @@ export function Results() {
     voucherCode,
     properties,
     nightsCount,
-    roomId,
+    roomTypeId,
     rateId,
     selectedRoom,
     selectRoom,
@@ -218,8 +218,8 @@ export function Results() {
   // Réhydrate la sélection depuis l'URL (lien partagé / retour arrière) — depuis
   // TOUTES les chambres, même si l'hébergement de la chambre n'est pas coché.
   useEffect(() => {
-    if (!selectedRoom && roomId && eligibleAllRooms.length) {
-      const room = eligibleAllRooms.find((r) => r.roomTypeId === roomId);
+    if (!selectedRoom && roomTypeId && eligibleAllRooms.length) {
+      const room = eligibleAllRooms.find((r) => r.roomTypeId === roomTypeId);
       const rate = room?.rates.find((rt) => rt.rateId === rateId) ?? room?.rates[0] ?? null;
       if (room && rate) {
         hydrateSelection(room, rate);
@@ -227,7 +227,7 @@ export function Results() {
         if (room.property && !properties.includes(room.property)) setProperties([...properties, room.property]);
       }
     }
-  }, [eligibleAllRooms, roomId, rateId, selectedRoom, hydrateSelection, properties, setProperties]);
+  }, [eligibleAllRooms, roomTypeId, rateId, selectedRoom, hydrateSelection, properties, setProperties]);
 
   function choose(room: ShapedRoom) {
     selectRoom(room);
