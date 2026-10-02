@@ -63,13 +63,13 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
     return defaultCard;
   };
 
-  const roomFamily = (room: ShapedRoom) =>
-    room.merchandising?.family ?? room.property ?? "other";
+  const roomTypeGroup = (room: ShapedRoom) =>
+    room.merchandising?.roomTypeGroupKey ?? "other";
 
-  // Filter only the live Mews room collection. Building/feature facts come from
-  // the resolved Cowboy merchandising record attached during room shaping.
+  // Filter the live Mews Room Types using our resolved lodging-domain profile.
+  // Room Type Group is a Cowboy-defined hierarchy because Mews does not provide one.
   const filteredRooms = rooms.filter((room) => {
-    if (selectedBuildingId !== "all" && roomFamily(room) !== selectedBuildingId) {
+    if (selectedBuildingId !== "all" && roomTypeGroup(room) !== selectedBuildingId) {
       return false;
     }
     if (activeFeatureFilter === "dog" && room.merchandising?.dogPolicy !== "allowed") return false;
@@ -81,11 +81,12 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   const roomByKey = (key: string) =>
     filteredRooms.find((room) => room.merchandising?.key === key);
 
-  const hasFamily = (family: string) =>
-    filteredRooms.some((room) => roomFamily(room) === family);
+  const hasRoomTypeGroup = (family: string) =>
+    filteredRooms.some((room) => roomTypeGroup(room) === family);
 
-  const unmappedRooms = filteredRooms.filter(
-    (room) => !["alpine", "walden", "lodge"].includes(roomFamily(room)),
+  const designedGroupKeys = new Set(BUILDINGS.map((building) => building.id));
+  const additionalRooms = filteredRooms.filter(
+    (room) => !designedGroupKeys.has(roomTypeGroup(room)),
   );
 
   const renderMappedRoom = (
@@ -247,7 +248,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
       {layoutMode === 'spread' && (
         <div className="booking-shell space-y-20 py-10">
           {/* SECTION 1: ALPINE HAUS SPREAD (Exact layout from Screenshot 1!) */}
-          {(selectedBuildingId === 'all' || selectedBuildingId === 'alpine') && hasFamily("alpine") && (
+          {(selectedBuildingId === 'all' || selectedBuildingId === 'alpine') && hasRoomTypeGroup("alpine") && (
             <div className="relative">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left Column: Architectural Woodcut + Story (Screenshot 1 left) */}
@@ -293,7 +294,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           )}
 
           {/* SECTION 2: WALDEN HAUS SPREAD */}
-          {(selectedBuildingId === 'all' || selectedBuildingId === 'walden') && hasFamily("walden") && (
+          {(selectedBuildingId === 'all' || selectedBuildingId === 'walden') && hasRoomTypeGroup("walden") && (
             <div className="relative text-[#221C18] border-t border-[#4E332D]/15 pt-16">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left Column: Woodcut + Walden Story */}
@@ -336,7 +337,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           )}
 
           {/* SECTION 3: THE LODGE SPREAD (Exact layout from Screenshot 4!) */}
-          {(selectedBuildingId === 'all' || selectedBuildingId === 'lodge') && hasFamily("lodge") && (
+          {(selectedBuildingId === 'all' || selectedBuildingId === 'lodge') && hasRoomTypeGroup("lodge") && (
             <div className="relative border-t border-[#4E332D]/15 pt-16">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left/Middle Column: 3 Lodge Rooms Collage (Screenshot 4) */}
@@ -381,23 +382,23 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </div>
           )}
 
-          {selectedBuildingId === "all" && unmappedRooms.length > 0 && (
+          {selectedBuildingId === "all" && additionalRooms.length > 0 && (
             <div className="relative border-t border-[#4E332D]/15 pt-16">
               <div className="mb-6">
                 <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
-                  Live Mews Inventory
+                  More Ways to Stay
                 </p>
                 <h2 className="mt-1 font-heading text-3xl uppercase text-[#221C18]">
-                  Available Rooms
+                  Additional Room Types
                 </h2>
                 <p className="mt-2 max-w-2xl font-body text-sm text-[#4E332D]/75">
-                  These live room categories are not yet assigned to a Cowboy building mapping, so only verified Mews facts are shown.
+                  More room types across the property, with their dedicated group stories and layouts still being finalized.
                 </p>
               </div>
               <div className="space-y-6">
-                {unmappedRooms.map((room, index) => (
+                {additionalRooms.map((room, index) => (
                   <RoomsListCard
-                    key={room.categoryId}
+                    key={room.roomTypeId}
                     room={room}
                     imageBaseUrl={imageBaseUrl}
                     color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
@@ -418,7 +419,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           {BUILDINGS.filter(
             (b) => selectedBuildingId === 'all' || selectedBuildingId === b.id
           ).map((building) => {
-            const buildingRooms = filteredRooms.filter((r) => roomFamily(r) === building.id);
+            const buildingRooms = filteredRooms.filter((r) => roomTypeGroup(r) === building.id);
             if (buildingRooms.length === 0) return null;
 
             return (
@@ -449,7 +450,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                     renderRoomCard(
                       room,
                       <RoomsListCard
-                        key={room.categoryId}
+                        key={room.roomTypeId}
                         room={room}
                         imageBaseUrl={imageBaseUrl}
                         color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
@@ -464,23 +465,23 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             );
           })}
 
-          {selectedBuildingId === "all" && unmappedRooms.length > 0 && (
+          {selectedBuildingId === "all" && additionalRooms.length > 0 && (
             <div className="space-y-6">
               <div className="rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] p-6 sm:p-8">
                 <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
                   Live Mews Inventory
                 </p>
                 <h2 className="mt-1 font-heading text-3xl uppercase text-[#221C18]">
-                  Unmapped Room Categories
+                  Additional Room Types
                 </h2>
                 <p className="mt-2 max-w-2xl font-body text-sm text-[#4E332D]/75">
-                  Shown directly from Mews until their permanent Cowboy room/building mappings are confirmed.
+                  These Room Types are mapped and bookable; their dedicated Room Type Group presentation is still being finalized.
                 </p>
               </div>
               <div className="space-y-6">
-                {unmappedRooms.map((room, index) => (
+                {additionalRooms.map((room, index) => (
                   <RoomsListCard
-                    key={room.categoryId}
+                    key={room.roomTypeId}
                     room={room}
                     imageBaseUrl={imageBaseUrl}
                     color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
