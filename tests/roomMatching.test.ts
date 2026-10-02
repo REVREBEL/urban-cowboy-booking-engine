@@ -8,12 +8,14 @@ function room(key: string, price = 500): ShapedRoom {
   const merchandising = merchandisingForKey(key);
   assert.ok(merchandising, `Missing merchandising fixture: ${key}`);
   return {
-    categoryId: `category-${key}`,
+    roomTypeId: `room-type-${key}`,
+    categoryId: `room-type-${key}`,
     name: merchandising.legacyNames[0],
     description: "",
     imageIds: [],
     normalBedCount: 1,
     extraBedCount: 0,
+    roomClass: "Room",
     spaceType: "Room",
     availableRoomCount: 1,
     capacity: 2,
@@ -21,7 +23,7 @@ function room(key: string, price = 500): ShapedRoom {
     fromGross: price,
     property: null,
     merchandising,
-    merchandisingSource: "categoryId",
+    merchandisingSource: "mewsRoomTypeId",
   };
 }
 
