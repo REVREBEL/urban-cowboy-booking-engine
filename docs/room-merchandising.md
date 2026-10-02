@@ -16,7 +16,7 @@ Production logic identifies each Room Type with the Mews `RoomCategoryId`, expos
 
 Each profile currently contains:
 
-- `mewsRoomTypeIds`: durable Mews Room Type UUID bindings.
+- `mewsRoomTypeId`: durable Mews Room Type UUID bindings.
 - `legacyNames`: transitional exact-name aliases.
 - `roomTypeGroupKey`: our higher-level Room Type Group relationship.
 
