@@ -82,13 +82,23 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   const roomByKey = (key: string) =>
     filteredRooms.find((room) => room.merchandising?.key === key);
 
-  const hasRoomTypeGroup = (family: string) =>
-    filteredRooms.some((room) => roomTypeGroup(room) === family);
+  const hasRoomTypeGroup = (groupKey: string) =>
+    filteredRooms.some((room) => roomTypeGroup(room) === groupKey);
 
-  // Only these three groups currently have bespoke editorial section layouts.
-  const designedGroupKeys = new Set(BUILDINGS.map((building) => building.id));
-  const additionalRooms = filteredRooms.filter(
-    (room) => !designedGroupKeys.has(roomTypeGroup(room)),
+  // Every known Room Type Group remains structurally distinct even before it gets
+  // a bespoke editorial treatment. This lets the component section design evolve
+  // without collapsing valid groups into an "unmapped" bucket.
+  const pendingRoomTypeGroups = ROOM_TYPE_GROUPS
+    .filter((group) => group.sectionStatus === "pending")
+    .map((group) => ({
+      group,
+      rooms: filteredRooms.filter((room) => roomTypeGroup(room) === group.key),
+    }))
+    .filter(({ rooms: groupRooms }) => groupRooms.length > 0);
+
+  const knownRoomTypeGroupKeys = new Set(ROOM_TYPE_GROUPS.map((group) => group.key));
+  const unresolvedRooms = filteredRooms.filter(
+    (room) => !knownRoomTypeGroupKeys.has(roomTypeGroup(room) as typeof ROOM_TYPE_GROUPS[number]["key"]),
   );
 
   const renderMappedRoom = (
@@ -384,21 +394,47 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </div>
           )}
 
-          {additionalRooms.length > 0 && (
+          {pendingRoomTypeGroups.map(({ group, rooms: groupRooms }) => (
+            <div key={group.key} className="relative border-t border-[#4E332D]/15 pt-16">
+              <div className="mb-6">
+                <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
+                  Room Type Group
+                </p>
+                <h2 className="mt-1 font-heading text-3xl uppercase text-[#221C18]">
+                  {group.name}
+                </h2>
+              </div>
+              <div className="space-y-6">
+                {groupRooms.map((room, index) => (
+                  <RoomsListCard
+                    key={room.roomTypeId}
+                    room={room}
+                    imageBaseUrl={imageBaseUrl}
+                    color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
+                    layout={index % 2 === 0 ? "left" : "right"}
+                    onSelectRoom={onSelectRoom}
+                    onOpenRoomDetails={onOpenRoomDetails}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {unresolvedRooms.length > 0 && (
             <div className="relative border-t border-[#4E332D]/15 pt-16">
               <div className="mb-6">
                 <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
-                  More Ways to Stay
+                  Live Mews Inventory
                 </p>
                 <h2 className="mt-1 font-heading text-3xl uppercase text-[#221C18]">
-                  Additional Room Types
+                  Unassigned Room Types
                 </h2>
                 <p className="mt-2 max-w-2xl font-body text-sm text-[#4E332D]/75">
-                  More room types across the property, with their dedicated group stories and layouts still being finalized.
+                  These Mews Room Types do not yet have a Cowboy Room Type Group assignment.
                 </p>
               </div>
               <div className="space-y-6">
-                {additionalRooms.map((room, index) => (
+                {unresolvedRooms.map((room, index) => (
                   <RoomsListCard
                     key={room.roomTypeId}
                     room={room}
@@ -467,21 +503,47 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             );
           })}
 
-          {additionalRooms.length > 0 && (
+          {pendingRoomTypeGroups.map(({ group, rooms: groupRooms }) => (
+            <div key={group.key} className="space-y-6">
+              <div className="rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] p-6 sm:p-8">
+                <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
+                  Room Type Group
+                </p>
+                <h2 className="mt-1 font-heading text-3xl uppercase text-[#221C18]">
+                  {group.name}
+                </h2>
+              </div>
+              <div className="space-y-6">
+                {groupRooms.map((room, index) => (
+                  <RoomsListCard
+                    key={room.roomTypeId}
+                    room={room}
+                    imageBaseUrl={imageBaseUrl}
+                    color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
+                    layout={index % 2 === 0 ? "left" : "right"}
+                    onSelectRoom={onSelectRoom}
+                    onOpenRoomDetails={onOpenRoomDetails}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {unresolvedRooms.length > 0 && (
             <div className="space-y-6">
               <div className="rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] p-6 sm:p-8">
                 <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
                   Live Mews Inventory
                 </p>
                 <h2 className="mt-1 font-heading text-3xl uppercase text-[#221C18]">
-                  Additional Room Types
+                  Unassigned Room Types
                 </h2>
                 <p className="mt-2 max-w-2xl font-body text-sm text-[#4E332D]/75">
-                  These Room Types are mapped and bookable; their dedicated Room Type Group presentation is still being finalized.
+                  These Mews Room Types do not yet have a Cowboy Room Type Group assignment.
                 </p>
               </div>
               <div className="space-y-6">
-                {additionalRooms.map((room, index) => (
+                {unresolvedRooms.map((room, index) => (
                   <RoomsListCard
                     key={room.roomTypeId}
                     room={room}
