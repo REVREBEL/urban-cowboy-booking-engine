@@ -278,7 +278,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
   {
     key: "slide-mountain-haus-5-room",
     mewsRoomTypeId: "d68e4504-7944-43a7-8e12-b1f1012d6350",
-    legacyNames: ["Slide Mountain Haus 5 Room", "Slide Mountain Haus Full Haus"],
+    legacyNames: ["Slide Mountain Haus 5 Bedroom", "Slide Mountain Haus 5 Room", "Slide Mountain Haus Full Haus"],
     roomTypeGroupKey: "slide-mountain",
     dogPolicy: "allowed",
     agePolicy: "none",
