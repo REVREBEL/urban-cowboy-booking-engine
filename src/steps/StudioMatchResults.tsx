@@ -99,7 +99,7 @@ export function StudioMatchResults({
             <div className="mt-5 space-y-5">
               {alternates.map((room, index) => (
                 <RoomsListCard
-                  key={room.categoryId}
+                  key={room.roomTypeId}
                   room={room}
                   imageBaseUrl={imageBaseUrl}
                   color={index % 2 === 0 ? "forest" : "smoke"}
