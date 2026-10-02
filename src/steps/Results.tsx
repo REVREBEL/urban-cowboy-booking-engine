@@ -20,10 +20,13 @@ import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type { RecommendationPreferences as MatcherPreferences } from "../types/merchandising";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
+import { roomTypeGroupName } from "@/data/roomTypeGroups";
 import { roomDetailTags } from "@/lib/roomTags";
 
 function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
   const merchandising = room.merchandising;
+  const roomTypeGroupKey = merchandising?.roomTypeGroupKey ?? "other";
+  const groupName = roomTypeGroupName(roomTypeGroupKey);
   const tags = roomDetailTags(merchandising).map((tag) => tag.label);
   const images = room.imageIds
     .map((imageId) => imgUrl(imageBaseUrl, imageId, 1600))
@@ -36,11 +39,11 @@ function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
 
   return {
     id: room.roomTypeId,
-    buildingId: room.property || "catskills",
-    buildingName: room.property || "Catskills",
+    buildingId: roomTypeGroupKey,
+    buildingName: groupName,
     name: room.name,
-    eyebrow: merchandising?.roomTypeGroupKey || "A distinct room experience",
-    tagline: merchandising?.roomTypeGroupKey || "Stay a little differently",
+    eyebrow: groupName,
+    tagline: merchandising?.cardTagline || "Stay a little differently",
     description: room.description,
     longDescription: room.description,
     basePrice: room.rates[0]?.perNightGross ?? room.fromGross ?? 0,
