@@ -61,7 +61,7 @@ test("selects all four seasons from the check-in month", () => {
 test("never uses seasonal feature claims without metadata support", () => {
   const metadata: RoomMerchandising = {
     key: "test-room",
-    mewsRoomTypeIds: [],
+    mewsRoomTypeId: "test-room-type-id",
     legacyNames: ["Test Room"],
     roomTypeGroupKey: "test",
     dogPolicy: "unknown",
