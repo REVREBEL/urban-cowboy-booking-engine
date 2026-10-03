@@ -164,3 +164,21 @@ The three layers are complementary:
 - **Dashboard**: controlled management UI over the CMS/configuration layer, not a second content database.
 
 This terminology is authoritative for new application code and CMS schema design.
+
+## Room Type Group setting metadata
+
+Room Type Groups also own location/context metadata that Mews does not provide:
+
+- `coreProximity`: `core`, `near-core`, `away-from-core`, or `unknown`
+- `privacyLevel`: `standard`, `enhanced`, or `unknown`
+
+These fields support guest-preference logic such as **Minimal Distractions** without pretending the signal is a physical room amenity.
+
+For Minimal Distractions, the matcher requires both:
+
+```text
+coreProximity = away-from-core
+privacyLevel = enhanced
+```
+
+This metadata is a good candidate for the Webflow Room Type Group collection because it belongs to the custom Cowboy hierarchy, not to Mews.
