@@ -36,7 +36,7 @@ test("single-interest Bathe Outside follows the documented fallback ladder", () 
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["bathe-outside"] },
+    { party: "partner", dog: false, interests: ["connection-with-nature"] },
     { children: 0, infants: 0 },
   );
 
@@ -61,7 +61,7 @@ test("dog requested is a hard filter and unknown dog policy is not treated as el
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: true, interests: ["bathe-outside"] },
+    { party: "partner", dog: true, interests: ["connection-with-nature"] },
     { children: 0, infants: 0 },
   );
 
@@ -99,7 +99,7 @@ test("children remove adults-only Alpine and Walden inventory regardless of part
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "friends", dog: false, interests: ["simple-cozy"] },
+    { party: "friends", dog: false, interests: ["simple-comforts"] },
     { children: 1, infants: 0 },
   );
 
@@ -109,7 +109,7 @@ test("children remove adults-only Alpine and Walden inventory regardless of part
   );
 });
 
-test("two-interest intersection bonus makes Chalet the top Bathe Outside + My Own Place match", () => {
+test("two-interest intersection bonus makes Chalet the top Bathe Outside + My Your Own Hideaway match", () => {
   const rooms = [
     room("walden-forest-bathing-suite"),
     room("cabin"),
@@ -118,14 +118,14 @@ test("two-interest intersection bonus makes Chalet the top Bathe Outside + My Ow
   ];
   const [top] = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["bathe-outside", "my-own-place"] },
+    { party: "partner", dog: false, interests: ["connection-with-nature", "your-own-hideaway"] },
     { children: 0, infants: 0 },
   );
 
   assert.equal(top.merchandising?.key, "chalet");
 });
 
-test("two-interest intersection bonus makes Cabin the top Iconic Tub + My Own Place match", () => {
+test("two-interest intersection bonus makes Cabin the top Indoor Sanctuaries + My Your Own Hideaway match", () => {
   const rooms = [
     room("alpine-bathing-suite"),
     room("lodge-penthouse-suite"),
@@ -134,7 +134,7 @@ test("two-interest intersection bonus makes Cabin the top Iconic Tub + My Own Pl
   ];
   const [top] = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["iconic-tub", "my-own-place"] },
+    { party: "partner", dog: false, interests: ["indoor-sanctuaries", "your-own-hideaway"] },
     { children: 0, infants: 0 },
   );
 
@@ -156,32 +156,33 @@ test("normal browsing preserves existing order while still enforcing known age e
 });
 
 
-test("near-everything prefers Lodge inventory", () => {
+test("spaces-for-connection prefers Room Types with a separate living room", () => {
   const rooms = [
     room("cabin", 200),
-    room("forest-house-king", 250),
-    room("lodge-king", 300),
+    room("lodge-king", 250),
+    room("lodge-penthouse-suite", 300),
   ];
   const [top] = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["near-everything"] },
+    { party: "partner", dog: false, interests: ["spaces-for-connection"] },
     { children: 0, infants: 0 },
   );
 
-  assert.equal(top.merchandising?.key, "lodge-king");
+  assert.equal(top.merchandising?.key, "lodge-penthouse-suite");
 });
 
-test("bringing-my-people derives fit from existing friends and family scores", () => {
+test("spaces-to-gather prefers Room Types with a full kitchen", () => {
   const rooms = [
-    room("alpine-bathing-suite", 200),
-    room("forest-house-queen", 250),
-    room("lodge-3-bedroom-suite", 300),
+    room("lodge-3-bedroom-suite", 200),
+    room("forest-house-king", 250),
+    room("chalet", 300),
   ];
   const [top] = rankRecommendedRooms(
     rooms,
-    { party: "friends", dog: false, interests: ["bringing-my-people"] },
+    { party: "friends", dog: false, interests: ["spaces-to-gather"] },
     { children: 0, infants: 0 },
   );
 
-  assert.equal(top.merchandising?.key, "lodge-3-bedroom-suite");
+  assert.equal(top.merchandising?.key, "chalet");
 });
+
