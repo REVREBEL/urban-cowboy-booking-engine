@@ -186,3 +186,23 @@ test("spaces-to-gather prefers Room Types with a full kitchen", () => {
   assert.equal(top.merchandising?.key, "chalet");
 });
 
+
+
+test("minimal-distractions favors away-from-core private groups", () => {
+  const rooms = [
+    room("lodge-king", 200),
+    room("alpine-bathing-suite", 220),
+    room("walden-king", 240),
+    room("cabin", 260),
+  ];
+  const ranked = rankRecommendedRooms(
+    rooms,
+    { party: "solo", dog: false, interests: ["minimal-distractions"] },
+    { children: 0, infants: 0 },
+  );
+
+  assert.deepEqual(
+    ranked.slice(0, 2).map((r) => r.merchandising?.roomTypeGroupKey),
+    ["walden", "cabin"],
+  );
+});
