@@ -27,7 +27,7 @@ function room(key: string, price = 500): ShapedRoom {
   };
 }
 
-test("single-interest Bathe Outside follows the documented fallback ladder", () => {
+test("single-interest Connection with Nature follows the documented fallback ladder", () => {
   const rooms = [
     room("chalet", 300),
     room("walden-forest-bathing-suite-den", 200),
@@ -109,7 +109,7 @@ test("children remove adults-only Alpine and Walden inventory regardless of part
   );
 });
 
-test("two-interest intersection bonus makes Chalet the top Bathe Outside + My Your Own Hideaway match", () => {
+test("two-interest intersection bonus makes Chalet the top Connection with Nature + Your Own Hideaway match", () => {
   const rooms = [
     room("walden-forest-bathing-suite"),
     room("cabin"),
@@ -125,7 +125,7 @@ test("two-interest intersection bonus makes Chalet the top Bathe Outside + My Yo
   assert.equal(top.merchandising?.key, "chalet");
 });
 
-test("two-interest intersection bonus makes Cabin the top Indoor Sanctuaries + My Your Own Hideaway match", () => {
+test("two-interest intersection bonus makes Cabin the top Indoor Sanctuaries + Your Own Hideaway match", () => {
   const rooms = [
     room("alpine-bathing-suite"),
     room("lodge-penthouse-suite"),
