@@ -6,6 +6,7 @@ import type {
   RoomMerchandising,
 } from "../types/merchandising";
 import { PREFERENCE_LABELS } from "@/data/findYourStayPreferences";
+import { roomTypeGroupSupportsMinimalDistractions } from "@/data/roomTypeGroups";
 
 export type Season = "winter" | "spring" | "summer" | "fall";
 
@@ -41,7 +42,7 @@ const PARTY_BENEFITS: Record<PartyType, string> = {
 const INTEREST_BENEFITS: Record<MatchInterest, string> = {
   "connection-with-nature": "This room brings the stay closer to the outdoors and surrounding landscape.",
   "indoor-sanctuaries": "The indoor bathing ritual makes the room feel like a retreat in its own right.",
-  "minimal-distractions": "This preference is being kept intentionally neutral until its room criteria are defined.",
+  "minimal-distractions": "This stay sits away from the Lodge core, with a more private setting and fewer built-in distractions.",
   "scenic-mountain-views": "The setting and confirmed view keep the stay connected to the Catskills landscape.",
   "simple-comforts": "This room keeps things easy, comfortable, and unfussy.",
   "spaces-for-connection": "A separate living room gives you somewhere to settle in together beyond the bedroom.",
@@ -52,7 +53,7 @@ const INTEREST_BENEFITS: Record<MatchInterest, string> = {
 const FALLBACK_INTEREST_COPY: Record<MatchInterest, string> = {
   "connection-with-nature": "It is the strongest available overall match, without overstating a specific outdoor connection.",
   "indoor-sanctuaries": "It is the strongest available overall match, without claiming the full indoor-sanctuary experience.",
-  "minimal-distractions": "It is the strongest available overall match; Minimal Distractions is not yet used as a room-specific ranking claim.",
+  "minimal-distractions": "It is the strongest available overall match, without claiming an away-from-core private setting.",
   "scenic-mountain-views": "It is the strongest available overall match, without promising a room-specific mountain view.",
   "simple-comforts": "It is the strongest available overall match, without overstating the room's simplicity or comfort profile.",
   "spaces-for-connection": "It is the strongest available overall match, without claiming a separate living room.",
@@ -83,7 +84,7 @@ function supportsInterest(
     "indoor-sanctuaries": metadata?.interestScores["indoor-sanctuaries"] != null
       ? (metadata.interestScores["indoor-sanctuaries"] ?? 0) >= 4
       : false,
-    "minimal-distractions": false,
+    "minimal-distractions": roomTypeGroupSupportsMinimalDistractions(metadata?.roomTypeGroupKey),
     "scenic-mountain-views": features.scenicView,
     "simple-comforts": features.simpleCozy,
     "spaces-for-connection": features.separateLivingRoom,
