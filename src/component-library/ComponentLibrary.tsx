@@ -46,6 +46,8 @@ import { SearchBarPromoDropdown } from "@/components/booking/search/SearchBarPro
 import { SearchButton } from "@/components/booking/search/SearchButton";
 
 import { demoMatchRoom, demoStaySummary } from "./fixtures";
+import { FIND_YOUR_STAY_PREFERENCES } from "@/data/findYourStayPreferences";
+import type { PreferenceId } from "@/types/booking-ui";
 
 type SectionId =
   | "chrome"
@@ -548,7 +550,7 @@ function FindFlowsSection({ width }: { width: PreviewWidth }) {
 
 function BookingSection({ width, surface }: { width: PreviewWidth; surface: PreviewSurface }) {
   const [dog, setDog] = useState(false);
-  const [preference, setPreference] = useState(false);
+  const [selectedPreference, setSelectedPreference] = useState<PreferenceId | null>(null);
 
   return (
     <section id="booking" className="scroll-mt-24">
@@ -577,55 +579,22 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
       >
         <WidthFrame width={width}>
           <div className="flex min-h-64 items-center justify-center">
-            <PreferenceIconButton
-              id="iconic-tub"
-              label="iconic-tub"
-              description="A private cedar soaking tub outside among the trees."
-              selected={preference}
-              onToggle={() => setPreference((value) => !value)}
-            />
-            <PreferenceIconButton
-              id="bathe-outside"
-              label="Outdoor Soak"
-              description="A private cedar soaking tub outside among the trees."
-              selected={preference}
-              onToggle={() => setPreference((value) => !value)}
-            />
-            <PreferenceIconButton
-              id="my-own-place"
-              label="my-own-place"
-              description="A private cedar soaking tub outside among the trees."
-              selected={preference}
-              onToggle={() => setPreference((value) => !value)}
-            />
-            <PreferenceIconButton
-              id="near-everything"
-              label="near-everything"
-              description="A private cedar soaking tub outside among the trees."
-              selected={preference}
-              onToggle={() => setPreference((value) => !value)}
-            />
-            <PreferenceIconButton
-              id="simple-cozy"
-              label="simple-cozy"
-              description="A private cedar soaking tub outside among the trees."
-              selected={preference}
-              onToggle={() => setPreference((value) => !value)}
-            />
-            <PreferenceIconButton
-              id="mountain-views"
-              label="mountain-views"
-              description="A private cedar soaking tub outside among the trees."
-              selected={preference}
-              onToggle={() => setPreference((value) => !value)}
-            />
-            <PreferenceIconButton
-              id="bringing-my-people"
-              label="bringing-my-people"
-              description="A private cedar soaking tub outside among the trees."
-              selected={preference}
-              onToggle={() => setPreference((value) => !value)}
-            />
+            <div className="flex flex-wrap justify-center gap-3">
+              {FIND_YOUR_STAY_PREFERENCES.map((item) => (
+                <PreferenceIconButton
+                  key={item.id}
+                  id={item.id}
+                  label={item.label}
+                  description={item.description}
+                  selected={selectedPreference === item.id}
+                  onToggle={() =>
+                    setSelectedPreference((current) =>
+                      current === item.id ? null : item.id,
+                    )
+                  }
+                />
+              ))}
+            </div>
           </div>
         </WidthFrame>
       </Preview>
