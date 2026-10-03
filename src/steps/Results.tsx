@@ -18,7 +18,6 @@ import { BuildingExperienceList } from "@/components/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/RoomDetailModal";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
-import type { RecommendationPreferences as MatcherPreferences } from "../types/merchandising";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 import { roomTypeGroupName } from "@/data/roomTypeGroups";
 import { roomDetailTags } from "@/lib/roomTags";
@@ -57,18 +56,6 @@ function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
     images: images.length ? images : [ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE],
     features: tags,
     tags,
-  };
-}
-
-// The discovery UI retains the Studio label "Spaces to Gather" (`social`).
-// The live merchandising catalogue predates that label and represents the same
-// room-space signal as `ownPlace`; keep the UI vocabulary without changing the
-// existing Mews matcher contract.
-function toMatcherPreferences(preferences: DiscoveryPreferences | null): MatcherPreferences | null {
-  if (!preferences) return null;
-  return {
-    ...preferences,
-    interests: preferences.interests.map((interest) => (interest === "social" ? "ownPlace" : interest)) as MatcherPreferences["interests"],
   };
 }
 
@@ -158,7 +145,7 @@ export function Results() {
     () => parseRecommendationPreferences(recommendationSearch, { adults, children }),
     [recommendationSearch, adults, children],
   );
-  const recommendationPreferences = toMatcherPreferences(quizPreferences ?? urlRecommendationPreferences);
+  const recommendationPreferences = quizPreferences ?? urlRecommendationPreferences;
   const dogRequested = useMemo(() => {
     const value = new URLSearchParams(recommendationSearch).get("dog");
     return value === "yes" || value === "1";
