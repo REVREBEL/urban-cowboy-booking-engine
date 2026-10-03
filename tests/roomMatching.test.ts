@@ -36,7 +36,7 @@ test("single-interest Outdoor Soak follows the documented fallback ladder", () =
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["outdoorSoak"] },
+    { party: "partner", dog: false, interests: ["bathe-outside"] },
     { children: 0, infants: 0 },
   );
 
@@ -61,7 +61,7 @@ test("dog requested is a hard filter and unknown dog policy is not treated as el
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: true, interests: ["outdoorSoak"] },
+    { party: "partner", dog: true, interests: ["bathe-outside"] },
     { children: 0, infants: 0 },
   );
 
@@ -99,7 +99,7 @@ test("children remove adults-only Alpine and Walden inventory regardless of part
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "friends", dog: false, interests: ["simpleCozy"] },
+    { party: "friends", dog: false, interests: ["simple-cozy"] },
     { children: 1, infants: 0 },
   );
 
@@ -118,7 +118,7 @@ test("two-interest intersection bonus makes Chalet the top Outdoor Soak + Own Pl
   ];
   const [top] = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["outdoorSoak", "ownPlace"] },
+    { party: "partner", dog: false, interests: ["bathe-outside", "my-own-place"] },
     { children: 0, infants: 0 },
   );
 
@@ -134,7 +134,7 @@ test("two-interest intersection bonus makes Cabin the top Icon Tub + Own Place m
   ];
   const [top] = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["iconTub", "ownPlace"] },
+    { party: "partner", dog: false, interests: ["iconic-tub", "my-own-place"] },
     { children: 0, infants: 0 },
   );
 
