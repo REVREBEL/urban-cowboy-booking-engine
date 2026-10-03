@@ -15,25 +15,11 @@ type MaskedArtworkProps = {
   className?: string;
 };
 
-const ICON: Record<PreferenceId, string> = {
-  "iconic-tub": "/assets/icons/amenities/buttons/copper_clawfoot_soaking_tub.svg",
-  "bathe-outside": "/assets/icons/amenities/buttons/outdoor_cedar_soaking_tub.svg",
-  "my-own-place": "/assets/icons/amenities/buttons/cabin.svg",
-  "near-everything": "/assets/icons/amenities/buttons/separate_living_room.svg",
-  "simple-cozy": "/assets/icons/amenities/buttons/letter_writing_desk.svg",
-  "mountain-views": "/assets/icons/amenities/buttons/peak_balcony_mountian_view.svg",
-  "bringing-my-people": "/assets/icons/amenities/buttons/separate_living_room.svg",
-};
+const ARTWORK_ROOT = "/assets/illustrations/interaction/find-your-stay";
 
-const LABEL: Partial<Record<PreferenceId, string>> = {
-  "iconic-tub": "/assets/labels/copper_clawfoot_soaking_tub_label.svg",
-  "bathe-outside": "/assets/labels/soak-outside-label.svg",
-  "my-own-place": "/assets/labels/my_own_place_label.svg",
-  "near-everything": "/assets/labels/spaces_to_gather_label.svg",
-  "simple-cozy": "/assets/labels/simple_cozy_label.svg",
-  "mountain-views": "/assets/labels/scenic_views_label.svg",
-  "bringing-my-people": "/assets/labels/spaces_to_gather_label.svg",
-};
+function preferenceArtwork(id: PreferenceId): string {
+  return `${ARTWORK_ROOT}/${id}.svg`;
+}
 
 function MaskedArtwork({ src, selected, className }: MaskedArtworkProps) {
   return (
@@ -59,8 +45,7 @@ function MaskedArtwork({ src, selected, className }: MaskedArtworkProps) {
 }
 
 export function PreferenceIconButton({ id, label, description, selected, onToggle }: Props) {
-  const icon = ICON[id];
-  const labelArt = LABEL[id];
+  const artwork = preferenceArtwork(id);
 
   return (
     <button
@@ -74,42 +59,20 @@ export function PreferenceIconButton({ id, label, description, selected, onToggl
     >
       <span
         className={cn(
-          "flex flex-1 flex-col items-center justify-center self-stretch overflow-hidden border-[0.386px] transition-colors",
+          "flex flex-1 items-center justify-center self-stretch overflow-hidden border-[0.386px] transition-colors",
           selected
             ? "border-oxblood bg-white/70"
             : "border-umber/30 bg-white/25 group-hover:border-umber/50",
         )}
       >
         <MaskedArtwork
-          src={icon}
+          src={artwork}
           selected={selected}
           className={cn(
-            "h-32 w-32",
+            "h-[188px] w-[188px]",
             !selected && "group-hover:opacity-65",
           )}
         />
-
-        {labelArt ? (
-          <MaskedArtwork
-            src={labelArt}
-            selected={selected}
-            className={cn(
-              "h-[45px] w-[120px]",
-              !selected && "group-hover:opacity-65",
-            )}
-          />
-        ) : (
-          <span
-            className={cn(
-              "font-label text-[11px] leading-tight transition-colors",
-              selected
-                ? "text-oxblood"
-                : "text-umber/45 group-hover:text-umber/65",
-            )}
-          >
-            {label}
-          </span>
-        )}
       </span>
 
       <span id={`preference-${id}-label`} className="sr-only">
