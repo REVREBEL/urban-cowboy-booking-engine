@@ -1,11 +1,12 @@
 export const PREFERENCE_IDS = [
-  "iconic-tub",
-  "bathe-outside",
-  "my-own-place",
-  "near-everything",
-  "simple-cozy",
-  "mountain-views",
-  "bringing-my-people",
+  "connection-with-nature",
+  "indoor-sanctuaries",
+  "minimal-distractions",
+  "scenic-mountain-views",
+  "simple-comforts",
+  "spaces-for-connection",
+  "spaces-to-gather",
+  "your-own-hideaway",
 ] as const;
 
 export type PreferenceId = (typeof PREFERENCE_IDS)[number];
