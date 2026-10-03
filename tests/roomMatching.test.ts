@@ -188,12 +188,16 @@ test("spaces-to-gather prefers Room Types with a full kitchen", () => {
 
 
 
-test("minimal-distractions favors away-from-core private groups", () => {
+test("minimal-distractions favors the KML-verified away-from-core private groups", () => {
   const rooms = [
     room("lodge-king", 200),
-    room("alpine-bathing-suite", 220),
-    room("walden-king", 240),
-    room("cabin", 260),
+    room("walden-king", 210),
+    room("cabin", 220),
+    room("alpine-bathing-suite", 230),
+    room("forest-house-queen", 240),
+    room("slide-mountain-haus-double-queen", 250),
+    room("opas-cabin-2-bedroom", 260),
+    room("mountain-view-haus-2-bedroom", 270),
   ];
   const ranked = rankRecommendedRooms(
     rooms,
@@ -202,7 +206,7 @@ test("minimal-distractions favors away-from-core private groups", () => {
   );
 
   assert.deepEqual(
-    ranked.slice(0, 2).map((r) => r.merchandising?.roomTypeGroupKey),
-    ["walden", "cabin"],
+    ranked.slice(0, 4).map((r) => r.merchandising?.roomTypeGroupKey),
+    ["forest-house", "slide-mountain", "opas", "mountain-view"],
   );
 });
