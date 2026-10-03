@@ -1,12 +1,8 @@
+import type { PreferenceId } from "./booking-ui";
+
 export type PartyType = "partner" | "friends" | "family" | "solo";
 
-export type MatchInterest =
-  | "iconTub"
-  | "outdoorSoak"
-  | "ownPlace"
-  | "scenic"
-  | "simpleCozy"
-  | "social";
+export type MatchInterest = PreferenceId;
 
 export type Season = "winter" | "spring" | "summer" | "fall";
 
