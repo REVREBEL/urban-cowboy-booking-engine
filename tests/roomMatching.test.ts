@@ -27,7 +27,7 @@ function room(key: string, price = 500): ShapedRoom {
   };
 }
 
-test("single-interest Outdoor Soak follows the documented fallback ladder", () => {
+test("single-interest Bathe Outside follows the documented fallback ladder", () => {
   const rooms = [
     room("chalet", 300),
     room("walden-forest-bathing-suite-den", 200),
@@ -109,7 +109,7 @@ test("children remove adults-only Alpine and Walden inventory regardless of part
   );
 });
 
-test("two-interest intersection bonus makes Chalet the top Outdoor Soak + Own Place match", () => {
+test("two-interest intersection bonus makes Chalet the top Bathe Outside + My Own Place match", () => {
   const rooms = [
     room("walden-forest-bathing-suite"),
     room("cabin"),
@@ -125,7 +125,7 @@ test("two-interest intersection bonus makes Chalet the top Outdoor Soak + Own Pl
   assert.equal(top.merchandising?.key, "chalet");
 });
 
-test("two-interest intersection bonus makes Cabin the top Icon Tub + Own Place match", () => {
+test("two-interest intersection bonus makes Cabin the top Iconic Tub + My Own Place match", () => {
   const rooms = [
     room("alpine-bathing-suite"),
     room("lodge-penthouse-suite"),
@@ -153,4 +153,35 @@ test("normal browsing preserves existing order while still enforcing known age e
     ranked.map((r) => r.merchandising?.key),
     ["forest-house-queen", "lodge-king"],
   );
+});
+
+
+test("near-everything prefers Lodge inventory", () => {
+  const rooms = [
+    room("cabin", 200),
+    room("forest-house-king", 250),
+    room("lodge-king", 300),
+  ];
+  const [top] = rankRecommendedRooms(
+    rooms,
+    { party: "partner", dog: false, interests: ["near-everything"] },
+    { children: 0, infants: 0 },
+  );
+
+  assert.equal(top.merchandising?.key, "lodge-king");
+});
+
+test("bringing-my-people derives fit from existing friends and family scores", () => {
+  const rooms = [
+    room("alpine-bathing-suite", 200),
+    room("forest-house-queen", 250),
+    room("lodge-3-bedroom-suite", 300),
+  ];
+  const [top] = rankRecommendedRooms(
+    rooms,
+    { party: "friends", dog: false, interests: ["bringing-my-people"] },
+    { children: 0, infants: 0 },
+  );
+
+  assert.equal(top.merchandising?.key, "lodge-3-bedroom-suite");
 });
