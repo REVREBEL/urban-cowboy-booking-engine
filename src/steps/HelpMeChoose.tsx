@@ -1,51 +1,8 @@
 import { useState } from 'react';
 import type { PartyType, MatchInterest, RecommendationPreferences } from "@/types/find-your-stay";
+import { FIND_YOUR_STAY_PREFERENCES } from "@/data/findYourStayPreferences";
 import { TravelPartyGroup } from "@/components/booking/discovery/FindYourStayTravelPartyButton";
 import { PreferenceIconButton } from "@/components/booking/discovery/PreferenceIconButton";
-
-type InterestMeta = {
-  value: MatchInterest;
-  label: string;
-  description: string;
-};
-
-const INTEREST_OPTIONS: InterestMeta[] = [
-  {
-    value: "iconic-tub",
-    label: "Iconic Tub",
-    description: "The signature Cowboy bathing ritual.",
-  },
-  {
-    value: "bathe-outside",
-    label: "Bathe Outside",
-    description: "A soak in the open air.",
-  },
-  {
-    value: "my-own-place",
-    label: "My Own Place",
-    description: "A private place to settle in.",
-  },
-  {
-    value: "near-everything",
-    label: "Near Everything",
-    description: "Stay close to the social heart of the Cowboy.",
-  },
-  {
-    value: "simple-cozy",
-    label: "Simple + Cozy",
-    description: "Something easy, warm, and unfussy.",
-  },
-  {
-    value: "mountain-views",
-    label: "Mountain Views",
-    description: "Mountain and forest views.",
-  },
-  {
-    value: "bringing-my-people",
-    label: "Bringing My People",
-    description: "More room for friends or family to stay together.",
-  },
-];
 
 const TRAVEL_PARTY_OPTIONS = [
   { id: 'solo', title: 'SOLO', subtitle: 'Time to myself' },
@@ -199,17 +156,17 @@ export default function HelpMeChoose({
         </p>
 
         <div className="grid grid-cols-2 justify-items-center gap-5 sm:grid-cols-3" role="group" aria-label="Choose up to two preferences">
-          {INTEREST_OPTIONS.map((option) => {
-            const selected = interests.includes(option.value);
+          {FIND_YOUR_STAY_PREFERENCES.map((option) => {
+            const selected = interests.includes(option.id);
             const disabled = !selected && interests.length >= 2;
             return (
-              <div key={option.value} className={disabled ? "pointer-events-none opacity-35" : ""}>
+              <div key={option.id} className={disabled ? "pointer-events-none opacity-35" : ""}>
                 <PreferenceIconButton
-                  id={option.value}
+                  id={option.id}
                   label={option.label}
                   description={option.description}
                   selected={selected}
-                  onToggle={() => toggleInterest(option.value)}
+                  onToggle={() => toggleInterest(option.id)}
                 />
               </div>
             );
