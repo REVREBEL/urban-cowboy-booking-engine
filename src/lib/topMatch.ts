@@ -39,23 +39,25 @@ const PARTY_BENEFITS: Record<PartyType, string> = {
 };
 
 const INTEREST_BENEFITS: Record<MatchInterest, string> = {
-  "iconic-tub": "The signature indoor soaking tub puts the classic Cowboy bathing ritual front and center.",
-  "bathe-outside": "The outdoor soaking setup makes this one of the strongest ways to bathe among the trees.",
-  "my-own-place": "This accommodation gives you a more private, independent way to stay.",
-  "near-everything": "This room keeps you close to the Lodge, the social heart of the Cowboy.",
-  "simple-cozy": "This room keeps things easy, comfortable, and unfussy.",
-  "mountain-views": "The setting and confirmed view keep the stay connected to the Catskills landscape.",
-  "bringing-my-people": "This room is a strong fit when the stay is about bringing friends or family together.",
+  "connection-with-nature": "This room brings the stay closer to the outdoors and surrounding landscape.",
+  "indoor-sanctuaries": "The indoor bathing ritual makes the room feel like a retreat in its own right.",
+  "minimal-distractions": "This preference is being kept intentionally neutral until its room criteria are defined.",
+  "scenic-mountain-views": "The setting and confirmed view keep the stay connected to the Catskills landscape.",
+  "simple-comforts": "This room keeps things easy, comfortable, and unfussy.",
+  "spaces-for-connection": "A separate living room gives you somewhere to settle in together beyond the bedroom.",
+  "spaces-to-gather": "A full kitchen gives the stay a natural place to gather around.",
+  "your-own-hideaway": "This accommodation gives you a more private, independent way to stay.",
 };
 
 const FALLBACK_INTEREST_COPY: Record<MatchInterest, string> = {
-  "iconic-tub": "It is the strongest available overall match, though it does not claim an indoor soaking tub.",
-  "bathe-outside": "It is the strongest available overall match, though it does not claim an outdoor soaking setup.",
-  "my-own-place": "It is the strongest available overall match, without implying a fully standalone stay.",
-  "near-everything": "It is the strongest available overall match, without claiming a Lodge location.",
-  "simple-cozy": "It is the strongest available overall match, without overstating the room's size or price point.",
-  "mountain-views": "It is the strongest available overall match, without promising a room-specific view.",
-  "bringing-my-people": "It is the strongest available overall match, without overstating its group-stay fit.",
+  "connection-with-nature": "It is the strongest available overall match, without overstating a specific outdoor connection.",
+  "indoor-sanctuaries": "It is the strongest available overall match, without claiming the full indoor-sanctuary experience.",
+  "minimal-distractions": "It is the strongest available overall match; Minimal Distractions is not yet used as a room-specific ranking claim.",
+  "scenic-mountain-views": "It is the strongest available overall match, without promising a room-specific mountain view.",
+  "simple-comforts": "It is the strongest available overall match, without overstating the room's simplicity or comfort profile.",
+  "spaces-for-connection": "It is the strongest available overall match, without claiming a separate living room.",
+  "spaces-to-gather": "It is the strongest available overall match, without claiming a full kitchen.",
+  "your-own-hideaway": "It is the strongest available overall match, without implying a fully independent hideaway.",
 };
 
 const DOG_BENEFIT = "It is also confirmed as a dog-friendly choice, so your dog can come along for the stay.";
@@ -74,23 +76,19 @@ function supportsInterest(
 ): boolean {
   const features = metadata?.features ?? EMPTY_FEATURES;
 
-  if (interest === "near-everything") {
-    return metadata?.roomTypeGroupKey === "lodge";
-  }
-
-  if (interest === "bringing-my-people") {
-    return Math.max(
-      metadata?.partyScores.friends ?? 0,
-      metadata?.partyScores.family ?? 0,
-    ) >= 4;
-  }
-
   return {
-    "iconic-tub": features.indoorTub,
-    "bathe-outside": features.outdoorSoak,
-    "my-own-place": features.ownPlace,
-    "simple-cozy": features.simpleCozy,
-    "mountain-views": features.scenicView,
+    "connection-with-nature": metadata?.interestScores["connection-with-nature"] != null
+      ? (metadata.interestScores["connection-with-nature"] ?? 0) >= 4
+      : false,
+    "indoor-sanctuaries": metadata?.interestScores["indoor-sanctuaries"] != null
+      ? (metadata.interestScores["indoor-sanctuaries"] ?? 0) >= 4
+      : false,
+    "minimal-distractions": false,
+    "scenic-mountain-views": features.scenicView,
+    "simple-comforts": features.simpleCozy,
+    "spaces-for-connection": features.separateLivingRoom,
+    "spaces-to-gather": features.fullKitchen,
+    "your-own-hideaway": features.ownPlace,
   }[interest] === true;
 }
 
@@ -166,22 +164,29 @@ export function buildTopMatchCopy(
 }
 
 const VALID_INTERESTS: MatchInterest[] = [
-  "iconic-tub",
-  "bathe-outside",
-  "my-own-place",
-  "near-everything",
-  "simple-cozy",
-  "mountain-views",
-  "bringing-my-people",
+  "connection-with-nature",
+  "indoor-sanctuaries",
+  "minimal-distractions",
+  "scenic-mountain-views",
+  "simple-comforts",
+  "spaces-for-connection",
+  "spaces-to-gather",
+  "your-own-hideaway",
 ];
 
 const LEGACY_INTEREST_ALIASES: Record<string, MatchInterest> = {
-  iconTub: "iconic-tub",
-  outdoorSoak: "bathe-outside",
-  ownPlace: "my-own-place",
-  scenic: "mountain-views",
-  simpleCozy: "simple-cozy",
-  social: "bringing-my-people",
+  iconTub: "indoor-sanctuaries",
+  "iconic-tub": "indoor-sanctuaries",
+  outdoorSoak: "connection-with-nature",
+  "bathe-outside": "connection-with-nature",
+  ownPlace: "your-own-hideaway",
+  "my-own-place": "your-own-hideaway",
+  scenic: "scenic-mountain-views",
+  "mountain-views": "scenic-mountain-views",
+  simpleCozy: "simple-comforts",
+  "simple-cozy": "simple-comforts",
+  social: "spaces-for-connection",
+  "bringing-my-people": "spaces-for-connection",
 };
 
 function normalizeInterest(value: string | null): MatchInterest | null {
