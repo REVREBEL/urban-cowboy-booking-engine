@@ -18,16 +18,17 @@ export function interestScore(
   const configured = merchandising.interestScores[interest];
   if (configured != null) return configured;
 
-  if (interest === "bringing-my-people") {
-    return Math.max(
-      merchandising.partyScores.friends ?? 0,
-      merchandising.partyScores.family ?? 0,
-    );
+  if (interest === "spaces-for-connection") {
+    return merchandising.features.separateLivingRoom ? 5 : 0;
   }
 
-  if (interest === "near-everything") {
-    return merchandising.roomTypeGroupKey === "lodge" ? 5 : 0;
+  if (interest === "spaces-to-gather") {
+    return merchandising.features.fullKitchen ? 5 : 0;
   }
+
+  // Minimal Distractions is a new guest preference. Do not infer it from
+  // "simple comforts" or room size until its intended room signal is defined.
+  if (interest === "minimal-distractions") return 0;
 
   return 0;
 }
