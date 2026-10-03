@@ -67,9 +67,9 @@ test("never uses seasonal feature claims without metadata support", () => {
     dogPolicy: "unknown",
     agePolicy: "none",
     partyScores: { partner: 0, friends: 0, family: 0, solo: 0 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 0, scenic: 0, simpleCozy: 5 },
-    interestPriority: { simpleCozy: 0 },
-    matchReasons: { simpleCozy: "its easygoing feel" },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 0, "simple-cozy": 5 },
+    interestPriority: { "simple-cozy": 0 },
+    matchReasons: { "simple-cozy": "its easygoing feel" },
     features: { simpleCozy: true },
   };
   const copy = buildTopMatchCopy(
