@@ -79,12 +79,14 @@ A separate living room and a full kitchen are independent signals. A Room Type m
 This preference describes **setting**, not an amenity. It is evaluated at the Room Type Group level:
 
 ```text
+distanceFromLodgeFeet >= 1000
+AND
 coreProximity = away-from-core
 AND
 privacyLevel = enhanced
 ```
 
-Current qualifying groups are Walden, Cabin, Chalet, Opa's, Slide Mountain, and Mountain View. The Lodge is the core and does not qualify. Alpine is near the core and does not qualify. Forest House remains `unknown` until its physical relationship to the Lodge/core is explicitly confirmed.
+Using the property KML, the immediate Lodge cluster is Walden (156 ft), Chalet (162 ft), Cabin (183 ft), and Alpine (288 ft). The separated groups are Mountain View (1,262 ft), Slide Mountain (1,323 ft), Forest House (1,668 ft), and Opa's (1,844 ft). Those four separated groups qualify when `privacyLevel = enhanced`.
 
 A few implementation caveats matter. The current Walden copy explicitly says the Forest Bathing Suite with Den is its only non-dog-friendly room style, while the other listed Walden types are dog-friendly. Alpine's three types are dog-friendly and 21+. Cabin, Chalet and the four Lodge types are published as dog-friendly. Slide says the full Haus is dog-friendly while the 2 Bedroom is not unless the full Haus is booked. The current canonical Forest House page says those rooms are not dog-friendly. Opa’s and Mountain View currently don't state a dog policy in their published copy, so I would **not silently code them as dog-friendly** until the CRS/property confirms it. ([Urban Cowboy][2])
 
@@ -147,7 +149,7 @@ This is the other piece I would give the developer. These are the broad product 
 | **SIMPLE COMFORTS** | Slide Mountain Haus Double Queen → Forest House Queen → Walden King → Lodge King → Forest House King → Slide Mountain Haus 2 Bedroom → Opa’s Cabin 2 Bedroom → Lodge 2 Bedroom                                                                                                                                                                                                |
 | **SPACES FOR CONNECTION** | Feature-driven: Room Types with a verified separate living room or lounge space. |
 | **SPACES TO GATHER** | Feature-driven: Room Types with a verified full kitchen. |
-| **MINIMAL DISTRACTIONS** | Room Type Groups marked away from the Lodge/core with enhanced privacy. |
+| **MINIMAL DISTRACTIONS** | KML-measured distance of at least 1,000 ft from The Main Lodge, plus enhanced privacy. |
 
 Then **party type reshuffles that ladder**.
 
