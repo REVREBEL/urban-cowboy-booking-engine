@@ -21,11 +21,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adultsOnly21",
     partyScores: { partner: 5, friends: 3, family: 2, solo: 4 },
-    interestScores: { iconTub: 5, outdoorSoak: 0, ownPlace: 0, scenic: 5, simpleCozy: 2 },
+    interestScores: { "iconic-tub": 5, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 5, "simple-cozy": 2 },
     features: { indoorTub: true, scenicView: true, privateDeck: true, heatedFloors: true },
     matchReasons: {
-      iconTub: "its signature indoor soaking tub",
-      scenic: "its mountain-and-forest outlook",
+      "iconic-tub": "its signature indoor soaking tub",
+      "mountain-views": "its mountain-and-forest outlook",
     },
   },
   {
@@ -37,11 +37,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adultsOnly21",
     partyScores: { partner: 5, friends: 3, family: 2, solo: 3 },
-    interestScores: { iconTub: 5, outdoorSoak: 0, ownPlace: 0, scenic: 5, simpleCozy: 1 },
+    interestScores: { "iconic-tub": 5, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 5, "simple-cozy": 1 },
     features: { indoorTub: true, scenicView: true, privateDeck: true, heatedFloors: true },
     matchReasons: {
-      iconTub: "its signature indoor soaking tub",
-      scenic: "its elevated mountain-and-forest views",
+      "iconic-tub": "its signature indoor soaking tub",
+      "mountain-views": "its elevated mountain-and-forest views",
     },
   },
   {
@@ -53,7 +53,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adultsOnly21",
     partyScores: { partner: 5, friends: 3, family: 2, solo: 3 },
-    interestScores: { iconTub: 5, outdoorSoak: 0, ownPlace: 0, scenic: 5, simpleCozy: 1 },
+    interestScores: { "iconic-tub": 5, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 5, "simple-cozy": 1 },
     features: {
       indoorTub: true,
       scenicView: true,
@@ -62,8 +62,8 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
       fireplace: true,
     },
     matchReasons: {
-      iconTub: "its signature indoor soaking tub",
-      scenic: "its elevated penthouse setting and balcony views",
+      "iconic-tub": "its signature indoor soaking tub",
+      "mountain-views": "its elevated penthouse setting and balcony views",
     },
   },
   {
@@ -75,11 +75,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adultsOnly21",
     partyScores: { partner: 5, friends: 3, family: 2, solo: 4 },
-    interestScores: { iconTub: 0, outdoorSoak: 5, ownPlace: 0, scenic: 4, simpleCozy: 2 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 5, "my-own-place": 0, "mountain-views": 4, "simple-cozy": 2 },
     features: { outdoorSoak: true, scenicView: true, privateDeck: true },
     matchReasons: {
-      outdoorSoak: "its cedar soaking tub on a private deck among the trees",
-      scenic: "its private deck overlooking the woods",
+      "bathe-outside": "its cedar soaking tub on a private deck among the trees",
+      "mountain-views": "its private deck overlooking the woods",
     },
   },
   {
@@ -90,11 +90,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adultsOnly21",
     partyScores: { partner: 5, friends: 3, family: 2, solo: 3 },
-    interestScores: { iconTub: 0, outdoorSoak: 5, ownPlace: 0, scenic: 5, simpleCozy: 1 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 5, "my-own-place": 0, "mountain-views": 5, "simple-cozy": 1 },
     features: { outdoorSoak: true, scenicView: true, privateDeck: true },
     matchReasons: {
-      outdoorSoak: "its outdoor cedar soaking tub",
-      scenic: "its sunrise-facing private porch and mountain views",
+      "bathe-outside": "its outdoor cedar soaking tub",
+      "mountain-views": "its sunrise-facing private porch and mountain views",
     },
   },
   {
@@ -105,11 +105,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "notAllowed",
     agePolicy: "adultsOnly21",
     partyScores: { partner: 5, friends: 3, family: 2, solo: 3 },
-    interestScores: { iconTub: 0, outdoorSoak: 5, ownPlace: 0, scenic: 4, simpleCozy: 1 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 5, "my-own-place": 0, "mountain-views": 4, "simple-cozy": 1 },
     features: { outdoorSoak: true, scenicView: true, privateDeck: true },
     matchReasons: {
-      outdoorSoak: "its cedar soaking tub on a private deck among the trees",
-      scenic: "its private deck in the forest",
+      "bathe-outside": "its cedar soaking tub on a private deck among the trees",
+      "mountain-views": "its private deck in the forest",
     },
   },
   {
@@ -121,11 +121,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adultsOnly21",
     partyScores: { partner: 4, friends: 3, family: 2, solo: 5 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 0, scenic: 4, simpleCozy: 5 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 4, "simple-cozy": 5 },
     features: { scenicView: true, privateDeck: true, simpleCozy: true },
     matchReasons: {
-      scenic: "its forest-facing private deck",
-      simpleCozy: "its classic cabin-style king-room setup",
+      "mountain-views": "its forest-facing private deck",
+      "simple-cozy": "its classic cabin-style king-room setup",
     },
   },
   {
@@ -136,11 +136,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "none",
     partyScores: { partner: 5, friends: 4, family: 4, solo: 3 },
-    interestScores: { iconTub: 5, outdoorSoak: 0, ownPlace: 5, scenic: 3, simpleCozy: 2 },
+    interestScores: { "iconic-tub": 5, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 3, "simple-cozy": 2 },
     features: { indoorTub: true, ownPlace: true, fireplace: true },
     matchReasons: {
-      iconTub: "its copper clawfoot tub",
-      ownPlace: "its standalone cabin setting",
+      "iconic-tub": "its copper clawfoot tub",
+      "my-own-place": "its standalone cabin setting",
     },
   },
   {
@@ -151,7 +151,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "none",
     partyScores: { partner: 5, friends: 4, family: 5, solo: 2 },
-    interestScores: { iconTub: 0, outdoorSoak: 5, ownPlace: 5, scenic: 4, simpleCozy: 2 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 5, "my-own-place": 5, "mountain-views": 4, "simple-cozy": 2 },
     features: {
       outdoorSoak: true,
       ownPlace: true,
@@ -162,9 +162,9 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
       fullKitchen: true,
     },
     matchReasons: {
-      outdoorSoak: "its private cedar soaking tub",
-      ownPlace: "its standalone chalet setting",
-      scenic: "its picture windows and private deck",
+      "bathe-outside": "its private cedar soaking tub",
+      "my-own-place": "its standalone chalet setting",
+      "mountain-views": "its picture windows and private deck",
     },
   },
   {
@@ -175,7 +175,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "notAllowed",
     agePolicy: "none",
     partyScores: { partner: 4, friends: 3, family: 3, solo: 5 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 0, scenic: 2, simpleCozy: 5 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 2, "simple-cozy": 5 },
     features: { simpleCozy: true },
     matchReasons: { simpleCozy: "its cozy, straightforward Catskills room experience" },
   },
@@ -187,11 +187,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "notAllowed",
     agePolicy: "none",
     partyScores: { partner: 4, friends: 3, family: 4, solo: 4 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 0, scenic: 4, simpleCozy: 4 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 4, "simple-cozy": 4 },
     features: { scenicView: true, simpleCozy: true, privateDeck: true },
     matchReasons: {
-      scenic: "its private balcony at treetop level",
-      simpleCozy: "its comfortable king-room setup",
+      "mountain-views": "its private balcony at treetop level",
+      "simple-cozy": "its comfortable king-room setup",
     },
   },
   {
@@ -202,7 +202,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "unknown",
     agePolicy: "none",
     partyScores: { partner: 2, friends: 5, family: 5, solo: 1 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 5, scenic: 2, simpleCozy: 3 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 2, "simple-cozy": 3 },
     features: { ownPlace: true, fireplace: true, fullKitchen: true },
     matchReasons: { ownPlace: "its independent century-old cabin setting" },
   },
@@ -214,7 +214,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "unknown",
     agePolicy: "none",
     partyScores: { partner: 1, friends: 5, family: 5, solo: 0 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 5, scenic: 2, simpleCozy: 2 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 2, "simple-cozy": 2 },
     features: { ownPlace: true, fireplace: true, fullKitchen: true },
     matchReasons: { ownPlace: "its independent four-bedroom cabin setting" },
   },
@@ -227,11 +227,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adult21Required",
     partyScores: { partner: 5, friends: 3, family: 4, solo: 2 },
-    interestScores: { iconTub: 5, outdoorSoak: 0, ownPlace: 2, scenic: 5, simpleCozy: 1 },
+    interestScores: { "iconic-tub": 5, "bathe-outside": 0, "my-own-place": 2, "mountain-views": 5, "simple-cozy": 1 },
     features: { indoorTub: true, scenicView: true, privateDeck: true },
     matchReasons: {
-      iconTub: "its copper clawfoot tub",
-      scenic: "its elevated Lodge setting and private deck",
+      "iconic-tub": "its copper clawfoot tub",
+      "mountain-views": "its elevated Lodge setting and private deck",
     },
   },
   {
@@ -243,11 +243,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adult21Required",
     partyScores: { partner: 2, friends: 5, family: 5, solo: 0 },
-    interestScores: { iconTub: 4, outdoorSoak: 0, ownPlace: 2, scenic: 5, simpleCozy: 2 },
+    interestScores: { "iconic-tub": 4, "bathe-outside": 0, "my-own-place": 2, "mountain-views": 5, "simple-cozy": 2 },
     features: { indoorTub: true, scenicView: true, privateDeck: true, fireplace: true },
     matchReasons: {
-      iconTub: "its copper clawfoot tub",
-      scenic: "its sweeping Lodge views",
+      "iconic-tub": "its copper clawfoot tub",
+      "mountain-views": "its sweeping Lodge views",
     },
   },
   {
@@ -258,7 +258,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adult21Required",
     partyScores: { partner: 2, friends: 5, family: 5, solo: 1 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 1, scenic: 4, simpleCozy: 3 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 1, "mountain-views": 4, "simple-cozy": 3 },
     features: { scenicView: true, privateDeck: true },
     matchReasons: { scenic: "its private deck above the main Lodge" },
   },
@@ -271,7 +271,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "adult21Required",
     partyScores: { partner: 4, friends: 3, family: 4, solo: 5 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 0, scenic: 3, simpleCozy: 5 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 3, "simple-cozy": 5 },
     features: { simpleCozy: true },
     matchReasons: { simpleCozy: "its easy, classic Lodge-room setup" },
   },
@@ -283,7 +283,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "allowed",
     agePolicy: "none",
     partyScores: { partner: 0, friends: 5, family: 5, solo: 0 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 5, scenic: 3, simpleCozy: 3 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 3, "simple-cozy": 3 },
     features: { ownPlace: true, fullKitchen: true },
     matchReasons: { ownPlace: "its full-house setup with kitchen and living room" },
   },
@@ -295,7 +295,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "notAllowed",
     agePolicy: "none",
     partyScores: { partner: 1, friends: 5, family: 5, solo: 0 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 3, scenic: 3, simpleCozy: 4 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 3, "mountain-views": 3, "simple-cozy": 4 },
     features: { simpleCozy: true, fullKitchen: true },
     matchReasons: { simpleCozy: "its straightforward small-group house setup" },
   },
@@ -307,11 +307,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "unknown",
     agePolicy: "none",
     partyScores: { partner: 2, friends: 5, family: 4, solo: 2 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 0, scenic: 4, simpleCozy: 5 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 4, "simple-cozy": 5 },
     features: { scenicView: true, simpleCozy: true },
     matchReasons: {
-      scenic: "its porch view toward Slide Mountain",
-      simpleCozy: "its practical double-queen setup",
+      "mountain-views": "its porch view toward Slide Mountain",
+      "simple-cozy": "its practical double-queen setup",
     },
   },
   {
@@ -322,11 +322,11 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "unknown",
     agePolicy: "none",
     partyScores: { partner: 2, friends: 5, family: 5, solo: 0 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 5, scenic: 5, simpleCozy: 3 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 5, "simple-cozy": 3 },
     features: { ownPlace: true, scenicView: true, fireplace: true, fullKitchen: true },
     matchReasons: {
-      ownPlace: "its independent house setup",
-      scenic: "its view across the valley toward the Big Indian Wilderness",
+      "my-own-place": "its independent house setup",
+      "mountain-views": "its view across the valley toward the Big Indian Wilderness",
     },
   },
   {
@@ -337,17 +337,17 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     dogPolicy: "unknown",
     agePolicy: "none",
     partyScores: { partner: 1, friends: 5, family: 5, solo: 0 },
-    interestScores: { iconTub: 0, outdoorSoak: 0, ownPlace: 5, scenic: 5, simpleCozy: 2 },
+    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 5, "simple-cozy": 2 },
     features: { ownPlace: true, scenicView: true, fireplace: true, fullKitchen: true },
     matchReasons: {
-      ownPlace: "its independent four-bedroom house setup",
-      scenic: "its view across the valley toward the Big Indian Wilderness",
+      "my-own-place": "its independent four-bedroom house setup",
+      "mountain-views": "its view across the valley toward the Big Indian Wilderness",
     },
   },
 ];
 
-const INTEREST_LADDERS: Record<MatchInterest, string[]> = {
-  iconTub: [
+const INTEREST_LADDERS: Partial<Record<MatchInterest, string[]>> = {
+  "iconic-tub": [
     "alpine-bathing-suite",
     "alpine-bathing-suite-den",
     "alpine-penthouse-bathing-suite",
@@ -355,13 +355,13 @@ const INTEREST_LADDERS: Record<MatchInterest, string[]> = {
     "cabin",
     "lodge-3-bedroom-suite",
   ],
-  outdoorSoak: [
+  "bathe-outside": [
     "walden-forest-bathing-suite",
     "walden-sunrise-bathing-suite",
     "walden-forest-bathing-suite-den",
     "chalet",
   ],
-  ownPlace: [
+  "my-own-place": [
     "cabin",
     "chalet",
     "mountain-view-haus-2-bedroom",
@@ -371,7 +371,7 @@ const INTEREST_LADDERS: Record<MatchInterest, string[]> = {
     "opas-cabin-4-bedroom",
     "slide-mountain-haus-2-bedroom",
   ],
-  scenic: [
+  "mountain-views": [
     "walden-sunrise-bathing-suite",
     "alpine-bathing-suite-den",
     "alpine-penthouse-bathing-suite",
@@ -388,7 +388,7 @@ const INTEREST_LADDERS: Record<MatchInterest, string[]> = {
     "lodge-2-bedroom",
     "lodge-king",
   ],
-  simpleCozy: [
+  "simple-cozy": [
     "slide-mountain-haus-double-queen",
     "forest-house-queen",
     "walden-king",
