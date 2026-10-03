@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { PreferenceId } from "@/types/booking-ui";
+import { PREFERENCE_BY_ID } from "@/data/findYourStayPreferences";
 
 type Props = {
   id: PreferenceId;
@@ -12,7 +13,8 @@ type Props = {
 const ARTWORK_ROOT = "/assets/illustrations/interaction/find-your-stay";
 
 function preferenceArtwork(id: PreferenceId): string {
-  return `${ARTWORK_ROOT}/${id}.svg`;
+  const filename = PREFERENCE_BY_ID.get(id)?.artwork;
+  return `${ARTWORK_ROOT}/${filename ?? ""}`;
 }
 
 export function PreferenceIconButton({ id, label, description, selected, onToggle }: Props) {
