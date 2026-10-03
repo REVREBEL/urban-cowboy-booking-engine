@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { PartyType, MatchInterest, RecommendationPreferences } from "@/types/find-your-stay";
-import type { PreferenceId } from "@/types/booking-ui";
 import { TravelPartyGroup } from "@/components/booking/discovery/FindYourStayTravelPartyButton";
 import { PreferenceIconButton } from "@/components/booking/discovery/PreferenceIconButton";
 
@@ -12,45 +11,41 @@ type InterestMeta = {
 
 const INTEREST_OPTIONS: InterestMeta[] = [
   {
-    value: 'iconTub',
-    label: 'Iconic Copper Tub',
-    description: 'The signature Cowboy bathing ritual.',
+    value: "iconic-tub",
+    label: "Iconic Tub",
+    description: "The signature Cowboy bathing ritual.",
   },
   {
-    value: 'ownPlace',
-    label: 'My Own Place',
-    description: 'A private place to settle in.',
+    value: "bathe-outside",
+    label: "Bathe Outside",
+    description: "A soak in the open air.",
   },
   {
-    value: 'scenic',
-    label: 'Scenic Views',
-    description: 'Mountain and forest views.',
+    value: "my-own-place",
+    label: "My Own Place",
+    description: "A private place to settle in.",
   },
   {
-    value: 'outdoorSoak',
-    label: 'Soak Outside',
-    description: 'A soak in the open air.',
+    value: "near-everything",
+    label: "Near Everything",
+    description: "Stay close to the social heart of the Cowboy.",
   },
   {
-    value: 'simpleCozy',
-    label: 'Simple + Cozy',
-    description: 'Something easy, warm, and unfussy.',
+    value: "simple-cozy",
+    label: "Simple + Cozy",
+    description: "Something easy, warm, and unfussy.",
   },
   {
-    value: 'social',
-    label: 'Spaces to Gather',
-    description: 'Room for everyone to gather.',
+    value: "mountain-views",
+    label: "Mountain Views",
+    description: "Mountain and forest views.",
+  },
+  {
+    value: "bringing-my-people",
+    label: "Bringing My People",
+    description: "More room for friends or family to stay together.",
   },
 ];
-
-const PREFERENCE_IDS: Record<MatchInterest, PreferenceId> = {
-  iconTub: 'iconic-tub',
-  outdoorSoak: 'bathe-outside',
-  ownPlace: 'my-own-place',
-  scenic: 'mountain-views',
-  simpleCozy: 'simple-cozy',
-  social: 'bringing-my-people',
-};
 
 const TRAVEL_PARTY_OPTIONS = [
   { id: 'solo', title: 'SOLO', subtitle: 'Time to myself' },
@@ -210,7 +205,7 @@ export default function HelpMeChoose({
             return (
               <div key={option.value} className={disabled ? "pointer-events-none opacity-35" : ""}>
                 <PreferenceIconButton
-                  id={PREFERENCE_IDS[option.value]}
+                  id={option.value}
                   label={option.label}
                   description={option.description}
                   selected={selected}
