@@ -11,8 +11,25 @@ export type RecommendationSearchContext = {
   dogRequested?: boolean;
 };
 
-function interestScore(merchandising: RoomMerchandising, interest: MatchInterest): number {
-  return merchandising.interestScores[interest] ?? 0;
+export function interestScore(
+  merchandising: RoomMerchandising,
+  interest: MatchInterest,
+): number {
+  const configured = merchandising.interestScores[interest];
+  if (configured != null) return configured;
+
+  if (interest === "bringing-my-people") {
+    return Math.max(
+      merchandising.partyScores.friends ?? 0,
+      merchandising.partyScores.family ?? 0,
+    );
+  }
+
+  if (interest === "near-everything") {
+    return merchandising.roomTypeGroupKey === "lodge" ? 5 : 0;
+  }
+
+  return 0;
 }
 
 function priorityScore(
