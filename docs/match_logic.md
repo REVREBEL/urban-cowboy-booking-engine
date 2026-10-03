@@ -69,9 +69,22 @@ The eight guest-facing choices use a mix of the existing score matrix and verifi
 - **Your Own Hideaway** uses the existing independent/own-place score ladder.
 - **Spaces for Connection** is feature-driven: a Room Type must have a verified separate living room or lounge space.
 - **Spaces to Gather** is feature-driven: a Room Type must have a verified full kitchen.
-- **Minimal Distractions** is intentionally not assigned a room-specific score until its exact room criteria are defined.
+- **Minimal Distractions** is group-driven: the Room Type Group must be marked `away-from-core` and `enhanced` privacy. It is not derived from room size, price, or Simple Comforts.
 
 A separate living room and a full kitchen are independent signals. A Room Type may match one, both, or neither.
+
+
+### Minimal Distractions group rule
+
+This preference describes **setting**, not an amenity. It is evaluated at the Room Type Group level:
+
+```text
+coreProximity = away-from-core
+AND
+privacyLevel = enhanced
+```
+
+Current qualifying groups are Walden, Cabin, Chalet, Opa's, Slide Mountain, and Mountain View. The Lodge is the core and does not qualify. Alpine is near the core and does not qualify. Forest House remains `unknown` until its physical relationship to the Lodge/core is explicitly confirmed.
 
 A few implementation caveats matter. The current Walden copy explicitly says the Forest Bathing Suite with Den is its only non-dog-friendly room style, while the other listed Walden types are dog-friendly. Alpine's three types are dog-friendly and 21+. Cabin, Chalet and the four Lodge types are published as dog-friendly. Slide says the full Haus is dog-friendly while the 2 Bedroom is not unless the full Haus is booked. The current canonical Forest House page says those rooms are not dog-friendly. Opa’s and Mountain View currently don't state a dog policy in their published copy, so I would **not silently code them as dog-friendly** until the CRS/property confirms it. ([Urban Cowboy][2])
 
@@ -134,7 +147,7 @@ This is the other piece I would give the developer. These are the broad product 
 | **SIMPLE COMFORTS** | Slide Mountain Haus Double Queen → Forest House Queen → Walden King → Lodge King → Forest House King → Slide Mountain Haus 2 Bedroom → Opa’s Cabin 2 Bedroom → Lodge 2 Bedroom                                                                                                                                                                                                |
 | **SPACES FOR CONNECTION** | Feature-driven: Room Types with a verified separate living room or lounge space. |
 | **SPACES TO GATHER** | Feature-driven: Room Types with a verified full kitchen. |
-| **MINIMAL DISTRACTIONS** | Pending explicit room criteria; no room-specific score is asserted yet. |
+| **MINIMAL DISTRACTIONS** | Room Type Groups marked away from the Lodge/core with enhanced privacy. |
 
 Then **party type reshuffles that ladder**.
 
