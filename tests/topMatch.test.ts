@@ -46,7 +46,7 @@ test("describes an unsupported second interest honestly", () => {
     "2026-01-10",
     merch("alpine-bathing-suite"),
   );
-  assert.match(copy.interest_summary, /Icon Tub and Outdoor Soak/);
+  assert.match(copy.interest_summary, /Iconic Tub and Bathe Outside/);
   assert.match(copy.benefit_1, /indoor soaking tub/);
   assert.match(copy.benefit_2, /does not claim an outdoor soaking setup/);
 });
