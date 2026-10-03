@@ -17,7 +17,7 @@ Partner | Friends | Family | Solo
 → soft ranking modifier, not a hard filter
 
 **INTEREST 1 + OPTIONAL INTEREST 2**
-Connection with Nature | Indoor Sanctuaries | Minimal Distractions | Scenic Scenic Mountain Views | Simple Comforts | Spaces for Connection | Spaces to Gather | Your Own Hideaway
+Connection with Nature | Indoor Sanctuaries | Minimal Distractions | Scenic Mountain Views | Simple Comforts | Spaces for Connection | Spaces to Gather | Your Own Hideaway
 
 **RANK ALL ELIGIBLE ROOM TYPES**
 
