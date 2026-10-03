@@ -13,7 +13,7 @@ function merch(key: string): RoomMerchandising {
 test("uses the requested party framing", () => {
   const copy = buildTopMatchCopy(
     "Forest House Queen",
-    { party: "solo", dog: false, interests: ["simpleCozy"] },
+    { party: "solo", dog: false, interests: ["simple-cozy"] },
     "2026-04-10",
     merch("forest-house-queen"),
   );
@@ -23,7 +23,7 @@ test("uses the requested party framing", () => {
 test("mentions a dog only when requested and confirmed eligible", () => {
   const eligible = buildTopMatchCopy(
     "Cabin",
-    { party: "partner", dog: true, interests: ["ownPlace"] },
+    { party: "partner", dog: true, interests: ["my-own-place"] },
     "2026-06-10",
     merch("cabin"),
   );
@@ -32,7 +32,7 @@ test("mentions a dog only when requested and confirmed eligible", () => {
 
   const ineligible = buildTopMatchCopy(
     "Walden Forest Bathing Suite with Den",
-    { party: "partner", dog: true, interests: ["outdoorSoak"] },
+    { party: "partner", dog: true, interests: ["bathe-outside"] },
     "2026-06-10",
     merch("walden-forest-bathing-suite-den"),
   );
@@ -42,7 +42,7 @@ test("mentions a dog only when requested and confirmed eligible", () => {
 test("describes an unsupported second interest honestly", () => {
   const copy = buildTopMatchCopy(
     "Alpine Bathing Suite",
-    { party: "partner", dog: false, interests: ["iconTub", "outdoorSoak"] },
+    { party: "partner", dog: false, interests: ["iconic-tub", "bathe-outside"] },
     "2026-01-10",
     merch("alpine-bathing-suite"),
   );
@@ -63,7 +63,7 @@ test("never uses seasonal feature claims without metadata support", () => {
     key: "test-room",
     mewsRoomTypeId: "test-room-type-id",
     legacyNames: ["Test Room"],
-    roomTypeGroupKey: "test",
+    roomTypeGroupKey: "forest-house",
     dogPolicy: "unknown",
     agePolicy: "none",
     partyScores: { partner: 0, friends: 0, family: 0, solo: 0 },
@@ -74,7 +74,7 @@ test("never uses seasonal feature claims without metadata support", () => {
   };
   const copy = buildTopMatchCopy(
     "Test Room",
-    { party: "solo", dog: false, interests: ["simpleCozy"] },
+    { party: "solo", dog: false, interests: ["simple-cozy"] },
     "2026-01-10",
     metadata,
   );
