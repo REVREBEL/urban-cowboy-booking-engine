@@ -1,11 +1,14 @@
-export type PreferenceId =
-  | "iconic-tub"
-  | "bathe-outside"
-  | "my-own-place"
-  | "near-everything"
-  | "simple-cozy"
-  | "mountain-views"
-  | "bringing-my-people";
+export const PREFERENCE_IDS = [
+  "iconic-tub",
+  "bathe-outside",
+  "my-own-place",
+  "near-everything",
+  "simple-cozy",
+  "mountain-views",
+  "bringing-my-people",
+] as const;
+
+export type PreferenceId = (typeof PREFERENCE_IDS)[number];
 
 export type MatchRoomSummary = {
   name: string;
