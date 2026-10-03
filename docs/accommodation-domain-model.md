@@ -169,6 +169,7 @@ This terminology is authoritative for new application code and CMS schema design
 
 Room Type Groups also own location/context metadata that Mews does not provide:
 
+- `distanceFromLodgeFeet`: straight-line distance from The Main Lodge, derived from the property KML
 - `coreProximity`: `core`, `near-core`, `away-from-core`, or `unknown`
 - `privacyLevel`: `standard`, `enhanced`, or `unknown`
 
@@ -177,8 +178,11 @@ These fields support guest-preference logic such as **Minimal Distractions** wit
 For Minimal Distractions, the matcher requires both:
 
 ```text
+distanceFromLodgeFeet >= 1000
 coreProximity = away-from-core
 privacyLevel = enhanced
 ```
+
+The current measured split is sharp: the immediate Lodge cluster is 156–288 ft away, while Mountain View, Slide Mountain, Forest House, and Opa's are 1,262–1,844 ft away. The 1,000 ft threshold therefore separates the two clusters without an arbitrary borderline case.
 
 This metadata is a good candidate for the Webflow Room Type Group collection because it belongs to the custom Cowboy hierarchy, not to Mews.
