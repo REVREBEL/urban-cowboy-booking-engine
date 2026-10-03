@@ -17,7 +17,7 @@ Partner | Friends | Family | Solo
 → soft ranking modifier, not a hard filter
 
 **INTEREST 1 + OPTIONAL INTEREST 2**
-Iconic Tub | Bathe Outside | My Own Place | Near Everything | Simple + Cozy | Mountain Views | Bringing My People
+Connection with Nature | Indoor Sanctuaries | Minimal Distractions | Scenic Scenic Mountain Views | Simple Comforts | Spaces for Connection | Spaces to Gather | Your Own Hideaway
 
 **RANK ALL ELIGIBLE ROOM TYPES**
 
@@ -33,7 +33,7 @@ So sold-out inventory never breaks the recommendation experience. It simply caus
 
 These scores are **our recommendation logic**, not claims made by the hotel. `5` means defining match, `4` strong, `3` useful secondary fit, `1–2` weak, `0` no meaningful fit.
 
-| Room Type                                | Partner | Friends | Family | Solo | Dog       | 21+  | Iconic Tub | Bathe Outside | My Own Place | Mountain Views | Simple + Cozy |
+| Room Type                                | Partner | Friends | Family | Solo | Dog       | 21+  | Indoor Sanctuaries | Connection with Nature | Your Own Hideaway | Scenic Mountain Views | Simple Comforts |
 | ---------------------------------------- | ------: | ------: | -----: | ---: | --------- | ---- | -------: | -----------: | --------: | -----: | ------------: |
 | **Alpine Bathing Suite**                 |       5 |       3 |      2 |    4 | Yes       | Yes  |        5 |            0 |         0 |      5 |             2 |
 | **Alpine Bathing Suite with Den**        |       5 |       3 |      2 |    3 | Yes       | Yes  |        5 |            0 |         0 |      5 |             1 |
@@ -58,14 +58,20 @@ These scores are **our recommendation logic**, not claims made by the hotel. `5`
 | **Mountain View Haus 2 Bedroom**         |       2 |       5 |      5 |    0 | Verify    | No   |        0 |            0 |         5 |      5 |             3 |
 | **Mountain View Haus 4 Bedroom**         |       1 |       5 |      5 |    0 | Verify    | No   |        0 |            0 |         5 |      5 |             2 |
 
-### Derived preference behavior
+### Additional preference behavior
 
-Two of the seven guest-facing choices intentionally derive their fit from existing verified structure rather than adding another hand-maintained score column:
+The eight guest-facing choices use a mix of the existing score matrix and verified room features:
 
-- **Near Everything**: Lodge Room Types score `5` because The Lodge is the established social heart of the property. Other Room Type Groups score `0` until explicit proximity metadata is added.
-- **Bringing My People**: fit is derived from the stronger of the existing `Friends` and `Family` scores for that Room Type.
+- **Connection with Nature** uses the former outdoor-soak score ladder.
+- **Indoor Sanctuaries** uses the former iconic-indoor-tub score ladder.
+- **Scenic Mountain Views** uses the existing scenic-view score ladder.
+- **Simple Comforts** uses the existing simple/cozy score ladder.
+- **Your Own Hideaway** uses the existing independent/own-place score ladder.
+- **Spaces for Connection** is feature-driven: a Room Type must have a verified separate living room or lounge space.
+- **Spaces to Gather** is feature-driven: a Room Type must have a verified full kitchen.
+- **Minimal Distractions** is intentionally not assigned a room-specific score until its exact room criteria are defined.
 
-The other five preferences use the explicit room-level score matrix above.
+A separate living room and a full kitchen are independent signals. A Room Type may match one, both, or neither.
 
 A few implementation caveats matter. The current Walden copy explicitly says the Forest Bathing Suite with Den is its only non-dog-friendly room style, while the other listed Walden types are dog-friendly. Alpine's three types are dog-friendly and 21+. Cabin, Chalet and the four Lodge types are published as dog-friendly. Slide says the full Haus is dog-friendly while the 2 Bedroom is not unless the full Haus is booked. The current canonical Forest House page says those rooms are not dog-friendly. Opa’s and Mountain View currently don't state a dog policy in their published copy, so I would **not silently code them as dog-friendly** until the CRS/property confirms it. ([Urban Cowboy][2])
 
@@ -77,18 +83,18 @@ A few implementation caveats matter. The current Walden copy explicitly says the
 
 Using your example:
 
-### PARTNER + NO DOG + BATHE OUTSIDE
+### PARTNER + NO DOG + CONNECTION WITH NATURE
 
 The ranked fallback path would be:
 
 **1. Walden Forest Bathing Suite**
-The archetypal Cowboy outdoor-soak experience.
+The archetypal Cowboy outdoor connection.
 
 **2. Walden Sunrise Bathing Suite**
 Same defining ritual with an even stronger scenic component.
 
 **3. Walden Forest Bathing Suite with Den**
-Outdoor soak plus more room to lounge.
+Outdoor bathing plus more room to lounge.
 
 **4. Chalet**
 Outdoor cedar tub, but shifts into the larger standalone/private experience.
@@ -97,13 +103,13 @@ The booking engine checks them in that order.
 
 If #1 is sold out, #2 moves up.
 If #1 and #2 are sold out, the guest sees #3 and #4.
-If all Walden inventory is sold, Chalet becomes the strongest remaining outdoor-soak match.
+If all Walden inventory is sold, Chalet becomes the strongest remaining Connection with Nature match.
 
 Only the **first three available** are presented.
 
 For:
 
-### PARTNER + DOG + BATHE OUTSIDE
+### PARTNER + DOG + CONNECTION WITH NATURE
 
 Dog eligibility removes the Walden Den automatically:
 
@@ -121,17 +127,18 @@ This is the other piece I would give the developer. These are the broad product 
 
 | Interest          | Primary room-type ladder                                                                                                                                                                                                                                                                                                                                                      |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **ICONIC TUB**      | Alpine Bathing Suite → Alpine Bathing Suite with Den → Alpine Penthouse Bathing Suite → Lodge Penthouse Suite → Cabin → Lodge 3 Bedroom Suite                                                                                                                                                                                                                                 |
-| **BATHE OUTSIDE**  | Walden Forest Bathing Suite → Walden Sunrise Bathing Suite → Walden Forest Bathing Suite with Den → Chalet                                                                                                                                                                                                                                                                    |
-| **MY OWN PLACE**  | Cabin → Chalet → Mountain View Haus 2 Bedroom → Opa’s Cabin 2 Bedroom → Slide Mountain Haus 5 Room → Mountain View Haus 4 Bedroom → Opa’s Cabin 4 Bedroom → Slide Mountain Haus 2 Bedroom                                                                                                                                                                                     |
-| **MOUNTAIN VIEWS**  | Walden Sunrise Bathing Suite → Alpine Bathing Suite with Den → Alpine Penthouse Bathing Suite → Lodge Penthouse Suite → Alpine Bathing Suite → Mountain View Haus 2 Bedroom → Mountain View Haus 4 Bedroom → Lodge 3 Bedroom Suite → Walden Forest Bathing Suite → Forest House King → Chalet → Slide Mountain Haus Double Queen → Walden King → Lodge 2 Bedroom → Lodge King |
-| **SIMPLE + COZY** | Slide Mountain Haus Double Queen → Forest House Queen → Walden King → Lodge King → Forest House King → Slide Mountain Haus 2 Bedroom → Opa’s Cabin 2 Bedroom → Lodge 2 Bedroom                                                                                                                                                                                                |
-| **NEAR EVERYTHING** | Lodge inventory first; party fit and live price/order break ties because all Lodge Room Types share the same location relationship. |
-| **BRINGING MY PEOPLE** | Derived from the stronger Friends/Family fit rather than a separate static ladder. |
+| **INDOOR SANCTUARIES**      | Alpine Bathing Suite → Alpine Bathing Suite with Den → Alpine Penthouse Bathing Suite → Lodge Penthouse Suite → Cabin → Lodge 3 Bedroom Suite                                                                                                                                                                                                                                 |
+| **CONNECTION WITH NATURE**  | Walden Forest Bathing Suite → Walden Sunrise Bathing Suite → Walden Forest Bathing Suite with Den → Chalet                                                                                                                                                                                                                                                                    |
+| **YOUR OWN HIDEAWAY**  | Cabin → Chalet → Mountain View Haus 2 Bedroom → Opa’s Cabin 2 Bedroom → Slide Mountain Haus 5 Room → Mountain View Haus 4 Bedroom → Opa’s Cabin 4 Bedroom → Slide Mountain Haus 2 Bedroom                                                                                                                                                                                     |
+| **SCENIC MOUNTAIN VIEWS**  | Walden Sunrise Bathing Suite → Alpine Bathing Suite with Den → Alpine Penthouse Bathing Suite → Lodge Penthouse Suite → Alpine Bathing Suite → Mountain View Haus 2 Bedroom → Mountain View Haus 4 Bedroom → Lodge 3 Bedroom Suite → Walden Forest Bathing Suite → Forest House King → Chalet → Slide Mountain Haus Double Queen → Walden King → Lodge 2 Bedroom → Lodge King |
+| **SIMPLE COMFORTS** | Slide Mountain Haus Double Queen → Forest House Queen → Walden King → Lodge King → Forest House King → Slide Mountain Haus 2 Bedroom → Opa’s Cabin 2 Bedroom → Lodge 2 Bedroom                                                                                                                                                                                                |
+| **SPACES FOR CONNECTION** | Feature-driven: Room Types with a verified separate living room or lounge space. |
+| **SPACES TO GATHER** | Feature-driven: Room Types with a verified full kitchen. |
+| **MINIMAL DISTRACTIONS** | Pending explicit room criteria; no room-specific score is asserted yet. |
 
 Then **party type reshuffles that ladder**.
 
-For example, `Simple + Cozy` for **Solo** would move Forest House Queen / Walden King / Lodge King to the top, whereas **Friends** would push Slide Double Queen / Slide 2 Bedroom upward.
+For example, `Simple Comforts` for **Solo** would move Forest House Queen / Walden King / Lodge King to the top, whereas **Friends** would push Slide Double Queen / Slide 2 Bedroom upward.
 
 ---
 
@@ -141,7 +148,7 @@ This is where I would avoid manually maintaining separate tables.
 
 If the guest chooses two interests, first look for room types that genuinely satisfy **both**.
 
-### BATHE OUTSIDE + MY OWN PLACE
+### CONNECTION WITH NATURE + YOUR OWN HIDEAWAY
 
 **Chalet** becomes the obvious #1 because it scores 5 + 5.
 
@@ -154,7 +161,7 @@ Mountain View 2 Bedroom
 Opa’s 2 Bedroom
 etc.
 
-### ICONIC TUB + MY OWN PLACE
+### INDOOR SANCTUARIES + YOUR OWN HIDEAWAY
 
 **Cabin** becomes #1 because it is both a standalone unit and an iconic indoor-tub room.
 
@@ -165,7 +172,7 @@ Alpine Bathing Suite
 Alpine Bathing Suite with Den
 Chalet / Mountain View as own-place fallbacks
 
-### BATHE OUTSIDE + MOUNTAIN VIEWS
+### CONNECTION WITH NATURE + SCENIC MOUNTAIN VIEWS
 
 **Walden Sunrise Bathing Suite** becomes #1.
 
@@ -175,14 +182,14 @@ Walden Forest Bathing Suite
 Walden Forest Bathing Suite with Den
 Chalet
 
-### MY OWN PLACE + MOUNTAIN VIEWS
+### YOUR OWN HIDEAWAY + SCENIC MOUNTAIN VIEWS
 
 **Mountain View Haus 2 Bedroom / 4 Bedroom** become very strong.
 
 For a Partner, the smaller 2 Bedroom moves ahead.
 For Friends/Family, party size determines whether 2BR or 4BR is the better fit.
 
-### MOUNTAIN VIEWS + SIMPLE + COZY
+### SCENIC MOUNTAIN VIEWS + SIMPLE COMFORTS
 
 Now you are deliberately steering away from the premium bathing suites:
 
@@ -193,7 +200,7 @@ Lodge King
 
 with party type deciding the precise order.
 
-### ICONIC TUB + BATHE OUTSIDE
+### INDOOR SANCTUARIES + CONNECTION WITH NATURE
 
 There is **no single room type that truly delivers both**.
 
@@ -236,13 +243,13 @@ Something along these lines:
 
 That ensures:
 
-**Bathe Outside + My Own Place → Chalet**
+**Connection with Nature + Your Own Hideaway → Chalet**
 
 beats:
 
 **Walden Forest Bathing Suite**
 
-even though Walden may be the stronger pure Bathe Outside room.
+even though Walden may be the stronger pure Connection with Nature room.
 
 ---
 
@@ -254,7 +261,7 @@ So `Family` itself should **not automatically remove Alpine/Walden**. A family c
 
 If the actual booking search contains a child, *then* those 21+ room types disappear.
 
-Likewise, `Friends` should not automatically push someone into a two-bedroom unit. If the reservation is two adults and they selected Iconic Tub, an Alpine Bathing Suite may still be exactly what they want.
+Likewise, `Friends` should not automatically push someone into a two-bedroom unit. If the reservation is two adults and they selected Indoor Sanctuaries, an Alpine Bathing Suite may still be exactly what they want.
 
 That keeps the matcher smart without letting the quiz override actual booking facts.
 
