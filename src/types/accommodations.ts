@@ -35,6 +35,8 @@ export interface RoomTypeGroupDefinition {
   key: RoomTypeGroupKey;
   name: string;
   sectionStatus: RoomTypeGroupSectionStatus;
+  /** Straight-line building-to-building distance from The Main Lodge, in feet. */
+  distanceFromLodgeFeet: number;
   coreProximity: CoreProximity;
   privacyLevel: PrivacyLevel;
 }
