@@ -18,11 +18,13 @@ type StudioMatchResultsProps = {
 };
 
 const INTEREST_LABELS: Record<MatchInterest, string> = {
-  iconTub: "an iconic copper-tub soak",
-  outdoorSoak: "bathing outside",
-  ownPlace: "a place of your own",
-  scenic: "mountain and forest views",
-  simpleCozy: "something simple and cozy",
+  "iconic-tub": "an iconic copper-tub soak",
+  "bathe-outside": "bathing outside",
+  "my-own-place": "a place of your own",
+  "near-everything": "staying near everything",
+  "simple-cozy": "something simple and cozy",
+  "mountain-views": "mountain and forest views",
+  "bringing-my-people": "bringing your people together",
 };
 
 function choices(preferences: RecommendationPreferences) {
