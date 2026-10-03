@@ -99,7 +99,7 @@ export const demoRooms: RoomProduct[] = [
 export const demoRecommendation: RecommendationResult = {
   room: demoRooms[1],
   score: 96,
-  matchedInterests: ["outdoorSoak", "scenic"],
+  matchedInterests: ["bathe-outside", "mountain-views"],
   explanation: {
     match_badge: "TOP MATCH",
     room_type: "Walden",
@@ -120,7 +120,7 @@ export const demoResults: RecommendationResult[] = [
   {
     room: demoRooms[2],
     score: 88,
-    matchedInterests: ["ownPlace"],
+    matchedInterests: ["my-own-place"],
   },
   {
     room: demoRooms[0],
