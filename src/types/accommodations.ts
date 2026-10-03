@@ -20,8 +20,21 @@ export type RoomTypeGroupKey =
 
 export type RoomTypeGroupSectionStatus = "designed" | "pending";
 
+export type CoreProximity =
+  | "core"
+  | "near-core"
+  | "away-from-core"
+  | "unknown";
+
+export type PrivacyLevel =
+  | "standard"
+  | "enhanced"
+  | "unknown";
+
 export interface RoomTypeGroupDefinition {
   key: RoomTypeGroupKey;
   name: string;
   sectionStatus: RoomTypeGroupSectionStatus;
+  coreProximity: CoreProximity;
+  privacyLevel: PrivacyLevel;
 }
