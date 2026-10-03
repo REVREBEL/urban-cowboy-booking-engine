@@ -5,6 +5,7 @@ import type {
   RoomFeatures,
   RoomMerchandising,
 } from "../types/merchandising";
+import { PREFERENCE_LABELS } from "@/data/findYourStayPreferences";
 
 export type Season = "winter" | "spring" | "summer" | "fall";
 
@@ -21,15 +22,7 @@ export type TopMatchCopy = {
   alternate_match_heading: string;
 };
 
-export const INTEREST_LABELS: Record<MatchInterest, string> = {
-  "iconic-tub": "Iconic Tub",
-  "bathe-outside": "Bathe Outside",
-  "my-own-place": "My Own Place",
-  "near-everything": "Near Everything",
-  "simple-cozy": "Simple + Cozy",
-  "mountain-views": "Mountain Views",
-  "bringing-my-people": "Bringing My People",
-};
+export const INTEREST_LABELS = PREFERENCE_LABELS;
 
 const PARTY_FRAMING: Record<PartyType, { plain: string; dog: string }> = {
   partner: { plain: "a couple's stay", dog: "a couple's stay with your dog" },
