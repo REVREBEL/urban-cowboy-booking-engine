@@ -177,7 +177,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     partyScores: { partner: 4, friends: 3, family: 3, solo: 5 },
     interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 2, "simple-cozy": 5 },
     features: { simpleCozy: true },
-    matchReasons: { simpleCozy: "its cozy, straightforward Catskills room experience" },
+    matchReasons: { "simple-cozy": "its cozy, straightforward Catskills room experience" },
   },
   {
     key: "forest-house-king",
@@ -204,7 +204,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     partyScores: { partner: 2, friends: 5, family: 5, solo: 1 },
     interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 2, "simple-cozy": 3 },
     features: { ownPlace: true, fireplace: true, fullKitchen: true },
-    matchReasons: { ownPlace: "its independent century-old cabin setting" },
+    matchReasons: { "my-own-place": "its independent century-old cabin setting" },
   },
   {
     key: "opas-cabin-4-bedroom",
@@ -216,7 +216,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     partyScores: { partner: 1, friends: 5, family: 5, solo: 0 },
     interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 2, "simple-cozy": 2 },
     features: { ownPlace: true, fireplace: true, fullKitchen: true },
-    matchReasons: { ownPlace: "its independent four-bedroom cabin setting" },
+    matchReasons: { "my-own-place": "its independent four-bedroom cabin setting" },
   },
   {
     key: "lodge-penthouse-suite",
@@ -260,7 +260,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     partyScores: { partner: 2, friends: 5, family: 5, solo: 1 },
     interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 1, "mountain-views": 4, "simple-cozy": 3 },
     features: { scenicView: true, privateDeck: true },
-    matchReasons: { scenic: "its private deck above the main Lodge" },
+    matchReasons: { "mountain-views": "its private deck above the main Lodge" },
   },
   {
     key: "lodge-king",
@@ -273,7 +273,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     partyScores: { partner: 4, friends: 3, family: 4, solo: 5 },
     interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 3, "simple-cozy": 5 },
     features: { simpleCozy: true },
-    matchReasons: { simpleCozy: "its easy, classic Lodge-room setup" },
+    matchReasons: { "simple-cozy": "its easy, classic Lodge-room setup" },
   },
   {
     key: "slide-mountain-haus-5-room",
@@ -285,7 +285,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     partyScores: { partner: 0, friends: 5, family: 5, solo: 0 },
     interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 5, "mountain-views": 3, "simple-cozy": 3 },
     features: { ownPlace: true, fullKitchen: true },
-    matchReasons: { ownPlace: "its full-house setup with kitchen and living room" },
+    matchReasons: { "my-own-place": "its full-house setup with kitchen and living room" },
   },
   {
     key: "slide-mountain-haus-2-bedroom",
@@ -297,7 +297,7 @@ const BASE_ROOMS: BaseRoomMerchandising[] = [
     partyScores: { partner: 1, friends: 5, family: 5, solo: 0 },
     interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 3, "mountain-views": 3, "simple-cozy": 4 },
     features: { simpleCozy: true, fullKitchen: true },
-    matchReasons: { simpleCozy: "its straightforward small-group house setup" },
+    matchReasons: { "simple-cozy": "its straightforward small-group house setup" },
   },
   {
     key: "slide-mountain-haus-double-queen",
