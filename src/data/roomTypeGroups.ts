@@ -6,57 +6,58 @@ import type { RoomTypeGroupDefinition, RoomTypeGroupKey } from "@/types/accommod
  * Mews does not provide this hierarchy. These groups organize Mews Room Types
  * into the higher-level Catskills lodging experience.
  *
+ * distanceFromLodgeFeet is the straight-line building-to-building distance
+ * calculated from the property KML coordinates, using The Main Lodge as origin.
+ *
  * coreProximity and privacyLevel are Cowboy-owned merchandising attributes.
- * They intentionally live at the Room Type Group layer because they describe
- * the setting of the group, not a physical amenity of an individual room.
+ * They describe the setting of the group, not a physical amenity of a room.
  */
 export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   {
-    key: "alpine",
-    name: "Alpine Haus",
+    key: "lodge",
+    name: "The Lodge",
     sectionStatus: "designed",
-    coreProximity: "near-core",
+    distanceFromLodgeFeet: 0,
+    coreProximity: "core",
     privacyLevel: "standard",
   },
   {
     key: "walden",
     name: "Walden Haus",
     sectionStatus: "designed",
-    coreProximity: "away-from-core",
-    privacyLevel: "enhanced",
-  },
-  {
-    key: "lodge",
-    name: "The Lodge",
-    sectionStatus: "designed",
-    coreProximity: "core",
+    distanceFromLodgeFeet: 156,
+    coreProximity: "near-core",
     privacyLevel: "standard",
-  },
-  {
-    key: "forest-house",
-    name: "Forest House",
-    sectionStatus: "pending",
-    coreProximity: "unknown",
-    privacyLevel: "unknown",
-  },
-  {
-    key: "cabin",
-    name: "Cabin",
-    sectionStatus: "pending",
-    coreProximity: "away-from-core",
-    privacyLevel: "enhanced",
   },
   {
     key: "chalet",
     name: "Chalet",
     sectionStatus: "pending",
-    coreProximity: "away-from-core",
-    privacyLevel: "enhanced",
+    distanceFromLodgeFeet: 162,
+    coreProximity: "near-core",
+    privacyLevel: "standard",
   },
   {
-    key: "opas",
-    name: "Opa's",
+    key: "cabin",
+    name: "Cabin",
     sectionStatus: "pending",
+    distanceFromLodgeFeet: 183,
+    coreProximity: "near-core",
+    privacyLevel: "standard",
+  },
+  {
+    key: "alpine",
+    name: "Alpine Haus",
+    sectionStatus: "designed",
+    distanceFromLodgeFeet: 288,
+    coreProximity: "near-core",
+    privacyLevel: "standard",
+  },
+  {
+    key: "mountain-view",
+    name: "Mountain View Haus",
+    sectionStatus: "pending",
+    distanceFromLodgeFeet: 1262,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
   },
@@ -64,13 +65,23 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
     key: "slide-mountain",
     name: "Slide Mountain Haus",
     sectionStatus: "pending",
+    distanceFromLodgeFeet: 1323,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
   },
   {
-    key: "mountain-view",
-    name: "Mountain View Haus",
+    key: "forest-house",
+    name: "Forest House",
     sectionStatus: "pending",
+    distanceFromLodgeFeet: 1668,
+    coreProximity: "away-from-core",
+    privacyLevel: "enhanced",
+  },
+  {
+    key: "opas",
+    name: "Opa's",
+    sectionStatus: "pending",
+    distanceFromLodgeFeet: 1844,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
   },
@@ -79,6 +90,8 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
 export const ROOM_TYPE_GROUP_BY_KEY = new Map(
   ROOM_TYPE_GROUPS.map((group) => [group.key, group] as const),
 );
+
+export const MINIMAL_DISTRACTIONS_DISTANCE_FEET = 1000;
 
 export function roomTypeGroupName(key: string | null | undefined): string {
   if (!key) return "Catskills";
@@ -91,7 +104,9 @@ export function roomTypeGroupSupportsMinimalDistractions(
   if (!key) return false;
   const group = ROOM_TYPE_GROUP_BY_KEY.get(key as RoomTypeGroupKey);
   return (
-    group?.coreProximity === "away-from-core" &&
+    !!group &&
+    group.distanceFromLodgeFeet >= MINIMAL_DISTRACTIONS_DISTANCE_FEET &&
+    group.coreProximity === "away-from-core" &&
     group.privacyLevel === "enhanced"
   );
 }
