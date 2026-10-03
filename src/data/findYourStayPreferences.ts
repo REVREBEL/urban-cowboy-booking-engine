@@ -26,8 +26,8 @@ export const FIND_YOUR_STAY_PREFERENCES: readonly FindYourStayPreference[] = [
   {
     id: "minimal-distractions",
     label: "Minimal Distractions",
-    description: "A simpler stay with less competing for your attention.",
-    resultPhrase: "minimal distractions",
+    description: "A more private setting away from the Lodge and main property core.",
+    resultPhrase: "more privacy away from the Lodge core",
     artwork: "minimal_distractions.svg",
   },
   {
