@@ -1,4 +1,5 @@
 import type { ShapedRoom } from "../types/mews";
+import { roomTypeGroupSupportsMinimalDistractions } from "@/data/roomTypeGroups";
 import type {
   MatchInterest,
   RecommendationPreferences,
@@ -26,9 +27,9 @@ export function interestScore(
     return merchandising.features.fullKitchen ? 5 : 0;
   }
 
-  // Minimal Distractions is a new guest preference. Do not infer it from
-  // "simple comforts" or room size until its intended room signal is defined.
-  if (interest === "minimal-distractions") return 0;
+  if (interest === "minimal-distractions") {
+    return roomTypeGroupSupportsMinimalDistractions(merchandising.roomTypeGroupKey) ? 5 : 0;
+  }
 
   return 0;
 }
