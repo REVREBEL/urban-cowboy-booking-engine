@@ -48,7 +48,7 @@ test("describes an unsupported second interest honestly", () => {
   );
   assert.match(copy.interest_summary, /Indoor Sanctuaries and Connection with Nature/);
   assert.match(copy.benefit_1, /indoor/);
-  assert.match(copy.benefit_2, /does not claim an specific outdoor connection/);
+  assert.match(copy.benefit_2, /without overstating a specific outdoor connection/);
 });
 
 test("selects all four seasons from the check-in month", () => {
