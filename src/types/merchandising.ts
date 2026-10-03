@@ -21,7 +21,8 @@ export type RoomFeatureKey =
   | "simpleCozy"
   | "heatedFloors"
   | "fireplace"
-  | "fullKitchen";
+  | "fullKitchen"
+  | "separateLivingRoom";
 
 export type RoomFeatures = Partial<Record<RoomFeatureKey, boolean>>;
 
