@@ -5,52 +5,71 @@ export type FindYourStayPreference = {
   label: string;
   description: string;
   resultPhrase: string;
+  artwork: string;
 };
 
 export const FIND_YOUR_STAY_PREFERENCES: readonly FindYourStayPreference[] = [
   {
-    id: "iconic-tub",
-    label: "Iconic Tub",
-    description: "The signature Cowboy bathing ritual.",
-    resultPhrase: "an iconic copper-tub soak",
+    id: "connection-with-nature",
+    label: "Connection with Nature",
+    description: "Stay connected to the landscape and outdoors.",
+    resultPhrase: "a stronger connection with nature",
+    artwork: "connection_with_nature.svg",
   },
   {
-    id: "bathe-outside",
-    label: "Bathe Outside",
-    description: "A soak in the open air.",
-    resultPhrase: "bathing outside",
+    id: "indoor-sanctuaries",
+    label: "Indoor Sanctuaries",
+    description: "A room that feels restorative from the inside out.",
+    resultPhrase: "an indoor sanctuary",
+    artwork: "indoor_sancuaries.svg",
   },
   {
-    id: "my-own-place",
-    label: "My Own Place",
-    description: "A private place to settle in.",
-    resultPhrase: "a place of your own",
+    id: "minimal-distractions",
+    label: "Minimal Distractions",
+    description: "A simpler stay with less competing for your attention.",
+    resultPhrase: "minimal distractions",
+    artwork: "minimal_distractions.svg",
   },
   {
-    id: "near-everything",
-    label: "Near Everything",
-    description: "Stay close to the social heart of the Cowboy.",
-    resultPhrase: "staying near everything",
-  },
-  {
-    id: "simple-cozy",
-    label: "Simple + Cozy",
-    description: "Something easy, warm, and unfussy.",
-    resultPhrase: "something simple and cozy",
-  },
-  {
-    id: "mountain-views",
-    label: "Mountain Views",
+    id: "scenic-mountain-views",
+    label: "Scenic Mountain Views",
     description: "Mountain and forest views.",
-    resultPhrase: "mountain and forest views",
+    resultPhrase: "scenic mountain views",
+    artwork: "scenic_mountain_views.svg",
   },
   {
-    id: "bringing-my-people",
-    label: "Bringing My People",
-    description: "More room for friends or family to stay together.",
-    resultPhrase: "bringing your people together",
+    id: "simple-comforts",
+    label: "Simple Comforts",
+    description: "Something easy, warm, and unfussy.",
+    resultPhrase: "simple comforts",
+    artwork: "simple_comforts.svg",
+  },
+  {
+    id: "spaces-for-connection",
+    label: "Spaces for Connection",
+    description: "A room with a separate living room or lounge space.",
+    resultPhrase: "space to connect in a living room",
+    artwork: "spaces_for_connection.svg",
+  },
+  {
+    id: "spaces-to-gather",
+    label: "Spaces to Gather",
+    description: "A room with a kitchen for gathering together.",
+    resultPhrase: "a kitchen made for gathering",
+    artwork: "spaces_to_gather.svg",
+  },
+  {
+    id: "your-own-hideaway",
+    label: "Your Own Hideaway",
+    description: "A private place to settle in.",
+    resultPhrase: "a hideaway of your own",
+    artwork: "your_own_hideaway.svg",
   },
 ] as const;
+
+export const PREFERENCE_BY_ID = new Map(
+  FIND_YOUR_STAY_PREFERENCES.map((preference) => [preference.id, preference] as const),
+);
 
 export const PREFERENCE_LABELS: Record<PreferenceId, string> = Object.fromEntries(
   FIND_YOUR_STAY_PREFERENCES.map((preference) => [preference.id, preference.label]),
