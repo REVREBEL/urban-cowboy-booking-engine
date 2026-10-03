@@ -1,3 +1,5 @@
+import type { PreferenceId } from "./types/booking-ui";
+
 export interface SearchCriteria {
   property: string;
   checkIn: string; // e.g. "2026-10-14"
@@ -12,13 +14,7 @@ export interface SearchCriteria {
 
 export type PartyType = 'partner' | 'friends' | 'family' | 'solo';
 
-export type MatchInterest =
-  | 'iconTub'
-  | 'outdoorSoak'
-  | 'ownPlace'
-  | 'scenic'
-  | 'simpleCozy'
-  | 'social';
+export type MatchInterest = PreferenceId;
 
 export interface RecommendationPreferences {
   party: PartyType;
