@@ -2,6 +2,7 @@ import { MatchBenefitsCard } from "@/components/booking/results/MatchBenefitsCar
 import { buildTopMatchCopy } from "@/lib/topMatch";
 import { roomDetailTags } from "@/lib/roomTags";
 import type { MatchInterest, RecommendationPreferences } from "@/types/merchandising";
+import { PREFERENCE_RESULT_PHRASES } from "@/data/findYourStayPreferences";
 import type { ShapedRoom } from "@/types/mews";
 import { RoomsListCard } from "@/components/RoomsListCard";
 
@@ -17,18 +18,8 @@ type StudioMatchResultsProps = {
   onOpenRoomDetails: (room: ShapedRoom) => void;
 };
 
-const INTEREST_LABELS: Record<MatchInterest, string> = {
-  "iconic-tub": "an iconic copper-tub soak",
-  "bathe-outside": "bathing outside",
-  "my-own-place": "a place of your own",
-  "near-everything": "staying near everything",
-  "simple-cozy": "something simple and cozy",
-  "mountain-views": "mountain and forest views",
-  "bringing-my-people": "bringing your people together",
-};
-
 function choices(preferences: RecommendationPreferences) {
-  const labels = preferences.interests.filter(Boolean).map((interest) => INTEREST_LABELS[interest as MatchInterest]);
+  const labels = preferences.interests.filter(Boolean).map((interest) => PREFERENCE_RESULT_PHRASES[interest as MatchInterest]);
   return labels.length === 2 ? `${labels[0]} and ${labels[1]}` : labels[0];
 }
 
