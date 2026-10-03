@@ -13,7 +13,7 @@ function merch(key: string): RoomMerchandising {
 test("uses the requested party framing", () => {
   const copy = buildTopMatchCopy(
     "Forest House Queen",
-    { party: "solo", dog: false, interests: ["simple-cozy"] },
+    { party: "solo", dog: false, interests: ["simple-comforts"] },
     "2026-04-10",
     merch("forest-house-queen"),
   );
@@ -23,7 +23,7 @@ test("uses the requested party framing", () => {
 test("mentions a dog only when requested and confirmed eligible", () => {
   const eligible = buildTopMatchCopy(
     "Cabin",
-    { party: "partner", dog: true, interests: ["my-own-place"] },
+    { party: "partner", dog: true, interests: ["your-own-hideaway"] },
     "2026-06-10",
     merch("cabin"),
   );
@@ -32,7 +32,7 @@ test("mentions a dog only when requested and confirmed eligible", () => {
 
   const ineligible = buildTopMatchCopy(
     "Walden Forest Bathing Suite with Den",
-    { party: "partner", dog: true, interests: ["bathe-outside"] },
+    { party: "partner", dog: true, interests: ["connection-with-nature"] },
     "2026-06-10",
     merch("walden-forest-bathing-suite-den"),
   );
@@ -42,13 +42,13 @@ test("mentions a dog only when requested and confirmed eligible", () => {
 test("describes an unsupported second interest honestly", () => {
   const copy = buildTopMatchCopy(
     "Alpine Bathing Suite",
-    { party: "partner", dog: false, interests: ["iconic-tub", "bathe-outside"] },
+    { party: "partner", dog: false, interests: ["indoor-sanctuaries", "connection-with-nature"] },
     "2026-01-10",
     merch("alpine-bathing-suite"),
   );
-  assert.match(copy.interest_summary, /Iconic Tub and Bathe Outside/);
-  assert.match(copy.benefit_1, /indoor soaking tub/);
-  assert.match(copy.benefit_2, /does not claim an outdoor soaking setup/);
+  assert.match(copy.interest_summary, /Indoor Sanctuaries and Connection with Nature/);
+  assert.match(copy.benefit_1, /indoor/);
+  assert.match(copy.benefit_2, /does not claim an specific outdoor connection/);
 });
 
 test("selects all four seasons from the check-in month", () => {
@@ -67,18 +67,39 @@ test("never uses seasonal feature claims without metadata support", () => {
     dogPolicy: "unknown",
     agePolicy: "none",
     partyScores: { partner: 0, friends: 0, family: 0, solo: 0 },
-    interestScores: { "iconic-tub": 0, "bathe-outside": 0, "my-own-place": 0, "mountain-views": 0, "simple-cozy": 5 },
-    interestPriority: { "simple-cozy": 0 },
-    matchReasons: { "simple-cozy": "its easygoing feel" },
+    interestScores: { "indoor-sanctuaries": 0, "connection-with-nature": 0, "your-own-hideaway": 0, "scenic-mountain-views": 0, "simple-comforts": 5 },
+    interestPriority: { "simple-comforts": 0 },
+    matchReasons: { "simple-comforts": "its easygoing feel" },
     features: { simpleCozy: true },
   };
   const copy = buildTopMatchCopy(
     "Test Room",
-    { party: "solo", dog: false, interests: ["simple-cozy"] },
+    { party: "solo", dog: false, interests: ["simple-comforts"] },
     "2026-01-10",
     metadata,
   );
   const output = `${copy.benefit_1} ${copy.benefit_2} ${copy.benefit_3}`;
   assert.doesNotMatch(output, /heated floors|fireplace|wood stove|outdoor soak|private deck|view/i);
   assert.match(copy.benefit_3, /Winter in the Catskills/);
+});
+
+
+test("claims a separate living room only when the feature is verified", () => {
+  const copy = buildTopMatchCopy(
+    "Lodge Penthouse Suite",
+    { party: "partner", dog: false, interests: ["spaces-for-connection"] },
+    "2026-06-10",
+    merch("lodge-penthouse-suite"),
+  );
+  assert.match(copy.benefit_1, /separate living room/i);
+});
+
+test("claims a kitchen only when the feature is verified", () => {
+  const copy = buildTopMatchCopy(
+    "Chalet",
+    { party: "friends", dog: false, interests: ["spaces-to-gather"] },
+    "2026-06-10",
+    merch("chalet"),
+  );
+  assert.match(copy.benefit_1, /full kitchen/i);
 });
