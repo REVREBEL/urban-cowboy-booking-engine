@@ -165,26 +165,42 @@ export function buildTopMatchCopy(
   };
 }
 
+const VALID_INTERESTS: MatchInterest[] = [
+  "iconic-tub",
+  "bathe-outside",
+  "my-own-place",
+  "near-everything",
+  "simple-cozy",
+  "mountain-views",
+  "bringing-my-people",
+];
+
+const LEGACY_INTEREST_ALIASES: Record<string, MatchInterest> = {
+  iconTub: "iconic-tub",
+  outdoorSoak: "bathe-outside",
+  ownPlace: "my-own-place",
+  scenic: "mountain-views",
+  simpleCozy: "simple-cozy",
+  social: "bringing-my-people",
+};
+
+function normalizeInterest(value: string | null): MatchInterest | null {
+  if (!value) return null;
+  if (VALID_INTERESTS.includes(value as MatchInterest)) return value as MatchInterest;
+  return LEGACY_INTEREST_ALIASES[value] ?? null;
+}
+
 export function parseRecommendationPreferences(
   search: string,
   fallback: { adults: number; children: number },
 ): RecommendationPreferences | null {
   const params = new URLSearchParams(search);
-  const validInterests: MatchInterest[] = [
-    "iconic-tub",
-    "bathe-outside",
-    "my-own-place",
-    "near-everything",
-    "simple-cozy",
-    "mountain-views",
-    "bringing-my-people",
-  ];
-  const primaryRaw = params.get("interest") as MatchInterest | null;
+  const primaryRaw = normalizeInterest(params.get("interest"));
 
   // No explicit interest means the guest is browsing normally, not using the matcher.
   // In that case keep the standard availability/price order rather than inventing a
   // preference from the room name.
-  if (!primaryRaw || !validInterests.includes(primaryRaw)) return null;
+  if (!primaryRaw) return null;
 
   const partyRaw = params.get("party") as PartyType | null;
   const validParties: PartyType[] = ["partner", "friends", "family", "solo"];
@@ -198,11 +214,9 @@ export function parseRecommendationPreferences(
           ? "partner"
           : "friends";
 
-  const secondaryRaw = params.get("interest2") as MatchInterest | null;
+  const secondaryRaw = normalizeInterest(params.get("interest2"));
   const secondary: MatchInterest | undefined =
-    secondaryRaw && validInterests.includes(secondaryRaw) && secondaryRaw !== primaryRaw
-      ? secondaryRaw
-      : undefined;
+    secondaryRaw && secondaryRaw !== primaryRaw ? secondaryRaw : undefined;
 
   return {
     party,
