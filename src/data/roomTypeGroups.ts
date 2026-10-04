@@ -6,13 +6,30 @@ import type { RoomTypeGroupDefinition, RoomTypeGroupKey } from "@/types/accommod
  * Mews does not provide this hierarchy. These groups organize Mews Room Types
  * into the higher-level Catskills lodging experience.
  *
- * distanceFromLodgeFeet is the straight-line building-to-building distance
- * calculated from the property KML coordinates, using The Main Lodge as origin.
+ * Registry order is the canonical guest-facing presentation order.
+ * distanceFromLodgeFeet is independent metadata calculated from the property
+ * KML coordinates, using The Main Lodge as origin.
  *
  * coreProximity and privacyLevel are Cowboy-owned merchandising attributes.
  * They describe the setting of the group, not a physical amenity of a room.
  */
 export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
+  {
+    key: "alpine",
+    name: "Alpine Haus",
+    sectionStatus: "designed",
+    distanceFromLodgeFeet: 288,
+    coreProximity: "near-core",
+    privacyLevel: "standard",
+  },
+  {
+    key: "walden",
+    name: "Walden Haus",
+    sectionStatus: "designed",
+    distanceFromLodgeFeet: 156,
+    coreProximity: "near-core",
+    privacyLevel: "standard",
+  },
   {
     key: "lodge",
     name: "The Lodge",
@@ -22,10 +39,18 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
     privacyLevel: "standard",
   },
   {
-    key: "walden",
-    name: "Walden Haus",
-    sectionStatus: "designed",
-    distanceFromLodgeFeet: 156,
+    key: "forest-house",
+    name: "Forest House",
+    sectionStatus: "pending",
+    distanceFromLodgeFeet: 1668,
+    coreProximity: "away-from-core",
+    privacyLevel: "enhanced",
+  },
+  {
+    key: "cabin",
+    name: "Cabin",
+    sectionStatus: "pending",
+    distanceFromLodgeFeet: 183,
     coreProximity: "near-core",
     privacyLevel: "standard",
   },
@@ -38,26 +63,10 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
     privacyLevel: "standard",
   },
   {
-    key: "cabin",
-    name: "Cabin",
+    key: "opas",
+    name: "Opa's",
     sectionStatus: "pending",
-    distanceFromLodgeFeet: 183,
-    coreProximity: "near-core",
-    privacyLevel: "standard",
-  },
-  {
-    key: "alpine",
-    name: "Alpine Haus",
-    sectionStatus: "designed",
-    distanceFromLodgeFeet: 288,
-    coreProximity: "near-core",
-    privacyLevel: "standard",
-  },
-  {
-    key: "mountain-view",
-    name: "Mountain View Haus",
-    sectionStatus: "pending",
-    distanceFromLodgeFeet: 1262,
+    distanceFromLodgeFeet: 1844,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
   },
@@ -70,18 +79,10 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
     privacyLevel: "enhanced",
   },
   {
-    key: "forest-house",
-    name: "Forest House",
+    key: "mountain-view",
+    name: "Mountain View Haus",
     sectionStatus: "pending",
-    distanceFromLodgeFeet: 1668,
-    coreProximity: "away-from-core",
-    privacyLevel: "enhanced",
-  },
-  {
-    key: "opas",
-    name: "Opa's",
-    sectionStatus: "pending",
-    distanceFromLodgeFeet: 1844,
+    distanceFromLodgeFeet: 1262,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
   },
