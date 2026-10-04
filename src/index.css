@@ -28,6 +28,10 @@
     --ring: 18 46% 41%;
     --radius: 0.5rem;
 
+    /* Adaptive overlay controls on photography. */
+    --icon-color-light: #faf9f9;
+    --icon-color-dark: #4e332d;
+
     /* Cowboy typography system. Components consume semantic variables, not font names. */
     --font-body: "Uchen", Georgia, serif;
     --font-heading: "DesertRain", Georgia, serif;
