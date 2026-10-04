@@ -8,7 +8,7 @@ import { imageContrastColor } from "@/lib/imageContrast";
 
 import { CaretLeft, CaretRight } from "@/components/icons/generated/ui";
 
-export type RoomCardColor = "paper" | "forest" | "smoke" | "copper";
+export type RoomCardColor = "paper" | "lake-forest" | "forest" | "smoke" | "copper";
 export type RoomCardLayout = "left" | "right";
 
 export interface RoomsListCardProps {
@@ -44,6 +44,17 @@ const COLOR_STYLES = {
     selectBtn: "bg-[#9A5636] hover:bg-[#783224] text-[#EBE8E0]",
     detailsBtn: "border border-[#9A5636] text-[#9A5636] hover:bg-[#9A5636]/10",
     price: "text-[#4E332D]",
+  },
+  "lake-forest": {
+    card: "bg-[#0E301A] border-2 border-[#0E301A]",
+    title: "text-[#FAF9F9]",
+    tagline: "text-[#F2AAA9]",
+    description: "text-[#FAF9F9]",
+    amenityBadge: "border border-[#FAF9F9] text-[#FAF9F9]",
+    highlightBadge: "border border-[#F2AAA9] text-[#F2AAA9]",
+    selectBtn: "bg-[#F2AAA9] hover:bg-[#F2AAA9]/85 text-[#0E301A] font-bold",
+    detailsBtn: "border border-[#F2AAA9] text-[#F2AAA9] hover:bg-[#F2AAA9]/10",
+    price: "text-[#FAF9F9]",
   },
   forest: {
     card: "bg-[#0E301A] border-2 border-[#0E301A]",
@@ -142,6 +153,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     setActiveImageIndex((index) => (index + 1) % imageUrls.length);
   const pills = buildRoomCardPills(room).slice(0, 6);
   const tagline = room.merchandising?.cardTagline ?? null;
+  const cardDescription = room.merchandising?.cardDescription ?? room.description;
   const firstRate = room.rates[0];
   const nightlyRate = firstRate?.perNightGross ?? room.fromGross ?? null;
   const currency = firstRate?.currency ?? "USD";
@@ -250,11 +262,11 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           )}
 
           {bodySlot ??
-            (room.description ? (
+            (cardDescription ? (
               <p
                 className={`room-list-card__body mb-4 line-clamp-3 text-xs leading-[22px] sm:text-sm sm:leading-[23px] md:line-clamp-4 ${colorStyles.description}`}
               >
-                {room.description}
+                {cardDescription}
               </p>
             ) : null)}
 
