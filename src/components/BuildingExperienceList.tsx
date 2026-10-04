@@ -332,14 +332,9 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
 
                 {/* Right Bento / Collage Grid: 3 Editorial Rooms + Photo Collages (Screenshot 1) */}
                 <div className="lg:col-span-8 space-y-6">
-                  {/* Top Card: Alpine Bathing Suite with Den */}
-                  {renderMappedRoom("alpine-bathing-suite-den", "paper", "left")}
-
-                  {/* Middle Card: Alpine Penthouse Bathing Suite */}
-                  {renderMappedRoom("alpine-penthouse-bathing-suite", "copper", "right")}
-
-                  {/* Bottom Card: Alpine Bathing Suite */}
-                  {renderMappedRoom("alpine-bathing-suite", "smoke", "left")}
+                  {renderMappedRoom("alpine-bathing-suite", "paper", "left")}
+                  {renderMappedRoom("alpine-bathing-suite-den", "copper", "right")}
+                  {renderMappedRoom("alpine-penthouse-bathing-suite", "lake-forest", "left")}
                 </div>
               </div>
             </div>
@@ -378,11 +373,10 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
 
                 {/* Right Rooms Grid for Walden */}
                 <div className="lg:col-span-8 space-y-6">
-                  {/* Walden Forest Bathing Suite */}
-                  {renderMappedRoom("walden-forest-bathing-suite", "paper", "left")}
-
-                  {/* Walden King (Simple, warm, cabin era) */}
-                  {renderMappedRoom("walden-king", "forest", "right")}
+                  {renderMappedRoom("walden-king", "paper", "left")}
+                  {renderMappedRoom("walden-forest-bathing-suite", "copper", "right")}
+                  {renderMappedRoom("walden-forest-bathing-suite-den", "copper", "left")}
+                  {renderMappedRoom("walden-sunrise-bathing-suite", "lake-forest", "right")}
                 </div>
               </div>
             </div>
@@ -394,14 +388,10 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left/Middle Column: 3 Lodge Rooms Collage (Screenshot 4) */}
                 <div className="lg:col-span-8 order-2 lg:order-1 space-y-6">
-                  {/* Card 1: Lodge Three-Bedroom Suite */}
-                  {renderMappedRoom("lodge-3-bedroom-suite", "paper", "left")}
-
-                  {/* Card 2: Lodge Penthouse */}
-                  {renderMappedRoom("lodge-penthouse-suite", "copper", "right")}
-
-                  {/* Card 3: Lodge King */}
-                  {renderMappedRoom("lodge-king", "smoke", "left")}
+                  {renderMappedRoom("lodge-king", "paper", "left")}
+                  {renderMappedRoom("lodge-2-bedroom", "copper", "right")}
+                  {renderMappedRoom("lodge-3-bedroom-suite", "copper", "left")}
+                  {renderMappedRoom("lodge-penthouse-suite", "lake-forest", "right")}
                 </div>
 
                 {/* Right Column: Woodcut + Lodge Narrative (Screenshot 4 right) */}
