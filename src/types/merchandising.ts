@@ -46,6 +46,8 @@ export interface RoomMerchandising {
   roomTypeGroupKey: RoomTypeGroupKey;
   /** Curated guest-facing subheadline used by the approved room-list card. */
   cardTagline?: string;
+  /** Curated guest-facing card description. Falls back to the Mews description. */
+  cardDescription?: string;
   dogPolicy: DogPolicy;
   agePolicy: AgePolicy;
   partyScores: Record<PartyType, number>;
