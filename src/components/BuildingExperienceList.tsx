@@ -424,28 +424,56 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </div>
           )}
 
-          {pendingRoomTypeGroups.map(({ group, rooms: groupRooms }) => (
+          {additionalRoomTypeGroups.map(({ group, presentation, rooms: groupRooms }) => (
             <div key={group.key} className="relative border-t border-[#4E332D]/15 pt-16">
-              <div className="mb-6">
-                <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
-                  Room Type Group
-                </p>
-                <h2 className="mt-1 font-heading text-3xl uppercase text-[#221C18]">
-                  {group.name}
-                </h2>
-              </div>
-              <div className="space-y-6">
-                {groupRooms.map((room, index) => (
-                  <RoomsListCard
-                    key={room.roomTypeId}
-                    room={room}
-                    imageBaseUrl={imageBaseUrl}
-                    color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
-                    layout={index % 2 === 0 ? "left" : "right"}
-                    onSelectRoom={onSelectRoom}
-                    onOpenRoomDetails={onOpenRoomDetails}
+              <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+                <div className="flex flex-col items-center border-b border-[#4E332D]/15 pb-6 text-center lg:col-span-4 lg:items-start lg:border-b-0 lg:border-r lg:pr-8 lg:text-left">
+                  <img
+                    src={presentation.iconPath}
+                    alt=""
+                    aria-hidden="true"
+                    className="mb-4 h-40 w-64 object-contain"
                   />
-                ))}
+
+                  <h2 className="mb-1 font-desert text-4xl font-bold leading-none tracking-tight text-[#221C18] sm:text-5xl">
+                    {group.name}
+                  </h2>
+
+                  {presentation.headline && (
+                    <span className="mt-1 mb-4 block font-woodblock text-xs font-bold uppercase tracking-[0.25em] text-[#9A5636]">
+                      {presentation.headline}
+                    </span>
+                  )}
+
+                  {presentation.paragraphs.map((paragraph) => (
+                    <p
+                      key={paragraph}
+                      className="mb-4 font-editorial text-sm leading-relaxed text-[#4E332D]/85 sm:text-base"
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+
+                  {presentation.callout && (
+                    <p className="mb-5 font-editorial text-sm font-medium italic text-[#4E332D]/90">
+                      {presentation.callout}
+                    </p>
+                  )}
+
+                  {presentation.badge && (
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-[#4E332D]/20 bg-[#EBE8E0] px-3 py-1 font-woodblock text-[11px] font-bold uppercase tracking-wider text-[#4E332D]">
+                      <span>✦ {presentation.badge}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-6 lg:col-span-8">
+                  {groupRooms.map((room, index) => (
+                    <React.Fragment key={room.roomTypeId}>
+                      {renderConfiguredRoom(room, index, groupRooms.length)}
+                    </React.Fragment>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
