@@ -1,5 +1,5 @@
 import type { ShapedRoom } from "../types/mews";
-import { roomTypeGroupSupportsMinimalDistractions } from "../data/roomTypeGroups";
+import { roomTypeGroupSupportsMinimalDistractions } from "../data/roomTypeGroups.ts";
 import type {
   MatchInterest,
   RecommendationPreferences,
