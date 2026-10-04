@@ -5,8 +5,8 @@ import type {
   RoomFeatures,
   RoomMerchandising,
 } from "../types/merchandising";
-import { PREFERENCE_LABELS } from "@/data/findYourStayPreferences";
-import { roomTypeGroupSupportsMinimalDistractions } from "@/data/roomTypeGroups";
+import { PREFERENCE_LABELS } from "../data/findYourStayPreferences";
+import { roomTypeGroupSupportsMinimalDistractions } from "../data/roomTypeGroups";
 
 export type Season = "winter" | "spring" | "summer" | "fall";
 
