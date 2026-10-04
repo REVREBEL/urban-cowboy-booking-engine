@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import type { SearchCriteria } from '../types';
 import type { ShapedRoom } from '@/types/mews';
-import { BUILDINGS } from '../data/hotelData';
 import { ROOM_TYPE_GROUPS } from '../data/roomTypeGroups';
+import { ROOM_TYPE_GROUP_PRESENTATION } from '../data/roomTypeGroupPresentation';
 import { RoomsListCard, type RoomCardColor, type RoomCardLayout } from '@/components/RoomsListCard';
 import {
   AlpineHausWoodcut,
@@ -85,16 +85,56 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   const hasRoomTypeGroup = (groupKey: string) =>
     filteredRooms.some((room) => roomTypeGroup(room) === groupKey);
 
-  // Every known Room Type Group remains structurally distinct even before it gets
-  // a bespoke editorial treatment. This lets the component section design evolve
-  // without collapsing valid groups into an "unmapped" bucket.
-  const pendingRoomTypeGroups = ROOM_TYPE_GROUPS
-    .filter((group) => group.sectionStatus === "pending")
+  const orderedRoomsForGroup = (groupKey: typeof ROOM_TYPE_GROUPS[number]["key"]) => {
+    const order = ROOM_TYPE_GROUP_PRESENTATION[groupKey].roomOrder;
+    const orderIndex = new Map(order.map((key, index) => [key, index]));
+    return filteredRooms
+      .filter((room) => roomTypeGroup(room) === groupKey)
+      .sort((a, b) => {
+        const aIndex = orderIndex.get(a.merchandising?.key ?? "") ?? Number.MAX_SAFE_INTEGER;
+        const bIndex = orderIndex.get(b.merchandising?.key ?? "") ?? Number.MAX_SAFE_INTEGER;
+        return aIndex - bIndex;
+      });
+  };
+
+  const additionalRoomTypeGroups = ROOM_TYPE_GROUPS
+    .filter((group) => !["alpine", "walden", "lodge"].includes(group.key))
     .map((group) => ({
       group,
-      rooms: filteredRooms.filter((room) => roomTypeGroup(room) === group.key),
+      presentation: ROOM_TYPE_GROUP_PRESENTATION[group.key],
+      rooms: orderedRoomsForGroup(group.key),
     }))
     .filter(({ rooms: groupRooms }) => groupRooms.length > 0);
+
+  const roomCardColorForPosition = (
+    index: number,
+    total: number,
+  ): RoomCardColor => {
+    if (total <= 1 || index === 0) return "paper";
+    if (index === total - 1) return "lake-forest";
+    return "copper";
+  };
+
+  const roomCardLayoutForPosition = (index: number): RoomCardLayout =>
+    index % 2 === 0 ? "left" : "right";
+
+  const renderConfiguredRoom = (
+    room: ShapedRoom,
+    index: number,
+    total: number,
+  ) =>
+    renderRoomCard(
+      room,
+      <RoomsListCard
+        key={room.roomTypeId}
+        room={room}
+        imageBaseUrl={imageBaseUrl}
+        color={roomCardColorForPosition(index, total)}
+        layout={roomCardLayoutForPosition(index)}
+        onSelectRoom={onSelectRoom}
+        onOpenRoomDetails={onOpenRoomDetails}
+      />,
+    );
 
   const knownRoomTypeGroupKeys = new Set(ROOM_TYPE_GROUPS.map((group) => group.key));
   const unresolvedRooms = filteredRooms.filter(
