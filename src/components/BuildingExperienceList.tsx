@@ -416,9 +416,6 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                     far from dinner, drinks or the fire.
                   </p>
 
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBE8E0] border border-[#4E332D]/20 text-[11px] font-woodblock uppercase tracking-wider text-[#4E332D] font-bold">
-                    <span>✦ Family-friendly & Gathering Suites</span>
-                  </div>
                 </div>
               </div>
             </div>
