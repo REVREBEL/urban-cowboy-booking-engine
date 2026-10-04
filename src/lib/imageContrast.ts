@@ -91,7 +91,9 @@ export function analyzeImageContrast(
   if (!context) return { tone: "dark", luminance: 0 };
 
   const sourceAspect = image.naturalWidth / image.naturalHeight;
-  const targetAspect = 1;
+  const renderedWidth = image.clientWidth || image.naturalWidth;
+  const renderedHeight = image.clientHeight || image.naturalHeight;
+  const targetAspect = renderedWidth / renderedHeight;
 
   let sx = 0;
   let sy = 0;
@@ -126,12 +128,19 @@ export function analyzeImageContrast(
   const width = Math.max(1, Math.ceil(target.width * sampleSize));
   const height = Math.max(1, Math.ceil(target.height * sampleSize));
 
-  const { data } = context.getImageData(
-    x,
-    y,
-    Math.min(width, sampleSize - x),
-    Math.min(height, sampleSize - y),
-  );
+  let data: Uint8ClampedArray;
+  try {
+    data = context.getImageData(
+      x,
+      y,
+      Math.min(width, sampleSize - x),
+      Math.min(height, sampleSize - y),
+    ).data;
+  } catch {
+    // Cross-origin images without canvas permission can still render normally.
+    // Fail safe to "dark" so overlay controls use the light design token.
+    return { tone: "dark", luminance: 0 };
+  }
 
   let luminanceTotal = 0;
   let samples = 0;
