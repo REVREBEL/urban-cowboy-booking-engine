@@ -121,8 +121,8 @@ function Footer() {
 function LangSwitcher() {
   const active = getLang();
   const opts: { code: Lang; label: string }[] = [
-    { code: "fr", label: "FR" },
     { code: "en", label: "EN" },
+    { code: "fr", label: "FR" },
   ];
   return (
     <div className="flex items-center gap-1.5 sm:justify-end" role="group" aria-label={t("footer.language")}>

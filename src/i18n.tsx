@@ -399,7 +399,7 @@ export type TKey = keyof typeof DICT;
 
 export function t(key: TKey, params?: Record<string, unknown>): string {
   const entry = DICT[key];
-  const val = (entry[getLang()] ?? entry.fr) as Entry;
+  const val = (entry[getLang()] ?? entry.en) as Entry;
   return typeof val === "function" ? val(params ?? {}) : val;
 }
 

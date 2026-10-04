@@ -4,7 +4,7 @@ import { t } from "@/i18n";
 import { regionName } from "@/lib/format";
 import { IconCheck } from "@/components/icons/cowboy-icons";
 
-// Liste ciblée (Martinique/France en tête — marché du resort). Code ISO + drapeau +
+// Liste ciblée. Code ISO + drapeau +
 // exemple national (placeholder). Indicatif & formatage/validation = libphonenumber-js.
 const COUNTRIES: { code: CountryCode; name: string; flag: string; example: string }[] = [
   { code: "FR", name: "France", flag: "🇫🇷", example: "06 12 34 56 78" },
@@ -67,7 +67,7 @@ export function PhoneInput({
   ariaDescribedBy?: string;
 }) {
   const init = safeParse(value);
-  const fallback = (COUNTRIES.find((c) => c.code === defaultCountry)?.code ?? "FR") as CountryCode;
+  const fallback = (COUNTRIES.find((c) => c.code === defaultCountry)?.code ?? "CA") as CountryCode;
   const [country, setCountry] = useState<CountryCode>(init?.country ?? fallback);
   const [text, setText] = useState(init?.national ?? "");
   const [valid, setValid] = useState(true);
@@ -97,7 +97,7 @@ export function PhoneInput({
 
   useEffect(() => {
     if (value || text.trim()) return;
-    const next = COUNTRIES.find((item) => item.code === defaultCountry)?.code ?? "FR";
+    const next = COUNTRIES.find((item) => item.code === defaultCountry)?.code ?? "CA";
     setCountry(next as CountryCode);
   }, [defaultCountry, value, text]);
 

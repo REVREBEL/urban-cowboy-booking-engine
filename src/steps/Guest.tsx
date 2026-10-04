@@ -37,13 +37,18 @@ export function Guest() {
   }
 
   return (
-    <StepLayout
-      title={t("guest.title")}
-      subtitle={t("guest.subtitle")}
-      onBack={() => goTo("rates")}
-      backLabel={t("guest.backLabel")}
-    >
-      <form onSubmit={submit} className="card space-y-5 p-5 sm:p-6" noValidate>
+    <div className="min-h-screen texture-linen">
+      <StepLayout
+        title={t("guest.title")}
+        subtitle={t("guest.subtitle")}
+        onBack={() => goTo("rates")}
+        backLabel={t("guest.backLabel")}
+      >
+        <form
+          onSubmit={submit}
+          className="card space-y-5 border-[#4E332D]/15 bg-[#FAF9F9] p-5 sm:p-6"
+          noValidate
+        >
         <div className="grid gap-4 sm:grid-cols-2">
           <Field htmlFor="guest-first-name" label={t("guest.firstName")} error={errors.firstName} required>
             <input
@@ -98,7 +103,7 @@ export function Guest() {
                 invalid={!!errors.telephone}
                 ariaDescribedBy={errors.telephone ? "guest-phone-error" : undefined}
                 value={guest.telephone}
-                defaultCountry={guest.nationalityCode}
+                defaultCountry={guest.nationalityCode === "FR" ? "CA" : guest.nationalityCode}
                 onChange={(val, valid) => {
                   setGuest({ telephone: val });
                   setPhoneValid(valid);
@@ -134,8 +139,9 @@ export function Guest() {
             {t("guest.continue")} <IconArrowRight className="h-4 w-4" />
           </button>
         </div>
-      </form>
-    </StepLayout>
+        </form>
+      </StepLayout>
+    </div>
   );
 }
 

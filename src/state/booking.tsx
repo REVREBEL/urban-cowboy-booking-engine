@@ -149,7 +149,7 @@ function writeUrl(s: BookingState) {
   if (s.airportTransfer) q.set("transfer", "1");
   if (s.rgid) q.set("rgid", s.rgid);
   // Préserve la langue non-défaut dans l'URL (writeUrl reconstruit les params à zéro).
-  if (getLang() === "en") q.set("lang", "en");
+  if (getLang() === "fr") q.set("lang", "fr");
   // REV-102 recommendation inputs are owned by the quiz/ranking layer. Preserve
   // them while this booking state serializes its own fields so REV-103 can explain
   // the actual ranked result without losing the guest's choices.

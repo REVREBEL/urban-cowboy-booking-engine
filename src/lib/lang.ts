@@ -1,5 +1,5 @@
 // Langue de l'interface & du contenu Mews. Source de vérité : le param `?lang=`
-// (fr|en), sinon localStorage, sinon `fr` par défaut. La langue est FIXE pour un
+// (fr|en), sinon localStorage, sinon `en` par défaut. La langue est FIXE pour un
 // chargement de page — le switcher (footer) met à jour `?lang=` puis RECHARGE, ce
 // qui re-localise proprement tout : chaînes UI (t()), formats Intl et surtout le
 // contenu Mews (chambres, tarifs, CGV) + la page de paiement hébergée par Mews.
@@ -19,18 +19,18 @@ const LS_KEY = "urban_cowboy_lang";
 const parse = (v: string | null | undefined): Lang | null =>
   v === "fr" || v === "en" ? v : null;
 
-let active: Lang = "fr";
+let active: Lang = "en";
 
 // À appeler UNE fois au boot (main.tsx), avant tout rendu ou appel réseau.
-// Priorité : ?lang= > localStorage > défaut fr. Un ?lang= explicite est mémorisé.
+// Priorité : ?lang= > localStorage > défaut en. Un ?lang= explicite est mémorisé.
 export function initLang(): Lang {
   try {
     const fromUrl = parse(new URLSearchParams(window.location.search).get("lang"));
     if (fromUrl) localStorage.setItem(LS_KEY, fromUrl);
-    active = fromUrl ?? parse(localStorage.getItem(LS_KEY)) ?? "fr";
+    active = fromUrl ?? parse(localStorage.getItem(LS_KEY)) ?? "en";
     document.documentElement.lang = active;
   } catch {
-    active = "fr";
+    active = "en";
   }
   return active;
 }
