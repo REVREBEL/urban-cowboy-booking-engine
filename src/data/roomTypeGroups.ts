@@ -48,7 +48,7 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   },
   {
     key: "cabin",
-    name: "Cabin",
+    name: "The Cabin",
     sectionStatus: "designed",
     distanceFromLodgeFeet: 183,
     coreProximity: "near-core",
@@ -64,7 +64,7 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   },
   {
     key: "opas",
-    name: "Opa's",
+    name: "Opa's Cabin",
     sectionStatus: "designed",
     distanceFromLodgeFeet: 1844,
     coreProximity: "away-from-core",
