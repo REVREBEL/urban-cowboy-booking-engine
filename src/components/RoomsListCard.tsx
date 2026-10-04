@@ -122,6 +122,8 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   }, []);
 
   useEffect(() => setActiveImageIndex(0), [room.roomTypeId, imageUrls.length]);
+  const imageUrl = imageUrls[activeImageIndex] ?? null;
+
   useEffect(() => {
     const image = imageRef.current;
     if (!image) return;
@@ -133,8 +135,6 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     observer.observe(image);
     return () => observer.disconnect();
   }, [imageUrl, updateOverlayContrast]);
-
-  const imageUrl = imageUrls[activeImageIndex] ?? null;
   const hasGallery = imageUrls.length > 1;
   const showPreviousImage = () =>
     setActiveImageIndex((index) => (index - 1 + imageUrls.length) % imageUrls.length);
