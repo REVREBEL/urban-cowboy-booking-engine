@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 import type { ShapedRoom } from "@/types/mews";
 import { imgUrl, money } from "@/lib/format";
 import { buildRoomCardPills } from "@/lib/roomCardPills";
+import { imageContrastColor } from "@/lib/imageContrast";
 
 
-import { CaretLeftCowboyUmber, CaretRightCowboyUmber } from "@/components/icons/generated/ui";
+import { CaretLeft, CaretRight } from "@/components/icons/generated/ui";
 
 export type RoomCardColor = "paper" | "forest" | "smoke" | "copper";
 export type RoomCardLayout = "left" | "right";
@@ -105,7 +106,34 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     return [...new Set(customImage ? [customImage, ...mewsImages] : mewsImages)];
   }, [customImage, imageBaseUrl, room.imageIds]);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const [overlayColors, setOverlayColors] = useState({
+    previous: "var(--icon-color-light)",
+    next: "var(--icon-color-light)",
+    counter: "var(--icon-color-light)",
+  });
+
+  const updateOverlayContrast = useCallback((image: HTMLImageElement) => {
+    setOverlayColors({
+      previous: imageContrastColor(image, "left-center", { objectFit: "cover" }),
+      next: imageContrastColor(image, "right-center", { objectFit: "cover" }),
+      counter: imageContrastColor(image, "bottom-right", { objectFit: "cover" }),
+    });
+  }, []);
+
   useEffect(() => setActiveImageIndex(0), [room.roomTypeId, imageUrls.length]);
+  useEffect(() => {
+    const image = imageRef.current;
+    if (!image) return;
+
+    if (image.complete) updateOverlayContrast(image);
+
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => updateOverlayContrast(image));
+    observer.observe(image);
+    return () => observer.disconnect();
+  }, [imageUrl, updateOverlayContrast]);
+
   const imageUrl = imageUrls[activeImageIndex] ?? null;
   const hasGallery = imageUrls.length > 1;
   const showPreviousImage = () =>
@@ -137,9 +165,11 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
       <div className="group relative h-full w-full flex-1 overflow-hidden rounded-[17px] bg-[#D7D0C7]">
         {imageUrl ? (
           <img
+            ref={imageRef}
             src={imageUrl}
             alt={room.name}
-            className="absolute inset-0 block h-full w-full select-none object-contain"
+            onLoad={(event) => updateOverlayContrast(event.currentTarget)}
+            className="absolute inset-0 block h-full w-full select-none object-cover"
           />
         ) : (
           <div className="absolute inset-0 grid place-items-center font-brothers text-[10px] font-bold uppercase tracking-widest text-[#4E332D]/45">
@@ -160,7 +190,11 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
               aria-label={`Previous photo of ${room.name}`}
               className="absolute left-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2AAA9]"
             >
-              <CaretLeftCowboyUmber className="h-9 w-9 drop-shadow-sm" aria-hidden="true" />
+              <CaretLeft
+                className="h-9 w-9 drop-shadow-sm"
+                style={{ color: overlayColors.previous }}
+                aria-hidden="true"
+              />
             </button>
             <button
               type="button"
@@ -168,9 +202,16 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
               aria-label={`Next photo of ${room.name}`}
               className="absolute right-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2AAA9]"
             >
-              <CaretRightCowboyUmber className="h-9 w-9 drop-shadow-sm" aria-hidden="true" />
+              <CaretRight
+                className="h-9 w-9 drop-shadow-sm"
+                style={{ color: overlayColors.next }}
+                aria-hidden="true"
+              />
             </button>
-            <span className="absolute bottom-3 right-3 z-10 rounded-full bg-[#221C18]/75 px-2.5 py-1 font-brothers text-[9px] font-bold uppercase tracking-wider text-[#FAF9F9] backdrop-blur-sm">
+            <span
+              className="absolute bottom-3 right-3 z-10 px-2.5 py-1 font-brothers text-[9px] font-bold uppercase tracking-wider drop-shadow-sm transition-colors"
+              style={{ color: overlayColors.counter }}
+            >
               {activeImageIndex + 1} / {imageUrls.length}
             </span>
           </>
