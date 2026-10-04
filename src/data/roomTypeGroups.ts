@@ -41,7 +41,7 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   {
     key: "forest-house",
     name: "Forest House",
-    sectionStatus: "pending",
+    sectionStatus: "designed",
     distanceFromLodgeFeet: 1668,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
@@ -49,7 +49,7 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   {
     key: "cabin",
     name: "Cabin",
-    sectionStatus: "pending",
+    sectionStatus: "designed",
     distanceFromLodgeFeet: 183,
     coreProximity: "near-core",
     privacyLevel: "standard",
@@ -57,7 +57,7 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   {
     key: "chalet",
     name: "Chalet",
-    sectionStatus: "pending",
+    sectionStatus: "designed",
     distanceFromLodgeFeet: 162,
     coreProximity: "near-core",
     privacyLevel: "standard",
@@ -65,7 +65,7 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   {
     key: "opas",
     name: "Opa's",
-    sectionStatus: "pending",
+    sectionStatus: "designed",
     distanceFromLodgeFeet: 1844,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
@@ -73,7 +73,7 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   {
     key: "slide-mountain",
     name: "Slide Mountain Haus",
-    sectionStatus: "pending",
+    sectionStatus: "designed",
     distanceFromLodgeFeet: 1323,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
@@ -81,7 +81,7 @@ export const ROOM_TYPE_GROUPS: readonly RoomTypeGroupDefinition[] = [
   {
     key: "mountain-view",
     name: "Mountain View Haus",
-    sectionStatus: "pending",
+    sectionStatus: "designed",
     distanceFromLodgeFeet: 1262,
     coreProximity: "away-from-core",
     privacyLevel: "enhanced",
