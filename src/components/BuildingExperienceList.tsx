@@ -512,80 +512,67 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
       {/* CATALOG MODE: Longitudinal narrative with tactile room cards */}
       {layoutMode === 'catalog' && (
         <div className="booking-shell space-y-12 py-10">
-          {BUILDINGS.filter(
-            (b) => selectedRoomTypeGroupKey === 'all' || selectedRoomTypeGroupKey === b.id
-          ).map((building) => {
-            const buildingRooms = filteredRooms.filter((r) => roomTypeGroup(r) === building.id);
-            if (buildingRooms.length === 0) return null;
+          {ROOM_TYPE_GROUPS.map((group) => {
+            if (
+              selectedRoomTypeGroupKey !== "all" &&
+              selectedRoomTypeGroupKey !== group.key
+            ) {
+              return null;
+            }
+
+            const groupRooms = orderedRoomsForGroup(group.key);
+            if (groupRooms.length === 0) return null;
+            const presentation = ROOM_TYPE_GROUP_PRESENTATION[group.key];
 
             return (
-              <div key={building.id} className="space-y-6">
-                {/* Building Header Banner */}
-                <div className="bg-[#FAF9F9] border-2 border-[#4E332D] rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
+              <div key={group.key} className="space-y-6">
+                <div className="flex flex-col items-center justify-between gap-6 rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] p-6 shadow-md sm:p-8 md:flex-row">
                   <div className="flex-1">
-                    <span className="font-woodblock text-xs uppercase tracking-widest text-[#9A5636] font-bold block mb-1">
-                      {building.number} · {building.badge}
-                    </span>
-                    <h2 className="font-desert font-bold text-3xl sm:text-4xl text-[#221C18]">
-                      {building.name}
+                    {presentation.headline && (
+                      <span className="mb-1 block font-woodblock text-xs font-bold uppercase tracking-widest text-[#9A5636]">
+                        {presentation.headline}
+                      </span>
+                    )}
+                    <h2 className="font-desert text-3xl font-bold text-[#221C18] sm:text-4xl">
+                      {group.name}
                     </h2>
-                    <p className="font-editorial text-sm text-[#4E332D]/80 mt-2 max-w-xl">
-                      {building.description}
-                    </p>
+                    {presentation.paragraphs.map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="mt-2 max-w-2xl font-editorial text-sm text-[#4E332D]/80"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                    {presentation.callout && (
+                      <p className="mt-3 max-w-2xl font-editorial text-sm italic text-[#4E332D]/90">
+                        {presentation.callout}
+                      </p>
+                    )}
+                    {presentation.badge && (
+                      <p className="mt-3 font-woodblock text-[11px] font-bold uppercase tracking-wider text-[#4E332D]">
+                        ✦ {presentation.badge}
+                      </p>
+                    )}
                   </div>
-                  <div className="shrink-0">
-                    {building.id === 'alpine' && <AlpineHausWoodcut className="w-48 h-32" />}
-                    {building.id === 'walden' && <WaldenHausWoodcut className="w-48 h-32" />}
-                    {building.id === 'lodge' && <LodgeWoodcut className="w-52 h-36" />}
-                  </div>
+                  <img
+                    src={presentation.iconPath}
+                    alt=""
+                    aria-hidden="true"
+                    className="h-36 w-52 shrink-0 object-contain"
+                  />
                 </div>
 
-                {/* Rooms Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {buildingRooms.map((room, index) =>
-                    renderRoomCard(
-                      room,
-                      <RoomsListCard
-                        key={room.roomTypeId}
-                        room={room}
-                        imageBaseUrl={imageBaseUrl}
-                        color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
-                        layout={index % 2 === 0 ? "left" : "right"}
-                        onSelectRoom={onSelectRoom}
-                        onOpenRoomDetails={onOpenRoomDetails}
-                      />,
-                    )
-                  )}
+                <div className="space-y-6">
+                  {groupRooms.map((room, index) => (
+                    <React.Fragment key={room.roomTypeId}>
+                      {renderConfiguredRoom(room, index, groupRooms.length)}
+                    </React.Fragment>
+                  ))}
                 </div>
               </div>
             );
           })}
-
-          {pendingRoomTypeGroups.map(({ group, rooms: groupRooms }) => (
-            <div key={group.key} className="space-y-6">
-              <div className="rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] p-6 sm:p-8">
-                <p className="font-eyebrow text-xs uppercase tracking-[0.25em] text-[#9A5636]">
-                  Room Type Group
-                </p>
-                <h2 className="mt-1 font-heading text-3xl uppercase text-[#221C18]">
-                  {group.name}
-                </h2>
-              </div>
-              <div className="space-y-6">
-                {groupRooms.map((room, index) => (
-                  <RoomsListCard
-                    key={room.roomTypeId}
-                    room={room}
-                    imageBaseUrl={imageBaseUrl}
-                    color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
-                    layout={index % 2 === 0 ? "left" : "right"}
-                    onSelectRoom={onSelectRoom}
-                    onOpenRoomDetails={onOpenRoomDetails}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
 
           {unresolvedRooms.length > 0 && (
             <div className="space-y-6">
