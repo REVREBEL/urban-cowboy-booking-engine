@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { ROOM_TYPE_GROUPS } from "../src/data/roomTypeGroups.ts";
+import { ROOM_TYPE_GROUP_PRESENTATION } from "../src/data/roomTypeGroupPresentation.ts";
 import { ROOM_MERCHANDISING } from "../src/lib/roomMerchandising.ts";
 
 test("all current Catskills Room Types have unique production Mews IDs", () => {
@@ -39,5 +40,20 @@ test("the current Room Type Group registry contains the expected Catskills group
       "slide-mountain",
       "mountain-view",
     ],
+  );
+});
+
+
+test("Room Type Group presentation order covers every Room Type exactly once", () => {
+  const presentedKeys = ROOM_TYPE_GROUPS.flatMap(
+    (group) => ROOM_TYPE_GROUP_PRESENTATION[group.key].roomOrder,
+  );
+  const merchandisingKeys = ROOM_MERCHANDISING.map((room) => room.key);
+
+  assert.equal(presentedKeys.length, ROOM_MERCHANDISING.length);
+  assert.equal(new Set(presentedKeys).size, presentedKeys.length);
+  assert.deepEqual(
+    [...presentedKeys].sort(),
+    [...merchandisingKeys].sort(),
   );
 });
