@@ -494,8 +494,8 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                     key={room.roomTypeId}
                     room={room}
                     imageBaseUrl={imageBaseUrl}
-                    color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
-                    layout={index % 2 === 0 ? "left" : "right"}
+                    color={roomCardColorForPosition(index, unresolvedRooms.length)}
+                    layout={roomCardLayoutForPosition(index)}
                     onSelectRoom={onSelectRoom}
                     onOpenRoomDetails={onOpenRoomDetails}
                   />
@@ -590,8 +590,8 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                     key={room.roomTypeId}
                     room={room}
                     imageBaseUrl={imageBaseUrl}
-                    color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
-                    layout={index % 2 === 0 ? "left" : "right"}
+                    color={roomCardColorForPosition(index, unresolvedRooms.length)}
+                    layout={roomCardLayoutForPosition(index)}
                     onSelectRoom={onSelectRoom}
                     onOpenRoomDetails={onOpenRoomDetails}
                   />
