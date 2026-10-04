@@ -107,10 +107,10 @@ test("claims a kitchen only when the feature is verified", () => {
 
 test("describes Minimal Distractions from group setting", () => {
   const copy = buildTopMatchCopy(
-    "Walden King",
+    "Forest House Queen",
     { party: "solo", dog: false, interests: ["minimal-distractions"] },
     "2026-06-10",
-    merch("walden-king"),
+    merch("forest-house-queen"),
   );
   assert.match(copy.benefit_1, /away from the Lodge core/i);
   assert.match(copy.benefit_1, /private/i);
