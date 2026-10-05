@@ -339,7 +339,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     config: RateCardConfig,
     fallbackCta: string,
   ) => {
-    const presentation = rateCardPricePresentation(liveRate);
+    const presentation = rateCardPricePresentation(liveRate, criteria.nights);
     return {
       price: formatLivePrice(liveRate, presentation.amount),
       priceUnit: 'Nightly',
