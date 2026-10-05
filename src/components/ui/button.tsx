@@ -50,7 +50,7 @@ export const COLOR_PALETTE: Record<ButtonColor, ColorConfig> = {
 
 // CVA configuration matching the Design System variants and sizes
 export const buttonVariants = cva(
-  "group inline-flex items-center justify-center font-button font-bold uppercase rounded-[25px] transition-all duration-200 ease-in-out select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-400 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "group inline-flex items-center justify-center font-button font-bold uppercase transition-all duration-200 ease-in-out select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-400 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -59,9 +59,9 @@ export const buttonVariants = cva(
         transparent: "",
       },
       size: {
-        small: "h-[36px] px-[20px] pt-[2px] pb-0 text-[11px] gap-[6px]",
-        default: "h-[48px] px-[30px] pt-[2px] pb-0 text-[14px] gap-[8px]",
-        large: "h-[60px] px-[40px] pt-[4px] pb-0 text-[18px] gap-[10px]",
+        small: "h-[36px] rounded-[10px] px-[20px] pt-[2px] pb-0 text-[11px] gap-[6px]",
+        default: "h-[48px] rounded-[14px] px-[30px] pt-[2px] pb-0 text-[14px] gap-[8px]",
+        large: "h-[60px] rounded-[19px] px-[40px] pt-[4px] pb-0 text-[18px] gap-[10px]",
       },
     },
     defaultVariants: {
