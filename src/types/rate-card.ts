@@ -69,6 +69,8 @@ export interface RateCardConfig {
    */
   cancellationPenaltyWindow?: number | null;
   cancellationPenaltyWindowPeriod?: CancellationPenaltyWindowPeriod | null;
+  cancellationFullForfeitWindow?: number | null;
+  cancellationFullForfeitWindowPeriod?: CancellationPenaltyWindowPeriod | null;
 
   /**
    * Machine-readable equivalents of important words baked into the artwork.
