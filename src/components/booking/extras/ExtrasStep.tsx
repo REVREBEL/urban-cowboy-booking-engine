@@ -7,6 +7,7 @@ import { AddonCard } from "./AddonCard";
 import { AddonCustomizerModal } from "./AddonCustomizerModal";
 import { Button } from "@/components/ui/button";
 import { money } from "@/lib/format";
+import { t } from "@/i18n";
 
 type ExtrasFilter = "all" | "dining" | "wellness" | "celebration" | "pets";
 
@@ -25,6 +26,8 @@ interface ExtrasStepProps {
   rateName?: string | null;
   extrasTotal: number;
   currency: string;
+  airportTransfer: boolean;
+  onToggleAirportTransfer: () => void;
   onToggle: (product: MerchandisedAddOn) => void;
   onSavePreference: (
     product: MerchandisedAddOn,
@@ -81,6 +84,8 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
   rateName,
   extrasTotal,
   currency,
+  airportTransfer,
+  onToggleAirportTransfer,
   onToggle,
   onSavePreference,
   onProceedToPay,
@@ -160,6 +165,46 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
           ))}
         </div>
       </div>
+
+      <section className="mb-8">
+        <div className="mb-3 flex items-center gap-3">
+          <span className="h-5 w-1 rounded-full bg-[#236B7D]" />
+          <h2 className="font-display text-lg uppercase text-[#221C18]">
+            {t("extras.serviceSection")}
+          </h2>
+        </div>
+        <button
+          type="button"
+          onClick={onToggleAirportTransfer}
+          aria-pressed={airportTransfer}
+          className={`flex w-full items-start gap-3 rounded-[17px] border p-4 text-left transition ${
+            airportTransfer
+              ? "border-[#236B7D] bg-[#236B7D]/5 ring-1 ring-[#236B7D]"
+              : "border-[#D1C9BE] bg-[#FAF9F9] hover:border-[#236B7D]/60"
+          }`}
+        >
+          <span
+            className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border transition ${
+              airportTransfer
+                ? "border-[#236B7D] bg-[#236B7D] text-white"
+                : "border-[#4E332D]/25 text-transparent"
+            }`}
+          >
+            <Check className="h-3.5 w-3.5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="font-button text-sm uppercase text-[#221C18]">
+              {t("extras.transferTitle")}
+            </span>
+            <span className="mt-1 block font-body text-sm leading-relaxed text-[#6B6259]">
+              {t("extras.transferDesc")}
+            </span>
+          </span>
+          <span className="shrink-0 rounded-full bg-[#EBE8E0] px-2 py-0.5 font-body text-[11px] text-[#4E332D]/70">
+            {t("extras.transferBadge")}
+          </span>
+        </button>
+      </section>
 
       {filteredProducts.length ? (
         <div className="mb-24 grid grid-cols-1 justify-items-center gap-8 md:grid-cols-2 lg:grid-cols-3">
