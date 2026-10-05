@@ -386,8 +386,8 @@ export function productCategory(p: ShapedProduct): { key: string; label: string;
   return { key: "other", label: "Autres extras", order: 99 };
 }
 
-export function groupProducts(products: ShapedProduct[]): { key: string; label: string; items: ShapedProduct[] }[] {
-  const map = new Map<string, { key: string; label: string; order: number; items: ShapedProduct[] }>();
+export function groupProducts<T extends ShapedProduct>(products: T[]): { key: string; label: string; items: T[] }[] {
+  const map = new Map<string, { key: string; label: string; order: number; items: T[] }>();
   for (const p of products) {
     const c = productCategory(p);
     const g = map.get(c.key) ?? { ...c, items: [] };
