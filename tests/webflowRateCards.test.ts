@@ -52,6 +52,15 @@ const options = webflowOptionNames({
       },
     },
     {
+      slug: "cancellation-full-forfeit-window-period",
+      validations: {
+        options: [
+          { id: "a6e5acdee6ebd912a3a5fc622260402d", name: "Hours" },
+          { id: "430cad6b7405352504dbf34e0d49da7c", name: "Days" },
+        ],
+      },
+    },
+    {
       slug: "desktop-overlay-position",
       validations: {
         options: [
@@ -86,6 +95,8 @@ test("normalizes the current Webflow Offers fields using real option IDs", () =>
       "member-only": false,
       "cancellation-penalty-window": 14,
       "cancellation-penalty-window-period": "a9907e83d9c4b7a0dd29301f0f99eaeb",
+      "cancellation-full-forfeit-window": 5,
+      "cancellation-full-forfeit-window-period": "430cad6b7405352504dbf34e0d49da7c",
       "desktop-overlay-position": "87d9d070103a16bbc6ecc08ed2df8060",
       "mobile-overlay-position": "2662a0f5a19ba0966ce291b1e3f993c9",
       "default-card": true,
@@ -122,6 +133,8 @@ test("normalizes the current Webflow Offers fields using real option IDs", () =>
     ctaLabel: "Book Now",
     cancellationPenaltyWindow: 14,
     cancellationPenaltyWindowPeriod: "days",
+    cancellationFullForfeitWindow: 5,
+    cancellationFullForfeitWindowPeriod: "days",
     eyebrow: "Keep Your Options Open",
     headline: "Ride Easy",
     description: "Our standard rate for guests who want a little more freedom around their plans.",
