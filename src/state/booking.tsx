@@ -216,6 +216,10 @@ interface BookingContextValue extends BookingState {
   setProperties: (keys: string[]) => void;
   clearSelection: () => void;
   toggleProduct: (id: string) => void;
+  setProductPresentation: (
+    id: string,
+    presentation: { name: string; description: string } | null,
+  ) => void;
   setAirportTransfer: (v: boolean) => void; // extra hors Mews (relance n8n)
   setGuest: (p: Partial<Guest>) => void;
   setCreated: (r: ReservationCreateResult | null) => void;
@@ -263,6 +267,9 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState(false);
   const [quoteRefreshKey, setQuoteRefreshKey] = useState(0);
+  const [productPresentation, setProductPresentationState] = useState<
+    Record<string, { name: string; description: string }>
+  >({});
   const [cartId, setCartId] = useState<string>(loadCartId);
 
   const [hotel, setHotel] = useState<HotelConfig | null>(null);
@@ -459,6 +466,20 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const setProductPresentation: BookingContextValue["setProductPresentation"] = useCallback(
+    (id, presentation) =>
+      setProductPresentationState((current) => {
+        if (!presentation) {
+          if (!(id in current)) return current;
+          const next = { ...current };
+          delete next[id];
+          return next;
+        }
+        return { ...current, [id]: presentation };
+      }),
+    [],
+  );
+
   const setAirportTransfer: BookingContextValue["setAirportTransfer"] = useCallback(
     (v) => patch({ airportTransfer: v }),
     [patch],
@@ -493,6 +514,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setCreatedState(null);
     setQuote(null);
     setQuoteError(false);
+    setProductPresentationState({});
     setState({ ...defaults });
     setCartId(newCartId()); // nouveau panier
   }, []);
@@ -564,6 +586,16 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     });
   }, [products, selectedRoom, state.checkIn, state.checkOut]);
 
+  // Prune CMS presentation aliases whenever their underlying Mews product is no
+  // longer selected. Presentation never changes the booking identity.
+  useEffect(() => {
+    setProductPresentationState((current) => {
+      const entries = Object.entries(current).filter(([id]) => state.productIds.includes(id));
+      if (entries.length === Object.keys(current).length) return current;
+      return Object.fromEntries(entries);
+    });
+  }, [state.productIds]);
+
   // ── dérivés ────────────────────────────────────────────────────────────────
   const nightsCount = useMemo(
     () => (state.checkIn && state.checkOut ? countNights(state.checkIn, state.checkOut) : 0),
@@ -572,8 +604,14 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const guestsCount = state.adults + state.children;
 
   const selectedProducts = useMemo(
-    () => products.filter((p) => state.productIds.includes(p.id)),
-    [products, state.productIds],
+    () =>
+      products
+        .filter((p) => state.productIds.includes(p.id))
+        .map((product) => {
+          const presentation = productPresentation[product.id];
+          return presentation ? { ...product, ...presentation } : product;
+        }),
+    [products, state.productIds, productPresentation],
   );
 
   const productsTotal = useMemo(
@@ -750,6 +788,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setProperties,
     clearSelection,
     toggleProduct,
+    setProductPresentation,
     setAirportTransfer,
     setGuest,
     setCreated,
