@@ -2,12 +2,12 @@ import { Check, Clock, Edit2, Minus } from "lucide-react";
 import { imgUrl, money } from "@/lib/format";
 import { chargingLabel } from "@/lib/shaping";
 import { productLineTotal } from "@/state/booking";
-import type { ShapedProduct } from "@/types/mews";
+import type { MerchandisedAddOn } from "@/types/add-on-cms";
 import { Photo } from "@/components/media/photo";
 import type { AddonSchedulePreference } from "./addon-types";
 
 export interface AddonCardProps {
-  product: ShapedProduct;
+  product: MerchandisedAddOn;
   imageBaseUrl: string;
   selected: boolean;
   locked?: boolean;
@@ -57,7 +57,7 @@ export function AddonCard({
       <div className="flex flex-1 flex-col gap-3">
         <div className="relative h-[237px] overflow-hidden rounded-2xl">
           <Photo
-            src={imgUrl(imageBaseUrl, product.imageId, 900)}
+            src={product.imageUrl ?? imgUrl(imageBaseUrl, product.imageId, 900)}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             gradient="from-creole via-creole-soft to-turquoise-vivid"
