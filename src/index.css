@@ -346,3 +346,278 @@
 .room-list-card__body {
   font-family: "Uchen", Georgia, serif !important;
 }
+
+
+/* Configurable rate card
+   Artwork is CMS-owned; transactional price/CTA/policy remain live application UI.
+   The shell is a size container so cards respond to their own rendered width,
+   not only to the browser viewport. */
+.rate-card-shell {
+  width: 100%;
+  max-width: 500px;
+  container-type: inline-size;
+}
+
+.rate-card-frame {
+  --rate-fg: #4e332d;
+  --rate-button-bg: #4e332d;
+  --rate-button-fg: #faf9f9;
+  --rate-primary-font: var(--font-button);
+  --rate-secondary-font: var(--font-number);
+
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  aspect-ratio: 500 / 1038;
+  overflow: hidden;
+  background: #faf9f9;
+}
+
+.rate-card-artwork {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+.rate-card-artwork--mobile {
+  display: none;
+}
+
+.rate-card-overlay {
+  position: absolute;
+  z-index: 2;
+  top: var(--rate-overlay-desktop-top, 58%);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(8px, 3cqw, 15px);
+  padding: clamp(8px, 3.6cqw, 18px) clamp(18px, 6cqw, 30px)
+    clamp(12px, 4.5cqw, 24px);
+  color: var(--rate-fg);
+}
+
+.rate-card-price-block {
+  width: 100%;
+}
+
+.rate-card-price {
+  width: 100%;
+  text-align: left;
+  font-family: var(--rate-primary-font);
+  font-size: clamp(16px, 5.2cqw, 26px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.rate-card-price span {
+  font: inherit;
+}
+
+.rate-card-tax {
+  margin-top: 0.3em;
+  width: 100%;
+  text-align: right;
+  font-family: var(--rate-secondary-font);
+  font-size: clamp(9px, 2.4cqw, 12px);
+  line-height: 1.2;
+}
+
+.rate-card-action {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(7px, 2.2cqw, 11px);
+}
+
+.rate-card-cta {
+  min-height: 44px;
+  max-width: 100%;
+  border-radius: 999px;
+  padding: clamp(9px, 2.4cqw, 12px) clamp(18px, 6cqw, 30px);
+  font-family: var(--font-button);
+  font-size: clamp(13px, 3.4cqw, 17px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.rate-card-cta[data-button-style="filled"] {
+  border: 2px solid var(--rate-button-bg);
+  background: var(--rate-button-bg);
+  color: var(--rate-button-fg);
+}
+
+.rate-card-cta[data-button-style="outline"] {
+  border: 2px solid var(--rate-fg);
+  background: transparent;
+  color: var(--rate-fg);
+}
+
+.rate-card-cta:not(:disabled):hover {
+  opacity: 0.88;
+}
+
+.rate-card-cta:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.rate-card-cta:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.rate-card-cta:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.rate-card-policy {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--rate-secondary-font);
+  font-size: clamp(9px, 2.2cqw, 11px);
+  line-height: 1.25;
+}
+
+.rate-card-shell[data-theme="light"] .rate-card-frame {
+  --rate-fg: #faf9f9;
+  --rate-button-bg: #faf9f9;
+  --rate-button-fg: #4e332d;
+}
+
+.rate-card-shell[data-theme="lake-forest"] .rate-card-frame {
+  --rate-fg: #0e301a;
+  --rate-button-bg: #0e301a;
+  --rate-button-fg: #faf9f9;
+}
+
+.rate-card-shell[data-theme="copper"] .rate-card-frame {
+  --rate-fg: #9a5636;
+  --rate-button-bg: #9a5636;
+  --rate-button-fg: #faf9f9;
+}
+
+.rate-card-shell[data-font-pair="brothers-bianco"] .rate-card-frame {
+  --rate-primary-font: var(--font-button);
+  --rate-secondary-font: var(--font-number);
+}
+
+.rate-card-shell[data-font-pair="brothers-uchen"] .rate-card-frame {
+  --rate-primary-font: var(--font-button);
+  --rate-secondary-font: var(--font-body);
+}
+
+.rate-card-shell[data-font-pair="desert-bianco"] .rate-card-frame {
+  --rate-primary-font: var(--font-heading);
+  --rate-secondary-font: var(--font-number);
+}
+
+.rate-card-semantic--visible {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(8px, 2.4cqw, 12px);
+  padding: clamp(24px, 8cqw, 40px);
+  background: #faf9f9;
+  color: #4e332d;
+}
+
+.rate-card-semantic--visible p,
+.rate-card-semantic--visible h3 {
+  margin: 0;
+}
+
+.rate-card-semantic--visible > p:first-child {
+  font-family: var(--font-label);
+  font-size: clamp(11px, 3cqw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rate-card-semantic--visible h3 {
+  font-family: var(--font-heading);
+  font-size: clamp(30px, 9cqw, 45px);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.rate-card-semantic--visible p:not(:first-child) {
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-size: clamp(12px, 3cqw, 15px);
+  line-height: 1.45;
+}
+
+/* Forced artwork modes are useful for component-library previews. */
+.rate-card-shell[data-artwork-mode="desktop"] .rate-card-frame {
+  aspect-ratio: 500 / 1038;
+}
+
+.rate-card-shell[data-artwork-mode="desktop"] .rate-card-artwork--desktop {
+  display: block;
+}
+
+.rate-card-shell[data-artwork-mode="desktop"] .rate-card-artwork--mobile {
+  display: none;
+}
+
+.rate-card-shell[data-artwork-mode="desktop"] .rate-card-overlay {
+  top: var(--rate-overlay-desktop-top, 58%);
+}
+
+.rate-card-shell[data-artwork-mode="mobile"] .rate-card-frame {
+  aspect-ratio: 500 / 675;
+}
+
+.rate-card-shell[data-artwork-mode="mobile"] .rate-card-artwork--desktop {
+  display: none;
+}
+
+.rate-card-shell[data-artwork-mode="mobile"] .rate-card-artwork--mobile {
+  display: block;
+}
+
+.rate-card-shell[data-artwork-mode="mobile"] .rate-card-overlay {
+  top: var(--rate-overlay-mobile-top, 58%);
+}
+
+/* Auto mode swaps compositions according to card width rather than viewport
+   width. A 300px card therefore uses the compact 500:675 composition even
+   when it happens to sit inside a large desktop viewport. */
+@container (max-width: 420px) {
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-frame {
+    aspect-ratio: 500 / 675;
+  }
+
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-artwork--desktop {
+    display: none;
+  }
+
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-artwork--mobile {
+    display: block;
+  }
+
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-overlay {
+    top: var(--rate-overlay-mobile-top, 58%);
+  }
+}
