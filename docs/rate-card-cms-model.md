@@ -114,8 +114,21 @@ Inactive and semantically incomplete CMS items are ignored.
 
 ## Webflow integration boundary
 
-The future Webflow adapter should transform collection items into
-`RateCardConfig[]`.
+The Worker fetches the Webflow `Offers` collection and transforms its items into
+`RateCardConfig[]` at `GET /api/content/rate-cards`. The browser receives only
+normalized card data; `WEBFLOW_CMS_API_TOKEN` remains server-side.
+
+Environment bindings:
+
+- `WEBFLOW_SITE_ID`
+- `WEBFLOW_RATE_CARD_COLLECTION_ID`
+- `WEBFLOW_CMS_API_TOKEN` (secret)
+
+Confirmed local collection identifiers are documented in `.dev.vars.example`.
+The current collection already supplies `mews-rate-id`, `full-card`,
+`compact-card`, `active`, `headline`, `description`, and related offer fields.
+New presentation fields use their Webflow slugs when added; absent optional
+fields fall back to the renderer's safe presets.
 
 The renderer and resolver do not make Webflow API calls directly. This keeps the
 card portable and makes the CMS provider replaceable without changing the UI.

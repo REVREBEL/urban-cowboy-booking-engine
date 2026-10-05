@@ -12,6 +12,9 @@ export interface Env {
   MEWS_CONFIG_ID: string;
   MEWS_ADULT_AGE_CATEGORY_ID?: string;
   MEWS_CHILD_AGE_CATEGORY_ID?: string;
+  WEBFLOW_CMS_API_TOKEN?: string;
+  WEBFLOW_SITE_ID?: string;
+  WEBFLOW_RATE_CARD_COLLECTION_ID?: string;
   // ★ UNIQUE endpoint de suivi → n8n → Supabase : reçoit TOUS les events du funnel
   // (chaque étape + paiement initié/validé). C'est LE endpoint du back-office.
   WEBHOOK_EVENTS?: string;

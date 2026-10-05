@@ -16,6 +16,7 @@ import { toUtc } from "./format";
 import { getLang, mewsLang } from "./lang";
 import { t } from "../i18n";
 import { apiLog } from "./apiLog";
+import type { RateCardConfig } from "../types/rate-card";
 
 export class ApiError extends Error {
   status: number;
@@ -67,6 +68,23 @@ async function call<T>(path: string, init: RequestInit | undefined, meta: Meta):
   return data as T;
 }
 
+async function contentCall<T>(path: string, meta: Meta): Promise<T> {
+  const id = apiLog.start("GET", path, meta.label, meta.why);
+  const t0 = performance.now();
+  const ms = () => Math.round(performance.now() - t0);
+  try {
+    const response = await fetch(`/api/content/${path}`);
+    const data = await response.json() as T;
+    if (!response.ok) throw new ApiError(`http_${response.status}`, response.status, data);
+    apiLog.finish(id, { ok: true, status: response.status, durationMs: ms(), response: data });
+    return data;
+  } catch (error) {
+    apiLog.finish(id, { ok: false, durationMs: ms(), error: "content_unavailable" });
+    if (error instanceof ApiError) throw error;
+    throw new ApiError("content_unavailable", 0);
+  }
+}
+
 const post = <T>(path: string, body: unknown, meta: Omit<Meta, "request">) =>
   call<T>(
     path,
@@ -108,6 +126,12 @@ export interface ReservationLine {
 }
 
 export const api = {
+  rateCards: () =>
+    contentCall<{ cards: RateCardConfig[] }>("rate-cards", {
+      label: "Rate-card CMS configuration",
+      why: "Loads normalized editorial rate-card artwork and approved display presets from Webflow. Live prices, policies, availability, and booking actions remain owned by Mews.",
+    }).then((response) => response.cards).catch(() => []),
+
   hotel: () =>
     call<HotelConfig>(`hotel?lang=${getLang()}`, undefined, {
       label: "Hotel configuration",

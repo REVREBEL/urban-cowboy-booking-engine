@@ -20,4 +20,9 @@ MEWS_CONFIG_ID = "93e27b6f-cba7-4e0b-a24a-819e1b7b388a"
 MEWS_ADULT_AGE_CATEGORY_ID = "5485e2f3-4034-4ca1-8a8f-ade30114c61f"
 MEWS_CHILD_AGE_CATEGORY_ID = "fece4b6b-39fa-4ccd-9909-afba0092eeb1"
 
+# Public Webflow identifiers. The API token remains a Worker secret supplied as
+# WEBFLOW_CMS_API_TOKEN and is never included in the browser bundle.
+WEBFLOW_SITE_ID = "6aaa2497c8ea366207beba30"
+WEBFLOW_RATE_CARD_COLLECTION_ID = "6abc811cb92ea32dd64d79e0"
+
 # Tracking is intentionally disabled until Urban Cowboy provisions its own endpoint.
