@@ -2,6 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import type { MerchandisedAddOn } from '@/types/add-on-cms';
 import { imgUrl, money } from '@/lib/format';
 import type { AddonSchedulePreference, AddonStayCriteria } from './addon-types';
+import {
+  addOnKind,
+  addOnStayDates,
+  deliveryTimeOptions,
+  normalizeAddOnPreference,
+  WINE_PREFERENCES,
+} from './addon-smart-logic';
 import { X, Check, Clock, Heart, Gift, Wine, Dog, Sparkles, ArrowRight } from 'lucide-react';
 
 interface AddonCustomizerModalProps {
@@ -23,141 +30,52 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
   onSave,
   onClose
 }) => {
-  const addonKind = useMemo(() => {
-    // A Webflow demo alias may intentionally borrow another live Mews Product ID
-    // for pricing. In that case the CMS content, not the Mews product label, owns
-    // the guest-facing customization experience.
-    if (addon.contentSource !== 'webflow') {
-      if (addon.knownAddOn === 'FLOWER_BOUQUET') return 'fresh-cut-flowers';
-      if (addon.knownAddOn === 'WELCOME_WINE') return 'wine-bottle';
-      if (addon.knownAddOn === 'HUMMUS_AND_CRUDITES') return 'hummus-crudites';
-      if (addon.knownAddOn === 'LETS_EAT_CHOCOLATE_TRUFFLES') return 'chocolate-truffles';
-    }
-
-    const searchable = `${addon.name} ${addon.description}`.toLowerCase();
-    if (/flower|bouquet|bloom/.test(searchable)) return 'fresh-cut-flowers';
-    if (/cake|birthday|anniversary/.test(searchable)) return 'celebration-cake';
-    if (/wine|bottle|sommelier/.test(searchable)) return 'wine-bottle';
-    if (/pup|pet|dog/.test(searchable)) return 'pup-stay';
-    if (/hummus|crudite/.test(searchable)) return 'hummus-crudites';
-    if (/chocolate|truffle/.test(searchable)) return 'chocolate-truffles';
-    return 'standard';
-  }, [addon]);
-  // Generate list of nights for the stay
-  const stayDates = useMemo(() => {
-    const dates = [];
-    const [year, month, day] = (searchCriteria.checkIn || '2026-10-14').split('-').map(Number);
-    const startDate = new Date(year, month - 1, day);
-    const nightsCount = searchCriteria.nights || 1;
-
-    for (let i = 0; i < nightsCount; i++) {
-      const d = new Date(startDate);
-      d.setDate(startDate.getDate() + i);
-      const dayName = d.toLocaleDateString('en-US', { weekday: 'long' });
-      const monthDay = d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
-      const fullLabel = i === 0 
-        ? `${dayName}, ${monthDay} (Arrival Night)` 
-        : i === nightsCount - 1
-        ? `${dayName}, ${monthDay} (Final Night)`
-        : `${dayName}, ${monthDay}`;
-
-      dates.push({
-        index: i,
-        isoDate: d.toISOString().split('T')[0],
-        dayName,
-        monthDay,
-        fullLabel,
-        isArrival: i === 0,
-        isDepartureNight: i === nightsCount - 1
-      });
-    }
-    return dates;
-  }, [searchCriteria.checkIn, searchCriteria.nights]);
-
+  const addonKind = useMemo(() => addOnKind(addon), [addon]);
+  const stayDates = useMemo(
+    () => addOnStayDates(searchCriteria),
+    [searchCriteria.checkIn, searchCriteria.nights],
+  );
   const isOneNightStay = searchCriteria.nights <= 1;
-  const arrivalDateInfo = stayDates[0] || {
-    dayName: 'Thursday',
-    monthDay: '06/20',
-    fullLabel: 'Thursday, 06/20 (Arrival Night)',
-    isoDate: '2026-06-20'
-  };
-
-  // State initialization with smart defaults
-  const [deliveryType, setDeliveryType] = useState<'waiting-in-room' | 'scheduled-day' | 'gift-surprise'>(
-    currentPreference?.deliveryType || (addonKind === 'fresh-cut-flowers' ? 'waiting-in-room' : 'scheduled-day')
+  const arrivalDateInfo = stayDates[0];
+  const smartPreference = useMemo(
+    () => normalizeAddOnPreference(addon, searchCriteria, currentPreference),
+    [addon, searchCriteria.checkIn, searchCriteria.checkOut, searchCriteria.nights, currentPreference],
   );
 
-  const [isGift, setIsGift] = useState<boolean>(
-    currentPreference?.isGift ?? (addonKind === 'celebration-cake')
+  // The Add-ons step owns the smart preference. This modal edits that shared
+  // model rather than inventing a separate set of defaults.
+  const [deliveryType, setDeliveryType] = useState(
+    smartPreference.deliveryType ?? 'scheduled-day',
   );
-
-  const [selectedDateIso, setSelectedDateIso] = useState<string>(
-    currentPreference?.selectedDateIso || arrivalDateInfo.isoDate
+  const [isGift, setIsGift] = useState(smartPreference.isGift ?? false);
+  const [selectedDateIso, setSelectedDateIso] = useState(
+    smartPreference.selectedDateIso ?? arrivalDateInfo.isoDate,
   );
-
-  const [selectedTime, setSelectedTime] = useState<string>(
-    currentPreference?.selectedTime || 'Prior to check-in (waiting in suite at 4:00 PM)'
+  const [selectedTime, setSelectedTime] = useState(
+    smartPreference.selectedTime ?? 'Waiting in suite prior to check-in',
   );
-
-  const [customTime, setCustomTime] = useState<string>(currentPreference?.customTime || '');
-
-  const [giftRecipient, setGiftRecipient] = useState<string>(
-    currentPreference?.giftRecipient || ''
+  const [customTime, setCustomTime] = useState(smartPreference.customTime ?? '');
+  const [giftRecipient, setGiftRecipient] = useState(smartPreference.giftRecipient ?? '');
+  const [includeCard, setIncludeCard] = useState(smartPreference.includeCard ?? false);
+  const [cardMessage, setCardMessage] = useState(smartPreference.cardMessage ?? '');
+  const [itemCustomization, setItemCustomization] = useState(
+    smartPreference.itemCustomization ?? '',
   );
-
-  const [includeCard, setIncludeCard] = useState<boolean>(
-    currentPreference?.includeCard ?? (addonKind === 'celebration-cake' || addonKind === 'fresh-cut-flowers')
-  );
-
-  const [cardMessage, setCardMessage] = useState<string>(
-    currentPreference?.cardMessage || ''
-  );
-
-  const [itemCustomization, setItemCustomization] = useState<string>(
-    currentPreference?.itemCustomization || ''
-  );
-
-  const [dietaryNote, setDietaryNote] = useState<string>(
-    currentPreference?.dietaryNote || ''
-  );
+  const [dietaryNote, setDietaryNote] = useState(smartPreference.dietaryNote ?? '');
 
   useEffect(() => {
-    if (isOpen) {
-      if (currentPreference) {
-        setDeliveryType(currentPreference.deliveryType || 'waiting-in-room');
-        setIsGift(currentPreference.isGift ?? false);
-        setSelectedDateIso(currentPreference.selectedDateIso || arrivalDateInfo.isoDate);
-        setSelectedTime(currentPreference.selectedTime || 'Prior to check-in (waiting in suite at 4:00 PM)');
-        setCustomTime(currentPreference.customTime || '');
-        setGiftRecipient(currentPreference.giftRecipient || '');
-        setIncludeCard(currentPreference.includeCard ?? false);
-        setCardMessage(currentPreference.cardMessage || '');
-        setItemCustomization(currentPreference.itemCustomization || '');
-        setDietaryNote(currentPreference.dietaryNote || '');
-      } else {
-        if (addonKind === 'fresh-cut-flowers') {
-          setDeliveryType('waiting-in-room');
-          setIsGift(false);
-          setSelectedTime('Waiting in suite prior to 4:00 PM arrival');
-          setIncludeCard(false);
-        } else if (addonKind === 'celebration-cake') {
-          setDeliveryType('scheduled-day');
-          setIsGift(true);
-          setSelectedTime('Evening service (post-dinner, 8:00 PM)');
-          setIncludeCard(true);
-          setItemCustomization('');
-        } else if (addonKind === 'wine-bottle') {
-          setItemCustomization('Natural Red (Earth & Fruit)');
-          setSelectedTime('Chilled & waiting in suite upon check-in');
-        } else if (addonKind === 'pup-stay') {
-          setItemCustomization('');
-          setSelectedTime('Ready in room prior to arrival');
-        } else {
-          setSelectedTime('Waiting in suite prior to check-in');
-        }
-      }
-    }
-  }, [isOpen, addonKind, currentPreference, arrivalDateInfo.isoDate]);
+    if (!isOpen) return;
+    setDeliveryType(smartPreference.deliveryType ?? 'scheduled-day');
+    setIsGift(smartPreference.isGift ?? false);
+    setSelectedDateIso(smartPreference.selectedDateIso ?? arrivalDateInfo.isoDate);
+    setSelectedTime(smartPreference.selectedTime ?? 'Waiting in suite prior to check-in');
+    setCustomTime(smartPreference.customTime ?? '');
+    setGiftRecipient(smartPreference.giftRecipient ?? '');
+    setIncludeCard(smartPreference.includeCard ?? false);
+    setCardMessage(smartPreference.cardMessage ?? '');
+    setItemCustomization(smartPreference.itemCustomization ?? '');
+    setDietaryNote(smartPreference.dietaryNote ?? '');
+  }, [isOpen, smartPreference, arrivalDateInfo.isoDate]);
 
   if (!isOpen) return null;
 
@@ -466,13 +384,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                   </label>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-2 gap-3 2xl:gap-4">
-                    {[
-                      selectedDateObj.isArrival ? 'Waiting in room prior to check-in (4:00 PM)' : 'Morning delivery (10:00 AM)',
-                      'Late afternoon refresh (4:30 PM)',
-                      'Evening service (post-dinner, 8:00 PM)',
-                      'Late night fireside (9:30 PM)',
-                      'Other custom time'
-                    ].map((timeOption) => {
+                    {deliveryTimeOptions(selectedDateObj).map((timeOption) => {
                       const isSelected = selectedTime === timeOption;
                       return (
                         <button
@@ -540,13 +452,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                   Select your preferred style, curated by the Cowboy Sommelier:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 2xl:gap-4 pt-1">
-                  {[
-                    'Natural Red (Earth & Fruit)',
-                    'Crisp Mineral White',
-                    'Sparkling Pet-Nat',
-                    'Chilled Orange Skin-Contact',
-                    'Dry Mountain Rosé'
-                  ].map((wineType) => (
+                  {WINE_PREFERENCES.map((wineType) => (
                     <button
                       key={wineType}
                       type="button"
