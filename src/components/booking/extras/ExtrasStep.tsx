@@ -1,96 +1,158 @@
-import React, { useState } from 'react';
-import { ExtraItem, BookingState, AddonSchedulePreference } from '../types';
-import { EXTRAS } from '../data/hotelData';
-import { AddonCard } from './AddonCard';
-import { AddonCustomizerModal } from './AddonCustomizerModal';
-import { ArrowRight, ArrowLeft, Calendar, Clock, Heart, Check, Sparkles } from 'lucide-react';
+import React, { useMemo, useState } from "react";
+import { ArrowLeft, Check } from "lucide-react";
+import type { MerchandisedAddOn } from "@/types/add-on-cms";
+import type { AddonSchedulePreference } from "./addon-types";
+import { addOnKind } from "./addon-smart-logic";
+import { AddonCard } from "./AddonCard";
+import { AddonCustomizerModal } from "./AddonCustomizerModal";
+import { Button } from "@/components/ui/button";
+import { money } from "@/lib/format";
+
+type ExtrasFilter = "all" | "dining" | "wellness" | "celebration" | "pets";
 
 interface ExtrasStepProps {
-  bookingState: BookingState;
-  onUpdateExtras: (extraId: string, count: number) => void;
-  onUpdateExtraPreference?: (extraId: string, preference: AddonSchedulePreference) => void;
+  products: MerchandisedAddOn[];
+  imageBaseUrl: string;
+  selectedProductIds: string[];
+  selectedDisplayByProduct: Record<string, string>;
+  preferences: Record<string, AddonSchedulePreference>;
+  lockedProductIds: ReadonlySet<string>;
+  nightsCount: number;
+  guestsCount: number;
+  checkIn: string;
+  checkOut: string;
+  roomName?: string | null;
+  rateName?: string | null;
+  extrasTotal: number;
+  currency: string;
+  onToggle: (product: MerchandisedAddOn) => void;
+  onSavePreference: (
+    product: MerchandisedAddOn,
+    preference: AddonSchedulePreference,
+  ) => void;
   onProceedToPay: () => void;
-  onBackToRates: () => void;
+  onBack: () => void;
+}
+
+const FILTERS: { id: ExtrasFilter; label: string }[] = [
+  { id: "all", label: "All Add-ons" },
+  { id: "dining", label: "Food & Drink" },
+  { id: "wellness", label: "Bathing & Spa" },
+  { id: "celebration", label: "Celebrations" },
+  { id: "pets", label: "Dogs" },
+];
+
+function filterFor(addon: MerchandisedAddOn): Exclude<ExtrasFilter, "all"> | "other" {
+  const kind = addOnKind(addon);
+  if (kind === "pup-stay") return "pets";
+  if (kind === "fresh-cut-flowers" || kind === "celebration-cake") return "celebration";
+  if (
+    kind === "wine-bottle" ||
+    kind === "hummus-crudites" ||
+    kind === "chocolate-truffles"
+  ) {
+    return "dining";
+  }
+
+  const hay = `${addon.name} ${addon.description}`.toLowerCase();
+  if (/bath|soak|spa|sauna|massage|wellness|ritual|steam/.test(hay)) return "wellness";
+  if (/dog|pup|pet/.test(hay)) return "pets";
+  if (/flower|bouquet|cake|birthday|anniversary|celebrat|romance/.test(hay)) {
+    return "celebration";
+  }
+  if (/wine|drink|beverage|food|snack|breakfast|dinner|dessert|truffle|hummus|s'more|smore/.test(hay)) {
+    return "dining";
+  }
+  return "other";
 }
 
 export const ExtrasStep: React.FC<ExtrasStepProps> = ({
-  bookingState,
-  onUpdateExtras,
-  onUpdateExtraPreference,
+  products,
+  imageBaseUrl,
+  selectedProductIds,
+  selectedDisplayByProduct,
+  preferences,
+  lockedProductIds,
+  nightsCount,
+  guestsCount,
+  checkIn,
+  checkOut,
+  roomName,
+  rateName,
+  extrasTotal,
+  currency,
+  onToggle,
+  onSavePreference,
   onProceedToPay,
-  onBackToRates
+  onBack,
 }) => {
-  const { selectedRoom, selectedRate, selectedExtras, extraPreferences = {}, searchCriteria } = bookingState;
-  const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [customizingAddon, setCustomizingAddon] = useState<ExtraItem | null>(null);
+  const [activeFilter, setActiveFilter] = useState<ExtrasFilter>("all");
+  const [customizingAddon, setCustomizingAddon] =
+    useState<MerchandisedAddOn | null>(null);
 
-  const calculateExtrasTotal = () => {
-    return Object.entries(selectedExtras).reduce((total, [extraId, count]) => {
-      const item = EXTRAS.find((e) => e.id === extraId);
-      return total + (item ? item.price * count : 0);
-    }, 0);
-  };
-
-  const totalSelectedCount = Object.values(selectedExtras).reduce((sum, c) => sum + c, 0);
-  const extrasTotal = calculateExtrasTotal();
-
-  const filteredExtras = EXTRAS.filter((extra) => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'dining' && extra.category === 'dining') return true;
-    if (activeFilter === 'wellness' && extra.category === 'wellness') return true;
-    if (activeFilter === 'celebration' && extra.category === 'celebration') return true;
-    if (activeFilter === 'pets' && extra.category === 'pets') return true;
-    return true;
-  });
-
-  const handleSavePreference = (pref: AddonSchedulePreference) => {
-    if (!customizingAddon) return;
-    if (onUpdateExtraPreference) {
-      onUpdateExtraPreference(customizingAddon.id, pref);
+  const firstDisplayForProduct = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const product of products) {
+      if (!map.has(product.id)) map.set(product.id, product.displayId);
     }
-  };
+    return map;
+  }, [products]);
+
+  const isSelected = (product: MerchandisedAddOn) =>
+    selectedProductIds.includes(product.id) &&
+    (selectedDisplayByProduct[product.id] ?? firstDisplayForProduct.get(product.id)) ===
+      product.displayId;
+
+  const filteredProducts = useMemo(
+    () =>
+      activeFilter === "all"
+        ? products
+        : products.filter((product) => filterFor(product) === activeFilter),
+    [activeFilter, products],
+  );
+
+  const totalSelectedCount = selectedProductIds.length;
+  const customizedSelectedCount = selectedProductIds.filter((productId) => {
+    const displayId =
+      selectedDisplayByProduct[productId] ?? firstDisplayForProduct.get(productId);
+    return Boolean(displayId && preferences[displayId]);
+  }).length;
 
   return (
     <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Top Back Navigation */}
       <button
-        onClick={onBackToRates}
-        className="inline-flex items-center gap-2 font-woodblock text-xs uppercase tracking-widest text-[#73716D] hover:text-[#4E332D] mb-6 transition-colors cursor-pointer group"
+        type="button"
+        onClick={onBack}
+        className="group mb-6 inline-flex items-center gap-2 font-button text-xs uppercase tracking-widest text-[#73716D] transition-colors hover:text-[#4E332D]"
       >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        <span>Back to Rate Selection</span>
+        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+        <span>Back to Guest Details</span>
       </button>
 
-      {/* Header Bar */}
-      <div className="mb-8 pb-6 border-b border-[#D1C9BE] flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="mb-8 flex flex-col gap-6 border-b border-[#D1C9BE] pb-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <span className="font-woodblock text-xs uppercase tracking-widest text-[#9A5636] font-bold block mb-1">
+          <span className="mb-1 block font-button text-xs font-bold uppercase tracking-widest text-[#9A5636]">
             STEP 4 OF 5 · CURATED ADD-ONS & EXPERIENCES
           </span>
-          <h1 className="font-display font-extrabold text-3xl sm:text-4xl lg:text-5xl text-[#221C18] uppercase tracking-tight">
+          <h1 className="font-display text-3xl uppercase tracking-tight text-[#221C18] sm:text-4xl lg:text-5xl">
             Add-ons & Personal Touches
           </h1>
-          <p className="font-editorial text-sm sm:text-base text-[#6B6259] mt-2 max-w-2xl">
-            From fresh Catskill bouquets waiting in your room to celebration cakes and fireside s'mores, schedule every detail and add custom notes for our front desk.
+          <p className="mt-2 max-w-2xl font-body text-sm text-[#6B6259] sm:text-base">
+            From fresh Catskill bouquets waiting in your room to celebration cakes and fireside s&apos;mores, schedule every detail and add custom notes for our front desk.
           </p>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-2">
-          {[
-            { id: 'all', label: 'All Add-ons' },
-            { id: 'dining', label: 'Food & Drink' },
-            { id: 'wellness', label: 'Bathing & Spa' },
-            { id: 'celebration', label: 'Celebrations' },
-            { id: 'pets', label: 'Dogs' },
-          ].map((tab) => (
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter add-ons">
+          {FILTERS.map((tab) => (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveFilter(tab.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-woodblock uppercase tracking-wider transition-all cursor-pointer ${
+              aria-pressed={activeFilter === tab.id}
+              className={`rounded-[10px] px-3.5 py-1.5 font-button text-xs uppercase tracking-wider transition-all ${
                 activeFilter === tab.id
-                  ? 'bg-[#4E332D] text-[#EBE8E0] shadow-xs font-bold'
-                  : 'bg-white/70 hover:bg-white text-[#73716D] border border-[#D1C9BE]/60'
+                  ? "bg-[#4E332D] font-bold text-[#EBE8E0] shadow-xs"
+                  : "border border-[#D1C9BE]/60 bg-white/70 text-[#73716D] hover:bg-white"
               }`}
             >
               {tab.label}
@@ -99,77 +161,96 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
         </div>
       </div>
 
-      {/* ================= ADDONS GRID (Matching 461.35px Figma Spec) ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center mb-24">
-        {filteredExtras.map((addon) => {
-          const count = selectedExtras[addon.id] || 0;
-          const preference = extraPreferences[addon.id];
-          return (
-            <AddonCard
-              key={addon.id}
-              addon={addon}
-              count={count}
-              preference={preference}
-              onUpdateCount={(newCount) => {
-                onUpdateExtras(addon.id, Math.max(0, newCount));
-              }}
-              onOpenCustomize={() => setCustomizingAddon(addon)}
-            />
-          );
-        })}
-      </div>
+      {filteredProducts.length ? (
+        <div className="mb-24 grid grid-cols-1 justify-items-center gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {filteredProducts.map((addon) => {
+            const selected = isSelected(addon);
+            const locked = lockedProductIds.has(addon.id);
+            return (
+              <AddonCard
+                key={addon.displayId}
+                product={addon}
+                imageBaseUrl={imageBaseUrl}
+                selected={selected}
+                locked={locked}
+                nightsCount={nightsCount}
+                guestsCount={guestsCount}
+                preference={preferences[addon.displayId]}
+                onToggle={() => onToggle(addon)}
+                onOpenCustomize={
+                  locked ? undefined : () => setCustomizingAddon(addon)
+                }
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <div className="mb-24 rounded-[17px] border border-[#D1C9BE] bg-[#FAF9F9] p-10 text-center font-body text-sm text-[#73716D]">
+          No add-ons in this category yet.
+        </div>
+      )}
 
-      {/* ================= FLOATING SUMMARY & SCHEDULE BAR ================= */}
-      <div className="sticky bottom-6 z-40 bg-[#221C18] text-white p-4 sm:p-5 rounded-3xl shadow-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-[1600px] mx-auto">
+      <div className="sticky bottom-6 z-40 mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 rounded-[19px] border border-white/10 bg-[#221C18] p-4 text-white shadow-2xl sm:flex-row sm:p-5">
         <div className="text-center sm:text-left">
-          <span className="font-woodblock text-[11px] uppercase tracking-widest text-[#D1C9BE] block">
+          <span className="block font-button text-[11px] uppercase tracking-widest text-[#D1C9BE]">
             RESERVATION SUMMARY
           </span>
-          <div className="font-serif text-sm text-white mt-0.5">
-            <span className="font-bold">{selectedRoom?.name || 'Selected Suite'}</span> ·{' '}
-            <span className="text-[#F2AAA9]">{selectedRate?.title || 'Selected Rate'}</span> ({searchCriteria.nights} {searchCriteria.nights === 1 ? 'night' : 'nights'})
+          <div className="mt-0.5 font-body text-sm text-white">
+            <span className="font-bold">{roomName || "Selected Room"}</span>
+            {rateName ? (
+              <>
+                {" · "}
+                <span className="text-[#F2AAA9]">{rateName}</span>
+              </>
+            ) : null}
+            {" · "}
+            {nightsCount} {nightsCount === 1 ? "night" : "nights"}
           </div>
+
           {extrasTotal > 0 && (
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-1">
-              <span className="text-xs font-mono font-bold text-[#F2AAA9] bg-white/10 px-2 py-0.5 rounded-full">
-                +${extrasTotal.toFixed(2)} in add-ons
+            <div className="mt-1 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+              <span className="rounded-full bg-white/10 px-2 py-0.5 font-numbers text-xs font-bold text-[#F2AAA9]">
+                +{money(extrasTotal, currency)} in add-ons
               </span>
-              <span className="text-xs text-[#EBE8E0]/70 font-sans">
-                ({totalSelectedCount} {totalSelectedCount === 1 ? 'item' : 'items'} selected)
+              <span className="font-body text-xs text-[#EBE8E0]/70">
+                ({totalSelectedCount} {totalSelectedCount === 1 ? "item" : "items"} selected)
               </span>
-              {Object.keys(extraPreferences).length > 0 && (
-                <span className="text-[11px] text-[#D1C9BE] font-sans flex items-center gap-1">
-                  <Check className="w-3 h-3 text-[#F2AAA9]" />
-                  <span>Scheduled with personalized timing</span>
+              {customizedSelectedCount > 0 && (
+                <span className="flex items-center gap-1 font-body text-[11px] text-[#D1C9BE]">
+                  <Check className="h-3 w-3 text-[#F2AAA9]" />
+                  <span>{customizedSelectedCount} personalized</span>
                 </span>
               )}
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-          <button
-            type="button"
-            onClick={onProceedToPay}
-            className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-[#9A5636] hover:bg-[#783224] active:scale-[0.98] text-[#EBE8E0] px-8 py-3.5 rounded-full font-woodblock text-xs sm:text-sm uppercase tracking-widest cursor-pointer transition-all shadow-md group"
-          >
-            <span>Proceed to Guest Details & Pay</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
+        <Button
+          type="button"
+          onClick={onProceedToPay}
+          variant="filled"
+          color="copper"
+          size="large"
+          hasIcon
+          className="w-full sm:w-auto"
+        >
+          Continue to Payment
+        </Button>
       </div>
 
-      {/* ================= SMART TAILORING MODAL ================= */}
       {customizingAddon && (
         <AddonCustomizerModal
-          isOpen={true}
+          isOpen
           addon={customizingAddon}
-          searchCriteria={searchCriteria}
-          currentPreference={extraPreferences[customizingAddon.id]}
-          onSave={handleSavePreference}
+          imageBaseUrl={imageBaseUrl}
+          searchCriteria={{ checkIn, checkOut, nights: nightsCount }}
+          currentPreference={preferences[customizingAddon.displayId]}
+          onSave={(preference) => onSavePreference(customizingAddon, preference)}
           onClose={() => setCustomizingAddon(null)}
         />
       )}
     </div>
   );
 };
+
+export default ExtrasStep;
