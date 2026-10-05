@@ -5,6 +5,10 @@ import type {
   RateCardLiveContent,
   RateCardOverlayPosition,
 } from "@/types/rate-card";
+import {
+  RATE_CARD_COLORS,
+  rateCardButtonTextColor,
+} from "@/lib/rateCardPresentation";
 
 export interface ConfigurableRateCardProps {
   config: RateCardConfig;
@@ -43,16 +47,27 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
       ({
         "--rate-overlay-desktop-top": POSITION_TOP[config.desktopOverlayPosition],
         "--rate-overlay-mobile-top": POSITION_TOP[config.mobileOverlayPosition],
+        "--rate-fg": RATE_CARD_COLORS[config.textColor].hex,
+        "--rate-button-bg": RATE_CARD_COLORS[config.buttonColor].hex,
+        "--rate-button-fg": rateCardButtonTextColor(config.buttonColor),
       }) as React.CSSProperties,
-    [config.desktopOverlayPosition, config.mobileOverlayPosition],
+    [
+      config.buttonColor,
+      config.desktopOverlayPosition,
+      config.mobileOverlayPosition,
+      config.textColor,
+    ],
   );
+
+  const ctaLabel = live.ctaLabel ?? config.ctaLabel ?? "BOOK NOW";
 
   return (
     <article
       className={`rate-card-shell ${className}`}
       data-rate-card={config.id}
       data-artwork-mode={artworkMode}
-      data-theme={config.theme}
+      data-text-color={config.textColor}
+      data-button-color={config.buttonColor}
       data-font-pair={config.fontPair}
       data-artwork-fallback={fallbackIsVisible ? "true" : "false"}
       style={style}
@@ -128,9 +143,9 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
                 onBook();
               }}
               disabled={disabled}
-              aria-label={`${live.ctaLabel ?? "Book now"}: ${config.headline}, ${live.price} ${live.priceUnit ?? "nightly"}`}
+              aria-label={`${ctaLabel}: ${config.headline}, ${live.price} ${live.priceUnit ?? "nightly"}`}
             >
-              {live.ctaLabel ?? "BOOK NOW"}
+              {ctaLabel}
             </button>
 
             <p className="rate-card-policy">{live.cancellationText}</p>
