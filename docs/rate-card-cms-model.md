@@ -20,7 +20,8 @@ The rate card renderer separates editorial artwork from live booking data.
 - headline
 - short description
 - call to action
-- optional cancellation penalty window/display fallback
+- cancellation free-cancellation threshold
+- cancellation full-forfeit threshold
 - default/fallback flag
 - sort order
 - desktop overlay position
@@ -52,8 +53,16 @@ Mobile/compact artwork:
 
 In automatic mode the component responds to its own rendered width using CSS
 container queries. At 420px and below it switches to the compact composition.
-A card rendered at 300px therefore becomes 300 × 405 while its live overlay
-type and spacing scale proportionally.
+A card rendered at 300px therefore becomes 300 × 405. The overlay swaps to
+the compact typography treatment at the same breakpoint.
+
+Rate typography:
+- full card: 34px amount / 20px cadence
+- compact card: 24px amount / 14px cadence
+
+The live overlay uses 30px horizontal padding at the 500px source-card width.
+The existing container-width padding rule reduces that spacing on narrower
+rendered cards.
 
 The CTA retains a minimum 44px interactive height.
 
@@ -79,6 +88,8 @@ The production Offers collection currently exposes these rate-card fields:
 | `call-to-action` | `ctaLabel` |
 | `cancellation-penalty-window` | `cancellationPenaltyWindow` |
 | `cancellation-penalty-window-period` | `cancellationPenaltyWindowPeriod` |
+| `cancellation-full-forfeit-window` | `cancellationFullForfeitWindow` |
+| `cancellation-full-forfeit-window-period` | `cancellationFullForfeitWindowPeriod` |
 | `eyebrow` | `eyebrow` |
 | `headline` | `headline` |
 | `description` | `description` |
@@ -212,16 +223,27 @@ The renderer no longer uses a Mews marketing description as cancellation text.
 Current precedence:
 
 1. Known Mews `NON_REFUNDABLE` rate group →
-   **Full Prepay · Non-Refundable**
-2. CMS cancellation penalty window + period →
-   calculate the cutoff from the selected check-in date
-3. No structured policy data →
+   **Full Prepay Non Refundable**
+2. Before the CMS free-cancellation cutoff →
+   **Free Cancellation until MMM dd, yyyy**
+3. From the free-cancellation cutoff until the CMS full-forfeit cutoff →
+   **Partially Refundable until MMM dd, yyyy**
+4. At or inside the full-forfeit cutoff →
+   **Full Prepay Non Refundable**
+5. No structured policy data →
    **See rate details for cancellation terms**
 
-The CMS cancellation window is a presentation fallback until the Mews
-integration exposes a structured cancellation-policy object. When that becomes
-available, Mews should take precedence and the CMS fallback can remain only for
-legacy or promotional cases.
+For the Best Flexible / Ride Easy example, Webflow is configured as:
+- free-cancellation threshold: 14 days before arrival
+- full-forfeit threshold: 5 days before arrival
+
+The comparison uses the current Catskills calendar date
+(`America/New_York`) against the selected arrival date. It does not parse
+marketing prose to infer policy rules.
+
+The CMS thresholds are a presentation fallback until the Mews integration
+exposes structured cancellation-policy tiers. Mews remains authoritative when
+such structured policy data becomes available.
 
 ## Webflow integration boundary
 
