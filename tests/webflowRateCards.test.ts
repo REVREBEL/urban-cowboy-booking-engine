@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   normalizeWebflowRateCard,
   normalizeWebflowRateCards,
+  onRequestGet,
   webflowOptionNames,
 } from "../worker/webflow/rate-cards.ts";
 
@@ -167,4 +168,69 @@ test("skips structurally invalid Webflow items", () => {
 
   assert.equal(cards.length, 1);
   assert.equal(cards[0]?.id, "valid");
+});
+
+
+test("fetches only the published Webflow item version and never echoes the CMS token", async () => {
+  const originalFetch = globalThis.fetch;
+  const requested: string[] = [];
+
+  globalThis.fetch = (async (input: string | URL | Request) => {
+    const url = String(input);
+    requested.push(url);
+
+    if (url.endsWith("/collections/collection-123")) {
+      return new Response(JSON.stringify({ fields: [] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (url.includes("/collections/collection-123/items/live?limit=100")) {
+      return new Response(JSON.stringify({
+        items: [
+          {
+            id: "published-card",
+            isArchived: false,
+            fieldData: {
+              name: "Published Card",
+              active: true,
+              headline: "Published",
+              description: "Published content",
+            },
+          },
+        ],
+      }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response("not found", { status: 404 });
+  }) as typeof fetch;
+
+  try {
+    const response = await onRequestGet({
+      env: {
+        WEBFLOW_CMS_API_TOKEN: "super-secret-token",
+        WEBFLOW_RATE_CARD_COLLECTION_ID: "collection-123",
+      } as never,
+    });
+
+    const body = await response.json() as { cards: unknown[] };
+
+    assert.equal(response.status, 200);
+    assert.equal(body.cards.length, 1);
+    assert.equal(
+      requested.some((url) => url.includes("/items/live?limit=100")),
+      true,
+    );
+    assert.equal(
+      requested.some((url) => /\/items\?limit=100$/.test(url)),
+      false,
+    );
+    assert.equal(JSON.stringify(body).includes("super-secret-token"), false);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
