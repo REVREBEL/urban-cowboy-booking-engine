@@ -354,6 +354,87 @@
 }
 
 
+
+/* CMS-selectable rate-card type pairs. Keep these scoped to rate-card use so
+   the booking engine's canonical typography tokens remain unchanged. */
+@font-face {
+  font-family: "Rate Quattrocento Sans";
+  src: url("/fonts/QuattrocentoSans/QuattrocentoSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate Rundeck";
+  src: url("/fonts/Rundeck/Rundeck-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate Noto Serif Tibetan";
+  src: url("/fonts/NotoSerifTibetan/NotoSerifTibetan-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate League Spartan";
+  src: url("/fonts/LeagueSpartan/LeagueSpartan-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate Arvo";
+  src: url("/fonts/Arvo/Arvo-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate League Gothic";
+  src: url("/fonts/LeagueGothic/LeagueGothic-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate DM Sans";
+  src: url("/fonts/DMSans/DMSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate Lato";
+  src: url("/fonts/Lato/Lato-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate Motter Corpus";
+  src: url("/fonts/Motter%20Corpus/Motter%20Corpus%20Std-SemiCondensed-WOFF2.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate Coustard";
+  src: url("/fonts/Coustard/Coustard-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Rate Filicudi";
+  src: url("/fonts/Filicudi/FilicudiSolid-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Configurable rate card
    Artwork is CMS-owned; transactional price/CTA/policy remain live application UI.
    The shell is a size container so cards respond to their own rendered width,
@@ -469,9 +550,9 @@
 }
 
 .rate-card-cta[data-button-style="outline"] {
-  border: 2px solid var(--rate-fg);
+  border: 2px solid var(--rate-button-bg);
   background: transparent;
-  color: var(--rate-fg);
+  color: var(--rate-button-bg);
 }
 
 .rate-card-cta:not(:disabled):hover {
@@ -501,24 +582,6 @@
   line-height: 1.25;
 }
 
-.rate-card-shell[data-theme="white"] .rate-card-frame {
-  --rate-fg: #faf9f9;
-  --rate-button-bg: #faf9f9;
-  --rate-button-fg: #4e332d;
-}
-
-.rate-card-shell[data-theme="blue"] .rate-card-frame {
-  --rate-fg: #236b7d;
-  --rate-button-bg: #236b7d;
-  --rate-button-fg: #faf9f9;
-}
-
-.rate-card-shell[data-theme="green"] .rate-card-frame {
-  --rate-fg: #0e301a;
-  --rate-button-bg: #0e301a;
-  --rate-button-fg: #faf9f9;
-}
-
 .rate-card-shell[data-font-pair="brothers-bianco"] .rate-card-frame {
   --rate-primary-font: var(--font-button);
   --rate-secondary-font: var(--font-number);
@@ -532,6 +595,42 @@
 .rate-card-shell[data-font-pair="desert-bianco"] .rate-card-frame {
   --rate-primary-font: var(--font-heading);
   --rate-secondary-font: var(--font-number);
+}
+
+.rate-card-shell[data-font-pair="quattrocento-bianco"] .rate-card-frame {
+  --rate-primary-font: "Rate Quattrocento Sans", sans-serif;
+  --rate-secondary-font: var(--font-number);
+}
+
+.rate-card-shell[data-font-pair="rundeck-noto-serif-tibetan"] .rate-card-frame {
+  --rate-primary-font: "Rate Rundeck", sans-serif;
+  --rate-secondary-font: "Rate Noto Serif Tibetan", serif;
+}
+
+.rate-card-shell[data-font-pair="league-spartan-arvo"] .rate-card-frame {
+  --rate-primary-font: "Rate League Spartan", sans-serif;
+  --rate-secondary-font: "Rate Arvo", serif;
+}
+
+.rate-card-shell[data-font-pair="league-gothic-dm-sans"] .rate-card-frame {
+  --rate-primary-font: "Rate League Gothic", sans-serif;
+  --rate-secondary-font: "Rate DM Sans", sans-serif;
+}
+
+.rate-card-shell[data-font-pair="noto-serif-tibetan-lato"] .rate-card-frame {
+  --rate-primary-font: "Rate Noto Serif Tibetan", serif;
+  --rate-secondary-font: "Rate Lato", sans-serif;
+}
+
+.rate-card-shell[data-font-pair="motter-corpus-coustard"] .rate-card-frame {
+  --rate-primary-font: "Rate Motter Corpus", serif;
+  --rate-secondary-font: "Rate Coustard", serif;
+}
+
+.rate-card-shell[data-font-pair="filicudi-special-elite"] .rate-card-frame {
+  --rate-primary-font: "Rate Filicudi", serif;
+  /* Special Elite font file is not currently present in public/fonts. */
+  --rate-secondary-font: "Special Elite", "Courier New", monospace;
 }
 
 .rate-card-shell[data-artwork-fallback="true"] .rate-card-frame {
