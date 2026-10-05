@@ -114,22 +114,26 @@ export function Extras() {
     if (selected && selectedDisplay === product.displayId) {
       toggleProduct(product.id);
       setProductPresentation(product.id, null);
-      setSelectedDisplayByProduct((current) => {
-        const next = { ...current };
-        delete next[product.id];
-        return next;
-      });
+      setSelectedAddOnDisplay(product.id, null);
       return;
     }
 
-    setSelectedDisplayByProduct((current) => ({
-      ...current,
-      [product.id]: product.displayId,
-    }));
+    setSelectedAddOnDisplay(product.id, product.displayId);
     setProductPresentation(product.id, {
       name: product.name,
       description: product.description,
     });
+
+    if (!addonPreferences[product.displayId]) {
+      setAddonPreference(
+        product.displayId,
+        defaultAddOnPreference(product, {
+          checkIn,
+          checkOut,
+          nights: nightsCount,
+        }),
+      );
+    }
 
     // Switching between two Webflow aliases for the same Mews product changes only
     // presentation identity. The Mews product remains selected exactly once.
@@ -257,14 +261,18 @@ export function Extras() {
           searchCriteria={{ checkIn, checkOut, nights: nightsCount }}
           currentPreference={addonPreferences[customizingProduct.displayId]}
           onSave={(preference) => {
-            setPreferences((current) => ({
-              ...current,
-              [customizingProduct.displayId]: preference,
-            }));
-            setSelectedDisplayByProduct((current) => ({
-              ...current,
-              [customizingProduct.id]: customizingProduct.displayId,
-            }));
+            setAddonPreference(
+              customizingProduct.displayId,
+              normalizeAddOnPreference(
+                customizingProduct,
+                { checkIn, checkOut, nights: nightsCount },
+                preference,
+              ),
+            );
+            setSelectedAddOnDisplay(
+              customizingProduct.id,
+              customizingProduct.displayId,
+            );
             setProductPresentation(customizingProduct.id, {
               name: customizingProduct.name,
               description: customizingProduct.description,
