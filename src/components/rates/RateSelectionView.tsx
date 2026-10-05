@@ -319,6 +319,8 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
       ctaLabel: 'Book Now',
       cancellationPenaltyWindow: null,
       cancellationPenaltyWindowPeriod: null,
+      cancellationFullForfeitWindow: null,
+      cancellationFullForfeitWindowPeriod: null,
       eyebrow: liveRate.knownRateGroup?.replace(/_/g, ' ') ?? 'DIRECT RATE',
       headline: liveRate.name,
       description: liveRate.description || 'Book direct for the best available offer.',
