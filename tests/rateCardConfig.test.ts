@@ -80,3 +80,21 @@ test("sort order determines the winning active default deterministically", () =>
 
   assert.equal(resolved?.id, "earlier");
 });
+
+
+test("incomplete specific CMS card is skipped in favor of an accessible default", () => {
+  const configs = [
+    config("default", { isDefault: true }),
+    config("incomplete", {
+      mewsRateId: "mews-rate-123",
+      headline: "",
+      description: "",
+      desktopArtworkUrl: "https://cdn.example.com/rate.webp",
+    }),
+  ];
+
+  const resolved = resolveRateCardConfig(configs, "mews-rate-123");
+
+  assert.equal(resolved?.id, "default");
+  assert.equal(resolved?.matchedBy, "default");
+});
