@@ -17,6 +17,7 @@ MEWS_CHILD_AGE_CATEGORY_ID=db093f0b-738e-4afe-9191-b106007065ff
 # a VITE_* variable or return it to browser code.
 WEBFLOW_SITE_ID=6aaa2497c8ea366207beba30
 WEBFLOW_RATE_CARD_COLLECTION_ID=6abc811cb92ea32dd64d79e0
+WEBFLOW_ROOM_TYPE_COLLECTION_ID=6abc815b36cbcba74b8b01c4
 WEBFLOW_CMS_API_TOKEN=<Webflow CMS API token — DO NOT commit the real value>
 
 # Funnel tracking is disabled unless this project provisions its own endpoint.
