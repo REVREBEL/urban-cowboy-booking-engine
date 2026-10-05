@@ -22,7 +22,8 @@
     "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs",
     "mews:smoke": "bash scripts/test-mews-booking-api.sh",
     "icons:build": "node scripts/build-icons.mjs",
-    "icons:clean": "node scripts/build-icons.mjs --clean"
+    "icons:clean": "node scripts/build-icons.mjs --clean",
+    "sync:room-photos": "node scripts/sync-mews-room-photos.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
