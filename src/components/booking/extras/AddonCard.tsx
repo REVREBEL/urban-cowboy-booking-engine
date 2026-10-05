@@ -5,6 +5,7 @@ import { productLineTotal } from "@/state/booking";
 import type { MerchandisedAddOn } from "@/types/add-on-cms";
 import { Photo } from "@/components/media/photo";
 import type { AddonSchedulePreference } from "./addon-types";
+import { addOnPreferenceSummary } from "./addon-smart-logic";
 
 export interface AddonCardProps {
   product: MerchandisedAddOn;
@@ -17,15 +18,6 @@ export interface AddonCardProps {
   onToggle: () => void;
   onOpenCustomize?: () => void;
   className?: string;
-}
-
-function preferenceSummary(preference?: AddonSchedulePreference): string {
-  if (!preference) return "Ready upon arrival";
-  if (preference.isGift) {
-    return `Gift surprise${preference.giftRecipient ? ` for ${preference.giftRecipient}` : ""}`;
-  }
-  if (preference.selectedDate) return preference.selectedDate.split("(")[0].trim();
-  return preference.selectedTime || "Ready upon arrival";
 }
 
 export function AddonCard({
@@ -91,7 +83,7 @@ export function AddonCard({
           <button type="button" onClick={onOpenCustomize} className="flex min-w-0 items-center gap-2 text-left text-xs text-[#73716D] hover:text-[#4E332D]">
             <Clock className="h-4 w-4 shrink-0 text-[#9A5636]" />
             <span className="min-w-0">
-              <span className="block max-w-[210px] truncate font-bold text-[#4E332D]">{preferenceSummary(preference)}</span>
+              <span className="block max-w-[210px] truncate font-bold text-[#4E332D]">{addOnPreferenceSummary(preference)}</span>
               <span className="inline-flex items-center gap-1 text-[#9A5636] underline">Customize <Edit2 className="h-3 w-3" /></span>
             </span>
           </button>
