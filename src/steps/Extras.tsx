@@ -2,18 +2,23 @@ import { useEffect, useMemo, useState } from "react";
 import { useBooking } from "../state/booking";
 import { t } from "../i18n";
 import { money } from "../lib/format";
-import { groupProducts, upgradeRooms, isHotelIncludedMeal, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
+import { api } from "../lib/api";
+import { mergeAddOnMerchandising } from "../lib/addOnMerchandising";
+import { groupProducts, isHotelIncludedMeal, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
 import { StepLayout } from "@/components/booking/layout/step-layout";
 import { AddonCard } from "@/components/booking/extras/AddonCard";
 import { AddonCustomizerModal } from "@/components/booking/extras/AddonCustomizerModal";
 import type { AddonSchedulePreference } from "@/components/booking/extras/addon-types";
 import type { ShapedProduct } from "@/types/mews";
+import type { AddOnCmsItem, MerchandisedAddOn } from "@/types/add-on-cms";
 import { DataBadge } from "@/components/dev/data-badge";
 import { IconArrowRight, IconCheck, IconSparkles } from "@/components/icons/cowboy-icons";
 
 export function Extras() {
-  const [customizingProduct, setCustomizingProduct] = useState<ShapedProduct | null>(null);
+  const [customizingProduct, setCustomizingProduct] = useState<MerchandisedAddOn | null>(null);
   const [preferences, setPreferences] = useState<Record<string, AddonSchedulePreference>>({});
+  const [cmsAddOns, setCmsAddOns] = useState<AddOnCmsItem[]>([]);
+  const [selectedDisplayByProduct, setSelectedDisplayByProduct] = useState<Record<string, string>>({});
   const {
     products,
     productIds,
@@ -27,7 +32,6 @@ export function Extras() {
     checkOut,
     selectedRoom,
     selectedRate,
-    availableRooms,
     grandTotal,
     currency,
     goTo,
@@ -36,6 +40,21 @@ export function Extras() {
   useEffect(() => {
     if (!selectedRoom || !selectedRate) goTo("results");
   }, [selectedRoom, selectedRate, goTo]);
+
+  useEffect(() => {
+    let alive = true;
+    void api.addOns().then((items) => {
+      if (alive) setCmsAddOns(items);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const merchandisedProducts = useMemo(
+    () => mergeAddOnMerchandising(products, cmsAddOns),
+    [products, cmsAddOns],
+  );
 
   // Réveillons OBLIGATOIRES pour ces dates + hébergement (soir du 24/12 = Noël, soir du
   // 31/12 = Saint-Sylvestre) → affichés verrouillés ; les autres réveillons sont masqués.
@@ -58,18 +77,54 @@ export function Extras() {
   // réveillon hors de ses dates (24/12 · 31/12) est masqué.
   const groups = useMemo(() => {
     const isHotel = selectedRoom?.property === "hotel";
-    const visible = products.filter(
+    const visible = merchandisedProducts.filter(
       (p) =>
         (!p.property || p.property === selectedRoom?.property) &&
         !(isHotel && isHotelIncludedMeal(p)) &&
         (!isReveillonProduct(p) || forcedReveillonIds.has(p.id)),
     );
     return groupProducts(visible);
-  }, [products, selectedRoom, forcedReveillonIds]);
+  }, [merchandisedProducts, selectedRoom, forcedReveillonIds]);
 
-  // Retour : vers le surclassement s'il y en avait, sinon vers les infos.
-  const currentTotal = selectedRate?.totalGross ?? selectedRoom?.fromGross ?? 0;
-  const back = upgradeRooms(availableRooms, selectedRoom, currentTotal).length > 0 ? "upgrade" : "guest";
+  // Room-upgrade step is disabled for the current demo, so Extras returns to Guest.
+  const back = "guest" as const;
+
+  const firstDisplayForProduct = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const product of merchandisedProducts) {
+      if (!map.has(product.id)) map.set(product.id, product.displayId);
+    }
+    return map;
+  }, [merchandisedProducts]);
+
+  const isDisplaySelected = (product: MerchandisedAddOn) =>
+    productIds.includes(product.id) &&
+    (selectedDisplayByProduct[product.id] ?? firstDisplayForProduct.get(product.id)) === product.displayId;
+
+  const toggleDisplayProduct = (product: MerchandisedAddOn) => {
+    const selected = productIds.includes(product.id);
+    const selectedDisplay =
+      selectedDisplayByProduct[product.id] ?? firstDisplayForProduct.get(product.id);
+
+    if (selected && selectedDisplay === product.displayId) {
+      toggleProduct(product.id);
+      setSelectedDisplayByProduct((current) => {
+        const next = { ...current };
+        delete next[product.id];
+        return next;
+      });
+      return;
+    }
+
+    setSelectedDisplayByProduct((current) => ({
+      ...current,
+      [product.id]: product.displayId,
+    }));
+
+    // Switching between two Webflow aliases for the same Mews product changes only
+    // presentation identity. The Mews product remains selected exactly once.
+    if (!selected) toggleProduct(product.id);
+  };
 
   return (
     <StepLayout
@@ -86,7 +141,7 @@ export function Extras() {
               ? t("extras.selectedCount", { count: productIds.length })
               : t("extras.optional")}
           </p>
-          <DataBadge label="Extras · Mews" />
+          <DataBadge label="Extras · Webflow + Mews" />
         </div>
 
         {/* Property service outside Mews: an airport-transfer interest checkbox.
@@ -142,15 +197,15 @@ export function Extras() {
                 <div className="grid gap-6 lg:grid-cols-2 2xl:grid-cols-3">
                   {g.items.map((p) => (
                     <AddonCard
-                      key={p.id}
+                      key={p.displayId}
                       product={p}
                       imageBaseUrl={imageBaseUrl}
-                      selected={productIds.includes(p.id)}
+                      selected={isDisplaySelected(p)}
                       locked={forcedReveillonIds.has(p.id)}
                       nightsCount={nightsCount}
                       guestsCount={guestsCount}
-                      preference={preferences[p.id]}
-                      onToggle={() => toggleProduct(p.id)}
+                      preference={preferences[p.displayId]}
+                      onToggle={() => toggleDisplayProduct(p)}
                       onOpenCustomize={forcedReveillonIds.has(p.id) ? undefined : () => setCustomizingProduct(p)}
                     />
                   ))}
@@ -190,10 +245,19 @@ export function Extras() {
           addon={customizingProduct}
           imageBaseUrl={imageBaseUrl}
           searchCriteria={{ checkIn, checkOut, nights: nightsCount }}
-          currentPreference={preferences[customizingProduct.id]}
+          currentPreference={preferences[customizingProduct.displayId]}
           onSave={(preference) => {
-            setPreferences((current) => ({ ...current, [customizingProduct.id]: preference }));
-            if (!productIds.includes(customizingProduct.id)) toggleProduct(customizingProduct.id);
+            setPreferences((current) => ({
+              ...current,
+              [customizingProduct.displayId]: preference,
+            }));
+            setSelectedDisplayByProduct((current) => ({
+              ...current,
+              [customizingProduct.id]: customizingProduct.displayId,
+            }));
+            if (!productIds.includes(customizingProduct.id)) {
+              toggleProduct(customizingProduct.id);
+            }
           }}
           onClose={() => setCustomizingProduct(null)}
         />
