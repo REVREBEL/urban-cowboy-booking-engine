@@ -142,6 +142,8 @@ test("odd-hour cancellation windows do not invent an arrival clock time", () => 
         ...baseConfig,
         cancellationPenaltyWindow: 18,
         cancellationPenaltyWindowPeriod: "hours",
+        cancellationFullForfeitWindow: null,
+        cancellationFullForfeitWindowPeriod: null,
       },
       "2027-06-14",
     ),
