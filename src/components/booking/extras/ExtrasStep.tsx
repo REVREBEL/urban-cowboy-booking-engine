@@ -27,6 +27,7 @@ interface ExtrasStepProps {
   extrasTotal: number;
   currency: string;
   airportTransfer: boolean;
+  showAirportTransfer?: boolean;
   onToggleAirportTransfer: () => void;
   onToggle: (product: MerchandisedAddOn) => void;
   onSavePreference: (
@@ -85,6 +86,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
   extrasTotal,
   currency,
   airportTransfer,
+  showAirportTransfer = false,
   onToggleAirportTransfer,
   onToggle,
   onSavePreference,
@@ -166,7 +168,8 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
         </div>
       </div>
 
-      <section className="mb-8">
+      {showAirportTransfer && (
+        <section className="mb-8">
         <div className="mb-3 flex items-center gap-3">
           <span className="h-5 w-1 rounded-full bg-[#236B7D]" />
           <h2 className="font-display text-lg uppercase text-[#221C18]">
@@ -193,8 +196,14 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
             <Check className="h-3.5 w-3.5" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="font-button text-sm uppercase text-[#221C18]">
-              {t("extras.transferTitle")}
+            <span className="flex items-center gap-2 font-button text-sm uppercase text-[#221C18]">
+              <span
+                className="font-emoji-mono text-lg leading-none"
+                aria-hidden="true"
+              >
+                ✈
+              </span>
+              <span>{t("extras.transferTitle")}</span>
             </span>
             <span className="mt-1 block font-body text-sm leading-relaxed text-[#6B6259]">
               {t("extras.transferDesc")}
@@ -204,7 +213,8 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
             {t("extras.transferBadge")}
           </span>
         </button>
-      </section>
+        </section>
+      )}
 
       {filteredProducts.length ? (
         <div className="mb-24 grid grid-cols-1 justify-items-center gap-8 md:grid-cols-2 lg:grid-cols-3">
