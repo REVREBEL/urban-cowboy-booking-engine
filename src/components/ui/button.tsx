@@ -18,6 +18,7 @@ export type ButtonColor =
   | 'smoke'
   | 'lake-forest'
   | 'copper'
+  | 'cowboy-umber'
   | 'oxblood'
   | 'oxidized-teal'
   | 'bandana-red'
@@ -43,6 +44,7 @@ export const COLOR_PALETTE: Record<ButtonColor, ColorConfig> = {
   smoke: { name: 'Smoke', hex: '#343833', isLightBg: false },
   'lake-forest': { name: 'Lake Forest', hex: '#0E301A', isLightBg: false },
   copper: { name: 'Copper', hex: '#9A5636', isLightBg: false },
+  'cowboy-umber': { name: 'Cowboy Umber', hex: '#4E332D', isLightBg: false },
   oxblood: { name: 'Oxblood', hex: '#69253A', isLightBg: false },
   'oxidized-teal': { name: 'Oxidized Teal', hex: '#236B7D', isLightBg: false },
   'bandana-red': { name: 'Bandana Red', hex: '#D65241', isLightBg: false },
