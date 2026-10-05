@@ -54,6 +54,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
       data-artwork-mode={artworkMode}
       data-theme={config.theme}
       data-font-pair={config.fontPair}
+      data-artwork-fallback={fallbackIsVisible ? "true" : "false"}
       style={style}
       aria-labelledby={`rate-card-${config.id}-title`}
     >
