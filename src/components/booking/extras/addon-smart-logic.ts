@@ -221,3 +221,22 @@ export function addOnPreferenceSummary(
   }
   return preference.selectedTime || "Ready upon arrival";
 }
+
+export function formatAddOnPreferenceNote(
+  addOnName: string,
+  preference: AddonSchedulePreference | undefined,
+): string | null {
+  if (!preference) return null;
+
+  const details: string[] = [];
+  if (preference.selectedDate) details.push(`date: ${preference.selectedDate}`);
+  if (preference.selectedTime) details.push(`time: ${preference.selectedTime}`);
+  if (preference.itemCustomization) details.push(`request: ${preference.itemCustomization}`);
+  if (preference.dietaryNote) details.push(`notes: ${preference.dietaryNote}`);
+  if (preference.isGift) details.push("gift: yes");
+  if (preference.giftRecipient) details.push(`recipient: ${preference.giftRecipient}`);
+  if (preference.includeCard) details.push("handwritten card: yes");
+  if (preference.cardMessage) details.push(`card message: ${preference.cardMessage}`);
+
+  return details.length ? `${addOnName} — ${details.join("; ")}` : null;
+}
