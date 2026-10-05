@@ -26,8 +26,8 @@ interface InReservation {
 // Bébé en berceau : aucun champ « InfantCount » dans reservationGroups/create (Mews ne
 // compte AdultCount + ChildCount que). On consigne donc le bébé en note lisible pour la
 // réception, dans la langue de la réservation.
-function babyNote(count: number, lang: "fr-FR" | "en-GB"): string {
-  return lang === "en-GB"
+function babyNote(count: number, lang: "fr-FR" | "en-US"): string {
+  return lang === "en-US"
     ? `${count} baby/babies in a cot — free, not counted in occupancy (baby kit requested)`
     : `${count} bébé(s) en berceau — gratuit, non décompté (kit bébé demandé)`;
 }

@@ -55,7 +55,7 @@ const availabilityPrices = (data: any, currency: string): number[] =>
     ),
   ).filter((value: unknown): value is number => typeof value === "number" && Number.isFinite(value));
 
-export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+export const onRequestPost: PagesFunction<Env> = async ({ request, env, waitUntil }) => {
   const body = await request.json<Body>().catch(() => ({}));
   if (!body.startDate || !body.endDate || !DATE.test(body.startDate) || !DATE.test(body.endDate)) return bad("missing_or_invalid_dates");
   const days = Math.round((Date.parse(`${body.endDate}T00:00:00Z`) - Date.parse(`${body.startDate}T00:00:00Z`)) / 86_400_000);
@@ -70,6 +70,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const cacheKey = JSON.stringify([property.configId, body.startDate, body.endDate, adults, children, infants, currency]);
   const cached = calendarCache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) return json({ dates: cached.dates }, 200, "public, max-age=300");
+
+  // POST responses are not cached by Cloudflare automatically. A synthetic GET
+  // key lets successful calendar lookups survive isolate restarts and be reused
+  // across visitors at the same edge location.
+  const edgeCacheKey = new Request(`${new URL(request.url).origin}/api/mews/calendar-cache?key=${encodeURIComponent(cacheKey)}`);
+  const edgeCached = await caches.default.match(edgeCacheKey);
+  if (edgeCached) return edgeCached;
   const dates = Array.from({ length: days }, (_, index) => addDays(body.startDate!, index));
 
   const entries: Array<[string, CalendarDay]> = [];
@@ -83,7 +90,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           StartUtc: propertyDateUtc(date),
           EndUtc: propertyDateUtc(addDays(date, nights)),
           CurrencyCode: currency,
-          LanguageCode: "en-GB",
+          LanguageCode: "en-US",
           OccupancyData: occupancyForProperty(property, adults, children, infants),
         });
         if (!result.ok) throw new Error(`mews_calendar_${result.status}`);
@@ -114,5 +121,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const responseDates = Object.fromEntries(entries);
   calendarCache.set(cacheKey, { expiresAt: Date.now() + CACHE_TTL_MS, dates: responseDates });
   if (calendarCache.size > 100) calendarCache.delete(calendarCache.keys().next().value as string);
-  return json({ dates: responseDates }, 200, "public, max-age=300");
+  const response = json({ dates: responseDates }, 200, "public, max-age=900, stale-while-revalidate=43200");
+  waitUntil(caches.default.put(edgeCacheKey, response.clone()));
+  return response;
 };

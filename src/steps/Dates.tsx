@@ -9,29 +9,32 @@ import { fmtDate, nights } from "@/lib/format";
 import { api } from "@/lib/api";
 import type { DailyRate } from "@/components/booking/search/InlineDateRangePicker";
 
-const CALENDAR_CACHE_TTL_MS = 15 * 60 * 1000;
-const CALENDAR_STORAGE_VERSION = "v2";
-const calendarCache = new Map<string, { expiresAt: number; dates: Record<string, DailyRate> }>();
+const CALENDAR_CACHE_FRESH_MS = 15 * 60 * 1000;
+const CALENDAR_CACHE_STALE_MS = 24 * 60 * 60 * 1000;
+const CALENDAR_STORAGE_VERSION = "v3";
+type CachedCalendar = { fetchedAt: number; dates: Record<string, DailyRate> };
+const calendarCache = new Map<string, CachedCalendar>();
 const calendarRequests = new Map<string, Promise<Record<string, DailyRate>>>();
 
-function readSessionCalendar(cacheKey: string) {
+function readStoredCalendar(cacheKey: string) {
   if (typeof window === "undefined") return undefined;
   try {
-    const raw = window.sessionStorage.getItem(`uc-calendar:${CALENDAR_STORAGE_VERSION}:${cacheKey}`);
+    const storageKey = `uc-calendar:${CALENDAR_STORAGE_VERSION}:${cacheKey}`;
+    const raw = window.localStorage.getItem(storageKey);
     if (!raw) return undefined;
-    const cached = JSON.parse(raw) as { expiresAt: number; dates: Record<string, DailyRate> };
-    if (cached.expiresAt > Date.now()) return cached;
-    window.sessionStorage.removeItem(`uc-calendar:${CALENDAR_STORAGE_VERSION}:${cacheKey}`);
+    const cached = JSON.parse(raw) as CachedCalendar;
+    if (cached.fetchedAt + CALENDAR_CACHE_STALE_MS > Date.now()) return cached;
+    window.localStorage.removeItem(storageKey);
   } catch {
     // Storage can be unavailable in privacy modes; the in-memory cache still works.
   }
   return undefined;
 }
 
-function writeSessionCalendar(cacheKey: string, cached: { expiresAt: number; dates: Record<string, DailyRate> }) {
+function writeStoredCalendar(cacheKey: string, cached: CachedCalendar) {
   if (typeof window === "undefined") return;
   try {
-    window.sessionStorage.setItem(`uc-calendar:${CALENDAR_STORAGE_VERSION}:${cacheKey}`, JSON.stringify(cached));
+    window.localStorage.setItem(`uc-calendar:${CALENDAR_STORAGE_VERSION}:${cacheKey}`, JSON.stringify(cached));
   } catch {
     // Treat storage quota/privacy failures as a cache miss.
   }
@@ -99,20 +102,19 @@ export function Dates() {
       currencyCode: "USD",
     };
     const cacheKey = JSON.stringify(request);
-    const cached = calendarCache.get(cacheKey) ?? readSessionCalendar(cacheKey);
-    if (cached && cached.expiresAt > Date.now()) {
+    const cached = calendarCache.get(cacheKey) ?? readStoredCalendar(cacheKey);
+    if (cached) {
       calendarCache.set(cacheKey, cached);
       setDailyRates((current) => ({ ...current, ...cached.dates }));
-      return;
+      if (cached.fetchedAt + CALENDAR_CACHE_FRESH_MS > Date.now()) return;
     }
-    if (cached) calendarCache.delete(cacheKey);
 
     let pending = calendarRequests.get(cacheKey);
     if (!pending) {
       pending = api.calendar(request).then((response) => {
-        const cachedResponse = { expiresAt: Date.now() + CALENDAR_CACHE_TTL_MS, dates: response.dates };
+        const cachedResponse = { fetchedAt: Date.now(), dates: response.dates };
         calendarCache.set(cacheKey, cachedResponse);
-        writeSessionCalendar(cacheKey, cachedResponse);
+        writeStoredCalendar(cacheKey, cachedResponse);
         return response.dates;
       }).finally(() => calendarRequests.delete(cacheKey));
       calendarRequests.set(cacheKey, pending);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ApiError, api, errorMessage } from "../lib/api";
-import { money, fmtDate, toUtc } from "../lib/format";
+import { money, fmtDate, toPropertyUtc } from "../lib/format";
 import { StepLayout } from "@/components/booking/layout/step-layout";
 import { SecureBadge } from "@/components/dev/data-badge";
 import { StayBreakdown } from "@/components/booking/summary/stay-breakdown";
@@ -95,8 +95,8 @@ export function Payment() {
         reservations: [
           {
             roomCategoryId: selectedRoom.roomTypeId,
-            startUtc: toUtc(checkIn),
-            endUtc: toUtc(checkOut),
+            startUtc: toPropertyUtc(checkIn),
+            endUtc: toPropertyUtc(checkOut),
             rateId: selectedRate.rateId,
             adults,
             children,

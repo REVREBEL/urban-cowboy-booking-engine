@@ -37,6 +37,11 @@ interface BuildingExperienceListProps {
   }) => React.ReactNode;
 }
 
+function formatSummaryDate(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  return match ? `${match[2]} ${match[3]} ${match[1]}` : value;
+}
+
 export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   criteria,
   rooms,
@@ -224,7 +229,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             <div className="px-4 py-2 rounded-full border border-[#4E332D]/20 bg-[#FAF9F9] font-woodblock text-xs uppercase tracking-wider text-[#4E332D] flex items-center gap-2">
               <Calendar className="w-3.5 h-3.5 text-[#9A5636]" />
               <span>
-                {criteria.checkIn} — {criteria.checkOut} · {criteria.guests} Adults
+                {formatSummaryDate(criteria.checkIn)} — {formatSummaryDate(criteria.checkOut)} · {criteria.guests} Adults
               </span>
             </div>
           </div>

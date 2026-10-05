@@ -9,9 +9,9 @@
 
 export type Lang = "fr" | "en";
 
-// Correspondance vers les LanguageCode Mews. `en-GB` colle à l'ordre de repli de
-// loc()/locStr (contenu Mews anglais authoré en en-GB pour cet établissement).
-export const MEWS_LANG: Record<Lang, string> = { fr: "fr-FR", en: "en-GB" };
+// The property is in the US, so English Mews content, payment pages, and emails
+// request the US locale. UI formatting can remain independent from this value.
+export const MEWS_LANG: Record<Lang, string> = { fr: "fr-FR", en: "en-US" };
 export const LOCALE: Record<Lang, string> = { fr: "fr-FR", en: "en-GB" };
 
 const LS_KEY = "urban_cowboy_lang";

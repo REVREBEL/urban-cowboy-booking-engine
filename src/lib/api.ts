@@ -12,7 +12,7 @@ import type {
   ReservationCreateResult,
   ReservationStatusResult,
 } from "../types/mews";
-import { toUtc } from "./format";
+import { toPropertyUtc } from "./format";
 import { getLang, mewsLang } from "./lang";
 import { t } from "../i18n";
 import { apiLog } from "./apiLog";
@@ -160,8 +160,8 @@ export const api = {
     post<AvailabilityResponse>(
       "availability",
       {
-        startUtc: toUtc(p.checkIn),
-        endUtc: toUtc(p.checkOut),
+        startUtc: toPropertyUtc(p.checkIn),
+        endUtc: toPropertyUtc(p.checkOut),
         adults: p.adults,
         children: p.children,
         infants: p.infants,
@@ -189,8 +189,8 @@ export const api = {
     post<PricingResult>(
       "pricing",
       {
-        startUtc: toUtc(p.checkIn),
-        endUtc: toUtc(p.checkOut),
+        startUtc: toPropertyUtc(p.checkIn),
+        endUtc: toPropertyUtc(p.checkOut),
         roomCategoryId: p.roomCategoryId,
         adults: p.adults,
         children: p.children,
@@ -221,8 +221,8 @@ export const api = {
     post<ReservationQuoteResult>(
       "reservation-price",
       {
-        startUtc: toUtc(p.checkIn),
-        endUtc: toUtc(p.checkOut),
+        startUtc: toPropertyUtc(p.checkIn),
+        endUtc: toPropertyUtc(p.checkOut),
         roomCategoryId: p.roomCategoryId,
         rateId: p.rateId,
         adults: p.adults,

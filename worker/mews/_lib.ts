@@ -202,9 +202,9 @@ export const isIsoDate = (s: unknown): s is string =>
 // LanguageCode Mews valide. Défaut strict : fr-FR. Utilisé par tous les endpoints
 // qui renvoient du contenu localisé (config, dispo, pricing) et par la création
 // (langue de la page de paiement + e-mails Mews).
-export const mewsLang = (v: unknown): "fr-FR" | "en-GB" => {
+export const mewsLang = (v: unknown): "fr-FR" | "en-US" => {
   const s = String(v ?? "").toLowerCase();
-  return s === "en" || s === "en-gb" || s === "en-us" ? "en-GB" : "fr-FR";
+  return s === "en" || s === "en-gb" || s === "en-us" ? "en-US" : "fr-FR";
 };
 
 export const clampInt = (v: unknown, min: number, max: number, dflt: number): number => {
