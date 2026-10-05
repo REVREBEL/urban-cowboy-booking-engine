@@ -147,6 +147,23 @@ for the secondary line.
 The rate-card font pairs are scoped to the rate-card renderer and do not change
 the booking engine's global typography tokens.
 
+## Booking interaction
+
+The CMS artwork card never confirms a reservation on the first click.
+
+1. **Book Now** opens the rate-detail flyout horizontally to the right.
+2. The flyout shows the short current cancellation state, live rate totals,
+   deposit/remaining amounts, and the full Mews rate-description/policy text.
+3. **Confirm Booking** proceeds with the selected Mews rate.
+
+Both artwork variants use the same interaction:
+- full 500 × 1038 card → horizontal full-detail panel
+- compact 500 × 675 card → horizontal compact-detail panel
+
+The dynamic price, tax disclosure, CTA, short cancellation state, and full
+policy text must not be baked into the uploaded artwork. Those values are
+rendered by the booking engine.
+
 ## Accessibility
 
 Artwork is decorative and renders with an empty alt attribute and
