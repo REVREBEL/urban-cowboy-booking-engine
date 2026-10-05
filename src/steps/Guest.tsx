@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
 import { t } from "../i18n";
 import { EMAIL_RE } from "../lib/format";
+import { getLang } from "../lib/lang";
 import { upgradeRooms } from "../lib/shaping";
 import { StepLayout } from "@/components/booking/layout/step-layout";
 import { IconArrowRight } from "@/components/icons/cowboy-icons";
@@ -103,7 +104,7 @@ export function Guest() {
                 invalid={!!errors.telephone}
                 ariaDescribedBy={errors.telephone ? "guest-phone-error" : undefined}
                 value={guest.telephone}
-                defaultCountry={guest.nationalityCode === "FR" ? "CA" : guest.nationalityCode}
+                defaultCountry={getLang() === "fr" ? "CA" : "US"}
                 onChange={(val, valid) => {
                   setGuest({ telephone: val });
                   setPhoneValid(valid);

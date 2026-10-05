@@ -40,6 +40,7 @@
     --font-eyebrow: "Bianco Sans", "League Spartan", sans-serif;
     --font-number: "Bianco Sans", "League Spartan", sans-serif;
     --font-blockquote: "Cedarville", cursive;
+    --font-emoji: "Noto Emoji", sans-serif;
 
     /* Backward-compatible aliases while the UI is being consolidated. */
     --font-brothers: var(--font-button);
@@ -282,6 +283,11 @@
   .font-uchen,
   .font-editorial {
     font-family: var(--font-body);
+  }
+
+  .font-emoji-mono {
+    font-family: var(--font-emoji);
+    font-variant-emoji: text;
   }
 
   .texture-linen {

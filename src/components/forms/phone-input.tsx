@@ -67,7 +67,7 @@ export function PhoneInput({
   ariaDescribedBy?: string;
 }) {
   const init = safeParse(value);
-  const fallback = (COUNTRIES.find((c) => c.code === defaultCountry)?.code ?? "CA") as CountryCode;
+  const fallback = (COUNTRIES.find((c) => c.code === defaultCountry)?.code ?? "US") as CountryCode;
   const [country, setCountry] = useState<CountryCode>(init?.country ?? fallback);
   const [text, setText] = useState(init?.national ?? "");
   const [valid, setValid] = useState(true);
@@ -97,7 +97,7 @@ export function PhoneInput({
 
   useEffect(() => {
     if (value || text.trim()) return;
-    const next = COUNTRIES.find((item) => item.code === defaultCountry)?.code ?? "CA";
+    const next = COUNTRIES.find((item) => item.code === defaultCountry)?.code ?? "US";
     setCountry(next as CountryCode);
   }, [defaultCountry, value, text]);
 
@@ -151,14 +151,14 @@ export function PhoneInput({
           className="absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent text-transparent outline-none"
         >
           {COUNTRIES.map((c) => (
-            <option key={c.code} value={c.code} className="text-marine">
+            <option key={c.code} value={c.code} className="font-emoji-mono text-marine">
               {c.flag} +{dialOf(c.code)} · {regionName(c.code)}
             </option>
           ))}
         </select>
         {/* Affichage compact : drapeau + indicatif ; pr-7 réserve la place du chevron. */}
         <span className="pointer-events-none flex h-full items-center gap-1.5 pl-4 pr-7 text-sm font-medium text-marine">
-          <span className="text-base leading-none">{country_.flag}</span>
+          <span className="font-emoji-mono text-base leading-none">{country_.flag}</span>
           <span className="tabular-nums">+{dialOf(country)}</span>
         </span>
         <svg
