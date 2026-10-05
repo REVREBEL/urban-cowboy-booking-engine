@@ -4,6 +4,10 @@ import type { ShapedRate } from '../../types/mews';
 import type { RateCardConfig } from '../../types/rate-card';
 import { RATE_OPTIONS } from '../../data/hotelData';
 import { resolveRateCardConfig } from '../../lib/rateCardConfig';
+import {
+  cancellationConfirmation,
+  rateCardPricePresentation,
+} from '../../lib/rateCardLiveContent';
 import { ConfigurableRateCard } from './ConfigurableRateCard';
 import { OffersCard } from './RideEasyOffersCard';
 import { OffersCardOutfit } from './OutfitOffersCard';
@@ -309,8 +313,12 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
       desktopOverlayPosition: 'normal',
       mobileOverlayPosition: 'normal',
       buttonStyle: 'filled',
-      theme: 'green',
+      buttonColor: 'cowboy-umber',
+      textColor: 'cowboy-umber',
       fontPair: 'brothers-bianco',
+      ctaLabel: 'Book Now',
+      cancellationPenaltyWindow: null,
+      cancellationPenaltyWindowPeriod: null,
       eyebrow: liveRate.knownRateGroup?.replace(/_/g, ' ') ?? 'DIRECT RATE',
       headline: liveRate.name,
       description: liveRate.description || 'Book direct for the best available offer.',
@@ -325,6 +333,21 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
       minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
       maximumFractionDigits: 2,
     }).format(amount);
+
+  const configurableLiveContent = (
+    liveRate: ShapedRate,
+    config: RateCardConfig,
+    fallbackCta: string,
+  ) => {
+    const presentation = rateCardPricePresentation(liveRate);
+    return {
+      price: formatLivePrice(liveRate, presentation.amount),
+      priceUnit: 'Nightly',
+      taxLabel: presentation.taxLabel,
+      cancellationText: cancellationConfirmation(liveRate, config, criteria.checkIn),
+      ctaLabel: config.ctaLabel || fallbackCta,
+    };
+  };
 
   // Format date string for display (e.g. "Oct 14, 2026")
   const formatDateDisplay = (dateStr: string) => {
@@ -555,13 +578,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateCard
                         config={cmsConfig}
-                        live={{
-                          price: formatLivePrice(liveRate, pricing.nightly),
-                          priceUnit: 'Nightly',
-                          taxLabel: 'Excluding Taxes + Fees',
-                          cancellationText: liveRate.description || `Free Cancellation until ${criteria.checkIn}`,
-                          ctaLabel: 'Book This Rate',
-                        }}
+                        live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
                         onBook={() => selectCardRate('ride-easy', rate)}
                       />
                     ) : <OffersCard
@@ -610,13 +627,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateCard
                         config={cmsConfig}
-                        live={{
-                          price: formatLivePrice(liveRate, pricing.nightly),
-                          priceUnit: 'Nightly',
-                          taxLabel: 'Excluding Taxes + Fees',
-                          cancellationText: liveRate.description || `Free Cancellation until ${criteria.checkIn}`,
-                          ctaLabel: 'Unlock This Rate',
-                        }}
+                        live={configurableLiveContent(liveRate, cmsConfig, 'Unlock This Rate')}
                         onBook={() => selectCardRate('member', rate)}
                         disabled={!onUnlockMember}
                       />
@@ -668,13 +679,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateCard
                         config={cmsConfig}
-                        live={{
-                          price: formatLivePrice(liveRate, pricing.nightly),
-                          priceUnit: 'Nightly',
-                          taxLabel: 'Excluding Taxes + Fees',
-                          cancellationText: liveRate.description || `Free Cancellation until ${criteria.checkIn}`,
-                          ctaLabel: 'Book This Rate',
-                        }}
+                        live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
                         onBook={() => selectCardRate('sunup', rate)}
                       />
                     ) : <OffersCardSunup
@@ -723,13 +728,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateCard
                         config={cmsConfig}
-                        live={{
-                          price: formatLivePrice(liveRate, pricing.nightly),
-                          priceUnit: 'Nightly',
-                          taxLabel: 'Excluding Taxes + Fees',
-                          cancellationText: liveRate.description || `Free Cancellation until ${criteria.checkIn}`,
-                          ctaLabel: 'Book This Rate',
-                        }}
+                        live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
                         onBook={() => selectCardRate('stay-while', rate)}
                       />
                     ) : <OffersCardStayAWhile
@@ -778,13 +777,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateCard
                         config={cmsConfig}
-                        live={{
-                          price: formatLivePrice(liveRate, pricing.nightly),
-                          priceUnit: 'Nightly',
-                          taxLabel: 'Excluding Taxes + Fees',
-                          cancellationText: liveRate.description || `Full Prepay. Non Refundable.`,
-                          ctaLabel: 'Commit to the Cowboy',
-                        }}
+                        live={configurableLiveContent(liveRate, cmsConfig, 'Commit to the Cowboy')}
                         onBook={() => selectCardRate('plan-ahead', rate)}
                       />
                     ) : <OffersCardPlanAhead
