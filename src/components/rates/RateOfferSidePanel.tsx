@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import { Button, type ButtonColor } from '../ui/button';
 
 export type OfferCardTheme = 'ride-easy' | 'outfit' | 'sunup' | 'stay-while' | 'plan-ahead';
 
@@ -41,6 +42,21 @@ interface ThemeStyles {
   headingFont: string;
   policyFont: string;
 }
+
+const buttonColorForTheme = (theme: OfferCardTheme): ButtonColor => {
+  switch (theme) {
+    case 'outfit':
+      return 'nude-ember';
+    case 'sunup':
+      return 'copper';
+    case 'stay-while':
+      return 'alpine-linen';
+    case 'plan-ahead':
+    case 'ride-easy':
+    default:
+      return 'smoke';
+  }
+};
 
 const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   'ride-easy': {
@@ -370,21 +386,17 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
 
         {/* Oval Pill CTA Button: AGREE & CONFIRM BOOKING */}
         <div className="w-full flex justify-center">
-          <button
+          <Button
             type="button"
             onClick={onConfirm}
             disabled={isSubmitting}
-            style={{
-              height: '60px',
-              backgroundColor: themeConfig.btnBg,
-              color: themeConfig.btnText,
-              border: themeConfig.btnBorder ? `2px solid ${themeConfig.btnBorder}` : 'none',
-              fontFamily: 'var(--font-button)',
-            }}
-            className="h-[60px] px-8 sm:px-10 rounded-full font-button text-xs sm:text-sm uppercase tracking-[0.12em] font-normal shadow-md hover:shadow-lg hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center whitespace-nowrap disabled:opacity-50"
+            isLoading={isSubmitting}
+            variant="filled"
+            color={buttonColorForTheme(theme)}
+            size="large"
           >
-            {isSubmitting ? 'Confirming...' : 'AGREE & CONFIRM BOOKING'}
-          </button>
+            AGREE & CONFIRM BOOKING
+          </Button>
         </div>
       </div>
     );
