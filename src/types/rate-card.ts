@@ -5,9 +5,9 @@ export type RateCardOverlayPosition = "high" | "normal" | "low";
 export type RateCardButtonStyle = "filled" | "outline";
 
 export type RateCardTheme =
-  | "light"
-  | "lake-forest"
-  | "copper";
+  | "white"
+  | "blue"
+  | "green";
 
 export type RateCardFontPair =
   | "brothers-bianco"
