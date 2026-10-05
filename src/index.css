@@ -531,52 +531,6 @@
   gap: clamp(7px, 2.2cqw, 11px);
 }
 
-.rate-card-cta {
-  min-height: 44px;
-  max-width: 100%;
-  border-radius: 999px;
-  padding: clamp(9px, 2.4cqw, 12px) clamp(18px, 6cqw, 30px);
-  font-family: var(--font-button);
-  font-size: clamp(13px, 3.4cqw, 17px);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition:
-    opacity 160ms ease,
-    transform 160ms ease;
-}
-
-.rate-card-cta[data-button-style="filled"] {
-  border: 2px solid var(--rate-button-bg);
-  background: var(--rate-button-bg);
-  color: var(--rate-button-fg);
-}
-
-.rate-card-cta[data-button-style="outline"] {
-  border: 2px solid var(--rate-button-bg);
-  background: transparent;
-  color: var(--rate-button-bg);
-}
-
-.rate-card-cta:not(:disabled):hover {
-  opacity: 0.88;
-}
-
-.rate-card-cta:not(:disabled):active {
-  transform: scale(0.98);
-}
-
-.rate-card-cta:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
-}
-
-.rate-card-cta:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
 .rate-card-policy {
   margin: 0;
   width: 100%;
