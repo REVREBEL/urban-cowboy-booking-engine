@@ -15,6 +15,9 @@ export interface ConfigurableRateCardProps {
   live: RateCardLiveContent;
   artworkMode?: RateCardArtworkMode;
   onBook: () => void;
+  isExpanded?: boolean;
+  onExpand?: () => void;
+  confirmLabel?: string;
   disabled?: boolean;
   className?: string;
 }
@@ -30,6 +33,9 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
   live,
   artworkMode = "auto",
   onBook,
+  isExpanded = false,
+  onExpand,
+  confirmLabel = "CONFIRM BOOKING",
   disabled = false,
   className = "",
 }) => {
@@ -59,7 +65,16 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
     ],
   );
 
-  const ctaLabel = live.ctaLabel ?? config.ctaLabel ?? "BOOK NOW";
+  const baseCtaLabel = live.ctaLabel ?? config.ctaLabel ?? "BOOK NOW";
+  const ctaLabel = isExpanded ? confirmLabel : baseCtaLabel;
+
+  const handleAction = () => {
+    if (!isExpanded && onExpand) {
+      onExpand();
+      return;
+    }
+    onBook();
+  };
 
   return (
     <article
@@ -140,7 +155,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
               data-button-style={config.buttonStyle}
               onClick={(event) => {
                 event.stopPropagation();
-                onBook();
+                handleAction();
               }}
               disabled={disabled}
               aria-label={`${ctaLabel}: ${config.headline}, ${live.price} ${live.priceUnit ?? "nightly"}`}
