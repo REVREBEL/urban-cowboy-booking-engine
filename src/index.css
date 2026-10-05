@@ -495,21 +495,21 @@
   line-height: 1.25;
 }
 
-.rate-card-shell[data-theme="light"] .rate-card-frame {
+.rate-card-shell[data-theme="white"] .rate-card-frame {
   --rate-fg: #faf9f9;
   --rate-button-bg: #faf9f9;
   --rate-button-fg: #4e332d;
 }
 
-.rate-card-shell[data-theme="lake-forest"] .rate-card-frame {
-  --rate-fg: #0e301a;
-  --rate-button-bg: #0e301a;
+.rate-card-shell[data-theme="blue"] .rate-card-frame {
+  --rate-fg: #236b7d;
+  --rate-button-bg: #236b7d;
   --rate-button-fg: #faf9f9;
 }
 
-.rate-card-shell[data-theme="copper"] .rate-card-frame {
-  --rate-fg: #9a5636;
-  --rate-button-bg: #9a5636;
+.rate-card-shell[data-theme="green"] .rate-card-frame {
+  --rate-fg: #0e301a;
+  --rate-button-bg: #0e301a;
   --rate-button-fg: #faf9f9;
 }
 
