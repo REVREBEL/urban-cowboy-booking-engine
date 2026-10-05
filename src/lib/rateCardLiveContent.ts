@@ -63,21 +63,21 @@ export function cancellationConfirmation(
   const checkInDate = parseCheckIn(checkIn);
 
   if (
-    checkInDate &&
     typeof window === "number" &&
     Number.isFinite(window) &&
     window > 0 &&
     period
   ) {
-    const cutoff = new Date(checkInDate);
-    const milliseconds =
-      period === "days"
-        ? window * 24 * 60 * 60 * 1000
-        : window * 60 * 60 * 1000;
-    cutoff.setTime(cutoff.getTime() - milliseconds);
+    if (period === "hours" && window % 24 !== 0) {
+      return `Free Cancellation until ${window} hours before arrival`;
+    }
 
-    const includeTime = period === "hours" && window % 24 !== 0;
-    return `Free Cancellation until ${formatCutoff(cutoff, includeTime)}`;
+    if (checkInDate) {
+      const cutoff = new Date(checkInDate);
+      const days = period === "days" ? window : window / 24;
+      cutoff.setUTCDate(cutoff.getUTCDate() - days);
+      return `Free Cancellation until ${formatCutoff(cutoff, false)}`;
+    }
   }
 
   return "See rate details for cancellation terms";
