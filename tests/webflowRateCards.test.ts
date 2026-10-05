@@ -51,6 +51,26 @@ const options = webflowOptionNames({
         ],
       },
     },
+    {
+      slug: "desktop-overlay-position",
+      validations: {
+        options: [
+          { id: "87d9d070103a16bbc6ecc08ed2df8060", name: "High" },
+          { id: "a9cb91d3b085661830789867a8030ebe", name: "Normal" },
+          { id: "eb540b58e09b5d5f768775ce2926e9f7", name: "Low" },
+        ],
+      },
+    },
+    {
+      slug: "mobile-overlay-position",
+      validations: {
+        options: [
+          { id: "358313718ac4d03c3431f241a507393a", name: "High" },
+          { id: "3d597f70b31eb3d79bc395726bb9f81a", name: "Normal" },
+          { id: "2662a0f5a19ba0966ce291b1e3f993c9", name: "Low" },
+        ],
+      },
+    },
   ],
 });
 
@@ -66,6 +86,10 @@ test("normalizes the current Webflow Offers fields using real option IDs", () =>
       "member-only": false,
       "cancellation-penalty-window": 14,
       "cancellation-penalty-window-period": "a9907e83d9c4b7a0dd29301f0f99eaeb",
+      "desktop-overlay-position": "87d9d070103a16bbc6ecc08ed2df8060",
+      "mobile-overlay-position": "2662a0f5a19ba0966ce291b1e3f993c9",
+      "default-card": true,
+      "sort-order": 4,
       "full-card": { url: "https://cdn.example/full.jpg" },
       "compact-card": { url: "https://cdn.example/compact.jpg" },
       "button-color": "06fad834bc888d6ccf15c26432c8c6ab",
@@ -83,14 +107,14 @@ test("normalizes the current Webflow Offers fields using real option IDs", () =>
     id: "6ac1c479ba0bd3fffaec54df",
     name: "Ride Easy",
     mewsRateId: "49941fcd-164b-418c-8b7d-b1060070665c",
-    isDefault: false,
+    isDefault: true,
     active: true,
-    sortOrder: 0,
+    sortOrder: 4,
     memberOnly: false,
     desktopArtworkUrl: "https://cdn.example/full.jpg",
     mobileArtworkUrl: "https://cdn.example/compact.jpg",
-    desktopOverlayPosition: "normal",
-    mobileOverlayPosition: "normal",
+    desktopOverlayPosition: "high",
+    mobileOverlayPosition: "low",
     buttonStyle: "outline",
     buttonColor: "smoke",
     textColor: "smoke",
