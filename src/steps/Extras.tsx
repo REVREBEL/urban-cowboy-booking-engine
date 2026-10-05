@@ -9,7 +9,6 @@ import { StepLayout } from "@/components/booking/layout/step-layout";
 import { AddonCard } from "@/components/booking/extras/AddonCard";
 import { AddonCustomizerModal } from "@/components/booking/extras/AddonCustomizerModal";
 import type { AddonSchedulePreference } from "@/components/booking/extras/addon-types";
-import type { ShapedProduct } from "@/types/mews";
 import type { AddOnCmsItem, MerchandisedAddOn } from "@/types/add-on-cms";
 import { DataBadge } from "@/components/dev/data-badge";
 import { IconArrowRight, IconCheck, IconSparkles } from "@/components/icons/cowboy-icons";
