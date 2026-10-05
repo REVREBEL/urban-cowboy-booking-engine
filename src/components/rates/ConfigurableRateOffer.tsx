@@ -19,6 +19,7 @@ export interface ConfigurableRateOfferProps {
   config: RateCardConfig;
   live: RateCardLiveContent;
   theme: OfferCardTheme;
+  variant?: "default" | "compact";
   isExpanded: boolean;
   onToggleExpand: () => void;
   onConfirmBooking: () => void;
@@ -33,6 +34,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   config,
   live,
   theme,
+  variant = "default",
   isExpanded,
   onToggleExpand,
   onConfirmBooking,
@@ -42,12 +44,17 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   fullPolicyText,
   disabled = false,
 }) => {
+  const isCompact = variant === "compact";
+  const sideWidth = isCompact ? 557 : 512;
+  const panelHeight = isCompact ? 675 : 1038;
+
   return (
-    <div className="flex items-stretch">
+    <div className="flex flex-row items-stretch">
       <div className="relative z-20 shrink-0">
         <ConfigurableRateCard
           config={config}
           live={live}
+          artworkMode={isCompact ? "mobile" : "desktop"}
           isExpanded={isExpanded}
           onExpand={onToggleExpand}
           onBook={onConfirmBooking}
@@ -59,27 +66,34 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
         className={[
           "relative z-10 shrink-0 overflow-hidden transition-all duration-500 ease-out -ml-12",
           isExpanded
-            ? "w-[480px] opacity-100 translate-x-0 pointer-events-auto"
+            ? "opacity-100 translate-x-0 pointer-events-auto"
             : "w-0 max-w-0 opacity-0 -translate-x-6 pointer-events-none",
         ].join(" ")}
+        style={{
+          width: isExpanded ? `${sideWidth}px` : "0px",
+          minWidth: isExpanded ? `${sideWidth}px` : "0px",
+        }}
         aria-hidden={!isExpanded}
       >
-        <RateOfferSidePanel
-          variant="default"
-          theme={theme}
-          cancellationHeader={live.cancellationText}
-          depositNote={depositNote}
-          remainingNote={remainingNote}
-          nightlyRate={pricing.nightly}
-          stayTotal={pricing.subtotal}
-          taxesAndFees={pricing.taxesAndFees}
-          totalStay={pricing.total}
-          dueAtBooking={pricing.dueToday}
-          remaining={pricing.remaining}
-          policyText={fullPolicyText}
-          onClose={onToggleExpand}
-          onConfirm={onConfirmBooking}
-        />
+        <div className="h-full pl-8">
+          <RateOfferSidePanel
+            variant={variant}
+            theme={theme}
+            cancellationHeader={live.cancellationText}
+            depositNote={depositNote}
+            remainingNote={remainingNote}
+            nightlyRate={pricing.nightly}
+            stayTotal={pricing.subtotal}
+            taxesAndFees={pricing.taxesAndFees}
+            totalStay={pricing.total}
+            dueAtBooking={pricing.dueToday}
+            remaining={pricing.remaining}
+            policyText={fullPolicyText}
+            onClose={onToggleExpand}
+            onConfirm={onConfirmBooking}
+            height={panelHeight}
+          />
+        </div>
       </div>
     </div>
   );
