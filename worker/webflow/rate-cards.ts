@@ -161,6 +161,11 @@ export function normalizeWebflowRateCard(
     fields["cancellation-penalty-window-period"],
     options,
   );
+  const fullForfeitPeriodName = optionName(
+    "cancellation-full-forfeit-window-period",
+    fields["cancellation-full-forfeit-window-period"],
+    options,
+  );
 
   return {
     id,
@@ -189,6 +194,8 @@ export function normalizeWebflowRateCard(
     ctaLabel: text(fields["call-to-action"]) || null,
     cancellationPenaltyWindow: nullableNumber(fields["cancellation-penalty-window"]),
     cancellationPenaltyWindowPeriod: penaltyPeriod(cancellationPeriodName),
+    cancellationFullForfeitWindow: nullableNumber(fields["cancellation-full-forfeit-window"]),
+    cancellationFullForfeitWindowPeriod: penaltyPeriod(fullForfeitPeriodName),
     eyebrow: text(fields.eyebrow) || null,
     headline: text(fields.headline),
     description: text(fields.description),
