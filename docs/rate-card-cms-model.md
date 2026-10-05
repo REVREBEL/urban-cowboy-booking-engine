@@ -21,7 +21,10 @@ The rate card renderer separates editorial artwork from live booking data.
 - short description
 - call to action
 - optional cancellation penalty window/display fallback
-- optional future default-card, sort-order, and overlay-position fields
+- default/fallback flag
+- sort order
+- desktop overlay position
+- mobile overlay position
 
 ### Booking engine / Mews owns
 
@@ -63,6 +66,10 @@ The production Offers collection currently exposes these rate-card fields:
 | `mews-rate-id` | `mewsRateId` |
 | `active` | `active` |
 | `member-only` | `memberOnly` |
+| `default-card` | `isDefault` |
+| `sort-order` | `sortOrder` |
+| `desktop-overlay-position` | `desktopOverlayPosition` |
+| `mobile-overlay-position` | `mobileOverlayPosition` |
 | `full-card` | `desktopArtworkUrl` |
 | `compact-card` | `mobileArtworkUrl` |
 | `card-fill` | `buttonStyle` |
@@ -76,9 +83,8 @@ The production Offers collection currently exposes these rate-card fields:
 | `headline` | `headline` |
 | `description` | `description` |
 
-The adapter also understands future `default-card`, `sort-order`,
-`desktop-overlay-position`, and `mobile-overlay-position` fields if they are
-added later.
+These fields now exist in the production Offers collection. Existing items use
+the renderer's safe defaults until an editor chooses explicit values.
 
 ## Button style
 
@@ -176,8 +182,8 @@ empty CMS result and application fallback.
 For a live Mews rate:
 
 1. Find an active CMS card whose `mewsRateId` exactly equals Mews `Rate.Id`.
-2. If none exists, use the first active card marked `isDefault`, if Webflow
-   later exposes a `default-card` field.
+2. If none exists, use the first active card marked `isDefault`, ordered by
+   `sortOrder`.
 3. If no valid CMS card resolves, the application generates an accessible
    semantic rate card from the live Mews rate instead of falling back to a
    legacy promotional component.
