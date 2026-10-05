@@ -149,7 +149,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
               variant={config.buttonStyle}
               color={config.buttonColor}
               size="default"
-              className="rate-card-cta"
+              className="max-w-full"
               onClick={(event) => {
                 event.stopPropagation();
                 handleAction();
