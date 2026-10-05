@@ -5,10 +5,8 @@ import type {
   RateCardLiveContent,
   RateCardOverlayPosition,
 } from "@/types/rate-card";
-import {
-  RATE_CARD_COLORS,
-  rateCardButtonTextColor,
-} from "@/lib/rateCardPresentation";
+import { RATE_CARD_COLORS } from "@/lib/rateCardPresentation";
+import { Button } from "@/components/ui/button";
 
 export interface ConfigurableRateCardProps {
   config: RateCardConfig;
@@ -54,11 +52,8 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
         "--rate-overlay-desktop-top": POSITION_TOP[config.desktopOverlayPosition],
         "--rate-overlay-mobile-top": POSITION_TOP[config.mobileOverlayPosition],
         "--rate-fg": RATE_CARD_COLORS[config.textColor].hex,
-        "--rate-button-bg": RATE_CARD_COLORS[config.buttonColor].hex,
-        "--rate-button-fg": rateCardButtonTextColor(config.buttonColor),
       }) as React.CSSProperties,
     [
-      config.buttonColor,
       config.desktopOverlayPosition,
       config.mobileOverlayPosition,
       config.textColor,
@@ -149,10 +144,12 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
           </div>
 
           <div className="rate-card-action">
-            <button
+            <Button
               type="button"
+              variant={config.buttonStyle}
+              color={config.buttonColor}
+              size="default"
               className="rate-card-cta"
-              data-button-style={config.buttonStyle}
               onClick={(event) => {
                 event.stopPropagation();
                 handleAction();
@@ -161,7 +158,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
               aria-label={`${ctaLabel}: ${config.headline}, ${live.price} ${live.priceUnit ?? "nightly"}`}
             >
               {ctaLabel}
-            </button>
+            </Button>
 
             <p className="rate-card-policy">{live.cancellationText}</p>
           </div>
