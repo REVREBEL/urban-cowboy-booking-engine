@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { ShapedProduct } from '@/types/mews';
+import type { MerchandisedAddOn } from '@/types/add-on-cms';
 import { imgUrl, money } from '@/lib/format';
 import type { AddonSchedulePreference, AddonStayCriteria } from './addon-types';
 import { X, Check, Clock, Heart, Gift, Wine, Dog, Sparkles, ArrowRight } from 'lucide-react';
 
 interface AddonCustomizerModalProps {
   isOpen: boolean;
-  addon: ShapedProduct;
+  addon: MerchandisedAddOn;
   imageBaseUrl: string;
   searchCriteria: AddonStayCriteria;
   currentPreference?: AddonSchedulePreference;
@@ -223,7 +223,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
               {/* Item Card Artwork */}
               <div className="relative rounded-2xl 2xl:rounded-3xl overflow-hidden shadow-md border border-[#4E332D]/15 group">
                 <img 
-                  src={imgUrl(imageBaseUrl, addon.imageId, 900) ?? undefined}
+                  src={addon.imageUrl ?? imgUrl(imageBaseUrl, addon.imageId, 900) ?? undefined}
                   alt={addon.name}
                   className="w-full h-48 sm:h-56 2xl:h-72 object-cover transition-transform duration-700 group-hover:scale-105" 
                 />
