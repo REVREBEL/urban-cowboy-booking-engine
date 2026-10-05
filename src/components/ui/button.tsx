@@ -13,6 +13,8 @@ function cn(...inputs: (string | undefined | null | false)[]) {
 export type ButtonColor =
   | 'dark'
   | 'light'
+  | 'paper'
+  | 'alpine-linen'
   | 'smoke'
   | 'lake-forest'
   | 'copper'
@@ -36,6 +38,8 @@ interface ColorConfig {
 export const COLOR_PALETTE: Record<ButtonColor, ColorConfig> = {
   dark: { name: 'Dark', hex: '#4E332D', isLightBg: false },
   light: { name: 'Light', hex: '#EBE8E0', isLightBg: true },
+  paper: { name: 'Paper', hex: '#FAF9F9', isLightBg: true },
+  'alpine-linen': { name: 'Alpine Linen', hex: '#EBE8E0', isLightBg: true },
   smoke: { name: 'Smoke', hex: '#343833', isLightBg: false },
   'lake-forest': { name: 'Lake Forest', hex: '#0E301A', isLightBg: false },
   copper: { name: 'Copper', hex: '#9A5636', isLightBg: false },
