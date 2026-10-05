@@ -500,14 +500,18 @@
   width: 100%;
   text-align: left;
   font-family: var(--rate-primary-font);
-  font-size: clamp(16px, 5.2cqw, 26px);
+  font-size: 34px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.01em;
 }
 
 .rate-card-price span {
-  font: inherit;
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
 }
 
 .rate-card-tax {
@@ -712,6 +716,14 @@
   top: var(--rate-overlay-mobile-top, 58%);
 }
 
+.rate-card-shell[data-artwork-mode="mobile"] .rate-card-price {
+  font-size: 24px;
+}
+
+.rate-card-shell[data-artwork-mode="mobile"] .rate-card-price span {
+  font-size: 14px;
+}
+
 /* Auto mode swaps compositions according to card width rather than viewport
    width. A 300px card therefore uses the compact 500:675 composition even
    when it happens to sit inside a large desktop viewport. */
@@ -730,5 +742,13 @@
 
   .rate-card-shell[data-artwork-mode="auto"] .rate-card-overlay {
     top: var(--rate-overlay-mobile-top, 58%);
+  }
+
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-price {
+    font-size: 24px;
+  }
+
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-price span {
+    font-size: 14px;
   }
 }
