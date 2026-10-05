@@ -8,7 +8,7 @@ import {
   cancellationConfirmation,
   rateCardPricePresentation,
 } from '../../lib/rateCardLiveContent';
-import { ConfigurableRateCard } from './ConfigurableRateCard';
+import { ConfigurableRateOffer } from './ConfigurableRateOffer';
 import { OffersCard } from './RideEasyOffersCard';
 import { OffersCardOutfit } from './OutfitOffersCard';
 import { OffersCardSunup } from './SunupOffersCard';
@@ -351,6 +351,57 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     };
   };
 
+  const offerThemeForCard = (cardId: typeof RATE_CARD_KEYS[number]) => {
+    switch (cardId) {
+      case 'member': return 'outfit' as const;
+      case 'sunup': return 'sunup' as const;
+      case 'stay-while': return 'stay-while' as const;
+      case 'plan-ahead': return 'plan-ahead' as const;
+      case 'ride-easy': return 'ride-easy' as const;
+    }
+  };
+
+  const depositNoteForRate = (
+    pricing: ReturnType<typeof calculateStayTotal>,
+  ) => {
+    if (pricing.total <= 0 || pricing.dueToday <= 0) return 'No deposit due today';
+    if (pricing.remaining <= 0) return 'Full stay due today';
+
+    const percentage = Math.round((pricing.dueToday / pricing.total) * 100);
+    return `${percentage}% deposit due today`;
+  };
+
+  const remainingNoteForRate = (
+    config: RateCardConfig,
+    pricing: ReturnType<typeof calculateStayTotal>,
+  ) => {
+    if (pricing.remaining <= 0) return 'Paid in full';
+
+    const window = config.cancellationFullForfeitWindow;
+    const period = config.cancellationFullForfeitWindowPeriod;
+    if (typeof window !== 'number' || !period) return 'Due before arrival';
+
+    if (period === 'hours' && window % 24 !== 0) {
+      return `Due ${window} hours before arrival`;
+    }
+
+    const [year, month, day] = criteria.checkIn.split('-').map(Number);
+    if (!year || !month || !day) return 'Due before arrival';
+
+    const due = new Date(Date.UTC(year, month - 1, day, 12));
+    const days = period === 'days' ? window : window / 24;
+    due.setUTCDate(due.getUTCDate() - days);
+
+    return `Due ${new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      timeZone: 'UTC',
+    }).format(due)}`;
+  };
+
+  const fullCancellationPolicyForRate = (liveRate: ShapedRate) =>
+    liveRate.description || 'See rate details for the full cancellation policy.';
+
   // Format date string for display (e.g. "Oct 14, 2026")
   const formatDateDisplay = (dateStr: string) => {
     try {
@@ -571,17 +622,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? (rateCardsVariant === 'compact' ? 675 : 1038) : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     {cmsConfig && liveRate ? (
-                      <ConfigurableRateCard
+                      <ConfigurableRateOffer
                         config={cmsConfig}
                         live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
-                        onBook={() => selectCardRate('ride-easy', rate)}
+                        theme={offerThemeForCard('ride-easy')}
+                        variant={rateCardsVariant}
+                        isExpanded={isExpanded}
+                        onToggleExpand={() => handleToggleExpandCard('ride-easy', idx)}
+                        onConfirmBooking={() => selectCardRate('ride-easy', rate)}
+                        pricing={pricing}
+                        depositNote={depositNoteForRate(pricing)}
+                        remainingNote={remainingNoteForRate(cmsConfig, pricing)}
+                        fullPolicyText={fullCancellationPolicyForRate(liveRate)}
                       />
                     ) : <OffersCard
                       variant={rateCardsVariant}
@@ -620,17 +679,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? (rateCardsVariant === 'compact' ? 675 : 1038) : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     {cmsConfig && liveRate ? (
-                      <ConfigurableRateCard
+                      <ConfigurableRateOffer
                         config={cmsConfig}
                         live={configurableLiveContent(liveRate, cmsConfig, 'Unlock This Rate')}
-                        onBook={() => selectCardRate('member', rate)}
+                        theme={offerThemeForCard('member')}
+                        variant={rateCardsVariant}
+                        isExpanded={isExpanded}
+                        onToggleExpand={() => handleToggleExpandCard('member', idx)}
+                        onConfirmBooking={() => selectCardRate('member', rate)}
+                        pricing={pricing}
+                        depositNote={depositNoteForRate(pricing)}
+                        remainingNote={remainingNoteForRate(cmsConfig, pricing)}
+                        fullPolicyText={fullCancellationPolicyForRate(liveRate)}
                         disabled={!onUnlockMember}
                       />
                     ) : <OffersCardOutfit
@@ -672,17 +739,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? (rateCardsVariant === 'compact' ? 675 : 1038) : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     {cmsConfig && liveRate ? (
-                      <ConfigurableRateCard
+                      <ConfigurableRateOffer
                         config={cmsConfig}
                         live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
-                        onBook={() => selectCardRate('sunup', rate)}
+                        theme={offerThemeForCard('sunup')}
+                        variant={rateCardsVariant}
+                        isExpanded={isExpanded}
+                        onToggleExpand={() => handleToggleExpandCard('sunup', idx)}
+                        onConfirmBooking={() => selectCardRate('sunup', rate)}
+                        pricing={pricing}
+                        depositNote={depositNoteForRate(pricing)}
+                        remainingNote={remainingNoteForRate(cmsConfig, pricing)}
+                        fullPolicyText={fullCancellationPolicyForRate(liveRate)}
                       />
                     ) : <OffersCardSunup
                       variant={rateCardsVariant}
@@ -721,17 +796,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? (rateCardsVariant === 'compact' ? 675 : 1038) : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     {cmsConfig && liveRate ? (
-                      <ConfigurableRateCard
+                      <ConfigurableRateOffer
                         config={cmsConfig}
                         live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
-                        onBook={() => selectCardRate('stay-while', rate)}
+                        theme={offerThemeForCard('stay-while')}
+                        variant={rateCardsVariant}
+                        isExpanded={isExpanded}
+                        onToggleExpand={() => handleToggleExpandCard('stay-while', idx)}
+                        onConfirmBooking={() => selectCardRate('stay-while', rate)}
+                        pricing={pricing}
+                        depositNote={depositNoteForRate(pricing)}
+                        remainingNote={remainingNoteForRate(cmsConfig, pricing)}
+                        fullPolicyText={fullCancellationPolicyForRate(liveRate)}
                       />
                     ) : <OffersCardStayAWhile
                       variant={rateCardsVariant}
@@ -770,17 +853,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? (rateCardsVariant === 'compact' ? 675 : 1038) : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
                     {cmsConfig && liveRate ? (
-                      <ConfigurableRateCard
+                      <ConfigurableRateOffer
                         config={cmsConfig}
                         live={configurableLiveContent(liveRate, cmsConfig, 'Commit to the Cowboy')}
-                        onBook={() => selectCardRate('plan-ahead', rate)}
+                        theme={offerThemeForCard('plan-ahead')}
+                        variant={rateCardsVariant}
+                        isExpanded={isExpanded}
+                        onToggleExpand={() => handleToggleExpandCard('plan-ahead', idx)}
+                        onConfirmBooking={() => selectCardRate('plan-ahead', rate)}
+                        pricing={pricing}
+                        depositNote={depositNoteForRate(pricing)}
+                        remainingNote={remainingNoteForRate(cmsConfig, pricing)}
+                        fullPolicyText={fullCancellationPolicyForRate(liveRate)}
                       />
                     ) : <OffersCardPlanAhead
                       variant={rateCardsVariant}
