@@ -15,6 +15,7 @@ import { nights as countNights } from "../lib/format";
 import { buildRooms, shapeProducts, cheapestDrinkProduct, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
 import { rankRecommendedRooms } from "../lib/roomMatching";
 import { parseRecommendationPreferences } from "../lib/topMatch";
+import { BOOKING_FEATURES } from "../config/bookingFeatures";
 import type {
   HotelConfig,
   ReservationCreateResult,
@@ -109,7 +110,11 @@ function readUrl(): Partial<BookingState> {
     return Number.isFinite(v) ? v : d;
   };
   const stepRaw = q.get("step") as Step | null;
-  const step = stepRaw && STEP_ORDER.includes(stepRaw) ? stepRaw : undefined;
+  const requestedStep = stepRaw && STEP_ORDER.includes(stepRaw) ? stepRaw : undefined;
+  const step =
+    requestedStep === "upgrade" && !BOOKING_FEATURES.roomUpgradeStep
+      ? "extras"
+      : requestedStep;
   const out: Partial<BookingState> = {};
   if (q.get("in")) out.checkIn = q.get("in")!;
   if (q.get("out")) out.checkOut = q.get("out")!;
@@ -470,7 +475,16 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setQuoteRefreshKey((key) => key + 1);
   }, []);
 
-  const goTo: BookingContextValue["goTo"] = useCallback((step) => patch({ step }), [patch]);
+  const goTo: BookingContextValue["goTo"] = useCallback(
+    (step) =>
+      patch({
+        step:
+          step === "upgrade" && !BOOKING_FEATURES.roomUpgradeStep
+            ? "extras"
+            : step,
+      }),
+    [patch],
+  );
 
   const resetAll = useCallback(() => {
     setSelectedRoom(null);
