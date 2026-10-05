@@ -359,8 +359,8 @@
    The shell is a size container so cards respond to their own rendered width,
    not only to the browser viewport. */
 .rate-card-shell {
-  width: 100%;
-  max-width: 500px;
+  width: min(500px, calc(100vw - 32px));
+  flex: 0 0 auto;
   container-type: inline-size;
 }
 

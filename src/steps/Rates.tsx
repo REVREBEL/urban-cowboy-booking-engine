@@ -1,7 +1,9 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RateSelectionView } from "@/components/rates/RateSelectionView";
 import type { RoomType } from "@/types";
+import type { RateCardConfig } from "@/types/rate-card";
 import { imgUrl } from "../lib/format";
+import { api } from "../lib/api";
 import { useBooking } from "../state/booking";
 import { roomTypeGroupName } from "@/data/roomTypeGroups";
 
@@ -37,6 +39,19 @@ function toProductRoom(room: NonNullable<ReturnType<typeof useBooking>["selected
 
 export function Rates() {
   const { selectedRoom, roomTypeId, hydrating, imageBaseUrl, checkIn, checkOut, nightsCount, adults, children, selectRoomRate, goTo } = useBooking();
+  const [rateCardConfigs, setRateCardConfigs] = useState<RateCardConfig[]>([]);
+
+  useEffect(() => {
+    let active = true;
+
+    api.rateCards().then((cards) => {
+      if (active) setRateCardConfigs(cards);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     // During URL rehydration the room id is available before the ShapedRoom is
@@ -65,6 +80,7 @@ export function Rates() {
       }}
       selectedRate={null}
       liveRates={selectedRoom.rates}
+      rateCardConfigs={rateCardConfigs}
       onSelectRate={() => undefined}
       onSelectLiveRate={(rate) => {
         selectRoomRate(selectedRoom, rate);

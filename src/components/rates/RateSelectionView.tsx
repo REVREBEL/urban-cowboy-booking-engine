@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RoomType, RateOption, SearchCriteria } from '../../types';
 import type { ShapedRate } from '../../types/mews';
+import type { RateCardConfig } from '../../types/rate-card';
 import { RATE_OPTIONS } from '../../data/hotelData';
+import { resolveRateCardConfig } from '../../lib/rateCardConfig';
+import { ConfigurableRateCard } from './ConfigurableRateCard';
 import { OffersCard } from './RideEasyOffersCard';
 import { OffersCardOutfit } from './OutfitOffersCard';
 import { OffersCardSunup } from './SunupOffersCard';
@@ -34,6 +37,8 @@ interface RateSelectionViewProps {
   onSelectVersion?: (version: 'v1' | 'v2') => void;
   /** Live Mews rates for the selected room. When supplied, unavailable product cards are omitted. */
   liveRates?: ShapedRate[];
+  /** Published Webflow presentation records, matched only by durable Mews Rate.Id (or an explicit CMS default). */
+  rateCardConfigs?: RateCardConfig[];
   onSelectLiveRate?: (rate: ShapedRate) => void;
   /** Explicitly returned member rate after REV-115 eligibility + Mews retrieval. */
   memberRate?: ShapedRate | null;
@@ -48,6 +53,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   onSelectRate,
   onChangeRoom,
   liveRates,
+  rateCardConfigs = [],
   onSelectLiveRate,
   memberRate = null,
   onUnlockMember,
@@ -56,8 +62,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   const [expandedRateId, setExpandedRateId] = useState<string | null>(null);
   const [showInclusionsMatrix, setShowInclusionsMatrix] = useState<boolean>(false);
 
-  // Middle spotlight card: index 2 (Sunup Before The Trail) is the default middle card of 5
-  const [spotlightIndex, setSpotlightIndex] = useState<number>(2);
+  const [spotlightIndex, setSpotlightIndex] = useState<number>(0);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const cardWrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -101,13 +106,14 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     }, 500);
   };
 
-  // Center initial middle spotlight card (index 2) on mount
+  // Center the first offer that is actually available for this search.
   useEffect(() => {
     const timer = setTimeout(() => {
-      scrollToCard(2);
+      const firstVisible = cardWrapperRefs.current.findIndex(Boolean);
+      scrollToCard(firstVisible >= 0 ? firstVisible : 0);
     }, 200);
     return () => clearTimeout(timer);
-  }, []);
+  }, [liveRates, memberRate]);
 
   // Automatically close expanded card if deselected (clicking outside the card)
   useEffect(() => {
@@ -195,7 +201,11 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   };
 
   const handlePrevCard = () => {
-    const prevIdx = Math.max(0, spotlightIndex - 1);
+    const visibleIndexes = cardWrapperRefs.current
+      .map((element, index) => element ? index : -1)
+      .filter((index) => index >= 0);
+    const currentPosition = visibleIndexes.indexOf(spotlightIndex);
+    const prevIdx = visibleIndexes[Math.max(0, currentPosition - 1)] ?? visibleIndexes[0] ?? 0;
     if (expandedRateId && expandedRateId !== RATE_CARD_KEYS[prevIdx]) {
       setExpandedRateId(null);
     }
@@ -203,7 +213,11 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   };
 
   const handleNextCard = () => {
-    const nextIdx = Math.min(4, spotlightIndex + 1);
+    const visibleIndexes = cardWrapperRefs.current
+      .map((element, index) => element ? index : -1)
+      .filter((index) => index >= 0);
+    const currentPosition = visibleIndexes.indexOf(spotlightIndex);
+    const nextIdx = visibleIndexes[Math.min(visibleIndexes.length - 1, currentPosition + 1)] ?? visibleIndexes[0] ?? 0;
     if (expandedRateId && expandedRateId !== RATE_CARD_KEYS[nextIdx]) {
       setExpandedRateId(null);
     }
@@ -221,7 +235,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
       case 'sunup':
         return matching((rate) => rate.knownRateGroup === 'PACKAGE') ?? matching((rate) => /breakfast|sunup/i.test(`${rate.name} ${rate.description}`));
       case 'plan-ahead':
-        return matching((rate) => rate.knownRateGroup === 'NON_REFUNDABLE') ?? matching((rate) => /non.?refundable|prepay|covid/i.test(`${rate.name} ${rate.description}`));
+        return matching((rate) => rate.knownRateGroup === 'NON_REFUNDABLE');
       case 'stay-while':
         return matching((rate) => rate.knownRateGroup === 'DISCOUNTED_RATES' || rate.knownRateGroup === 'PROMOTIONS');
       case 'ride-easy':
@@ -273,6 +287,44 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     if (liveRate && onSelectLiveRate) onSelectLiveRate(liveRate);
     else if (!liveRates) onSelectRate(fallback);
   };
+
+  const configurableCardForRate = (liveRate?: ShapedRate | null): RateCardConfig | null => {
+    if (!liveRate) return null;
+
+    const resolved = resolveRateCardConfig(rateCardConfigs, liveRate.rateId);
+    if (resolved) return resolved;
+
+    // A live Mews rate must never fall back to a legacy promotional component.
+    // Until an editor publishes matching artwork, render the configurable card's
+    // accessible semantic treatment with the live offer copy.
+    return {
+      id: `mews-${liveRate.rateId}`,
+      name: liveRate.name,
+      mewsRateId: liveRate.rateId,
+      isDefault: false,
+      active: true,
+      sortOrder: Number.MAX_SAFE_INTEGER,
+      desktopArtworkUrl: null,
+      mobileArtworkUrl: null,
+      desktopOverlayPosition: 'normal',
+      mobileOverlayPosition: 'normal',
+      buttonStyle: 'filled',
+      theme: 'green',
+      fontPair: 'brothers-bianco',
+      eyebrow: liveRate.knownRateGroup?.replace(/_/g, ' ') ?? 'DIRECT RATE',
+      headline: liveRate.name,
+      description: liveRate.description || 'Book direct for the best available offer.',
+      supportingText: null,
+    };
+  };
+
+  const formatLivePrice = (liveRate: ShapedRate, amount: number) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: liveRate.currency,
+      minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
 
   // Format date string for display (e.g. "Oct 14, 2026")
   const formatDateDisplay = (dateStr: string) => {
@@ -403,7 +455,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <span className="text-[10px] font-mono font-bold text-[#4E332D] px-2 uppercase whitespace-nowrap">
-                  RATE {spotlightIndex + 1} OF 5
+                  RATE {Math.max(1, cardWrapperRefs.current.filter(Boolean).indexOf(cardWrapperRefs.current[spotlightIndex]) + 1)} OF {Math.max(1, cardWrapperRefs.current.filter(Boolean).length)}
                 </span>
                 <button
                   type="button"
@@ -480,6 +532,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const liveRate = liveRateForCard('ride-easy');
                 if (liveRates && !liveRate) return null;
                 const pricing = calculateStayTotal(rate, liveRate);
+                const cmsConfig = configurableCardForRate(liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -493,13 +546,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
-                    <OffersCard
+                    {cmsConfig && liveRate ? (
+                      <ConfigurableRateCard
+                        config={cmsConfig}
+                        live={{
+                          price: formatLivePrice(liveRate, pricing.nightly),
+                          priceUnit: 'Nightly',
+                          taxLabel: 'Excluding Taxes + Fees',
+                          cancellationText: liveRate.description || `Free Cancellation until ${criteria.checkIn}`,
+                          ctaLabel: 'Book This Rate',
+                        }}
+                        onBook={() => selectCardRate('ride-easy', rate)}
+                      />
+                    ) : <OffersCard
                       variant={rateCardsVariant}
                       price={`$${pricing.nightly}`}
                       priceUnit="Nightly"
@@ -508,7 +573,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       onConfirmBooking={() => selectCardRate('ride-easy', rate)}
                       pricingDetails={pricing}
                       cancellationText={liveRate?.description || `Free Cancellation until ${criteria.checkIn}`}
-                    />
+                    />}
                   </div>
                 );
               })()}
@@ -520,7 +585,9 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const isExpanded = expandedRateId === 'member';
                 const rate = RATE_OPTIONS.find((r) => r.id === 'member') || RATE_OPTIONS[4];
                 const liveRate = liveRateForCard('member');
+                if (liveRates && !liveRate) return null;
                 const pricing = calculateStayTotal(rate, liveRate);
+                const cmsConfig = configurableCardForRate(liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -534,13 +601,26 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
-                    <OffersCardOutfit
+                    {cmsConfig && liveRate ? (
+                      <ConfigurableRateCard
+                        config={cmsConfig}
+                        live={{
+                          price: formatLivePrice(liveRate, pricing.nightly),
+                          priceUnit: 'Nightly',
+                          taxLabel: 'Excluding Taxes + Fees',
+                          cancellationText: liveRate.description || `Free Cancellation until ${criteria.checkIn}`,
+                          ctaLabel: 'Unlock This Rate',
+                        }}
+                        onBook={() => selectCardRate('member', rate)}
+                        disabled={!onUnlockMember}
+                      />
+                    ) : <OffersCardOutfit
                       variant={rateCardsVariant}
                       price={liveRate ? `${liveRate.currency} ${pricing.nightly}` : '—'}
                       priceUnit="NIGHTLY"
@@ -551,7 +631,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       pricingDetails={liveRate ? pricing : undefined}
                       disabled={!liveRate || !onUnlockMember}
                       cancellationText={liveRate?.description || `Free Cancellation until ${criteria.checkIn}`}
-                    />
+                    />}
                   </div>
                 );
               })()}
@@ -565,6 +645,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const liveRate = liveRateForCard('sunup');
                 if (liveRates && !liveRate) return null;
                 const pricing = calculateStayTotal(rate, liveRate);
+                const cmsConfig = configurableCardForRate(liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -578,13 +659,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
-                    <OffersCardSunup
+                    {cmsConfig && liveRate ? (
+                      <ConfigurableRateCard
+                        config={cmsConfig}
+                        live={{
+                          price: formatLivePrice(liveRate, pricing.nightly),
+                          priceUnit: 'Nightly',
+                          taxLabel: 'Excluding Taxes + Fees',
+                          cancellationText: liveRate.description || `Free Cancellation until ${criteria.checkIn}`,
+                          ctaLabel: 'Book This Rate',
+                        }}
+                        onBook={() => selectCardRate('sunup', rate)}
+                      />
+                    ) : <OffersCardSunup
                       variant={rateCardsVariant}
                       price={`$${pricing.nightly}`}
                       priceUnit="NIGHTLY"
@@ -593,7 +686,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       onConfirmBooking={() => selectCardRate('sunup', rate)}
                       pricingDetails={pricing}
                       cancellationText={liveRate?.description || `Free Cancellation until ${criteria.checkIn}`}
-                    />
+                    />}
                   </div>
                 );
               })()}
@@ -607,6 +700,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const liveRate = liveRateForCard('stay-while');
                 if (liveRates && !liveRate) return null;
                 const pricing = calculateStayTotal(rate, liveRate);
+                const cmsConfig = configurableCardForRate(liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -620,13 +714,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
-                    <OffersCardStayAWhile
+                    {cmsConfig && liveRate ? (
+                      <ConfigurableRateCard
+                        config={cmsConfig}
+                        live={{
+                          price: formatLivePrice(liveRate, pricing.nightly),
+                          priceUnit: 'Nightly',
+                          taxLabel: 'Excluding Taxes + Fees',
+                          cancellationText: liveRate.description || `Free Cancellation until ${criteria.checkIn}`,
+                          ctaLabel: 'Book This Rate',
+                        }}
+                        onBook={() => selectCardRate('stay-while', rate)}
+                      />
+                    ) : <OffersCardStayAWhile
                       variant={rateCardsVariant}
                       price={`$${pricing.nightly}`}
                       priceUnit="NIGHTLY"
@@ -635,7 +741,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       onConfirmBooking={() => selectCardRate('stay-while', rate)}
                       pricingDetails={pricing}
                       cancellationText={liveRate?.description || `Free Cancellation until ${criteria.checkIn}`}
-                    />
+                    />}
                   </div>
                 );
               })()}
@@ -649,6 +755,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 const liveRate = liveRateForCard('plan-ahead');
                 if (liveRates && !liveRate) return null;
                 const pricing = calculateStayTotal(rate, liveRate);
+                const cmsConfig = configurableCardForRate(liveRate);
                 return (
                   <div
                     ref={(el) => { cardWrapperRefs.current[idx] = el; }}
@@ -662,13 +769,25 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       opacity: isSpotlight ? 1 : 0.82,
                       filter: isSpotlight ? 'drop-shadow(0 20px 30px rgba(0, 0, 0, 0.20))' : 'drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08))',
                       transition: 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease',
-                      height: `${(rateCardsVariant === 'compact' ? 657 : 820) * (isSpotlight ? 0.85 : 0.70)}px`,
+                      height: `${(cmsConfig ? 1038 : (rateCardsVariant === 'compact' ? 657 : 820)) * (isSpotlight ? 0.85 : 0.70)}px`,
                       willChange: 'transform',
                     }}
                   >
 
                     {/* Offer Card (Scales in exact proportion with full width to expand) */}
-                    <OffersCardPlanAhead
+                    {cmsConfig && liveRate ? (
+                      <ConfigurableRateCard
+                        config={cmsConfig}
+                        live={{
+                          price: formatLivePrice(liveRate, pricing.nightly),
+                          priceUnit: 'Nightly',
+                          taxLabel: 'Excluding Taxes + Fees',
+                          cancellationText: liveRate.description || `Full Prepay. Non Refundable.`,
+                          ctaLabel: 'Commit to the Cowboy',
+                        }}
+                        onBook={() => selectCardRate('plan-ahead', rate)}
+                      />
+                    ) : <OffersCardPlanAhead
                       variant={rateCardsVariant}
                       price={`$${pricing.nightly}`}
                       priceUnit="Nightly"
@@ -676,7 +795,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                       onToggleExpand={() => handleToggleExpandCard('plan-ahead', idx)}
                       onConfirmBooking={() => selectCardRate('plan-ahead', rate)}
                       pricingDetails={pricing}
-                    />
+                    />}
                   </div>
                 );
               })()}

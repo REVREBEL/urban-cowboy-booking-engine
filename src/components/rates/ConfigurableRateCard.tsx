@@ -123,7 +123,10 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
               type="button"
               className="rate-card-cta"
               data-button-style={config.buttonStyle}
-              onClick={onBook}
+              onClick={(event) => {
+                event.stopPropagation();
+                onBook();
+              }}
               disabled={disabled}
               aria-label={`${live.ctaLabel ?? "Book now"}: ${config.headline}, ${live.price} ${live.priceUnit ?? "nightly"}`}
             >
