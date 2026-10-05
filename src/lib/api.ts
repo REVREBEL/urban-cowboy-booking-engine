@@ -18,6 +18,7 @@ import { t } from "../i18n";
 import { apiLog } from "./apiLog";
 import type { RateCardConfig } from "../types/rate-card";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
+import type { AddOnCmsItem } from "../types/add-on-cms";
 
 export class ApiError extends Error {
   status: number;
@@ -142,6 +143,12 @@ export const api = {
       label: "Rate-card CMS configuration",
       why: "Loads normalized editorial rate-card artwork and approved display presets from Webflow. Live prices, policies, availability, and booking actions remain owned by Mews.",
     }).then((response) => response.cards).catch(() => []),
+
+  addOns: () =>
+    contentCall<{ addOns: AddOnCmsItem[] }>("add-ons", {
+      label: "Add-on CMS merchandising",
+      why: "Loads published add-on names, descriptions, images, and Mews Product ID bindings from Webflow. Live price and bookability remain owned by Mews.",
+    }).then((response) => response.addOns).catch(() => []),
 
   hotel: () =>
     call<HotelConfig>(`hotel?lang=${getLang()}`, undefined, {
