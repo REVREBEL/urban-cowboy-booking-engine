@@ -134,3 +134,20 @@ test("odd-hour cancellation windows do not invent an arrival clock time", () => 
     "Free Cancellation until 18 hours before arrival",
   );
 });
+
+
+test("divides a total-only amount by stay nights before labeling it nightly", () => {
+  const rate: ShapedRate = {
+    ...baseRate,
+    perNightNet: null,
+    perNightGross: null,
+    totalNet: 600,
+    totalGross: 660,
+  };
+
+  assert.deepEqual(rateCardPricePresentation(rate, 2), {
+    amount: 300,
+    taxLabel: "Excluding Taxes + Fees",
+    basis: "net",
+  });
+});
