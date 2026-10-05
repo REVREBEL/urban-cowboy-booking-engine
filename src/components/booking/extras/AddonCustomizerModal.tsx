@@ -24,10 +24,15 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
   onClose
 }) => {
   const addonKind = useMemo(() => {
-    if (addon.knownAddOn === 'FLOWER_BOUQUET') return 'fresh-cut-flowers';
-    if (addon.knownAddOn === 'WELCOME_WINE') return 'wine-bottle';
-    if (addon.knownAddOn === 'HUMMUS_AND_CRUDITES') return 'hummus-crudites';
-    if (addon.knownAddOn === 'LETS_EAT_CHOCOLATE_TRUFFLES') return 'chocolate-truffles';
+    // A Webflow demo alias may intentionally borrow another live Mews Product ID
+    // for pricing. In that case the CMS content, not the Mews product label, owns
+    // the guest-facing customization experience.
+    if (addon.contentSource !== 'webflow') {
+      if (addon.knownAddOn === 'FLOWER_BOUQUET') return 'fresh-cut-flowers';
+      if (addon.knownAddOn === 'WELCOME_WINE') return 'wine-bottle';
+      if (addon.knownAddOn === 'HUMMUS_AND_CRUDITES') return 'hummus-crudites';
+      if (addon.knownAddOn === 'LETS_EAT_CHOCOLATE_TRUFFLES') return 'chocolate-truffles';
+    }
 
     const searchable = `${addon.name} ${addon.description}`.toLowerCase();
     if (/flower|bouquet|bloom/.test(searchable)) return 'fresh-cut-flowers';
