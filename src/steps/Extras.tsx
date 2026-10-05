@@ -22,6 +22,7 @@ export function Extras() {
     products,
     productIds,
     toggleProduct,
+    setProductPresentation,
     airportTransfer,
     setAirportTransfer,
     imageBaseUrl,
@@ -107,6 +108,7 @@ export function Extras() {
 
     if (selected && selectedDisplay === product.displayId) {
       toggleProduct(product.id);
+      setProductPresentation(product.id, null);
       setSelectedDisplayByProduct((current) => {
         const next = { ...current };
         delete next[product.id];
@@ -119,6 +121,10 @@ export function Extras() {
       ...current,
       [product.id]: product.displayId,
     }));
+    setProductPresentation(product.id, {
+      name: product.name,
+      description: product.description,
+    });
 
     // Switching between two Webflow aliases for the same Mews product changes only
     // presentation identity. The Mews product remains selected exactly once.
@@ -254,6 +260,10 @@ export function Extras() {
               ...current,
               [customizingProduct.id]: customizingProduct.displayId,
             }));
+            setProductPresentation(customizingProduct.id, {
+              name: customizingProduct.name,
+              description: customizingProduct.description,
+            });
             if (!productIds.includes(customizingProduct.id)) {
               toggleProduct(customizingProduct.id);
             }
