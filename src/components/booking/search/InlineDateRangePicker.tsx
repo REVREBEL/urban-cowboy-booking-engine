@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface DailyRate {
   amount: number;
   currency?: string;
   available?: boolean;
+  minNights?: number;
 }
 
 interface InlineDateRangePickerProps {
@@ -14,6 +15,7 @@ interface InlineDateRangePickerProps {
   minDate?: string;
   dailyRates?: Record<string, DailyRate>;
   formatRate?: (rate: DailyRate) => string;
+  onVisibleRangeChange?: (startDate: string, endDate: string) => void;
 }
 
 const pad = (value: number) => String(value).padStart(2, "0");
@@ -38,6 +40,12 @@ const shiftMonth = (year: number, month: number, amount: number) => {
   return { year: next.getUTCFullYear(), month: next.getUTCMonth() };
 };
 
+const addDays = (date: string, days: number) => {
+  const value = new Date(`${date}T12:00:00Z`);
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
+};
+
 const monthName = (year: number, month: number) =>
   new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" }).format(
     new Date(Date.UTC(year, month, 1)),
@@ -55,12 +63,21 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
       currency: rate.currency || "USD",
       maximumFractionDigits: 0,
     }).format(rate.amount),
+  onVisibleRangeChange,
 }) => {
   const initial = fromIso(checkIn || minDate);
   const [view, setView] = useState({ year: initial.year, month: initial.month });
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const months = [view, shiftMonth(view.year, view.month, 1)];
+  useEffect(() => {
+    if (!onVisibleRangeChange) return;
+    const startDate = toIso(view.year, view.month, 1);
+    const afterSecondMonth = shiftMonth(view.year, view.month, 2);
+    onVisibleRangeChange(startDate, toIso(afterSecondMonth.year, afterSecondMonth.month, 1));
+  }, [view.year, view.month, onVisibleRangeChange]);
   const hasDailyRates = Boolean(dailyRates && Object.keys(dailyRates).length > 0);
+  const selectedMinimumNights = checkIn ? dailyRates?.[checkIn]?.minNights : undefined;
+  const minimumCheckout = checkIn && selectedMinimumNights ? addDays(checkIn, selectedMinimumNights) : undefined;
   const previewEnd = !checkOut && hoveredDate && hoveredDate > checkIn ? hoveredDate : checkOut;
 
   const nightCount = useMemo(() => {
@@ -76,6 +93,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
 
   const selectDate = (date: string) => {
     if (date < minDate) return;
+    if (checkIn && !checkOut && date > checkIn && minimumCheckout && date < minimumCheckout) return;
     if (!checkIn || checkOut || date <= checkIn) {
       onChange(date, "");
     } else {
@@ -111,8 +129,12 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                 {monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
                   if (!date) return <span key={`blank-${index}`} role="gridcell" className={hasDailyRates ? "h-14" : "h-10"} />;
                   const rate = dailyRates?.[date];
-                  const unavailable = rate?.available === false;
-                  const disabled = date < minDate || unavailable;
+                  const unavailable = rate?.available === false && !rate.minNights;
+                  const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
+                  const minimumStayBlocked = Boolean(choosingCheckout && minimumCheckout && date < minimumCheckout);
+                  // A sold night may still be used as the departure date because the guest
+                  // does not occupy the room that night.
+                  const disabled = date < minDate || minimumStayBlocked || (unavailable && !choosingCheckout);
                   const start = date === checkIn;
                   const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
                   const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
@@ -122,14 +144,19 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                         type="button"
                         disabled={disabled}
                         onClick={() => selectDate(date)}
-                        aria-label={`${date}${rate ? `, ${unavailable ? "unavailable" : formatRate(rate)}` : ""}`}
+                        aria-label={`${date}${minimumStayBlocked && selectedMinimumNights ? `, checkout requires at least ${selectedMinimumNights} nights` : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
                         aria-pressed={start || end}
-                        className="group absolute inset-0 flex w-full flex-col items-center justify-center font-uchen transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9A5636]"
+                        className="group absolute inset-0 flex w-full flex-col items-center justify-center font-uchen transition focus-visible:outline-none"
                       >
-                        <span className={`grid h-9 w-9 place-items-center rounded-full text-sm transition ${disabled ? "text-[#4E332D]/20 line-through" : start || end ? "bg-[#4E332D] text-[#FAF9F9]" : "text-[#4E332D] group-hover:bg-[#9A5636] group-hover:text-[#FAF9F9]"}`}>
+                        <span className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-[#9A5636] group-focus-visible:ring-offset-2 ${minimumStayBlocked ? "text-[#4E332D]/20" : disabled ? "text-[#4E332D]/20 line-through" : start || end ? `bg-[#4E332D] text-[#FAF9F9] ${start && rate?.minNights ? "ring-2 ring-[#4E332D] ring-offset-2 ring-offset-white" : ""}` : "text-[#4E332D] group-hover:bg-[#9A5636] group-hover:text-[#FAF9F9]"}`}>
                           {fromIso(date).day}
                         </span>
-                        {rate && <span className={`mt-0.5 font-bianco text-[9px] font-bold leading-none ${unavailable ? "text-[#4E332D]/30" : "text-[#4E332D]/65"}`}>{unavailable ? "Sold" : formatRate(rate)}</span>}
+                        {rate && <span className={`mt-1.5 font-bianco text-[9px] font-bold leading-none ${unavailable ? "text-[#4E332D]/30" : "text-[#4E332D]/65"}`}>{unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}</span>}
+                        {rate?.minNights && (
+                          <span role="tooltip" className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-[#292326] px-2 py-1 font-bianco text-[10px] font-normal normal-case tracking-normal text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                            Min. of {rate.minNights} nights.
+                          </span>
+                        )}
                       </button>
                     </div>
                   );

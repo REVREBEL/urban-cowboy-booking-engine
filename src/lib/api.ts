@@ -17,6 +17,7 @@ import { getLang, mewsLang } from "./lang";
 import { t } from "../i18n";
 import { apiLog } from "./apiLog";
 import type { RateCardConfig } from "../types/rate-card";
+import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 
 export class ApiError extends Error {
   status: number;
@@ -126,6 +127,16 @@ export interface ReservationLine {
 }
 
 export const api = {
+  calendar: (p: { startDate: string; endDate: string; adults: number; children: number; infants: number; property?: string; currencyCode?: string }) =>
+    post<{ dates: Record<string, DailyRate> }>(
+      "calendar",
+      p,
+      {
+        label: "Calendar rates & availability",
+        why: "Loads Mews-backed starting prices and sold-out states for the two visible calendar months.",
+      },
+    ),
+
   rateCards: () =>
     contentCall<{ cards: RateCardConfig[] }>("rate-cards", {
       label: "Rate-card CMS configuration",

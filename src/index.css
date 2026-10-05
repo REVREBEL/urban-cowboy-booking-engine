@@ -457,6 +457,7 @@
   width: 100%;
   aspect-ratio: 500 / 1038;
   overflow: hidden;
+  border-radius: 50px;
   background: #faf9f9;
 }
 

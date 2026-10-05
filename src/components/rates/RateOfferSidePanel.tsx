@@ -405,10 +405,10 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   // ================= NORMAL VARIANT (Normal Active Open.png) =================
   return (
     <div
-      className="w-[480px] h-[800px] rounded-r-[40px] rounded-l-none p-6 sm:p-8 lg:p-10 flex flex-col justify-around shadow-xl relative box-border transition-colors duration-300 shrink-0"
+      className="w-[528px] h-[800px] rounded-r-[40px] rounded-l-none py-6 pr-6 pl-[72px] sm:py-8 sm:pr-8 sm:pl-[80px] lg:py-10 lg:pr-10 lg:pl-[88px] flex flex-col items-center justify-center gap-8 shadow-xl relative box-border transition-colors duration-300 shrink-0"
       style={{
-        width: '480px',
-        minWidth: '480px',
+        width: '528px',
+        minWidth: '528px',
         backgroundColor: themeConfig.panelBg,
         border: `3.5px solid ${themeConfig.borderColor}`,
         fontFamily: themeConfig.fontFamily,
@@ -416,11 +416,11 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
       }}
     >
       {/* Top Close Icon */}
-      <div className="flex justify-end w-full mb-2">
+      <div className="absolute right-6 top-6 sm:right-8 sm:top-8 lg:right-10 lg:top-10 flex justify-end">
         <button
           onClick={onClose}
           type="button"
-          className="hover:scale-110 transition-all p-1 cursor-pointer shrink-0 -mt-2 -mr-2"
+            className="hover:scale-110 transition-all p-1 cursor-pointer shrink-0"
           style={{ color: themeConfig.closeBtnColor }}
           aria-label="Close rate details"
         >
@@ -429,7 +429,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
       </div>
 
       {/* Top Section: Cancellation & Schedule */}
-      <div className="space-y-4 mb-6" style={{ fontFamily: themeConfig.fontFamily }}>
+      <div className="w-full space-y-4" style={{ fontFamily: themeConfig.fontFamily }}>
         <div>
           <span
             className="font-bold text-sm sm:text-base uppercase tracking-wider block leading-tight"
@@ -474,7 +474,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
 
       {/* Embedded Ticket Box (Financial Breakdown Only) */}
       <div
-        className="rounded-[24px] p-6 sm:p-7 shadow-xs mb-8 transition-colors duration-300"
+        className="w-full rounded-[24px] p-6 sm:p-7 shadow-xs transition-colors duration-300"
         style={{
           backgroundColor: themeConfig.ticketBg,
           border: `1.5px solid ${themeConfig.ticketBorder}`,
@@ -603,7 +603,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
 
       {/* Policy Disclaimer in Editorial Font at Bottom */}
       <p
-        className="text-xs sm:text-[13px] leading-relaxed text-left px-1 mt-auto"
+        className="w-full text-xs sm:text-[13px] leading-relaxed text-left px-1"
         style={{
           color: themeConfig.textSecondary,
           fontFamily: themeConfig.policyFont,

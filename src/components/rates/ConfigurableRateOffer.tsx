@@ -45,11 +45,11 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   disabled = false,
 }) => {
   const isCompact = variant === "compact";
-  const sideWidth = isCompact ? 557 : 512;
-  const panelHeight = isCompact ? 675 : 1038;
+  const sideWidth = isCompact ? 557 : 528;
+  const panelHeight = isCompact ? 675 : 900;
 
   return (
-    <div className="flex flex-row items-stretch">
+    <div className={`flex flex-row ${isCompact ? "items-stretch" : "items-center"}`}>
       <div className="relative z-20 shrink-0">
         <ConfigurableRateCard
           config={config}
@@ -75,7 +75,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
         }}
         aria-hidden={!isExpanded}
       >
-        <div className="h-full pl-8">
+        <div className={isCompact ? "h-full pl-8" : "h-full"}>
           <RateOfferSidePanel
             variant={variant}
             theme={theme}

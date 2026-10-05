@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SearchBarExpanded, type ActiveDropdownSection } from "@/components/booking/search/SearchBarExpanded";
 import { InlineDateRangePicker } from "@/components/booking/search/InlineDateRangePicker";
 import { SearchBarGuestDropdown } from "@/components/booking/search/SearchBarGuestsDropdown";
@@ -6,12 +6,52 @@ import { SearchBarLocationDropdown } from "@/components/booking/search/SearchBar
 import { SearchBarPromoDropdown } from "@/components/booking/search/SearchBarPromoDropdown";
 import { useBooking, DEFAULT_PROPERTIES } from "@/state/booking";
 import { fmtDate, nights } from "@/lib/format";
+import { api } from "@/lib/api";
+import type { DailyRate } from "@/components/booking/search/InlineDateRangePicker";
+
+const CALENDAR_CACHE_TTL_MS = 15 * 60 * 1000;
+const CALENDAR_STORAGE_VERSION = "v2";
+const calendarCache = new Map<string, { expiresAt: number; dates: Record<string, DailyRate> }>();
+const calendarRequests = new Map<string, Promise<Record<string, DailyRate>>>();
+
+function readSessionCalendar(cacheKey: string) {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const raw = window.sessionStorage.getItem(`uc-calendar:${CALENDAR_STORAGE_VERSION}:${cacheKey}`);
+    if (!raw) return undefined;
+    const cached = JSON.parse(raw) as { expiresAt: number; dates: Record<string, DailyRate> };
+    if (cached.expiresAt > Date.now()) return cached;
+    window.sessionStorage.removeItem(`uc-calendar:${CALENDAR_STORAGE_VERSION}:${cacheKey}`);
+  } catch {
+    // Storage can be unavailable in privacy modes; the in-memory cache still works.
+  }
+  return undefined;
+}
+
+function writeSessionCalendar(cacheKey: string, cached: { expiresAt: number; dates: Record<string, DailyRate> }) {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(`uc-calendar:${CALENDAR_STORAGE_VERSION}:${cacheKey}`, JSON.stringify(cached));
+  } catch {
+    // Treat storage quota/privacy failures as a cache miss.
+  }
+}
+
+function visibleMonthRange(value: string) {
+  const base = value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : new Date().toISOString().slice(0, 10);
+  const [year, month] = base.split("-").map(Number);
+  const end = new Date(Date.UTC(year, month + 1, 1));
+  return {
+    startDate: `${year}-${String(month).padStart(2, "0")}-01`,
+    endDate: end.toISOString().slice(0, 10),
+  };
+}
 
 const PILLARS = [
   {
     title: "Disappear for a While",
     text: "Trade pavement for mountain air and the kind of quiet that makes you forget what day it is.",
-    icon: "/assets/hammock.svg",
+    icon: "/assets/icons/amenities/simple/hammock.svg",
   },
   {
     title: "Soak It All In",
@@ -22,7 +62,7 @@ const PILLARS = [
   {
     title: "Better Together",
     text: "Dinner, drinks, fireside nights and whatever happens next. Cowboy is made for gathering.",
-    icon: "/assets/campfire.svg",
+    icon: "/assets/icons/amenities/simple/campfire.svg",
   },
 ] as const;
 
@@ -46,10 +86,56 @@ export function Dates() {
   const [accessible, setAccessible] = useState(false);
   const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
   const [error, setError] = useState("");
+  const [dailyRates, setDailyRates] = useState<Record<string, DailyRate>>({});
+
+  const loadCalendar = useCallback(async (startDate: string, endDate: string) => {
+    const request = {
+      startDate,
+      endDate,
+      adults: form.adults,
+      children: form.children,
+      infants: form.infants,
+      property: "hotel",
+      currencyCode: "USD",
+    };
+    const cacheKey = JSON.stringify(request);
+    const cached = calendarCache.get(cacheKey) ?? readSessionCalendar(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      calendarCache.set(cacheKey, cached);
+      setDailyRates((current) => ({ ...current, ...cached.dates }));
+      return;
+    }
+    if (cached) calendarCache.delete(cacheKey);
+
+    let pending = calendarRequests.get(cacheKey);
+    if (!pending) {
+      pending = api.calendar(request).then((response) => {
+        const cachedResponse = { expiresAt: Date.now() + CALENDAR_CACHE_TTL_MS, dates: response.dates };
+        calendarCache.set(cacheKey, cachedResponse);
+        writeSessionCalendar(cacheKey, cachedResponse);
+        return response.dates;
+      }).finally(() => calendarRequests.delete(cacheKey));
+      calendarRequests.set(cacheKey, pending);
+    }
+
+    try {
+      const dates = await pending;
+      setDailyRates((current) => ({ ...current, ...dates }));
+    } catch {
+      // Preserve any previously loaded months if a later navigation request fails.
+    }
+  }, [form.adults, form.children, form.infants]);
+
+  useEffect(() => {
+    const range = visibleMonthRange(form.checkIn);
+    void loadCalendar(range.startDate, range.endDate);
+  }, [form.checkIn, loadCalendar]);
 
   const displayedChildCount = form.children + form.infants;
   const guestCount = form.adults + displayedChildCount;
   const nightCount = nights(form.checkIn, form.checkOut);
+  const selectedMinimumNights = form.checkIn ? dailyRates[form.checkIn]?.minNights : undefined;
+  const meetsMinimumStay = !selectedMinimumNights || nightCount >= selectedMinimumNights;
   const guestLabel = `${form.adults} adult${form.adults === 1 ? "" : "s"}${
     displayedChildCount ? ` · ${displayedChildCount} child${displayedChildCount === 1 ? "" : "ren"}` : ""
   }`;
@@ -68,6 +154,11 @@ export function Dates() {
     }
     if (form.checkOut <= form.checkIn) {
       setError("Check-out must be after check-in.");
+      setActiveSection("dates");
+      return;
+    }
+    if (!meetsMinimumStay) {
+      setError(`This arrival requires a minimum ${selectedMinimumNights}-night stay.`);
       setActiveSection("dates");
       return;
     }
@@ -110,7 +201,13 @@ export function Dates() {
                       <span className="font-bianco text-sm font-bold uppercase tracking-[2px] text-[#4E332D]">Select dates of stay</span>
                       <button type="button" onClick={() => setActiveSection(null)} aria-label="Close date picker" className="grid h-8 w-8 place-items-center rounded-full text-xl text-[#4E332D] hover:bg-[#EBE8E0]">×</button>
                     </div>
-                    <InlineDateRangePicker checkIn={form.checkIn} checkOut={form.checkOut} onChange={(checkIn, checkOut) => setDates(checkIn, checkOut)} />
+                    <InlineDateRangePicker
+                      checkIn={form.checkIn}
+                      checkOut={form.checkOut}
+                      onChange={(checkIn, checkOut) => setDates(checkIn, checkOut)}
+                      dailyRates={dailyRates}
+                      onVisibleRangeChange={loadCalendar}
+                    />
                     <div className="mt-4 flex flex-col gap-4 border-t border-[#4E332D]/10 pt-4 text-left sm:flex-row sm:items-end sm:justify-between">
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                         <span className="font-bianco text-[10px] font-bold uppercase tracking-[1.5px] text-[#4E332D]/60">Quick Select</span>
@@ -134,8 +231,14 @@ export function Dates() {
 
                       <button
                         type="button"
-                        disabled={!form.checkIn || !form.checkOut || form.checkOut <= form.checkIn}
-                        onClick={() => setActiveSection(null)}
+                        disabled={!form.checkIn || !form.checkOut || form.checkOut <= form.checkIn || !meetsMinimumStay}
+                        onClick={() => {
+                          if (!meetsMinimumStay) {
+                            setError(`This arrival requires a minimum ${selectedMinimumNights}-night stay.`);
+                            return;
+                          }
+                          setActiveSection(null);
+                        }}
                         className="self-end rounded-full bg-[#4E332D] px-6 pb-2.5 pt-3 font-bianco text-xs font-bold uppercase tracking-[1.5px] text-[#FAF9F9] transition-colors hover:bg-[#9A5636] disabled:cursor-not-allowed disabled:opacity-35 sm:shrink-0"
                       >
                         Confirm dates
