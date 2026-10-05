@@ -3,7 +3,6 @@ import { useBooking } from "../state/booking";
 import { t } from "../i18n";
 import { EMAIL_RE } from "../lib/format";
 import { getLang } from "../lib/lang";
-import { upgradeRooms } from "../lib/shaping";
 import { StepLayout } from "@/components/booking/layout/step-layout";
 import { IconArrowRight } from "@/components/icons/cowboy-icons";
 
@@ -11,7 +10,7 @@ import { IconArrowRight } from "@/components/icons/cowboy-icons";
 const PhoneInput = lazy(() => import("@/components/forms/phone-input").then((m) => ({ default: m.PhoneInput })));
 
 export function Guest() {
-  const { selectedRoom, selectedRate, availableRooms, guest, setGuest, goTo } = useBooking();
+  const { selectedRoom, selectedRate, guest, setGuest, goTo } = useBooking();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [phoneValid, setPhoneValid] = useState(true);
 
@@ -31,10 +30,8 @@ export function Guest() {
     else if (!guest.telephone.trim()) errs.telephone = t("guest.err.telephoneRequired");
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    // Propose le surclassement seulement s'il existe des chambres supérieures.
-    const currentTotal = selectedRate?.totalGross ?? selectedRoom?.fromGross ?? 0;
-    const hasUpgrades = upgradeRooms(availableRooms, selectedRoom, currentTotal).length > 0;
-    goTo(hasUpgrades ? "upgrade" : "extras");
+    // Room-upgrade step is intentionally disabled for the current client demo.
+    goTo("extras");
   }
 
   return (
