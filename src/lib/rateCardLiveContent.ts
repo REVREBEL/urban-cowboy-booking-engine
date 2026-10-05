@@ -7,8 +7,15 @@ export interface RateCardPricePresentation {
   basis: "net" | "gross";
 }
 
-export function rateCardPricePresentation(rate: ShapedRate): RateCardPricePresentation {
-  const net = rate.perNightNet ?? rate.totalNet;
+export function rateCardPricePresentation(
+  rate: ShapedRate,
+  nights = 1,
+): RateCardPricePresentation {
+  const stayNights = Number.isFinite(nights) && nights > 0 ? nights : 1;
+  const net =
+    rate.perNightNet ??
+    (typeof rate.totalNet === "number" ? rate.totalNet / stayNights : null);
+
   if (typeof net === "number" && Number.isFinite(net)) {
     return {
       amount: net,
@@ -17,7 +24,10 @@ export function rateCardPricePresentation(rate: ShapedRate): RateCardPricePresen
     };
   }
 
-  const gross = rate.perNightGross ?? rate.totalGross ?? 0;
+  const gross =
+    rate.perNightGross ??
+    (typeof rate.totalGross === "number" ? rate.totalGross / stayNights : 0);
+
   return {
     amount: gross,
     taxLabel: "Including Taxes + Fees",
