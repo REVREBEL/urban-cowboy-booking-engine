@@ -27,6 +27,34 @@ interface HelpMeChooseModalProps {
   initialPreferences?: RecommendationPreferences;
 }
 
+type VibeType = 'soak' | 'forest' | 'penthouse' | 'loft';
+type SoakPrefType = 'clawfoot' | 'cedar-outdoor' | 'copper-fire';
+
+interface VibeOption {
+  id: VibeType;
+  title: string;
+  desc: string;
+}
+
+interface SoakOption {
+  id: SoakPrefType;
+  title: string;
+  desc: string;
+}
+
+const VIBE_OPTIONS: VibeOption[] = [
+  { id: 'soak', title: 'Slow Soaking & Mountain Views', desc: 'Hillside picture windows, clawfoot tubs, deep rest.' },
+  { id: 'forest', title: 'Wild Forest & Cedar Tubs', desc: 'Tucked into the pines with steaming outdoor cedar soaking.' },
+  { id: 'penthouse', title: 'Grand Cathedral Romance', desc: 'High ceilings, timber balcony, and cozy fireplace.' },
+  { id: 'loft', title: 'Lodge Heart & Historic Hearth', desc: 'Above the saloon and fireplace parlor in the main chalet.' }
+];
+
+const SOAK_OPTIONS: SoakOption[] = [
+  { id: 'clawfoot', title: 'Window Clawfoot Tub', desc: 'Picture window looking into woods' },
+  { id: 'cedar-outdoor', title: 'Outdoor Cedar Tub', desc: 'On private secluded forest deck' },
+  { id: 'copper-fire', title: 'Copper Tub + Fireplace', desc: 'Hammered copper beside warm hearth' }
+];
+
 export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
   isOpen,
   onClose,
@@ -86,8 +114,10 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
             <X className="h-5 w-5" />
           </button>
         </div>
-
         <div className="overflow-y-auto px-6 py-7 sm:px-8 sm:py-8">
+          <div className="mb-8 flex items-center gap-3" aria-label={`Step ${step + 1} of 2`}>
+            <span
+              className={        <div className="overflow-y-auto px-6 py-7 sm:px-8 sm:py-8">
           <div className="mb-8 flex items-center gap-3" aria-label={`Step ${step + 1} of 2`}>
             <span
               className={`h-3 w-3 rounded-full ${
@@ -114,12 +144,7 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
                 <p className="mt-4 font-editorial text-sm leading-6 text-[#6B6259]">
                   Tell us who&apos;s making the trip. If your dog is coming too,
                   tap the pup and we&apos;ll keep every match dog-friendly.
-                </p>
-              </div>
 
-              <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-start">
-                <TravelPartyGroup
-                  options={TRAVEL_PARTY_OPTIONS}
                   value={party}
                   onChange={(value) => setParty(value as PartyType)}
                   className="max-w-none justify-items-stretch [&>button]:!h-[104px] [&>button]:!w-full"
@@ -161,6 +186,11 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
                 type="button"
                 onClick={() => setStep(0)}
                 className="mb-6 font-bianco text-xs font-bold uppercase tracking-[2px] text-[#4E332D]/55 transition-colors hover:text-[#4E332D]"
+                onClick={() => {
+                  onClose();
+                  onSelectRoom(matchedRoom);
+                }}
+                className="w-full sm:w-auto bg-[#4E332D] hover:bg-[#343833] text-white px-6 py-2.5 rounded-full font-woodblock text-xs uppercase tracking-widest cursor-pointer shadow-sm transition-transform active:scale-95 shrink-0"
               >
                 ← Back
               </button>
