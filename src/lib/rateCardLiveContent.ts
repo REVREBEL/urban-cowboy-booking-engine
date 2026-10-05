@@ -35,59 +35,108 @@ export function rateCardPricePresentation(
   };
 }
 
-function parseCheckIn(checkIn: string): Date | null {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(checkIn);
+const PROPERTY_TIME_ZONE = "America/New_York";
+
+function parseDateOnly(value: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!match) return null;
 
   const [, year, month, day] = match;
-  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 15, 0, 0));
+  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day), 12, 0, 0));
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function formatCutoff(date: Date, includeTime: boolean): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
+function dateOnlyInPropertyTimeZone(now: Date): Date {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: PROPERTY_TIME_ZONE,
     year: "numeric",
-    ...(includeTime
-      ? {
-          hour: "numeric",
-          minute: "2-digit",
-          timeZone: "UTC",
-        }
-      : { timeZone: "UTC" }),
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+
+  const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return new Date(
+    Date.UTC(Number(value.year), Number(value.month) - 1, Number(value.day), 12, 0, 0),
+  );
+}
+
+function formatPolicyDate(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
   }).format(date);
+}
+
+function cutoffDate(
+  checkIn: Date,
+  window: number | null | undefined,
+  period: "hours" | "days" | null | undefined,
+): Date | null {
+  if (
+    typeof window !== "number" ||
+    !Number.isFinite(window) ||
+    window <= 0 ||
+    !period
+  ) {
+    return null;
+  }
+
+  // Date-only booking criteria cannot support a trustworthy clock-time cutoff.
+  // Whole-day hour windows are safe to convert; odd-hour windows stay relative.
+  if (period === "hours" && window % 24 !== 0) return null;
+
+  const days = period === "days" ? window : window / 24;
+  const cutoff = new Date(checkIn);
+  cutoff.setUTCDate(cutoff.getUTCDate() - days);
+  return cutoff;
 }
 
 export function cancellationConfirmation(
   rate: ShapedRate,
   config: RateCardConfig,
   checkIn: string,
+  now = new Date(),
 ): string {
   if (rate.knownRateGroup === "NON_REFUNDABLE") {
-    return "Full Prepay · Non-Refundable";
+    return "Full Prepay Non Refundable";
   }
 
-  const window = config.cancellationPenaltyWindow;
-  const period = config.cancellationPenaltyWindowPeriod;
-  const checkInDate = parseCheckIn(checkIn);
+  const arrival = parseDateOnly(checkIn);
+  if (!arrival) return "See rate details for cancellation terms";
 
-  if (
-    typeof window === "number" &&
-    Number.isFinite(window) &&
-    window > 0 &&
-    period
-  ) {
-    if (period === "hours" && window % 24 !== 0) {
-      return `Free Cancellation until ${window} hours before arrival`;
-    }
+  const today = dateOnlyInPropertyTimeZone(now);
+  const freeCutoff = cutoffDate(
+    arrival,
+    config.cancellationPenaltyWindow,
+    config.cancellationPenaltyWindowPeriod,
+  );
+  const fullForfeitCutoff = cutoffDate(
+    arrival,
+    config.cancellationFullForfeitWindow,
+    config.cancellationFullForfeitWindowPeriod,
+  );
 
-    if (checkInDate) {
-      const cutoff = new Date(checkInDate);
-      const days = period === "days" ? window : window / 24;
-      cutoff.setUTCDate(cutoff.getUTCDate() - days);
-      return `Free Cancellation until ${formatCutoff(cutoff, false)}`;
-    }
+  if (freeCutoff && today < freeCutoff) {
+    return `Free Cancellation until ${formatPolicyDate(freeCutoff)}`;
+  }
+
+  if (fullForfeitCutoff && today < fullForfeitCutoff) {
+    return `Partially Refundable until ${formatPolicyDate(fullForfeitCutoff)}`;
+  }
+
+  if (fullForfeitCutoff && today >= fullForfeitCutoff) {
+    return "Full Prepay Non Refundable";
+  }
+
+  const oddHourFreeWindow =
+    config.cancellationPenaltyWindowPeriod === "hours" &&
+    typeof config.cancellationPenaltyWindow === "number" &&
+    config.cancellationPenaltyWindow % 24 !== 0;
+
+  if (oddHourFreeWindow) {
+    return `Free Cancellation until ${config.cancellationPenaltyWindow} hours before arrival`;
   }
 
   return "See rate details for cancellation terms";
