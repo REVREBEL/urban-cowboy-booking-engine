@@ -13,8 +13,12 @@ const base: Omit<RateCardConfig, "id" | "name"> = {
   desktopOverlayPosition: "normal",
   mobileOverlayPosition: "low",
   buttonStyle: "filled",
-  theme: "green",
+  buttonColor: "cowboy-umber",
+  textColor: "cowboy-umber",
   fontPair: "brothers-bianco",
+  ctaLabel: "Book Now",
+  cancellationPenaltyWindow: null,
+  cancellationPenaltyWindowPeriod: null,
   headline: "Rate",
   description: "Rate description",
 };
