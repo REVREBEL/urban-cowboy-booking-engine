@@ -13,7 +13,7 @@ const base: Omit<RateCardConfig, "id" | "name"> = {
   desktopOverlayPosition: "normal",
   mobileOverlayPosition: "low",
   buttonStyle: "filled",
-  theme: "lake-forest",
+  theme: "green",
   fontPair: "brothers-bianco",
   headline: "Rate",
   description: "Rate description",
