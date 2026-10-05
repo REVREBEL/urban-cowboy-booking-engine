@@ -528,6 +528,12 @@
   --rate-secondary-font: var(--font-number);
 }
 
+.rate-card-shell[data-artwork-fallback="true"] .rate-card-frame {
+  --rate-fg: #4e332d;
+  --rate-button-bg: #4e332d;
+  --rate-button-fg: #faf9f9;
+}
+
 .rate-card-semantic--visible {
   position: absolute;
   inset: 0;
