@@ -16,6 +16,7 @@ import { buildRooms, shapeProducts, cheapestDrinkProduct, mandatoryReveillon, is
 import { rankRecommendedRooms } from "../lib/roomMatching";
 import { parseRecommendationPreferences } from "../lib/topMatch";
 import { BOOKING_FEATURES } from "../config/bookingFeatures";
+import type { AddonSchedulePreference } from "../components/booking/extras/addon-types";
 import type {
   HotelConfig,
   ReservationCreateResult,
@@ -192,6 +193,8 @@ interface BookingContextValue extends BookingState {
   nightsCount: number;
   guestsCount: number;
   selectedProducts: ShapedProduct[];
+  addonPreferences: Record<string, AddonSchedulePreference>;
+  selectedAddOnDisplayByProduct: Record<string, string>;
   productsTotal: number;
   roomTotal: number;
   grandTotal: number;
@@ -220,6 +223,8 @@ interface BookingContextValue extends BookingState {
     id: string,
     presentation: { name: string; description: string } | null,
   ) => void;
+  setAddonPreference: (displayId: string, preference: AddonSchedulePreference | null) => void;
+  setSelectedAddOnDisplay: (productId: string, displayId: string | null) => void;
   setAirportTransfer: (v: boolean) => void; // extra hors Mews (relance n8n)
   setGuest: (p: Partial<Guest>) => void;
   setCreated: (r: ReservationCreateResult | null) => void;
@@ -270,6 +275,11 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [productPresentation, setProductPresentationState] = useState<
     Record<string, { name: string; description: string }>
   >({});
+  const [addonPreferences, setAddonPreferences] = useState<
+    Record<string, AddonSchedulePreference>
+  >({});
+  const [selectedAddOnDisplayByProduct, setSelectedAddOnDisplayByProduct] =
+    useState<Record<string, string>>({});
   const [cartId, setCartId] = useState<string>(loadCartId);
 
   const [hotel, setHotel] = useState<HotelConfig | null>(null);
@@ -480,6 +490,33 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const setAddonPreference: BookingContextValue["setAddonPreference"] = useCallback(
+    (displayId, preference) =>
+      setAddonPreferences((current) => {
+        if (!preference) {
+          if (!(displayId in current)) return current;
+          const next = { ...current };
+          delete next[displayId];
+          return next;
+        }
+        return { ...current, [displayId]: preference };
+      }),
+    [],
+  );
+
+  const setSelectedAddOnDisplay: BookingContextValue["setSelectedAddOnDisplay"] =
+    useCallback((productId, displayId) => {
+      setSelectedAddOnDisplayByProduct((current) => {
+        if (!displayId) {
+          if (!(productId in current)) return current;
+          const next = { ...current };
+          delete next[productId];
+          return next;
+        }
+        return { ...current, [productId]: displayId };
+      });
+    }, []);
+
   const setAirportTransfer: BookingContextValue["setAirportTransfer"] = useCallback(
     (v) => patch({ airportTransfer: v }),
     [patch],
@@ -515,6 +552,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setQuote(null);
     setQuoteError(false);
     setProductPresentationState({});
+    setAddonPreferences({});
+    setSelectedAddOnDisplayByProduct({});
     setState({ ...defaults });
     setCartId(newCartId()); // nouveau panier
   }, []);
@@ -593,6 +632,14 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       const entries = Object.entries(current).filter(([id]) => state.productIds.includes(id));
       if (entries.length === Object.keys(current).length) return current;
       return Object.fromEntries(entries);
+    });
+  }, [state.productIds]);
+
+  // Prune smart add-on session state when its underlying Mews product is removed.
+  useEffect(() => {
+    setSelectedAddOnDisplayByProduct((current) => {
+      const entries = Object.entries(current).filter(([id]) => state.productIds.includes(id));
+      return entries.length === Object.keys(current).length ? current : Object.fromEntries(entries);
     });
   }, [state.productIds]);
 
@@ -772,6 +819,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     nightsCount,
     guestsCount,
     selectedProducts,
+    addonPreferences,
+    selectedAddOnDisplayByProduct,
     productsTotal,
     roomTotal,
     grandTotal,
@@ -789,6 +838,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     clearSelection,
     toggleProduct,
     setProductPresentation,
+    setAddonPreference,
+    setSelectedAddOnDisplay,
     setAirportTransfer,
     setGuest,
     setCreated,
