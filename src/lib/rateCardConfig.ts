@@ -3,12 +3,21 @@ import type {
   ResolvedRateCardConfig,
 } from "../types/rate-card.ts";
 
+export function hasRequiredRateCardContent(config: RateCardConfig): boolean {
+  return Boolean(
+    config.id.trim() &&
+    config.name.trim() &&
+    config.headline.trim() &&
+    config.description.trim(),
+  );
+}
+
 export function resolveRateCardConfig(
   configs: readonly RateCardConfig[],
   mewsRateId: string | null | undefined,
 ): ResolvedRateCardConfig | null {
   const active = configs
-    .filter((config) => config.active)
+    .filter((config) => config.active && hasRequiredRateCardContent(config))
     .sort((a, b) => a.sortOrder - b.sortOrder);
 
   if (mewsRateId) {
