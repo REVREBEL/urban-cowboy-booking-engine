@@ -1,10 +1,11 @@
 import type {
+  CancellationPenaltyWindowPeriod,
   RateCardButtonStyle,
+  RateCardColor,
   RateCardConfig,
   RateCardFontPair,
   RateCardOverlayPosition,
-  RateCardTheme,
-} from "../../src/types/rate-card";
+} from "../../src/types/rate-card.ts";
 import type { Env } from "../mews/_lib.ts";
 import { json } from "../mews/_lib.ts";
 
@@ -40,6 +41,7 @@ interface WebflowItemsResponse {
 type OptionNames = ReadonlyMap<string, ReadonlyMap<string, string>>;
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
+const WEBFLOW_TIMEOUT_MS = 8_000;
 const CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
 
 const text = (value: unknown): string => typeof value === "string" ? value.trim() : "";
@@ -48,6 +50,9 @@ const bool = (value: unknown): boolean => value === true;
 
 const number = (value: unknown, fallback: number): number =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
+
+const nullableNumber = (value: unknown): number | null =>
+  typeof value === "number" && Number.isFinite(value) ? value : null;
 
 const imageUrl = (value: unknown): string | null => {
   if (typeof value === "string") return text(value) || null;
@@ -60,9 +65,54 @@ const optionName = (slug: string, value: unknown, options: OptionNames): string 
   return options.get(slug)?.get(raw) ?? raw;
 };
 
+const slugify = (value: string): string =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 const enumValue = <T extends string>(value: string, allowed: readonly T[], fallback: T): T => {
-  const normalized = value.toLowerCase().replace(/\s+/g, "-");
+  const normalized = slugify(value);
   return allowed.includes(normalized as T) ? normalized as T : fallback;
+};
+
+const RATE_CARD_COLORS: readonly RateCardColor[] = [
+  "paper",
+  "ash",
+  "alpine-linen",
+  "nude-ember",
+  "lodge-yellow",
+  "oxidized-teal",
+  "lake-forest",
+  "oxblood",
+  "whiskey-sour",
+  "bandana-red",
+  "copper",
+  "cowboy-umber",
+  "smoke",
+];
+
+const FONT_PAIR_BY_WEBFLOW_NAME: Readonly<Record<string, RateCardFontPair>> = {
+  "quattrocento-and-bianco-sans": "quattrocento-bianco",
+  "rundeck-and-to-serif-tibetan": "rundeck-noto-serif-tibetan",
+  "rundeck-and-noto-serif-tibetan": "rundeck-noto-serif-tibetan",
+  "league-spartan-and-arvo": "league-spartan-arvo",
+  "league-gothic-and-dm-sans": "league-gothic-dm-sans",
+  "noto-serif-tibetan-and-lato": "noto-serif-tibetan-lato",
+  "motter-corpus-std-and-coustard": "motter-corpus-coustard",
+  "filicudi-and-special-elite": "filicudi-special-elite",
+};
+
+const rateFontPair = (value: string): RateCardFontPair =>
+  FONT_PAIR_BY_WEBFLOW_NAME[slugify(value)] ?? "brothers-bianco";
+
+const penaltyPeriod = (value: string): CancellationPenaltyWindowPeriod | null => {
+  const normalized = slugify(value);
+  if (normalized === "hours") return "hours";
+  if (normalized === "days") return "days";
+  return null;
 };
 
 export function webflowOptionNames(collection: WebflowCollectionResponse): OptionNames {
@@ -94,18 +144,32 @@ export function normalizeWebflowRateCard(
 
   const desktopPosition = optionName("desktop-overlay-position", fields["desktop-overlay-position"], options);
   const mobilePosition = optionName("mobile-overlay-position", fields["mobile-overlay-position"], options);
-  const buttonStyle = optionName("button-style", fields["button-style"], options)
-    || optionName("card-fill", fields["card-fill"], options);
-  const theme = optionName("theme", fields.theme, options);
-  const fontPair = optionName("font-pair", fields["font-pair"], options);
+  const cardFill = optionName(
+    fields["button-style"] ? "button-style" : "card-fill",
+    fields["button-style"] ?? fields["card-fill"],
+    options,
+  );
+  const buttonColorName = optionName("button-color", fields["button-color"], options);
+  const textColorName = optionName("text-color", fields["text-color"], options);
+  const rateFontName = optionName(
+    fields["rate-font"] ? "rate-font" : "font-pair",
+    fields["rate-font"] ?? fields["font-pair"],
+    options,
+  );
+  const cancellationPeriodName = optionName(
+    "cancellation-penalty-window-period",
+    fields["cancellation-penalty-window-period"],
+    options,
+  );
 
   return {
     id,
     name,
     mewsRateId: text(fields["mews-rate-id"]) || null,
     isDefault: bool(fields["default-card"]),
-    active: !bool(item.isArchived) && !bool(item.isDraft) && bool(fields.active),
+    active: !bool(item.isArchived) && bool(fields.active),
     sortOrder: number(fields["sort-order"], index),
+    memberOnly: bool(fields["member-only"]),
     desktopArtworkUrl: imageUrl(fields["full-card"] ?? fields["desktop-artwork"]),
     mobileArtworkUrl: imageUrl(fields["compact-card"] ?? fields["mobile-artwork"]),
     desktopOverlayPosition: enumValue<RateCardOverlayPosition>(
@@ -118,13 +182,13 @@ export function normalizeWebflowRateCard(
       ["high", "normal", "low"],
       "normal",
     ),
-    buttonStyle: enumValue<RateCardButtonStyle>(buttonStyle, ["filled", "outline"], "filled"),
-    theme: enumValue<RateCardTheme>(theme, ["white", "blue", "green"], "white"),
-    fontPair: enumValue<RateCardFontPair>(
-      fontPair,
-      ["brothers-bianco", "brothers-uchen", "desert-bianco"],
-      "brothers-bianco",
-    ),
+    buttonStyle: enumValue<RateCardButtonStyle>(cardFill, ["filled", "outline"], "filled"),
+    buttonColor: enumValue<RateCardColor>(buttonColorName, RATE_CARD_COLORS, "cowboy-umber"),
+    textColor: enumValue<RateCardColor>(textColorName, RATE_CARD_COLORS, "cowboy-umber"),
+    fontPair: rateFontPair(rateFontName),
+    ctaLabel: text(fields["call-to-action"]) || null,
+    cancellationPenaltyWindow: nullableNumber(fields["cancellation-penalty-window"]),
+    cancellationPenaltyWindowPeriod: penaltyPeriod(cancellationPeriodName),
     eyebrow: text(fields.eyebrow) || null,
     headline: text(fields.headline),
     description: text(fields.description),
@@ -142,14 +206,23 @@ export function normalizeWebflowRateCards(
 }
 
 async function webflowGet<T>(env: Env, path: string): Promise<T> {
-  const response = await fetch(`${WEBFLOW_API}${path}`, {
-    headers: {
-      Authorization: `Bearer ${env.WEBFLOW_CMS_API_TOKEN}`,
-      Accept: "application/json",
-    },
-  });
-  if (!response.ok) throw new Error(`webflow_${response.status}`);
-  return response.json<T>();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), WEBFLOW_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(`${WEBFLOW_API}${path}`, {
+      headers: {
+        Authorization: `Bearer ${env.WEBFLOW_CMS_API_TOKEN}`,
+        Accept: "application/json",
+      },
+      signal: controller.signal,
+    });
+
+    if (!response.ok) throw new Error(`webflow_${response.status}`);
+    return response.json<T>();
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export async function onRequestGet({ env }: { env: Env }): Promise<Response> {
@@ -161,11 +234,15 @@ export async function onRequestGet({ env }: { env: Env }): Promise<Response> {
     const collectionId = encodeURIComponent(env.WEBFLOW_RATE_CARD_COLLECTION_ID);
     const [collection, items] = await Promise.all([
       webflowGet<WebflowCollectionResponse>(env, `/collections/${collectionId}`),
-      webflowGet<WebflowItemsResponse>(env, `/collections/${collectionId}/items?limit=100`),
+      // Booking should consume the currently published CMS version, not staged
+      // editor changes that have not been published to the live site.
+      webflowGet<WebflowItemsResponse>(env, `/collections/${collectionId}/items/live?limit=100`),
     ]);
     const cards = normalizeWebflowRateCards(items.items ?? [], webflowOptionNames(collection));
     return json({ cards }, 200, CACHE_CONTROL);
-  } catch {
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : "webflow_unknown";
+    console.warn("[webflow rate-cards] content fetch failed", reason);
     return json({ cards: [] }, 200, "no-store");
   }
 }
