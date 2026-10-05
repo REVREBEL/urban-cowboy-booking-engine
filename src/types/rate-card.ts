@@ -4,15 +4,34 @@ export type RateCardOverlayPosition = "high" | "normal" | "low";
 
 export type RateCardButtonStyle = "filled" | "outline";
 
-export type RateCardTheme =
-  | "white"
-  | "blue"
-  | "green";
+export type RateCardColor =
+  | "paper"
+  | "ash"
+  | "alpine-linen"
+  | "nude-ember"
+  | "lodge-yellow"
+  | "oxidized-teal"
+  | "lake-forest"
+  | "oxblood"
+  | "whiskey-sour"
+  | "bandana-red"
+  | "copper"
+  | "cowboy-umber"
+  | "smoke";
 
 export type RateCardFontPair =
   | "brothers-bianco"
   | "brothers-uchen"
-  | "desert-bianco";
+  | "desert-bianco"
+  | "quattrocento-bianco"
+  | "rundeck-noto-serif-tibetan"
+  | "league-spartan-arvo"
+  | "league-gothic-dm-sans"
+  | "noto-serif-tibetan-lato"
+  | "motter-corpus-coustard"
+  | "filicudi-special-elite";
+
+export type CancellationPenaltyWindowPeriod = "hours" | "days";
 
 export interface RateCardConfig {
   /** Stable CMS/item identifier. */
@@ -20,16 +39,14 @@ export interface RateCardConfig {
   /** Internal label for editors and diagnostics. */
   name: string;
 
-  /**
-   * Optional durable Mews Rate.Id binding. Blank means this configuration is
-   * not tied to one specific Mews rate.
-   */
+  /** Durable binding to Mews Rate.Id. */
   mewsRateId: string | null;
 
-  /** Published fallback used when no Mews-specific card exists. */
+  /** Optional published fallback used when no Mews-specific card exists. */
   isDefault: boolean;
   active: boolean;
   sortOrder: number;
+  memberOnly?: boolean;
 
   /** Editorial artwork supplied by the CMS editor. */
   desktopArtworkUrl: string | null;
@@ -39,10 +56,19 @@ export interface RateCardConfig {
   desktopOverlayPosition: RateCardOverlayPosition;
   mobileOverlayPosition: RateCardOverlayPosition;
 
-  /** Preset presentation controls. No arbitrary CSS comes from the CMS. */
+  /** CMS-controlled live-overlay presentation. */
   buttonStyle: RateCardButtonStyle;
-  theme: RateCardTheme;
+  buttonColor: RateCardColor;
+  textColor: RateCardColor;
   fontPair: RateCardFontPair;
+  ctaLabel?: string | null;
+
+  /**
+   * Optional CMS policy-display fallback. Mews remains authoritative whenever
+   * structured cancellation data is available from the booking API.
+   */
+  cancellationPenaltyWindow?: number | null;
+  cancellationPenaltyWindowPeriod?: CancellationPenaltyWindowPeriod | null;
 
   /**
    * Machine-readable equivalents of important words baked into the artwork.
