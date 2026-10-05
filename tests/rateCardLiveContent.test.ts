@@ -118,3 +118,19 @@ test("does not invent a cancellation date when no structured policy data exists"
     "See rate details for cancellation terms",
   );
 });
+
+
+test("odd-hour cancellation windows do not invent an arrival clock time", () => {
+  assert.equal(
+    cancellationConfirmation(
+      baseRate,
+      {
+        ...baseConfig,
+        cancellationPenaltyWindow: 18,
+        cancellationPenaltyWindowPeriod: "hours",
+      },
+      "2027-06-14",
+    ),
+    "Free Cancellation until 18 hours before arrival",
+  );
+});
