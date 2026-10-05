@@ -8,6 +8,7 @@ import { StayBreakdown } from "@/components/booking/summary/stay-breakdown";
 import { TrustRow } from "@/components/booking/conversion";
 import { IconArrowRight, IconCheck, IconShield } from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
+import { formatAddOnPreferenceNote } from "@/components/booking/extras/addon-smart-logic";
 
 export function Payment() {
   const {
@@ -22,6 +23,9 @@ export function Payment() {
     voucherCode,
     productIds,
     products,
+    selectedProducts,
+    addonPreferences,
+    selectedAddOnDisplayByProduct,
     guest,
     currency,
     amountDueNow,
@@ -81,6 +85,20 @@ export function Payment() {
       const p = products.find((pr) => pr.id === id);
       return !p || !p.property || p.property === selectedRoom.property;
     });
+    const addOnInstructionLines = selectedProducts.flatMap((product) => {
+      const displayId = selectedAddOnDisplayByProduct[product.id];
+      const line = displayId
+        ? formatAddOnPreferenceNote(product.name, addonPreferences[displayId])
+        : null;
+      return line ? [line] : [];
+    });
+    const noteParts = [
+      guest.notes.trim(),
+      addOnInstructionLines.length
+        ? `Add-on requests:\n${addOnInstructionLines.map((line) => `- ${line}`).join("\n")}`
+        : "",
+    ].filter(Boolean);
+
     try {
       const result = await api.createReservation({
         property: selectedRoom.property ?? undefined,
@@ -103,7 +121,7 @@ export function Payment() {
             infants,
             productIds: safeProductIds.length ? safeProductIds : undefined,
             voucherCode: voucherCode || undefined,
-            notes: guest.notes.trim() || undefined,
+            notes: noteParts.length ? noteParts.join("\n\n") : undefined,
           },
         ],
         returnUrl: `${window.location.origin}/confirmation`,
