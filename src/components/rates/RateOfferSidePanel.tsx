@@ -21,6 +21,8 @@ export interface RateOfferSidePanelProps {
   onClose: () => void;
   onConfirm?: () => void;
   isSubmitting?: boolean;
+  /** Optional explicit panel height for CMS artwork cards. */
+  height?: number;
 }
 
 interface ThemeStyles {
@@ -136,6 +138,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   onClose,
   onConfirm,
   isSubmitting = false,
+  height,
 }) => {
   const isCompact = variant === 'compact';
   const themeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS['ride-easy'];
@@ -148,7 +151,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         style={{
           width: '525px',
           minWidth: '525px',
-          height: '625px',
+          height: height ? `${height}px` : '625px',
           backgroundColor: themeConfig.panelBg,
           border: `4px solid ${themeConfig.borderColor}`,
           fontFamily: themeConfig.fontFamily,
@@ -397,7 +400,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         backgroundColor: themeConfig.panelBg,
         border: `3.5px solid ${themeConfig.borderColor}`,
         fontFamily: themeConfig.fontFamily,
-        height: '800px',
+        height: height ? `${height}px` : '800px',
       }}
     >
       {/* Top Close Icon */}
