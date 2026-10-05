@@ -14,6 +14,7 @@ import {
 } from "@/components/booking/extras/addon-smart-logic";
 import type { AddonSchedulePreference } from "@/components/booking/extras/addon-types";
 import type { AddOnCmsItem, MerchandisedAddOn } from "@/types/add-on-cms";
+import { BOOKING_FEATURES } from "@/config/bookingFeatures";
 
 export function Extras() {
   const [cmsAddOns, setCmsAddOns] = useState<AddOnCmsItem[]>([]);
@@ -164,6 +165,7 @@ export function Extras() {
       extrasTotal={productsTotal}
       currency={currency}
       airportTransfer={airportTransfer}
+      showAirportTransfer={BOOKING_FEATURES.airportTransfer}
       onToggleAirportTransfer={() => setAirportTransfer(!airportTransfer)}
       onToggle={toggleDisplayProduct}
       onSavePreference={savePreference}
