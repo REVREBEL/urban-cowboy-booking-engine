@@ -8,21 +8,26 @@ import { groupProducts, isHotelIncludedMeal, mandatoryReveillon, isReveillonProd
 import { StepLayout } from "@/components/booking/layout/step-layout";
 import { AddonCard } from "@/components/booking/extras/AddonCard";
 import { AddonCustomizerModal } from "@/components/booking/extras/AddonCustomizerModal";
-import type { AddonSchedulePreference } from "@/components/booking/extras/addon-types";
+import {
+  defaultAddOnPreference,
+  normalizeAddOnPreference,
+} from "@/components/booking/extras/addon-smart-logic";
 import type { AddOnCmsItem, MerchandisedAddOn } from "@/types/add-on-cms";
 import { DataBadge } from "@/components/dev/data-badge";
 import { IconArrowRight, IconCheck, IconSparkles } from "@/components/icons/cowboy-icons";
 
 export function Extras() {
   const [customizingProduct, setCustomizingProduct] = useState<MerchandisedAddOn | null>(null);
-  const [preferences, setPreferences] = useState<Record<string, AddonSchedulePreference>>({});
   const [cmsAddOns, setCmsAddOns] = useState<AddOnCmsItem[]>([]);
-  const [selectedDisplayByProduct, setSelectedDisplayByProduct] = useState<Record<string, string>>({});
   const {
     products,
     productIds,
     toggleProduct,
     setProductPresentation,
+    addonPreferences,
+    selectedAddOnDisplayByProduct,
+    setAddonPreference,
+    setSelectedAddOnDisplay,
     airportTransfer,
     setAirportTransfer,
     imageBaseUrl,
@@ -99,12 +104,12 @@ export function Extras() {
 
   const isDisplaySelected = (product: MerchandisedAddOn) =>
     productIds.includes(product.id) &&
-    (selectedDisplayByProduct[product.id] ?? firstDisplayForProduct.get(product.id)) === product.displayId;
+    (selectedAddOnDisplayByProduct[product.id] ?? firstDisplayForProduct.get(product.id)) === product.displayId;
 
   const toggleDisplayProduct = (product: MerchandisedAddOn) => {
     const selected = productIds.includes(product.id);
     const selectedDisplay =
-      selectedDisplayByProduct[product.id] ?? firstDisplayForProduct.get(product.id);
+      selectedAddOnDisplayByProduct[product.id] ?? firstDisplayForProduct.get(product.id);
 
     if (selected && selectedDisplay === product.displayId) {
       toggleProduct(product.id);
@@ -209,7 +214,7 @@ export function Extras() {
                       locked={forcedReveillonIds.has(p.id)}
                       nightsCount={nightsCount}
                       guestsCount={guestsCount}
-                      preference={preferences[p.displayId]}
+                      preference={addonPreferences[p.displayId]}
                       onToggle={() => toggleDisplayProduct(p)}
                       onOpenCustomize={forcedReveillonIds.has(p.id) ? undefined : () => setCustomizingProduct(p)}
                     />
@@ -250,7 +255,7 @@ export function Extras() {
           addon={customizingProduct}
           imageBaseUrl={imageBaseUrl}
           searchCriteria={{ checkIn, checkOut, nights: nightsCount }}
-          currentPreference={preferences[customizingProduct.displayId]}
+          currentPreference={addonPreferences[customizingProduct.displayId]}
           onSave={(preference) => {
             setPreferences((current) => ({
               ...current,
