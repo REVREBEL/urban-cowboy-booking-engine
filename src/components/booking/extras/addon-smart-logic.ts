@@ -1,4 +1,4 @@
-import type { MerchandisedAddOn } from "../../types/add-on-cms";
+import type { MerchandisedAddOn } from "@/types/add-on-cms";
 import type {
   AddonDeliveryType,
   AddonSchedulePreference,
