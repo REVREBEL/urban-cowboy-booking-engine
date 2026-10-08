@@ -58,7 +58,14 @@ test("classifies known rate groups and guest add-ons by durable Mews IDs", () =>
 
 test("system fee IDs stay separate from guest add-on IDs", () => {
   assert.equal(isSystemFeeProductId(CATSKILLS_MEWS_IDS.fees.RESORT_FEE), true);
-  assert.equal(isSystemFeeProductId(CATSKILLS_MEWS_IDS.fees.PET_FREE), true);
+  assert.equal(
+    isSystemFeeProductId(CATSKILLS_MEWS_IDS.addOns.DOG_INCLUSION),
+    false,
+  );
+  assert.equal(
+    knownAddOnKey(CATSKILLS_MEWS_IDS.addOns.DOG_INCLUSION),
+    "DOG_INCLUSION",
+  );
   assert.equal(
     isSystemFeeProductId(CATSKILLS_MEWS_IDS.addOns.FLOWER_BOUQUET),
     false,
