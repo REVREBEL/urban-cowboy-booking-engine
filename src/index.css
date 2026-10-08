@@ -499,6 +499,7 @@
 
 .rate-card-price {
   width: 100%;
+  color: var(--rate-fg);
   text-align: left;
   font-family: var(--rate-primary-font);
   font-size: 34px;
@@ -518,6 +519,7 @@
 .rate-card-tax {
   margin-top: 0.3em;
   width: 100%;
+  color: var(--rate-fg);
   text-align: right;
   font-family: var(--rate-secondary-font);
   font-size: clamp(9px, 2.4cqw, 12px);
@@ -542,6 +544,7 @@
 .rate-card-policy {
   margin: 0;
   width: 100%;
+  color: var(--rate-fg);
   text-align: center;
   font-family: var(--rate-secondary-font);
   font-size: clamp(9px, 2.2cqw, 11px);
@@ -600,7 +603,6 @@
 }
 
 .rate-card-shell[data-artwork-fallback="true"] .rate-card-frame {
-  --rate-fg: #4e332d;
   --rate-button-bg: #4e332d;
   --rate-button-fg: #faf9f9;
 }
