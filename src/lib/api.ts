@@ -164,7 +164,7 @@ export const api = {
       configurationCount: number;
       productCount: number;
       products: unknown[];
-    }>("products-debug", undefined, {
+    }>(`products-debug?lang=${getLang()}`, undefined, {
       label: "Mews product catalog diagnostic",
       why: "Fetches the raw Mews configuration product catalog and annotates each product with the current booking-engine inclusion/exclusion decision. Used only by the developer API debugger on the add-ons step.",
     }),
