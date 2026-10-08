@@ -20,6 +20,9 @@ export interface Env {
   WEBFLOW_RATE_CARD_COLLECTION_ID?: string;
   WEBFLOW_ADD_ON_COLLECTION_ID?: string;
   WEBFLOW_ROOM_TYPE_COLLECTION_ID?: string;
+  // Webflow Cloud Key Value Store binding for slow-changing CMS overlays.
+  // Optional in local/dev; production should bind this as WEBFLOW_CONTENT_CACHE.
+  WEBFLOW_CONTENT_CACHE?: KVNamespace;
   // ★ UNIQUE endpoint de suivi → n8n → Supabase : reçoit TOUS les events du funnel
   // (chaque étape + paiement initié/validé). C'est LE endpoint du back-office.
   WEBHOOK_EVENTS?: string;
