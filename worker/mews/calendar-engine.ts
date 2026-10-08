@@ -322,7 +322,10 @@ export async function readCalendarRange(
 
     dates[date] = publicCalendarDay(stored);
     stale ||= isStoredDayStale(date, stored);
-    generatedAt = Math.max(generatedAt ?? 0, snapshot?.generatedAt ?? 0);
+    generatedAt =
+      generatedAt == null
+        ? stored.checkedAt
+        : Math.min(generatedAt, stored.checkedAt);
   }
 
   return {
