@@ -25,8 +25,7 @@ export function LodgeSignboard({
 }: LodgeSignboardProps) {
   return (
     <div
-      className={`relative isolate w-full overflow-hidden bg-[#3D2A22] shadow-2xl ${className}`}
-      style={{ aspectRatio: "16 / 9" }}
+      className={`relative isolate aspect-[4/5] w-full overflow-hidden bg-[#3D2A22] shadow-2xl sm:aspect-[16/9] ${className}`}
     >
       <img
         src={backgroundImage}
