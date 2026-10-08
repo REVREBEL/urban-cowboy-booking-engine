@@ -765,6 +765,10 @@ export async function runScheduledCalendarRefresh(
   env: Env,
   timestamp = Date.now(),
 ): Promise<void> {
+  // Scheduled warming is only worthwhile with the shared KV binding. Without it,
+  // a cron would warm one edge cache while still spending Booking Engine API calls.
+  if (!env.CALENDAR_CACHE) return;
+
   const property = propertyByKey(env, "hotel");
   if (!property) return;
 
