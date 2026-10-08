@@ -339,7 +339,6 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   const configurableLiveContent = (
     liveRate: ShapedRate,
     config: RateCardConfig,
-    fallbackCta: string,
   ) => {
     const presentation = rateCardPricePresentation(liveRate, criteria.nights);
     return {
@@ -347,7 +346,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
       priceUnit: 'Nightly',
       taxLabel: presentation.taxLabel,
       cancellationText: cancellationConfirmation(liveRate, config, criteria.checkIn),
-      ctaLabel: config.ctaLabel || fallbackCta,
+      ctaLabel: config.ctaLabel,
     };
   };
 
@@ -631,7 +630,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateOffer
                         config={cmsConfig}
-                        live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
+                        live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('ride-easy')}
                         variant={rateCardsVariant}
                         isExpanded={isExpanded}
@@ -688,7 +687,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateOffer
                         config={cmsConfig}
-                        live={configurableLiveContent(liveRate, cmsConfig, 'Unlock This Rate')}
+                        live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('member')}
                         variant={rateCardsVariant}
                         isExpanded={isExpanded}
@@ -748,7 +747,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateOffer
                         config={cmsConfig}
-                        live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
+                        live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('sunup')}
                         variant={rateCardsVariant}
                         isExpanded={isExpanded}
@@ -805,7 +804,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateOffer
                         config={cmsConfig}
-                        live={configurableLiveContent(liveRate, cmsConfig, 'Book This Rate')}
+                        live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('stay-while')}
                         variant={rateCardsVariant}
                         isExpanded={isExpanded}
@@ -862,7 +861,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     {cmsConfig && liveRate ? (
                       <ConfigurableRateOffer
                         config={cmsConfig}
-                        live={configurableLiveContent(liveRate, cmsConfig, 'Commit to the Cowboy')}
+                        live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('plan-ahead')}
                         variant={rateCardsVariant}
                         isExpanded={isExpanded}
