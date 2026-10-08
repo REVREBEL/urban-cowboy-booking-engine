@@ -60,13 +60,18 @@ Rate typography:
 - full card: 34px amount / 20px cadence
 - compact card: 24px amount / 14px cadence
 
-The live overlay uses 30px horizontal padding at the 500px source-card width.
-The existing container-width padding rule reduces that spacing on narrower
-rendered cards.
+The live price/disclaimer container uses a fixed 30px inset on both sides of
+the 500px source artwork in both compositions. Carousel scaling then scales the
+complete card proportionally.
 
-The CTA is deliberately more substantial than the global default button on these oversized artwork cards: 58px high on the full composition and 54px on the compact composition, with a wider minimum footprint. This compensates for the carousel's visual scaling so the action still reads as a primary booking control.
+The CTA is deliberately more substantial than the global default button on these oversized artwork cards: 300px wide and 58px high on the full composition, and 300px wide and 54px high on the compact composition. This compensates for the carousel's visual scaling so the action still reads as a primary booking control.
 
-Full and compact artwork now use separate vertical placement scales. The 500×1038 full card keeps the price lower in the composition, while the 500×675 compact card moves the live rate upward so it does not drift into the action area.
+Full and compact artwork use separate vertical placement scales. The CMS
+high/normal/low value positions only the centered live price/disclaimer block;
+the CTA and cancellation policy retain their fixed composition-specific anchor.
+The 500×1038 full card keeps the price lower in the composition, while the
+500×675 compact card moves the live rate upward so it does not drift into the
+action area.
 
 ## Current Webflow Offers fields
 

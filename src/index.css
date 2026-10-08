@@ -480,27 +480,21 @@
 .rate-card-overlay {
   position: absolute;
   z-index: 2;
-  top: var(--rate-overlay-desktop-top, 58%);
-  right: 0;
-  bottom: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: clamp(8px, 3cqw, 15px);
-  padding: clamp(8px, 3.6cqw, 18px) clamp(18px, 6cqw, 30px)
-    clamp(20px, 6cqw, 32px);
+  inset: 0;
   color: var(--rate-fg);
 }
 
 .rate-card-price-block {
-  width: 100%;
+  position: absolute;
+  top: var(--rate-overlay-desktop-top, 54%);
+  right: 30px;
+  left: 30px;
 }
 
 .rate-card-price {
   width: 100%;
   color: var(--rate-fg);
-  text-align: left;
+  text-align: center;
   font-family: var(--rate-primary-font);
   font-size: 34px;
   font-weight: 700;
@@ -520,22 +514,25 @@
   margin-top: 0.3em;
   width: 100%;
   color: var(--rate-fg);
-  text-align: right;
+  text-align: center;
   font-family: var(--rate-secondary-font);
   font-size: clamp(9px, 2.4cqw, 12px);
   line-height: 1.2;
 }
 
 .rate-card-action {
+  position: absolute;
+  right: 30px;
+  bottom: 150px;
+  left: 30px;
   display: flex;
-  width: 100%;
   flex-direction: column;
   align-items: center;
   gap: clamp(8px, 2.4cqw, 12px);
 }
 
 .rate-card-cta {
-  min-width: 180px;
+  width: min(300px, 100%);
   height: 58px !important;
   padding-right: 38px !important;
   padding-left: 38px !important;
@@ -660,7 +657,7 @@
   display: none;
 }
 
-.rate-card-shell[data-artwork-mode="desktop"] .rate-card-overlay {
+.rate-card-shell[data-artwork-mode="desktop"] .rate-card-price-block {
   top: var(--rate-overlay-desktop-top, 58%);
 }
 
@@ -676,8 +673,12 @@
   display: block;
 }
 
-.rate-card-shell[data-artwork-mode="mobile"] .rate-card-overlay {
+.rate-card-shell[data-artwork-mode="mobile"] .rate-card-price-block {
   top: var(--rate-overlay-mobile-top, 58%);
+}
+
+.rate-card-shell[data-artwork-mode="mobile"] .rate-card-action {
+  bottom: 48px;
 }
 
 .rate-card-shell[data-artwork-mode="mobile"] .rate-card-price {
@@ -704,8 +705,12 @@
     display: block;
   }
 
-  .rate-card-shell[data-artwork-mode="auto"] .rate-card-overlay {
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-price-block {
     top: var(--rate-overlay-mobile-top, 58%);
+  }
+
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-action {
+    bottom: 48px;
   }
 
   .rate-card-shell[data-artwork-mode="auto"] .rate-card-price {
@@ -717,7 +722,7 @@
   }
 
   .rate-card-shell[data-artwork-mode="auto"] .rate-card-cta {
-    min-width: 168px;
+    width: min(300px, 100%);
     height: 54px !important;
     padding-right: 34px !important;
     padding-left: 34px !important;
