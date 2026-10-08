@@ -40,6 +40,7 @@ export function addOnKind(addon: MerchandisedAddOn): AddOnKind {
   // Their CMS content owns the guest-facing experience, so do not let the bound
   // product's knownAddOn key override the alias.
   if (addon.contentSource !== "webflow") {
+    if (addon.knownAddOn === "DOG_INCLUSION") return "pup-stay";
     if (addon.knownAddOn === "FLOWER_BOUQUET") return "fresh-cut-flowers";
     if (addon.knownAddOn === "WELCOME_WINE") return "wine-bottle";
     if (addon.knownAddOn === "HUMMUS_AND_CRUDITES") return "hummus-crudites";
