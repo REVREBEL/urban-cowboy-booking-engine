@@ -9,9 +9,9 @@ import { fmtDate, nights } from "@/lib/format";
 import { api } from "@/lib/api";
 import type { DailyRate } from "@/components/booking/search/InlineDateRangePicker";
 
-const CALENDAR_CACHE_FRESH_MS = 15 * 60 * 1000;
+const CALENDAR_CACHE_FRESH_MS = 2 * 60 * 1000;
 const CALENDAR_CACHE_STALE_MS = 24 * 60 * 60 * 1000;
-const CALENDAR_STORAGE_VERSION = "v3";
+const CALENDAR_STORAGE_VERSION = "v4";
 type CachedCalendar = { fetchedAt: number; dates: Record<string, DailyRate> };
 const calendarCache = new Map<string, CachedCalendar>();
 const calendarRequests = new Map<string, Promise<Record<string, DailyRate>>>();
@@ -95,9 +95,6 @@ export function Dates() {
     const request = {
       startDate,
       endDate,
-      adults: form.adults,
-      children: form.children,
-      infants: form.infants,
       property: "hotel",
       currencyCode: "USD",
     };
@@ -126,7 +123,7 @@ export function Dates() {
     } catch {
       // Preserve any previously loaded months if a later navigation request fails.
     }
-  }, [form.adults, form.children, form.infants]);
+  }, []);
 
   useEffect(() => {
     const range = visibleMonthRange(form.checkIn);
@@ -136,8 +133,12 @@ export function Dates() {
   const displayedChildCount = form.children + form.infants;
   const guestCount = form.adults + displayedChildCount;
   const nightCount = nights(form.checkIn, form.checkOut);
-  const selectedMinimumNights = form.checkIn ? dailyRates[form.checkIn]?.minNights : undefined;
-  const meetsMinimumStay = !selectedMinimumNights || nightCount >= selectedMinimumNights;
+  const selectedRate = form.checkIn ? dailyRates[form.checkIn] : undefined;
+  const selectedMinimumNights = selectedRate?.minNights;
+  const cachedRestrictionConflict =
+    nightCount > 0 &&
+    (Boolean(selectedMinimumNights && nightCount < selectedMinimumNights) ||
+      Boolean(selectedRate?.invalidStayLengths?.includes(nightCount)));
   const guestLabel = `${form.adults} adult${form.adults === 1 ? "" : "s"}${
     displayedChildCount ? ` · ${displayedChildCount} child${displayedChildCount === 1 ? "" : "ren"}` : ""
   }`;
@@ -156,11 +157,6 @@ export function Dates() {
     }
     if (form.checkOut <= form.checkIn) {
       setError("Check-out must be after check-in.");
-      setActiveSection("dates");
-      return;
-    }
-    if (!meetsMinimumStay) {
-      setError(`This arrival requires a minimum ${selectedMinimumNights}-night stay.`);
       setActiveSection("dates");
       return;
     }
@@ -233,14 +229,8 @@ export function Dates() {
 
                       <button
                         type="button"
-                        disabled={!form.checkIn || !form.checkOut || form.checkOut <= form.checkIn || !meetsMinimumStay}
-                        onClick={() => {
-                          if (!meetsMinimumStay) {
-                            setError(`This arrival requires a minimum ${selectedMinimumNights}-night stay.`);
-                            return;
-                          }
-                          setActiveSection(null);
-                        }}
+                        disabled={!form.checkIn || !form.checkOut || form.checkOut <= form.checkIn}
+                        onClick={() => setActiveSection(null)}
                         className="self-end rounded-full bg-[#4E332D] px-6 pb-2.5 pt-3 font-bianco text-xs font-bold uppercase tracking-[1.5px] text-[#FAF9F9] transition-colors hover:bg-[#9A5636] disabled:cursor-not-allowed disabled:opacity-35 sm:shrink-0"
                       >
                         Confirm dates
@@ -287,9 +277,18 @@ export function Dates() {
 
           {error && <p role="alert" className="mt-3 text-left font-editorial text-sm font-semibold text-[#8C2340]">{error}</p>}
           {!error && nightCount > 0 && (
-            <p className="mt-3 text-left font-editorial text-xs text-[#4E332D]/65">
-              {nightCount} night{nightCount === 1 ? "" : "s"} · {guestCount} guest{guestCount === 1 ? "" : "s"}
-            </p>
+            <div className="mt-3 text-left">
+              <p className="font-editorial text-xs text-[#4E332D]/65">
+                {nightCount} night{nightCount === 1 ? "" : "s"} · {guestCount} guest{guestCount === 1 ? "" : "s"}
+              </p>
+              {cachedRestrictionConflict && (
+                <p className="mt-1 font-editorial text-xs font-semibold text-[#9A5636]">
+                  {selectedMinimumNights && nightCount < selectedMinimumNights
+                    ? `Calendar guidance currently shows a minimum ${selectedMinimumNights}-night stay for this arrival. Search will verify live availability.`
+                    : "Calendar guidance currently shows a restriction affecting this stay length. Search will verify live availability."}
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>
