@@ -108,6 +108,10 @@ const CALL_META: Record<string, { label: string; why: string }> = {
     label: "Visitor country (IP)",
     why: "Infers the visitor country from Cloudflare IP metadata, with no external API, to preselect the phone country code and support US/Canada-specific presets.",
   },
+  "products-debug": {
+    label: "Mews product catalog diagnostic",
+    why: "Shows the raw Mews configuration product objects plus the current add-on inclusion/exclusion decision, so missing products can be traced to Mews data versus local filtering.",
+  },
   track: {
     label: "Cart tracking → n8n",
     why: "Sends cart state (status, selection, and contact details) to n8n throughout the funnel to support abandoned, payment-started, and completed booking records.",
