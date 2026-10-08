@@ -16,6 +16,9 @@ import type { AddonSchedulePreference } from "@/components/booking/extras/addon-
 import type { AddOnCmsItem, MerchandisedAddOn } from "@/types/add-on-cms";
 import { BOOKING_FEATURES } from "@/config/bookingFeatures";
 
+const SHOW_API_DEBUGGER =
+  import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
+
 export function Extras() {
   const [cmsAddOns, setCmsAddOns] = useState<AddOnCmsItem[]>([]);
   const {
@@ -50,6 +53,11 @@ export function Extras() {
     void api.addOns().then((items) => {
       if (alive) setCmsAddOns(items);
     });
+
+    if (SHOW_API_DEBUGGER) {
+      void api.productCatalogDebug().catch(() => undefined);
+    }
+
     return () => {
       alive = false;
     };
