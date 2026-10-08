@@ -20,6 +20,7 @@ import type { RateCardConfig } from "../types/rate-card";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 import type { AddOnCmsItem } from "../types/add-on-cms";
 import type { RoomTypeCmsReviewMap } from "../types/room-type-cms";
+import type { BookingLocationCmsMap } from "../types/location-cms";
 
 export class ApiError extends Error {
   status: number;
@@ -167,6 +168,18 @@ export const api = {
     })
       .then((response) => response.reviews)
       .catch((): RoomTypeCmsReviewMap => ({})),
+
+  locations: () =>
+    contentCall<{
+      locations: BookingLocationCmsMap;
+      generatedAt?: string | null;
+      stale?: boolean;
+    }>("locations", {
+      label: "Location CMS content",
+      why: "Loads the published Webflow Location record bound to each configured Mews property so booking chrome can display the correct location name, city/state, and legal links without hardcoded property copy.",
+    })
+      .then((response) => response.locations)
+      .catch((): BookingLocationCmsMap => ({})),
 
   hotel: () =>
     call<HotelConfig>(`hotel?lang=${getLang()}`, undefined, {
