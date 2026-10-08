@@ -271,3 +271,42 @@ test("fetches only the published Webflow item version and never echoes the CMS t
     globalThis.fetch = originalFetch;
   }
 });
+
+test("uses Webflow Call to Action with a defensive 24-character fallback", () => {
+  const accepted = normalizeWebflowRateCard({
+    id: "accepted-cta",
+    fieldData: {
+      name: "Accepted CTA",
+      active: true,
+      "call-to-action": "Unlock this Rate",
+      headline: "Headline",
+      description: "Description",
+    },
+  });
+
+  const tooLong = normalizeWebflowRateCard({
+    id: "long-cta",
+    fieldData: {
+      name: "Long CTA",
+      active: true,
+      "call-to-action": "This CTA is deliberately much too long",
+      headline: "Headline",
+      description: "Description",
+    },
+  });
+
+  const blank = normalizeWebflowRateCard({
+    id: "blank-cta",
+    fieldData: {
+      name: "Blank CTA",
+      active: true,
+      "call-to-action": "   ",
+      headline: "Headline",
+      description: "Description",
+    },
+  });
+
+  assert.equal(accepted?.ctaLabel, "Unlock this Rate");
+  assert.equal(tooLong?.ctaLabel, "Book Now");
+  assert.equal(blank?.ctaLabel, "Book Now");
+});
