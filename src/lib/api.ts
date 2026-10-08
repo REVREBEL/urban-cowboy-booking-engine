@@ -164,7 +164,9 @@ export const api = {
     }>("room-type-reviews", {
       label: "Room-type CMS reviews",
       why: "Loads published room-type review content from Webflow, keyed by the durable Mews Room Type ID. Blank review fields intentionally render no review section.",
-    }).then((response) => response.reviews).catch(() => ({})),
+    })
+      .then((response) => response.reviews)
+      .catch((): RoomTypeCmsReviewMap => ({})),
 
   hotel: () =>
     call<HotelConfig>(`hotel?lang=${getLang()}`, undefined, {
