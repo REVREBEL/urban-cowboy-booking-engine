@@ -157,6 +157,18 @@ export const api = {
       why: "Loads published add-on names, descriptions, images, and Mews Product ID bindings from Webflow. Live price and bookability remain owned by Mews.",
     }).then((response) => response.addOns).catch(() => []),
 
+  productCatalogDebug: () =>
+    call<{
+      source: string;
+      currencyCode: string;
+      configurationCount: number;
+      productCount: number;
+      products: unknown[];
+    }>("products-debug", undefined, {
+      label: "Mews product catalog diagnostic",
+      why: "Fetches the raw Mews configuration product catalog and annotates each product with the current booking-engine inclusion/exclusion decision. Used only by the developer API debugger on the add-ons step.",
+    }),
+
   roomTypeReviews: () =>
     contentCall<{
       reviews: RoomTypeCmsReviewMap;
