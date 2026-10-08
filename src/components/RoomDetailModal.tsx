@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { RoomType, SearchCriteria } from '../types';
+import type { RoomTypeCmsReview } from '../types/room-type-cms';
 import { AmenityWoodcutIcon } from './WoodcutArt';
-import { getFeaturedReviewForRoom } from '../data/roomReviews';
+import { GuestReviewQuoteCard } from './GuestReviewQuoteCard';
 import { X, Bath, ArrowRight } from 'lucide-react';
 
 interface RoomDetailModalProps {
@@ -9,18 +10,28 @@ interface RoomDetailModalProps {
   criteria: SearchCriteria;
   onClose: () => void;
   onProceedToRates: (room: RoomType) => void;
+  review?: RoomTypeCmsReview | null;
 }
 
 export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   room,
   criteria,
   onClose,
-  onProceedToRates
+  onProceedToRates,
+  review = null,
 }) => {
   if (!room) return null;
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const featuredReview = getFeaturedReviewForRoom(room.id, room.buildingId);
+
+  const reviewDate = review?.reviewDate
+    ? new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      }).format(new Date(review.reviewDate))
+    : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
@@ -239,17 +250,19 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Guest Review Quote Card (matching Review Quote.pdf) */}
-          <div className="pt-4 border-t border-[#4E332D]/15">
-            <div className="bg-white rounded-2xl border border-[#4E332D]/20 shadow-xs px-6 py-10 sm:px-12 sm:py-14 text-center my-2">
-              <blockquote className="font-cedarville text-2xl sm:text-3xl md:text-[34px] text-[#964828] font-normal leading-relaxed tracking-wide max-w-2xl mx-auto">
-                {featuredReview.quote}
-              </blockquote>
-              <p className="font-sans text-xs sm:text-[13px] tracking-[0.22em] text-[#964828]/85 uppercase mt-6 sm:mt-8 font-medium">
-                — {featuredReview.reviewer}, {featuredReview.date} · {featuredReview.site}
-              </p>
+          {review?.quote?.trim() ? (
+            <div className="border-t border-[#4E332D]/15 pt-4">
+              <GuestReviewQuoteCard
+                quote={review.quote}
+                reviewer={review.reviewer}
+                date={reviewDate}
+                site={review.source}
+                sourceUrl={review.sourceUrl}
+                size="lg"
+                className="my-2 px-6 py-10 sm:px-12 sm:py-14"
+              />
             </div>
-          </div>
+          ) : null}
         </div>
 
         {/* Modal Sticky Footer CTA */}
