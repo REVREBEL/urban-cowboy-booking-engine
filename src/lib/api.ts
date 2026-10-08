@@ -19,6 +19,7 @@ import { apiLog } from "./apiLog";
 import type { RateCardConfig } from "../types/rate-card";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 import type { AddOnCmsItem } from "../types/add-on-cms";
+import type { RoomTypeCmsReviewMap } from "../types/room-type-cms";
 
 export class ApiError extends Error {
   status: number;
@@ -154,6 +155,16 @@ export const api = {
       label: "Add-on CMS merchandising",
       why: "Loads published add-on names, descriptions, images, and Mews Product ID bindings from Webflow. Live price and bookability remain owned by Mews.",
     }).then((response) => response.addOns).catch(() => []),
+
+  roomTypeReviews: () =>
+    contentCall<{
+      reviews: RoomTypeCmsReviewMap;
+      generatedAt?: string | null;
+      stale?: boolean;
+    }>("room-type-reviews", {
+      label: "Room-type CMS reviews",
+      why: "Loads published room-type review content from Webflow, keyed by the durable Mews Room Type ID. Blank review fields intentionally render no review section.",
+    }).then((response) => response.reviews).catch(() => ({})),
 
   hotel: () =>
     call<HotelConfig>(`hotel?lang=${getLang()}`, undefined, {
