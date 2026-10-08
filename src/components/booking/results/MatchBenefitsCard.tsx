@@ -10,12 +10,14 @@ export function MatchBenefitsCard({
   intro,
   reasonHeadings,
   compact = false,
+  showActions = true,
 }: {
   room: MatchRoomSummary;
   reasons: string[];
   intro?: string;
   reasonHeadings?: [string, string];
   compact?: boolean;
+  showActions?: boolean;
 }) {
   const [saved, setSaved] = useState(false);
   const recommendationIntro =
@@ -75,15 +77,17 @@ export function MatchBenefitsCard({
         </section>
       </div>
 
-      <div className={`mt-auto flex justify-end gap-3 ${compact ? "pt-4" : "pt-4"}`}>
-        <Button type="button" variant="outline" onClick={handleShare} className={`${compact ? "h-8 px-4 text-[10px]" : "h-10 px-7 text-xs"} rounded-full border-umber bg-transparent text-umber shadow-none hover:bg-umber hover:text-primary-foreground`}>
-          Share
-        </Button>
-        <Button type="button" aria-pressed={saved} onClick={() => setSaved((current) => !current)} className={`${compact ? "h-8 px-4 text-[10px]" : "h-10 px-7 text-xs"} rounded-full bg-oxblood text-primary-foreground shadow-none hover:bg-oxblood/90`}>
-          {saved ? <Check aria-hidden="true" /> : null}
-          {saved ? "Saved" : "Save"}
-        </Button>
-      </div>
+      {showActions && (
+        <div className={`mt-auto flex justify-end gap-3 ${compact ? "pt-4" : "pt-4"}`}>
+          <Button type="button" variant="outline" onClick={handleShare} className={`${compact ? "h-8 px-4 text-[10px]" : "h-10 px-7 text-xs"} rounded-full border-umber bg-transparent text-umber shadow-none hover:bg-umber hover:text-primary-foreground`}>
+            Share
+          </Button>
+          <Button type="button" aria-pressed={saved} onClick={() => setSaved((current) => !current)} className={`${compact ? "h-8 px-4 text-[10px]" : "h-10 px-7 text-xs"} rounded-full bg-oxblood text-primary-foreground shadow-none hover:bg-oxblood/90`}>
+            {saved ? <Check aria-hidden="true" /> : null}
+            {saved ? "Saved" : "Save"}
+          </Button>
+        </div>
+      )}
     </aside>
   );
 }
