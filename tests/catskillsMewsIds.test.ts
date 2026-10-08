@@ -32,11 +32,13 @@ test("derives the active property configuration from deployment env values", () 
     MEWS_CONFIG_ID: CATSKILLS_MEWS_IDS.configurationId,
     MEWS_ADULT_AGE_CATEGORY_ID: CATSKILLS_MEWS_IDS.ageCategories.adult,
     MEWS_CHILD_AGE_CATEGORY_ID: CATSKILLS_MEWS_IDS.ageCategories.child,
+    WEBFLOW_LOCATION_ITEM_ID: "catskills-location-item",
   } as any);
 
   assert.equal(property.configId, CATSKILLS_MEWS_IDS.configurationId);
   assert.equal(property.adultAgeCategoryId, CATSKILLS_MEWS_IDS.ageCategories.adult);
   assert.equal(property.childAgeCategoryId, CATSKILLS_MEWS_IDS.ageCategories.child);
+  assert.equal(property.locationCmsItemId, "catskills-location-item");
 });
 
 test("classifies known rate groups and guest add-ons by durable Mews IDs", () => {
