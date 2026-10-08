@@ -41,12 +41,6 @@ const shiftMonth = (year: number, month: number, amount: number) => {
   return { year: next.getUTCFullYear(), month: next.getUTCMonth() };
 };
 
-const addDays = (date: string, days: number) => {
-  const value = new Date(`${date}T12:00:00Z`);
-  value.setUTCDate(value.getUTCDate() + days);
-  return value.toISOString().slice(0, 10);
-};
-
 const monthName = (year: number, month: number) =>
   new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" }).format(
     new Date(Date.UTC(year, month, 1)),
