@@ -9,3 +9,4 @@ The goal is to preserve not only what the application does, but why particular i
 - [Calendar Availability & Rate Snapshot Architecture](./calendar-availability-rate-snapshot.md) — how calendar rates, restrictions, caching, adaptive Mews polling, reservation-triggered refreshes, and the future Connector API migration work.
 
 - [Saved Room Match Email Placeholder](./email-templates/room-match-saved-v1.md) — data contract and implementation TODO for emailing saved matcher results through the cart-recovery/n8n pipeline.
+- [Room Discovery & Matcher Flow](./discovery-room-matcher.md) — how the signboard landing screen, full matcher, room-list modal, matched results, sharing, and saved-match tracking fit together.
