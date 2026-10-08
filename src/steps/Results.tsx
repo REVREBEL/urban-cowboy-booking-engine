@@ -7,11 +7,16 @@ import type { AvailabilityResponse, ShapedRoom } from "../types/mews";
 import { InlineUpsell } from "@/components/booking/extras/upsell-card";
 import { IconCalendar, IconUsers, IconChevron } from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
-import { parseRecommendationPreferences } from "../lib/topMatch";
+import {
+  clearRecommendationPreferencesFromUrl,
+  parseRecommendationPreferences,
+  writeRecommendationPreferencesToUrl,
+} from "../lib/topMatch";
 import { rankRecommendedRooms } from "../lib/roomMatching";
 import { unresolvedRoomTypeBindings } from "../lib/roomMerchandising";
-import HelpMeChoose from "./HelpMeChoose";
-import { StudioFindYourStay } from "./StudioFindYourStay";
+import { MatchOrBrowseScreen } from "@/components/booking/discovery/MatchOrBrowseScreen";
+import { RoomMatcherPage } from "@/components/booking/discovery/RoomMatcherPage";
+import { HelpMeChooseModal } from "@/components/booking/discovery/HelpMeChooseModal";
 import { StudioMatchResults } from "./StudioMatchResults";
 import { RoomsListCard, type RoomCardColor } from "@/components/RoomsListCard";
 import { BuildingExperienceList } from "@/components/BuildingExperienceList";
@@ -93,12 +98,13 @@ export function Results() {
   const [reloadKey, setReloadKey] = useState(0);
   // Accordéons « autres hébergements » (ouverts/fermés par clé d'hébergement).
   const [openProps, setOpenProps] = useState<string[]>([]);
-  const [discoveryView, setDiscoveryView] = useState<"explore" | "quiz" | "matches" | "rooms">(() =>
+  const [discoveryView, setDiscoveryView] = useState<"explore" | "matcher" | "matches" | "rooms">(() =>
     typeof window !== "undefined" && new URLSearchParams(window.location.search).has("interest")
       ? "matches"
       : "explore",
   );
   const [quizPreferences, setQuizPreferences] = useState<DiscoveryPreferences | null>(null);
+  const [showMatcherModal, setShowMatcherModal] = useState(false);
   const toggleProp = (key: string) =>
     setOpenProps((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
 
@@ -228,41 +234,55 @@ export function Results() {
   // Upsell inline : un extra de l'hébergement de la 1re chambre (sinon il serait
   // refusé à la réservation, cf. produits rattachés à une config Mews).
   const inlineProduct = products.find((p) => !p.property || p.property === rooms[0]?.property) ?? null;
-  // Date search now opens the discovery choice first. The room catalogue remains
-  // this component's source of truth; the discovery screens only choose whether
-  // to browse it or rank it with the existing live matcher.
+  const discoveryCriteria = {
+    property: "catskills",
+    checkIn,
+    checkOut,
+    nights: nightsCount,
+    guests: adults + children + infants,
+    children: children + infants,
+    rooms: 1,
+  };
+
+  function browseAllRooms() {
+    setQuizPreferences(null);
+    clearRecommendationPreferencesFromUrl();
+    setDiscoveryView("rooms");
+  }
+
+  function applyMatcherPreferences(preferences: DiscoveryPreferences) {
+    setQuizPreferences(preferences);
+    writeRecommendationPreferencesToUrl(preferences);
+    setDiscoveryView("matches");
+  }
+
+  // Date search opens the visual match-or-browse decision first. The imported
+  // mockup components are adapters only; live Mews inventory and our canonical
+  // matching rules remain the source of truth.
   if (discoveryView === "explore") {
     return (
-      <StudioFindYourStay
-        checkIn={checkIn}
-        checkOut={checkOut}
-        nights={nightsCount}
-        adults={adults}
-        children={children}
-        infants={infants}
+      <MatchOrBrowseScreen
+        criteria={discoveryCriteria}
         availableCount={!loading && !hotelError && !error ? rooms.length : undefined}
-        onChangeSearch={() => {
+        onChangeDates={() => {
           setQuizPreferences(null);
+          clearRecommendationPreferencesFromUrl();
           goTo("dates");
         }}
-        onHelpMeChoose={() => setDiscoveryView("quiz")}
-        onBrowseAll={() => {
-          setQuizPreferences(null);
-          setDiscoveryView("rooms");
-        }}
+        onFindYourStay={() => setDiscoveryView("matcher")}
+        onShowAllRooms={browseAllRooms}
       />
     );
   }
 
-  if (discoveryView === "quiz") {
+  if (discoveryView === "matcher") {
     return (
-      <HelpMeChoose
-        initialPreferences={quizPreferences ?? undefined}
+      <RoomMatcherPage
+        criteria={discoveryCriteria}
+        initialPreferences={recommendationPreferences ?? undefined}
         onBack={() => setDiscoveryView("explore")}
-        onSubmit={(preferences) => {
-          setQuizPreferences(preferences);
-          setDiscoveryView("matches");
-        }}
+        onViewAllRooms={browseAllRooms}
+        onSubmit={applyMatcherPreferences}
       />
     );
   }
@@ -276,11 +296,8 @@ export function Results() {
           checkIn={checkIn}
           imageBaseUrl={imageBaseUrl}
           totalAvailable={eligibleAllRooms.length}
-          onBack={() => setDiscoveryView("quiz")}
-          onBrowseAll={() => {
-            setQuizPreferences(null);
-            setDiscoveryView("rooms");
-          }}
+          onBack={() => setDiscoveryView("matcher")}
+          onBrowseAll={browseAllRooms}
           onSelectRoom={(room) => {
             if (room.rates.length) choose(room);
           }}
@@ -303,15 +320,7 @@ export function Results() {
   }
 
   if (discoveryView === "rooms") {
-    const studioCriteria = {
-      property: "catskills",
-      checkIn,
-      checkOut,
-      nights: nightsCount,
-      guests: adults,
-      children: children + infants,
-      rooms: 1,
-    };
+    const studioCriteria = discoveryCriteria;
 
     return (
       <div className="studio-room-experience">
@@ -324,7 +333,7 @@ export function Results() {
             if (room.rates.length) choose(room);
           }}
           onOpenRoomDetails={setOpenRoom}
-          onOpenHelpMeChoose={() => setDiscoveryView("quiz")}
+          onOpenHelpMeChoose={() => setShowMatcherModal(true)}
           onBackToSearch={() => goTo("dates")}
         />
         {openRoom && (
@@ -337,6 +346,16 @@ export function Results() {
             }}
           />
         )}
+
+        <HelpMeChooseModal
+          isOpen={showMatcherModal}
+          initialPreferences={recommendationPreferences ?? undefined}
+          onClose={() => setShowMatcherModal(false)}
+          onSubmit={(preferences) => {
+            setShowMatcherModal(false);
+            applyMatcherPreferences(preferences);
+          }}
+        />
       </div>
     );
   }
