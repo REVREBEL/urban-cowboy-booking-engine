@@ -75,6 +75,13 @@ function cleanCustomer(c: InCustomer | undefined) {
   };
 }
 
+// FUTURE: after reservationGroups/create succeeds, scheduled add-ons should also
+// create linked operational tasks in Mews using the Connector API. This is
+// intentionally NOT implemented yet because Connector API access requires a
+// separately certified connection and credentials that this project does not
+// currently have. Until certification is complete, keep the full delivery date,
+// time, and customization instructions in reservation Notes.
+//
 // reservationGroups/create — ÉCRIT dans Mews. On reconstruit entièrement le payload
 // à partir de champs whitelistés ; jamais de forward du body brut. Renvoie au front
 // une réponse curée (Id, PaymentRequestId, numéros de confirmation, montants dans leur devise Mews).
