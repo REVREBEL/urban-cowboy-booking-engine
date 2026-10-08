@@ -20,6 +20,8 @@ export interface Env {
   WEBFLOW_RATE_CARD_COLLECTION_ID?: string;
   WEBFLOW_ADD_ON_COLLECTION_ID?: string;
   WEBFLOW_ROOM_TYPE_COLLECTION_ID?: string;
+  WEBFLOW_LOCATION_COLLECTION_ID?: string;
+  WEBFLOW_LOCATION_ITEM_ID?: string;
   // Webflow Cloud Key Value Store binding for slow-changing CMS overlays.
   // Optional in local/dev; production should bind this as WEBFLOW_CONTENT_CACHE.
   WEBFLOW_CONTENT_CACHE?: KVNamespace;
@@ -60,6 +62,7 @@ export interface Property {
   key: string;
   label: string;
   configId: string;
+  locationCmsItemId: string | null;
   adultAgeCategoryId: string;
   childAgeCategoryId: string | null;
   // Infants are sent only when the selected property exposes an infant age category.
@@ -71,6 +74,7 @@ export const propertiesForEnv = (env: Env): Property[] => [
     key: "hotel",
     label: "Urban Cowboy Lodge Catskills",
     configId: env.MEWS_CONFIG_ID,
+    locationCmsItemId: env.WEBFLOW_LOCATION_ITEM_ID || null,
     adultAgeCategoryId: env.MEWS_ADULT_AGE_CATEGORY_ID || AGE_FALLBACK.adult,
     childAgeCategoryId: env.MEWS_CHILD_AGE_CATEGORY_ID || AGE_FALLBACK.child,
     infantAgeCategoryId: null,
