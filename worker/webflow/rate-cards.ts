@@ -7,6 +7,7 @@ import type {
   RateCardOverlayPosition,
 } from "../../src/types/rate-card.ts";
 import type { Env } from "../mews/_lib.ts";
+import { normalizeRateCardCtaLabel } from "../../src/lib/rateCardCta.ts";
 import { json } from "../mews/_lib.ts";
 
 interface WebflowImage {
@@ -191,7 +192,7 @@ export function normalizeWebflowRateCard(
     buttonColor: enumValue<RateCardColor>(buttonColorName, RATE_CARD_COLORS, "cowboy-umber"),
     textColor: enumValue<RateCardColor>(textColorName, RATE_CARD_COLORS, "cowboy-umber"),
     fontPair: rateFontPair(rateFontName),
-    ctaLabel: text(fields["call-to-action"]) || null,
+    ctaLabel: normalizeRateCardCtaLabel(fields["call-to-action"]),
     cancellationPenaltyWindow: nullableNumber(fields["cancellation-penalty-window"]),
     cancellationPenaltyWindowPeriod: penaltyPeriod(cancellationPeriodName),
     cancellationFullForfeitWindow: nullableNumber(fields["cancellation-full-forfeit-window"]),
