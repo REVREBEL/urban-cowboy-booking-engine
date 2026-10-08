@@ -24,6 +24,7 @@ import { runScheduledCalendarRefresh } from "./mews/calendar-engine";
 import { onRequestGet as rateCards } from "./webflow/rate-cards";
 import { onRequestGet as addOns } from "./webflow/add-ons";
 import { onRequestGet as roomTypeReviews } from "./webflow/room-type-reviews";
+import { onRequestGet as locations } from "./webflow/locations";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
 // waitUntil permet de lancer les webhooks en tâche de fond sans bloquer la réponse.
@@ -65,6 +66,10 @@ export default {
     if (url.pathname.match(/^\/api\/content\/room-type-reviews\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return roomTypeReviews({ env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    if (url.pathname.match(/^\/api\/content\/locations\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return locations({ env, waitUntil: (p) => ctx.waitUntil(p) });
     }
     const match = url.pathname.match(/^\/api\/mews\/([a-z-]+)\/?$/);
     if (match) {
