@@ -533,10 +533,10 @@
 }
 
 .rate-card-cta {
-  min-width: 164px;
-  height: 54px !important;
-  padding-right: 34px !important;
-  padding-left: 34px !important;
+  min-width: 180px;
+  height: 58px !important;
+  padding-right: 38px !important;
+  padding-left: 38px !important;
 }
 
 .rate-card-policy {
@@ -715,9 +715,9 @@
   }
 
   .rate-card-shell[data-artwork-mode="auto"] .rate-card-cta {
-    min-width: 154px;
-    height: 50px !important;
-    padding-right: 30px !important;
-    padding-left: 30px !important;
+    min-width: 168px;
+    height: 54px !important;
+    padding-right: 34px !important;
+    padding-left: 34px !important;
   }
 }
