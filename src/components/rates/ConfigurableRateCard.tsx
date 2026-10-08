@@ -6,6 +6,7 @@ import type {
   RateCardOverlayPosition,
 } from "@/types/rate-card";
 import { RATE_CARD_COLORS } from "@/lib/rateCardPresentation";
+import { normalizeRateCardCtaLabel } from "@/lib/rateCardCta";
 import { Button } from "@/components/ui/button";
 
 export interface ConfigurableRateCardProps {
@@ -20,10 +21,16 @@ export interface ConfigurableRateCardProps {
   className?: string;
 }
 
-const POSITION_TOP: Record<RateCardOverlayPosition, string> = {
-  high: "48%",
-  normal: "58%",
-  low: "68%",
+const DESKTOP_POSITION_TOP: Record<RateCardOverlayPosition, string> = {
+  high: "46%",
+  normal: "54%",
+  low: "62%",
+};
+
+const MOBILE_POSITION_TOP: Record<RateCardOverlayPosition, string> = {
+  high: "32%",
+  normal: "38%",
+  low: "44%",
 };
 
 export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
@@ -49,8 +56,8 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
   const style = useMemo(
     () =>
       ({
-        "--rate-overlay-desktop-top": POSITION_TOP[config.desktopOverlayPosition],
-        "--rate-overlay-mobile-top": POSITION_TOP[config.mobileOverlayPosition],
+        "--rate-overlay-desktop-top": DESKTOP_POSITION_TOP[config.desktopOverlayPosition],
+        "--rate-overlay-mobile-top": MOBILE_POSITION_TOP[config.mobileOverlayPosition],
         "--rate-fg": RATE_CARD_COLORS[config.textColor].hex,
       }) as React.CSSProperties,
     [
@@ -60,7 +67,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
     ],
   );
 
-  const baseCtaLabel = live.ctaLabel ?? config.ctaLabel ?? "BOOK NOW";
+  const baseCtaLabel = normalizeRateCardCtaLabel(config.ctaLabel ?? live.ctaLabel);
   const ctaLabel = isExpanded ? confirmLabel : baseCtaLabel;
 
   const handleAction = () => {
@@ -149,7 +156,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
               variant={config.buttonStyle}
               color={config.buttonColor}
               size="default"
-              className="max-w-full"
+              className="rate-card-cta max-w-full"
               onClick={(event) => {
                 event.stopPropagation();
                 handleAction();
