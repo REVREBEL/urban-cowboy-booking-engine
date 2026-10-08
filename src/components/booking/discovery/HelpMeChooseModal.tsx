@@ -6,19 +6,10 @@ import type {
   RecommendationPreferences,
 } from "@/types/find-your-stay";
 import { FIND_YOUR_STAY_PREFERENCES } from "@/data/findYourStayPreferences";
-import {
-  TravelPartyGroup,
-  type TravelPartyItem,
-} from "./FindYourStayTravelPartyButton";
+import { TravelPartyGroup } from "./FindYourStayTravelPartyButton";
+import { ROOM_MATCHER_PARTY_OPTIONS } from "./RoomMatcherPage";
 import { DogToggleButton } from "./DogToggleButton";
 import { PreferenceIconButton } from "./PreferenceIconButton";
-
-const TRAVEL_PARTY_OPTIONS: TravelPartyItem[] = [
-  { id: "solo", title: "SOLO", subtitle: "Time to myself" },
-  { id: "partner", title: "PARTNER", subtitle: "Just the two of us" },
-  { id: "friends", title: "FRIENDS", subtitle: "A crew weekend" },
-  { id: "family", title: "FAMILY", subtitle: "Grown-ups and kids" },
-];
 
 interface HelpMeChooseModalProps {
   isOpen: boolean;
@@ -124,7 +115,7 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
 
               <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-start">
                 <TravelPartyGroup
-                  options={TRAVEL_PARTY_OPTIONS}
+                  options={ROOM_MATCHER_PARTY_OPTIONS}
                   value={party}
                   onChange={(value) => setParty(value as PartyType)}
                   className="max-w-none justify-items-stretch [&>button]:!h-[104px] [&>button]:!w-full"
