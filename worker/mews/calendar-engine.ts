@@ -738,10 +738,25 @@ export async function refreshCalendarAfterReservation(
     endDate: string;
   },
 ): Promise<void> {
+  const property = propertyByKey(env, request.propertyKey ?? "hotel");
+  if (!property) return;
+
+  const currency = request.currency ?? "USD";
   const range = reservationRefreshRange(request.startDate, request.endDate);
+
+  // A booking is itself strong evidence that this period is commercially active.
+  // Keep the affected months in the scheduled-refresh hot set for the next 48 hours.
+  await markCalendarRangeActive(
+    env,
+    property,
+    currency,
+    range.startDate,
+    range.endDate,
+  );
+
   await queueCalendarRefresh(env, {
-    propertyKey: request.propertyKey,
-    currency: request.currency,
+    propertyKey: property.key,
+    currency,
     ...range,
   });
 }
@@ -755,10 +770,16 @@ async function monthNeedsRefresh(
 ) {
   const snapshot = await readMonth(env, property, currency, month);
   if (!snapshot) return true;
+
   const today = easternParts(timestamp).date;
-  const futureDates = Object.entries(snapshot.dates).filter(([date]) => date >= today);
-  if (!futureDates.length) return true;
-  return futureDates.some(([date, day]) => isStoredDayStale(date, day, timestamp));
+  const bounds = monthBounds(month);
+  const startDate = maxDate(bounds.startDate, today);
+  if (startDate >= bounds.endDate) return false;
+
+  const expectedDates = datesInRange(startDate, bounds.endDate);
+  return expectedDates.some((date) =>
+    isStoredDayStale(date, snapshot.dates[date], timestamp),
+  );
 }
 
 export async function runScheduledCalendarRefresh(
