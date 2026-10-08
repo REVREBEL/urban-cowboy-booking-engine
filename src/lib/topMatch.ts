@@ -250,4 +250,13 @@ export function writeRecommendationPreferencesToUrl(
   window.history.replaceState(null, "", url.toString());
 }
 
+export function clearRecommendationPreferencesFromUrl(): void {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  for (const key of ["party", "dog", "interest", "interest2"] as const) {
+    url.searchParams.delete(key);
+  }
+  window.history.replaceState(null, "", url.toString());
+}
+
 export type { MatchInterest, PartyType, RecommendationPreferences, RoomMerchandising };
