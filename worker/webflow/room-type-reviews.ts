@@ -121,7 +121,7 @@ export function normalizeRoomTypeReview(
     roomTypeId,
     quote,
     reviewer: text(fields["reviewer-name-or-handle"]) || null,
-    source: reviewSourceNames.get(sourceId) ?? sourceId || null,
+    source: (reviewSourceNames.get(sourceId) ?? sourceId) || null,
     sourceUrl: safeUrl(fields["review-url"]),
     reviewDate: text(fields["review-date"]) || null,
   };
