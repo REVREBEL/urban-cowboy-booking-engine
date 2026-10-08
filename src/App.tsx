@@ -15,6 +15,9 @@ import { Payment } from "./steps/Payment";
 import { Confirmation } from "./steps/Confirmation";
 import { t } from "./i18n";
 
+const SHOW_API_DEBUGGER =
+  import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
+
 const PROGRESS_NUMBER: Record<Step, number> = {
   dates: 1,
   results: 2,
@@ -78,7 +81,7 @@ function Shell() {
 
       <BookingFooter />
       <ContactBar />
-      {import.meta.env.DEV && <DevPanel />}
+      {SHOW_API_DEBUGGER && <DevPanel />}
     </div>
   );
 }
