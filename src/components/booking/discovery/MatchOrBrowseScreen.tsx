@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Calendar, ArrowLeft } from "lucide-react";
 import type { SearchCriteria } from "@/types";
 import { LodgeSignboard } from "./RusticLodgeSignboard";
@@ -24,7 +25,7 @@ function SignAction({
   onClick,
   tone,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   onClick: () => void;
   tone: "yellow" | "pink";
 }) {
