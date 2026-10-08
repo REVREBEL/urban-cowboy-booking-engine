@@ -80,3 +80,18 @@ test("draft or archived room type reviews are not exposed", () => {
   assert.equal(draft, null);
   assert.equal(archived, null);
 });
+
+test("unknown review source metadata is omitted instead of leaking a Webflow option ID", () => {
+  const review = normalizeRoomTypeReview({
+    isArchived: false,
+    isDraft: false,
+    fieldData: {
+      "mews-room-type-id": "mews-room-type-789",
+      review: "The room was great.",
+      "review-source": "internal-webflow-option-id",
+    },
+  });
+
+  assert.equal(review?.source, null);
+  assert.equal(review?.quote, "The room was great.");
+});
