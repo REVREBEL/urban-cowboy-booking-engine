@@ -64,7 +64,7 @@ The live overlay uses 30px horizontal padding at the 500px source-card width.
 The existing container-width padding rule reduces that spacing on narrower
 rendered cards.
 
-The CTA is deliberately more substantial than the global default button on these oversized artwork cards: 54px high on the full composition and 50px on the compact composition, with a wider minimum footprint.
+The CTA is deliberately more substantial than the global default button on these oversized artwork cards: 58px high on the full composition and 54px on the compact composition, with a wider minimum footprint. This compensates for the carousel's visual scaling so the action still reads as a primary booking control.
 
 Full and compact artwork now use separate vertical placement scales. The 500×1038 full card keeps the price lower in the composition, while the 500×675 compact card moves the live rate upward so it does not drift into the action area.
 
