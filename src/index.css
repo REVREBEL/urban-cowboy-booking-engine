@@ -723,3 +723,65 @@
     padding-left: 34px !important;
   }
 }
+
+
+/* Checkout mock visual language, now backed by live booking state. */
+.checkout-field {
+  width: 100%;
+  border: 2px solid #d1c9be;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0.75rem 1rem;
+  color: #221c18;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  box-shadow: 0 1px 2px rgb(78 51 45 / 0.04);
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.checkout-field:focus {
+  border-color: #4e332d;
+  box-shadow: 0 0 0 3px rgb(78 51 45 / 0.08);
+}
+
+.checkout-field::placeholder {
+  color: rgb(107 98 89 / 0.55);
+}
+
+.checkout-phone-shell > div {
+  border: 2px solid #d1c9be;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px rgb(78 51 45 / 0.04);
+}
+
+.checkout-phone-shell > div:focus-within {
+  border-color: #4e332d;
+  box-shadow: 0 0 0 3px rgb(78 51 45 / 0.08);
+}
+
+.checkout-phone-shell input {
+  color: #221c18;
+}
+
+.checkout-phone-shell span,
+.checkout-phone-shell svg {
+  color: #4e332d;
+}
+
+@media (min-width: 640px) {
+  .checkout-field {
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .checkout-field {
+    border-radius: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    font-size: 1.125rem;
+  }
+}
