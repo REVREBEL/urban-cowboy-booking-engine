@@ -64,7 +64,9 @@ The live overlay uses 30px horizontal padding at the 500px source-card width.
 The existing container-width padding rule reduces that spacing on narrower
 rendered cards.
 
-The CTA retains a minimum 44px interactive height.
+The CTA is deliberately more substantial than the global default button on these oversized artwork cards: 54px high on the full composition and 50px on the compact composition, with a wider minimum footprint.
+
+Full and compact artwork now use separate vertical placement scales. The 500×1038 full card keeps the price lower in the composition, while the 500×675 compact card moves the live rate upward so it does not drift into the action area.
 
 ## Current Webflow Offers fields
 
@@ -85,7 +87,7 @@ The production Offers collection currently exposes these rate-card fields:
 | `button-color` | `buttonColor` |
 | `text-color` | `textColor` |
 | `rate-font` | `fontPair` |
-| `call-to-action` | `ctaLabel` |
+| `call-to-action` | `ctaLabel` (max 24 characters in the renderer; blank/overlong values fall back to **Book Now**) |
 | `cancellation-penalty-window` | `cancellationPenaltyWindow` |
 | `cancellation-penalty-window-period` | `cancellationPenaltyWindowPeriod` |
 | `cancellation-full-forfeit-window` | `cancellationFullForfeitWindow` |
