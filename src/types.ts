@@ -12,6 +12,8 @@ export interface SearchCriteria {
   promoCode?: string;
 }
 
+
+
 export type PartyType = 'partner' | 'friends' | 'family' | 'solo';
 
 export type MatchInterest = PreferenceId;
@@ -92,6 +94,7 @@ export interface RateOption {
   isNonRefundable?: boolean;
   minNights?: number;
 }
+
 
 export interface ExtraItem {
   id: string;

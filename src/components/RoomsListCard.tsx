@@ -276,7 +276,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <div
                   key={pill.key}
                   data-pill-source={pill.source}
-                  className={`room-list-card__pill rounded-[12px] px-2.5 py-1 text-[10px] font-bold uppercase tracking-[1px] ${
+                  className={`room-list-card__pill rounded-[12px] px-2.5 pb-1 pt-[6.5px] text-[10px] font-bold uppercase tracking-[1px] ${
                     pill.emphasis === "highlight"
                       ? colorStyles.highlightBadge
                       : colorStyles.amenityBadge
@@ -296,7 +296,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onSelectRoom(room)}
-                  className={`room-list-card__action rounded-[17px] px-5 py-2.5 text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95 ${colorStyles.selectBtn}`}
+                  className={`room-list-card__action rounded-[17px] px-5 pb-2.5 pt-[12.5px] text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95 ${colorStyles.selectBtn}`}
                 >
                   Select Room
                 </button>
@@ -305,7 +305,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenRoomDetails(room)}
-                  className={`room-list-card__action rounded-[17px] px-5 py-2 text-[11px] font-bold uppercase tracking-[1.1px] transition-colors ${colorStyles.detailsBtn}`}
+                  className={`room-list-card__action rounded-[17px] px-5 pb-2 pt-[10.5px] text-[11px] font-bold uppercase tracking-[1.1px] transition-colors ${colorStyles.detailsBtn}`}
                 >
                   View Details
                 </button>

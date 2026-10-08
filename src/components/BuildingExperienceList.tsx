@@ -193,7 +193,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={onOpenHelpMeChoose}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FAF9F9] border border-[#4E332D]/30 hover:border-[#4E332D] font-woodblock text-xs uppercase tracking-wider text-[#4E332D] shadow-xs transition-all hover:bg-white cursor-pointer"
+              className="flex items-center gap-2 px-5 pb-2.5 pt-[12.5px] rounded-full bg-[#FAF9F9] border border-[#4E332D]/30 hover:border-[#4E332D] font-woodblock text-xs uppercase tracking-wider text-[#4E332D] shadow-xs transition-all hover:bg-white cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#9A5636]" />
               <span>Help Me Choose</span>
@@ -203,7 +203,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             <div className="flex items-center bg-[#FAF9F9] border border-[#4E332D]/20 rounded-full p-1 text-xs font-woodblock uppercase tracking-wider text-[#4E332D]">
               <button
                 onClick={() => setLayoutMode('spread')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 pb-1 pt-[6.5px] rounded-full transition-all cursor-pointer ${
                   layoutMode === 'spread'
                     ? 'bg-[#4E332D] text-[#EBE8E0] shadow-xs'
                     : 'text-[#73716D] hover:text-[#4E332D]'
@@ -214,7 +214,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               </button>
               <button
                 onClick={() => setLayoutMode('catalog')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 pb-1 pt-[6.5px] rounded-full transition-all cursor-pointer ${
                   layoutMode === 'catalog'
                     ? 'bg-[#4E332D] text-[#EBE8E0] shadow-xs'
                     : 'text-[#73716D] hover:text-[#4E332D]'
@@ -226,7 +226,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </div>
 
             {/* Active search pill */}
-            <div className="px-4 py-2 rounded-full border border-[#4E332D]/20 bg-[#FAF9F9] font-woodblock text-xs uppercase tracking-wider text-[#4E332D] flex items-center gap-2">
+            <div className="px-4 pb-2 pt-[10.5px] rounded-full border border-[#4E332D]/20 bg-[#FAF9F9] font-woodblock text-xs uppercase tracking-wider text-[#4E332D] flex items-center gap-2">
               <Calendar className="w-3.5 h-3.5 text-[#9A5636]" />
               <span>
                 {formatSummaryDate(criteria.checkIn)} — {formatSummaryDate(criteria.checkOut)} · {criteria.guests} Adults
@@ -243,7 +243,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </span>
             <button
               onClick={() => setSelectedRoomTypeGroupKey('all')}
-              className={`px-3.5 py-1 rounded-full text-xs font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`px-3.5 pb-1 pt-[6.5px] rounded-full text-xs font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
                 selectedRoomTypeGroupKey === 'all'
                   ? 'bg-[#4E332D] text-[#EBE8E0]'
                   : 'bg-[#FAF9F9] text-[#4E332D] border border-[#4E332D]/20 hover:border-[#4E332D]'
@@ -255,7 +255,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               <button
                 key={group.key}
                 onClick={() => setSelectedRoomTypeGroupKey(group.key)}
-                className={`px-3.5 py-1 rounded-full text-xs font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
+                className={`px-3.5 pb-1 pt-[6.5px] rounded-full text-xs font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
                   selectedRoomTypeGroupKey === group.key
                     ? 'bg-[#4E332D] text-[#EBE8E0]'
                     : 'bg-[#FAF9F9] text-[#4E332D] border border-[#4E332D]/20 hover:border-[#4E332D]'
@@ -269,7 +269,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'cedar' ? 'all' : 'cedar')}
-              className={`px-3 py-1 rounded-full text-[11px] font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`px-3 pb-1 pt-[6.5px] rounded-full text-[11px] font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'cedar'
                   ? 'bg-[#9A5636] text-[#EBE8E0]'
                   : 'bg-[#FAF9F9] text-[#4E332D] border border-[#4E332D]/20 hover:border-[#4E332D]'
@@ -279,7 +279,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </button>
             <button
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'dog' ? 'all' : 'dog')}
-              className={`px-3 py-1 rounded-full text-[11px] font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`px-3 pb-1 pt-[6.5px] rounded-full text-[11px] font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'dog'
                   ? 'bg-[#9A5636] text-[#EBE8E0]'
                   : 'bg-[#FAF9F9] text-[#4E332D] border border-[#4E332D]/20 hover:border-[#4E332D]'
@@ -289,7 +289,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </button>
             <button
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'fireplace' ? 'all' : 'fireplace')}
-              className={`px-3 py-1 rounded-full text-[11px] font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`px-3 pb-1 pt-[6.5px] rounded-full text-[11px] font-woodblock uppercase tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'fireplace'
                   ? 'bg-[#9A5636] text-[#EBE8E0]'
                   : 'bg-[#FAF9F9] text-[#4E332D] border border-[#4E332D]/20 hover:border-[#4E332D]'
