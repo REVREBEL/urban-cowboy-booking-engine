@@ -20,6 +20,7 @@ import { onRequestPost as paymentLink } from "./mews/payment-link";
 import { onRequestPost as voucher } from "./mews/voucher";
 import { onRequestPost as track } from "./mews/track";
 import { onRequestGet as geo } from "./mews/geo";
+import { onRequestGet as productsDebug } from "./mews/products-debug";
 import { runScheduledCalendarRefresh } from "./mews/calendar-engine";
 import { onRequestGet as rateCards } from "./webflow/rate-cards";
 import { onRequestGet as addOns } from "./webflow/add-ons";
@@ -44,6 +45,7 @@ const ROUTES: Record<string, Partial<Record<string, Handler>>> = {
   voucher: { POST: h(voucher) },
   track: { POST: h(track) },
   geo: { GET: h(geo) },
+  "products-debug": { GET: h(productsDebug) },
 };
 
 const json = (data: unknown, status: number) =>
