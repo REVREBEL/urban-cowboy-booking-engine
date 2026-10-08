@@ -22,9 +22,9 @@ export interface ConfigurableRateCardProps {
 }
 
 const DESKTOP_POSITION_TOP: Record<RateCardOverlayPosition, string> = {
-  high: "46%",
-  normal: "54%",
-  low: "62%",
+  high: "62%",
+  normal: "67%",
+  low: "72%",
 };
 
 const MOBILE_POSITION_TOP: Record<RateCardOverlayPosition, string> = {
@@ -49,6 +49,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
 
   const desktopArtwork = desktopFailed ? null : config.desktopArtworkUrl;
   const mobileArtwork = mobileFailed ? null : config.mobileArtworkUrl;
+  const textColor = RATE_CARD_COLORS[config.textColor].hex;
 
   const hasAnyArtwork = Boolean(desktopArtwork || mobileArtwork);
   const fallbackIsVisible = !hasAnyArtwork;
@@ -58,12 +59,12 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
       ({
         "--rate-overlay-desktop-top": DESKTOP_POSITION_TOP[config.desktopOverlayPosition],
         "--rate-overlay-mobile-top": MOBILE_POSITION_TOP[config.mobileOverlayPosition],
-        "--rate-fg": RATE_CARD_COLORS[config.textColor].hex,
+        "--rate-fg": textColor,
       }) as React.CSSProperties,
     [
       config.desktopOverlayPosition,
       config.mobileOverlayPosition,
-      config.textColor,
+      textColor,
     ],
   );
 
@@ -159,6 +160,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
               color={config.buttonColor}
               size="default"
               className="rate-card-cta max-w-full"
+              style={config.buttonStyle === "outline" ? { color: textColor } : undefined}
               onClick={(event) => {
                 event.stopPropagation();
                 handleAction();

@@ -57,17 +57,18 @@ A card rendered at 300px therefore becomes 300 × 405. The overlay swaps to
 the compact typography treatment at the same breakpoint.
 
 Rate typography:
-- full card: 34px amount / 20px cadence
+- full card: 45px amount and cadence / 22px tax disclaimer
 - compact card: 24px amount / 14px cadence
 
-The live price/disclaimer container uses a fixed 30px inset on both sides of
-the 500px source artwork in both compositions. Carousel scaling then scales the
-complete card proportionally.
+The live price/disclaimer container uses a fixed 80px inset on both sides of
+the 500px source artwork in both compositions, producing a 340px source-width
+region. The price aligns to the region's left edge and the tax disclaimer to
+its right edge. Carousel scaling then scales the complete card proportionally.
 
 The CTA is deliberately more substantial than the global default button on these oversized artwork cards: 300px wide and 58px high on the full composition, and 300px wide and 54px high on the compact composition. This compensates for the carousel's visual scaling so the action still reads as a primary booking control.
 
 Full and compact artwork use separate vertical placement scales. The CMS
-high/normal/low value positions only the centered live price/disclaimer block;
+high/normal/low value positions only the live price/disclaimer block;
 the CTA and cancellation policy retain their fixed composition-specific anchor.
 The 500×1038 full card keeps the price lower in the composition, while the
 500×675 compact card moves the live rate upward so it does not drift into the

@@ -21,7 +21,6 @@ export function Banner({
   className,
 }: BannerProps) {
   const colorConfig = COLOR_PALETTE[color];
-  const textColor = colorConfig.isLightBg ? "#4E332D" : "#FFFFFF";
 
   return (
     <div
@@ -31,8 +30,8 @@ export function Banner({
         className,
       )}
       style={{
-        backgroundColor: colorConfig.hex,
-        color: textColor,
+        backgroundColor: colorConfig.bg,
+        color: colorConfig.text,
         fontFamily: "var(--font-body)",
       }}
     >

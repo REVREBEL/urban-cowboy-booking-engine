@@ -505,13 +505,14 @@
    The shell is a size container so cards respond to their own rendered width,
    not only to the browser viewport. */
 .rate-card-shell {
+  --rate-fg: #4e332d;
+
   width: min(500px, calc(100vw - 32px));
   flex: 0 0 auto;
   container-type: inline-size;
 }
 
 .rate-card-frame {
-  --rate-fg: #4e332d;
   --rate-button-bg: #4e332d;
   --rate-button-fg: #faf9f9;
   --rate-primary-font: var(--font-button);
@@ -552,16 +553,16 @@
 .rate-card-price-block {
   position: absolute;
   top: var(--rate-overlay-desktop-top, 54%);
-  right: 30px;
-  left: 30px;
+  right: 80px;
+  left: 80px;
 }
 
 .rate-card-price {
   width: 100%;
   color: var(--rate-fg);
-  text-align: center;
+  text-align: left;
   font-family: var(--rate-primary-font);
-  font-size: 34px;
+  font-size: 45px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -569,7 +570,7 @@
 
 .rate-card-price span {
   font-family: inherit;
-  font-size: 20px;
+  font-size: 45px;
   font-weight: inherit;
   line-height: inherit;
   letter-spacing: inherit;
@@ -579,21 +580,22 @@
   margin-top: 0.3em;
   width: 100%;
   color: var(--rate-fg);
-  text-align: center;
+  text-align: right;
   font-family: var(--rate-secondary-font);
-  font-size: clamp(9px, 2.4cqw, 12px);
+  font-size: 22px;
   line-height: 1.2;
 }
 
 .rate-card-action {
   position: absolute;
   right: 30px;
-  bottom: 150px;
+  bottom: 80px;
   left: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: clamp(8px, 2.4cqw, 12px);
+  color: var(--rate-fg);
 }
 
 .rate-card-cta {

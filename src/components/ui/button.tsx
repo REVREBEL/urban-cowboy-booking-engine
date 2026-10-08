@@ -40,7 +40,7 @@ type Palette = {
   border: string;
 };
 
-const colorMap: Record<ButtonColor, Palette> = {
+export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
   dark: {
     bg: "var(--cowboy-umber--normal, #4e332d)",
     text: "var(--alpine-linen--normal, #ebe8e0)",
@@ -117,6 +117,8 @@ const colorMap: Record<ButtonColor, Palette> = {
     border: "var(--ash--normal, #ccc7bb)",
   },
 };
+
+const colorMap = COLOR_PALETTE;
 
 export const buttonVariants = cva(
   "group inline-flex box-border select-none items-center justify-center gap-2 font-bold transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--copper--normal)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0",
