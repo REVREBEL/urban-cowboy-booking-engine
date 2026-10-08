@@ -4,10 +4,7 @@ import { MatchBenefitsCard } from "@/components/booking/results/MatchBenefitsCar
 import { buildTopMatchCopy } from "@/lib/topMatch";
 import { roomDetailTags } from "@/lib/roomTags";
 import type { MatchInterest, RecommendationPreferences } from "@/types/merchandising";
-import {
-  PREFERENCE_LABELS,
-  PREFERENCE_RESULT_PHRASES,
-} from "@/data/findYourStayPreferences";
+import { PREFERENCE_LABELS } from "@/data/findYourStayPreferences";
 import { MatcherProgress } from "@/components/booking/discovery/RoomMatcherProgress";
 import type { ShapedRoom } from "@/types/mews";
 import { RoomsListCard } from "@/components/RoomsListCard";
@@ -26,13 +23,6 @@ type StudioMatchResultsProps = {
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function choices(preferences: RecommendationPreferences) {
-  const labels = preferences.interests
-    .filter(Boolean)
-    .map((interest) => PREFERENCE_RESULT_PHRASES[interest as MatchInterest]);
-  return labels.length === 2 ? labels[0] + " and " + labels[1] : labels[0];
-}
 
 function choiceLabels(preferences: RecommendationPreferences) {
   return preferences.interests
