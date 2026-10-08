@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, Calendar, Check, Printer, ShieldCheck, Users } from "lucide-react";
+import { ArrowRight, Check, Printer, ShieldCheck } from "lucide-react";
 import { useBooking } from "../state/booking";
 import { api, errorMessage } from "../lib/api";
 import { fmtDate, money } from "../lib/format";
