@@ -1,4 +1,5 @@
 import { mewsJson, readJson, bad, json, isIsoDate, clampInt, anyAmount, propertyByKey, mewsLang, type Env } from "./_lib";
+import { refreshCalendarAfterReservation } from "./calendar-engine";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -77,7 +78,7 @@ function cleanCustomer(c: InCustomer | undefined) {
 // reservationGroups/create — ÉCRIT dans Mews. On reconstruit entièrement le payload
 // à partir de champs whitelistés ; jamais de forward du body brut. Renvoie au front
 // une réponse curée (Id, PaymentRequestId, numéros de confirmation, montants dans leur devise Mews).
-export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+export const onRequestPost: PagesFunction<Env> = async ({ request, env, waitUntil }) => {
   const b = await readJson<Body>(request);
 
   const Customer = cleanCustomer(b.customer);
@@ -156,38 +157,64 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   // Le suivi « paiement initié » part du front (track → WEBHOOK_EVENTS) avec le
   // reservationGroupId → n8n valide ensuite le paiement via Mews. Pas de webhook serveur.
 
+  const totalAmount = anyAmount(d.TotalAmount);
+  const createdReservations = (d.Reservations ?? []).map((r: any) => ({
+    id: r.Id,
+    number: r.Number,
+    roomCategoryId: r.RoomCategoryId,
+    rateId: r.RateId,
+    startUtc: r.StartUtc,
+    endUtc: r.EndUtc,
+    adultCount: r.AdultCount,
+    childCount: r.ChildCount,
+    amount:
+      anyAmount(r.Amount) ??
+      (r.Cost && typeof r.Cost === "object"
+        ? (() => {
+            const first = Object.entries(r.Cost as Record<string, unknown>).find(
+              ([, value]) => typeof value === "number",
+            );
+            return first
+              ? {
+                  currency: first[0],
+                  gross: first[1] as number,
+                  net: null,
+                  taxTotal: null,
+                  taxes: [],
+                }
+              : null;
+          })()
+        : null),
+  }));
+
+  // A successful reservation can immediately change the lowest available room
+  // type, from-rate, sold-out state, or restriction behavior around the booked
+  // dates. Refresh that small window in the background without delaying the
+  // reservation response or payment handoff.
+  const createdStayDates = createdReservations
+    .flatMap((reservation: any) => [reservation.startUtc, reservation.endUtc])
+    .filter((value: unknown): value is string => typeof value === "string")
+    .map((value: string) => value.slice(0, 10))
+    .sort();
+
+  if (createdStayDates.length >= 2) {
+    waitUntil(
+      refreshCalendarAfterReservation(env, {
+        propertyKey: b.property ?? "hotel",
+        currency: totalAmount?.currency ?? "USD",
+        startDate: createdStayDates[0],
+        endDate: createdStayDates[createdStayDates.length - 1],
+      }).catch(() => undefined),
+    );
+  }
+
   return json({
     id: d.Id,
     customerId: d.CustomerId,
     paymentRequestId: d.PaymentRequestId ?? null,
     paymentUrl,
     creditCardAvailable: d.CreditCardAvailable ?? null,
-    totalAmount: anyAmount(d.TotalAmount),
-    reservations: (d.Reservations ?? []).map((r: any) => ({
-      id: r.Id,
-      number: r.Number,
-      roomCategoryId: r.RoomCategoryId,
-      rateId: r.RateId,
-      startUtc: r.StartUtc,
-      endUtc: r.EndUtc,
-      adultCount: r.AdultCount,
-      childCount: r.ChildCount,
-      amount:
-        anyAmount(r.Amount) ??
-        (r.Cost && typeof r.Cost === "object"
-          ? (() => {
-              const first = Object.entries(r.Cost as Record<string, unknown>).find(([, value]) => typeof value === "number");
-              return first
-                ? {
-                    currency: first[0],
-                    gross: first[1] as number,
-                    net: null,
-                    taxTotal: null,
-                    taxes: [],
-                  }
-                : null;
-            })()
-          : null),
-    })),
+    totalAmount,
+    reservations: createdReservations,
   });
 };
