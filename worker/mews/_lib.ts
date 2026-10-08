@@ -19,6 +19,7 @@ export interface Env {
   WEBFLOW_SITE_ID?: string;
   WEBFLOW_RATE_CARD_COLLECTION_ID?: string;
   WEBFLOW_ADD_ON_COLLECTION_ID?: string;
+  WEBFLOW_ROOM_TYPE_COLLECTION_ID?: string;
   // ★ UNIQUE endpoint de suivi → n8n → Supabase : reçoit TOUS les events du funnel
   // (chaque étape + paiement initié/validé). C'est LE endpoint du back-office.
   WEBHOOK_EVENTS?: string;
