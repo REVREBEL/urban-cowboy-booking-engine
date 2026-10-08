@@ -47,7 +47,7 @@ Each configured Mews property also carries a Webflow Location CMS item ID on the
 For the current Catskills configuration:
 
 ```text
-WEBFLOW_LOCATION_ITEM_ID = 6abc9142d98b325b2811ca23
+WEBFLOW_LOCATION_ITEM_ID = 6abc9142d98b325b2821ca23
 ```
 
 This ID points at the **Catskills** item in the Locations collection.
