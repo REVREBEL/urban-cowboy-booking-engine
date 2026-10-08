@@ -1,153 +1,128 @@
-import React from 'react';
-import { SearchCriteria } from '../types';
-import { Calendar, ArrowLeft } from 'lucide-react';
+import { Calendar, ArrowLeft } from "lucide-react";
+import type { SearchCriteria } from "@/types";
+import { LodgeSignboard } from "./RusticLodgeSignboard";
 
 interface MatchOrBrowseScreenProps {
   criteria: SearchCriteria;
+  availableCount?: number;
   onFindYourStay: () => void;
   onShowAllRooms: () => void;
   onChangeDates: () => void;
 }
 
-export const MatchOrBrowseScreen: React.FC<MatchOrBrowseScreenProps> = ({
+function formatDateDisplay(date: string) {
+  if (!date) return "";
+  const [year, month, day] = date.split("-").map(Number);
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+  }).format(new Date(year, month - 1, day));
+}
+
+function SignAction({
+  children,
+  onClick,
+  tone,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  tone: "yellow" | "pink";
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex h-full w-full items-center justify-center border border-[#2B1C16] px-2 text-center font-brothers text-[8px] font-bold uppercase leading-tight tracking-[0.08em] shadow-[0_3px_0_rgba(28,18,13,0.65)] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 sm:px-3 sm:text-xs md:text-sm ${
+        tone === "yellow"
+          ? "bg-[#FACA78] text-[#2B1C16] hover:bg-[#FFD58D]"
+          : "bg-[#F3A7A0] text-[#2B1C16] hover:bg-[#F6B5AF]"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function MatchOrBrowseScreen({
   criteria,
+  availableCount,
   onFindYourStay,
   onShowAllRooms,
-  onChangeDates
-}) => {
-  // Format dates helper
-  const formatDateDisplay = (dateStr: string) => {
-    try {
-      const parts = dateStr.split('-');
-      if (parts.length === 3) {
-        const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      }
-      return dateStr;
-    } catch {
-      return dateStr;
-    }
-  };
-
+  onChangeDates,
+}: MatchOrBrowseScreenProps) {
   return (
-    <div 
-      className="min-h-screen w-full flex flex-col justify-center items-center py-10 sm:py-16 px-4 sm:px-8 selection:bg-[#4E332D] selection:text-white relative"
-      style={{
-        backgroundColor: '#5C483B',
-        backgroundImage: `
-          repeating-linear-gradient(0deg, rgba(0,0,0,0.14) 0px, rgba(0,0,0,0.14) 1px, transparent 1px, transparent 4px),
-          repeating-linear-gradient(90deg, rgba(0,0,0,0.14) 0px, rgba(0,0,0,0.14) 1px, transparent 1px, transparent 4px),
-          repeating-linear-gradient(45deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 4px)
-        `
-      }}
-    >
-      {/* Top Floating Stay Context Chip */}
-      <div className="mb-6 sm:mb-8 flex items-center justify-center">
-        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#3B2C24]/85 text-[#F2D078] border border-[#2A1D17] text-xs font-mono shadow-md backdrop-blur-xs">
-          <Calendar className="w-3.5 h-3.5 text-[#F5C748]" />
-          <span>
-            {formatDateDisplay(criteria.checkIn)} – {formatDateDisplay(criteria.checkOut)}
-          </span>
-          <span className="text-[#F2D078]/40">·</span>
-          <span>{criteria.nights} {criteria.nights === 1 ? 'Night' : 'Nights'}</span>
-          <span className="text-[#F2D078]/40">·</span>
-          <span>{criteria.guests} {criteria.guests === 1 ? 'Guest' : 'Guests'}</span>
+    <section className="min-h-[calc(100vh-120px)] bg-[#EBE8E0] pb-20 pt-8 md:pt-12">
+      <div className="booking-shell">
+        <div className="mb-7 flex flex-wrap items-center justify-between gap-4 border-y border-[#4E332D]/20 py-4">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-editorial text-sm text-[#4E332D]">
+            <Calendar className="h-4 w-4 text-[#9A5636]" aria-hidden="true" />
+            <span>
+              {formatDateDisplay(criteria.checkIn)} → {formatDateDisplay(criteria.checkOut)}
+            </span>
+            <span className="text-[#4E332D]/35">·</span>
+            <span className="text-[#4E332D]/65">
+              {criteria.nights} night{criteria.nights === 1 ? "" : "s"}
+            </span>
+            <span className="text-[#4E332D]/35">·</span>
+            <span className="text-[#4E332D]/65">
+              {criteria.guests} guest{criteria.guests === 1 ? "" : "s"}
+            </span>
+          </div>
+
           <button
             type="button"
             onClick={onChangeDates}
-            className="text-[#F8A8A2] hover:text-white uppercase font-woodblock tracking-wider text-[11px] ml-2 underline cursor-pointer transition-colors"
+            className="font-bianco text-xs font-bold uppercase tracking-[2px] underline underline-offset-4"
           >
             Change
           </button>
         </div>
-      </div>
 
-      {/* Main Grid: Left Framed Card + Right Action Tickets */}
-      <div className="max-w-[1240px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
-        
-        {/* ================= LEFT CARD (DARK SLATE/WOOD) ================= */}
-        <div className="lg:col-span-7 bg-[#544139] border-[3px] border-[#2C1E18] p-8 sm:p-12 lg:p-14 flex flex-col justify-between shadow-2xl relative">
-          
-          {/* Subtle Inner Framing Border */}
-          <div className="absolute inset-2 sm:inset-3 border border-[#3E2D26]/70 pointer-events-none" />
-
-          {/* Top Headline Statement */}
-          <div className="relative z-10 space-y-6 sm:space-y-8">
-            <h2 className="font-desert font-medium text-lg sm:text-2xl text-[#EBD08B] tracking-wide leading-snug">
-              A Place With This Much Character Comes With More Ways to Stay.
-            </h2>
-
-            {/* Main Big Question */}
-            <div className="space-y-1 py-4 sm:py-6">
-              <div className="font-display font-bold text-4xl sm:text-5xl lg:text-[62px] text-[#F5C748] tracking-wider leading-[1.08] uppercase drop-shadow-xs">
-                WANT HELP
+        <div className="mx-auto max-w-6xl">
+          <LodgeSignboard
+            textSlot={
+              <div className="max-w-[16rem] text-center text-[#FACA78] drop-shadow-[0_3px_1px_rgba(0,0,0,0.45)]">
+                <p className="font-bianco text-[7px] font-bold uppercase tracking-[0.22em] text-[#F7E3B5] sm:text-[10px]">
+                  {availableCount === undefined
+                    ? "Find Your Stay"
+                    : `${availableCount} Room Experience${availableCount === 1 ? "" : "s"} Available`}
+                </p>
+                <h1 className="mt-2 font-desert text-[clamp(22px,4vw,52px)] font-bold uppercase leading-[0.9] tracking-[1px]">
+                  Want Help Finding the Right One?
+                </h1>
+                <p className="mx-auto mt-3 hidden max-w-[14rem] font-editorial text-[10px] leading-snug text-[#F7E3B5] sm:block md:text-xs">
+                  Tell us what kind of stay you want and we&apos;ll point you toward the strongest matches.
+                </p>
               </div>
-              <div className="font-display font-bold text-4xl sm:text-5xl lg:text-[62px] text-[#F5C748] tracking-wider leading-[1.08] uppercase drop-shadow-xs">
-                FINDING THE
-              </div>
-              <div className="font-display font-bold text-4xl sm:text-5xl lg:text-[62px] text-[#F5C748] tracking-wider leading-[1.08] uppercase drop-shadow-xs">
-                RIGHT ONE?
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Narrative Description */}
-          <div className="relative z-10 pt-6 mt-4 border-t border-[#3E2D26]/80">
-            <p className="font-desert text-sm sm:text-base text-[#EBD08B] leading-relaxed max-w-xl">
-              Tell us a Little About Your Stay and we’ll Point you Toward Your Best Matches, or you can Browse Everything Available.
-            </p>
-          </div>
-
+            }
+            buttonSlotTop={
+              <SignAction tone="yellow" onClick={onFindYourStay}>
+                Help Me Choose
+              </SignAction>
+            }
+            buttonSlotBottom={
+              <SignAction tone="pink" onClick={onShowAllRooms}>
+                Show All Rooms
+              </SignAction>
+            }
+          />
         </div>
 
-        {/* ================= RIGHT BUTTONS STACK ================= */}
-        <div className="lg:col-span-5 flex flex-col gap-6 sm:gap-8 justify-between">
-          
-          {/* Top Block: Pink "YES" Button (Takes them to Room Matcher) */}
+        <div className="mx-auto mt-7 flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
+          <p className="max-w-2xl text-center font-editorial text-sm leading-6 text-[#6B6259] sm:text-left">
+            A place with this much character comes with more ways to stay. Get a quick recommendation or browse every live room type available for your dates.
+          </p>
+
           <button
             type="button"
-            onClick={onFindYourStay}
-            aria-label="Yes, help me find the right room"
-            className="flex-1 min-h-[160px] sm:min-h-[190px] bg-[#F8A8A2] hover:bg-[#F99D96] active:bg-[#F28D85] text-[#1C1917] p-8 flex items-center justify-center border-2 border-[#2C1E18] shadow-xl hover:shadow-2xl transition-all duration-200 cursor-pointer group hover:scale-[1.015] active:scale-[0.985]"
+            onClick={onChangeDates}
+            className="inline-flex shrink-0 items-center gap-2 font-bianco text-[11px] font-bold uppercase tracking-[2px] text-[#4E332D]/70 transition hover:text-[#4E332D]"
           >
-            <span className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl tracking-wider uppercase text-[#1C1917] group-hover:scale-105 transition-transform duration-200 select-none">
-              YES
-            </span>
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            Back to Dates
           </button>
-
-          {/* Bottom Block: Yellow "no thanks SHOW ME ALL ROOMS" Button (Takes them to normal all rooms) */}
-          <button
-            type="button"
-            onClick={onShowAllRooms}
-            aria-label="No thanks, show me all rooms"
-            className="flex-1 min-h-[180px] sm:min-h-[220px] bg-[#FEE474] hover:bg-[#FEDF5A] active:bg-[#FBD63F] text-[#1C1917] p-8 flex flex-col items-center justify-center text-center border-2 border-[#2C1E18] shadow-xl hover:shadow-2xl transition-all duration-200 cursor-pointer group hover:scale-[1.015] active:scale-[0.985] space-y-2"
-          >
-            <span className="font-desert lowercase text-xl sm:text-2xl text-[#1C1917] font-normal tracking-wide select-none">
-              no thanks
-            </span>
-            <div className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl uppercase tracking-wider text-[#1C1917] leading-[1.05] group-hover:scale-105 transition-transform duration-200 select-none">
-              SHOW ME
-              <br />
-              ALL ROOMS
-            </div>
-          </button>
-
         </div>
-
       </div>
-
-      {/* Return to Date Selection Back Link */}
-      <div className="mt-8 sm:mt-10">
-        <button
-          type="button"
-          onClick={onChangeDates}
-          className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#EBD08B]/80 hover:text-[#F5C748] transition-colors cursor-pointer"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Return to Date Selection</span>
-        </button>
-      </div>
-
-    </div>
+    </section>
   );
-};
+}
