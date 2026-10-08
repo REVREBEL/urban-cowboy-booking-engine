@@ -290,7 +290,7 @@ export function StudioMatchResults({
               Send Them to Your Inbox
             </h2>
             <p className="mt-4 font-editorial text-sm leading-6 text-[#6B6259]">
-              We&apos;ll save this email with the same booking-session data used for cart recovery, along with your top match and alternates.
+              Save your top match and alternates with your booking session so they&apos;re easy to pick back up later.
             </p>
 
             <form className="mt-6" onSubmit={saveMatches}>
@@ -315,9 +315,8 @@ export function StudioMatchResults({
                 </p>
               )}
 
-              <p className="mt-4 rounded-xl bg-[#EBE8E0] px-4 py-3 font-editorial text-xs leading-5 text-[#6B6259]">
-                Match saving is connected now. The dedicated match-results email template is a tracked implementation TODO, so delivery remains pending until that template is connected to the n8n workflow.
-              </p>
+              {/* TODO(room-match-saved-v1): connect the dedicated saved-match email
+                  template in n8n before launch. Data capture is already live. */}
 
               <div className="mt-6 flex justify-end gap-3">
                 <button
