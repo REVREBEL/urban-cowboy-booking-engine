@@ -27,3 +27,17 @@ WEBFLOW_RATE_CARD_COLLECTION_ID = "6abc811cb92ea32dd64d79e0"
 WEBFLOW_ADD_ON_COLLECTION_ID = "6ac364287c8782e8e653075e"
 
 # Tracking is intentionally disabled until Urban Cowboy provisions its own endpoint.
+
+
+# Calendar snapshot refresh scheduler. The Worker itself enforces America/New_York
+# cadence: every 30 minutes during the revenue-management day and hourly 8 PM–7 AM.
+[triggers]
+crons = ["*/15 * * * *"]
+
+# Preferred production calendar snapshot store. Create the namespace first, then
+# uncomment and insert the namespace ID. Until then the Worker falls back to
+# Cloudflare's Cache API.
+#
+# [[kv_namespaces]]
+# binding = "CALENDAR_CACHE"
+# id = "<cloudflare-kv-namespace-id>"
