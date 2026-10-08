@@ -75,8 +75,8 @@ interface RefreshRequest {
 }
 
 interface RefreshCoordinator {
-  startDate: string;
-  endDate: string;
+  pendingStartDate: string | null;
+  pendingEndDate: string | null;
   propertyKey: string;
   currency: string;
   promise: Promise<void>;
@@ -681,14 +681,18 @@ export function queueCalendarRefresh(
 
   const existing = refreshCoordinators.get(coordinatorKey);
   if (existing) {
-    existing.startDate = minDate(existing.startDate, request.startDate);
-    existing.endDate = maxDate(existing.endDate, request.endDate);
+    existing.pendingStartDate = existing.pendingStartDate
+      ? minDate(existing.pendingStartDate, request.startDate)
+      : request.startDate;
+    existing.pendingEndDate = existing.pendingEndDate
+      ? maxDate(existing.pendingEndDate, request.endDate)
+      : request.endDate;
     return existing.promise;
   }
 
   const state = {} as RefreshCoordinator;
-  state.startDate = request.startDate;
-  state.endDate = request.endDate;
+  state.pendingStartDate = request.startDate;
+  state.pendingEndDate = request.endDate;
   state.propertyKey = property.key;
   state.currency = currency;
 
@@ -696,11 +700,11 @@ export function queueCalendarRefresh(
     // Briefly coalesce bursts of reservations/calendar requests in the same isolate.
     await new Promise((resolve) => setTimeout(resolve, 200));
 
-    while (state.startDate && state.endDate) {
-      const startDate = state.startDate;
-      const endDate = state.endDate;
-      state.startDate = "";
-      state.endDate = "";
+    while (state.pendingStartDate && state.pendingEndDate) {
+      const startDate = state.pendingStartDate;
+      const endDate = state.pendingEndDate;
+      state.pendingStartDate = null;
+      state.pendingEndDate = null;
 
       await refreshCalendarRange(env, {
         propertyKey: state.propertyKey,
