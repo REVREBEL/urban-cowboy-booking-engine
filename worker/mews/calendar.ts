@@ -20,7 +20,7 @@ interface Body {
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env, waitUntil }) => {
-  const body = await request.json<Body>().catch(() => ({}));
+  const body: Body = await request.json<Body>().catch((): Body => ({}));
   if (
     !body.startDate ||
     !body.endDate ||
