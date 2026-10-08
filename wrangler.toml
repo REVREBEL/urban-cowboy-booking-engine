@@ -42,3 +42,12 @@ crons = ["*/15 * * * *"]
 # [[kv_namespaces]]
 # binding = "CALENDAR_CACHE"
 # id = "<cloudflare-kv-namespace-id>"
+
+
+# Optional shared cache for slow-changing Webflow editorial content.
+# Production on Webflow Cloud should provision a Key Value Store with this
+# binding name. Leave commented locally until a namespace/store is provisioned.
+#
+# [[kv_namespaces]]
+# binding = "WEBFLOW_CONTENT_CACHE"
+# id = "<webflow-content-cache-namespace-id>"
