@@ -128,13 +128,18 @@ export interface ReservationLine {
 }
 
 export const api = {
-  calendar: (p: { startDate: string; endDate: string; adults: number; children: number; infants: number; property?: string; currencyCode?: string }) =>
-    post<{ dates: Record<string, DailyRate> }>(
+  calendar: (p: { startDate: string; endDate: string; property?: string; currencyCode?: string }) =>
+    post<{
+      dates: Record<string, DailyRate>;
+      generatedAt?: string | null;
+      stale?: boolean;
+      refreshing?: boolean;
+    }>(
       "calendar",
       p,
       {
         label: "Calendar rates & availability",
-        why: "Loads Mews-backed starting prices and sold-out states for the two visible calendar months.",
+        why: "Loads the shared 2-adult calendar snapshot for starting prices, sold-out states, and restriction guidance. Exact occupancy and pricing are validated by the live search after Search.",
       },
     ),
 
