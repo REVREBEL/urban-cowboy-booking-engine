@@ -109,7 +109,13 @@ export function Dates() {
     let pending = calendarRequests.get(cacheKey);
     if (!pending) {
       pending = api.calendar(request).then((response) => {
-        const cachedResponse = { fetchedAt: Date.now(), dates: response.dates };
+        const generatedAt = response.generatedAt
+          ? Date.parse(response.generatedAt)
+          : Date.now();
+        const cachedResponse = {
+          fetchedAt: Number.isFinite(generatedAt) ? generatedAt : Date.now(),
+          dates: response.dates,
+        };
         calendarCache.set(cacheKey, cachedResponse);
         writeStoredCalendar(cacheKey, cachedResponse);
         return response.dates;
