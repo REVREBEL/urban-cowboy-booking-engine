@@ -43,8 +43,11 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
+const CACHE_KEY_PREFIX = "webflow:room-type-reviews:v1";
 const BROWSER_CACHE_CONTROL =
   "public, max-age=300, s-maxage=21600, stale-while-revalidate=64800";
+
+const memoryCache = new Map<string, CachedReviewPayload>();
 
 const text = (value: unknown): string =>
   typeof value === "string" ? value.trim() : "";
@@ -54,10 +57,8 @@ const safeUrl = (value: unknown): string | null => {
   return /^https?:\/\//i.test(candidate) ? candidate : null;
 };
 
-const cacheRequest = (collectionId: string) =>
-  new Request(
-    `https://webflow-content-cache.internal/room-type-reviews/${encodeURIComponent(collectionId)}`,
-  );
+const cacheKey = (collectionId: string) =>
+  `${CACHE_KEY_PREFIX}:${collectionId}`;
 
 async function webflowGet<T>(
   env: Env,
@@ -171,31 +172,60 @@ async function fetchPublishedReviews(
 }
 
 async function readCachedReviews(
+  env: Env,
   collectionId: string,
 ): Promise<CachedReviewPayload | null> {
-  const response = await caches.default.match(cacheRequest(collectionId));
-  if (!response) return null;
+  const key = cacheKey(collectionId);
 
-  try {
-    return (await response.json()) as CachedReviewPayload;
-  } catch {
+  if (env.WEBFLOW_CONTENT_CACHE) {
+    try {
+      const stored = await env.WEBFLOW_CONTENT_CACHE.get<CachedReviewPayload>(
+        key,
+        "json",
+      );
+      if (stored) {
+        memoryCache.set(key, stored);
+        return stored;
+      }
+    } catch (error) {
+      const reason =
+        error instanceof Error ? error.message : "webflow_kv_read_unknown";
+      console.warn("[webflow room-type reviews] KV read failed", reason);
+    }
+  }
+
+  const memory = memoryCache.get(key);
+  if (!memory) return null;
+
+  if (memory.fetchedAt + CACHE_TTL_SECONDS * 1000 <= Date.now()) {
+    memoryCache.delete(key);
     return null;
   }
+
+  return memory;
 }
 
 async function writeCachedReviews(
+  env: Env,
   collectionId: string,
   payload: CachedReviewPayload,
 ): Promise<void> {
-  await caches.default.put(
-    cacheRequest(collectionId),
-    new Response(JSON.stringify(payload), {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": `public, max-age=${CACHE_TTL_SECONDS}`,
-      },
-    }),
-  );
+  const key = cacheKey(collectionId);
+  memoryCache.set(key, payload);
+
+  if (!env.WEBFLOW_CONTENT_CACHE) return;
+
+  try {
+    await env.WEBFLOW_CONTENT_CACHE.put(key, JSON.stringify(payload), {
+      expirationTtl: CACHE_TTL_SECONDS,
+    });
+  } catch (error) {
+    // The CMS CDN is still a safe fallback. A cache write failure should never
+    // remove review content from the booking flow.
+    const reason =
+      error instanceof Error ? error.message : "webflow_kv_write_unknown";
+    console.warn("[webflow room-type reviews] KV write failed", reason);
+  }
 }
 
 async function refreshReviews(
@@ -203,7 +233,7 @@ async function refreshReviews(
   collectionId: string,
 ): Promise<CachedReviewPayload> {
   const payload = await fetchPublishedReviews(env, collectionId);
-  await writeCachedReviews(collectionId, payload);
+  await writeCachedReviews(env, collectionId, payload);
   return payload;
 }
 
@@ -232,7 +262,7 @@ export async function onRequestGet({
     return json({ reviews: {}, generatedAt: null, stale: false }, 200, "no-store");
   }
 
-  const cached = await readCachedReviews(collectionId);
+  const cached = await readCachedReviews(env, collectionId);
 
   if (cached) {
     const stale = cached.fetchedAt + CACHE_FRESH_MS <= Date.now();
@@ -248,7 +278,9 @@ export async function onRequestGet({
     }
 
     // Stale content is safe editorial data, so serve it immediately while a
-    // background refresh updates the shared Worker cache.
+    // background refresh updates Webflow Cloud KV. Without the KV binding, the
+    // module-memory fallback only avoids duplicate work within the same runtime
+    // instance; Webflow's Content Delivery API CDN remains the upstream cache.
     if (!stale || waitUntil) return response(cached, stale);
   }
 
