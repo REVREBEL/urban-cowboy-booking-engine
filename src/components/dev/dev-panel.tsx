@@ -112,6 +112,10 @@ const CALL_META: Record<string, { label: string; why: string }> = {
     label: "Cart tracking → n8n",
     why: "Sends cart state (status, selection, and contact details) to n8n throughout the funnel to support abandoned, payment-started, and completed booking records.",
   },
+  "room-type-reviews": {
+    label: "Room-type reviews · Webflow CMS",
+    why: "Loads published review copy for Room Types from Webflow, joined by Mews Room Type ID. Blank CMS review fields intentionally return no review.",
+  },
 };
 
 function callMeta(entry: ApiLogEntry) {
@@ -287,9 +291,10 @@ const LIVE: string[] = [
   "Rates: name, description, private/public, payment mode",
   "Extras: name, description, EUR price, billing",
   "Booking: confirmation #, total, payment status",
+  "Room detail review quotes: published Webflow Room Type CMS fields, keyed by Mews Room Type ID",
 ];
 const MOCK: string[] = [
-  "Ratings & reviews ('9.4 · 1,248', '9.0 · 129') — no review API connected",
+  "Aggregate rating/count badges ('9.4 · 1,248', '9.0 · 129') — no aggregate review API connected",
   "'X people viewing', 'booked N times' — generated (deterministic per room)",
   "'Guest favorite', 'High demand' — marketing badges",
   "'High demand for your dates' banner — copy",
@@ -335,9 +340,8 @@ function SourcesView() {
           ))}
         </ul>
         <p className="mt-2 text-[11px] text-cream/40">
-          Centralized in <code className="text-cream/60">src/components/conversion.tsx</code> (+ amenities in{" "}
-          <code className="text-cream/60">RoomDetailDrawer</code>). Replace with real sources (reviews,
-          Mews cancellation policy, amenities) in production.
+          Remaining demo conversion signals are centralized in <code className="text-cream/60">src/components/conversion.tsx</code> (+ amenities in{" "}
+          <code className="text-cream/60">RoomDetailDrawer</code>). Room-detail review quotes now come from published Webflow CMS content.
         </p>
       </div>
     </div>
