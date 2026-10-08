@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RoomType, RateOption, SearchCriteria } from '../../types';
 import type { ShapedRate } from '../../types/mews';
-import type { RateCardConfig } from '../../types/rate-card';
+import type { RateCardConfig, RateCardLiveContent } from '../../types/rate-card';
 import { RATE_OPTIONS } from '../../data/hotelData';
 import { resolveRateCardConfig } from '../../lib/rateCardConfig';
+import { normalizeRateCardCtaLabel } from '../../lib/rateCardCta';
 import {
   cancellationConfirmation,
   rateCardPricePresentation,
@@ -339,14 +340,14 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   const configurableLiveContent = (
     liveRate: ShapedRate,
     config: RateCardConfig,
-  ) => {
+  ): RateCardLiveContent => {
     const presentation = rateCardPricePresentation(liveRate, criteria.nights);
     return {
       price: formatLivePrice(liveRate, presentation.amount),
       priceUnit: 'Nightly',
       taxLabel: presentation.taxLabel,
       cancellationText: cancellationConfirmation(liveRate, config, criteria.checkIn),
-      ctaLabel: config.ctaLabel,
+      ctaLabel: normalizeRateCardCtaLabel(config.ctaLabel),
     };
   };
 
