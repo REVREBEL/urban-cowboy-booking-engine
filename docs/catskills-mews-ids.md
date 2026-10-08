@@ -18,15 +18,15 @@ The subscription reference is retained for human/account reference only. It is n
 
 | Source label | ID |
 | --- | --- |
-| `PET_FREE` | `c74edf03-043c-4217-adbd-b124016a55ae` |
 | Resort Fee | `bdaf2c3a-baf7-41c6-aecb-b11e016a147e` |
 
-`PET_FREE` is preserved exactly as supplied until the source Mews label is verified. These IDs are classified as system fees and are excluded from the generic guest-selectable add-on list. Their actual application remains controlled by Mews / booking policy rather than being invented client-side.
+The previously provisional `PET_FREE` classification was removed after verification against the production Mews booking engine and the Webflow Add Ons collection showed the same product as a guest-selectable dog inclusion / cleaning-fee add-on.
 
 ## Guest add-ons
 
 | Add-on | ID |
 | --- | --- |
+| Dog Inclusion | `c74edf03-043c-4217-adbd-b124016a55ae` |
 | Flower Bouquet | `d8009b60-0580-49e7-a5dd-b12401713848` |
 | Hummus & Crudités | `d4e2bfdd-f01f-4177-b366-b12401712a25` |
 | Let's Eat! Chocolate Truffles | `41f8b399-a303-40ac-bbfc-b124016e6b85` |
