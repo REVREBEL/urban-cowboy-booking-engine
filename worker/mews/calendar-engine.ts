@@ -5,7 +5,7 @@ import {
   propertyDateUtc,
   type Env,
   type Property,
-} from "./_lib";
+} from "./_lib.ts";
 
 export const CALENDAR_STORAGE_VERSION = "v4";
 export const MAX_INFERRED_LOS = 3;
@@ -395,12 +395,15 @@ const availabilityDetails = (data: any, currency: string) => {
 
 class EvidenceLedger {
   private readonly evidence = new Map<string, Promise<ProbeEvidence>>();
+  private readonly env: Env;
+  private readonly property: Property;
+  private readonly currency: string;
 
-  constructor(
-    private readonly env: Env,
-    private readonly property: Property,
-    private readonly currency: string,
-  ) {}
+  constructor(env: Env, property: Property, currency: string) {
+    this.env = env;
+    this.property = property;
+    this.currency = currency;
+  }
 
   probe(arrival: string, nights: number): Promise<ProbeEvidence> {
     const key = `${arrival}:${nights}`;

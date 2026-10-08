@@ -12,7 +12,7 @@ export function BookingFooter() {
       <div className="booking-shell">
         <div className="flex flex-col items-center justify-between gap-8 border-b border-[#EBE8E0]/15 pb-10 text-center md:flex-row md:text-left">
           <img
-            src="/assets/brand/logos/Urban Cowboy.svg"
+            src="./assets/brand/logos/urban-cowboy_light.svg"
             alt="Urban Cowboy"
             className="mx-auto h-10 w-auto select-none object-contain md:mx-0 sm:h-12"
           />
