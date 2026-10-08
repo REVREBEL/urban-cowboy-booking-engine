@@ -32,6 +32,28 @@ The subscription reference is retained for human/account reference only. It is n
 | Let's Eat! Chocolate Truffles | `41f8b399-a303-40ac-bbfc-b124016e6b85` |
 | Welcome Wine! | `cad13cb9-752d-49e8-b5d3-b124016d3aa8` |
 
+### Deferred add-on delivery tasks
+
+Guest-selected delivery dates, times, and customization details are currently preserved on the reservation as notes. A future enhancement should also create a linked operational task in Mews for scheduled add-ons (wine, cake, flowers, pup setup, food delivery, and similar fulfillment).
+
+That implementation is intentionally deferred. Creating Mews operational tasks requires the **Connector API**, which uses a separately certified connection and Connector credentials. This project does not currently have that certified Connector API connection.
+
+Do not attempt to send task-creation requests through the existing Booking Engine / Distributor API credentials. Once Connector API certification and credentials are available, the intended flow is:
+
+```text
+reservationGroups/create succeeds
+        ↓
+Mews reservation ID returned
+        ↓
+convert selected property-local delivery date/time to UTC
+        ↓
+Connector API task creation
+        ↓
+task linked to reservation + routed to configured department
+```
+
+Until then, the reservation note is the operational fallback and should retain the complete add-on instructions.
+
 ## Rate groups
 
 | Rate group | ID |
