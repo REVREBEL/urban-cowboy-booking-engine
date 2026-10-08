@@ -243,7 +243,9 @@ KV is preferred because the same snapshot can be reused across visitors and Work
 
 The code intentionally falls back to the Workers Cache API until the namespace is provisioned so local development and deployment are not blocked.
 
-The Wrangler configuration contains a commented binding template. After creating the namespace, add its real ID:
+The Wrangler configuration contains a commented binding template. **Scheduled calendar warming intentionally does not run until this shared KV binding exists**, because warming a single edge Cache API instance would spend Mews calls without creating a globally reusable snapshot.
+
+After creating the namespace, add its real ID:
 
 ```toml
 [[kv_namespaces]]
