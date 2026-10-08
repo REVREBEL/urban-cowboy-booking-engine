@@ -5,6 +5,19 @@ import { AmenityWoodcutIcon } from './WoodcutArt';
 import { GuestReviewQuoteCard } from './GuestReviewQuoteCard';
 import { X, Bath, ArrowRight } from 'lucide-react';
 
+function formatReviewDate(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) return null;
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(timestamp));
+}
+
 interface RoomDetailModalProps {
   room: RoomType | null;
   criteria: SearchCriteria;
@@ -24,14 +37,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  const reviewDate = review?.reviewDate
-    ? new Intl.DateTimeFormat("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        timeZone: "UTC",
-      }).format(new Date(review.reviewDate))
-    : null;
+  const reviewDate = formatReviewDate(review?.reviewDate);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
