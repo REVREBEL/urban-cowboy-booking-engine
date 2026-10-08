@@ -116,6 +116,10 @@ const CALL_META: Record<string, { label: string; why: string }> = {
     label: "Room-type reviews · Webflow CMS",
     why: "Loads published review copy for Room Types from Webflow, joined by Mews Room Type ID. Blank CMS review fields intentionally return no review.",
   },
+  locations: {
+    label: "Location chrome · Webflow CMS",
+    why: "Loads the published Location CMS record bound to each configured Mews property for footer name, city/state, and legal links.",
+  },
 };
 
 function callMeta(entry: ApiLogEntry) {
@@ -292,6 +296,7 @@ const LIVE: string[] = [
   "Extras: name, description, EUR price, billing",
   "Booking: confirmation #, total, payment status",
   "Room detail review quotes: published Webflow Room Type CMS fields, keyed by Mews Room Type ID",
+  "Booking footer: published Webflow Location name, city/state, and legal links",
 ];
 const MOCK: string[] = [
   "Aggregate rating/count badges ('9.4 · 1,248', '9.0 · 129') — no aggregate review API connected",
