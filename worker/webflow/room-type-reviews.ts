@@ -122,7 +122,7 @@ export function normalizeRoomTypeReview(
     roomTypeId,
     quote,
     reviewer: text(fields["reviewer-name-or-handle"]) || null,
-    source: (reviewSourceNames.get(sourceId) ?? sourceId) || null,
+    source: reviewSourceNames.get(sourceId) ?? null,
     sourceUrl: safeUrl(fields["review-url"]),
     reviewDate: text(fields["review-date"]) || null,
   };
@@ -147,19 +147,21 @@ async function fetchPublishedReviews(
   collectionId: string,
 ): Promise<CachedReviewPayload> {
   const encoded = encodeURIComponent(collectionId);
-  const [collection, items] = await Promise.all([
-    // Option labels are schema metadata and do not currently have a CDN endpoint.
-    webflowGet<WebflowCollectionResponse>(
-      env,
-      WEBFLOW_API,
-      `/collections/${encoded}`,
-    ),
-    // Published room content uses Webflow's Content Delivery API/CDN.
+  const [items, collection] = await Promise.all([
+    // Published room content is the required payload and uses Webflow's Content
+    // Delivery API/CDN.
     webflowGet<WebflowItemsResponse>(
       env,
       WEBFLOW_CONTENT_API,
       `/collections/${encoded}/items/live?limit=100`,
     ),
+    // Option labels are schema metadata and do not currently have a CDN endpoint.
+    // Review text should still render if this secondary metadata request fails.
+    webflowGet<WebflowCollectionResponse>(
+      env,
+      WEBFLOW_API,
+      `/collections/${encoded}`,
+    ).catch((): WebflowCollectionResponse => ({ fields: [] })),
   ]);
 
   return {
