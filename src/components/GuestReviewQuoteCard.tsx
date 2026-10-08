@@ -1,41 +1,65 @@
-import React from 'react';
+import React from "react";
 
 export interface GuestReviewQuoteCardProps {
-  quote?: string;
-  reviewer?: string;
-  date?: string;
-  site?: string;
+  quote: string;
+  reviewer?: string | null;
+  date?: string | null;
+  site?: string | null;
+  sourceUrl?: string | null;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }
 
 export const GuestReviewQuoteCard: React.FC<GuestReviewQuoteCardProps> = ({
-  quote = 'We went all out and stayed in the Alpine Suite - beautiful, clean room with heated bathroom floors and a hot tub ideally located for night time star gazing.',
-  reviewer = 'Ben',
-  date = 'May 27, 2025',
-  site = 'Google Reviews',
-  className = '',
-  size = 'md'
+  quote,
+  reviewer,
+  date,
+  site,
+  sourceUrl,
+  className = "",
+  size = "md",
 }) => {
+  const normalizedQuote = quote.trim();
+  if (!normalizedQuote) return null;
+
   const textSizeClass =
-    size === 'sm'
-      ? 'text-lg sm:text-xl'
-      : size === 'lg'
-      ? 'text-2xl sm:text-3xl md:text-[34px]'
-      : 'text-xl sm:text-2xl md:text-[25px]';
+    size === "sm"
+      ? "text-lg sm:text-xl"
+      : size === "lg"
+        ? "text-2xl sm:text-3xl md:text-[34px]"
+        : "text-xl sm:text-2xl md:text-[25px]";
+
+  const attribution = [reviewer, date].filter(Boolean).join(", ");
+  const sourceLabel = site?.trim() || null;
 
   return (
     <div
-      className={`bg-white rounded-2xl border border-[#4E332D]/20 shadow-xs px-5 py-6 sm:px-8 sm:py-8 text-center ${className}`}
+      className={`rounded-2xl border border-[#4E332D]/20 bg-white px-5 py-6 text-center shadow-xs sm:px-8 sm:py-8 ${className}`}
     >
       <blockquote
-        className={`font-cedarville ${textSizeClass} text-[#964828] font-normal leading-relaxed tracking-wide max-w-2xl mx-auto`}
+        className={`mx-auto max-w-2xl font-cedarville ${textSizeClass} font-normal leading-relaxed tracking-wide text-[#964828]`}
       >
-        "{quote}"
+        &ldquo;{normalizedQuote}&rdquo;
       </blockquote>
-      <p className="font-sans text-[11px] sm:text-xs tracking-[0.22em] text-[#964828]/85 uppercase mt-5 sm:mt-6 font-medium">
-        — {reviewer}{date ? `, ${date}` : ''}{site ? ` · ${site}` : ''}
-      </p>
+
+      {(attribution || sourceLabel) && (
+        <p className="mt-5 font-sans text-[11px] font-medium uppercase tracking-[0.22em] text-[#964828]/85 sm:mt-6 sm:text-xs">
+          {attribution ? <>— {attribution}</> : null}
+          {attribution && sourceLabel ? " · " : null}
+          {sourceLabel && sourceUrl ? (
+            <a
+              href={sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-current/40 underline-offset-4 transition hover:decoration-current"
+            >
+              {sourceLabel}
+            </a>
+          ) : (
+            sourceLabel
+          )}
+        </p>
+      )}
     </div>
   );
 };
