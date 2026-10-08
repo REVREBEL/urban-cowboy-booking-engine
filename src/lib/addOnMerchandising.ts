@@ -16,8 +16,13 @@ export function mergeAddOnMerchandising(
   if (!cmsItems.length) return liveProducts.map(fallbackAddOn);
 
   const liveById = new Map(liveProducts.map((product) => [product.id, product]));
+  const cmsBoundProductIds = new Set(
+    cmsItems
+      .map((item) => item.mewsProductId)
+      .filter((id): id is string => Boolean(id)),
+  );
 
-  return cmsItems.flatMap((item) => {
+  const merchandised = cmsItems.flatMap((item) => {
     if (!item.mewsProductId) return [];
     const live = liveById.get(item.mewsProductId);
     if (!live) return [];
@@ -35,4 +40,13 @@ export function mergeAddOnMerchandising(
       contentSource: "webflow" as const,
     }];
   });
+
+  // Webflow is an editorial overlay, not a whitelist. If Mews exposes a valid
+  // guest-selectable product that has not been merchandised in CMS yet, retain
+  // it with the native Mews name/description rather than silently hiding it.
+  const nativeFallbacks = liveProducts
+    .filter((product) => !cmsBoundProductIds.has(product.id))
+    .map(fallbackAddOn);
+
+  return [...merchandised, ...nativeFallbacks];
 }
