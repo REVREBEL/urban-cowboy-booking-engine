@@ -489,7 +489,7 @@
   justify-content: space-between;
   gap: clamp(8px, 3cqw, 15px);
   padding: clamp(8px, 3.6cqw, 18px) clamp(18px, 6cqw, 30px)
-    clamp(12px, 4.5cqw, 24px);
+    clamp(20px, 6cqw, 32px);
   color: var(--rate-fg);
 }
 
@@ -529,7 +529,14 @@
   width: 100%;
   flex-direction: column;
   align-items: center;
-  gap: clamp(7px, 2.2cqw, 11px);
+  gap: clamp(8px, 2.4cqw, 12px);
+}
+
+.rate-card-cta {
+  min-width: 164px;
+  height: 54px !important;
+  padding-right: 34px !important;
+  padding-left: 34px !important;
 }
 
 .rate-card-policy {
@@ -705,5 +712,12 @@
 
   .rate-card-shell[data-artwork-mode="auto"] .rate-card-price span {
     font-size: 14px;
+  }
+
+  .rate-card-shell[data-artwork-mode="auto"] .rate-card-cta {
+    min-width: 154px;
+    height: 50px !important;
+    padding-right: 30px !important;
+    padding-left: 30px !important;
   }
 }
