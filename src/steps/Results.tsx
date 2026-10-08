@@ -23,6 +23,7 @@ import { BuildingExperienceList } from "@/components/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/RoomDetailModal";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
+import type { RoomTypeCmsReviewMap } from "../types/room-type-cms";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 import { roomTypeGroupName } from "@/data/roomTypeGroups";
 import { roomDetailTags } from "@/lib/roomTags";
@@ -106,6 +107,7 @@ export function Results() {
   const [quizPreferences, setQuizPreferences] = useState<DiscoveryPreferences | null>(null);
   const [showMatcherModal, setShowMatcherModal] = useState(false);
   const [matchBackView, setMatchBackView] = useState<"matcher" | "rooms">("matcher");
+  const [roomTypeReviews, setRoomTypeReviews] = useState<RoomTypeCmsReviewMap>({});
   const toggleProp = (key: string) =>
     setOpenProps((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
 
@@ -142,6 +144,16 @@ export function Results() {
       alive = false;
     };
   }, [checkIn, checkOut, adults, children, infants, voucherCode, hotel, hotelError, reloadKey]);
+
+  useEffect(() => {
+    let alive = true;
+    api.roomTypeReviews().then((reviews) => {
+      if (alive) setRoomTypeReviews(reviews);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   // Toutes les chambres dispos (tous hébergements), enrichies avec la couche
   // merchandising Urban Cowboy au moment du shaping.
@@ -314,6 +326,7 @@ export function Results() {
               room={toStudioRoom(openRoom, imageBaseUrl)}
               criteria={{ property: "catskills", checkIn, checkOut, nights: nightsCount, guests: adults, children: children + infants, rooms: 1 }}
               onClose={() => setOpenRoom(null)}
+              review={roomTypeReviews[openRoom.roomTypeId] ?? null}
               onProceedToRates={() => {
                 if (openRoom.rates.length) choose(openRoom);
               }}
@@ -346,6 +359,7 @@ export function Results() {
             room={toStudioRoom(openRoom, imageBaseUrl)}
             criteria={studioCriteria}
             onClose={() => setOpenRoom(null)}
+            review={roomTypeReviews[openRoom.roomTypeId] ?? null}
             onProceedToRates={() => {
               if (openRoom.rates.length) choose(openRoom);
             }}
@@ -505,6 +519,7 @@ export function Results() {
             room={toStudioRoom(openRoom, imageBaseUrl)}
             criteria={{ property: "catskills", checkIn, checkOut, nights: nightsCount, guests: adults, children: children + infants, rooms: 1 }}
             onClose={() => setOpenRoom(null)}
+            review={roomTypeReviews[openRoom.roomTypeId] ?? null}
             onProceedToRates={() => {
               if (openRoom.rates.length) choose(openRoom);
             }}
