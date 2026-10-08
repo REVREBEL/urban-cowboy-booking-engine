@@ -231,4 +231,23 @@ export function parseRecommendationPreferences(
   };
 }
 
+
+export function writeRecommendationPreferencesToUrl(
+  preferences: RecommendationPreferences,
+): void {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.set("party", preferences.party);
+  url.searchParams.set("dog", preferences.dog ? "yes" : "no");
+  url.searchParams.set("interest", preferences.interests[0]);
+
+  if (preferences.interests[1]) {
+    url.searchParams.set("interest2", preferences.interests[1]);
+  } else {
+    url.searchParams.delete("interest2");
+  }
+
+  window.history.replaceState(null, "", url.toString());
+}
+
 export type { MatchInterest, PartyType, RecommendationPreferences, RoomMerchandising };
