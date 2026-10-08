@@ -4,7 +4,11 @@ import { MatchBenefitsCard } from "@/components/booking/results/MatchBenefitsCar
 import { buildTopMatchCopy } from "@/lib/topMatch";
 import { roomDetailTags } from "@/lib/roomTags";
 import type { MatchInterest, RecommendationPreferences } from "@/types/merchandising";
-import { PREFERENCE_RESULT_PHRASES } from "@/data/findYourStayPreferences";
+import {
+  PREFERENCE_LABELS,
+  PREFERENCE_RESULT_PHRASES,
+} from "@/data/findYourStayPreferences";
+import { MatcherProgress } from "@/components/booking/discovery/RoomMatcherProgress";
 import type { ShapedRoom } from "@/types/mews";
 import { RoomsListCard } from "@/components/RoomsListCard";
 import { useBooking } from "@/state/booking";
@@ -28,6 +32,19 @@ function choices(preferences: RecommendationPreferences) {
     .filter(Boolean)
     .map((interest) => PREFERENCE_RESULT_PHRASES[interest as MatchInterest]);
   return labels.length === 2 ? labels[0] + " and " + labels[1] : labels[0];
+}
+
+function choiceLabels(preferences: RecommendationPreferences) {
+  return preferences.interests
+    .filter(Boolean)
+    .map((interest) => PREFERENCE_LABELS[interest as MatchInterest])
+    .join(" & ");
+}
+
+function partyLabel(preferences: RecommendationPreferences) {
+  return preferences.party === "partner"
+    ? "COUPLE"
+    : preferences.party.toUpperCase();
 }
 
 export function StudioMatchResults({
@@ -130,23 +147,31 @@ export function StudioMatchResults({
   }
 
   return (
-    <section className="min-h-screen bg-[#EBE8E0] pb-24 pt-10">
-      <div className="booking-shell">
-        <button type="button" onClick={onBack} className="mb-8 font-bianco text-xs font-bold uppercase tracking-widest text-[#767470] transition hover:text-[#4E332D]">
-          ← Back
-        </button>
+    <section className="min-h-screen bg-[#FAF9F9] pb-24 text-[#1C1917]">
+      <MatcherProgress step={3} />
 
-        <header className="mb-8">
-          <p className="mb-2 font-bianco text-xs font-bold uppercase tracking-[4px] text-[#9A5636]">
-            Matched for You
+      <div className="booking-shell pt-10 sm:pt-14">
+        <header className="mx-auto mb-10 max-w-3xl space-y-3 text-center">
+          <p className="font-woodblock text-xs font-bold uppercase tracking-[0.25em] text-[#0E301A]">
+            ✦ Curated Match Results
           </p>
-          <h1 className="font-desert text-5xl font-bold uppercase leading-none text-[#4E332D] md:text-6xl">
-            Your Best Match
+          <h1 className="font-display text-3xl font-light uppercase leading-[1.05] tracking-wide text-[#1C1917] sm:text-5xl">
+            Your Handpicked Catskill Matches
           </h1>
-          <p className="mt-4 max-w-3xl font-editorial text-sm text-[#6B6259]">
-            You told us you wanted {choices(preferences)}. Here&apos;s where those choices line up best with live availability.
+          <p className="font-sans text-sm leading-6 text-[#60605E] sm:text-base">
+            Based on your party of {partyLabel(preferences)}
+            {preferences.dog ? " (with your dog companion)" : ""} and your escape focus on{" "}
+            <strong className="text-[#4E332D]">{choiceLabels(preferences)}</strong>.
           </p>
         </header>
+
+        <button
+          type="button"
+          onClick={onBack}
+          className="mb-6 flex items-center gap-2 font-woodblock text-xs uppercase tracking-wider text-[#73716D] transition hover:text-[#4E332D]"
+        >
+          ← Back to Focus
+        </button>
 
         <div className="grid items-stretch gap-4 xl:grid-cols-[minmax(0,2.2fr)_minmax(18rem,0.9fr)]">
           <RoomsListCard
