@@ -25,6 +25,7 @@ MEWS_CHILD_AGE_CATEGORY_ID = "fece4b6b-39fa-4ccd-9909-afba0092eeb1"
 WEBFLOW_SITE_ID = "6aaa2497c8ea366207beba30"
 WEBFLOW_RATE_CARD_COLLECTION_ID = "6abc811cb92ea32dd64d79e0"
 WEBFLOW_ADD_ON_COLLECTION_ID = "6ac364287c8782e8e653075e"
+WEBFLOW_ROOM_TYPE_COLLECTION_ID = "6abc815b36cbcba74b8b01c4"
 
 # Tracking is intentionally disabled until Urban Cowboy provisions its own endpoint.
 
