@@ -20,6 +20,7 @@ import { onRequestPost as paymentLink } from "./mews/payment-link";
 import { onRequestPost as voucher } from "./mews/voucher";
 import { onRequestPost as track } from "./mews/track";
 import { onRequestGet as geo } from "./mews/geo";
+import { runScheduledCalendarRefresh } from "./mews/calendar-engine";
 import { onRequestGet as rateCards } from "./webflow/rate-cards";
 import { onRequestGet as addOns } from "./webflow/add-ons";
 
@@ -68,5 +69,15 @@ export default {
     }
     // Front statique + fallback SPA (géré par le binding ASSETS).
     return env.ASSETS.fetch(request);
+  },
+
+  async scheduled(
+    controller: ScheduledController,
+    env: Env,
+    ctx: ExecutionContext,
+  ): Promise<void> {
+    ctx.waitUntil(
+      runScheduledCalendarRefresh(env, controller.scheduledTime).catch(() => undefined),
+    );
   },
 };
