@@ -34,8 +34,9 @@ export const STEP_ORDER: Step[] = ["dates", "results", "rates", "guest", "upgrad
 //  • etape           : une étape atteinte (dates → confirmation), le `step` précise laquelle
 //  • paiement_initie : « Payer » cliqué (réservation créée + demande de paiement Mews)
 //  • paiement_valide : paiement encaissé (confirmé par Mews)
+//  • matches_saved    : le visiteur a enregistré ses recommandations par e-mail
 // « Paiement non abouti » = paiement_initie SANS paiement_valide (dérivé côté Supabase).
-export type CartStatus = "etape" | "paiement_initie" | "paiement_valide";
+export type CartStatus = "etape" | "paiement_initie" | "paiement_valide" | "matches_saved";
 
 // Identifiant de panier — persistant (localStorage) pour survivre à la redirection
 // paiement (Mews → /confirmation). Régénéré à chaque nouvelle recherche (resetAll).
