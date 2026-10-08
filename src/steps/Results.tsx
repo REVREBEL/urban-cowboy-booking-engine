@@ -105,6 +105,7 @@ export function Results() {
   );
   const [quizPreferences, setQuizPreferences] = useState<DiscoveryPreferences | null>(null);
   const [showMatcherModal, setShowMatcherModal] = useState(false);
+  const [matchBackView, setMatchBackView] = useState<"matcher" | "rooms">("matcher");
   const toggleProp = (key: string) =>
     setOpenProps((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
 
@@ -250,8 +251,12 @@ export function Results() {
     setDiscoveryView("rooms");
   }
 
-  function applyMatcherPreferences(preferences: DiscoveryPreferences) {
+  function applyMatcherPreferences(
+    preferences: DiscoveryPreferences,
+    backView: "matcher" | "rooms" = "matcher",
+  ) {
     setQuizPreferences(preferences);
+    setMatchBackView(backView);
     writeRecommendationPreferencesToUrl(preferences);
     setDiscoveryView("matches");
   }
@@ -282,7 +287,7 @@ export function Results() {
         initialPreferences={recommendationPreferences ?? undefined}
         onBack={() => setDiscoveryView("explore")}
         onViewAllRooms={browseAllRooms}
-        onSubmit={applyMatcherPreferences}
+        onSubmit={(preferences) => applyMatcherPreferences(preferences, "matcher")}
       />
     );
   }
@@ -296,7 +301,7 @@ export function Results() {
           checkIn={checkIn}
           imageBaseUrl={imageBaseUrl}
           totalAvailable={eligibleAllRooms.length}
-          onBack={() => setDiscoveryView("matcher")}
+          onBack={() => setDiscoveryView(matchBackView)}
           onBrowseAll={browseAllRooms}
           onSelectRoom={(room) => {
             if (room.rates.length) choose(room);
@@ -353,7 +358,7 @@ export function Results() {
           onClose={() => setShowMatcherModal(false)}
           onSubmit={(preferences) => {
             setShowMatcherModal(false);
-            applyMatcherPreferences(preferences);
+            applyMatcherPreferences(preferences, "rooms");
           }}
         />
       </div>
