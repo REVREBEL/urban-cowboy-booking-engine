@@ -3,9 +3,10 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from '@tailwindcss/vite';
 
-// Le front est un build statique pur (→ dist/). Les appels Mews passent par les
-// Pages Functions (functions/api/mews/*), servies par wrangler sur la même origine.
-export default defineConfig({
+// The browser build is a static multi-page Vite app. Webflow Cloud wraps the
+// project in its own SSR build, so HTML entry points must only be registered
+// for the normal client/static build.
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [
     tailwindcss(),
     react(),
@@ -18,13 +19,15 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
-    rollupOptions: {
-      input: {
-        main: "index.html",
-        dashboard: "dashboard.html",
-        components: "components.html",
+    ...(!isSsrBuild && {
+      rollupOptions: {
+        input: {
+          main: "index.html",
+          dashboard: "dashboard.html",
+          components: "components.html",
+        },
       },
-    },
+    }),
   },
   server: {
     port: 5173,
@@ -36,4 +39,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
