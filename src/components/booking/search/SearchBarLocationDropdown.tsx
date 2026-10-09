@@ -105,7 +105,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
       aria-labelledby={headerId}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className={`box-border relative flex flex-col items-start p-[25px] gap-[10px] w-[362px] h-[259px] bg-[#FAF9F9] border-2 border-[#4E332D] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none outline-none ${className}`}
+      className={`box-border relative flex flex-col items-start p-[25px] gap-[10px] w-[362px] h-[259px] bg-paper border-2 border-cowboy-umber shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none outline-none ${className}`}
     >
       {/* Frame: 308px x 205px, gap: 5px */}
       <div className="flex flex-col items-start p-0 gap-[5px] w-[308px] h-[205px] self-stretch flex-1">
@@ -121,7 +121,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
             <div className="flex flex-col items-start p-0 gap-[1px] w-[308px] h-[18px] flex-1">
               <span
                 id={headerId}
-                className="w-[179px] h-[18px] font-brothers text-[16px] leading-[19px] uppercase text-[#A79996] flex items-center tracking-wider"
+                className="w-[179px] h-[18px] font-label text-[16px] leading-[19px] uppercase text-cowboy-umber-100 flex items-center tracking-wider"
               >
                 SELECT A COWBOY
               </span>
@@ -129,7 +129,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
           </div>
 
           {/* Divider 1: 308px x 1px, #E2E2E1 */}
-          <div className="w-[308px] h-[1px] bg-[#E2E2E1] self-stretch shrink-0" aria-hidden="true" />
+          <div className="w-[308px] h-[1px] bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
 
           {/* Location 1: CATSKILLS (Row: 308px x 35px, padding: 8px 0px) */}
           <button
@@ -143,7 +143,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
             }`}
           >
             <div className="flex flex-col items-start p-0 gap-[1px] w-auto h-[19px]">
-              <span className="w-[88px] h-[19px] font-desert text-[16px] leading-[19px] font-bold tracking-[2px] text-[#4E332D] flex items-center group-hover:translate-x-0.5 transition-transform">
+              <span className="w-[88px] h-[19px] font-heading text-[16px] leading-[19px] font-bold tracking-[2px] text-cowboy-umber flex items-center group-hover:translate-x-0.5 transition-transform">
                 CATSKILLS
               </span>
             </div>
@@ -153,7 +153,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
           </button>
 
           {/* Divider 2: 308px x 1px, #E2E2E1 */}
-          <div className="w-[308px] h-[1px] bg-[#E2E2E1] self-stretch shrink-0" aria-hidden="true" />
+          <div className="w-[308px] h-[1px] bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
 
           {/* Location 2: NASHVILLE (Row: 308px x 35px, padding: 8px 0px) */}
           <button
@@ -167,7 +167,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
             }`}
           >
             <div className="flex flex-col items-start p-0 gap-[1px] w-auto h-[19px]">
-              <span className="w-[94px] h-[19px] font-desert text-[16px] leading-[19px] font-bold tracking-[2px] text-[#4E332D] flex items-center group-hover:translate-x-0.5 transition-transform">
+              <span className="w-[94px] h-[19px] font-heading text-[16px] leading-[19px] font-bold tracking-[2px] text-cowboy-umber flex items-center group-hover:translate-x-0.5 transition-transform">
                 NASHVILLE
               </span>
             </div>
@@ -177,7 +177,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
           </button>
 
           {/* Divider 3: 308px x 1px, #E2E2E1 */}
-          <div className="w-[308px] h-[1px] bg-[#E2E2E1] self-stretch shrink-0" aria-hidden="true" />
+          <div className="w-[308px] h-[1px] bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
 
           {/* Location 3: DENVER (Row: 308px x 35px, padding: 8px 0px) */}
           <button
@@ -191,7 +191,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
             }`}
           >
             <div className="flex flex-col justify-center items-start p-0 w-[292px] h-[19px]">
-              <span className="w-[70px] h-[19px] font-desert text-[16px] leading-[19px] font-bold tracking-[2px] text-[#4E332D] flex items-center group-hover:translate-x-0.5 transition-transform">
+              <span className="w-[70px] h-[19px] font-heading text-[16px] leading-[19px] font-bold tracking-[2px] text-cowboy-umber flex items-center group-hover:translate-x-0.5 transition-transform">
                 DENVER
               </span>
             </div>

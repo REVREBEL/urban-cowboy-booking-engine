@@ -33,7 +33,7 @@ export function CheckoutStep({
         <button
           type="button"
           onClick={onBack}
-          className="group mb-6 inline-flex cursor-pointer items-center gap-2 font-woodblock text-xs uppercase tracking-widest text-[#73716D] transition-colors hover:text-[#4E332D] sm:text-sm 2xl:mb-8"
+          className="group mb-6 inline-flex cursor-pointer items-center gap-2 font-label text-xs uppercase tracking-widest text-smoke-fade transition-colors hover:text-cowboy-umber sm:text-sm 2xl:mb-8"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
           <span>{backLabel}</span>
@@ -43,14 +43,14 @@ export function CheckoutStep({
       <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10 2xl:gap-14">
         <div className="space-y-6 lg:col-span-7 2xl:space-y-8">
           <header>
-            <span className="mb-1 block font-woodblock text-xs font-bold uppercase tracking-widest text-[#9A5636] 2xl:text-sm">
+            <span className="mb-1 block font-label text-xs font-bold uppercase tracking-widest text-copper 2xl:text-sm">
               {eyebrow}
             </span>
-            <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-[#4E332D] sm:text-4xl lg:text-4xl 2xl:text-5xl">
+            <h1 className="font-heading text-3xl font-bold uppercase tracking-tight text-cowboy-umber sm:text-4xl lg:text-4xl 2xl:text-5xl">
               {title}
             </h1>
             {subtitle ? (
-              <div className="mt-1.5 font-editorial text-sm leading-relaxed text-[#6B6259] sm:text-base 2xl:text-lg">
+              <div className="mt-1.5 font-body text-sm leading-relaxed text-ash-900 sm:text-base 2xl:text-lg">
                 {subtitle}
               </div>
             ) : null}

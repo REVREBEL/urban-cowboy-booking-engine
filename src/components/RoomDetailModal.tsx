@@ -41,17 +41,17 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl bg-[#FAF9F9] rounded-[36px] overflow-hidden shadow-2xl border-4 border-[#4E332D] my-8 max-h-[90vh] flex flex-col texture-linen">
+      <div className="relative w-full max-w-4xl bg-paper rounded-modal-lg overflow-hidden shadow-2xl border-4 border-cowboy-umber my-8 max-h-[90vh] flex flex-col texture-linen">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-[#EBE8E0] border-b-2 border-[#4E332D]/20">
+        <div className="flex items-center justify-between px-6 py-4 bg-alpine-linen border-b-2 border-cowboy-umber/20">
           <div className="flex items-center gap-2">
-            <span className="font-woodblock text-xs uppercase tracking-widest text-[#9A5636] font-bold">
+            <span className="font-label text-xs uppercase tracking-widest text-copper font-bold">
               {room.buildingName.toUpperCase()} · {room.eyebrow}
             </span>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white border border-[#4E332D]/20 hover:bg-[#EBE8E0] flex items-center justify-center text-[#4E332D] transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-white border border-cowboy-umber/20 hover:bg-alpine-linen flex items-center justify-center text-cowboy-umber transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -62,13 +62,13 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
         <div className="p-6 sm:p-8 overflow-y-auto space-y-8">
           {/* Gallery Carousel with Deckled Borders */}
           <div>
-            <div className="relative h-72 sm:h-96 rounded-2xl overflow-hidden border-2 border-[#4E332D] shadow-md mb-3">
+            <div className="relative h-72 sm:h-96 rounded-2xl overflow-hidden border-2 border-cowboy-umber shadow-md mb-3">
               <img
                 src={room.images[activeImageIndex]}
                 alt={`${room.name} photo ${activeImageIndex + 1}`}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-4 left-4 bg-[#221C18]/90 text-white px-3.5 py-1 rounded-full text-xs font-woodblock uppercase tracking-wider border border-white/20">
+              <div className="absolute bottom-4 left-4 bg-smoke/90 text-white px-3.5 py-1 rounded-full text-xs font-label uppercase tracking-wider border border-white/20">
                 Photo {activeImageIndex + 1} of {room.images.length}
               </div>
             </div>
@@ -81,7 +81,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                   onClick={() => setActiveImageIndex(idx)}
                   className={`relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
                     activeImageIndex === idx
-                      ? 'border-[#4E332D] scale-105 shadow-sm'
+                      ? 'border-cowboy-umber scale-105 shadow-sm'
                       : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
@@ -92,55 +92,55 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           </div>
 
           {/* Room Title & Specs */}
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-[#4E332D]/15">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-cowboy-umber/15">
             <div>
-              <h2 className="text-balance font-display font-extrabold text-3xl sm:text-4xl text-[#221C18] uppercase tracking-wide">
+              <h2 className="text-balance font-heading font-extrabold text-3xl sm:text-4xl text-smoke uppercase tracking-wide">
                 {room.name}
               </h2>
-              <p className="font-editorial italic text-base text-[#9A5636] mt-1">
+              <p className="font-body italic text-base text-copper mt-1">
                 {room.tagline}
               </p>
             </div>
 
-            <div className="flex items-center gap-4 bg-[#FAF9F9] p-4 rounded-2xl border-2 border-[#4E332D] shrink-0">
+            <div className="flex items-center gap-4 bg-paper p-4 rounded-2xl border-2 border-cowboy-umber shrink-0">
               <div className="text-right">
-                <span className="block text-[10px] font-woodblock uppercase tracking-widest text-[#73716D]">
+                <span className="block text-[10px] font-label uppercase tracking-widest text-smoke-fade">
                   Standard Rate
                 </span>
-                <span className="font-display font-bold text-3xl text-[#4E332D]">
+                <span className="font-heading font-bold text-3xl text-cowboy-umber">
                   ${room.basePrice}
                 </span>
-                <span className="text-[10px] text-[#73716D] block">/ night excl. tax</span>
+                <span className="text-[10px] text-smoke-fade block">/ night excl. tax</span>
               </div>
             </div>
           </div>
 
           {/* Narrative Long Description */}
           <div>
-            <h3 className="font-woodblock text-xs uppercase tracking-widest text-[#8A7E74] font-bold mb-2">
+            <h3 className="font-label text-xs uppercase tracking-widest text-cowboy-umber-100 font-bold mb-2">
               THE EXPERIENCE & DESIGN STORY
             </h3>
-            <p className="font-editorial text-base sm:text-lg text-[#221C18] leading-relaxed">
+            <p className="font-body text-base sm:text-lg text-smoke leading-relaxed">
               {room.longDescription}
             </p>
           </div>
 
           {/* The Soaking Ritual Feature Box */}
-          <div className="bg-[#FAF9F9] border-2 border-[#9A5636] rounded-2xl p-6 shadow-xs relative">
+          <div className="bg-paper border-2 border-copper rounded-2xl p-6 shadow-xs relative">
             <div className="flex items-center gap-2 mb-2">
-              <Bath className="w-5 h-5 text-[#9A5636]" />
-              <h4 className="font-woodblock text-sm uppercase tracking-wider text-[#4E332D] font-bold">
+              <Bath className="w-5 h-5 text-copper" />
+              <h4 className="font-label text-sm uppercase tracking-wider text-cowboy-umber font-bold">
                 The Soaking Tub Ritual
               </h4>
             </div>
-            <p className="font-editorial text-sm sm:text-base text-[#4E332D]">
+            <p className="font-body text-sm sm:text-base text-cowboy-umber">
               {room.soakHighlight}. Every bath is stocked with organic botanicals, dead sea bath salts, and plush Turkish waffle robes for unwinding after a Catskill hike.
             </p>
           </div>
 
           {/* Handcrafted Woodcut Amenity Grid (matching features.pdf layout) */}
-          <div className="pt-6 border-t border-[#4E332D]/15">
-            <h3 className="font-woodblock text-xs uppercase tracking-[0.25em] text-[#8A7E74] font-bold mb-8 text-center sm:text-left">
+          <div className="pt-6 border-t border-cowboy-umber/15">
+            <h3 className="font-label text-xs uppercase tracking-[0.25em] text-cowboy-umber-100 font-bold mb-8 text-center sm:text-left">
               SIGNATURE SUITE AMENITIES
             </h3>
 
@@ -154,7 +154,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     className="h-16 sm:h-20 md:h-22 w-auto max-w-[130px] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-brothers font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#221C18] leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
                   {room.bedType.toUpperCase().includes('KING') ? 'KING BED' : room.bedType.toUpperCase()}
                 </span>
               </div>
@@ -167,7 +167,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     className="h-16 sm:h-20 md:h-22 w-auto max-w-[110px] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-brothers font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#221C18] leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
                   PENDLETON<br />WOOL ROBES
                 </span>
               </div>
@@ -180,7 +180,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     className="h-16 sm:h-20 md:h-22 w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-brothers font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#221C18] leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
                   SIGNATURE<br />BATH AMENITIES
                 </span>
               </div>
@@ -193,7 +193,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     className="h-16 sm:h-20 md:h-22 w-auto max-w-[110px] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-brothers font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#221C18] leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
                   MINIBAR
                 </span>
               </div>
@@ -206,7 +206,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     className="h-16 sm:h-20 md:h-22 w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-brothers font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#221C18] leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
                   LETTER<br />WRITING DESK
                 </span>
               </div>
@@ -219,7 +219,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     className="h-16 sm:h-20 md:h-22 w-auto max-w-[125px] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-brothers font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#221C18] leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
                   RADIANT<br />HEATED FLOORS
                 </span>
               </div>
@@ -232,7 +232,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     className="h-16 sm:h-20 md:h-22 w-auto max-w-[110px] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-brothers font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#221C18] leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
                   CAST IRON<br />WOOD STOVE
                 </span>
               </div>
@@ -245,7 +245,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                     className="h-16 sm:h-20 md:h-22 w-auto max-w-[130px] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-brothers font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-[#221C18] leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
                   {room.soakType === 'outdoor-cedar-tub' ? (
                     <>OUTDOOR CEDAR<br />SOAKING TUB</>
                   ) : (
@@ -257,7 +257,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           </div>
 
           {review?.quote?.trim() ? (
-            <div className="border-t border-[#4E332D]/15 pt-4">
+            <div className="border-t border-cowboy-umber/15 pt-4">
               <GuestReviewQuoteCard
                 quote={review.quote}
                 reviewer={review.reviewer}
@@ -272,15 +272,15 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
         </div>
 
         {/* Modal Sticky Footer CTA */}
-        <div className="p-5 sm:p-6 bg-[#EBE8E0] border-t-2 border-[#4E332D]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-xs text-[#6B6259] font-sans">
+        <div className="p-5 sm:p-6 bg-alpine-linen border-t-2 border-cowboy-umber/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-xs text-ash-900 font-sans">
             <span>Stay dates: </span>
-            <span className="font-bold text-[#4E332D]">{criteria.checkIn} to {criteria.checkOut}</span> ({criteria.nights} nights)
+            <span className="font-bold text-cowboy-umber">{criteria.checkIn} to {criteria.checkOut}</span> ({criteria.nights} nights)
           </div>
 
           <button
             onClick={() => onProceedToRates(room)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#4E332D] hover:bg-[#343833] text-white px-8 py-3.5 rounded-full font-woodblock text-xs sm:text-sm uppercase tracking-widest shadow-md transition-all cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-cowboy-umber hover:bg-smoke text-white px-8 py-3.5 rounded-full font-label text-xs sm:text-sm uppercase tracking-widest shadow-md transition-all cursor-pointer"
           >
             <span>Proceed to Rate Selection</span>
             <ArrowRight className="w-4 h-4" />

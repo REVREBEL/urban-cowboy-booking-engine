@@ -38,7 +38,7 @@ export function MatchBenefitsCard({
 
   return (
     <aside
-      className={`flex h-full flex-col overflow-hidden border-[1.5px] border-oxblood bg-white/80 text-oxblood ${
+      className={`flex h-full flex-col overflow-hidden border-[length:var(--border-width-medium)] border-oxblood bg-white/80 text-oxblood ${
         compact ? "min-h-[310px] p-4" : "min-h-[620px] p-6"
       }`}
     >
@@ -60,7 +60,7 @@ export function MatchBenefitsCard({
             aria-hidden="true"
             className={`${compact ? "h-6 w-12" : "h-10 w-[82px]"} text-oxblood shrink-0 object-contain`}
           />
-          <h3 className={`${compact ? "text-base" : "text-2xl"} max-w-48 font-display leading-[1.08] text-oxblood`}>
+          <h3 className={`${compact ? "text-base" : "text-2xl"} max-w-48 font-heading leading-[1.08] text-oxblood`}>
             You’ll love it because …
           </h3>
         </div>
@@ -68,11 +68,11 @@ export function MatchBenefitsCard({
 
       <div className={`${compact ? "mt-4 space-y-3" : "mt-7 space-y-7"}`}>
         <section>
-          <h4 className={`font-topic text-oxblood ${compact ? "text-xs" : "text-base"}`}>{firstHeading}</h4>
+          <h4 className={`font-eyebrow text-oxblood ${compact ? "text-xs" : "text-base"}`}>{firstHeading}</h4>
           <p className={`${compact ? "mt-1 text-[11px]" : "mt-2 text-sm"} leading-tight text-oxblood`}>{firstReason}</p>
         </section>
         <section>
-          <h4 className={`font-topic text-oxblood ${compact ? "text-xs" : "text-base"}`}>{secondHeading}</h4>
+          <h4 className={`font-eyebrow text-oxblood ${compact ? "text-xs" : "text-base"}`}>{secondHeading}</h4>
           <p className={`${compact ? "mt-1 text-[11px]" : "mt-2 text-sm"} leading-tight text-oxblood`}>{secondReason}</p>
         </section>
       </div>

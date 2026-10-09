@@ -420,7 +420,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   return (
     <div className="w-full texture-linen min-h-screen pb-24 overflow-x-hidden">
       {/* ================= TOP HEADER BAR: SELECTED ROOM & TRIP SPECS ================= */}
-      <div className="bg-[#FAF9F9] border-b-2 border-[#4E332D]/20 shadow-xs sticky top-0 z-30 backdrop-blur-md bg-[#FAF9F9]/95">
+      <div className="bg-paper border-b-2 border-cowboy-umber/20 shadow-xs sticky top-0 z-30 backdrop-blur-md bg-paper/95">
         <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 max-w-[1600px] w-full mx-auto">
             
@@ -429,20 +429,20 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
               <button
                 type="button"
                 onClick={onChangeRoom}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[#4E332D]/25 bg-white hover:bg-[#EBE8E0] text-[#4E332D] font-woodblock text-xs uppercase tracking-wider transition-all cursor-pointer shadow-2xs group shrink-0 self-start sm:self-auto"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-cowboy-umber/25 bg-white hover:bg-alpine-linen text-cowboy-umber font-label text-xs uppercase tracking-wider transition-all cursor-pointer shadow-2xs group shrink-0 self-start sm:self-auto"
                 title="Change suite or go back to room selection"
               >
                 <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
                 <span>Back to Room Selection</span>
               </button>
 
-              <div className="h-7 w-[1px] bg-[#4E332D]/20 hidden sm:block" />
+              <div className="h-7 w-[1px] bg-cowboy-umber/20 hidden sm:block" />
 
               <div>
-                <span className="font-woodblock text-[10px] uppercase tracking-widest text-[#9A5636] font-bold block">
+                <span className="font-label text-[10px] uppercase tracking-widest text-copper font-bold block">
                   SELECTED SUITE · {room.buildingName.toUpperCase()}
                 </span>
-                <h1 className="font-display font-extrabold text-xs sm:text-sm lg:text-base text-[#221C18] uppercase tracking-wide leading-tight">
+                <h1 className="font-heading font-extrabold text-xs sm:text-sm lg:text-base text-smoke uppercase tracking-wide leading-tight">
                   {room.name}
                 </h1>
               </div>
@@ -451,39 +451,39 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
             {/* Right Section: Dates, # Nights, # Guests Pill Badges */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {/* Selected Dates */}
-              <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-[#4E332D]/15 shadow-2xs">
-                <Calendar className="w-4 h-4 text-[#9A5636] shrink-0" />
+              <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-cowboy-umber/15 shadow-2xs">
+                <Calendar className="w-4 h-4 text-copper shrink-0" />
                 <div className="text-left">
-                  <span className="block text-[9px] font-woodblock uppercase tracking-wider text-[#73716D] leading-none">
+                  <span className="block text-[9px] font-label uppercase tracking-wider text-smoke-fade leading-none">
                     DATES
                   </span>
-                  <span className="block text-xs sm:text-sm font-sans font-bold text-[#221C18] mt-0.5 whitespace-nowrap">
+                  <span className="block text-xs sm:text-sm font-sans font-bold text-smoke mt-0.5 whitespace-nowrap">
                     {formatDateDisplay(criteria.checkIn)} – {formatDateDisplay(criteria.checkOut)}
                   </span>
                 </div>
               </div>
 
               {/* # Nights */}
-              <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-[#4E332D]/15 shadow-2xs">
-                <Moon className="w-4 h-4 text-[#9A5636] shrink-0" />
+              <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-cowboy-umber/15 shadow-2xs">
+                <Moon className="w-4 h-4 text-copper shrink-0" />
                 <div className="text-left">
-                  <span className="block text-[9px] font-woodblock uppercase tracking-wider text-[#73716D] leading-none">
+                  <span className="block text-[9px] font-label uppercase tracking-wider text-smoke-fade leading-none">
                     NIGHTS
                   </span>
-                  <span className="block text-xs sm:text-sm font-sans font-bold text-[#221C18] mt-0.5 whitespace-nowrap">
+                  <span className="block text-xs sm:text-sm font-sans font-bold text-smoke mt-0.5 whitespace-nowrap">
                     {criteria.nights} {criteria.nights === 1 ? 'NIGHT' : 'NIGHTS'}
                   </span>
                 </div>
               </div>
 
               {/* # Guests */}
-              <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-[#4E332D]/15 shadow-2xs">
-                <Users className="w-4 h-4 text-[#9A5636] shrink-0" />
+              <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-cowboy-umber/15 shadow-2xs">
+                <Users className="w-4 h-4 text-copper shrink-0" />
                 <div className="text-left">
-                  <span className="block text-[9px] font-woodblock uppercase tracking-wider text-[#73716D] leading-none">
+                  <span className="block text-[9px] font-label uppercase tracking-wider text-smoke-fade leading-none">
                     GUESTS
                   </span>
-                  <span className="block text-xs sm:text-sm font-sans font-bold text-[#221C18] mt-0.5 whitespace-nowrap">
+                  <span className="block text-xs sm:text-sm font-sans font-bold text-smoke mt-0.5 whitespace-nowrap">
                     {criteria.guests} {criteria.guests === 1 ? 'GUEST' : 'GUESTS'}
                   </span>
                 </div>
@@ -493,7 +493,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
               <button
                 type="button"
                 onClick={onChangeRoom}
-                className="inline-flex items-center gap-1 text-xs font-woodblock uppercase tracking-wider text-[#9A5636] hover:text-[#4E332D] font-bold px-2 py-1 cursor-pointer transition-colors hover:underline"
+                className="inline-flex items-center gap-1 text-xs font-label uppercase tracking-wider text-copper hover:text-cowboy-umber font-bold px-2 py-1 cursor-pointer transition-colors hover:underline"
               >
                 <DoorOpen className="w-3.5 h-3.5" />
                 <span>Change Room</span>
@@ -509,10 +509,10 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
         <div className="space-y-4">
           
           {/* Header Bar: SELECT A RATE + CAROUSEL CONTROLS */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-[#4E332D]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-cowboy-umber">
             <div>
               <div className="flex items-center gap-3">
-                <h2 className="font-display font-extrabold text-2xl sm:text-3xl text-[#221C18] uppercase tracking-[0.15em]">
+                <h2 className="font-heading font-extrabold text-2xl sm:text-3xl text-smoke uppercase tracking-[0.15em]">
                   Select a Rate
                 </h2>
               </div>
@@ -520,24 +520,24 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
 
             <div className="flex flex-wrap items-center gap-3">
               {/* Spotlight Carousel Arrow Controls */}
-              <div className="flex items-center gap-1.5 bg-[#FAF9F9] border border-[#4E332D]/20 rounded-full p-1 shadow-2xs">
+              <div className="flex items-center gap-1.5 bg-paper border border-cowboy-umber/20 rounded-full p-1 shadow-2xs">
                 <button
                   type="button"
                   onClick={handlePrevCard}
                   disabled={spotlightIndex === 0}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-[#4E332D] hover:bg-[#EBE8E0] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-cowboy-umber hover:bg-alpine-linen disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   title="Previous rate"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="text-[10px] font-mono font-bold text-[#4E332D] px-2 uppercase whitespace-nowrap">
+                <span className="text-[10px] font-mono font-bold text-cowboy-umber px-2 uppercase whitespace-nowrap">
                   RATE {Math.max(1, cardWrapperRefs.current.filter(Boolean).indexOf(cardWrapperRefs.current[spotlightIndex]) + 1)} OF {Math.max(1, cardWrapperRefs.current.filter(Boolean).length)}
                 </span>
                 <button
                   type="button"
                   onClick={handleNextCard}
                   disabled={spotlightIndex === 4}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-[#4E332D] hover:bg-[#EBE8E0] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-cowboy-umber hover:bg-alpine-linen disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   title="Next rate"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -547,7 +547,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowInclusionsMatrix(!showInclusionsMatrix)}
-                className="font-woodblock text-xs uppercase tracking-wider text-[#9A5636] font-bold hover:underline cursor-pointer flex items-center gap-1"
+                className="font-label text-xs uppercase tracking-wider text-copper font-bold hover:underline cursor-pointer flex items-center gap-1"
               >
                 <span>{showInclusionsMatrix ? 'Hide Table' : 'Compare Rates'}</span>
                 {showInclusionsMatrix ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -557,10 +557,10 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
 
           {/* Inclusions comparison table if opened */}
           {showInclusionsMatrix && (
-            <div className="bg-white rounded-2xl p-5 border border-[#4E332D]/20 shadow-sm text-xs font-sans">
+            <div className="bg-white rounded-2xl p-5 border border-cowboy-umber/20 shadow-sm text-xs font-sans">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-[#4E332D]/20 text-[#73716D] font-woodblock uppercase tracking-wider text-[10px]">
+                  <tr className="border-b border-cowboy-umber/20 text-smoke-fade font-label uppercase tracking-wider text-[10px]">
                     <th className="pb-2">Rate Option</th>
                     <th className="pb-2">Nightly</th>
                     <th className="pb-2">Breakfast</th>
@@ -569,11 +569,11 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 </thead>
                 <tbody className="divide-y divide-[#EBE8E0]">
                   {RATE_OPTIONS.map((r) => (
-                    <tr key={r.id} className="text-[#221C18]">
+                    <tr key={r.id} className="text-smoke">
                       <td className="py-2.5 font-bold">{r.title}</td>
                       <td className="py-2.5">${calculateNightlyRate(r)}</td>
                       <td className="py-2.5">{r.isBreakfastIncluded ? '✓ Included' : 'A la carte'}</td>
-                      <td className="py-2.5 text-[11px] text-[#73716D]">{r.cancellationPolicy}</td>
+                      <td className="py-2.5 text-[11px] text-smoke-fade">{r.cancellationPolicy}</td>
                     </tr>
                   ))}
                 </tbody>

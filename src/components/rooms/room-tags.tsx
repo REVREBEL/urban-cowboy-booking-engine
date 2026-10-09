@@ -17,7 +17,7 @@ export function RoomBenefitsOverlay({ tags = [] }: { tags?: RoomTag[] }) {
       {tags.map((tag) => (
         <span
           key={tag.key}
-          className="inline-flex items-center gap-1 rounded-full bg-ink/65 px-2 py-1 text-[11px] font-semibold text-cream shadow-sm backdrop-blur"
+          className="inline-flex items-center gap-1 rounded-full bg-smoke/65 px-2 py-1 text-[11px] font-semibold text-cream shadow-sm backdrop-blur"
         >
           <tag.Icon aria-hidden="true" className="h-3.5 w-3.5" /> {tag.label}
         </span>

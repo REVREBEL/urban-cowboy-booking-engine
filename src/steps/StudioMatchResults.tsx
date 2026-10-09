@@ -57,18 +57,18 @@ export function StudioMatchResults({
 
   if (rooms.length === 0) {
     return (
-      <section className="min-h-screen bg-[#EBE8E0] py-12">
+      <section className="min-h-screen bg-alpine-linen py-12">
         <div className="booking-shell max-w-3xl text-center">
-          <button type="button" onClick={onBack} className="mb-8 font-bianco text-xs font-bold uppercase tracking-widest text-[#767470]">
+          <button type="button" onClick={onBack} className="mb-8 font-number text-xs font-bold uppercase tracking-widest text-ash-900">
             ← Back
           </button>
-          <h1 className="font-desert text-5xl font-bold uppercase text-[#4E332D]">
+          <h1 className="font-heading text-5xl font-bold uppercase text-cowboy-umber">
             No Exact Match This Time
           </h1>
-          <p className="mx-auto mt-4 max-w-xl font-editorial text-sm text-[#6B6259]">
+          <p className="mx-auto mt-4 max-w-xl font-body text-sm text-ash-900">
             Your current party and eligibility filters removed the available rooms. Browse all eligible rooms or change your answers.
           </p>
-          <button type="button" onClick={onBrowseAll} className="mt-7 rounded-full bg-[#4E332D] px-7 py-3 font-bianco text-xs font-bold uppercase tracking-widest text-[#EBE8E0]">
+          <button type="button" onClick={onBrowseAll} className="mt-7 rounded-full bg-cowboy-umber px-7 py-3 font-number text-xs font-bold uppercase tracking-widest text-alpine-linen">
             Browse Available Rooms
           </button>
         </div>
@@ -137,28 +137,28 @@ export function StudioMatchResults({
   }
 
   return (
-    <section className="min-h-screen bg-[#FAF9F9] pb-24 text-[#1C1917]">
+    <section className="min-h-screen bg-paper pb-24 text-smoke">
       <MatcherProgress step={3} />
 
       <div className="booking-shell pt-10 sm:pt-14">
         <header className="mx-auto mb-10 max-w-3xl space-y-3 text-center">
-          <p className="font-woodblock text-xs font-bold uppercase tracking-[0.25em] text-[#0E301A]">
+          <p className="font-label text-xs font-bold uppercase tracking-[0.25em] text-lake-forest">
             ✦ Curated Match Results
           </p>
-          <h1 className="font-display text-3xl font-light uppercase leading-[1.05] tracking-wide text-[#1C1917] sm:text-5xl">
+          <h1 className="font-heading text-3xl font-light uppercase leading-[1.05] tracking-wide text-smoke sm:text-5xl">
             Your Handpicked Catskill Matches
           </h1>
-          <p className="font-sans text-sm leading-6 text-[#60605E] sm:text-base">
+          <p className="font-sans text-sm leading-6 text-ash-900 sm:text-base">
             Based on your party of {partyLabel(preferences)}
             {preferences.dog ? " (with your dog companion)" : ""} and your escape focus on{" "}
-            <strong className="text-[#4E332D]">{choiceLabels(preferences)}</strong>.
+            <strong className="text-cowboy-umber">{choiceLabels(preferences)}</strong>.
           </p>
         </header>
 
         <button
           type="button"
           onClick={onBack}
-          className="mb-6 flex items-center gap-2 font-woodblock text-xs uppercase tracking-wider text-[#73716D] transition hover:text-[#4E332D]"
+          className="mb-6 flex items-center gap-2 font-label text-xs uppercase tracking-wider text-smoke-fade transition hover:text-cowboy-umber"
         >
           ← Back to Focus
         </button>
@@ -191,14 +191,14 @@ export function StudioMatchResults({
           <div className="mt-12">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="font-bianco text-[11px] font-bold uppercase tracking-[3px] text-[#9A5636]">
+                <p className="font-number text-[11px] font-bold uppercase tracking-[3px] text-copper">
                   Worth Another Look
                 </p>
-                <h2 className="mt-1 font-desert text-3xl font-bold uppercase text-[#4E332D]">
+                <h2 className="mt-1 font-heading text-3xl font-bold uppercase text-cowboy-umber">
                   Two More Strong Matches
                 </h2>
               </div>
-              <p className="max-w-md font-editorial text-sm text-[#6B6259]">
+              <p className="max-w-md font-body text-sm text-ash-900">
                 Different strengths, same live availability. These were the next highest-ranked room types for your answers.
               </p>
             </div>
@@ -209,7 +209,7 @@ export function StudioMatchResults({
                   key={room.roomTypeId}
                   room={room}
                   imageBaseUrl={imageBaseUrl}
-                  color={index % 2 === 0 ? "forest" : "smoke"}
+                  theme={index % 2 === 0 ? "lake-forest" : "paper"}
                   layout={index % 2 === 0 ? "left" : "right"}
                   onSelectRoom={onSelectRoom}
                   onOpenRoomDetails={onOpenRoomDetails}
@@ -219,12 +219,12 @@ export function StudioMatchResults({
           </div>
         )}
 
-        <div className="mt-12 overflow-hidden rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] shadow-md">
-          <div className="border-b border-[#4E332D]/20 bg-[#4E332D] px-6 py-5 text-[#FAF9F9] sm:px-8">
-            <p className="font-bianco text-[11px] font-bold uppercase tracking-[3px] text-[#FACA78]">
+        <div className="mt-12 overflow-hidden rounded-3xl border-2 border-cowboy-umber bg-paper shadow-md">
+          <div className="border-b border-cowboy-umber/20 bg-cowboy-umber px-6 py-5 text-paper sm:px-8">
+            <p className="font-number text-[11px] font-bold uppercase tracking-[3px] text-lodge-yellow">
               Keep Exploring or Take These With You
             </p>
-            <h2 className="mt-1 font-desert text-3xl font-bold uppercase leading-none sm:text-4xl">
+            <h2 className="mt-1 font-heading text-3xl font-bold uppercase leading-none sm:text-4xl">
               Not Seeing What You&apos;re After?
             </h2>
           </div>
@@ -233,12 +233,12 @@ export function StudioMatchResults({
             <button
               type="button"
               onClick={onBrowseAll}
-              className="min-h-24 rounded-2xl bg-[#FACA78] px-6 py-5 text-left transition hover:-translate-y-0.5 hover:shadow-md"
+              className="min-h-24 rounded-2xl bg-lodge-yellow px-6 py-5 text-left transition hover:-translate-y-0.5 hover:shadow-md"
             >
-              <span className="block font-bianco text-[10px] font-bold uppercase tracking-[2px] text-[#4E332D]/65">
+              <span className="block font-number text-[10px] font-bold uppercase tracking-[2px] text-cowboy-umber/65">
                 Keep Looking
               </span>
-              <span className="mt-2 block font-brothers text-lg font-bold uppercase tracking-[1px] text-[#4E332D]">
+              <span className="mt-2 block font-label text-lg font-bold uppercase tracking-[1px] text-cowboy-umber">
                 Browse All {totalAvailable} Rooms →
               </span>
             </button>
@@ -246,14 +246,14 @@ export function StudioMatchResults({
             <button
               type="button"
               onClick={shareMatches}
-              className="flex min-h-24 items-center gap-4 rounded-2xl border border-[#4E332D]/30 bg-[#EBE8E0] px-6 py-5 text-left transition hover:-translate-y-0.5 hover:border-[#4E332D] hover:shadow-md"
+              className="flex min-h-24 items-center gap-4 rounded-2xl border border-cowboy-umber/30 bg-alpine-linen px-6 py-5 text-left transition hover:-translate-y-0.5 hover:border-cowboy-umber hover:shadow-md"
             >
-              <Share2 className="h-6 w-6 shrink-0 text-[#9A5636]" aria-hidden="true" />
+              <Share2 className="h-6 w-6 shrink-0 text-copper" aria-hidden="true" />
               <span>
-                <span className="block font-bianco text-[10px] font-bold uppercase tracking-[2px] text-[#4E332D]/60">
+                <span className="block font-number text-[10px] font-bold uppercase tracking-[2px] text-cowboy-umber/60">
                   {shared ? "Link Ready" : "Send It Around"}
                 </span>
-                <span className="mt-1 block font-brothers text-lg font-bold uppercase tracking-[1px] text-[#4E332D]">
+                <span className="mt-1 block font-label text-lg font-bold uppercase tracking-[1px] text-cowboy-umber">
                   Share Matches
                 </span>
               </span>
@@ -265,14 +265,14 @@ export function StudioMatchResults({
                 setEmail(guest.email);
                 setShowEmailSave(true);
               }}
-              className="flex min-h-24 items-center gap-4 rounded-2xl border border-[#4E332D]/30 bg-white px-6 py-5 text-left transition hover:-translate-y-0.5 hover:border-[#4E332D] hover:shadow-md"
+              className="flex min-h-24 items-center gap-4 rounded-2xl border border-cowboy-umber/30 bg-white px-6 py-5 text-left transition hover:-translate-y-0.5 hover:border-cowboy-umber hover:shadow-md"
             >
-              <Mail className="h-6 w-6 shrink-0 text-[#9A5636]" aria-hidden="true" />
+              <Mail className="h-6 w-6 shrink-0 text-copper" aria-hidden="true" />
               <span>
-                <span className="block font-bianco text-[10px] font-bold uppercase tracking-[2px] text-[#4E332D]/60">
+                <span className="block font-number text-[10px] font-bold uppercase tracking-[2px] text-cowboy-umber/60">
                   {saved ? "Saved to Your Session" : "Keep a Copy"}
                 </span>
-                <span className="mt-1 block font-brothers text-lg font-bold uppercase tracking-[1px] text-[#4E332D]">
+                <span className="mt-1 block font-label text-lg font-bold uppercase tracking-[1px] text-cowboy-umber">
                   Save &amp; Email
                 </span>
               </span>
@@ -287,29 +287,29 @@ export function StudioMatchResults({
             role="dialog"
             aria-modal="true"
             aria-labelledby="save-matches-title"
-            className="relative w-full max-w-lg rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] p-6 shadow-2xl sm:p-8"
+            className="relative w-full max-w-lg rounded-3xl border-2 border-cowboy-umber bg-paper p-6 shadow-2xl sm:p-8"
           >
             <button
               type="button"
               onClick={() => setShowEmailSave(false)}
               aria-label="Close save matches dialog"
-              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-[#4E332D] hover:bg-[#EBE8E0]"
+              className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-cowboy-umber hover:bg-alpine-linen"
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
 
-            <p className="font-bianco text-[11px] font-bold uppercase tracking-[3px] text-[#9A5636]">
+            <p className="font-number text-[11px] font-bold uppercase tracking-[3px] text-copper">
               Save Your Matches
             </p>
-            <h2 id="save-matches-title" className="mt-2 pr-10 font-desert text-4xl font-bold uppercase leading-none text-[#4E332D]">
+            <h2 id="save-matches-title" className="mt-2 pr-10 font-heading text-4xl font-bold uppercase leading-none text-cowboy-umber">
               Send Them to Your Inbox
             </h2>
-            <p className="mt-4 font-editorial text-sm leading-6 text-[#6B6259]">
+            <p className="mt-4 font-body text-sm leading-6 text-ash-900">
               Save your top match and alternates with your booking session so they&apos;re easy to pick back up later.
             </p>
 
             <form className="mt-6" onSubmit={saveMatches}>
-              <label htmlFor="match-save-email" className="font-bianco text-[11px] font-bold uppercase tracking-[2px] text-[#4E332D]">
+              <label htmlFor="match-save-email" className="font-number text-[11px] font-bold uppercase tracking-[2px] text-cowboy-umber">
                 Email Address
               </label>
               <input
@@ -321,11 +321,11 @@ export function StudioMatchResults({
                   setEmail(event.target.value);
                   setEmailError("");
                 }}
-                className="mt-2 w-full rounded-xl border border-[#4E332D]/35 bg-white px-4 py-3 font-editorial text-sm text-[#4E332D] outline-none focus:border-[#9A5636] focus:ring-2 focus:ring-[#9A5636]/20"
+                className="mt-2 w-full rounded-xl border border-cowboy-umber/35 bg-white px-4 py-3 font-body text-sm text-cowboy-umber outline-none focus:border-copper focus:ring-2 focus:ring-copper/20"
                 placeholder="you@example.com"
               />
               {emailError && (
-                <p role="alert" className="mt-2 font-editorial text-xs font-semibold text-[#8C2340]">
+                <p role="alert" className="mt-2 font-body text-xs font-semibold text-oxblood-300">
                   {emailError}
                 </p>
               )}
@@ -337,13 +337,13 @@ export function StudioMatchResults({
                 <button
                   type="button"
                   onClick={() => setShowEmailSave(false)}
-                  className="rounded-full border border-[#4E332D] px-5 pb-2.5 pt-3 font-bianco text-xs font-bold uppercase tracking-[1.5px] text-[#4E332D]"
+                  className="rounded-full border border-cowboy-umber px-5 pb-2.5 pt-3 font-number text-xs font-bold uppercase tracking-[1.5px] text-cowboy-umber"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-full bg-[#4E332D] px-6 pb-2.5 pt-3 font-bianco text-xs font-bold uppercase tracking-[1.5px] text-[#FAF9F9] hover:bg-[#9A5636]"
+                  className="rounded-full bg-cowboy-umber px-6 pb-2.5 pt-3 font-number text-xs font-bold uppercase tracking-[1.5px] text-paper hover:bg-copper"
                 >
                   Save Matches
                 </button>

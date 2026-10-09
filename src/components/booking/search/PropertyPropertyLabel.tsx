@@ -58,7 +58,7 @@ export const PropertyPropertyLabel: React.FC<PropertyPropertyLabelProps> = ({
       aria-busy={isSubmitting}
       className={`
         inline-flex items-center justify-start text-left transition-all duration-200 select-none
-        ${interactive ? 'cursor-pointer hover:opacity-80 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4E332D]' : ''}
+        ${interactive ? 'cursor-pointer hover:opacity-80 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber' : ''}
         ${selected ? 'opacity-100 font-bold' : interactive ? 'opacity-60 hover:opacity-100' : 'opacity-100'}
         ${isSubmitting ? 'cursor-wait opacity-50' : ''}
         ${className}
@@ -70,7 +70,7 @@ export const PropertyPropertyLabel: React.FC<PropertyPropertyLabelProps> = ({
         fontSize: '12px',
         lineHeight: '14px',
         letterSpacing: '2px',
-        color: '#4E332D',
+        color: 'var(--color-cowboy-umber)',
         textTransform: 'uppercase',
         whiteSpace: 'nowrap',
         ...style,
@@ -79,7 +79,7 @@ export const PropertyPropertyLabel: React.FC<PropertyPropertyLabelProps> = ({
       {isSubmitting ? (
         <span className="flex items-center gap-2">
           <svg
-            className="animate-spin h-3.5 w-3.5 text-[#4E332D]"
+            className="animate-spin h-3.5 w-3.5 text-cowboy-umber"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -123,7 +123,7 @@ export const PropertyPropertyLabelGroup: React.FC<PropertyGroupProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col justify-center items-start p-3 gap-3 w-[235px] h-[90px] rounded-[5px] bg-transparent ${className}`}
+      className={`flex flex-col justify-center items-start p-3 gap-3 w-[235px] h-[90px] rounded-field bg-transparent ${className}`}
       role="group"
       aria-label="Urban Cowboy Property Location Selection"
     >
@@ -153,42 +153,42 @@ export default function PropertyPropertyLabelShowcase() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F3EE] p-8 flex flex-col items-center justify-center gap-8 font-sans">
+    <div className="min-h-screen bg-alpine-linen-fade p-8 flex flex-col items-center justify-center gap-8 font-sans">
       <div className="text-center max-w-md">
         <h1
-          className="text-2xl font-bold mb-2 tracking-wide text-[#343833]"
+          className="text-2xl font-bold mb-2 tracking-wide text-smoke"
           style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
         >
           PROPERTY PROPERTY LABEL
         </h1>
-        <p className="text-sm text-[#767470]">
+        <p className="text-sm text-ash-900">
           Full brand property title badges for Urban Cowboy Catskills, Nashville, and Denver.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
         {/* Spec Frame */}
-        <div className="bg-white p-6 rounded-xl border border-[#E2DFD7] shadow-sm flex flex-col items-center">
-          <span className="text-xs font-semibold text-[#8C8880] uppercase tracking-wider mb-4">
+        <div className="bg-white p-6 rounded-xl border border-alpine-linen-fade shadow-sm flex flex-col items-center">
+          <span className="text-xs font-semibold text-ash-900 uppercase tracking-wider mb-4">
             SPEC CONTAINER (235px × 90px)
           </span>
-          <div className="border border-dashed border-[#A79996] p-3 rounded-[5px] bg-[#FAF9F6]">
+          <div className="border border-dashed border-cowboy-umber-100 p-3 rounded-field bg-paper">
             <PropertyPropertyLabelGroup />
           </div>
         </div>
 
         {/* Interactive Selector */}
-        <div className="bg-white p-6 rounded-xl border border-[#E2DFD7] shadow-sm flex flex-col items-center">
-          <span className="text-xs font-semibold text-[#8C8880] uppercase tracking-wider mb-4">
+        <div className="bg-white p-6 rounded-xl border border-alpine-linen-fade shadow-sm flex flex-col items-center">
+          <span className="text-xs font-semibold text-ash-900 uppercase tracking-wider mb-4">
             INTERACTIVE PROPERTY SELECTOR
           </span>
-          <div className="border border-[#4E332D]/20 p-3 rounded-[5px] bg-[#EBE8E0]/40 mb-4">
+          <div className="border border-cowboy-umber/20 p-3 rounded-field bg-alpine-linen/40 mb-4">
             <PropertyPropertyLabelGroup
               selectedProperty={activeProperty}
               onSelect={handleSelect}
             />
           </div>
-          <div className="text-xs font-mono text-[#4E332D] bg-[#EBE8E0] px-3 py-1.5 rounded-md w-full text-center truncate">
+          <div className="text-xs font-mono text-cowboy-umber bg-alpine-linen px-3 py-1.5 rounded-md w-full text-center truncate">
             {statusLog}
           </div>
         </div>

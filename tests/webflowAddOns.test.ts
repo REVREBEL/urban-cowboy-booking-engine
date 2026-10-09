@@ -77,7 +77,7 @@ test("allows multiple CMS cards to share one Mews Product ID without duplicating
   assert.deepEqual(merged.map((item) => item.name), ["Celebration Cake", "Bathing Ritual Kit"]);
 });
 
-test("skips CMS add-ons that are not bound to a live Mews product", () => {
+test("skips unbound CMS cards without hiding live Mews add-ons", () => {
   const merged = mergeAddOnMerchandising(
     [liveProduct],
     [
@@ -93,7 +93,35 @@ test("skips CMS add-ons that are not bound to a live Mews product", () => {
     ],
   );
 
-  assert.deepEqual(merged, []);
+  assert.equal(merged.length, 1);
+  assert.equal(merged[0]?.displayId, "mews:mews-product-1");
+  assert.equal(merged[0]?.cmsItemId, null);
+  assert.equal(merged[0]?.contentSource, "mews");
+  assert.equal(merged.some((item) => item.displayId === "cms-unbound"), false);
+});
+
+test("skips CMS merchandising bound to a nonexistent Mews product while retaining real live products", () => {
+  const merged = mergeAddOnMerchandising(
+    [liveProduct],
+    [
+      {
+        id: "cms-missing-live-product",
+        name: "Future Add On",
+        itemName: "Future Add On",
+        shortDescription: null,
+        longDescription: "Not live yet",
+        mewsProductId: "missing-mews-product",
+        imageUrl: "https://cdn.example/future.jpg",
+      },
+    ],
+  );
+
+  assert.equal(merged.length, 1);
+  assert.equal(merged[0]?.displayId, "mews:mews-product-1");
+  assert.equal(
+    merged.some((item) => item.displayId === "cms-missing-live-product"),
+    false,
+  );
 });
 
 test("falls back to Mews presentation when Webflow content is unavailable", () => {

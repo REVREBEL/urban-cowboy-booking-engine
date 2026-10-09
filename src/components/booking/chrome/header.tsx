@@ -35,7 +35,7 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
   const showProgress = step !== "confirmation";
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#4E332D]/10 bg-[#EBE8E0]/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-cowboy-umber/10 bg-alpine-linen/95 backdrop-blur-md">
       <div className="booking-shell">
         <div className="flex h-16 w-full items-center justify-between gap-5 sm:h-[67px]">
           <button
@@ -77,21 +77,21 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
             </div>
           )}
 
-          <div className="flex items-center gap-1.5 border-b border-[#4E332D]/20 pb-0.5 text-[#4E332D] sm:border-b-0">
+          <div className="flex items-center gap-1.5 border-b border-cowboy-umber/20 pb-0.5 text-cowboy-umber sm:border-b-0">
             <img
               src="/assets/icons/ui/fi-sheriff-badge.svg"
               alt=""
               aria-hidden="true"
               className="h-4 w-4 select-none object-contain"
             />
-            <span className="font-woodblock text-[11px] font-semibold uppercase tracking-wider sm:text-xs">
+            <span className="font-label text-[11px] font-semibold uppercase tracking-wider sm:text-xs">
               Best Price Guaranteed
             </span>
           </div>
         </div>
 
         {showProgress && (
-          <div className="overflow-x-auto border-t border-[#4E332D]/10 py-2 md:hidden hide-scrollbar">
+          <div className="overflow-x-auto border-t border-cowboy-umber/10 py-2 md:hidden hide-scrollbar">
             <div className="mx-auto flex min-w-max justify-center">
               <ProgressBar
                 currentStep={current}

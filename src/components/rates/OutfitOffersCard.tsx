@@ -167,7 +167,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 maxWidth: '100%',
                 height: '657px',
                 padding: '54px 30px',
-                backgroundColor: '#0E301A',
+                backgroundColor: 'var(--color-lake-forest)',
                 border: '4px solid #F2AAA9',
                 borderRadius: '45px',
               }}
@@ -176,7 +176,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
               <div
                 className="w-full text-center font-normal lowercase select-none"
                 style={{
-                  color: '#F2AAA9',
+                  color: 'var(--color-nude-ember)',
                   fontFamily: "'Fineday-StyleOne', 'Instrument Serif', Georgia, serif",
                   fontSize: '28px',
                   lineHeight: '32px',
@@ -191,7 +191,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 <h2
                   className="w-full text-center font-normal uppercase m-0 p-0 select-none whitespace-pre-line tracking-[0.02em]"
                   style={{
-                    color: '#F2AAA9',
+                    color: 'var(--color-nude-ember)',
                     fontFamily: "'League Gothic', 'Impact', sans-serif-condensed, sans-serif",
                     fontSize: 'clamp(68px, 15vw, 88px)',
                     lineHeight: '74px',
@@ -202,7 +202,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 <div
                   className="w-full text-center font-normal lowercase select-none mt-1"
                   style={{
-                    color: '#EBE8E0',
+                    color: 'var(--color-alpine-linen)',
                     fontFamily: "'Fineday-StyleOne', 'Instrument Serif', Georgia, serif",
                     fontSize: '26px',
                     lineHeight: '28px',
@@ -217,7 +217,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 <div
                   className="w-full text-left font-normal uppercase select-none whitespace-nowrap"
                   style={{
-                    color: '#F2AAA9',
+                    color: 'var(--color-nude-ember)',
                     fontFamily: "'League Gothic', 'Impact', sans-serif-condensed, sans-serif",
                     fontSize: 'clamp(30px, 10cqw, 46px)',
                     lineHeight: '46px',
@@ -229,7 +229,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 <div
                   className="w-full text-right font-normal select-none mt-0.5"
                   style={{
-                    color: '#F2AAA9',
+                    color: 'var(--color-nude-ember)',
                     fontFamily: "'DM Sans', sans-serif",
                     fontSize: '16px',
                     lineHeight: '18px',
@@ -245,7 +245,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 <p
                   className="w-full font-medium text-center m-0 text-balance"
                   style={{
-                    color: '#EBE8E0',
+                    color: 'var(--color-alpine-linen)',
                     fontFamily: "'DM Sans', sans-serif",
                     fontSize: '15px',
                     lineHeight: '22px',
@@ -261,13 +261,13 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3.5 rounded-full bg-[#F2AAA9] text-[#0E301A] font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-white whitespace-nowrap"
+                      className="px-8 py-3.5 rounded-full bg-nude-ember text-lake-forest font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-white whitespace-nowrap"
                       style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
                     <span
-                      className="text-xs text-[#EBE8E0] text-center"
+                      className="text-xs text-alpine-linen text-center"
                       style={{ fontFamily: "'DM Sans', sans-serif" }}
                     >
                       {cancellationText}
@@ -281,7 +281,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
             <div
               className="relative w-full h-full flex flex-col overflow-hidden box-border transition-all duration-300 shadow-lg hover:shadow-xl"
               style={{
-                backgroundColor: '#0E301A',
+                backgroundColor: 'var(--color-lake-forest)',
                 borderRadius: '50px',
               }}
             >
@@ -298,7 +298,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <div
                       className="w-full text-center font-normal lowercase select-none m-0 p-0"
                       style={{
-                        color: '#EBE8E0',
+                        color: 'var(--color-alpine-linen)',
                         fontFamily: "'Fineday-StyleOne', 'Instrument Serif', Georgia, serif",
                         fontSize: '28px',
                         lineHeight: '28px',
@@ -311,7 +311,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <h2
                       className="w-full text-center font-normal uppercase m-0 p-0 select-none whitespace-pre-line tracking-[0.02em]"
                       style={{
-                        color: '#F2AAA9',
+                        color: 'var(--color-nude-ember)',
                         fontFamily: "'League Gothic', 'Impact', sans-serif-condensed, sans-serif",
                         fontSize: 'clamp(88px, 18vw, 114px)',
                         lineHeight: '90px',
@@ -323,7 +323,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <div
                       className="w-full text-center font-normal lowercase select-none m-0 p-0"
                       style={{
-                        color: '#EBE8E0',
+                        color: 'var(--color-alpine-linen)',
                         fontFamily: "'Fineday-StyleOne', 'Instrument Serif', Georgia, serif",
                         fontSize: '26px',
                         lineHeight: '26px',
@@ -337,7 +337,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <p
                       className="w-full font-medium text-center m-0 text-balance"
                       style={{
-                        color: '#EBE8E0',
+                        color: 'var(--color-alpine-linen)',
                         fontFamily: "'DM Sans', sans-serif",
                         fontSize: '18px',
                         lineHeight: '24px',
@@ -354,7 +354,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <div
                       className="w-full text-left font-normal uppercase select-none whitespace-nowrap"
                       style={{
-                        color: '#F2AAA9',
+                        color: 'var(--color-nude-ember)',
                         fontFamily: "'League Gothic', 'Impact', sans-serif-condensed, sans-serif",
                         fontSize: 'clamp(30px, 10cqw, 46px)',
                         lineHeight: '46px',
@@ -366,7 +366,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <div
                       className="w-full text-right font-normal select-none mt-0.5"
                       style={{
-                        color: '#F2AAA9',
+                        color: 'var(--color-nude-ember)',
                         fontFamily: "'DM Sans', sans-serif",
                         fontSize: '16px',
                         lineHeight: '18px',
@@ -379,7 +379,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
 
                   <div className="w-full flex flex-col items-center gap-2">
                     {isUnlocked && (
-                      <div className="w-full max-w-[380px] rounded-full border border-[#F2AAA9]/40 bg-[#1E2F28] px-4 py-3 text-center text-[#F2AAA9]" role="status">
+                      <div className="w-full max-w-[380px] rounded-full border border-nude-ember/40 bg-lake-forest px-4 py-3 text-center text-nude-ember" role="status">
                         <span className="font-normal text-[18px] tracking-[1px] uppercase" style={{ fontFamily: 'var(--font-button)' }}>
                           Member rate unlocked
                         </span>
@@ -397,12 +397,12 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                           placeholder="Enter your email"
                           autoFocus
                           disabled={isSubmitting}
-                          className="w-full rounded-full bg-[#EBE8E0] px-5 py-3 text-sm font-medium text-[#384D43] placeholder-[#384D43]/60 shadow-inner focus:outline-none focus:ring-2 focus:ring-[#F2AAA9] disabled:opacity-60"
+                          className="w-full rounded-full bg-alpine-linen px-5 py-3 text-sm font-medium text-lake-forest placeholder-[#384D43]/60 shadow-inner focus:outline-none focus:ring-2 focus:ring-nude-ember disabled:opacity-60"
                         />
                         <button
                           type="submit"
                           disabled={disabled || isSubmitting}
-                          className="w-full min-h-[64px] rounded-full bg-[#F2AAA9] px-6 py-3 text-[#1B2B24] transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
+                          className="w-full min-h-[64px] rounded-full bg-nude-ember px-6 py-3 text-lake-forest transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
                         >
                           <span className="font-normal text-[20px] tracking-[1.2px] uppercase" style={{ fontFamily: 'var(--font-button)' }}>
                             {isSubmitting ? 'Unlocking…' : 'Confirm & Save'}
@@ -415,14 +415,14 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className={`group w-full max-w-[380px] min-h-[64px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#F2AAA9]/30 active:scale-[0.98] whitespace-nowrap ${
+                      className={`group w-full max-w-[380px] min-h-[64px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-nude-ember/30 active:scale-[0.98] whitespace-nowrap ${
                         disabled
-                          ? 'cursor-not-allowed bg-[#F2AAA9] text-[#0E301A] border-[3px] border-[#F2AAA9]'
+                          ? 'cursor-not-allowed bg-nude-ember text-lake-forest border-[length:var(--border-width-control)] border-nude-ember'
                           : isExpanded
-                          ? 'bg-[#F2AAA9] text-[#0E301A]'
+                          ? 'bg-nude-ember text-lake-forest'
                           : isSubmitting
-                          ? 'bg-[#F2AAA9] text-[#0E301A] cursor-wait border-transparent'
-                          : 'cursor-pointer bg-[#F2AAA9] text-[#0E301A] border-[3px] border-[#F2AAA9] hover:bg-transparent hover:text-[#F2AAA9]'
+                          ? 'bg-nude-ember text-lake-forest cursor-wait border-transparent'
+                          : 'cursor-pointer bg-nude-ember text-lake-forest border-[length:var(--border-width-control)] border-nude-ember hover:bg-transparent hover:text-nude-ember'
                       }`}
                       aria-busy={isSubmitting}
                     >
@@ -447,7 +447,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <div
                       className="w-full text-center font-normal text-[13px] select-none whitespace-nowrap"
                       style={{
-                        color: '#EBE8E0',
+                        color: 'var(--color-alpine-linen)',
                         fontFamily: "'DM Sans', sans-serif",
                         letterSpacing: '1px',
                       }}
@@ -462,14 +462,14 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
               <div
                 className="w-full py-3 px-5 flex items-center justify-center select-none"
                 style={{
-                  backgroundColor: '#F2AAA9',
+                  backgroundColor: 'var(--color-nude-ember)',
                   borderRadius: '0px 0px 50px 50px',
                 }}
               >
                 <span
                   className="text-center font-bold text-[16px] tracking-[1px] uppercase"
                   style={{
-                    color: '#0E301A',
+                    color: 'var(--color-lake-forest)',
                     fontFamily: "'DM Sans', sans-serif",
                   }}
                 >

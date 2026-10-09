@@ -5,19 +5,19 @@ export const PillarFeatures: React.FC = () => {
     {
       title: 'DISAPPEAR FOR A WHILE',
       text: 'Trade pavement for mountain air and the kind of quiet that makes you forget what day it is.',
-      icon: '/assets/icons/amenities/simple/hammock.svg',
+      icon: '/assets/assets/icons/icons-simple/hammock.svg',
       alt: 'Hammock'
     },
     {
       title: 'SOAK IT ALL IN',
       text: 'Sauna, outdoor hangs, long baths and plenty of ways to slow the whole operation down.',
-      icon: '/assets/icons/amenities/simple/estonian_sauna.svg',
+      icon: '/assets/assets/icons/icons-simple/estonian_sauna.svg',
       alt: 'Estonian Sauna'
     },
     {
       title: 'BETTER TOGETHER',
       text: 'Dinner, drinks, fireside nights and whatever happens next. Cowboy is made for gathering.',
-      icon: '/assets/icons/amenities/simple/campfire.svg',
+      icon: '/assets/assets/icons/icons-simple/campfire.svg',
       alt: 'Campfire'
     }
   ];
@@ -37,10 +37,10 @@ export const PillarFeatures: React.FC = () => {
                 className="w-12 h-12 md:w-14 md:h-14 object-contain select-none"
               />
             </div>
-            <h3 className="font-woodblock text-sm md:text-base font-bold text-[#4E332D] tracking-wider uppercase mb-2">
+            <h3 className="font-label text-sm md:text-base font-bold text-cowboy-umber tracking-wider uppercase mb-2">
               {p.title}
             </h3>
-            <p className="font-editorial text-sm md:text-[15px] text-[#4E332D]/80 leading-relaxed">
+            <p className="font-body text-sm md:text-[15px] text-cowboy-umber/80 leading-relaxed">
               {p.text}
             </p>
           </div>
