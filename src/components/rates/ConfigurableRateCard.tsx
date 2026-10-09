@@ -60,6 +60,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
         "--rate-overlay-desktop-top": DESKTOP_POSITION_TOP[config.desktopOverlayPosition],
         "--rate-overlay-mobile-top": MOBILE_POSITION_TOP[config.mobileOverlayPosition],
         "--rate-fg": textColor,
+        "--rate-border-color": textColor,
       }) as React.CSSProperties,
     [
       config.desktopOverlayPosition,
@@ -87,13 +88,17 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
       data-text-color={config.textColor}
       data-button-color={config.buttonColor}
       data-font-pair={config.fontPair}
+      data-border-style={config.borderStyle}
       data-desktop-overlay-position={config.desktopOverlayPosition}
       data-mobile-overlay-position={config.mobileOverlayPosition}
       data-artwork-fallback={fallbackIsVisible ? "true" : "false"}
       style={style}
       aria-labelledby={`rate-card-${config.id}-title`}
     >
-      <div className="rate-card-frame">
+      <div
+        className="rate-card-frame rate-card-border-surface"
+        data-border-style={config.borderStyle}
+      >
         <div
           className={
             fallbackIsVisible
