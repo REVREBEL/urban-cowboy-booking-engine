@@ -1,11 +1,12 @@
 export type PreferenceArtworkId =
-  | "iconic-tub"
-  | "bathe-outside"
-  | "my-own-place"
-  | "near-everything"
-  | "simple-cozy"
-  | "mountain-views"
-  | "bringing-my-people";
+  "your_own_hideaway"
+  "spaces_to_gather"
+  "spaces_for_connection"
+  "simple_comforts"
+  "scenic_mountain_views"
+  "minimal_distractions"
+  "indoor_sancuaries.svg"
+  "connection_with_nature";
 
 type FeatureKind =
   | "kitchen"
@@ -20,73 +21,44 @@ type FeatureKind =
 type PreferenceId = PreferenceArtworkId;
 
 const RAW =
-  "https://raw.githubusercontent.com/REVREBEL/urban-cowboy-booking-engine/d77a9f16cb2f99624f730bbb63cd340c74a6fdb5/src/components/other-cowboy/figma/public/assets";
+  "./assets";
 
 const asset = (path: string) => `${RAW}/${path}`;
 
 export const BRAND = {
-  wordmarkForest: asset("logo-wordmark.svg"),
-  wordmarkLinen: asset("logo-light.svg"),
-  logoLinen: asset("logo-stacked.svg"),
-  star: asset("best-rate-guaranteed-icon.svg"),
-  building: asset("alpine-house-1.svg"),
+  wordmarkForest: asset("/brand/logos/logo-wordmark.svg"),
+  wordmarkLinen: asset("/brand/logos/logo-light.svg"),
+  logoLinen: asset("/brand/logos/logo-stacked.svg"),
+  star: asset("/simple-logo/best-rate-dark.svg"),
+  lodge: asset("icons/simple-logo/lodge.svg"),
+  slide_mountain: asset("icons/simple-logo/slide_mountain_haus.svg"),
+  ralphs: asset("icons/simple-logo/ralphs_bar_bowling.svg"),
+  opas: asset("icons/simple-logo/opas_cabin.svg"),
+  mountian_view: asset("icons/simple-logo/mountian_view_haus.svg"),
+  forest: asset("icons/simple-logo/forest_haus.svg"),
+  sauna: asset("icons/simple-logo/estonian_sauna.svg"),
+  walden: asset("icons/simple-logo/walden.svg"),
+  chalet: asset("icons/simple-logo/chalet.svg"),
+  cabin: asset("icons/simple-logo/cabin.svg"),
+  alpine: asset("icons/simple-logo/alpine.svg"),
 };
 
 export const PREFERENCE_ICON: Record<PreferenceId, string> = {
-  "iconic-tub": asset("copper-tub-illustration-unselected.png"),
-  "bathe-outside": asset("soak-outside-illustration-unselected.png"),
-  "my-own-place": asset("my-own-place-illustration-unselected.png"),
-  "near-everything": asset("spaces-to-gather-illustration-unselected.png"),
-  "simple-cozy": asset("simple-cozy-illustration-unselected.png"),
-  "mountain-views": asset("scenic-views-illustration-unselected.png"),
-  "bringing-my-people": asset("party-card-bg-wide.svg"),
+your_own_hideaway: asset("illustrations/interaction/find-your-stay/your_own_hideaway.svg"),
+spaces_to_gather: asset("illustrations/interaction/find-your-stay/spaces_to_gather.svg"),
+spaces_for_connection: asset("/illustrations/interaction/find-your-stay/spaces_for_connection.svg"),
+simple_comforts: asset("illustrations/interaction/find-your-staycsimple_comforts.svg"),
+scenic_mountain_views: asset("illustrations/interaction/find-your-stay/scenic_mountain_views.svg"),
+minimal_distractions: asset("illustrations/interaction/find-your-stay/minimal_distractions.svg"),
+indoor_sancuaries: asset("illustrations/interaction/find-your-stay/indoor_sancuaries.svg"),
+connection_with_nature: asset("illustrations/interaction/find-your-staycconnection_with_nature.svg"),
 };
 
-export const PREFERENCE_LABEL: Partial<Record<PreferenceId, string>> = {
-  "iconic-tub": asset("copper-tub-label-unselected.svg"),
-  "bathe-outside": asset("soak-outside-label.svg"),
-  "my-own-place": asset("my-own-place-label-unselected.svg"),
-  "near-everything": asset("spaces-to-gather-label-unselected.svg"),
-  "simple-cozy": asset("simple-cozy-label-unselected.svg"),
-  "mountain-views": asset("scenic-views-label-unselected.svg"),
-};
-
-export const PREFERENCE_ICON_SELECTED: Partial<Record<PreferenceId, string>> = {
-  "iconic-tub": asset("copper-tub-illustration-selected.png"),
-  "bathe-outside": asset("outdoor-cedar-soaking-tub.png"),
-  "my-own-place": asset("the-cabin.png"),
-  "near-everything": asset("spaces-to-gather-illustration-selected.png"),
-  "simple-cozy": asset("simple-cozy-illustration-selected.png"),
-  "mountain-views": asset("scenic-views-illustration-selected.png"),
-};
-
-export const PREFERENCE_LABEL_SELECTED: Partial<Record<PreferenceId, string>> = {
-  "iconic-tub": asset("copper-tub-label-selected.svg"),
-  "bathe-outside": asset("soak-outside-label.svg"),
-  "my-own-place": asset("my-own-place-label-selected.svg"),
-  "near-everything": asset("spaces-to-gather-label-selected.svg"),
-  "simple-cozy": asset("simple-cozy-label-selected.svg"),
-  "mountain-views": asset("scenic-views-label-selected.svg"),
-};
-
-export const DOG_ICON = asset("dog-toggle-off.svg");
-export const DOG_ICON_SELECTED = asset("dog-toggle-on.svg");
-
-export const FEATURE_ICON: Record<FeatureKind, string> = {
-  water: asset("simple-icons/copper_clawfoot_soaking_tub.svg"),
-  bed: asset("simple-icons/one_bed.svg"),
-  heating: asset("simple-icons/cast_iron_wood_stove.svg"),
-  room: asset("simple-icons/heated_floors.svg"),
-  building: asset("alpine-house-1.svg"),
-  basic: asset("simple-icons/cowboy_robe.svg"),
-  kitchen: asset("simple-icons/full_kitchen.svg"),
-  badge: asset("best-rate-guaranteed-icon.svg"),
-};
 
 export const BADGE_ICON = {
-  adultsOnly: asset("simple-icons/adults-only-filled.svg"),
-  wifi: asset("simple-icons/wifi_badge.svg"),
-  dogFriendly: asset("simple-icons/dog_friendly.svg"),
+  adultsOnly: asset("icons/badges/simple-icons/adults-only-filled.svg"),
+  wifi: asset("icons/badges/wifi_badge.svg"),
+  dogFriendly: asset("icons/badges//dog_friendly.svg"),
 };
 
 export const INTERESTS = [];

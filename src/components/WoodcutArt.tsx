@@ -80,11 +80,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'robes':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/cowboy_robe.svg"
-=======
-          src="/assets/icons/icons-simple/cowboy_robe.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/cowboy_robe.svg"
           alt="Pendleton Wool Robes"
           className={`${className} object-contain select-none`}
         />
@@ -93,11 +89,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'bed':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/one_bed.svg"
-=======
-          src="/assets/icons/icons-simple/one_bed.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/one_bed.svg"
           alt="Bed"
           className={`${className} object-contain select-none`}
         />
@@ -106,11 +98,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'double-beds':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/double_beds.svg"
-=======
-          src="/assets/icons/icons-simple/double_beds.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/double_beds.svg"
           alt="Double Beds"
           className={`${className} object-contain select-none`}
         />
@@ -119,11 +107,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'stove':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/enameled_gas_fireplace.svg"
-=======
-          src="/assets/icons/icons-simple/enameled_gas_fireplace.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/enameled_gas_fireplace.svg"
           alt="Cast Iron Wood Stove"
           className={`${className} object-contain select-none`}
         />
@@ -132,11 +116,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'stone-fireplace':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/river_stone_hearth_fireplace.svg"
-=======
-          src="/assets/icons/icons-simple/river_stone_hearth_fireplace.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/river_stone_hearth_fireplace.svg"
           alt="River Stone Hearth Fireplace"
           className={`${className} object-contain select-none`}
         />
@@ -145,11 +125,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'cedar-tub':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/outdoor_cedar_soaking_tub.svg"
-=======
-          src="/assets/icons/icons-simple/outdoor_cedar_soaking_tub.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/outdoor_cedar_soaking_tub.svg"
           alt="Outdoor Cedar Soaking Tub"
           className={`${className} object-contain select-none`}
         />
@@ -158,11 +134,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'clawfoot-tub':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/copper_clawfoot_soaking_tub.svg"
-=======
-          src="/assets/icons/icons-simple/copper_clawfoot_soaking_tub.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/copper_clawfoot_soaking_tub.svg"
           alt="Copper Clawfoot Soaking Tub"
           className={`${className} object-contain select-none`}
         />
@@ -171,11 +143,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'desk':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/letter_writing_desk.svg"
-=======
-          src="/assets/icons/icons-simple/letter_writing_desk.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/letter_writing_desk.svg"
           alt="Letter Writing Desk"
           className={`${className} object-contain select-none`}
         />
@@ -184,11 +152,7 @@ export const AmenityWoodcutIcon: React.FC<{
     case 'separate-living':
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/separate_living_room.svg"
-=======
-          src="/assets/icons/icons-simple/separate_living_room.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/separate_living_room.svg"
           alt="Separate Living Room"
           className={`${className} object-contain select-none`}
         />
@@ -368,11 +332,7 @@ export const AmenityWoodcutIcon: React.FC<{
     default:
       return (
         <img
-<<<<<<< Updated upstream
-          src="/assets/icons/amenities/simple/outdoor_cedar_soaking_tub.svg"
-=======
-          src="/assets/icons/icons-simple/outdoor_cedar_soaking_tub.svg"
->>>>>>> Stashed changes
+          src="/assets/assets/icons/icons-simple/outdoor_cedar_soaking_tub.svg"
           alt="Outdoor Cedar Soaking Tub"
           className={`${className} object-contain select-none`}
         />
