@@ -34,6 +34,14 @@ const FONT_CLASS_REPLACEMENTS = new Map([
   ["font-uchen", "font-body"],
   ["font-desert", "font-heading"],
   ["font-bianco", "font-number"],
+  ["font-display", "font-heading"],
+  ["font-brand", "font-heading"],
+  ["font-topic", "font-eyebrow"],
+  ["font-inter", "font-body"],
+  ["font-lato", "font-body"],
+  ["font-dm-sans", "font-body"],
+  ["font-league-spartan", "font-label"],
+  ["font-emoji-mono", "font-emoji emoji-text"],
 ]);
 
 const RADIUS_CLASS_REPLACEMENTS = new Map([
@@ -44,6 +52,13 @@ const RADIUS_CLASS_REPLACEMENTS = new Map([
   ["rounded-[17px]", "rounded-card-media"],
   ["rounded-[18px]", "rounded-control-lg"],
   ["rounded-[20px]", "rounded-control-xl"],
+]);
+
+const BORDER_CLASS_REPLACEMENTS = new Map([
+  ["border-[1px]", "border"],
+  ["border-[2px]", "border-2"],
+  ["border-[3px]", "border-[length:var(--border-width-control)]"],
+  ["border-[3.5px]", "border-[length:var(--border-width-control-lg)]"],
 ]);
 
 const STATIC_VALUE_PATTERNS = [
@@ -61,7 +76,7 @@ const STATIC_VALUE_PATTERNS = [
   },
   {
     kind: "font",
-    pattern: /font-(?:woodblock|brothers|editorial|uchen|desert|bianco)\b/g,
+    pattern: /font-(?:woodblock|brothers|editorial|uchen|desert|bianco|display|brand|topic|inter|lato|dm-sans|league-spartan|emoji-mono)\b/g,
   },
 ];
 
@@ -109,6 +124,9 @@ function replaceKnownClasses(source) {
     next = next.replace(new RegExp(`\\b${from}\\b`, "g"), to);
   }
   for (const [from, to] of RADIUS_CLASS_REPLACEMENTS) {
+    next = next.split(from).join(to);
+  }
+  for (const [from, to] of BORDER_CLASS_REPLACEMENTS) {
     next = next.split(from).join(to);
   }
   return next;
@@ -168,6 +186,7 @@ function collectUnresolved(source, filePath) {
       }
 
       if (kind === "radius" && RADIUS_CLASS_REPLACEMENTS.has(value)) continue;
+      if (kind === "border-width" && BORDER_CLASS_REPLACEMENTS.has(value)) continue;
       if (kind === "font" && FONT_CLASS_REPLACEMENTS.has(value)) continue;
 
       findings.push({
