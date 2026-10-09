@@ -105,7 +105,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
       aria-labelledby={headerId}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className={`box-border relative flex flex-col items-start p-6.25 gap-2.5 w-90.5 h-64.75 bg-paper border-2 border-cowboy-umber shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none outline-none ${className}`}
+      className={`relative box-border flex h-64.75 w-90.5 select-none flex-col items-start gap-2.5 rounded-none border-2 border-input-border bg-input-bg p-6.25 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] outline-none ${className}`}
     >
       {/* Frame: 308px x 205px, gap: 5px */}
       <div className="flex flex-col items-start p-0 gap-1.25 w-77 h-51.25 self-stretch flex-1">
@@ -121,7 +121,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
             <div className="flex flex-col items-start p-0 gap-px w-77 h-4.5 flex-1">
               <span
                 id={headerId}
-                className="w-44.75 h-4.5 font-label text-[16px] leading-[19px] uppercase text-cowboy-umber-100 flex items-center tracking-wider"
+                className="flex h-4.5 w-44.75 items-center font-label text-[16px] uppercase leading-[19px] tracking-wider text-foreground/60"
               >
                 SELECT A COWBOY
               </span>
@@ -143,7 +143,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
             }`}
           >
             <div className="flex flex-col items-start p-0 gap-px w-auto h-4.75">
-              <span className="w-22 h-4.75 font-heading text-[16px] leading-[19px] font-bold tracking-[2px] text-cowboy-umber flex items-center group-hover:translate-x-0.5 transition-transform">
+              <span className="flex h-4.75 w-22 items-center font-heading text-[16px] font-bold leading-[19px] tracking-[2px] text-foreground transition-transform group-hover:translate-x-0.5">
                 CATSKILLS
               </span>
             </div>
@@ -167,7 +167,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
             }`}
           >
             <div className="flex flex-col items-start p-0 gap-px w-auto h-4.75">
-              <span className="w-23.5 h-4.75 font-heading text-[16px] leading-[19px] font-bold tracking-[2px] text-cowboy-umber flex items-center group-hover:translate-x-0.5 transition-transform">
+              <span className="flex h-4.75 w-23.5 items-center font-heading text-[16px] font-bold leading-[19px] tracking-[2px] text-foreground transition-transform group-hover:translate-x-0.5">
                 NASHVILLE
               </span>
             </div>
@@ -191,7 +191,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
             }`}
           >
             <div className="flex flex-col justify-center items-start p-0 w-73 h-4.75">
-              <span className="w-17.5 h-4.75 font-heading text-[16px] leading-[19px] font-bold tracking-[2px] text-cowboy-umber flex items-center group-hover:translate-x-0.5 transition-transform">
+              <span className="flex h-4.75 w-17.5 items-center font-heading text-[16px] font-bold leading-[19px] tracking-[2px] text-foreground transition-transform group-hover:translate-x-0.5">
                 DENVER
               </span>
             </div>

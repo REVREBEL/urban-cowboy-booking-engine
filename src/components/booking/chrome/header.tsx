@@ -4,6 +4,7 @@ import {
   ProgressStep,
   type ProgressStepState,
 } from "@/components/booking/progress/ProgressBar";
+import { BestRateGuaranteedLabel } from "@/components/booking/search/BestRateGuaranteedLabel";
 
 type BookingHeaderProps = {
   step: Step;
@@ -44,10 +45,14 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
             className="group flex items-center py-1 text-left focus:outline-none"
             aria-label="Cowboy home"
           >
-            <img
-              src="/assets/brand/logos/Cowboy.svg"
-              alt="Cowboy"
-              className="h-6 w-auto select-none text-foreground object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-7"
+            <span
+              role="img"
+              aria-label="Cowboy"
+              className="block h-6 w-34 bg-current text-foreground transition-transform duration-200 group-hover:scale-[1.03] sm:h-7 sm:w-40"
+              style={{
+                WebkitMask: 'url("/assets/brand/logos/Cowboy.svg") center / contain no-repeat',
+                mask: 'url("/assets/brand/logos/Cowboy.svg") center / contain no-repeat',
+              }}
             />
           </button>
 
@@ -77,17 +82,7 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
             </div>
           )}
 
-          <div className="flex items-center gap-1.5 border-b border-foreground/20 pb-0.5 text-foreground sm:border-b-0">
-            <img
-              src="/assets/icons/ui/fi-sheriff-badge.svg"
-              alt=""
-              aria-hidden="true"
-              className="h-4 w-4 select-none object-contain"
-            />
-            <span className="font-label text-[11px] font-semibold uppercase tracking-wider sm:text-xs">
-              Best Price Guaranteed
-            </span>
-          </div>
+          <BestRateGuaranteedLabel className="text-foreground" />
         </div>
 
         {showProgress && (
