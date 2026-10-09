@@ -148,8 +148,9 @@ color-scheme: light;
 --_size---button-sm--padding-right: 1rem;
 
 /* Adaptive photography overlays */
---icon-color-light: #faf9f9;
+--icon-color-light: var(--color-paper);
 --icon-color-dark: var(--color-cowboy-umber);
+--media-placeholder: #d7d0c7;
 
 /* Backward-compatible font aliases */
 --font-brothers: var(--font-button);
@@ -272,6 +273,49 @@ letter-spacing: 2px;
 --card-primary-text: var(--color-lake-forest);
 --card-primary-hover: color-mix(in srgb, var(--color-nude-ember) 85%, var(--color-paper));
 --card-secondary-hover: color-mix(in srgb, var(--color-nude-ember) 10%, transparent);
+}
+
+.room-list-card {
+background-color: var(--card-bg);
+border-color: var(--card-border);
+}
+
+.room-list-card__title,
+.room-list-card__description,
+.room-list-card__price {
+color: var(--card-title);
+}
+
+.room-list-card__tagline {
+color: var(--card-accent);
+}
+
+.room-list-card__amenity {
+border-color: var(--card-pill);
+color: var(--card-pill);
+}
+
+.room-list-card__highlight {
+border-color: var(--card-accent);
+color: var(--card-accent);
+}
+
+.room-list-card__primary {
+background-color: var(--card-primary-bg);
+color: var(--card-primary-text);
+}
+
+.room-list-card__primary:hover {
+background-color: var(--card-primary-hover);
+}
+
+.room-list-card__secondary {
+border-color: var(--card-accent);
+color: var(--card-accent);
+}
+
+.room-list-card__secondary:hover {
+background-color: var(--card-secondary-hover);
 }
 
 .btn {
