@@ -23,7 +23,10 @@
     "mews:smoke": "bash scripts/test-mews-booking-api.sh",
     "icons:build": "node scripts/build-icons.mjs",
     "icons:clean": "node scripts/build-icons.mjs --clean",
-    "sync:room-photos": "node scripts/sync-mews-room-photos.mjs"
+    "sync:room-photos": "node scripts/sync-mews-room-photos.mjs",
+    "tokens:audit": "node scripts/tokenize-design-system.mjs",
+    "tokens:fix": "node scripts/tokenize-design-system.mjs --write",
+    "tokens:check": "node scripts/tokenize-design-system.mjs --check"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.21",
