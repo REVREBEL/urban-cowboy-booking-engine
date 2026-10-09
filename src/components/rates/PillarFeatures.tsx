@@ -5,19 +5,19 @@ export const PillarFeatures: React.FC = () => {
     {
       title: 'DISAPPEAR FOR A WHILE',
       text: 'Trade pavement for mountain air and the kind of quiet that makes you forget what day it is.',
-      icon: '/assets/icons/amenities/simple/hammock.svg',
+      icon: '/assets/assets/icons/icons-simple/hammock.svg',
       alt: 'Hammock'
     },
     {
       title: 'SOAK IT ALL IN',
       text: 'Sauna, outdoor hangs, long baths and plenty of ways to slow the whole operation down.',
-      icon: '/assets/icons/amenities/simple/estonian_sauna.svg',
+      icon: '/assets/assets/icons/icons-simple/estonian_sauna.svg',
       alt: 'Estonian Sauna'
     },
     {
       title: 'BETTER TOGETHER',
       text: 'Dinner, drinks, fireside nights and whatever happens next. Cowboy is made for gathering.',
-      icon: '/assets/icons/amenities/simple/campfire.svg',
+      icon: '/assets/assets/icons/icons-simple/campfire.svg',
       alt: 'Campfire'
     }
   ];

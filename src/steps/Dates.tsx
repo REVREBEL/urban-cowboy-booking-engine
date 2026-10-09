@@ -54,18 +54,18 @@ const PILLARS = [
   {
     title: "Disappear for a While",
     text: "Trade pavement for mountain air and the kind of quiet that makes you forget what day it is.",
-    icon: "/assets/icons/amenities/simple/hammock.svg",
+    icon: "/assets/assets/icons/icons-simple/hammock.svg",
   },
   {
     title: "Soak It All In",
     text: "Sauna, outdoor hangs, long baths and plenty of ways to slow the whole operation down.",
-    icon: "/assets/icons/amenities/simple/estonian_sauna.svg",
+    icon: "/assets/assets/icons/icons-simple/estonian_sauna.svg",
     useMask: true,
   },
   {
     title: "Better Together",
     text: "Dinner, drinks, fireside nights and whatever happens next. Cowboy is made for gathering.",
-    icon: "/assets/icons/amenities/simple/campfire.svg",
+    icon: "/assets/icons/icons-simple/campfire.svg",
   },
 ] as const;
 
