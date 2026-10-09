@@ -153,7 +153,10 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     setActiveImageIndex((index) => (index + 1) % imageUrls.length);
   const pills = buildRoomCardPills(room).slice(0, 6);
   const tagline = room.merchandising?.cardTagline ?? null;
-  const cardDescription = room.merchandising?.cardDescription ?? room.description;
+  const cardDescription =
+    room.cmsShortDescription ??
+    room.merchandising?.cardDescription ??
+    room.description;
   const firstRate = room.rates[0];
   const nightlyRate = firstRate?.perNightGross ?? room.fromGross ?? null;
   const currency = firstRate?.currency ?? "USD";
