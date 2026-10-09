@@ -23,7 +23,10 @@ import { BuildingExperienceList } from "@/components/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/RoomDetailModal";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
-import type { RoomTypeCmsReviewMap } from "../types/room-type-cms";
+import type {
+  RoomTypeCmsDescriptionMap,
+  RoomTypeCmsReviewMap,
+} from "../types/room-type-cms";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 import { roomTypeGroupName } from "@/data/roomTypeGroups";
 import { roomDetailTags } from "@/lib/roomTags";
@@ -49,8 +52,8 @@ function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
     name: room.name,
     eyebrow: groupName,
     tagline: merchandising?.cardTagline || "Stay a little differently",
-    description: room.description,
-    longDescription: room.description,
+    description: room.cmsShortDescription ?? room.description,
+    longDescription: room.cmsLongDescription ?? room.description,
     basePrice: room.rates[0]?.perNightGross ?? room.fromGross ?? 0,
     squareFeet: 0,
     bedType: room.normalBedCount > 1 ? `${room.normalBedCount} beds` : "1 bed",
@@ -108,6 +111,8 @@ export function Results() {
   const [showMatcherModal, setShowMatcherModal] = useState(false);
   const [matchBackView, setMatchBackView] = useState<"matcher" | "rooms">("matcher");
   const [roomTypeReviews, setRoomTypeReviews] = useState<RoomTypeCmsReviewMap>({});
+  const [roomTypeDescriptions, setRoomTypeDescriptions] =
+    useState<RoomTypeCmsDescriptionMap>({});
   const toggleProp = (key: string) =>
     setOpenProps((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
 
@@ -147,8 +152,10 @@ export function Results() {
 
   useEffect(() => {
     let alive = true;
-    api.roomTypeReviews().then((reviews) => {
-      if (alive) setRoomTypeReviews(reviews);
+    api.roomTypeContent().then((content) => {
+      if (!alive) return;
+      setRoomTypeReviews(content.reviews);
+      setRoomTypeDescriptions(content.descriptions);
     });
     return () => {
       alive = false;
@@ -157,7 +164,22 @@ export function Results() {
 
   // Toutes les chambres dispos (tous hébergements), enrichies avec la couche
   // merchandising Urban Cowboy au moment du shaping.
-  const allRooms = useMemo(() => (data ? buildRooms(data, hotel) : []), [data, hotel]);
+  const allRooms = useMemo(() => {
+    if (!data) return [];
+
+    return buildRooms(data, hotel).map((room) => {
+      const cms = roomTypeDescriptions[room.roomTypeId];
+      if (!cms) return room;
+
+      return {
+        ...room,
+        // The list/search layer uses concise Webflow copy when available.
+        description: cms.shortDescription ?? room.description,
+        cmsShortDescription: cms.shortDescription,
+        cmsLongDescription: cms.longDescription,
+      };
+    });
+  }, [data, hotel, roomTypeDescriptions]);
 
   const recommendationSearch = window.location.search;
   const urlRecommendationPreferences = useMemo(
