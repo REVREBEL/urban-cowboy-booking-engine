@@ -79,14 +79,11 @@ text-cowboy-umber, font-heading, shadow-card).
 
 /* Shared interface neutrals. These preserve the existing visual values while
    replacing repeated arbitrary hex classes with named utilities. */
---color-ink: #221c18;
 --color-ink-deep: #1c1917;
 --color-copy: #60605e;
 --color-copy-warm: #6b6259;
---color-copy-muted: #73716d;
 --color-copy-soft: #767470;
 --color-copy-faint: #8a7e74;
---color-line: #d1c9be;
 --color-line-light: #e1e0e0;
 --color-line-cool: #e2e2e1;
 --color-line-neutral: #dddddd;
@@ -322,13 +319,14 @@ color-scheme: light;
 
 /* Raw brand references aligned with Webflow */
 --cowboy-umber--normal: var(--color-cowboy-umber);
---alpine-linen--normal: #ebe8e0;
+--alpine-linen--normal: var(--color-alpine-linen);
 --lodge-yellow--normal: #fddc4e;
 --ash--normal: #ccc7bb;
 --paper--normal: #faf9f9;
 --lake-forest--normal: #0e301a;
 --whiskey-sour--normal: #ddc5a4;
---smoke--normal: #343833;
+--smoke--normal: var(--color-smoke);
+--smoke--fade: var(--color-smoke-fade);
 --mist--normal: #f2f2f2;
 --copper--normal: #9a5636;
 --oxblood--normal: #69253a;
