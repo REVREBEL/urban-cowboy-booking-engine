@@ -111,7 +111,7 @@ const CheckIcon: React.FC<{ size?: number; color?: string }> = ({
     viewBox="0 0 12 12"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="flex-shrink-0"
+    className="shrink-0"
     aria-hidden="true"
   >
     <path
@@ -167,7 +167,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
       aria-current={state === 'current' ? 'step' : undefined}
       aria-busy={isBusy}
       aria-label={`Step ${step}: ${label} (${state})`}
-      className={`group relative inline-flex items-center justify-center select-none transition-all duration-200 box-border w-fit flex-shrink-0 ${
+      className={`group relative inline-flex items-center justify-center select-none transition-all duration-200 box-border w-fit shrink-0 ${
         isInteractive && !isInteractiveDisabled
           ? 'cursor-pointer hover:opacity-90 active:scale-[0.97]'
           : isBusy
@@ -215,7 +215,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
         <>
           {/* Step Number Circle (16px x 16px, vertically centered) */}
           <div
-            className="flex-shrink-0 flex items-center justify-center box-border transition-colors duration-200"
+            className="shrink-0 flex items-center justify-center box-border transition-colors duration-200"
             style={{
               width: '16px',
               height: '16px',
@@ -263,7 +263,7 @@ const ProgressSlashSeparator: React.FC<{ className?: string }> = ({
 }) => (
   <span
     aria-hidden="true"
-    className={`select-none inline-flex items-center justify-center flex-shrink-0 mx-3.75 ${className}`}
+    className={`select-none inline-flex items-center justify-center shrink-0 mx-3.75 ${className}`}
     style={{
       width: '3px',
       height: '17px',
@@ -333,10 +333,10 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           return (
             <li
               key={`step-slot-${item.step}`}
-              className="inline-flex items-center flex-shrink-0"
+              className="inline-flex items-center shrink-0"
             >
               {/* Slot Area: Hugs the inserted component allowing dynamic width expansion */}
-              <div className="inline-flex items-center justify-center flex-shrink-0 w-fit">
+              <div className="inline-flex items-center justify-center shrink-0 w-fit">
                 {stepContent}
               </div>
 

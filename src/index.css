@@ -74,7 +74,10 @@ text-cowboy-umber, font-heading, shadow-card).
 
 /* ==========================================================================
 2. Pure CSS Custom Properties (:root)
-Scoped CSS properties, Webflow sizing tokens, and raw values.
+========================================================================== /
+
+Scoped CSS properties, Webflow sizing tokens, and raw values. */
+
 @font-face {
 font-family: "Uchen";
 src: url("/fonts/Uchen/Uchen-Regular.woff2") format("woff2");
@@ -106,7 +109,7 @@ font-display: swap;
 
 /* ==========================================================================
 7. Rate Card System & Checkout Custom Styles
-}
+========================================================================== */
 
 .rate-card-price {
 width: 100%;

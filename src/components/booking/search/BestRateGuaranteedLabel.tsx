@@ -65,7 +65,7 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       className={`box-border relative inline-flex w-max min-w-44.75 flex-row items-center justify-center gap-2 p-0 h-4.25 select-none cursor-default group focus:outline-none focus-visible:ring-1 focus-visible:ring-cowboy-umber rounded-hairline ${className}`}
     >
       {/* 1. best-rate-guaranteed-icon (17px x 17px, padding: 1px, gap: 10px) */}
-      <div className="box-border flex flex-row justify-center items-center p-0.25 gap-2.5 w-4.25 h-4.25 shrink-0">
+      <div className="box-border flex flex-row justify-center items-center p-px gap-2.5 w-4.25 h-4.25 shrink-0">
         {iconSlot ? (
           iconSlot
         ) : (
@@ -79,7 +79,7 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       <div className="flex h-4 min-w-38.5 w-max shrink-0 flex-col items-center justify-center p-0">
         <span
           style={{ color }}
-          className="flex h-4 w-max min-w-38.5 items-center whitespace-nowrap font-label text-[13px] font-normal uppercase leading-[16px] tracking-[0.5px]"
+          className="flex h-4 w-max min-w-38.5 items-center whitespace-nowrap font-label text-[13px] font-normal uppercase leading-4 tracking-[0.5px]"
         >
           {text}
         </span>
@@ -89,7 +89,7 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       {showTooltip && tooltipText && (
         <div
           role="tooltip"
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 w-60 p-2.5 bg-paper border border-cowboy-umber text-cowboy-umber text-[11px] leading-[15px] font-urbanist rounded shadow-lg pointer-events-none transition-all duration-150 animate-in fade-in zoom-in-95"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 w-60 p-2.5 bg-paper border border-cowboy-umber text-cowboy-umber text-[11px] leading-3.75 font-urbanist rounded shadow-lg pointer-events-none transition-all duration-150 animate-in fade-in zoom-in-95"
         >
           <div className="font-label uppercase font-bold text-[10px] mb-1 tracking-wider text-cowboy-umber">
             Direct Booking Perk

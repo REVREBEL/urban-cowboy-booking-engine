@@ -118,7 +118,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
         >
           {/* Header Row: 308px x 18px */}
           <div className="flex flex-row items-center p-0 w-77 h-4.5 self-stretch">
-            <div className="flex flex-col items-start p-0 gap-0.25 w-77 h-4.5 flex-1">
+            <div className="flex flex-col items-start p-0 gap-px w-77 h-4.5 flex-1">
               <span
                 id={headerId}
                 className="w-44.75 h-4.5 font-label text-[16px] leading-[19px] uppercase text-cowboy-umber-100 flex items-center tracking-wider"
@@ -142,7 +142,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
               focusedIndex === 0 ? 'opacity-100' : 'opacity-90'
             }`}
           >
-            <div className="flex flex-col items-start p-0 gap-0.25 w-auto h-4.75">
+            <div className="flex flex-col items-start p-0 gap-px w-auto h-4.75">
               <span className="w-22 h-4.75 font-heading text-[16px] leading-[19px] font-bold tracking-[2px] text-cowboy-umber flex items-center group-hover:translate-x-0.5 transition-transform">
                 CATSKILLS
               </span>
@@ -166,7 +166,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
               focusedIndex === 1 ? 'opacity-100' : 'opacity-90'
             }`}
           >
-            <div className="flex flex-col items-start p-0 gap-0.25 w-auto h-4.75">
+            <div className="flex flex-col items-start p-0 gap-px w-auto h-4.75">
               <span className="w-23.5 h-4.75 font-heading text-[16px] leading-[19px] font-bold tracking-[2px] text-cowboy-umber flex items-center group-hover:translate-x-0.5 transition-transform">
                 NASHVILLE
               </span>

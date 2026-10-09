@@ -161,7 +161,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
         {/* ROW 1: Adults (308px x 57px, padding: 8px 0px) */}
         <div className="flex flex-row items-center py-2 px-0 w-77 h-14.25 self-stretch">
           {/* Text block: Adults + Age 13+ (196px x 41px) */}
-          <div className="flex flex-col items-start p-0 gap-0.25 w-49 h-10.25 flex-1">
+          <div className="flex flex-col items-start p-0 gap-px w-49 h-10.25 flex-1">
             <p
               id={adultId}
               className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-49 h-4.25 flex items-center"
@@ -227,7 +227,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
         {/* ROW 2: Children (308px x 58px, padding: 8px 0px) */}
         <div className="flex flex-row items-center py-2 px-0 w-77 h-14.5 self-stretch">
           {/* Text block: Children + Age up to 12 (196px x 42px) */}
-          <div className="flex flex-col items-start p-0 gap-0.25 w-49 h-10.5 flex-1">
+          <div className="flex flex-col items-start p-0 gap-px w-49 h-10.5 flex-1">
             <p
               id={childrenId}
               className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-49 h-4.25 flex items-center"
@@ -296,7 +296,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
         {/* ROW 3: Infants (308px x 58px, padding: 8px 0px) */}
         <div className="flex h-14.5 w-full flex-row items-center px-0 py-2 self-stretch">
-          <div className="flex h-10.5 flex-1 flex-col items-start gap-0.25 p-0">
+          <div className="flex h-10.5 flex-1 flex-col items-start gap-px p-0">
             <p
               id={infantsId}
               className="m-0 flex h-4.25 items-center font-label text-[14px] uppercase leading-[17px] text-smoke"
