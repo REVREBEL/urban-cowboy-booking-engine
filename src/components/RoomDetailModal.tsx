@@ -40,7 +40,6 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   const reviewDate = formatReviewDate(review?.reviewDate);
 
   return (
-<<<<<<< Updated upstream
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
       <div className="relative w-full max-w-4xl bg-paper rounded-modal-lg overflow-hidden shadow-2xl border-4 border-cowboy-umber my-8 max-h-[90vh] flex flex-col texture-linen">
         {/* Modal Header */}

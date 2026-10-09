@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-<<<<<<< Updated upstream
-=======
 @import "tailwindcss";
 
 /* ==========================================================================
@@ -238,9 +236,9 @@ color-scheme: light;
 --media-placeholder: var(--color-lake-forest-100);
 
 /* Calendar status colors */
---calendar-date-foreground: hsl(var(--foreground));
---calendar-date-muted-foreground: hsl(var(--foreground) / 0.45);
---calendar-date-disabled-foreground: hsl(var(--foreground) / 0.2);
+--calendar-date-foreground: var(--foreground);
+--calendar-date-muted-foreground: color-mix(in srgb, var(--foreground) 45%, transparent);
+--calendar-date-disabled-foreground: color-mix(in srgb, var(--foreground) 20%, transparent);
 --calendar-date-selected-bg: var(--color-button-primary-bg);
 --calendar-date-selected-foreground: var(--color-button-primary-foreground);
 --calendar-date-range-bg: color-mix(in srgb, var(--color-copper) 10%, transparent);
@@ -248,8 +246,8 @@ color-scheme: light;
 --calendar-date-restricted-ring: color-mix(in srgb, var(--color-copper) 35%, transparent);
 --calendar-date-hover-bg: var(--color-copper);
 --calendar-date-hover-foreground: var(--color-button-primary-foreground);
---calendar-date-rate-foreground: hsl(var(--foreground) / 0.65);
---calendar-date-rate-unavailable-foreground: hsl(var(--foreground) / 0.3);
+--calendar-date-rate-foreground: color-mix(in srgb, var(--foreground) 65%, transparent);
+--calendar-date-rate-unavailable-foreground: color-mix(in srgb, var(--foreground) 30%, transparent);
 --calendar-date-focus-ring: var(--color-copper);
 --calendar-date-ring-offset-bg: var(--color-paper);
 --calendar-tooltip-bg: var(--color-lake-forest);
@@ -274,7 +272,6 @@ color-scheme: light;
 /* ==========================================================================
 3. Base Element Styling
 ========================================================================== */
->>>>>>> Stashed changes
 @layer base {
   :root {
     color-scheme: light;
@@ -456,7 +453,7 @@ letter-spacing: 2px;
 }
 }
 
-<<<<<<< Updated upstream
+
 @layer components {
 /* Three semantic card themes. Components consume these variables instead of
    embedding palette values in JSX. */
@@ -662,7 +659,7 @@ font-family: var(--font-label);
 }
 }
 
-=======
+
 body {
 background-color: var(--color-mist);
 color: var(--color-lake-forest);
@@ -933,7 +930,7 @@ font-family: var(--font-label);
 /* ==========================================================================
 5. Utilities & Responsive Canvas
 ========================================================================== */
->>>>>>> Stashed changes
+
 @layer utilities {
 .booking-shell {
 width: 100%;
@@ -1163,7 +1160,6 @@ box-shadow: 0 0 0 3px rgb(78 51 45 / 0.08);
 }
 
 .checkout-field::placeholder {
-<<<<<<< Updated upstream
   color: rgb(107 98 89 / 0.55);
 }
 
@@ -1202,7 +1198,4 @@ box-shadow: 0 0 0 3px rgb(78 51 45 / 0.08);
     padding-bottom: 1rem;
     font-size: 1.125rem;
   }
-=======
-color: rgb(107 98 89 / 0.55);
->>>>>>> Stashed changes
 }

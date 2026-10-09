@@ -75,16 +75,16 @@ export const VintageKeyFob: React.FC<{ roomNumber?: string; className?: string }
       <div className="w-3.5 h-3.5 rounded-full bg-[#C88A36] border border-[#2A0C0A] shadow-inner mt-1" />
 
       {/* Stamped Room Number */}
-      <div className="font-woodblock text-3xl font-extrabold text-[#F7E7CE] tracking-wider my-auto">
+      <div className="font-label text-3xl font-extrabold text-[#F7E7CE] tracking-wider my-auto">
         {roomNumber}
       </div>
 
       {/* Foil Stamp Branding */}
       <div className="border-t border-[#8C3A27]/80 pt-1.5 w-full">
-        <span className="font-editorial italic text-[8px] tracking-widest text-[#F7E7CE]/90 block uppercase">
+        <span className="font-body italic text-[8px] tracking-widest text-[#F7E7CE]/90 block uppercase">
           Urban Cowboy
         </span>
-        <span className="font-woodblock font-bold text-[10px] tracking-[0.2em] text-[#F7E7CE] block uppercase leading-tight">
+        <span className="font-label font-bold text-[10px] tracking-[0.2em] text-[#F7E7CE] block uppercase leading-tight">
           Lodge
         </span>
         <span className="font-sans text-[7px] text-[#C88A36] tracking-wider block uppercase mt-0.5">
