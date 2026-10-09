@@ -30,6 +30,25 @@ text-cowboy-umber, font-heading, shadow-card).
 --color-lake-forest: #0e301a;
 --color-lake-forest-fade: #566e5f;
 
+/* Shared interface neutrals. These preserve the existing visual values while
+   replacing repeated arbitrary hex classes with named utilities. */
+--color-ink: #221c18;
+--color-ink-deep: #1c1917;
+--color-copy: #60605e;
+--color-copy-warm: #6b6259;
+--color-copy-muted: #73716d;
+--color-copy-soft: #767470;
+--color-copy-faint: #8a7e74;
+--color-line: #d1c9be;
+--color-line-light: #e1e0e0;
+--color-line-cool: #e2e2e1;
+--color-line-neutral: #dddddd;
+--color-surface-muted: #f0efeb;
+--color-surface-warm: #f4f1ea;
+--color-surface-light: #f9f9f9;
+--color-disabled: #afaeae;
+--color-mauve-muted: #a79996;
+
 /* Typography Families */
 --font-body: "Uchen", Georgia, serif;
 --font-heading: "DesertRain", Georgia, serif;
@@ -49,6 +68,16 @@ text-cowboy-umber, font-heading, shadow-card).
 --radius-card-media: 17px;
 --radius-control-lg: 18px;
 --radius-control-xl: 20px;
+--radius-hairline: 2px;
+--radius-field: 5px;
+--radius-panel-xs: 22px;
+--radius-panel-sm: 24px;
+--radius-panel: 26px;
+--radius-panel-lg: 28px;
+--radius-modal: 32px;
+--radius-modal-lg: 36px;
+--radius-modal-xl: 40px;
+--radius-modal-2xl: 48px;
 --shadow-card: 0 4px 20px -2px rgba(78, 51, 45, 0.08);
 --shadow-float: 0 10px 30px -4px rgba(78, 51, 45, 0.15);
 }
@@ -147,8 +176,11 @@ color-scheme: light;
 --_size---button-sm--padding-left: 1rem;
 --_size---button-sm--padding-right: 1rem;
 
+--border-width-hairline: 0.386px;
+--border-width-medium: 1.5px;
 --border-width-control: 3px;
 --border-width-control-lg: 3.5px;
+--border-width-heavy: 4px;
 
 /* Adaptive photography overlays */
 --icon-color-light: var(--color-paper);
