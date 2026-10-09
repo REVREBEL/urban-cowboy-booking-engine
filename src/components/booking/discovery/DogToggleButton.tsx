@@ -6,8 +6,8 @@ type Props = {
   className?: string;
 };
 
-const DETAILED_DOG_ICON = "/assets/icons/amenities/detailed/dog_friendly.svg";
-const SIMPLE_DOG_ICON = "/assets/badges/features/dog_friendly.svg";
+const DETAILED_DOG_ICON = "/assets/icons/detailed/dog_friendly.svg";
+const SIMPLE_DOG_ICON = "/assets/icons/badges/features/dog_friendly.svg";
 
 export function DogToggleButton({ selected, onToggle, className = "" }: Props) {
   return (
