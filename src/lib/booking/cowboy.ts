@@ -1,22 +1,12 @@
 export type PreferenceArtworkId =
-  "your_own_hideaway"
-  "spaces_to_gather"
-  "spaces_for_connection"
-  "simple_comforts"
-  "scenic_mountain_views"
-  "minimal_distractions"
-  "indoor_sancuaries.svg"
-  "connection_with_nature";
-
-type FeatureKind =
-  | "kitchen"
-  | "heating"
-  | "water"
-  | "room"
-  | "bed"
-  | "basic"
-  | "building"
-  | "badge";
+  | "your_own_hideaway"
+  | "spaces_to_gather"
+  | "spaces_for_connection"
+  | "simple_comforts"
+  | "scenic_mountain_views"
+  | "minimal_distractions"
+  | "indoor_sancuaries"
+  | "connection_with_nature";
 
 type PreferenceId = PreferenceArtworkId;
 
