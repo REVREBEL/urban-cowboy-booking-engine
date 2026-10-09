@@ -131,10 +131,10 @@ export function PhoneInput({
   return (
     // UN SEUL champ : segment indicatif (drapeau + code) · séparateur · numéro.
     <div
-      className={`flex items-stretch overflow-hidden rounded-xl border bg-[var(--input-bg)] shadow-sm transition focus-within:ring-2 ${
+      className={`flex items-stretch overflow-hidden rounded-xl border bg-(--input-bg) shadow-sm transition focus-within:ring-2 ${
         showInvalid
-          ? "border-[var(--error)] focus-within:border-[var(--error)] focus-within:ring-[var(--error)]/20"
-          : "border-[var(--input-border)] focus-within:border-[var(--foreground)]/50 focus-within:ring-[var(--foreground)]/10"
+          ? "border-(--error) focus-within:border-(--error) focus-within:ring-(--error)/20"
+          : "border-(--input-border) focus-within:border-(--foreground)/50 focus-within:ring-(--foreground)/10"
       }`}
     >
       {/* Largeur AUTO (définie par l'affichage compact) → s'adapte aux indicatifs à 3 chiffres. */}
@@ -151,18 +151,18 @@ export function PhoneInput({
           className="absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent text-transparent outline-none"
         >
           {COUNTRIES.map((c) => (
-            <option key={c.code} value={c.code} className="font-emoji emoji-text text-[var(--color-input)]">
+            <option key={c.code} value={c.code} className="font-emoji emoji-text text-(--color-input)">
               {c.flag} +{dialOf(c.code)} · {regionName(c.code)}
             </option>
           ))}
         </select>
         {/* Affichage compact : drapeau + indicatif ; pr-7 réserve la place du chevron. */}
-        <span className="pointer-events-none flex h-full items-center gap-1.5 pl-4 pr-7 text-sm font-medium text-[var(--color-input)]">
+        <span className="pointer-events-none flex h-full items-center gap-1.5 pl-4 pr-7 text-sm font-medium text-(--color-input)">
           <span className="font-emoji emoji-text text-base leading-none">{country_.flag}</span>
           <span className="tabular-nums">+{dialOf(country)}</span>
         </span>
         <svg
-          className="pointer-events-none absolute right-1.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-input)]/40"
+          className="pointer-events-none absolute right-1.5 top-1/2 h-4 w-4 -translate-y-1/2 text-(--color-input)/40"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -172,7 +172,7 @@ export function PhoneInput({
         </svg>
       </div>
 
-      <span className="my-2 w-px shrink-0 bg-[var(--input-border)]/40" aria-hidden />
+      <span className="my-2 w-px shrink-0 bg-(--input-border)/40" aria-hidden />
 
       <div className="relative flex-1">
         <input
@@ -184,7 +184,7 @@ export function PhoneInput({
           required={required}
           aria-invalid={invalid || showInvalid || undefined}
           aria-describedby={ariaDescribedBy}
-          className="h-full w-full border-0 bg-transparent px-3 py-3 pr-9 text-[var(--color-input)] outline-none placeholder:text-[var(--color-input)]/35"
+          className="h-full w-full border-0 bg-transparent px-3 py-3 pr-9 text-(--color-input) outline-none placeholder:text-(--color-input)/35"
           placeholder={country_.example}
           value={text}
           onChange={(e) => apply(country, e.target.value)}

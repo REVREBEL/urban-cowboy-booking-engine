@@ -121,30 +121,30 @@ export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
 const colorMap = COLOR_PALETTE;
 
 export const buttonVariants = cva(
-  "group inline-flex box-border select-none items-center justify-center gap-2 font-bold transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--copper--normal)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "group inline-flex box-border select-none items-center justify-center gap-2 font-bold transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--copper--normal) focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         filled:
-          "bg-[var(--cowboy-umber--normal)] text-[var(--alpine-linen--normal)]",
+          "bg-(--cowboy-umber--normal) text-(--alpine-linen--normal)",
         outline:
-          "border-[var(--_size---button--border-width)] border-[var(--cowboy-umber--normal)] bg-transparent text-[var(--cowboy-umber--normal)]",
+          "border-(--_size---button--border-width) border-(--cowboy-umber--normal) bg-transparent text-(--cowboy-umber--normal)",
         transparent:
-          "border-0 bg-transparent text-[var(--cowboy-umber--normal)]",
+          "border-0 bg-transparent text-(--cowboy-umber--normal)",
       },
       size: {
         xsmall:
-          "rounded-[var(--_size---button-xs--border-radius)] px-3 py-2 text-[length:var(--_size---button-xs--font-size)]",
+          "rounded-(--_size---button-xs--border-radius) px-3 py-2 text-(--_size---button-xs--font-size)",
         small:
-          "rounded-[var(--_size---button-sm--border-radius)] px-[var(--_size---button-sm--padding-left)] py-[var(--_size---button-sm--padding-top)] text-[length:var(--_size---button-sm--font-size)]",
+          "rounded-(--_size---button-sm--border-radius) px-(--_size---button-sm--padding-left) py-(--_size---button-sm--padding-top) text-(--_size---button-sm--font-size)",
         default:
-          "rounded-[var(--_size---button--border-radius)] px-[var(--_size---button--padding-left)] py-[var(--_size---button--padding-top)] text-[length:var(--_size---button--font-size)]",
+          "rounded-(--_size---button--border-radius) px-(--_size---button--padding-left) py-(--_size---button--padding-top) text-(--_size---button--font-size)",
         medium:
-          "rounded-[var(--_size---button-md--border-radius)] px-[var(--_size---button--padding-left)] py-[var(--_size---button--padding-top)] text-[length:var(--_size---button-md--font-size)]",
+          "rounded-(--_size---button-md--border-radius) px-(--_size---button--padding-left) py-(--_size---button--padding-top) text-(--_size---button-md--font-size)",
         large:
-          "rounded-[var(--_size---button-lg--border-radius)] px-[var(--_size---button-lg--padding-left)] py-[var(--_size---button-lg--padding-top)] text-[length:var(--_size---button-lg--font-size)]",
+          "rounded-(--_size---button-lg--border-radius) px-(--_size---button-lg--padding-left) py-(--_size---button-lg--padding-top) text-(--_size---button-lg--font-size)",
         xlarge:
-          "rounded-[var(--_size---button-xl--border-radius)] px-[var(--_size---button-lg--padding-left)] py-[var(--_size---button-lg--padding-top)] text-[length:var(--_size---button-xl--font-size)]",
+          "rounded-(--_size---button-xl--border-radius) px-(--_size---button-lg--padding-left) py-(--_size---button-lg--padding-top) text-(--_size---button-xl--font-size)",
       },
     },
     defaultVariants: {

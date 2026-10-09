@@ -14,7 +14,7 @@ export const ROOM_TYPE_GROUP_PRESENTATION: Record<
   RoomTypeGroupPresentation
 > = {
   alpine: {
-    iconPath: "/assets/icons/buildings/alpine_haus.svg",
+    iconPath: "/assets/icons/buildings/alpine.svg",
     headline: "The Iconic Indoor Soak",
     paragraphs: [
       "Built into the hillside above the Lodge, Alpine is home to ten of the Cowboy's most iconic rooms. Every suite puts a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside.",
@@ -43,7 +43,7 @@ export const ROOM_TYPE_GROUP_PRESENTATION: Record<
     ],
   },
   lodge: {
-    iconPath: "/assets/icons/buildings/the_lodge.svg",
+    iconPath: "/assets/icons/buildings/lodge.svg",
     headline: "STAY IN THE MIDDLE OF IT ALL.",
     paragraphs: [
       "The Lodge rooms sit directly above the restaurant, bar and fireside gathering spaces—the right choice for guests who want the Cowboy close at hand.",

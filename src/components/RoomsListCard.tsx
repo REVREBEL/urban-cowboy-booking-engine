@@ -125,7 +125,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   // Original approved media proportions and treatment.
   const mediaElement = mediaSlot ?? (
     <div className="flex min-h-65 w-full shrink-0 flex-col self-stretch sm:min-h-75 lg:min-h-84 lg:w-[46%] xl:w-[48%]">
-      <div className="group relative h-full w-full flex-1 overflow-hidden rounded-card-media bg-[var(--media-placeholder)]">
+      <div className="group relative h-full w-full flex-1 overflow-hidden rounded-card-media bg-(--media-placeholder)">
         {imageUrl ? (
           <img
             ref={imageRef}

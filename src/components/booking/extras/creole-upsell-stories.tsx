@@ -85,7 +85,7 @@ export function CreoleUpsellStories() {
                 className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 gradient="from-creole via-creole-soft to-turquoise-vivid"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/25 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-ink/90 via-ink/25 to-transparent" />
               <span
                 className={`absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full transition ${
                   on ? "bg-turquoise text-white" : "bg-white/85 text-smoke"

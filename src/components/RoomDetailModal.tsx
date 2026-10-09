@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import { RoomType, SearchCriteria } from '../types';
 import type { RoomTypeCmsReview } from '../types/room-type-cms';
 import { AmenityWoodcutIcon } from './WoodcutArt';
@@ -18,7 +19,7 @@ function formatReviewDate(value: string | null | undefined): string | null {
   }).format(new Date(timestamp));
 }
 
-interface RoomDetailModalProps {
+export interface RoomDetailModalProps {
   room: RoomType | null;
   criteria: SearchCriteria;
   onClose: () => void;
@@ -32,12 +33,13 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   onClose,
   onProceedToRates,
   review = null,
-}) => {
+}: RoomDetailModalProps) => {
   if (!room) return null;
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  const reviewDate = formatReviewDate(review?.reviewDate);
+  const activeReview: RoomTypeCmsReview | null = review ?? null;
+  const reviewDate = formatReviewDate(activeReview?.reviewDate);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
@@ -75,7 +77,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
             {/* Thumbnails */}
             <div className="flex items-center gap-3 overflow-x-auto pb-2">
-              {room.images.map((img, idx) => (
+              {room.images.map((img: string, idx: number) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
@@ -256,14 +258,14 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             </div>
           </div>
 
-          {review?.quote?.trim() ? (
+          {activeReview && activeReview.quote && activeReview.quote.trim() ? (
             <div className="border-t border-cowboy-umber/15 pt-4">
               <GuestReviewQuoteCard
-                quote={review.quote}
-                reviewer={review.reviewer}
+                quote={activeReview.quote}
+                reviewer={activeReview.reviewer}
                 date={reviewDate}
-                site={review.source}
-                sourceUrl={review.sourceUrl}
+                site={activeReview.source}
+                sourceUrl={activeReview.sourceUrl}
                 size="lg"
                 className="my-2 px-6 py-10 sm:px-12 sm:py-14"
               />

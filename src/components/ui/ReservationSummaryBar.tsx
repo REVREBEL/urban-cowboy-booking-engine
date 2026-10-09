@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { ArrowRight, Check } from 'lucide-react';
 
 export interface ReservationSummaryBarProps {

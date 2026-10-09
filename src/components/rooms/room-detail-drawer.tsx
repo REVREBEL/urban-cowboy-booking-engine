@@ -142,7 +142,7 @@ export function RoomDetailDrawer({
               <IconClose className="h-5 w-5" />
             </button>
             {images.length > 1 && (
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/65 via-ink/15 to-transparent p-3">
+              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-ink/65 via-ink/15 to-transparent p-3">
                 <div className="no-scrollbar flex gap-2 overflow-x-auto">
                   {images.map((id, i) => (
                     <button

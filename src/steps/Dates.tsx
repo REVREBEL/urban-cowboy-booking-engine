@@ -54,12 +54,12 @@ const PILLARS = [
   {
     title: "Disappear for a While",
     text: "Trade pavement for mountain air and the kind of quiet that makes you forget what day it is.",
-    icon: "/assets/assets/icons/icons-simple/hammock.svg",
+    icon: "/assets/icons/icons-simple/hammock.svg",
   },
   {
     title: "Soak It All In",
     text: "Sauna, outdoor hangs, long baths and plenty of ways to slow the whole operation down.",
-    icon: "/assets/assets/icons/icons-simple/estonian_sauna.svg",
+    icon: "/assets/icons/icons-simple/estonian_sauna.svg",
     useMask: true,
   },
   {
@@ -225,7 +225,7 @@ export function Dates() {
                               key={label}
                               type="button"
                               onClick={() => setDates(checkIn, checkOut)}
-                              className="rounded-full border border-cowboy-umber bg-transparent px-3 pb-1 pt-1.5 font-body text-xs leading-none text-cowboy-umber transition-colors hover:bg-cowboy-umber hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper"
+                              className="rounded-full border border-cowboy-umber bg-transparent px-3 pb-1 pt-1.5 font-body text-xs leading-none text-cowboy-umber transition-colors hover:bg-cowboy-umber hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper"
                             >
                               {label}
                             </button>

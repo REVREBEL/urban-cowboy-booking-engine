@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { X } from 'lucide-react';
 import { Button, type ButtonColor } from '../ui/button';
 

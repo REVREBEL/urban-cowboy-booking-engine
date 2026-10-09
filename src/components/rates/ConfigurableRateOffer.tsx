@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import type { RateCardConfig, RateCardLiveContent } from "@/types/rate-card";
 import { ConfigurableRateCard } from "./ConfigurableRateCard";
 import {

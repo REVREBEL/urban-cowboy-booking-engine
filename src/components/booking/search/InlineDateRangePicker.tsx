@@ -99,13 +99,23 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   return (
     <div className="rounded-2xl border border-cowboy-umber/15 bg-white p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between">
-        <button type="button" aria-label="Previous month" onClick={() => setView(shiftMonth(view.year, view.month, -1))} className="grid h-9 w-9 place-items-center rounded-full text-(--calendar-date-foreground) transition hover:bg-(--calendar-date-hover-bg)hover:text-[var(--calendar-date-hover-foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-(--calendar-date-focus-ring)">
+        <button
+          type="button"
+          aria-label="Previous month"
+          onClick={() => setView(shiftMonth(view.year, view.month, -1))}
+          className="grid h-9 w-9 place-items-center rounded-full text-(--calendar-date-foreground) transition hover:bg-(--calendar-date-hover-bg) hover:text-(--calendar-date-hover-foreground) focus-visible:outline-2 focus-visible:outline-(--calendar-date-focus-ring)"
+        >
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </button>
         <p className="font-label text-sm uppercase tracking-[1.5px] text-(--calendar-date-foreground)">
           {nightCount > 0 ? `${nightCount} night${nightCount === 1 ? "" : "s"} selected` : "Select your dates"}
         </p>
-        <button type="button" aria-label="Next month" onClick={() => setView(shiftMonth(view.year, view.month, 1))} className="grid h-9 w-9 place-items-center rounded-full text-(--calendar-date-foreground) transition hover:bg-(--calendar-date-hover-bg)hover:text-[var(--calendar-date-hover-foreground)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-(--calendar-date-focus-ring)">
+        <button
+          type="button"
+          aria-label="Next month"
+          onClick={() => setView(shiftMonth(view.year, view.month, 1))}
+          className="grid h-9 w-9 place-items-center rounded-full text-(--calendar-date-foreground) transition hover:bg-(--calendar-date-hover-bg) hover:text-(--calendar-date-hover-foreground) focus-visible:outline-2 focus-visible:outline-(--calendar-date-focus-ring)"
+        >
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
@@ -113,12 +123,29 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
       <div className="grid gap-7 md:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)]">
         {months.map((calendarMonth, monthIndex) => (
           <React.Fragment key={`${calendarMonth.year}-${calendarMonth.month}`}>
-            {monthIndex === 1 && <div className="hidden self-stretch bg-gradient-to-b from-transparent via-foreground/15 to-transparent md:block" aria-hidden="true" />}
+            {monthIndex === 1 && (
+              <div
+                className="hidden self-stretch bg-linear-to-b from-transparent via-foreground/15 to-transparent md:block"
+                aria-hidden="true"
+              />
+            )}
             <div className={monthIndex === 1 ? "hidden md:block" : ""}>
-              <p className="mb-3 text-center font-body text-sm text-(--calendar-date-foreground)">{monthName(calendarMonth.year, calendarMonth.month)}</p>
-              <div role="grid" aria-label={monthName(calendarMonth.year, calendarMonth.month)} className="grid grid-cols-7 text-center">
+              <p className="mb-3 text-center font-body text-sm text-(--calendar-date-foreground)">
+                {monthName(calendarMonth.year, calendarMonth.month)}
+              </p>
+              <div
+                role="grid"
+                aria-label={monthName(calendarMonth.year, calendarMonth.month)}
+                className="grid grid-cols-7 text-center"
+              >
                 {["M", "T", "W", "T", "F", "S", "S"].map((weekday, index) => (
-                  <span key={`${weekday}-${index}`} role="columnheader" className="pb-2 font-number text-[10px] font-bold uppercase text-[var(--calendar-date-muted-foreground)]">{weekday}</span>
+                  <span
+                    key={`${weekday}-${index}`}
+                    role="columnheader"
+                    className="pb-2 font-number text-[10px] font-bold uppercase text-(--calendar-date-muted-foreground)"
+                  >
+                    {weekday}
+                  </span>
                 ))}
                 {monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
                   if (!date) return <span key={`blank-${index}`} role="gridcell" className={hasDailyRates ? "h-14" : "h-10"} />;
@@ -153,7 +180,14 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                   const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
                   const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
                   return (
-                    <div key={date} role="gridcell" aria-selected={start || end || inRange} className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-[var(--calendar-date-range-bg)]" : ""}`} onMouseEnter={() => !disabled && setHoveredDate(date)} onMouseLeave={() => setHoveredDate(null)}>
+                    <div
+                      key={date}
+                      role="gridcell"
+                      aria-selected={start || end || inRange}
+                      className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-(--calendar-date-range-bg)" : ""}`}
+                      onMouseEnter={() => !disabled && setHoveredDate(date)}
+                      onMouseLeave={() => setHoveredDate(null)}
+                    >
                       <button
                         type="button"
                         disabled={disabled}
@@ -162,12 +196,31 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                         aria-pressed={start || end}
                         className="group absolute inset-0 flex w-full flex-col items-center justify-center font-body transition focus-visible:outline-none"
                       >
-                        <span className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-[var(--calendar-date-focus-ring)] group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-[var(--calendar-date-ring-offset-bg)] ${disabled ? "text-[var(--calendar-date-disabled-foreground)] line-through" : start || end ? `bg-[var(--calendar-date-selected-bg)] text-[var(--calendar-date-selected-foreground)] ${start && rate?.minNights ? "ring-2 ring-[var(--calendar-date-selected-bg)] ring-offset-2 ring-offset-[var(--calendar-date-ring-offset-bg)]" : ""}` : restrictionAdvisory ? "text-[var(--calendar-date-restricted-foreground)] ring-1 ring-[var(--calendar-date-restricted-ring)]" : "text-(--calendar-date-foreground) group-hover:bg-(--calendar-date-hover-bg)group-hover:text-[var(--calendar-date-hover-foreground)]"}`}>
+                        <span
+                          className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${
+                            disabled
+                              ? "text-(--calendar-date-disabled-foreground) line-through"
+                              : start || end
+                                ? `bg-(--calendar-date-selected-bg) text-(--calendar-date-selected-foreground) ${start && rate?.minNights ? "ring-2 ring-(--calendar-date-selected-bg) ring-offset-2 ring-offset-(--calendar-date-ring-offset-bg)" : ""}`
+                                : restrictionAdvisory
+                                  ? "text-(--calendar-date-restricted-foreground) ring-1 ring-(--calendar-date-restricted-ring)"
+                                  : "text-(--calendar-date-foreground) group-hover:bg-(--calendar-date-hover-bg) group-hover:text-(--calendar-date-hover-foreground)"
+                          }`}
+                        >
                           {fromIso(date).day}
                         </span>
-                        {rate && <span className={`mt-1.5 font-number text-[9px] font-bold leading-none ${unavailable ? "text-(--calendar-date-rate-unavailable-foreground)" : "text-[var(--calendar-date-rate-foreground)]"}`}>{unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}</span>}
+                        {rate && (
+                          <span
+                            className={`mt-1.5 font-number text-[9px] font-bold leading-none ${unavailable ? "text-(--calendar-date-rate-unavailable-foreground)" : "text-(--calendar-date-rate-foreground)"}`}
+                          >
+                            {unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}
+                          </span>
+                        )}
                         {rate?.minNights && (
-                          <span role="tooltip" className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-[var(--calendar-tooltip-bg)] px-2 py-1 font-number text-[10px] font-normal normal-case tracking-normal text-(--calendar-tooltip-foreground) opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                          <span
+                            role="tooltip"
+                            className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-(--calendar-tooltip-bg) px-2 py-1 font-number text-[10px] font-normal normal-case tracking-normal text-(--calendar-tooltip-foreground) opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+                          >
                             Min. of {rate.minNights} nights.
                           </span>
                         )}

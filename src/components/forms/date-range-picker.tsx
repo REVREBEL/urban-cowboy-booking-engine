@@ -189,7 +189,7 @@ export function DateRangePicker({
         aria-expanded={open}
         aria-controls={pickerId}
         onClick={() => (open ? closePicker(false) : openPicker())}
-        className="flex w-full items-stretch overflow-hidden rounded-2xl border border-[var(--input-border)] bg-[var(--input-bg)] text-left transition hover:border-[var(--foreground)]/40"
+        className="flex w-full items-stretch overflow-hidden rounded-2xl border border-(--input-border) bg-(--input-bg) text-left transition hover:border-(--foreground)/40"
       >
         <Segment
           label={t("datePicker.checkIn")}
@@ -197,7 +197,7 @@ export function DateRangePicker({
           active={open && !checkIn}
           icon
         />
-        <span className="my-2 w-px bg-[var(--foreground)]/10" />
+        <span className="my-2 w-px bg-(--foreground)/10" />
         <Segment
           label={t("datePicker.checkOut")}
           value={checkOut ? fmtDate(checkOut) : t("datePicker.when")}
@@ -212,7 +212,7 @@ export function DateRangePicker({
           role="dialog"
           aria-modal="false"
           aria-label={t("datePicker.selectDates")}
-          className="absolute left-0 right-0 z-50 mt-2 animate-scale-in rounded-2xl border border-[var(--foreground)]/10 bg-[var(--background)] p-4 shadow-float sm:left-auto sm:right-auto sm:w-160 sm:p-5"
+          className="absolute left-0 right-0 z-50 mt-2 animate-scale-in rounded-2xl border border-(--foreground)/10 bg-(--background) p-4 shadow-float sm:left-auto sm:right-auto sm:w-160 sm:p-5"
         >
           <div className="mb-3 flex items-center justify-between">
             <button
@@ -220,18 +220,18 @@ export function DateRangePicker({
               onClick={() => canGoPrev && shiftMonth(-1)}
               disabled={!canGoPrev}
               aria-label={t("datePicker.prevMonth")}
-              className="grid h-8 w-8 place-items-center rounded-full text-[var(--foreground)] transition hover:bg-[var(--foreground)]/10 disabled:opacity-25"
+              className="grid h-8 w-8 place-items-center rounded-full text-(--foreground) transition hover:bg-(--foreground)/10 disabled:opacity-25"
             >
               <IconChevron aria-hidden="true" className="h-4 w-4 rotate-180" />
             </button>
-            <p className="font-number text-base capitalize text-[var(--foreground)]">
+            <p className="font-number text-base capitalize text-(--foreground)">
               {n > 0 ? t("datePicker.nights", { count: n }) : t("datePicker.selectDates")}
             </p>
             <button
               type="button"
               onClick={() => shiftMonth(1)}
               aria-label={t("datePicker.nextMonth")}
-              className="grid h-8 w-8 place-items-center rounded-full text-[var(--foreground)] transition hover:bg-[var(--foreground)]/10"
+              className="grid h-8 w-8 place-items-center rounded-full text-(--foreground) transition hover:bg-(--foreground)/10"
             >
               <IconChevron aria-hidden="true" className="h-4 w-4" />
             </button>
@@ -240,7 +240,7 @@ export function DateRangePicker({
           <div className="grid gap-6 sm:grid-cols-2">
             {months.map((mv, idx) => (
               <div key={`${mv.y}-${mv.m}`} className={idx === 1 ? "hidden sm:block" : ""}>
-                <p className="mb-2 text-center font-number text-sm font-semibold capitalize text-[var(--foreground)]">
+                <p className="mb-2 text-center font-number text-sm font-semibold capitalize text-(--foreground)">
                   {monthLabel(mv.y, mv.m)}
                 </p>
                 <div role="grid" className="grid grid-cols-7 gap-y-1 text-center">
@@ -249,7 +249,7 @@ export function DateRangePicker({
                       key={w}
                       role="columnheader"
                       aria-label={w}
-                      className="pb-1 text-[11px] font-medium uppercase text-[var(--foreground)]/35"
+                      className="pb-1 text-[11px] font-medium uppercase text-(--foreground)/35"
                     >
                       {w.charAt(0)}
                     </span>
@@ -262,7 +262,7 @@ export function DateRangePicker({
                     const between = inRange(day);
                     const edge = isStart || isEnd;
                     const band = between
-                      ? "bg-[var(--calendar-date-in-range-bg,rgba(154,86,54,0.15))]"
+                      ? "bg-(--calendar-date-in-range-bg,rgba(154,86,54,0.15))"
                       : isStart && previewEnd
                         ? "bg-[linear-gradient(to_right,transparent_50%,var(--calendar-date-in-range-bg,rgba(154,86,54,0.15))_50%)]"
                         : isEnd
@@ -293,12 +293,12 @@ export function DateRangePicker({
                           aria-label={fmtDate(day)}
                           aria-pressed={isStart || day === checkOut}
                           aria-current={day === isoDay(0) ? "date" : undefined}
-                          className={`absolute inset-0 m-auto grid h-9 w-9 place-items-center rounded-full font-number text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+                          className={`absolute inset-0 m-auto grid h-9 w-9 place-items-center rounded-full font-number text-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
                             disabled
-                              ? "cursor-not-allowed text-[var(--foreground)]/25 line-through"
+                              ? "cursor-not-allowed text-(--foreground)/25 line-through"
                               : edge
-                                ? "bg-[var(--button-primary-bg)] font-semibold text-[var(--button-primary-foreground)]"
-                                : "text-[var(--foreground)] hover:bg-[var(--foreground)]/10"
+                                ? "bg-(--button-primary-bg) font-semibold text-(--button-primary-foreground)"
+                                : "text-(--foreground) hover:bg-(--foreground)/10"
                           }`}
                         >
                           {parseInt(day.slice(8), 10)}
@@ -311,7 +311,7 @@ export function DateRangePicker({
             ))}
           </div>
 
-          <div className="mt-4 flex items-center justify-between border-t border-[var(--foreground)]/10 pt-3">
+          <div className="mt-4 flex items-center justify-between border-t border-(--foreground)/10 pt-3">
             <button
               type="button"
               onClick={() => {
@@ -321,7 +321,7 @@ export function DateRangePicker({
                 setViewForDay(minDate);
                 focusDay(minDate);
               }}
-              className="text-sm font-semibold text-[var(--foreground)]/60 underline-offset-4 hover:text-[var(--foreground)] hover:underline"
+              className="text-sm font-semibold text-(--foreground)/60 underline-offset-4 hover:text-(--foreground) hover:underline"
             >
               {t("datePicker.clear")}
             </button>
@@ -347,13 +347,13 @@ function Segment({
   icon?: boolean;
 }) {
   return (
-    <span className={`flex flex-1 items-center gap-2 px-4 py-3 transition ${active ? "bg-[var(--foreground)]/5" : ""}`}>
+    <span className={`flex flex-1 items-center gap-2 px-4 py-3 transition ${active ? "bg-(--foreground)/5" : ""}`}>
       {icon && <IconCalendar aria-hidden="true" className="h-4 w-4 shrink-0 text-accent" />}
       <span className="min-w-0">
-        <span className="block text-[11px] font-semibold uppercase tracking-wide text-[var(--foreground)]/60">{label}</span>
+        <span className="block text-[11px] font-semibold uppercase tracking-wide text-(--foreground)/60">{label}</span>
         <span
           className={`block truncate font-number text-sm ${
-            value === t("datePicker.when") ? "text-[var(--foreground)]/40" : "font-medium text-[var(--foreground)]"
+            value === t("datePicker.when") ? "text-(--foreground)/40" : "font-medium text-(--foreground)"
           }`}
         >
           {value}

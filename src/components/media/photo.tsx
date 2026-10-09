@@ -20,7 +20,7 @@ export function Photo({
       <div
         role="img"
         aria-label={alt}
-        className={`bg-gradient-to-br ${gradient} ${className}`}
+        className={`bg-linear-to-br ${gradient} ${className}`}
       />
     );
   }

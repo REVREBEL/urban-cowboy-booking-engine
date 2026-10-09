@@ -36,7 +36,7 @@ export function LodgeSignboard({
 
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/15"
+        className="absolute inset-0 bg-linear-to-r from-black/20 via-transparent to-black/15"
       />
 
       <img
