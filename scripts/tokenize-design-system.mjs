@@ -24,6 +24,28 @@ const COLOR_TOKENS = new Map(
     "#236b7d": "oxidized-teal",
     "#f2aaa9": "nude-ember",
     "#566e5f": "lake-forest-fade",
+
+    // Shared interface neutrals.
+    "#221c18": "ink",
+    "#1c1917": "ink-deep",
+    "#60605e": "copy",
+    "#6b6259": "copy-warm",
+    "#73716d": "copy-muted",
+    "#767470": "copy-soft",
+    "#8a7e74": "copy-faint",
+    "#d1c9be": "line",
+    "#e1e0e0": "line-light",
+    "#e2e2e1": "line-cool",
+    "#dddddd": "line-neutral",
+    "#f0efeb": "surface-muted",
+    "#f4f1ea": "surface-warm",
+    "#f9f9f9": "surface-light",
+    "#afaeae": "disabled",
+    "#a79996": "mauve-muted",
+
+    // Tailwind core colors do not need duplicate @theme declarations.
+    "#ffffff": "white",
+    "#000000": "black",
   }),
 );
 
@@ -52,13 +74,27 @@ const RADIUS_CLASS_REPLACEMENTS = new Map([
   ["rounded-[17px]", "rounded-card-media"],
   ["rounded-[18px]", "rounded-control-lg"],
   ["rounded-[20px]", "rounded-control-xl"],
+  ["rounded-[2px]", "rounded-hairline"],
+  ["rounded-[5px]", "rounded-field"],
+  ["rounded-[22px]", "rounded-panel-xs"],
+  ["rounded-[24px]", "rounded-panel-sm"],
+  ["rounded-[26px]", "rounded-panel"],
+  ["rounded-[28px]", "rounded-panel-lg"],
+  ["rounded-[32px]", "rounded-modal"],
+  ["rounded-[36px]", "rounded-modal-lg"],
+  ["rounded-[40px]", "rounded-modal-xl"],
+  ["rounded-[48px]", "rounded-modal-2xl"],
+  ["rounded-[9999px]", "rounded-full"],
 ]);
 
 const BORDER_CLASS_REPLACEMENTS = new Map([
+  ["border-[0.386px]", "border-[length:var(--border-width-hairline)]"],
   ["border-[1px]", "border"],
+  ["border-[1.5px]", "border-[length:var(--border-width-medium)]"],
   ["border-[2px]", "border-2"],
   ["border-[3px]", "border-[length:var(--border-width-control)]"],
   ["border-[3.5px]", "border-[length:var(--border-width-control-lg)]"],
+  ["border-[4px]", "border-[length:var(--border-width-heavy)]"],
 ]);
 
 const STATIC_VALUE_PATTERNS = [
@@ -133,6 +169,10 @@ function replaceKnownClasses(source) {
 }
 
 function transform(source, filePath) {
+  // The token source is maintained deliberately. Never run the codemod over
+  // its own declarations/selectors or it can create self-references.
+  if (filePath === TOKEN_SOURCE) return source;
+
   let next = source;
   next = replaceTailwindColors(next);
   next = replaceInlineStyleColors(next);
@@ -147,6 +187,15 @@ function transform(source, filePath) {
   return next;
 }
 
+function isArtworkSource(filePath) {
+  const relative = path.relative(ROOT, filePath).split(path.sep).join("/");
+  return (
+    relative === "src/components/WoodcutArt.tsx" ||
+    relative === "src/components/icons/WoodcutArt.tsx" ||
+    relative.startsWith("src/components/icons/generated/")
+  );
+}
+
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const files = [];
@@ -157,7 +206,7 @@ async function walk(directory) {
 
     if (entry.isDirectory()) {
       files.push(...(await walk(child)));
-    } else if (/\.(?:ts|tsx|css)$/.test(entry.name)) {
+    } else if (/\.(?:ts|tsx|css)$/.test(entry.name) && !isArtworkSource(child)) {
       files.push(child);
     }
   }
@@ -204,6 +253,7 @@ const files = await walk(SRC_ROOT);
 let changedFiles = 0;
 let replacementFiles = 0;
 let unresolvedCount = 0;
+const unresolvedByValue = new Map();
 
 for (const filePath of files) {
   const original = await readFile(filePath, "utf8");
@@ -228,7 +278,27 @@ for (const filePath of files) {
     console.log(
       `review        ${relative}:${finding.line} [${finding.kind}] ${finding.value}`,
     );
+    const key = `${finding.kind}:${finding.value.toLowerCase()}`;
+    const previous = unresolvedByValue.get(key) ?? {
+      kind: finding.kind,
+      value: finding.value,
+      count: 0,
+    };
+    previous.count += 1;
+    unresolvedByValue.set(key, previous);
   }
+}
+
+if (unresolvedByValue.size > 0) {
+  console.log("");
+  console.log("Unresolved values by frequency:");
+  [...unresolvedByValue.values()]
+    .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value))
+    .forEach((item) => {
+      console.log(
+        `  ${String(item.count).padStart(3, " ")}x  [${item.kind}] ${item.value}`,
+      );
+    });
 }
 
 console.log("");
