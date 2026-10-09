@@ -11,6 +11,7 @@ const COLOR_TOKENS = new Map(
   Object.entries({
     // Canonical brand values.
     "#4e332d": "cowboy-umber",
+    "#958581": "cowboy-umber-100",
     "#d1c9be": "alpine-linen",
     "#fddc4e": "lodge-yellow",
     "#ccc7bb": "ash",
@@ -70,6 +71,19 @@ const COLOR_TOKENS = new Map(
     "#f3a7a0": "nude-ember",
     "#f6b5af": "nude-ember",
     "#faf9f6": "paper",
+    "#6b6259": "ash-900",
+    "#1c1917": "smoke",
+    "#767470": "ash-900",
+    "#60605e": "ash-900",
+    "#e1e0e0": "alpine-linen-fade",
+    "#e2e2e1": "alpine-linen-fade",
+    "#8a7e74": "cowboy-umber-100",
+    "#f0efeb": "alpine-linen-fade",
+    "#afaeae": "ash",
+    "#f9f9f9": "paper",
+    "#a79996": "cowboy-umber-100",
+    "#dddddd": "alpine-linen-fade",
+    "#f4f1ea": "alpine-linen-fade",
 
     // Tailwind core colors.
     "#ffffff": "white",
