@@ -294,6 +294,102 @@ font-display: swap;
 7. Rate Card System & Checkout Custom Styles
 ========================================================================== */
 
+.rate-card-shell {
+--rate-fg: var(--color-cowboy-umber);
+--rate-border-color: var(--rate-fg);
+width: min(500px, calc(100vw - 32px));
+flex: 0 0 auto;
+container-type: inline-size;
+}
+
+.rate-card-border-surface {
+position: relative;
+}
+
+.rate-card-border-surface::before,
+.rate-card-border-surface::after {
+content: "";
+position: absolute;
+pointer-events: none;
+box-sizing: border-box;
+z-index: 20;
+border-color: var(--rate-border-color, var(--rate-fg));
+border-style: solid;
+}
+
+.rate-card-border-surface[data-border-style="none"]::before,
+.rate-card-border-surface[data-border-style="none"]::after {
+display: none;
+}
+
+.rate-card-border-surface[data-border-style="single"]::before {
+inset: 0;
+border-width: 5px;
+border-radius: inherit;
+}
+
+.rate-card-border-surface[data-border-style="single"]::after {
+display: none;
+}
+
+.rate-card-border-surface[data-border-style="double"]::before {
+inset: 0;
+border-width: 3px;
+border-radius: inherit;
+}
+
+.rate-card-border-surface[data-border-style="double"]::after {
+inset: 5px;
+border-width: 3px;
+border-radius: max(0px, calc(var(--rate-card-radius, 0px) - 5px));
+}
+
+.rate-card-frame {
+--rate-button-bg: var(--color-cowboy-umber);
+--rate-button-fg: #faf9f9;
+--rate-primary-font: var(--font-button);
+--rate-secondary-font: var(--font-number);
+
+position: relative;
+isolation: isolate;
+width: 100%;
+aspect-ratio: 500 / 1038;
+overflow: hidden;
+--rate-card-radius: 50px;
+border-radius: var(--rate-card-radius);
+background: var(--color-paper);
+}
+
+.rate-card-artwork {
+position: absolute;
+inset: 0;
+z-index: 0;
+display: block;
+width: 100%;
+height: 100%;
+object-fit: cover;
+pointer-events: none;
+user-select: none;
+}
+
+.rate-card-artwork--mobile {
+display: none;
+}
+
+.rate-card-overlay {
+position: absolute;
+z-index: 2;
+inset: 0;
+color: var(--rate-fg);
+}
+
+.rate-card-price-block {
+position: absolute;
+top: var(--rate-overlay-desktop-top, 54%);
+right: 80px;
+left: 80px;
+}
+
 .rate-card-price {
 width: 100%;
 color: var(--rate-fg);
@@ -342,6 +438,146 @@ text-align: center;
 font-family: var(--rate-secondary-font);
 font-size: clamp(9px, 2.2cqw, 11px);
 line-height: 1.25;
+}
+
+/* --------------------------------------------------------------------------
+   Horizontal offer card: 1475 × 380 artboard.
+
+   The viewport crops from the right first while the live overlay moves left.
+   Once the overlay reaches 51% of the original artboard, the composition
+   scales proportionally instead of allowing the overlay into the artwork half.
+   -------------------------------------------------------------------------- */
+.horizontal-rate-card-shell {
+--rate-fg: var(--color-cowboy-umber);
+--rate-border-color: var(--rate-fg);
+--rate-card-radius: 0px;
+position: relative;
+isolation: isolate;
+width: min(1475px, 100%);
+height: var(--horizontal-offer-height, 380px);
+overflow: hidden;
+flex: 0 0 auto;
+color: var(--rate-fg);
+}
+
+.horizontal-rate-card-viewport {
+position: relative;
+overflow: hidden;
+transform-origin: top left;
+}
+
+.horizontal-rate-card-artboard {
+position: relative;
+isolation: isolate;
+overflow: hidden;
+background: var(--color-paper);
+}
+
+.horizontal-rate-card-artwork {
+position: absolute;
+inset: 0;
+z-index: 0;
+display: block;
+width: 1475px;
+height: 380px;
+max-width: none;
+object-fit: cover;
+pointer-events: none;
+user-select: none;
+}
+
+.horizontal-rate-card-overlay {
+position: absolute;
+top: 0;
+bottom: 0;
+left: 66%;
+z-index: 2;
+width: 34%;
+color: var(--rate-fg);
+will-change: transform;
+}
+
+.horizontal-rate-card-price-block {
+position: absolute;
+top: 52px;
+right: 36px;
+left: 36px;
+text-align: center;
+}
+
+.horizontal-rate-card-price {
+font-family: var(--rate-primary-font, var(--font-button));
+font-size: 56px;
+font-weight: 700;
+line-height: 0.95;
+letter-spacing: 0.01em;
+white-space: nowrap;
+}
+
+.horizontal-rate-card-price span {
+font-size: 0.9em;
+}
+
+.horizontal-rate-card-tax {
+margin-top: 10px;
+font-family: var(--rate-secondary-font, var(--font-number));
+font-size: 23px;
+font-weight: 700;
+line-height: 1.1;
+}
+
+.horizontal-rate-card-action {
+position: absolute;
+right: 34px;
+bottom: 36px;
+left: 34px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 24px;
+}
+
+.horizontal-rate-card-cta {
+width: min(315px, 100%);
+height: 80px !important;
+padding-right: 34px !important;
+padding-left: 34px !important;
+font-size: 27px !important;
+}
+
+.horizontal-rate-card-policy {
+margin: 0;
+width: 100%;
+font-family: var(--rate-secondary-font, var(--font-number));
+font-size: 18px;
+font-weight: 700;
+line-height: 1.15;
+text-align: center;
+}
+
+.horizontal-rate-card-semantic {
+position: absolute;
+z-index: 1;
+top: 48px;
+left: 48px;
+width: 620px;
+color: var(--rate-fg);
+}
+
+.horizontal-rate-card-semantic--visible h3 {
+margin: 8px 0 12px;
+font-family: var(--font-heading);
+font-size: 42px;
+line-height: 0.95;
+text-transform: uppercase;
+}
+
+.horizontal-rate-card-semantic--visible p {
+margin: 0 0 10px;
+max-width: 560px;
+font-family: var(--font-body);
+font-size: 18px;
+line-height: 1.35;
 }
 
 .checkout-field {

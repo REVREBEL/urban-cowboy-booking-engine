@@ -4,6 +4,8 @@ export type RateCardOverlayPosition = "high" | "normal" | "low";
 
 export type RateCardButtonStyle = "filled" | "outline";
 
+export type RateCardBorderStyle = "none" | "single" | "double";
+
 export type RateCardColor =
   | "paper"
   | "ash"
@@ -51,6 +53,7 @@ export interface RateCardConfig {
   /** Editorial artwork supplied by the CMS editor. */
   desktopArtworkUrl: string | null;
   mobileArtworkUrl: string | null;
+  horizontalArtworkUrl: string | null;
 
   /** Independent placement presets for each artwork composition. */
   desktopOverlayPosition: RateCardOverlayPosition;
@@ -60,6 +63,7 @@ export interface RateCardConfig {
   buttonStyle: RateCardButtonStyle;
   buttonColor: RateCardColor;
   textColor: RateCardColor;
+  borderStyle: RateCardBorderStyle;
   fontPair: RateCardFontPair;
   ctaLabel?: string | null;
 

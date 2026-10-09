@@ -247,8 +247,7 @@ function transform(source, filePath) {
 function isArtworkSource(filePath) {
   const relative = path.relative(ROOT, filePath).split(path.sep).join("/");
   return (
-    relative === "src/components/WoodcutArt.tsx" ||
-    relative === "src/components/icons/WoodcutArt.tsx" ||
+    relative === "src/components/icons/AmenityWoodcutIcon.tsx" ||
     relative.startsWith("src/components/icons/generated/")
   );
 }
