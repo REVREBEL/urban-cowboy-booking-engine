@@ -19,7 +19,10 @@ import { apiLog } from "./apiLog";
 import type { RateCardConfig } from "../types/rate-card";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 import type { AddOnCmsItem } from "../types/add-on-cms";
-import type { RoomTypeCmsReviewMap } from "../types/room-type-cms";
+import type {
+  RoomTypeCmsDescriptionMap,
+  RoomTypeCmsReviewMap,
+} from "../types/room-type-cms";
 import type { BookingLocationCmsMap } from "../types/location-cms";
 
 export class ApiError extends Error {
@@ -169,9 +172,24 @@ export const api = {
       why: "Fetches the raw Mews configuration product catalog and annotates each product with the current booking-engine inclusion/exclusion decision. Used only by the developer API debugger on the add-ons step.",
     }),
 
+  roomTypeContent: () =>
+    contentCall<{
+      reviews: RoomTypeCmsReviewMap;
+      descriptions: RoomTypeCmsDescriptionMap;
+      generatedAt?: string | null;
+      stale?: boolean;
+    }>("room-type-reviews", {
+      label: "Room-type CMS content",
+      why: "Loads published Room Type short/long descriptions and review content from Webflow, keyed by the durable Mews Room Type ID. Mews remains the fallback when editorial descriptions are blank.",
+    }).catch(() => ({
+      reviews: {} as RoomTypeCmsReviewMap,
+      descriptions: {} as RoomTypeCmsDescriptionMap,
+    })),
+
   roomTypeReviews: () =>
     contentCall<{
       reviews: RoomTypeCmsReviewMap;
+      descriptions?: RoomTypeCmsDescriptionMap;
       generatedAt?: string | null;
       stale?: boolean;
     }>("room-type-reviews", {
