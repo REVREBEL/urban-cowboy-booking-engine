@@ -18,7 +18,7 @@ import { MatchOrBrowseScreen } from "@/components/booking/discovery/MatchOrBrows
 import { RoomMatcherPage } from "@/components/booking/discovery/RoomMatcherPage";
 import { HelpMeChooseModal } from "@/components/booking/discovery/HelpMeChooseModal";
 import { StudioMatchResults } from "./StudioMatchResults";
-import { RoomsListCard, type RoomCardColor } from "@/components/RoomsListCard";
+import { RoomsListCard, type RoomCardTheme } from "@/components/RoomsListCard";
 import { BuildingExperienceList } from "@/components/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/RoomDetailModal";
 import type { RoomType as StudioRoomType } from "@/types";
@@ -468,7 +468,7 @@ export function Results() {
               <RoomsListCard
                 room={room}
                 imageBaseUrl={imageBaseUrl}
-                color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
+                theme={(["paper", "copper", "lake-forest"] as RoomCardTheme[])[index % 3]}
                 layout={index % 2 === 0 ? "left" : "right"}
                 onSelectRoom={(selected) => {
                   if (selected.rates.length) choose(selected);
