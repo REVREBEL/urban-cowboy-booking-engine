@@ -240,6 +240,10 @@ export interface ShapedRoom {
   categoryId: string;
   name: string;
   description: string;
+  /** Published Webflow list-card copy. Falls back to the Mews description when absent. */
+  cmsShortDescription?: string | null;
+  /** Published Webflow detail-view copy. Falls back to the Mews description when absent. */
+  cmsLongDescription?: string | null;
   imageIds: string[];
   normalBedCount: number;
   extraBedCount: number;
