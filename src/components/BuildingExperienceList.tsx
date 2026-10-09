@@ -148,7 +148,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
 
   const renderMappedRoom = (
     key: string,
-    color: RoomCardTheme,
+    theme: RoomCardTheme,
     layout: RoomCardLayout,
   ) => {
     const room = roomByKey(key);
@@ -158,7 +158,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
       <RoomsListCard
         room={room}
         imageBaseUrl={imageBaseUrl}
-        theme={color}
+        theme={theme}
         layout={layout}
         onSelectRoom={onSelectRoom}
         onOpenRoomDetails={onOpenRoomDetails}
