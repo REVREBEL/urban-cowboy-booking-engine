@@ -10,13 +10,11 @@ const CHECK = process.argv.includes("--check");
 const COLOR_TOKENS = new Map(
   Object.entries({
     "#4e332d": "cowboy-umber",
-    "#ebe8e0": "alpine-linen",
     "#fddc4e": "lodge-yellow",
     "#ccc7bb": "ash",
     "#faf9f9": "paper",
     "#0e301a": "lake-forest",
     "#ddc5a4": "whiskey-sour",
-    "#343833": "smoke",
     "#f2f2f2": "mist",
     "#9a5636": "copper",
     "#69253a": "oxblood",
@@ -26,14 +24,15 @@ const COLOR_TOKENS = new Map(
     "#566e5f": "lake-forest-fade",
 
     // Shared interface neutrals.
-    "#221c18": "ink",
+    "#221c18": "smoke",
     "#1c1917": "ink-deep",
     "#60605e": "copy",
     "#6b6259": "copy-warm",
-    "#73716d": "copy-muted",
+    "#73716d": "smoke-fade",
+    "#717470": "smoke-fade",
     "#767470": "copy-soft",
     "#8a7e74": "copy-faint",
-    "#d1c9be": "line",
+    "#d1c9be": "alpine-linen",
     "#e1e0e0": "line-light",
     "#e2e2e1": "line-cool",
     "#dddddd": "line-neutral",
@@ -48,6 +47,13 @@ const COLOR_TOKENS = new Map(
     "#000000": "black",
   }),
 );
+
+const COLOR_CLASS_REPLACEMENTS = new Map([
+  ["text-ink", "text-smoke"],
+  ["bg-ink", "bg-smoke"],
+  ["border-ink", "border-smoke"],
+  ["ring-ink", "ring-smoke"],
+]);
 
 const FONT_CLASS_REPLACEMENTS = new Map([
   ["font-woodblock", "font-label"],
@@ -156,6 +162,9 @@ function replaceCssColors(source) {
 
 function replaceKnownClasses(source) {
   let next = source;
+  for (const [from, to] of COLOR_CLASS_REPLACEMENTS) {
+    next = next.replace(new RegExp(`\\b${from}\\b`, "g"), to);
+  }
   for (const [from, to] of FONT_CLASS_REPLACEMENTS) {
     next = next.replace(new RegExp(`\\b${from}\\b`, "g"), to);
   }
