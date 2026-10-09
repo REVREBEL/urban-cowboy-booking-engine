@@ -231,15 +231,28 @@ export interface ShapedRate {
 }
 
 export interface ShapedRoom {
+  /**
+   * Canonical lodging-domain Room Type ID.
+   * This is the Mews RoomCategoryId at the integration boundary.
+   */
+  roomTypeId: string;
+  /** @deprecated Transitional alias. Use roomTypeId in application code. */
   categoryId: string;
   name: string;
   description: string;
+  /** Published Webflow list-card copy. Falls back to the Mews description when absent. */
+  cmsShortDescription?: string | null;
+  /** Published Webflow detail-view copy. Falls back to the Mews description when absent. */
+  cmsLongDescription?: string | null;
   imageIds: string[];
   normalBedCount: number;
   extraBedCount: number;
+  /** Lodging-domain Room Class, mapped from Mews SpaceType. */
+  roomClass: string;
+  /** @deprecated Transitional alias. Use roomClass in application code. */
   spaceType: string;
   availableRoomCount: number;
-  capacity: number; // lits normaux + d'appoint
+  capacity: number; // legacy bed-count estimate; Mews occupancy remains booking authority
   rates: ShapedRate[]; // triés prix croissant, prix null exclus
   fromGross: number | null; // min des totaux non-null
   property?: string | null; // hébergement (hotel/creole/villas)

@@ -1,0 +1,3 @@
+import type { SVGProps } from "react";
+const SvgFiPlus = (props: SVGProps<SVGSVGElement>) => <svg id="fi-plus" fill="currentColor" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" {...props}><path d="M84.43 39.72H60.26V15.56c0-1.01-.82-1.82-1.82-1.82l-16.93-.01c-1.01 0-1.82.81-1.82 1.81l-.01 24.16 -24.16-.01c-.97 0-1.82.85-1.82 1.81v16.92c-.01.48.19.94.53 1.28 .33.33.8.53 1.28.53h24.16v24.16c0 .48.19.94.53 1.28 .34.34.8.53 1.28.53l16.92-.01c.48 0 .94-.2 1.28-.54 .33-.34.52-.8.52-1.28V60.2l24.16-.01c.5 0 .95-.21 1.28-.53 .32-.33.53-.79.53-1.29l0-16.93c0-1.01-.82-1.82-1.82-1.82Z" /></svg>;
+export default SvgFiPlus;

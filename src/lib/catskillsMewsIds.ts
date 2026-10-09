@@ -6,12 +6,10 @@ export const CATSKILLS_MEWS_IDS = {
     child: "db093f0b-738e-4afe-9191-b106007065ff",
   },
   fees: {
-    // Preserved from the source label exactly as supplied. Verify whether the
-    // Mews product is named "Pet Fee" before renaming this key.
-    PET_FREE: "c74edf03-043c-4217-adbd-b124016a55ae",
     RESORT_FEE: "bdaf2c3a-baf7-41c6-aecb-b11e016a147e",
   },
   addOns: {
+    DOG_INCLUSION: "c74edf03-043c-4217-adbd-b124016a55ae",
     FLOWER_BOUQUET: "d8009b60-0580-49e7-a5dd-b12401713848",
     HUMMUS_AND_CRUDITES: "d4e2bfdd-f01f-4177-b366-b12401712a25",
     LETS_EAT_CHOCOLATE_TRUFFLES: "41f8b399-a303-40ac-bbfc-b124016e6b85",

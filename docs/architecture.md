@@ -3,7 +3,7 @@
 > Flow map and decision guide — technical and business — so that anyone joining the
 > project immediately knows whether an observed behavior is **intended**, a
 > **subtlety to be aware of**, or a **real bug**.
-> Stack: **Cloudflare Worker + React/Vite** · PMS: **Mews Distributor v1** · Analytics: **n8n → Supabase**
+> Stack: **Cloudflare Worker + React/Vite** · PMS: **Mews Booking Engine API** · Editorial CMS: **Webflow** · Analytics: **n8n → Supabase**
 
 ## Table of Contents
 
@@ -160,7 +160,8 @@ Several reassurance elements are **generated**, not sourced from Mews. Good to k
 | Room names, descriptions, photos | 🟢 Real | Mews `configuration/get`. |
 | "Only N rooms left" | 🟢 Real | Based on Mews `AvailableRoomCount`. |
 | Terms & Conditions (link) | 🟢 Real | URL provided by Mews configuration. |
-| Rating "4.2 · 2,064 reviews" | 🟣 Demo | Hardcoded. To be connected to a real review source. |
+| Room-detail review quote | 🟢 Real | Published Webflow Room Type CMS content, joined by Mews Room Type ID. Blank review fields hide the section. |
+| Aggregate rating/count badge "4.2 · 2,064 reviews" | 🟣 Demo | Still hardcoded; no aggregate review API is connected. |
 | "14 people viewing this stay" | 🟣 Demo | Generated (seeded per room), not a real counter. |
 | "Booked N times this week" | 🟣 Demo | Generated. Illustrative social proof. |
 | "Guest Favorite" / "High Demand" | 🟣 Demo | Illustrative badges (simple rule / seed), not a Mews signal. |

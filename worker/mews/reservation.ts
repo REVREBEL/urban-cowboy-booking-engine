@@ -1,4 +1,5 @@
 import { mewsJson, readJson, bad, json, isIsoDate, clampInt, anyAmount, propertyByKey, mewsLang, type Env } from "./_lib";
+import { refreshCalendarAfterReservation } from "./calendar-engine";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -26,8 +27,8 @@ interface InReservation {
 // Bébé en berceau : aucun champ « InfantCount » dans reservationGroups/create (Mews ne
 // compte AdultCount + ChildCount que). On consigne donc le bébé en note lisible pour la
 // réception, dans la langue de la réservation.
-function babyNote(count: number, lang: "fr-FR" | "en-GB"): string {
-  return lang === "en-GB"
+function babyNote(count: number, lang: "fr-FR" | "en-US"): string {
+  return lang === "en-US"
     ? `${count} baby/babies in a cot — free, not counted in occupancy (baby kit requested)`
     : `${count} bébé(s) en berceau — gratuit, non décompté (kit bébé demandé)`;
 }
@@ -74,10 +75,17 @@ function cleanCustomer(c: InCustomer | undefined) {
   };
 }
 
+// FUTURE: after reservationGroups/create succeeds, scheduled add-ons should also
+// create linked operational tasks in Mews using the Connector API. This is
+// intentionally NOT implemented yet because Connector API access requires a
+// separately certified connection and credentials that this project does not
+// currently have. Until certification is complete, keep the full delivery date,
+// time, and customization instructions in reservation Notes.
+//
 // reservationGroups/create — ÉCRIT dans Mews. On reconstruit entièrement le payload
 // à partir de champs whitelistés ; jamais de forward du body brut. Renvoie au front
 // une réponse curée (Id, PaymentRequestId, numéros de confirmation, montants dans leur devise Mews).
-export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+export const onRequestPost: PagesFunction<Env> = async ({ request, env, waitUntil }) => {
   const b = await readJson<Body>(request);
 
   const Customer = cleanCustomer(b.customer);
@@ -156,38 +164,64 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   // Le suivi « paiement initié » part du front (track → WEBHOOK_EVENTS) avec le
   // reservationGroupId → n8n valide ensuite le paiement via Mews. Pas de webhook serveur.
 
+  const totalAmount = anyAmount(d.TotalAmount);
+  const createdReservations = (d.Reservations ?? []).map((r: any) => ({
+    id: r.Id,
+    number: r.Number,
+    roomCategoryId: r.RoomCategoryId,
+    rateId: r.RateId,
+    startUtc: r.StartUtc,
+    endUtc: r.EndUtc,
+    adultCount: r.AdultCount,
+    childCount: r.ChildCount,
+    amount:
+      anyAmount(r.Amount) ??
+      (r.Cost && typeof r.Cost === "object"
+        ? (() => {
+            const first = Object.entries(r.Cost as Record<string, unknown>).find(
+              ([, value]) => typeof value === "number",
+            );
+            return first
+              ? {
+                  currency: first[0],
+                  gross: first[1] as number,
+                  net: null,
+                  taxTotal: null,
+                  taxes: [],
+                }
+              : null;
+          })()
+        : null),
+  }));
+
+  // A successful reservation can immediately change the lowest available room
+  // type, from-rate, sold-out state, or restriction behavior around the booked
+  // dates. Refresh that small window in the background without delaying the
+  // reservation response or payment handoff.
+  const createdStayDates = createdReservations
+    .flatMap((reservation: any) => [reservation.startUtc, reservation.endUtc])
+    .filter((value: unknown): value is string => typeof value === "string")
+    .map((value: string) => value.slice(0, 10))
+    .sort();
+
+  if (createdStayDates.length >= 2) {
+    waitUntil(
+      refreshCalendarAfterReservation(env, {
+        propertyKey: b.property ?? "hotel",
+        currency: totalAmount?.currency ?? "USD",
+        startDate: createdStayDates[0],
+        endDate: createdStayDates[createdStayDates.length - 1],
+      }).catch(() => undefined),
+    );
+  }
+
   return json({
     id: d.Id,
     customerId: d.CustomerId,
     paymentRequestId: d.PaymentRequestId ?? null,
     paymentUrl,
     creditCardAvailable: d.CreditCardAvailable ?? null,
-    totalAmount: anyAmount(d.TotalAmount),
-    reservations: (d.Reservations ?? []).map((r: any) => ({
-      id: r.Id,
-      number: r.Number,
-      roomCategoryId: r.RoomCategoryId,
-      rateId: r.RateId,
-      startUtc: r.StartUtc,
-      endUtc: r.EndUtc,
-      adultCount: r.AdultCount,
-      childCount: r.ChildCount,
-      amount:
-        anyAmount(r.Amount) ??
-        (r.Cost && typeof r.Cost === "object"
-          ? (() => {
-              const first = Object.entries(r.Cost as Record<string, unknown>).find(([, value]) => typeof value === "number");
-              return first
-                ? {
-                    currency: first[0],
-                    gross: first[1] as number,
-                    net: null,
-                    taxTotal: null,
-                    taxes: [],
-                  }
-                : null;
-            })()
-          : null),
-    })),
+    totalAmount,
+    reservations: createdReservations,
   });
 };

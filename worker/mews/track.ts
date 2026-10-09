@@ -1,7 +1,7 @@
 import { readJson, bad, json, postWebhook, type Env } from "./_lib";
 
 // Events du funnel acceptés (cf. front src/state/booking.tsx).
-const VALID_EVENTS = new Set(["etape", "paiement_initie", "paiement_valide"]);
+const VALID_EVENTS = new Set(["etape", "paiement_initie", "paiement_valide", "matches_saved"]);
 
 const str = (v: unknown, max = 200): string | null => (typeof v === "string" && v ? v.slice(0, max) : null);
 const num = (v: unknown): number | null => (typeof v === "number" && Number.isFinite(v) ? v : null);
@@ -74,6 +74,29 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, waitUnti
             email: str(b.customer.email, 200),
             telephone: str(b.customer.telephone, 40),
             nationalityCode: str(b.customer.nationalityCode, 2),
+          }
+        : null,
+    matchSave:
+      b.matchSave && typeof b.matchSave === "object"
+        ? {
+            emailTemplateKey: str(b.matchSave.emailTemplateKey, 80),
+            deliveryStatus: str(b.matchSave.deliveryStatus, 40),
+            topRoomCategoryId: str(b.matchSave.topRoomCategoryId, 60),
+            alternateRoomCategoryIds: Array.isArray(b.matchSave.alternateRoomCategoryIds)
+              ? b.matchSave.alternateRoomCategoryIds
+                  .slice(0, 2)
+                  .map((value: unknown) => str(value, 60))
+                  .filter(Boolean)
+              : [],
+            party: str(b.matchSave.party, 20),
+            dog: typeof b.matchSave.dog === "boolean" ? b.matchSave.dog : null,
+            interests: Array.isArray(b.matchSave.interests)
+              ? b.matchSave.interests
+                  .slice(0, 2)
+                  .map((value: unknown) => str(value, 80))
+                  .filter(Boolean)
+              : [],
+            shareUrl: str(b.matchSave.shareUrl, 1000),
           }
         : null,
     // Clé de corrélation avec Mews : permet à n8n de VALIDER le paiement

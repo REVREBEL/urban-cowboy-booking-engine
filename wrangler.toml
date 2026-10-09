@@ -20,4 +20,36 @@ MEWS_CONFIG_ID = "93e27b6f-cba7-4e0b-a24a-819e1b7b388a"
 MEWS_ADULT_AGE_CATEGORY_ID = "5485e2f3-4034-4ca1-8a8f-ade30114c61f"
 MEWS_CHILD_AGE_CATEGORY_ID = "fece4b6b-39fa-4ccd-9909-afba0092eeb1"
 
+# Public Webflow identifiers. The API token remains a Worker secret supplied as
+# WEBFLOW_CMS_API_TOKEN and is never included in the browser bundle.
+WEBFLOW_SITE_ID = "6aaa2497c8ea366207beba30"
+WEBFLOW_RATE_CARD_COLLECTION_ID = "6abc811cb92ea32dd64d79e0"
+WEBFLOW_ADD_ON_COLLECTION_ID = "6ac364287c8782e8e653075e"
+WEBFLOW_ROOM_TYPE_COLLECTION_ID = "6abc815b36cbcba74b8b01c4"
+WEBFLOW_LOCATION_COLLECTION_ID = "6abc812fd98b325b281d6301"
+WEBFLOW_LOCATION_ITEM_ID = "6abc9142d98b325b2821ca23"
+
 # Tracking is intentionally disabled until Urban Cowboy provisions its own endpoint.
+
+
+# Calendar snapshot refresh scheduler. The Worker itself enforces America/New_York
+# cadence: every 30 minutes during the revenue-management day and hourly 8 PM–7 AM.
+[triggers]
+crons = ["*/15 * * * *"]
+
+# Preferred production calendar snapshot store. Create the namespace first, then
+# uncomment and insert the namespace ID. Until then the Worker falls back to
+# Cloudflare's Cache API.
+#
+# [[kv_namespaces]]
+# binding = "CALENDAR_CACHE"
+# id = "<cloudflare-kv-namespace-id>"
+
+
+# Optional shared cache for slow-changing Webflow editorial content.
+# Production on Webflow Cloud should provision a Key Value Store with this
+# binding name. Leave commented locally until a namespace/store is provisioned.
+#
+# [[kv_namespaces]]
+# binding = "WEBFLOW_CONTENT_CACHE"
+# id = "<webflow-content-cache-namespace-id>"

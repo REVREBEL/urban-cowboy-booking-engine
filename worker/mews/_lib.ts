@@ -5,6 +5,9 @@
 export interface Env {
   // Binding Static Assets : sert le front buildé (dist/) + fallback SPA.
   ASSETS: Fetcher;
+  // Preferred shared calendar snapshot store. The calendar engine falls back to
+  // the Worker Cache API when this KV binding has not been provisioned yet.
+  CALENDAR_CACHE?: KVNamespace;
   MEWS_BASE_URL: string;
   MEWS_APP_BASE_URL: string;
   MEWS_CLIENT: string;
@@ -12,6 +15,16 @@ export interface Env {
   MEWS_CONFIG_ID: string;
   MEWS_ADULT_AGE_CATEGORY_ID?: string;
   MEWS_CHILD_AGE_CATEGORY_ID?: string;
+  WEBFLOW_CMS_API_TOKEN?: string;
+  WEBFLOW_SITE_ID?: string;
+  WEBFLOW_RATE_CARD_COLLECTION_ID?: string;
+  WEBFLOW_ADD_ON_COLLECTION_ID?: string;
+  WEBFLOW_ROOM_TYPE_COLLECTION_ID?: string;
+  WEBFLOW_LOCATION_COLLECTION_ID?: string;
+  WEBFLOW_LOCATION_ITEM_ID?: string;
+  // Webflow Cloud Key Value Store binding for slow-changing CMS overlays.
+  // Optional in local/dev; production should bind this as WEBFLOW_CONTENT_CACHE.
+  WEBFLOW_CONTENT_CACHE?: KVNamespace;
   // ★ UNIQUE endpoint de suivi → n8n → Supabase : reçoit TOUS les events du funnel
   // (chaque étape + paiement initié/validé). C'est LE endpoint du back-office.
   WEBHOOK_EVENTS?: string;
@@ -49,6 +62,7 @@ export interface Property {
   key: string;
   label: string;
   configId: string;
+  locationCmsItemId: string | null;
   adultAgeCategoryId: string;
   childAgeCategoryId: string | null;
   // Infants are sent only when the selected property exposes an infant age category.
@@ -60,6 +74,7 @@ export const propertiesForEnv = (env: Env): Property[] => [
     key: "hotel",
     label: "Urban Cowboy Lodge Catskills",
     configId: env.MEWS_CONFIG_ID,
+    locationCmsItemId: env.WEBFLOW_LOCATION_ITEM_ID || null,
     adultAgeCategoryId: env.MEWS_ADULT_AGE_CATEGORY_ID || AGE_FALLBACK.adult,
     childAgeCategoryId: env.MEWS_CHILD_AGE_CATEGORY_ID || AGE_FALLBACK.child,
     infantAgeCategoryId: null,
@@ -80,6 +95,24 @@ export function occupancyForProperty(prop: Property, adults: number, children = 
   // Send infants only where a Mews age category exists.
   if (infants > 0 && prop.infantAgeCategoryId) out.push({ AgeCategoryId: prop.infantAgeCategoryId, PersonCount: infants });
   return out;
+}
+
+/** Convert a property-local calendar date to its UTC midnight, including DST. */
+export function propertyDateUtc(date: string, timeZone = "America/New_York"): string {
+  const guess = Date.parse(`${date}T00:00:00Z`);
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(guess));
+  const value = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
+  const representedAsUtc = Date.UTC(value("year"), value("month") - 1, value("day"), value("hour"), value("minute"), value("second"));
+  return new Date(guess - (representedAsUtc - guess)).toISOString();
 }
 
 const TIMEOUT_MS = 12_000;
@@ -180,9 +213,9 @@ export const isIsoDate = (s: unknown): s is string =>
 // LanguageCode Mews valide. Défaut strict : fr-FR. Utilisé par tous les endpoints
 // qui renvoient du contenu localisé (config, dispo, pricing) et par la création
 // (langue de la page de paiement + e-mails Mews).
-export const mewsLang = (v: unknown): "fr-FR" | "en-GB" => {
+export const mewsLang = (v: unknown): "fr-FR" | "en-US" => {
   const s = String(v ?? "").toLowerCase();
-  return s === "en" || s === "en-gb" || s === "en-us" ? "en-GB" : "fr-FR";
+  return s === "en" || s === "en-gb" || s === "en-us" ? "en-US" : "fr-FR";
 };
 
 export const clampInt = (v: unknown, min: number, max: number, dflt: number): number => {

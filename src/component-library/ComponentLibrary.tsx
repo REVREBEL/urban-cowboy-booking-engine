@@ -16,35 +16,41 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmptyState from "@/components/feedback/empty-state";
 import ErrorState from "@/components/feedback/error-state";
 import LoadingState from "@/components/feedback/loading-state";
+import { BookingHeader } from "@/components/booking/chrome/header";
+import { BookingFooter } from "@/components/booking/chrome/footer";
+import { ContactBar } from "@/components/booking/chrome/contact-bar";
 
-import { DogToggleButton } from "@/features/booking/components/DogToggleButton";
-import { MatchBenefitsCard } from "@/features/booking/components/MatchBenefitsCard";
-import { PreferenceIconButton } from "@/features/booking/components/PreferenceIconButton";
-import { StaySummary } from "@/features/booking/components/StaySummary";
+import { DogToggleButton } from "@/components/booking/discovery/DogToggleButton";
+import { MatchBenefitsCard } from "@/components/booking/results/MatchBenefitsCard";
+import { PreferenceIconButton } from "@/components/booking/discovery/PreferenceIconButton";
+import { StaySummary } from "@/components/booking/summary/stay-summary";
 
 import {
   BestRateGuaranteedLabel,
-} from "@/features/find-your-stay/components/controls/BestRateGuaranteedLabel";
+} from "@/components/booking/search/BestRateGuaranteedLabel";
 import {
   PropertyLocationGroup,
-} from "@/features/find-your-stay/components/controls/PropertyLocationLabel";
+} from "@/components/booking/search/PropertyLocationLabel";
 import {
   TravelPartyGroup,
-} from "@/features/find-your-stay/components/controls/FindYourStayTravelPartyButton";
-import FindYourStay from "@/features/find-your-stay/components/flows/FindYourStay";
-import HelpMeChoose from "@/features/find-your-stay/components/flows/HelpMeChoose";
-import { ProgressBar } from "@/features/find-your-stay/components/progress/ProgressBar";
-import { ProgressStep } from "@/features/find-your-stay/components/progress/ProgressStep";
-import { SearchBar } from "@/features/find-your-stay/components/search/SearchBar";
-import { SearchBarExpanded } from "@/features/find-your-stay/components/search/SearchBarExpanded";
-import { SearchBarGuestDropdown } from "@/features/find-your-stay/components/search/SearchBarGuestsDropdown";
-import { SearchBarLocationDropdown } from "@/features/find-your-stay/components/search/SearchBarLocationDropdown";
-import { SearchBarPromoDropdown } from "@/features/find-your-stay/components/search/SearchBarPromoDropdown";
-import { SearchButton } from "@/features/find-your-stay/components/search/SearchButton";
+} from "@/components/booking/discovery/FindYourStayTravelPartyButton";
+import FindYourStay from "@/steps/FindYourStay";
+import HelpMeChoose from "@/steps/HelpMeChoose";
+import { ProgressBar } from "@/components/booking/progress/ProgressBar";
+import { ProgressStep } from "@/components/booking/progress/ProgressStep";
+import { SearchBar } from "@/components/booking/search/SearchBar";
+import { SearchBarExpanded } from "@/components/booking/search/SearchBarExpanded";
+import { SearchBarGuestDropdown } from "@/components/booking/search/SearchBarGuestsDropdown";
+import { SearchBarLocationDropdown } from "@/components/booking/search/SearchBarLocationDropdown";
+import { SearchBarPromoDropdown } from "@/components/booking/search/SearchBarPromoDropdown";
+import { SearchButton } from "@/components/booking/search/SearchButton";
 
 import { demoMatchRoom, demoStaySummary } from "./fixtures";
+import { FIND_YOUR_STAY_PREFERENCES } from "@/data/findYourStayPreferences";
+import type { PreferenceId } from "@/types/booking-ui";
 
 type SectionId =
+  | "chrome"
   | "find-controls"
   | "find-search"
   | "find-progress"
@@ -58,6 +64,7 @@ type PreviewWidth = "desktop" | "tablet" | "mobile" | "fluid";
 type PreviewSurface = "cream" | "white" | "forest" | "transparent";
 
 const sections: { id: SectionId; label: string; kicker: string }[] = [
+  { id: "chrome", label: "Booking · Chrome", kicker: "Chrome" },
   { id: "find-controls", label: "Find Your Stay · Controls", kicker: "Controls" },
   { id: "find-search", label: "Find Your Stay · Search", kicker: "Search" },
   { id: "find-progress", label: "Find Your Stay · Progress", kicker: "Progress" },
@@ -83,23 +90,26 @@ const surfaceClasses: Record<PreviewSurface, string> = {
 };
 
 const renderedPaths = new Set([
-  "src/features/booking/components/DogToggleButton.tsx",
-  "src/features/booking/components/MatchBenefitsCard.tsx",
-  "src/features/booking/components/PreferenceIconButton.tsx",
-  "src/features/booking/components/StaySummary.tsx",
-  "src/features/find-your-stay/components/controls/BestRateGuaranteedLabel.tsx",
-  "src/features/find-your-stay/components/controls/FindYourStayTravelPartyButton.tsx",
-  "src/features/find-your-stay/components/controls/PropertyLocationLabel.tsx",
-  "src/features/find-your-stay/components/flows/FindYourStay.tsx",
-  "src/features/find-your-stay/components/flows/HelpMeChoose.tsx",
-  "src/features/find-your-stay/components/progress/ProgressBar.tsx",
-  "src/features/find-your-stay/components/progress/ProgressStep.tsx",
-  "src/features/find-your-stay/components/search/SearchBar.tsx",
-  "src/features/find-your-stay/components/search/SearchBarExpanded.tsx",
-  "src/features/find-your-stay/components/search/SearchBarGuestsDropdown.tsx",
-  "src/features/find-your-stay/components/search/SearchBarLocationDropdown.tsx",
-  "src/features/find-your-stay/components/search/SearchBarPromoDropdown.tsx",
-  "src/features/find-your-stay/components/search/SearchButton.tsx",
+  "src/components/booking/chrome/header.tsx",
+  "src/components/booking/chrome/footer.tsx",
+  "src/components/booking/chrome/contact-bar.tsx",
+  "src/components/booking/discovery/DogToggleButton.tsx",
+  "src/components/booking/results/MatchBenefitsCard.tsx",
+  "src/components/booking/discovery/PreferenceIconButton.tsx",
+  "src/components/booking/summary/stay-summary.tsx",
+  "src/components/booking/search/BestRateGuaranteedLabel.tsx",
+  "src/components/booking/discovery/FindYourStayTravelPartyButton.tsx",
+  "src/components/booking/search/PropertyLocationLabel.tsx",
+  "src/steps/FindYourStay.tsx",
+  "src/steps/HelpMeChoose.tsx",
+  "src/components/booking/progress/ProgressBar.tsx",
+  "src/components/booking/progress/ProgressStep.tsx",
+  "src/components/booking/search/SearchBar.tsx",
+  "src/components/booking/search/SearchBarExpanded.tsx",
+  "src/components/booking/search/SearchBarGuestsDropdown.tsx",
+  "src/components/booking/search/SearchBarLocationDropdown.tsx",
+  "src/components/booking/search/SearchBarPromoDropdown.tsx",
+  "src/components/booking/search/SearchButton.tsx",
   "src/components/feedback/empty-state.tsx",
   "src/components/feedback/error-state.tsx",
   "src/components/feedback/loading-state.tsx",
@@ -114,7 +124,14 @@ const renderedPaths = new Set([
 
 const componentModules = import.meta.glob([
   "../components/**/*.tsx",
-  "../features/**/*.tsx",
+  "../steps/**/*.tsx",
+  // Stored prototype pages are not production components and contain imports
+  // for an abandoned Extras implementation. Keep the catalog on canonical UI.
+  "!../components/booking/extras/AddonCard.tsx",
+  "!../components/booking/extras/AddonCustomizerModal.tsx",
+  "!../components/booking/summary/CheckoutStep.tsx",
+  "!../components/booking/summary/ExtrasStep.tsx",
+  "!../components/rates/RideEasySoloPage.tsx",
 ]);
 
 const allComponentPaths = Object.keys(componentModules)
@@ -259,6 +276,56 @@ function Toolbar({
   );
 }
 
+function ChromeSection({ width }: { width: PreviewWidth }) {
+  return (
+    <section id="chrome" className="scroll-mt-24">
+      <SectionHeader
+        kicker="Booking"
+        title="Chrome"
+        body="Global booking shell components used across the booking journey."
+      />
+
+      <Preview
+        title="BookingHeader"
+        path="src/components/booking/chrome/header.tsx"
+        surface="cream"
+      >
+        <WidthFrame width={width} centered={false}>
+          <BookingHeader
+            step="results"
+            onNavigate={() => undefined}
+            onHome={() => undefined}
+            canNavigate={() => true}
+          />
+        </WidthFrame>
+      </Preview>
+
+      <Preview
+        title="BookingFooter"
+        path="src/components/booking/chrome/footer.tsx"
+        surface="cream"
+      >
+        <WidthFrame width={width} centered={false}>
+          <BookingFooter />
+        </WidthFrame>
+      </Preview>
+
+      <Preview
+        title="ContactBar"
+        path="src/components/booking/chrome/contact-bar.tsx"
+        surface="cream"
+        description="Rendered in preview mode so the floating contact control stays inside this component card."
+      >
+        <WidthFrame width={width}>
+          <div className="relative min-h-72 overflow-hidden rounded-xl border border-[#4e332d]/10 bg-[#ebe8e0]">
+            <ContactBar preview />
+          </div>
+        </WidthFrame>
+      </Preview>
+    </section>
+  );
+}
+
 function FindControlsSection({ width, surface }: { width: PreviewWidth; surface: PreviewSurface }) {
   const [location, setLocation] = useState("catskills");
   const [party, setParty] = useState<string | null>("partner");
@@ -273,7 +340,7 @@ function FindControlsSection({ width, surface }: { width: PreviewWidth; surface:
 
       <Preview
         title="BestRateGuaranteedLabel"
-        path="src/features/find-your-stay/components/controls/BestRateGuaranteedLabel.tsx"
+        path="src/components/booking/search/BestRateGuaranteedLabel.tsx"
         surface={surface}
       >
         <WidthFrame width={width}>
@@ -285,7 +352,7 @@ function FindControlsSection({ width, surface }: { width: PreviewWidth; surface:
 
       <Preview
         title="PropertyLocationLabel / Group"
-        path="src/features/find-your-stay/components/controls/PropertyLocationLabel.tsx"
+        path="src/components/booking/search/PropertyLocationLabel.tsx"
         surface={surface}
       >
         <WidthFrame width={width}>
@@ -300,7 +367,7 @@ function FindControlsSection({ width, surface }: { width: PreviewWidth; surface:
 
       <Preview
         title="FindYourStayTravelPartyButton"
-        path="src/features/find-your-stay/components/controls/FindYourStayTravelPartyButton.tsx"
+        path="src/components/booking/discovery/FindYourStayTravelPartyButton.tsx"
         surface={surface}
       >
         <WidthFrame width={width}>
@@ -324,7 +391,7 @@ function FindSearchSection({ width, surface }: { width: PreviewWidth; surface: P
 
       <Preview
         title="SearchButton"
-        path="src/features/find-your-stay/components/search/SearchButton.tsx"
+        path="src/components/booking/search/SearchButton.tsx"
         surface={surface}
       >
         <WidthFrame width={width}>
@@ -339,7 +406,7 @@ function FindSearchSection({ width, surface }: { width: PreviewWidth; surface: P
 
       <Preview
         title="SearchBar"
-        path="src/features/find-your-stay/components/search/SearchBar.tsx"
+        path="src/components/booking/search/SearchBar.tsx"
         surface={surface}
         description="Compact search bar. Use the width controls above to reveal clipping and breakpoint behavior."
       >
@@ -354,7 +421,7 @@ function FindSearchSection({ width, surface }: { width: PreviewWidth; surface: P
 
       <Preview
         title="SearchBarExpanded"
-        path="src/features/find-your-stay/components/search/SearchBarExpanded.tsx"
+        path="src/components/booking/search/SearchBarExpanded.tsx"
         surface={surface}
         description="Expanded search bar at its current production dimensions."
       >
@@ -366,21 +433,21 @@ function FindSearchSection({ width, surface }: { width: PreviewWidth; surface: P
       <div className="grid gap-8 xl:grid-cols-3">
         <Preview
           title="Guests Dropdown"
-          path="src/features/find-your-stay/components/search/SearchBarGuestsDropdown.tsx"
+          path="src/components/booking/search/SearchBarGuestsDropdown.tsx"
           surface={surface}
         >
           <SearchBarGuestDropdown />
         </Preview>
         <Preview
           title="Location Dropdown"
-          path="src/features/find-your-stay/components/search/SearchBarLocationDropdown.tsx"
+          path="src/components/booking/search/SearchBarLocationDropdown.tsx"
           surface={surface}
         >
           <SearchBarLocationDropdown />
         </Preview>
         <Preview
           title="Promo Dropdown"
-          path="src/features/find-your-stay/components/search/SearchBarPromoDropdown.tsx"
+          path="src/components/booking/search/SearchBarPromoDropdown.tsx"
           surface={surface}
         >
           <SearchBarPromoDropdown />
@@ -403,7 +470,7 @@ function FindProgressSection({ width, surface }: { width: PreviewWidth; surface:
 
       <Preview
         title="ProgressStep"
-        path="src/features/find-your-stay/components/progress/ProgressStep.tsx"
+        path="src/components/booking/progress/ProgressStep.tsx"
         surface={surface}
       >
         <WidthFrame width={width}>
@@ -417,7 +484,7 @@ function FindProgressSection({ width, surface }: { width: PreviewWidth; surface:
 
       <Preview
         title="ProgressBar"
-        path="src/features/find-your-stay/components/progress/ProgressBar.tsx"
+        path="src/components/booking/progress/ProgressBar.tsx"
         surface="forest"
       >
         <WidthFrame width={width}>
@@ -445,7 +512,7 @@ function FindFlowsSection({ width }: { width: PreviewWidth }) {
 
       <Preview
         title="FindYourStay"
-        path="src/features/find-your-stay/components/flows/FindYourStay.tsx"
+        path="src/steps/FindYourStay.tsx"
         surface="cream"
         tall
       >
@@ -465,7 +532,7 @@ function FindFlowsSection({ width }: { width: PreviewWidth }) {
 
       <Preview
         title="HelpMeChoose"
-        path="src/features/find-your-stay/components/flows/HelpMeChoose.tsx"
+        path="src/steps/HelpMeChoose.tsx"
         surface="forest"
         tall
       >
@@ -483,7 +550,7 @@ function FindFlowsSection({ width }: { width: PreviewWidth }) {
 
 function BookingSection({ width, surface }: { width: PreviewWidth; surface: PreviewSurface }) {
   const [dog, setDog] = useState(false);
-  const [preference, setPreference] = useState(false);
+  const [selectedPreference, setSelectedPreference] = useState<PreferenceId | null>(null);
 
   return (
     <section id="booking" className="scroll-mt-24">
@@ -495,7 +562,7 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
 
       <Preview
         title="DogToggleButton"
-        path="src/features/booking/components/DogToggleButton.tsx"
+        path="src/components/booking/discovery/DogToggleButton.tsx"
         surface={surface}
       >
         <WidthFrame width={width}>
@@ -507,18 +574,27 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
 
       <Preview
         title="PreferenceIconButton"
-        path="src/features/booking/components/PreferenceIconButton.tsx"
+        path="src/components/booking/discovery/PreferenceIconButton.tsx"
         surface={surface}
       >
         <WidthFrame width={width}>
           <div className="flex min-h-64 items-center justify-center">
-            <PreferenceIconButton
-              id="bathe-outside"
-              label="Outdoor Soak"
-              description="A private cedar soaking tub outside among the trees."
-              selected={preference}
-              onToggle={() => setPreference((value) => !value)}
-            />
+            <div className="flex flex-wrap justify-center gap-3">
+              {FIND_YOUR_STAY_PREFERENCES.map((item) => (
+                <PreferenceIconButton
+                  key={item.id}
+                  id={item.id}
+                  label={item.label}
+                  description={item.description}
+                  selected={selectedPreference === item.id}
+                  onToggle={() =>
+                    setSelectedPreference((current) =>
+                      current === item.id ? null : item.id,
+                    )
+                  }
+                />
+              ))}
+            </div>
           </div>
         </WidthFrame>
       </Preview>
@@ -526,7 +602,7 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
       <div className="grid gap-8 xl:grid-cols-2">
         <Preview
           title="MatchBenefitsCard"
-          path="src/features/booking/components/MatchBenefitsCard.tsx"
+          path="src/components/booking/results/MatchBenefitsCard.tsx"
           surface="cream"
         >
           <div className="w-[448px]">
@@ -542,11 +618,11 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
 
         <Preview
           title="StaySummary"
-          path="src/features/booking/components/StaySummary.tsx"
+          path="src/components/booking/summary/stay-summary.tsx"
           surface={surface}
         >
           <div className="w-[420px]">
-            <StaySummary data={demoStaySummary} />
+            <StaySummary {...demoStaySummary} />
           </div>
         </Preview>
       </div>
@@ -613,6 +689,27 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
         title="UI Primitives"
         body="Representative live primitives from the retained Radix/shadcn layer. The full primitive inventory remains visible below."
       />
+
+      <Preview
+        title="Typography"
+        path="src/index.css"
+        surface={surface}
+        description="Semantic typography variables used across the booking engine."
+      >
+        <WidthFrame width={width}>
+          <div className="grid max-w-3xl gap-5 text-[#4e332d]">
+            <div>
+              <p className="font-eyebrow text-xs uppercase tracking-[0.18em]">Eyebrow · Bianco Sans</p>
+              <h2 className="mt-1 font-display text-4xl">Heading · DesertRain</h2>
+            </div>
+            <p className="text-base">Body · Uchen Regular. Built for the quieter reading moments between decisions.</p>
+            <p className="font-label text-sm uppercase">Label · Brothers OT</p>
+            <Button variant="outline" color="dark">Button · Brothers OT</Button>
+            <p className="font-number text-2xl">$425.00 · Oct 14–17 · 2 Guests</p>
+            <blockquote className="text-3xl">Blockquote · Cedarville</blockquote>
+          </div>
+        </WidthFrame>
+      </Preview>
 
       <Preview
         title="Buttons + Badges"
@@ -689,8 +786,11 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
 }
 
 function classify(path: string) {
-  if (path.includes("/features/find-your-stay/")) return "Find Your Stay";
-  if (path.includes("/features/booking/")) return "Booking";
+  if (path.includes("/components/booking/search/")) return "Booking Search";
+  if (path.includes("/components/booking/discovery/")) return "Booking Discovery";
+  if (path.includes("/components/booking/progress/")) return "Booking Progress";
+  if (path.includes("/components/booking/results/")) return "Booking Results";
+  if (path.includes("/steps/")) return "Booking Steps";
   if (path.includes("/components/ui/")) return "UI";
   if (path.includes("/components/feedback/")) return "Feedback";
   if (path.includes("/components/icons/")) return "Icons";
@@ -723,7 +823,7 @@ function InventorySection() {
       <SectionHeader
         kicker="Canonical Tree"
         title="Full Component Inventory"
-        body="Generated automatically from src/components and src/features. A Live badge means the component also has a visual preview above."
+        body="Generated automatically from src/components and src/steps. A Live badge means the component also has a visual preview above."
       />
 
       <div className="mb-5 grid gap-4 rounded-2xl border border-[#4e332d]/10 bg-white p-5 md:grid-cols-[1fr_auto] md:items-center">
@@ -818,6 +918,7 @@ export default function ComponentLibrary() {
             </p>
           </div>
 
+          <ChromeSection width={width} />
           <FindControlsSection width={width} surface={surface} />
           <FindSearchSection width={width} surface={surface} />
           <FindProgressSection width={width} surface={surface} />

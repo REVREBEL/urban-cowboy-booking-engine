@@ -8,12 +8,14 @@ function room(key: string, price = 500): ShapedRoom {
   const merchandising = merchandisingForKey(key);
   assert.ok(merchandising, `Missing merchandising fixture: ${key}`);
   return {
-    categoryId: `category-${key}`,
+    roomTypeId: `room-type-${key}`,
+    categoryId: `room-type-${key}`,
     name: merchandising.legacyNames[0],
     description: "",
     imageIds: [],
     normalBedCount: 1,
     extraBedCount: 0,
+    roomClass: "Room",
     spaceType: "Room",
     availableRoomCount: 1,
     capacity: 2,
@@ -21,11 +23,11 @@ function room(key: string, price = 500): ShapedRoom {
     fromGross: price,
     property: null,
     merchandising,
-    merchandisingSource: "categoryId",
+    merchandisingSource: "mewsRoomTypeId",
   };
 }
 
-test("single-interest Outdoor Soak follows the documented fallback ladder", () => {
+test("single-interest Connection with Nature follows the documented fallback ladder", () => {
   const rooms = [
     room("chalet", 300),
     room("walden-forest-bathing-suite-den", 200),
@@ -34,7 +36,7 @@ test("single-interest Outdoor Soak follows the documented fallback ladder", () =
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["outdoorSoak"] },
+    { party: "partner", dog: false, interests: ["connection-with-nature"] },
     { children: 0, infants: 0 },
   );
 
@@ -59,7 +61,7 @@ test("dog requested is a hard filter and unknown dog policy is not treated as el
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: true, interests: ["outdoorSoak"] },
+    { party: "partner", dog: true, interests: ["connection-with-nature"] },
     { children: 0, infants: 0 },
   );
 
@@ -97,7 +99,7 @@ test("children remove adults-only Alpine and Walden inventory regardless of part
   ];
   const ranked = rankRecommendedRooms(
     rooms,
-    { party: "friends", dog: false, interests: ["simpleCozy"] },
+    { party: "friends", dog: false, interests: ["simple-comforts"] },
     { children: 1, infants: 0 },
   );
 
@@ -107,7 +109,7 @@ test("children remove adults-only Alpine and Walden inventory regardless of part
   );
 });
 
-test("two-interest intersection bonus makes Chalet the top Outdoor Soak + Own Place match", () => {
+test("two-interest intersection bonus makes Chalet the top Connection with Nature + Your Own Hideaway match", () => {
   const rooms = [
     room("walden-forest-bathing-suite"),
     room("cabin"),
@@ -116,14 +118,14 @@ test("two-interest intersection bonus makes Chalet the top Outdoor Soak + Own Pl
   ];
   const [top] = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["outdoorSoak", "ownPlace"] },
+    { party: "partner", dog: false, interests: ["connection-with-nature", "your-own-hideaway"] },
     { children: 0, infants: 0 },
   );
 
   assert.equal(top.merchandising?.key, "chalet");
 });
 
-test("two-interest intersection bonus makes Cabin the top Icon Tub + Own Place match", () => {
+test("two-interest intersection bonus makes Cabin the top Indoor Sanctuaries + Your Own Hideaway match", () => {
   const rooms = [
     room("alpine-bathing-suite"),
     room("lodge-penthouse-suite"),
@@ -132,7 +134,7 @@ test("two-interest intersection bonus makes Cabin the top Icon Tub + Own Place m
   ];
   const [top] = rankRecommendedRooms(
     rooms,
-    { party: "partner", dog: false, interests: ["iconTub", "ownPlace"] },
+    { party: "partner", dog: false, interests: ["indoor-sanctuaries", "your-own-hideaway"] },
     { children: 0, infants: 0 },
   );
 
@@ -150,5 +152,61 @@ test("normal browsing preserves existing order while still enforcing known age e
   assert.deepEqual(
     ranked.map((r) => r.merchandising?.key),
     ["forest-house-queen", "lodge-king"],
+  );
+});
+
+
+test("spaces-for-connection prefers Room Types with a separate living room", () => {
+  const rooms = [
+    room("cabin", 200),
+    room("lodge-king", 250),
+    room("lodge-penthouse-suite", 300),
+  ];
+  const [top] = rankRecommendedRooms(
+    rooms,
+    { party: "partner", dog: false, interests: ["spaces-for-connection"] },
+    { children: 0, infants: 0 },
+  );
+
+  assert.equal(top.merchandising?.key, "lodge-penthouse-suite");
+});
+
+test("spaces-to-gather prefers Room Types with a full kitchen", () => {
+  const rooms = [
+    room("lodge-3-bedroom-suite", 200),
+    room("forest-house-king", 250),
+    room("chalet", 300),
+  ];
+  const [top] = rankRecommendedRooms(
+    rooms,
+    { party: "friends", dog: false, interests: ["spaces-to-gather"] },
+    { children: 0, infants: 0 },
+  );
+
+  assert.equal(top.merchandising?.key, "chalet");
+});
+
+
+
+test("minimal-distractions favors the KML-verified away-from-core private groups", () => {
+  const rooms = [
+    room("lodge-king", 200),
+    room("walden-king", 210),
+    room("cabin", 220),
+    room("alpine-bathing-suite", 230),
+    room("forest-house-queen", 240),
+    room("slide-mountain-haus-double-queen", 250),
+    room("opas-cabin-2-bedroom", 260),
+    room("mountain-view-haus-2-bedroom", 270),
+  ];
+  const ranked = rankRecommendedRooms(
+    rooms,
+    { party: "solo", dog: false, interests: ["minimal-distractions"] },
+    { children: 0, infants: 0 },
+  );
+
+  assert.deepEqual(
+    ranked.slice(0, 4).map((r) => r.merchandising?.roomTypeGroupKey),
+    ["forest-house", "slide-mountain", "opas", "mountain-view"],
   );
 });

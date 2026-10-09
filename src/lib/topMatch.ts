@@ -5,6 +5,8 @@ import type {
   RoomFeatures,
   RoomMerchandising,
 } from "../types/merchandising";
+import { PREFERENCE_LABELS } from "../data/findYourStayPreferences.ts";
+import { roomTypeGroupSupportsMinimalDistractions } from "../data/roomTypeGroups.ts";
 
 export type Season = "winter" | "spring" | "summer" | "fall";
 
@@ -21,13 +23,7 @@ export type TopMatchCopy = {
   alternate_match_heading: string;
 };
 
-export const INTEREST_LABELS: Record<MatchInterest, string> = {
-  iconTub: "Icon Tub",
-  outdoorSoak: "Outdoor Soak",
-  ownPlace: "My Own Place",
-  scenic: "Scenic Views",
-  simpleCozy: "Simple + Cozy",
-};
+export const INTEREST_LABELS = PREFERENCE_LABELS;
 
 const PARTY_FRAMING: Record<PartyType, { plain: string; dog: string }> = {
   partner: { plain: "a couple's stay", dog: "a couple's stay with your dog" },
@@ -44,19 +40,25 @@ const PARTY_BENEFITS: Record<PartyType, string> = {
 };
 
 const INTEREST_BENEFITS: Record<MatchInterest, string> = {
-  iconTub: "The signature indoor soaking tub puts the classic Cowboy bathing ritual front and center.",
-  outdoorSoak: "The outdoor soaking setup makes this one of the strongest ways to bathe among the trees.",
-  ownPlace: "This accommodation gives you a more private, independent way to stay.",
-  scenic: "The setting and confirmed view keep the stay connected to the Catskills landscape.",
-  simpleCozy: "This room keeps things easy, comfortable, and unfussy.",
+  "connection-with-nature": "This room brings the stay closer to the outdoors and surrounding landscape.",
+  "indoor-sanctuaries": "The indoor bathing ritual makes the room feel like a retreat in its own right.",
+  "minimal-distractions": "This stay sits away from the Lodge core, with a more private setting and fewer built-in distractions.",
+  "scenic-mountain-views": "The setting and confirmed view keep the stay connected to the Catskills landscape.",
+  "simple-comforts": "This room keeps things easy, comfortable, and unfussy.",
+  "spaces-for-connection": "A separate living room gives you somewhere to settle in together beyond the bedroom.",
+  "spaces-to-gather": "A full kitchen gives the stay a natural place to gather around.",
+  "your-own-hideaway": "This accommodation gives you a more private, independent way to stay.",
 };
 
 const FALLBACK_INTEREST_COPY: Record<MatchInterest, string> = {
-  iconTub: "It is the strongest available overall match, though it does not claim an indoor soaking tub.",
-  outdoorSoak: "It is the strongest available overall match, though it does not claim an outdoor soaking setup.",
-  ownPlace: "It is the strongest available overall match, without implying a fully standalone stay.",
-  scenic: "It is the strongest available overall match, without promising a room-specific view.",
-  simpleCozy: "It is the strongest available overall match, without overstating the room's size or price point.",
+  "connection-with-nature": "It is the strongest available overall match, without overstating a specific outdoor connection.",
+  "indoor-sanctuaries": "It is the strongest available overall match, without claiming the full indoor-sanctuary experience.",
+  "minimal-distractions": "It is the strongest available overall match, without claiming an away-from-core private setting.",
+  "scenic-mountain-views": "It is the strongest available overall match, without promising a room-specific mountain view.",
+  "simple-comforts": "It is the strongest available overall match, without overstating the room's simplicity or comfort profile.",
+  "spaces-for-connection": "It is the strongest available overall match, without claiming a separate living room.",
+  "spaces-to-gather": "It is the strongest available overall match, without claiming a full kitchen.",
+  "your-own-hideaway": "It is the strongest available overall match, without implying a fully independent hideaway.",
 };
 
 const DOG_BENEFIT = "It is also confirmed as a dog-friendly choice, so your dog can come along for the stay.";
@@ -69,13 +71,25 @@ export function seasonForDate(checkIn: string): Season {
   return "fall";
 }
 
-function supportsInterest(features: RoomFeatures, interest: MatchInterest): boolean {
+function supportsInterest(
+  metadata: RoomMerchandising | null,
+  interest: MatchInterest,
+): boolean {
+  const features = metadata?.features ?? EMPTY_FEATURES;
+
   return {
-    iconTub: features.indoorTub,
-    outdoorSoak: features.outdoorSoak,
-    ownPlace: features.ownPlace,
-    scenic: features.scenicView,
-    simpleCozy: features.simpleCozy,
+    "connection-with-nature": metadata?.interestScores["connection-with-nature"] != null
+      ? (metadata.interestScores["connection-with-nature"] ?? 0) >= 4
+      : false,
+    "indoor-sanctuaries": metadata?.interestScores["indoor-sanctuaries"] != null
+      ? (metadata.interestScores["indoor-sanctuaries"] ?? 0) >= 4
+      : false,
+    "minimal-distractions": roomTypeGroupSupportsMinimalDistractions(metadata?.roomTypeGroupKey),
+    "scenic-mountain-views": features.scenicView,
+    "simple-comforts": features.simpleCozy,
+    "spaces-for-connection": features.separateLivingRoom,
+    "spaces-to-gather": features.fullKitchen,
+    "your-own-hideaway": features.ownPlace,
   }[interest] === true;
 }
 
@@ -118,8 +132,8 @@ export function buildTopMatchCopy(
 ): TopMatchCopy {
   const [primary, secondary] = preferences.interests;
   const features = metadata?.features ?? EMPTY_FEATURES;
-  const primaryMatch = supportsInterest(features, primary);
-  const secondaryMatch = secondary ? supportsInterest(features, secondary) : false;
+  const primaryMatch = supportsInterest(metadata, primary);
+  const secondaryMatch = secondary ? supportsInterest(metadata, secondary) : false;
   const reasonInterest = primaryMatch ? primary : secondaryMatch && secondary ? secondary : null;
   const reason = reasonInterest
     ? metadata?.matchReasons[reasonInterest] ?? INTEREST_BENEFITS[reasonInterest].toLocaleLowerCase()
@@ -150,18 +164,49 @@ export function buildTopMatchCopy(
   };
 }
 
+const VALID_INTERESTS: MatchInterest[] = [
+  "connection-with-nature",
+  "indoor-sanctuaries",
+  "minimal-distractions",
+  "scenic-mountain-views",
+  "simple-comforts",
+  "spaces-for-connection",
+  "spaces-to-gather",
+  "your-own-hideaway",
+];
+
+const LEGACY_INTEREST_ALIASES: Record<string, MatchInterest> = {
+  iconTub: "indoor-sanctuaries",
+  "iconic-tub": "indoor-sanctuaries",
+  outdoorSoak: "connection-with-nature",
+  "bathe-outside": "connection-with-nature",
+  ownPlace: "your-own-hideaway",
+  "my-own-place": "your-own-hideaway",
+  scenic: "scenic-mountain-views",
+  "mountain-views": "scenic-mountain-views",
+  simpleCozy: "simple-comforts",
+  "simple-cozy": "simple-comforts",
+  social: "spaces-for-connection",
+  "bringing-my-people": "spaces-for-connection",
+};
+
+function normalizeInterest(value: string | null): MatchInterest | null {
+  if (!value) return null;
+  if (VALID_INTERESTS.includes(value as MatchInterest)) return value as MatchInterest;
+  return LEGACY_INTEREST_ALIASES[value] ?? null;
+}
+
 export function parseRecommendationPreferences(
   search: string,
   fallback: { adults: number; children: number },
 ): RecommendationPreferences | null {
   const params = new URLSearchParams(search);
-  const validInterests: MatchInterest[] = ["iconTub", "outdoorSoak", "ownPlace", "scenic", "simpleCozy"];
-  const primaryRaw = params.get("interest") as MatchInterest | null;
+  const primaryRaw = normalizeInterest(params.get("interest"));
 
   // No explicit interest means the guest is browsing normally, not using the matcher.
   // In that case keep the standard availability/price order rather than inventing a
   // preference from the room name.
-  if (!primaryRaw || !validInterests.includes(primaryRaw)) return null;
+  if (!primaryRaw) return null;
 
   const partyRaw = params.get("party") as PartyType | null;
   const validParties: PartyType[] = ["partner", "friends", "family", "solo"];
@@ -175,17 +220,43 @@ export function parseRecommendationPreferences(
           ? "partner"
           : "friends";
 
-  const secondaryRaw = params.get("interest2") as MatchInterest | null;
+  const secondaryRaw = normalizeInterest(params.get("interest2"));
   const secondary: MatchInterest | undefined =
-    secondaryRaw && validInterests.includes(secondaryRaw) && secondaryRaw !== primaryRaw
-      ? secondaryRaw
-      : undefined;
+    secondaryRaw && secondaryRaw !== primaryRaw ? secondaryRaw : undefined;
 
   return {
     party,
     dog: params.get("dog") === "yes" || params.get("dog") === "1",
     interests: [primaryRaw, secondary],
   };
+}
+
+
+export function writeRecommendationPreferencesToUrl(
+  preferences: RecommendationPreferences,
+): void {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.set("party", preferences.party);
+  url.searchParams.set("dog", preferences.dog ? "yes" : "no");
+  url.searchParams.set("interest", preferences.interests[0]);
+
+  if (preferences.interests[1]) {
+    url.searchParams.set("interest2", preferences.interests[1]);
+  } else {
+    url.searchParams.delete("interest2");
+  }
+
+  window.history.replaceState(null, "", url.toString());
+}
+
+export function clearRecommendationPreferencesFromUrl(): void {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  for (const key of ["party", "dog", "interest", "interest2"] as const) {
+    url.searchParams.delete(key);
+  }
+  window.history.replaceState(null, "", url.toString());
 }
 
 export type { MatchInterest, PartyType, RecommendationPreferences, RoomMerchandising };

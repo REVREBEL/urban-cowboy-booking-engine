@@ -32,7 +32,7 @@ export function Upgrade() {
 
   if (!selectedRoom || !selectedRate || !base.room) return null;
 
-  const upgraded = selectedRoom.categoryId !== base.room.categoryId;
+  const upgraded = selectedRoom.roomTypeId !== base.room.roomTypeId;
 
   return (
     <StepLayout
@@ -75,11 +75,11 @@ export function Upgrade() {
             <div className="space-y-4">
               {ups.map((room) => {
                 const diff = (room.fromGross ?? 0) - base.total;
-                const isSelected = selectedRoom.categoryId === room.categoryId;
+                const isSelected = selectedRoom.roomTypeId === room.roomTypeId;
                 const benefits = upgradeBenefits(base.room!, room);
                 return (
                   <article
-                    key={room.categoryId}
+                    key={room.roomTypeId}
                     className={`card flex flex-col overflow-hidden transition sm:h-72 sm:flex-row ${
                       isSelected ? "ring-2 ring-turquoise" : "hover:shadow-float"
                     }`}
@@ -87,7 +87,7 @@ export function Upgrade() {
                     <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden sm:aspect-auto sm:h-full sm:w-64">
                       <Photo src={imgUrl(imageBaseUrl, room.imageIds[0], 600)} alt={room.name} className="h-full w-full object-cover" />
                       <span className="absolute left-3 top-3 rounded-full bg-teal-deep/85 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-cream">
-                        {spaceLabel(room.spaceType)}
+                        {spaceLabel(room.roomClass)}
                       </span>
                     </div>
                     <div className="flex flex-1 flex-col p-5">

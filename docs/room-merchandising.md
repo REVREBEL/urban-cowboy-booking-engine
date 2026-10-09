@@ -1,46 +1,44 @@
-# Urban Cowboy room merchandising model
+# Urban Cowboy Room Type merchandising model
+
+See `docs/accommodation-domain-model.md` for the canonical lodging terminology.
 
 The booking engine separates three concerns:
 
-1. **Mews inventory truth**: category ID, availability, occupancy, price, rates.
-2. **Urban Cowboy merchandising**: dog policy, age policy, room-family facts, amenity facts, recommendation scores.
-3. **UI presentation**: cards, tags, match explanations, drawers.
+1. **Mews operational truth**: Room Type ID (`RoomCategoryId` at the API boundary), availability, occupancy, price and rates.
+2. **Urban Cowboy Room Type profile**: Room Type Group relationship, policies, feature facts, recommendation scores and match reasons.
+3. **UI presentation**: Room Type Group sections, room cards, tags, match explanations and detail views.
 
-The merchandising registry lives in `src/lib/roomMerchandising.ts`.
+The current profile registry lives in `src/lib/roomMerchandising.ts`.
 
 ## Durable identity
 
-Production logic should identify a room type by the Mews `RoomCategoryId`, not by its display name.
+Production logic identifies each Room Type with the Mews `RoomCategoryId`, exposed in our domain as the Room Type ID.
 
-Each merchandising record therefore has:
+Each profile currently contains:
 
-- `categoryIds`: durable Mews category UUIDs.
-- `legacyNames`: temporary exact-name aliases used only while migrating the live catalogue.
+- `mewsRoomTypeId`: durable Mews Room Type UUID bindings.
+- `legacyNames`: transitional exact-name aliases.
+- `roomTypeGroupKey`: our higher-level Room Type Group relationship.
 
-The resolver always tries `categoryIds` first. The name fallback is intentionally isolated in one file so room cards, the matcher, TopMatch copy, and dialogs never infer facts from names themselves.
+UUID matching is authoritative. Name matching remains only as a migration/failsafe bridge.
 
-The repository does not currently contain the production Catskills room-category UUIDs, so no UUIDs are invented here.
+All 22 current Catskills production Room Types have durable Mews bindings.
 
-The confirmed Catskills identifiers are:
+## Room Type Groups
 
-- Booking Engine Configuration ID: `4725ace3-6b93-439f-a549-b4bc00ae1d10`
-- Hotel / Enterprise ID: `8bd38131-c371-4625-9c29-b10600705d34`
-- Adult age category: `8f3ceb39-5c40-417a-b9a5-b106007064f8`
-- Child age category: `db093f0b-738e-4afe-9191-b106007065ff`
+Mews does not provide the Room Type Group layer required by the Catskills booking experience. The Cowboy model currently defines:
 
-The Mews subscription number `16703` is an account/subscription reference and is not used in Booking Engine API request payloads.
+- Alpine
+- Walden
+- Lodge
+- Forest House
+- Cabin
+- Chalet
+- Opa's
+- Slide Mountain
+- Mountain View
 
-To retrieve the category IDs with the registered production Booking Engine client:
-
-```bash
-MEWS_CLIENT='Your Registered Client 1.0.0' npm run room-ids
-```
-
-Then copy each returned UUID into the corresponding `categoryIds` array in `src/lib/roomMerchandising.ts`.
-
-During development, the Results page also logs any room that resolved through a legacy name with its live `RoomCategoryId`.
-
-Once every Catskills category has a UUID binding, the `legacyNames` fallback can be removed.
+This relationship powers higher-level filtering and the editorial building/group presentation.
 
 ## Matching rules
 
@@ -49,24 +47,16 @@ The score matrix comes from `docs/match_logic.md`.
 Eligibility happens before ranking:
 
 - Mews availability and occupancy determine what can physically be booked.
-- If children or infants are present, rooms with `agePolicy: "adultsOnly21"` are removed.
-- `adult21Required` does **not** remove families; it means an adult 21+ must be present.
-- If the guest says a dog is coming, only `dogPolicy: "allowed"` is eligible. `unknown` is not silently treated as dog-friendly.
+- If children or infants are present, Room Types with `agePolicy: "adultsOnly21"` are removed.
+- `adult21Required` means an adult 21+ must be present; it does not by itself remove families.
+- If the guest says a dog is coming, only `dogPolicy: "allowed"` is eligible. `unknown` is not treated as dog-friendly.
 
-Then interests and party type rank the remaining rooms:
+Then interests and party type rank the remaining live Room Types.
 
-- one interest: `interest × 10 + party × 2`
-- two interests: both interest scores + party score
-- both interests score 4–5: +50 intersection bonus
-- one scores 4–5 and the other 2–3: +20 intersection bonus
-- documented single-interest ladders break ties
-
-Availability has already been applied by Mews, so sold-out inventory never occupies a recommendation slot.
+The matching algorithm stays in application code. Its Room Type facts and scoring configuration can later be managed through the Webflow-backed content/configuration layer.
 
 ## Source discipline
 
-A high recommendation score is not automatically a guest-facing factual claim.
+A recommendation score is not automatically a guest-facing factual claim.
 
-The `features` object is deliberately more conservative than the scoring matrix. Only explicit feature flags may appear in tags or recommendation copy.
-
-Dog policies and the room facts currently encoded in the registry follow the project matching matrix and the current Urban Cowboy Catskills lodging pages. Unknown dog policies for Opa's Cabin, Mountain View Haus, and Slide Mountain Haus Double Queen remain `unknown` until the property/CRS confirms them.
+The `features` object remains deliberately conservative. Only verified feature flags should appear in guest-facing tags or match explanations.

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
+import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 import { useBooking } from "../state/booking";
 import { ApiError, api, errorMessage } from "../lib/api";
-import { money, fmtDate, toUtc } from "../lib/format";
-import { StepLayout } from "@/components/booking/layout/step-layout";
+import { money, toPropertyUtc } from "../lib/format";
+import { CheckoutStep } from "@/components/booking/summary/CheckoutStep";
 import { SecureBadge } from "@/components/dev/data-badge";
-import { StayBreakdown } from "@/components/booking/summary/stay-breakdown";
-import { TrustRow } from "@/components/booking/conversion";
-import { IconArrowRight, IconCheck, IconShield } from "@/components/icons/cowboy-icons";
 import { t } from "../i18n";
+import { formatAddOnPreferenceNote } from "@/components/booking/extras/addon-smart-logic";
 
 export function Payment() {
   const {
@@ -22,6 +21,9 @@ export function Payment() {
     voucherCode,
     productIds,
     products,
+    selectedProducts,
+    addonPreferences,
+    selectedAddOnDisplayByProduct,
     guest,
     currency,
     amountDueNow,
@@ -29,7 +31,6 @@ export function Payment() {
     quoteLoading,
     quoteError,
     refreshQuote,
-    nightsCount,
     setCreated,
     goTo,
     track,
@@ -54,9 +55,6 @@ export function Payment() {
     settlementOffset === "P0D" ||
     settlementOffset === "PT0S";
 
-  // Mews documents AmountToChargeOnConfirmation as optional. It is required for
-  // this checkout only when the selected automatic rate settles immediately on
-  // confirmation. Future-settlement rates may legitimately return null.
   const confirmationChargeRequired =
     selectedRate.settlement.isAutomatic &&
     selectedRate.settlement.trigger === "Confirmation" &&
@@ -72,15 +70,37 @@ export function Payment() {
 
   async function pay() {
     if (!accepted || !selectedRoom || !selectedRate || !quoteUsable) return;
+
     setSubmitting(true);
     setError(null);
     setUnavailable(false);
-    // Filet de sécurité : ne jamais envoyer un extra d'un autre hébergement que la
-    // chambre (Mews refuse → « product invalid »). En pratique déjà filtré en amont.
+
     const safeProductIds = productIds.filter((id) => {
-      const p = products.find((pr) => pr.id === id);
-      return !p || !p.property || p.property === selectedRoom.property;
+      const product = products.find((candidate) => candidate.id === id);
+      return (
+        !product ||
+        !product.property ||
+        product.property === selectedRoom.property
+      );
     });
+
+    const addOnInstructionLines = selectedProducts.flatMap((product) => {
+      const displayId = selectedAddOnDisplayByProduct[product.id];
+      const line = displayId
+        ? formatAddOnPreferenceNote(product.name, addonPreferences[displayId])
+        : null;
+      return line ? [line] : [];
+    });
+
+    const noteParts = [
+      guest.notes.trim(),
+      addOnInstructionLines.length
+        ? `Add-on requests:\n${addOnInstructionLines
+            .map((line) => `- ${line}`)
+            .join("\n")}`
+        : "",
+    ].filter(Boolean);
+
     try {
       const result = await api.createReservation({
         property: selectedRoom.property ?? undefined,
@@ -94,16 +114,16 @@ export function Payment() {
         },
         reservations: [
           {
-            roomCategoryId: selectedRoom.categoryId,
-            startUtc: toUtc(checkIn),
-            endUtc: toUtc(checkOut),
+            roomCategoryId: selectedRoom.roomTypeId,
+            startUtc: toPropertyUtc(checkIn),
+            endUtc: toPropertyUtc(checkOut),
             rateId: selectedRate.rateId,
             adults,
             children,
             infants,
             productIds: safeProductIds.length ? safeProductIds : undefined,
             voucherCode: voucherCode || undefined,
-            notes: guest.notes.trim() || undefined,
+            notes: noteParts.length ? noteParts.join("\n\n") : undefined,
           },
         ],
         returnUrl: `${window.location.origin}/confirmation`,
@@ -111,165 +131,159 @@ export function Payment() {
 
       setCreated(result);
 
-      // Panier → « paiement initié ». On await (avant la redirection) pour être sûr
-      // que l'event parte. reservationGroupId fourni ici car `created` (contexte)
-      // n'est pas encore à jour à cet instant.
       await track("paiement_initie", {
         reservationGroupId: result.id,
         paymentRequestId: result.paymentRequestId ?? null,
       });
 
       if (result.paymentUrl) {
-        // Voie A : redirection vers la page carte + 3DS hébergée par Mews.
         window.location.href = result.paymentUrl;
         return;
       }
-      // Pas de paiement en ligne (settlement manuel) → confirmation directe.
+
       goTo("confirmation");
-    } catch (e) {
-      if (e instanceof ApiError && e.code === "exceeding_availability") {
+    } catch (caught) {
+      if (caught instanceof ApiError && caught.code === "exceeding_availability") {
         setUnavailable(true);
       } else {
-        setError(errorMessage(e));
+        setError(errorMessage(caught));
       }
       setSubmitting(false);
     }
   }
 
+  const ctaLabel = submitting
+    ? t("payment.processing")
+    : quoteLoading || (!quote && !quoteProblem)
+      ? t("payment.verifyingPrice")
+      : onSession && amountDueNow != null
+        ? `Pay ${money(amountDueNow, currency)} & Guarantee Stay`
+        : "Confirm & Guarantee Stay";
+
   return (
-    <StepLayout
-      title={t("payment.title")}
-      subtitle={onSession ? t("payment.subtitleOnline") : t("payment.subtitleFinalize")}
-      onBack={() => goTo("extras")}
-      backLabel={t("payment.backLabel")}
-    >
-      <div className="space-y-5">
-        {/* Réassurance / urgence */}
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-xs text-ink/55">{t("payment.reassurance")}</span>
-        </div>
-
-        {/* Récap final */}
-        <div className="card p-5">
-          <h2 className="font-display text-lg text-ink">{t("payment.yourBooking")}</h2>
-          <dl className="mt-3 space-y-2 text-sm">
-            <Recap label={t("payment.recapAccommodation")} value={selectedRoom.name} />
-            <Recap label={t("payment.recapRate")} value={selectedRate.name} />
-            <Recap
-              label={t("payment.recapStay")}
-              value={`${fmtDate(checkIn)} → ${fmtDate(checkOut)} · ${t("payment.nights", { count: nightsCount })}`}
-            />
-            <Recap
-              label={t("payment.recapTraveler")}
-              value={`${guest.firstName} ${guest.lastName}`.trim() || "—"}
-            />
-          </dl>
-
-          {/* Détail du prix : hébergement + demi-pension incluse + taxe de séjour (Hôtel). */}
-          <div className="mt-4 border-t border-ink/10 pt-4">
-            <p className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-ink/50">
-              {t("payment.priceDetail")}
-            </p>
-            <StayBreakdown />
+    <div className="min-h-screen bg-[#FAF9F9]">
+      <CheckoutStep
+        eyebrow="STEP 5 OF 5 · RESERVATION GUARANTEE"
+        title="Review & Guarantee"
+        subtitle={
+          onSession
+            ? t("payment.subtitleOnline")
+            : t("payment.subtitleFinalize")
+        }
+        onBack={() => goTo("extras")}
+        backLabel="Back to Curated Add-ons"
+      >
+        <div className="space-y-5 sm:space-y-6 2xl:space-y-7">
+          <div className="rounded-2xl border-2 border-[#D1C9BE] bg-white p-5 shadow-2xs 2xl:rounded-3xl 2xl:p-6">
+            <div className="flex items-start gap-4">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#0E301A]/10 text-[#0E301A]">
+                <ShieldCheck className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <div>
+                <h2 className="font-brothers text-base font-bold uppercase tracking-wide text-[#4E332D] sm:text-lg">
+                  {onSession
+                    ? t("payment.methodOnlineTitle")
+                    : t("payment.methodArrivalTitle")}
+                </h2>
+                <p className="mt-1 font-editorial text-sm leading-6 text-[#6B6259] sm:text-base">
+                  {onSession
+                    ? t("payment.methodOnlineDesc")
+                    : t("payment.methodArrivalDesc")}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Mode de règlement */}
-        <div className="rounded-xl2 border border-turquoise/30 bg-turquoise/5 p-5">
-          <p className="inline-flex items-center gap-2 font-semibold text-teal-deep">
-            <IconShield className="h-5 w-5 text-turquoise" />
-            {onSession ? t("payment.methodOnlineTitle") : t("payment.methodArrivalTitle")}
-          </p>
-          <p className="mt-1.5 text-sm text-ink/70">
-            {onSession
-              ? t("payment.methodOnlineDesc")
-              : t("payment.methodArrivalDesc")}
-          </p>
-        </div>
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-[#D1C9BE] bg-white p-5 text-sm leading-6 text-[#6B6259] shadow-2xs">
+            <input
+              type="checkbox"
+              className="mt-1 h-5 w-5 shrink-0 accent-[#9A5636]"
+              checked={accepted}
+              onChange={(event) => setAccepted(event.target.checked)}
+            />
+            <span>
+              {t("payment.acceptPrefix")}{" "}
+              {hotel?.TermsAndConditionsUrl ? (
+                <a
+                  href={hotel.TermsAndConditionsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-bold text-[#4E332D] underline underline-offset-4"
+                >
+                  {t("payment.termsLink")}
+                </a>
+              ) : (
+                <strong className="text-[#4E332D]">
+                  {t("payment.termsLink")}
+                </strong>
+              )}{" "}
+              {t("payment.acceptSuffix")}
+            </span>
+          </label>
 
-        {/* CGV */}
-        <label className="flex cursor-pointer items-start gap-3 text-sm text-ink/80">
-          <input
-            type="checkbox"
-            className="mt-0.5 h-4 w-4 accent-turquoise"
-            checked={accepted}
-            onChange={(e) => setAccepted(e.target.checked)}
-          />
-          <span>
-            {t("payment.acceptPrefix")}{" "}
-            {hotel?.TermsAndConditionsUrl ? (
-              <a
-                href={hotel.TermsAndConditionsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold text-turquoise underline underline-offset-2"
+          {unavailable ? (
+            <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-5 text-sm">
+              <p className="font-bold text-amber-800">{t("payment.unavailable")}</p>
+              <button
+                type="button"
+                onClick={() => goTo("results")}
+                className="mt-3 rounded-full bg-[#4E332D] px-5 py-2.5 font-woodblock text-xs uppercase tracking-wider text-white"
               >
-                {t("payment.termsLink")}
-              </a>
-            ) : (
-              <span className="font-semibold">{t("payment.termsLink")}</span>
-            )}{" "}
-            {t("payment.acceptSuffix")}
-          </span>
-        </label>
+                {t("payment.editSearch")}
+              </button>
+            </div>
+          ) : null}
 
-        {unavailable && (
-          <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm">
-            <p className="font-medium text-amber-800">
-              {t("payment.unavailable")}
+          {error ? (
+            <p className="rounded-2xl border-2 border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
+              {error}
             </p>
-            <button type="button" onClick={() => goTo("results")} className="btn-primary mt-3">
-              {t("payment.editSearch")}
+          ) : null}
+
+          {quoteProblem ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-red-200 bg-red-50 p-4 text-sm">
+              <p className="font-medium text-red-700">
+                {t("payment.quoteUnavailable")}
+              </p>
+              <button
+                type="button"
+                onClick={refreshQuote}
+                className="font-woodblock text-xs uppercase tracking-wider text-[#4E332D] underline underline-offset-4"
+              >
+                {t("common.retry")}
+              </button>
+            </div>
+          ) : null}
+
+          <div className="border-t-2 border-[#D1C9BE] pt-4 2xl:pt-6">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 2xl:mb-6">
+              <div className="flex items-center gap-3 text-xs text-[#6B6259] sm:text-sm">
+                <Check className="h-5 w-5 text-[#0E301A]" aria-hidden="true" />
+                <span>{t("payment.reassurance")}</span>
+              </div>
+              <SecureBadge />
+            </div>
+
+            <button
+              type="button"
+              onClick={pay}
+              disabled={
+                !accepted ||
+                submitting ||
+                quoteLoading ||
+                quoteProblem ||
+                !quoteUsable
+              }
+              className="group flex w-full items-center justify-center gap-2 rounded-full bg-[#4E332D] py-4 font-woodblock text-sm uppercase tracking-widest text-white shadow-lg transition-all hover:bg-[#221C18] hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-[#D1C9BE] disabled:text-[#73716D] disabled:shadow-none sm:py-5 sm:text-base 2xl:py-6 2xl:text-lg"
+            >
+              <span>{ctaLabel}</span>
+              {!submitting && !quoteLoading ? (
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1 2xl:h-6 2xl:w-6" aria-hidden="true" />
+              ) : null}
             </button>
           </div>
-        )}
-        {error && <p className="text-sm font-medium text-red-600">{error}</p>}
-        {quoteProblem && (
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm">
-            <p className="font-medium text-red-700">{t("payment.quoteUnavailable")}</p>
-            <button type="button" onClick={refreshQuote} className="btn-link">
-              {t("common.retry")}
-            </button>
-          </div>
-        )}
-
-        <div className="rounded-xl2 bg-cream/70 p-4">
-          <TrustRow compact />
         </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <SecureBadge />
-          <button
-            type="button"
-            onClick={pay}
-            disabled={!accepted || submitting || quoteLoading || quoteProblem || !quoteUsable}
-            className="btn-accent min-w-56 text-base"
-          >
-            {submitting ? (
-              t("payment.processing")
-            ) : quoteLoading || (!quote && !quoteProblem) ? (
-              t("payment.verifyingPrice")
-            ) : onSession && amountDueNow != null ? (
-              <>
-                {t("payment.pay")} {money(amountDueNow, currency)} <IconArrowRight className="h-4 w-4" />
-              </>
-            ) : (
-              <>
-                {t("payment.confirmBooking")} <IconCheck className="h-4 w-4" />
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    </StepLayout>
-  );
-}
-
-function Recap({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between gap-4">
-      <dt className="text-ink/55">{label}</dt>
-      <dd className="text-right font-medium text-ink">{value}</dd>
+      </CheckoutStep>
     </div>
   );
 }

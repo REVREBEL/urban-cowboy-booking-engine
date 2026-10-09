@@ -4,7 +4,7 @@ import "./index.css";
 import { initLang } from "./lib/lang";
 import { initUtm } from "./lib/utm";
 
-// Langue résolue AVANT le rendu et tout appel réseau (?lang= > localStorage > fr) :
+// Langue résolue AVANT le rendu et tout appel réseau (?lang= > localStorage > en) :
 // figée pour ce chargement, elle pilote t(), les formats Intl et la langue Mews.
 initLang();
 // UTM capturés AVANT que l'URL ne soit réécrite (sinon perdus) → joints au suivi n8n.

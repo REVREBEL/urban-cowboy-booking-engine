@@ -12,10 +12,18 @@ import type {
   ReservationCreateResult,
   ReservationStatusResult,
 } from "../types/mews";
-import { toUtc } from "./format";
+import { toPropertyUtc } from "./format";
 import { getLang, mewsLang } from "./lang";
 import { t } from "../i18n";
 import { apiLog } from "./apiLog";
+import type { RateCardConfig } from "../types/rate-card";
+import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
+import type { AddOnCmsItem } from "../types/add-on-cms";
+import type {
+  RoomTypeCmsDescriptionMap,
+  RoomTypeCmsReviewMap,
+} from "../types/room-type-cms";
+import type { BookingLocationCmsMap } from "../types/location-cms";
 
 export class ApiError extends Error {
   status: number;
@@ -67,6 +75,23 @@ async function call<T>(path: string, init: RequestInit | undefined, meta: Meta):
   return data as T;
 }
 
+async function contentCall<T>(path: string, meta: Meta): Promise<T> {
+  const id = apiLog.start("GET", path, meta.label, meta.why);
+  const t0 = performance.now();
+  const ms = () => Math.round(performance.now() - t0);
+  try {
+    const response = await fetch(`/api/content/${path}`);
+    const data = await response.json() as T;
+    if (!response.ok) throw new ApiError(`http_${response.status}`, response.status, data);
+    apiLog.finish(id, { ok: true, status: response.status, durationMs: ms(), response: data });
+    return data;
+  } catch (error) {
+    apiLog.finish(id, { ok: false, durationMs: ms(), error: "content_unavailable" });
+    if (error instanceof ApiError) throw error;
+    throw new ApiError("content_unavailable", 0);
+  }
+}
+
 const post = <T>(path: string, body: unknown, meta: Omit<Meta, "request">) =>
   call<T>(
     path,
@@ -108,18 +133,96 @@ export interface ReservationLine {
 }
 
 export const api = {
+  calendar: (p: { startDate: string; endDate: string; property?: string; currencyCode?: string }) =>
+    post<{
+      dates: Record<string, DailyRate>;
+      generatedAt?: string | null;
+      stale?: boolean;
+      refreshing?: boolean;
+    }>(
+      "calendar",
+      p,
+      {
+        label: "Calendar rates & availability",
+        why: "Loads the shared 2-adult calendar snapshot for starting prices, sold-out states, and restriction guidance. Exact occupancy and pricing are validated by the live search after Search.",
+      },
+    ),
+
+  rateCards: () =>
+    contentCall<{ cards: RateCardConfig[] }>("rate-cards", {
+      label: "Rate-card CMS configuration",
+      why: "Loads normalized editorial rate-card artwork and approved display presets from Webflow. Live prices, policies, availability, and booking actions remain owned by Mews.",
+    }).then((response) => response.cards).catch(() => []),
+
+  addOns: () =>
+    contentCall<{ addOns: AddOnCmsItem[] }>("add-ons", {
+      label: "Add-on CMS merchandising",
+      why: "Loads published add-on names, descriptions, images, and Mews Product ID bindings from Webflow. Live price and bookability remain owned by Mews.",
+    }).then((response) => response.addOns).catch(() => []),
+
+  productCatalogDebug: () =>
+    call<{
+      source: string;
+      currencyCode: string;
+      configurationCount: number;
+      productCount: number;
+      products: unknown[];
+    }>(`products-debug?lang=${getLang()}`, undefined, {
+      label: "Mews product catalog diagnostic",
+      why: "Fetches the raw Mews configuration product catalog and annotates each product with the current booking-engine inclusion/exclusion decision. Used only by the developer API debugger on the add-ons step.",
+    }),
+
+  roomTypeContent: () =>
+    contentCall<{
+      reviews: RoomTypeCmsReviewMap;
+      descriptions: RoomTypeCmsDescriptionMap;
+      generatedAt?: string | null;
+      stale?: boolean;
+    }>("room-type-reviews", {
+      label: "Room-type CMS content",
+      why: "Loads published Room Type short/long descriptions and review content from Webflow, keyed by the durable Mews Room Type ID. Mews remains the fallback when editorial descriptions are blank.",
+    }).catch(() => ({
+      reviews: {} as RoomTypeCmsReviewMap,
+      descriptions: {} as RoomTypeCmsDescriptionMap,
+    })),
+
+  roomTypeReviews: () =>
+    contentCall<{
+      reviews: RoomTypeCmsReviewMap;
+      descriptions?: RoomTypeCmsDescriptionMap;
+      generatedAt?: string | null;
+      stale?: boolean;
+    }>("room-type-reviews", {
+      label: "Room-type CMS reviews",
+      why: "Loads published room-type review content from Webflow, keyed by the durable Mews Room Type ID. Blank review fields intentionally render no review section.",
+    })
+      .then((response) => response.reviews)
+      .catch((): RoomTypeCmsReviewMap => ({})),
+
+  locations: () =>
+    contentCall<{
+      locations: BookingLocationCmsMap;
+      generatedAt?: string | null;
+      stale?: boolean;
+    }>("locations", {
+      label: "Location CMS content",
+      why: "Loads the published Webflow Location record bound to each configured Mews property so booking chrome can display the correct location name, city/state, and legal links without hardcoded property copy.",
+    })
+      .then((response) => response.locations)
+      .catch((): BookingLocationCmsMap => ({})),
+
   hotel: () =>
     call<HotelConfig>(`hotel?lang=${getLang()}`, undefined, {
-      label: "Configuration de l'hôtel",
-      why: "Charge la config de l'établissement (catégories de chambres, photos, produits/extras, devise, conditions, passerelle de paiement) dans la langue courante. Appelé une seule fois au démarrage. Mis en cache 5 min côté serveur.",
+      label: "Hotel configuration",
+      why: "Loads the hotel configuration (room categories, photos, products/extras, currency, policies, and payment gateway) in the current language. Called once at startup and cached server-side for 5 minutes.",
     }),
 
   availability: (p: SearchParams) =>
     post<AvailabilityResponse>(
       "availability",
       {
-        startUtc: toUtc(p.checkIn),
-        endUtc: toUtc(p.checkOut),
+        startUtc: toPropertyUtc(p.checkIn),
+        endUtc: toPropertyUtc(p.checkOut),
         adults: p.adults,
         children: p.children,
         infants: p.infants,
@@ -129,8 +232,8 @@ export const api = {
         ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
       },
       {
-        label: "Disponibilités & prix",
-        why: "Le cœur du moteur : interroge Mews pour les chambres disponibles et leurs tarifs dans la devise de l'établissement, pour vos dates et occupants. Le front les groupe par type de chambre (prix « à partir de »).",
+        label: "Availability & pricing",
+        why: "Core booking-engine call: queries Mews for available rooms and rates in the property currency for the selected dates and occupancy. The frontend groups results by room type and derives starting rates.",
       },
     ),
 
@@ -147,8 +250,8 @@ export const api = {
     post<PricingResult>(
       "pricing",
       {
-        startUtc: toUtc(p.checkIn),
-        endUtc: toUtc(p.checkOut),
+        startUtc: toPropertyUtc(p.checkIn),
+        endUtc: toPropertyUtc(p.checkOut),
         roomCategoryId: p.roomCategoryId,
         adults: p.adults,
         children: p.children,
@@ -158,8 +261,8 @@ export const api = {
         ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
       },
       {
-        label: "Prix exact du type de chambre",
-        why: "À l'ouverture du panneau détail : confirme le prix précis de ce type de chambre selon l'occupation choisie, dans la devise sélectionnée.",
+        label: "Exact room-type pricing",
+        why: "When room details open, confirms the exact price for that room type using the selected occupancy and currency.",
       },
     ),
 
@@ -179,8 +282,8 @@ export const api = {
     post<ReservationQuoteResult>(
       "reservation-price",
       {
-        startUtc: toUtc(p.checkIn),
-        endUtc: toUtc(p.checkOut),
+        startUtc: toPropertyUtc(p.checkIn),
+        endUtc: toPropertyUtc(p.checkOut),
         roomCategoryId: p.roomCategoryId,
         rateId: p.rateId,
         adults: p.adults,
@@ -192,8 +295,8 @@ export const api = {
         ...(p.currencyCode ? { currencyCode: p.currencyCode } : {}),
       },
       {
-        label: "Devis final de la réservation",
-        why: "Calcule le total exact du tarif sélectionné et le montant que Mews indique comme dû à la confirmation, avec les extras choisis.",
+        label: "Final reservation quote",
+        why: "Calculates the exact total for the selected rate and extras, including the amount Mews says is due at confirmation.",
       },
     ),
 
@@ -205,41 +308,41 @@ export const api = {
     returnUrl?: string;
   }) =>
     post<ReservationCreateResult>("reservation", { ...payload, languageCode: mewsLang() }, {
-      label: "Création de la réservation",
-      why: "Écrit la réservation dans Mews (reservationGroups/create) et prépare le paiement : Mews renvoie un PaymentRequestId, le serveur construit l'URL de paiement sécurisée (Voie A).",
+      label: "Create reservation",
+      why: "Creates the reservation in Mews (reservationGroups/create) and prepares payment. Mews returns a PaymentRequestId and the server builds the secure payment URL.",
     }),
 
   reservationStatus: (reservationGroupId: string) =>
     post<ReservationStatusResult>("reservation-status", { reservationGroupId }, {
-      label: "Vérification du paiement",
-      why: "Au retour de la page de paiement : vérifie via reservationGroups/get que le règlement est bien passé (PaymentRequests/Payments). Re-sondé tant que non finalisé.",
+      label: "Payment verification",
+      why: "After returning from the payment page, verifies via reservationGroups/get that payment completed successfully. Rechecked while payment remains pending.",
     }),
 
   paymentLink: (reservationGroupId: string, returnUrl: string) =>
     post<{ paymentUrl: string | null; paid: boolean }>("payment-link", { reservationGroupId, returnUrl }, {
-      label: "Reprise du paiement",
-      why: "Reconstruit le lien de paiement Mews pour un règlement encore en attente (bouton « Reprendre le paiement »).",
+      label: "Resume payment",
+      why: "Rebuilds the Mews payment link for a reservation with payment still pending.",
     }),
 
   validateVoucher: (voucherCode: string) =>
     post<unknown>("voucher", { voucherCode }, {
-      label: "Validation du code promo",
-      why: "Vérifie la validité d'un code promotionnel ; une nouvelle recherche avec ce code débloque les tarifs privés.",
+      label: "Promo code validation",
+      why: "Checks whether a promo code is valid. A new availability search with the code can unlock eligible private rates.",
     }),
 
   // Détection best-effort du pays via l'IP (Cloudflare). Pré-remplit l'indicatif
   // téléphonique + presets US/CA. Ne stocke rien ; échoue silencieusement.
   geo: () =>
     call<{ country: string | null }>("geo", undefined, {
-      label: "Pays du visiteur (IP)",
-      why: "Déduit le pays via l'IP (fourni par Cloudflare, sans API externe) pour pré-sélectionner l'indicatif téléphonique et proposer des presets (navette + forfait boisson) aux visiteurs US/Canada.",
+      label: "Visitor country (IP)",
+      why: "Infers the visitor country from Cloudflare IP metadata, with no external API, to preselect the phone country code and support US/Canada-specific presets.",
     }).catch(() => ({ country: null })),
 
   // Suivi de panier (funnel) → n8n via le Worker. Best-effort : n'échoue jamais l'UI.
   track: (payload: unknown): Promise<{ ok: boolean }> =>
     post<{ ok: boolean }>("track", payload, {
-      label: "Suivi panier → n8n",
-      why: "Pousse l'état du panier (statut, sélection, contact) vers n8n à chaque étape à partir des infos client, pour alimenter la base des paniers (abandonné / paiement initié / validé).",
+      label: "Cart tracking → n8n",
+      why: "Sends cart state (status, selection, and contact details) to n8n throughout the funnel to support abandoned, payment-started, and completed booking records.",
     }).catch(() => ({ ok: false })),
 };
 

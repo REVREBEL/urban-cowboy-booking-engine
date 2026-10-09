@@ -71,6 +71,66 @@ const JsonTree = ({ value }: { value: unknown }) => (
   </div>
 );
 
+const CALL_META: Record<string, { label: string; why: string }> = {
+  hotel: {
+    label: "Hotel configuration",
+    why: "Loads the hotel configuration (room categories, photos, products/extras, currency, policies, and payment gateway) in the current language. Called once at startup and cached server-side for 5 minutes.",
+  },
+  availability: {
+    label: "Availability & pricing",
+    why: "Core booking-engine call: queries Mews for available rooms and rates in the property currency for the selected dates and occupancy. The frontend groups results by room type and derives starting rates.",
+  },
+  pricing: {
+    label: "Exact room-type pricing",
+    why: "When room details open, confirms the exact price for that room type using the selected occupancy and currency.",
+  },
+  "reservation-price": {
+    label: "Final reservation quote",
+    why: "Calculates the exact total for the selected rate and extras, including the amount Mews says is due at confirmation.",
+  },
+  reservation: {
+    label: "Create reservation",
+    why: "Creates the reservation in Mews and prepares payment. Mews returns the payment request used to build the secure hosted-payment URL.",
+  },
+  "reservation-status": {
+    label: "Payment verification",
+    why: "After returning from the payment page, verifies that payment completed successfully and rechecks while payment remains pending.",
+  },
+  "payment-link": {
+    label: "Resume payment",
+    why: "Rebuilds the Mews payment link for a reservation with payment still pending.",
+  },
+  voucher: {
+    label: "Promo code validation",
+    why: "Checks whether a promo code is valid so a new availability search can expose eligible private rates.",
+  },
+  geo: {
+    label: "Visitor country (IP)",
+    why: "Infers the visitor country from Cloudflare IP metadata, with no external API, to preselect the phone country code and support US/Canada-specific presets.",
+  },
+  "products-debug": {
+    label: "Mews product catalog diagnostic",
+    why: "Shows the raw Mews configuration product objects plus the current add-on inclusion/exclusion decision, so missing products can be traced to Mews data versus local filtering.",
+  },
+  track: {
+    label: "Cart tracking → n8n",
+    why: "Sends cart state (status, selection, and contact details) to n8n throughout the funnel to support abandoned, payment-started, and completed booking records.",
+  },
+  "room-type-reviews": {
+    label: "Room-type content · Webflow CMS",
+    why: "Loads published short/long Room Type descriptions and review copy from Webflow, joined by Mews Room Type ID. Blank editorial fields fall back safely without changing Mews availability or pricing.",
+  },
+  locations: {
+    label: "Location chrome · Webflow CMS",
+    why: "Loads the published Location CMS record bound to each configured Mews property for footer name, city/state, and legal links.",
+  },
+};
+
+function callMeta(entry: ApiLogEntry) {
+  const endpoint = entry.path.split("?")[0];
+  return CALL_META[endpoint] ?? { label: entry.label, why: entry.why };
+}
+
 // ── Dev Panel ─────────────────────────────────────────────────────────────────
 export function DevPanel() {
   const entries = useApiLog();
@@ -182,6 +242,7 @@ function CallsView({
     <ul className="divide-y divide-white/5">
       {entries.map((e) => {
         const isOpen = expanded === e.id;
+        const meta = callMeta(e);
         return (
           <li key={e.id}>
             <button
@@ -191,7 +252,7 @@ function CallsView({
             >
               <StatusDot e={e} />
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-medium text-cream">{e.label}</span>
+                <span className="block truncate text-[13px] font-medium text-cream">{meta.label}</span>
                 <span className="block truncate font-mono text-[11px] text-cream/45">
                   {e.method} /{e.path}
                 </span>
@@ -204,7 +265,7 @@ function CallsView({
             {isOpen && (
               <div className="space-y-3 bg-black/20 px-4 py-3">
                 <Field title="Why this call?">
-                  <p className="text-[12px] leading-relaxed text-cream/75">{e.why}</p>
+                  <p className="text-[12px] leading-relaxed text-cream/75">{meta.why}</p>
                 </Field>
                 {e.request != null && (
                   <Field title="Request (sent to proxy)">
@@ -238,9 +299,11 @@ const LIVE: string[] = [
   "Rates: name, description, private/public, payment mode",
   "Extras: name, description, EUR price, billing",
   "Booking: confirmation #, total, payment status",
+  "Room detail review quotes: published Webflow Room Type CMS fields, keyed by Mews Room Type ID",
+  "Booking footer: published Webflow Location name, city/state, and legal links",
 ];
 const MOCK: string[] = [
-  "Ratings & reviews ('9.4 · 1,248', '9.0 · 129') — no review API connected",
+  "Aggregate rating/count badges ('9.4 · 1,248', '9.0 · 129') — no aggregate review API connected",
   "'X people viewing', 'booked N times' — generated (deterministic per room)",
   "'Guest favorite', 'High demand' — marketing badges",
   "'High demand for your dates' banner — copy",
@@ -286,9 +349,8 @@ function SourcesView() {
           ))}
         </ul>
         <p className="mt-2 text-[11px] text-cream/40">
-          Centralized in <code className="text-cream/60">src/components/conversion.tsx</code> (+ amenities in{" "}
-          <code className="text-cream/60">RoomDetailDrawer</code>). Replace with real sources (reviews,
-          Mews cancellation policy, amenities) in production.
+          Remaining demo conversion signals are centralized in <code className="text-cream/60">src/components/conversion.tsx</code> (+ amenities in{" "}
+          <code className="text-cream/60">RoomDetailDrawer</code>). Room-detail review quotes now come from published Webflow CMS content.
         </p>
       </div>
     </div>

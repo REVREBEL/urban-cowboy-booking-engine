@@ -11,6 +11,7 @@
 import type { Env } from "./mews/_lib";
 import { onRequestGet as hotelGet, onRequestPost as hotelPost } from "./mews/hotel";
 import { onRequestPost as availability } from "./mews/availability";
+import { onRequestPost as calendar } from "./mews/calendar";
 import { onRequestPost as pricing } from "./mews/pricing";
 import { onRequestPost as reservationPrice } from "./mews/reservation-price";
 import { onRequestPost as reservation } from "./mews/reservation";
@@ -19,6 +20,12 @@ import { onRequestPost as paymentLink } from "./mews/payment-link";
 import { onRequestPost as voucher } from "./mews/voucher";
 import { onRequestPost as track } from "./mews/track";
 import { onRequestGet as geo } from "./mews/geo";
+import { onRequestGet as productsDebug } from "./mews/products-debug";
+import { runScheduledCalendarRefresh } from "./mews/calendar-engine";
+import { onRequestGet as rateCards } from "./webflow/rate-cards";
+import { onRequestGet as addOns } from "./webflow/add-ons";
+import { onRequestGet as roomTypeReviews } from "./webflow/room-type-reviews";
+import { onRequestGet as locations } from "./webflow/locations";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
 // waitUntil permet de lancer les webhooks en tâche de fond sans bloquer la réponse.
@@ -29,6 +36,7 @@ const h = (fn: unknown) => fn as Handler;
 const ROUTES: Record<string, Partial<Record<string, Handler>>> = {
   hotel: { GET: h(hotelGet), POST: h(hotelPost) },
   availability: { POST: h(availability) },
+  calendar: { POST: h(calendar) },
   pricing: { POST: h(pricing) },
   "reservation-price": { POST: h(reservationPrice) },
   reservation: { POST: h(reservation) },
@@ -37,6 +45,7 @@ const ROUTES: Record<string, Partial<Record<string, Handler>>> = {
   voucher: { POST: h(voucher) },
   track: { POST: h(track) },
   geo: { GET: h(geo) },
+  "products-debug": { GET: h(productsDebug) },
 };
 
 const json = (data: unknown, status: number) =>
@@ -48,6 +57,22 @@ const json = (data: unknown, status: number) =>
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname.match(/^\/api\/content\/rate-cards\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return rateCards({ env });
+    }
+    if (url.pathname.match(/^\/api\/content\/add-ons\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return addOns({ env });
+    }
+    if (url.pathname.match(/^\/api\/content\/room-type-reviews\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return roomTypeReviews({ env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    if (url.pathname.match(/^\/api\/content\/locations\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return locations({ env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
     const match = url.pathname.match(/^\/api\/mews\/([a-z-]+)\/?$/);
     if (match) {
       const handler = ROUTES[match[1]]?.[request.method.toUpperCase()];
@@ -56,5 +81,15 @@ export default {
     }
     // Front statique + fallback SPA (géré par le binding ASSETS).
     return env.ASSETS.fetch(request);
+  },
+
+  async scheduled(
+    controller: ScheduledController,
+    env: Env,
+    ctx: ExecutionContext,
+  ): Promise<void> {
+    ctx.waitUntil(
+      runScheduledCalendarRefresh(env, controller.scheduledTime).catch(() => undefined),
+    );
   },
 };

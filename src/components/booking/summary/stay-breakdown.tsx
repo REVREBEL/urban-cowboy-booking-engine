@@ -182,9 +182,9 @@ function Row({
         <span>{label}</span>
       </dt>
       <dd
-        className={`shrink-0 tabular-nums ${
+        className={`shrink-0 ${value ? "font-number tabular-nums" : "font-label"} ${
           strong
-            ? "font-display text-lg text-teal-deep"
+            ? "text-lg text-teal-deep"
             : note
               ? "text-xs font-semibold uppercase tracking-wide text-turquoise"
               : "font-medium text-ink"

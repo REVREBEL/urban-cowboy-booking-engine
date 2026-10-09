@@ -15,6 +15,8 @@ import { nights as countNights } from "../lib/format";
 import { buildRooms, shapeProducts, cheapestDrinkProduct, mandatoryReveillon, isReveillonProduct } from "../lib/shaping";
 import { rankRecommendedRooms } from "../lib/roomMatching";
 import { parseRecommendationPreferences } from "../lib/topMatch";
+import { BOOKING_FEATURES } from "../config/bookingFeatures";
+import type { AddonSchedulePreference } from "../components/booking/extras/addon-types";
 import type {
   HotelConfig,
   ReservationCreateResult,
@@ -24,16 +26,17 @@ import type {
   ShapedRoom,
 } from "../types/mews";
 
-export type Step = "dates" | "results" | "guest" | "upgrade" | "extras" | "payment" | "confirmation";
-export const STEP_ORDER: Step[] = ["dates", "results", "guest", "upgrade", "extras", "payment", "confirmation"];
+export type Step = "dates" | "results" | "rates" | "guest" | "upgrade" | "extras" | "payment" | "confirmation";
+export const STEP_ORDER: Step[] = ["dates", "results", "rates", "guest", "upgrade", "extras", "payment", "confirmation"];
 
 // Statuts de panier poussés vers n8n (base des paniers).
 // Events de suivi (funnel) → n8n → Supabase.
 //  • etape           : une étape atteinte (dates → confirmation), le `step` précise laquelle
 //  • paiement_initie : « Payer » cliqué (réservation créée + demande de paiement Mews)
 //  • paiement_valide : paiement encaissé (confirmé par Mews)
+//  • matches_saved    : le visiteur a enregistré ses recommandations par e-mail
 // « Paiement non abouti » = paiement_initie SANS paiement_valide (dérivé côté Supabase).
-export type CartStatus = "etape" | "paiement_initie" | "paiement_valide";
+export type CartStatus = "etape" | "paiement_initie" | "paiement_valide" | "matches_saved";
 
 // Identifiant de panier — persistant (localStorage) pour survivre à la redirection
 // paiement (Mews → /confirmation). Régénéré à chaque nouvelle recherche (resetAll).
@@ -91,7 +94,7 @@ interface BookingState {
   infants: number; // bébés en berceau (0-3) — gratuits ET non décomptés de l'occupation
   voucherCode: string;
   properties: string[]; // hébergements cochés (hotel/creole/villas)
-  roomId: string | null;
+  roomTypeId: string | null;
   rateId: string | null;
   productIds: string[];
   // Extra HORS Mews : simple intérêt « transfert aéroport » (booléen). N'affecte ni le
@@ -109,7 +112,11 @@ function readUrl(): Partial<BookingState> {
     return Number.isFinite(v) ? v : d;
   };
   const stepRaw = q.get("step") as Step | null;
-  const step = stepRaw && STEP_ORDER.includes(stepRaw) ? stepRaw : undefined;
+  const requestedStep = stepRaw && STEP_ORDER.includes(stepRaw) ? stepRaw : undefined;
+  const step =
+    requestedStep === "upgrade" && !BOOKING_FEATURES.roomUpgradeStep
+      ? "extras"
+      : requestedStep;
   const out: Partial<BookingState> = {};
   if (q.get("in")) out.checkIn = q.get("in")!;
   if (q.get("out")) out.checkOut = q.get("out")!;
@@ -118,7 +125,7 @@ function readUrl(): Partial<BookingState> {
   if (q.has("babies")) out.infants = num("babies", 0);
   if (q.get("voucher")) out.voucherCode = q.get("voucher")!;
   if (q.get("props")) out.properties = q.get("props")!.split(",").filter(Boolean);
-  if (q.get("cat")) out.roomId = q.get("cat");
+  if (q.get("cat")) out.roomTypeId = q.get("cat");
   if (q.get("rate")) out.rateId = q.get("rate");
   if (q.get("products")) out.productIds = q.get("products")!.split(",").filter(Boolean);
   if (q.has("transfer")) out.airportTransfer = q.get("transfer") === "1";
@@ -143,13 +150,13 @@ function writeUrl(s: BookingState) {
   if (s.voucherCode) q.set("voucher", s.voucherCode);
   if (s.properties.length && s.properties.length < DEFAULT_PROPERTIES.length) q.set("props", s.properties.join(","));
   if (s.step !== "dates") q.set("step", s.step);
-  if (s.roomId) q.set("cat", s.roomId);
+  if (s.roomTypeId) q.set("cat", s.roomTypeId);
   if (s.rateId) q.set("rate", s.rateId);
   if (s.productIds.length) q.set("products", s.productIds.join(","));
   if (s.airportTransfer) q.set("transfer", "1");
   if (s.rgid) q.set("rgid", s.rgid);
   // Préserve la langue non-défaut dans l'URL (writeUrl reconstruit les params à zéro).
-  if (getLang() === "en") q.set("lang", "en");
+  if (getLang() === "fr") q.set("lang", "fr");
   // REV-102 recommendation inputs are owned by the quiz/ranking layer. Preserve
   // them while this booking state serializes its own fields so REV-103 can explain
   // the actual ranked result without losing the guest's choices.
@@ -187,6 +194,8 @@ interface BookingContextValue extends BookingState {
   nightsCount: number;
   guestsCount: number;
   selectedProducts: ShapedProduct[];
+  addonPreferences: Record<string, AddonSchedulePreference>;
+  selectedAddOnDisplayByProduct: Record<string, string>;
   productsTotal: number;
   roomTotal: number;
   grandTotal: number;
@@ -202,6 +211,7 @@ interface BookingContextValue extends BookingState {
     >,
   ) => void;
   selectRoomRate: (room: ShapedRoom, rate: ShapedRate) => void;
+  selectRoom: (room: ShapedRoom) => void;
   hydrateSelection: (room: ShapedRoom | null, rate: ShapedRate | null) => void;
   setAvailableRooms: (rooms: ShapedRoom[]) => void;
   // Filtre d'affichage des hébergements (page résultats) : change `properties`
@@ -210,6 +220,12 @@ interface BookingContextValue extends BookingState {
   setProperties: (keys: string[]) => void;
   clearSelection: () => void;
   toggleProduct: (id: string) => void;
+  setProductPresentation: (
+    id: string,
+    presentation: { name: string; description: string } | null,
+  ) => void;
+  setAddonPreference: (displayId: string, preference: AddonSchedulePreference | null) => void;
+  setSelectedAddOnDisplay: (productId: string, displayId: string | null) => void;
   setAirportTransfer: (v: boolean) => void; // extra hors Mews (relance n8n)
   setGuest: (p: Partial<Guest>) => void;
   setCreated: (r: ReservationCreateResult | null) => void;
@@ -231,7 +247,7 @@ const defaults: BookingState = {
   infants: 0,
   voucherCode: "",
   properties: DEFAULT_PROPERTIES,
-  roomId: null,
+  roomTypeId: null,
   rateId: null,
   productIds: [],
   airportTransfer: false,
@@ -249,7 +265,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [hydrating, setHydrating] = useState<boolean>(() => {
     const u = readUrl();
     const deep = u.step === "guest" || u.step === "upgrade" || u.step === "extras" || u.step === "payment";
-    return !!(deep && u.roomId && u.checkIn && u.checkOut);
+    return !!(deep && u.roomTypeId && u.checkIn && u.checkOut);
   });
   const [guest, setGuestState] = useState<Guest>(() => ({ ...emptyGuest }));
   const [created, setCreatedState] = useState<ReservationCreateResult | null>(null);
@@ -257,6 +273,14 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [quoteError, setQuoteError] = useState(false);
   const [quoteRefreshKey, setQuoteRefreshKey] = useState(0);
+  const [productPresentation, setProductPresentationState] = useState<
+    Record<string, { name: string; description: string }>
+  >({});
+  const [addonPreferences, setAddonPreferences] = useState<
+    Record<string, AddonSchedulePreference>
+  >({});
+  const [selectedAddOnDisplayByProduct, setSelectedAddOnDisplayByProduct] =
+    useState<Record<string, string>>({});
   const [cartId, setCartId] = useState<string>(loadCartId);
 
   const [hotel, setHotel] = useState<HotelConfig | null>(null);
@@ -291,8 +315,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     }
     if (!hotel) return; // attendre le catalogue (buildRooms en dépend)
     hydratedRef.current = true;
-    const deep = ["guest", "upgrade", "extras", "payment"].includes(state.step);
-    if (!deep || selectedRoom || availableRooms.length || !state.roomId || !state.checkIn || !state.checkOut) {
+    const deep = ["rates", "guest", "upgrade", "extras", "payment"].includes(state.step);
+    if (!deep || selectedRoom || availableRooms.length || !state.roomTypeId || !state.checkIn || !state.checkOut) {
       setHydrating(false);
       return;
     }
@@ -323,9 +347,12 @@ export function BookingProvider({ children }: { children: ReactNode }) {
           dogRequested: dogValue === "yes" || dogValue === "1",
         });
         setAvailableRoomsState(rooms);
-        const room = rooms.find((r) => r.categoryId === state.roomId);
-        const rate = room?.rates.find((rt) => rt.rateId === state.rateId) ?? room?.rates[0] ?? null;
-        if (room && rate) {
+        const room = rooms.find((r) => r.roomTypeId === state.roomTypeId);
+        // A Rates deep link may intentionally have a room but no rate yet. Do not
+        // silently select the first Mews rate; only rehydrate a rate when its id is
+        // present in the URL.
+        const rate = state.rateId ? room?.rates.find((rt) => rt.rateId === state.rateId) ?? null : null;
+        if (room) {
           setSelectedRoom(room);
           setSelectedRate(rate);
         }
@@ -364,7 +391,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
         return {
           ...s,
           ...p,
-          ...(searchChanged ? { roomId: null, rateId: null, productIds: [] } : {}),
+          ...(searchChanged ? { roomTypeId: null, rateId: null, productIds: [] } : {}),
         };
       }),
     [],
@@ -389,13 +416,26 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       setQuoteError(false);
       setState((s) => ({
         ...s,
-        roomId: room.categoryId,
+        roomTypeId: room.roomTypeId,
         rateId: rate.rateId,
         productIds: validProductsFor(s.productIds, room.property),
       }));
     },
     [validProductsFor],
   );
+
+  const selectRoom: BookingContextValue["selectRoom"] = useCallback((room) => {
+    setSelectedRoom(room);
+    setSelectedRate(null);
+    setQuote(null);
+    setQuoteError(false);
+    setState((s) => ({
+      ...s,
+      roomTypeId: room.roomTypeId,
+      rateId: null,
+      productIds: validProductsFor(s.productIds, room.property),
+    }));
+  }, [validProductsFor]);
 
   const hydrateSelection: BookingContextValue["hydrateSelection"] = useCallback(
     (room, rate) => {
@@ -425,7 +465,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setSelectedRate(null);
     setQuote(null);
     setQuoteError(false);
-    setState((s) => ({ ...s, roomId: null, rateId: null }));
+    setState((s) => ({ ...s, roomTypeId: null, rateId: null }));
   }, []);
 
   const toggleProduct: BookingContextValue["toggleProduct"] = useCallback(
@@ -436,6 +476,47 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       })),
     [],
   );
+
+  const setProductPresentation: BookingContextValue["setProductPresentation"] = useCallback(
+    (id, presentation) =>
+      setProductPresentationState((current) => {
+        if (!presentation) {
+          if (!(id in current)) return current;
+          const next = { ...current };
+          delete next[id];
+          return next;
+        }
+        return { ...current, [id]: presentation };
+      }),
+    [],
+  );
+
+  const setAddonPreference: BookingContextValue["setAddonPreference"] = useCallback(
+    (displayId, preference) =>
+      setAddonPreferences((current) => {
+        if (!preference) {
+          if (!(displayId in current)) return current;
+          const next = { ...current };
+          delete next[displayId];
+          return next;
+        }
+        return { ...current, [displayId]: preference };
+      }),
+    [],
+  );
+
+  const setSelectedAddOnDisplay: BookingContextValue["setSelectedAddOnDisplay"] =
+    useCallback((productId, displayId) => {
+      setSelectedAddOnDisplayByProduct((current) => {
+        if (!displayId) {
+          if (!(productId in current)) return current;
+          const next = { ...current };
+          delete next[productId];
+          return next;
+        }
+        return { ...current, [productId]: displayId };
+      });
+    }, []);
 
   const setAirportTransfer: BookingContextValue["setAirportTransfer"] = useCallback(
     (v) => patch({ airportTransfer: v }),
@@ -453,7 +534,16 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setQuoteRefreshKey((key) => key + 1);
   }, []);
 
-  const goTo: BookingContextValue["goTo"] = useCallback((step) => patch({ step }), [patch]);
+  const goTo: BookingContextValue["goTo"] = useCallback(
+    (step) =>
+      patch({
+        step:
+          step === "upgrade" && !BOOKING_FEATURES.roomUpgradeStep
+            ? "extras"
+            : step,
+      }),
+    [patch],
+  );
 
   const resetAll = useCallback(() => {
     setSelectedRoom(null);
@@ -462,6 +552,9 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     setCreatedState(null);
     setQuote(null);
     setQuoteError(false);
+    setProductPresentationState({});
+    setAddonPreferences({});
+    setSelectedAddOnDisplayByProduct({});
     setState({ ...defaults });
     setCartId(newCartId()); // nouveau panier
   }, []);
@@ -479,7 +572,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     const u = readUrl();
     // Fresh visit: no room/payment/deep-link state to preserve. Guest nationality is
     // intentionally not restored from the URL because personal data is never serialized.
-    const fresh = !u.roomId && !u.rgid && (!u.step || u.step === "dates");
+    const fresh = !u.roomTypeId && !u.rgid && (!u.step || u.step === "dates");
     let alive = true;
     // On appelle toujours /geo (léger, no-store) pour tracer le pays détecté en debug.
     void api.geo().then((r) => {
@@ -533,6 +626,24 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     });
   }, [products, selectedRoom, state.checkIn, state.checkOut]);
 
+  // Prune CMS presentation aliases whenever their underlying Mews product is no
+  // longer selected. Presentation never changes the booking identity.
+  useEffect(() => {
+    setProductPresentationState((current) => {
+      const entries = Object.entries(current).filter(([id]) => state.productIds.includes(id));
+      if (entries.length === Object.keys(current).length) return current;
+      return Object.fromEntries(entries);
+    });
+  }, [state.productIds]);
+
+  // Prune smart add-on session state when its underlying Mews product is removed.
+  useEffect(() => {
+    setSelectedAddOnDisplayByProduct((current) => {
+      const entries = Object.entries(current).filter(([id]) => state.productIds.includes(id));
+      return entries.length === Object.keys(current).length ? current : Object.fromEntries(entries);
+    });
+  }, [state.productIds]);
+
   // ── dérivés ────────────────────────────────────────────────────────────────
   const nightsCount = useMemo(
     () => (state.checkIn && state.checkOut ? countNights(state.checkIn, state.checkOut) : 0),
@@ -541,8 +652,14 @@ export function BookingProvider({ children }: { children: ReactNode }) {
   const guestsCount = state.adults + state.children;
 
   const selectedProducts = useMemo(
-    () => products.filter((p) => state.productIds.includes(p.id)),
-    [products, state.productIds],
+    () =>
+      products
+        .filter((p) => state.productIds.includes(p.id))
+        .map((product) => {
+          const presentation = productPresentation[product.id];
+          return presentation ? { ...product, ...presentation } : product;
+        }),
+    [products, state.productIds, productPresentation],
   );
 
   const productsTotal = useMemo(
@@ -572,7 +689,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       .reservationPrice({
         checkIn: state.checkIn,
         checkOut: state.checkOut,
-        roomCategoryId: selectedRoom.categoryId,
+        roomCategoryId: selectedRoom.roomTypeId,
         rateId: selectedRate.rateId,
         adults: state.adults,
         children: state.children,
@@ -644,7 +761,7 @@ export function BookingProvider({ children }: { children: ReactNode }) {
       children: state.children,
       infants: state.infants,
     },
-    room: selectedRoom ? { categoryId: selectedRoom.categoryId, name: selectedRoom.name } : null,
+    room: selectedRoom ? { categoryId: selectedRoom.roomTypeId, name: selectedRoom.name } : null,
     rate: selectedRate
       ? { rateId: selectedRate.rateId, name: selectedRate.name, totalGross: selectedRate.totalGross }
       : null,
@@ -703,6 +820,8 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     nightsCount,
     guestsCount,
     selectedProducts,
+    addonPreferences,
+    selectedAddOnDisplayByProduct,
     productsTotal,
     roomTotal,
     grandTotal,
@@ -713,11 +832,15 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     remainingBalance,
     setSearch,
     selectRoomRate,
+    selectRoom,
     hydrateSelection,
     setAvailableRooms,
     setProperties,
     clearSelection,
     toggleProduct,
+    setProductPresentation,
+    setAddonPreference,
+    setSelectedAddOnDisplay,
     setAirportTransfer,
     setGuest,
     setCreated,

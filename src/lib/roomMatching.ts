@@ -1,4 +1,5 @@
 import type { ShapedRoom } from "../types/mews";
+import { roomTypeGroupSupportsMinimalDistractions } from "../data/roomTypeGroups.ts";
 import type {
   MatchInterest,
   RecommendationPreferences,
@@ -11,8 +12,26 @@ export type RecommendationSearchContext = {
   dogRequested?: boolean;
 };
 
-function interestScore(merchandising: RoomMerchandising, interest: MatchInterest): number {
-  return merchandising.interestScores[interest] ?? 0;
+export function interestScore(
+  merchandising: RoomMerchandising,
+  interest: MatchInterest,
+): number {
+  const configured = merchandising.interestScores[interest];
+  if (configured != null) return configured;
+
+  if (interest === "spaces-for-connection") {
+    return merchandising.features.separateLivingRoom ? 5 : 0;
+  }
+
+  if (interest === "spaces-to-gather") {
+    return merchandising.features.fullKitchen ? 5 : 0;
+  }
+
+  if (interest === "minimal-distractions") {
+    return roomTypeGroupSupportsMinimalDistractions(merchandising.roomTypeGroupKey) ? 5 : 0;
+  }
+
+  return 0;
 }
 
 function priorityScore(

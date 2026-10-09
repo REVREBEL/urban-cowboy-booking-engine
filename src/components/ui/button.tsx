@@ -1,111 +1,171 @@
-// Button.tsx
-
-import React, { ButtonHTMLAttributes, ReactNode } from 'react';
+import React, {
+  type ButtonHTMLAttributes,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
-// Utility for class merging (or import from '@/lib/utils')
-function cn(...inputs: (string | undefined | null | false)[]) {
-  return inputs.filter(Boolean).join(' ');
-}
+export type ButtonStyle = "filled" | "outline" | "transparent";
 
-// --- COLOR PALETTE DEFINITIONS & CONTRAST CONFIG ---
 export type ButtonColor =
-  | 'dark'
-  | 'light'
-  | 'smoke'
-  | 'lake-forest'
-  | 'copper'
-  | 'oxblood'
-  | 'oxidized-teal'
-  | 'bandana-red'
-  | 'whiskey-sour'
-  | 'lodge-yellow'
-  | 'nude-ember'
-  | 'ash';
+  | "dark"
+  | "light"
+  | "alpine-linen"
+  | "cowboy-umber"
+  | "smoke"
+  | "lake-forest"
+  | "copper"
+  | "oxblood"
+  | "oxidized-teal"
+  | "bandana-red"
+  | "whiskey-sour"
+  | "lodge-yellow"
+  | "nude-ember"
+  | "ash"
+  | "paper";
 
-export type ButtonVariant = 'filled' | 'outline' | 'transparent';
-export type ButtonSize = 'small' | 'default' | 'large';
+export type ButtonSize =
+  | "xsmall"
+  | "small"
+  | "default"
+  | "medium"
+  | "large"
+  | "xlarge";
 
-interface ColorConfig {
-  name: string;
-  hex: string;
-  isLightBg: boolean;
-}
-
-export const COLOR_PALETTE: Record<ButtonColor, ColorConfig> = {
-  dark: { name: 'Dark', hex: '#4E332D', isLightBg: false },
-  light: { name: 'Light', hex: '#EBE8E0', isLightBg: true },
-  smoke: { name: 'Smoke', hex: '#343833', isLightBg: false },
-  'lake-forest': { name: 'Lake Forest', hex: '#0E301A', isLightBg: false },
-  copper: { name: 'Copper', hex: '#9A5636', isLightBg: false },
-  oxblood: { name: 'Oxblood', hex: '#69253A', isLightBg: false },
-  'oxidized-teal': { name: 'Oxidized Teal', hex: '#236B7D', isLightBg: false },
-  'bandana-red': { name: 'Bandana Red', hex: '#D65241', isLightBg: false },
-  'whiskey-sour': { name: 'Whiskey Sour', hex: '#DDC5A4', isLightBg: true },
-  'lodge-yellow': { name: 'Lodge Yellow', hex: '#FDDC4E', isLightBg: true },
-  'nude-ember': { name: 'Nude Ember', hex: '#F2AAA9', isLightBg: true },
-  ash: { name: 'Ash', hex: '#CCC7BB', isLightBg: true },
+type Palette = {
+  bg: string;
+  text: string;
+  border: string;
 };
 
-// CVA configuration matching the Design System variants and sizes
+export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
+  dark: {
+    bg: "var(--cowboy-umber--normal, #4e332d)",
+    text: "var(--alpine-linen--normal, #ebe8e0)",
+    border: "var(--cowboy-umber--normal, #4e332d)",
+  },
+  light: {
+    bg: "var(--alpine-linen--normal, #ebe8e0)",
+    text: "var(--cowboy-umber--normal, #4e332d)",
+    border: "var(--alpine-linen--normal, #ebe8e0)",
+  },
+  "alpine-linen": {
+    bg: "var(--alpine-linen--normal, #ebe8e0)",
+    text: "var(--cowboy-umber--normal, #4e332d)",
+    border: "var(--alpine-linen--normal, #ebe8e0)",
+  },
+  "cowboy-umber": {
+    bg: "var(--cowboy-umber--normal, #4e332d)",
+    text: "var(--alpine-linen--normal, #ebe8e0)",
+    border: "var(--cowboy-umber--normal, #4e332d)",
+  },
+  smoke: {
+    bg: "var(--smoke--normal, #343833)",
+    text: "var(--paper--normal, #faf9f9)",
+    border: "var(--smoke--normal, #343833)",
+  },
+  "lake-forest": {
+    bg: "var(--lake-forest--normal, #0e301a)",
+    text: "var(--alpine-linen--normal, #ebe8e0)",
+    border: "var(--lake-forest--normal, #0e301a)",
+  },
+  copper: {
+    bg: "var(--copper--normal, #9a5636)",
+    text: "var(--alpine-linen--normal, #ebe8e0)",
+    border: "var(--copper--normal, #9a5636)",
+  },
+  oxblood: {
+    bg: "var(--oxblood--normal, #69253a)",
+    text: "var(--alpine-linen--normal, #ebe8e0)",
+    border: "var(--oxblood--normal, #69253a)",
+  },
+  "oxidized-teal": {
+    bg: "var(--oxidized-teal--normal, #236b7d)",
+    text: "#ffffff",
+    border: "var(--oxidized-teal--normal, #236b7d)",
+  },
+  "bandana-red": {
+    bg: "var(--bandana-red--normal, #d65241)",
+    text: "#ffffff",
+    border: "var(--bandana-red--normal, #d65241)",
+  },
+  "whiskey-sour": {
+    bg: "var(--whiskey-sour--normal, #ddc5a4)",
+    text: "var(--cowboy-umber--normal, #4e332d)",
+    border: "var(--whiskey-sour--normal, #ddc5a4)",
+  },
+  "lodge-yellow": {
+    bg: "var(--lodge-yellow--normal, #fddc4e)",
+    text: "var(--cowboy-umber--normal, #4e332d)",
+    border: "var(--lodge-yellow--normal, #fddc4e)",
+  },
+  "nude-ember": {
+    bg: "var(--nude-ember--normal, #f2aaa9)",
+    text: "var(--cowboy-umber--normal, #4e332d)",
+    border: "var(--nude-ember--normal, #f2aaa9)",
+  },
+  ash: {
+    bg: "var(--ash--normal, #ccc7bb)",
+    text: "var(--cowboy-umber--normal, #4e332d)",
+    border: "var(--ash--normal, #ccc7bb)",
+  },
+  paper: {
+    bg: "var(--paper--normal, #faf9f9)",
+    text: "var(--smoke--normal, #343833)",
+    border: "var(--ash--normal, #ccc7bb)",
+  },
+};
+
+const colorMap = COLOR_PALETTE;
+
 export const buttonVariants = cva(
-  "group inline-flex items-center justify-center font-bold uppercase rounded-[25px] transition-all duration-200 ease-in-out select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-stone-400 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "group inline-flex box-border select-none items-center justify-center gap-2 font-bold transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--copper--normal)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        filled: "",
-        outline: "",
-        transparent: "",
+        filled:
+          "bg-[var(--cowboy-umber--normal)] text-[var(--alpine-linen--normal)]",
+        outline:
+          "border-[var(--_size---button--border-width)] border-[var(--cowboy-umber--normal)] bg-transparent text-[var(--cowboy-umber--normal)]",
+        transparent:
+          "border-0 bg-transparent text-[var(--cowboy-umber--normal)]",
       },
       size: {
-        small: "h-[36px] px-[20px] pt-[2px] pb-0 text-[11px] gap-[6px]",
-        default: "h-[48px] px-[30px] pt-[2px] pb-0 text-[14px] gap-[8px]",
-        large: "h-[60px] px-[40px] pt-[4px] pb-0 text-[18px] gap-[10px]",
+        xsmall:
+          "rounded-[var(--_size---button-xs--border-radius)] px-3 py-2 text-[length:var(--_size---button-xs--font-size)]",
+        small:
+          "rounded-[var(--_size---button-sm--border-radius)] px-[var(--_size---button-sm--padding-left)] py-[var(--_size---button-sm--padding-top)] text-[length:var(--_size---button-sm--font-size)]",
+        default:
+          "rounded-[var(--_size---button--border-radius)] px-[var(--_size---button--padding-left)] py-[var(--_size---button--padding-top)] text-[length:var(--_size---button--font-size)]",
+        medium:
+          "rounded-[var(--_size---button-md--border-radius)] px-[var(--_size---button--padding-left)] py-[var(--_size---button--padding-top)] text-[length:var(--_size---button-md--font-size)]",
+        large:
+          "rounded-[var(--_size---button-lg--border-radius)] px-[var(--_size---button-lg--padding-left)] py-[var(--_size---button-lg--padding-top)] text-[length:var(--_size---button-lg--font-size)]",
+        xlarge:
+          "rounded-[var(--_size---button-xl--border-radius)] px-[var(--_size---button-lg--padding-left)] py-[var(--_size---button-lg--padding-top)] text-[length:var(--_size---button-xl--font-size)]",
       },
     },
     defaultVariants: {
       variant: "filled",
       size: "default",
     },
-  }
+  },
 );
 
-// Chevron SVG Icon
-export const ChevronRight: React.FC<{ color?: string; size?: number }> = ({
-  color = 'currentColor',
-  size = 14,
-}) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 10 14"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="inline-block transition-transform duration-150 group-hover:translate-x-0.5"
-  >
-    <path
-      d="M2 2L8 7L2 12"
-      stroke={color}
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-// Spinner SVG for Loading State
 export const Spinner: React.FC<{ size?: number; color?: string }> = ({
   size = 16,
-  color = 'currentColor',
+  color = "currentColor",
 }) => (
   <svg
-    className="animate-spin -ml-1 mr-2"
+    className="-ml-1 mr-2 inline-block animate-spin"
     width={size}
     height={size}
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
   >
     <circle
       className="opacity-25"
@@ -123,170 +183,262 @@ export const Spinner: React.FC<{ size?: number; color?: string }> = ({
   </svg>
 );
 
-export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  children?: ReactNode;
-  variant?: ButtonVariant;
+export const ChevronRight: React.FC<{ color?: string; size?: number }> = ({
+  color = "currentColor",
+  size = 14,
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 10 14"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="inline-block transition-transform duration-150 group-hover:translate-x-0.5"
+    aria-hidden="true"
+  >
+    <path
+      d="M2 2L8 7L2 12"
+      stroke={color}
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: ButtonStyle;
+  /** Preferred name from the Webflow-derived component API. */
+  colorScheme?: ButtonColor;
+  /** Backward-compatible alias used by the existing booking engine. */
   color?: ButtonColor;
   size?: ButtonSize;
   hasIcon?: boolean;
   icon?: ReactNode;
+  iconPosition?: "left" | "right";
   isLoading?: boolean;
-  disabled?: boolean;
+  children?: ReactNode;
   asChild?: boolean;
-  className?: string;
+  buttonName?: string;
+  buttonPage?: string;
+  buttonContent?: string;
 }
 
-/**
- * Reusable Design System Button Component
- */
+type SizeStyle = {
+  css: CSSProperties;
+  iconSize: number;
+  borderWidth: string;
+};
+
+function getSizeStyles(size: ButtonSize): SizeStyle {
+  const baseLineHeight = "var(--_size---button--line-height, 1)";
+
+  switch (size) {
+    case "xlarge":
+      return {
+        css: {
+          fontSize:
+            "var(--_size---button-xl--font-size, var(--_typography---text-size--xl, 1.5rem))",
+          lineHeight: baseLineHeight,
+          paddingTop: "var(--_size---button-lg--padding-top, 1.25rem)",
+          paddingRight: "var(--_size---button-lg--padding-right, 1.75rem)",
+          paddingBottom: "var(--_size---button-lg--padding-bottom, 1.25rem)",
+          paddingLeft: "var(--_size---button-lg--padding-left, 1.75rem)",
+          borderRadius: "var(--_size---button-xl--border-radius, 20px)",
+          fontWeight: "var(--_size---button-lg--font-weight, 700)",
+        },
+        borderWidth: "var(--_size---button-lg--border-width, 3.5px)",
+        iconSize: 20,
+      };
+
+    case "large":
+      return {
+        css: {
+          fontSize:
+            "var(--_size---button-lg--font-size, var(--_typography---text-size--lg, 1.3rem))",
+          lineHeight: baseLineHeight,
+          paddingTop: "var(--_size---button-lg--padding-top, 1.25rem)",
+          paddingRight: "var(--_size---button-lg--padding-right, 1.75rem)",
+          paddingBottom: "var(--_size---button-lg--padding-bottom, 1.25rem)",
+          paddingLeft: "var(--_size---button-lg--padding-left, 1.75rem)",
+          borderRadius: "var(--_size---button-lg--border-radius, 18px)",
+          fontWeight: "var(--_size---button-lg--font-weight, 700)",
+        },
+        borderWidth: "var(--_size---button-lg--border-width, 3.5px)",
+        iconSize: 18,
+      };
+
+    case "medium":
+      return {
+        css: {
+          fontSize:
+            "var(--_size---button-md--font-size, var(--_typography---text-size--md, 1.2rem))",
+          lineHeight: baseLineHeight,
+          paddingTop: "var(--_size---button--padding-top, 1rem)",
+          paddingRight: "var(--_size---button--padding-right, 1.15rem)",
+          paddingBottom: "var(--_size---button--padding-bottom, 1rem)",
+          paddingLeft: "var(--_size---button--padding-left, 1.15rem)",
+          borderRadius: "var(--_size---button-md--border-radius, 16px)",
+          fontWeight: "var(--_size---button--font-weight, 700)",
+        },
+        borderWidth: "var(--_size---button--border-width, 3px)",
+        iconSize: 16,
+      };
+
+    case "small":
+      return {
+        css: {
+          fontSize:
+            "var(--_size---button-sm--font-size, var(--_typography---text-size--sm, 1rem))",
+          lineHeight: baseLineHeight,
+          paddingTop: "var(--_size---button-sm--padding-top, 0.75rem)",
+          paddingRight: "var(--_size---button-sm--padding-right, 1rem)",
+          paddingBottom: "var(--_size---button-sm--padding-bottom, 0.75rem)",
+          paddingLeft: "var(--_size---button-sm--padding-left, 1rem)",
+          borderRadius: "var(--_size---button-sm--border-radius, 12px)",
+          fontWeight: "var(--_size---button-sm--font-weight, 700)",
+        },
+        borderWidth: "var(--_size---button-sm--border-width, 3px)",
+        iconSize: 12,
+      };
+
+    case "xsmall":
+      return {
+        css: {
+          fontSize:
+            "var(--_size---button-xs--font-size, var(--_typography---text-size--xs, 0.9rem))",
+          lineHeight: baseLineHeight,
+          padding: "0.5rem 0.75rem",
+          borderRadius: "var(--_size---button-xs--border-radius, 10px)",
+          fontWeight: "var(--_size---button-sm--font-weight, 700)",
+        },
+        borderWidth: "var(--_size---button-sm--border-width, 3px)",
+        iconSize: 12,
+      };
+
+    case "default":
+    default:
+      return {
+        css: {
+          fontSize:
+            "var(--_size---button--font-size, var(--_typography---text-size--base, 1.1rem))",
+          lineHeight: baseLineHeight,
+          paddingTop: "var(--_size---button--padding-top, 1rem)",
+          paddingRight: "var(--_size---button--padding-right, 1.15rem)",
+          paddingBottom: "var(--_size---button--padding-bottom, 1rem)",
+          paddingLeft: "var(--_size---button--padding-left, 1.15rem)",
+          borderRadius: "var(--_size---button--border-radius, 14px)",
+          fontWeight: "var(--_size---button--font-weight, 700)",
+        },
+        borderWidth: "var(--_size---button--border-width, 3px)",
+        iconSize: 14,
+      };
+  }
+}
+
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      children,
-      variant = 'filled',
-      color = 'dark',
-      size = 'default',
+      variant = "filled",
+      colorScheme,
+      color,
+      size = "default",
       hasIcon = false,
       icon,
+      iconPosition = "right",
       isLoading = false,
       disabled = false,
+      children,
       asChild = false,
-      className = '',
-      style = {},
-      onClick,
-      ...props
+      className = "",
+      style,
+      buttonName,
+      buttonPage,
+      buttonContent,
+      ...restProps
     },
-    ref
+    ref,
   ) => {
-    const colorConfig = COLOR_PALETTE[color] || COLOR_PALETTE.dark;
-    const mainColor = colorConfig.hex;
-    const isLightBg = colorConfig.isLightBg;
-
-    // Text color tokens
-    const darkTextColor = '#4E332D';
-    const whiteTextColor = '#FFFFFF';
-
-    const iconSizes = {
-      small: 11,
-      default: 14,
-      large: 18,
-    };
-    const iconSize = iconSizes[size || 'default'];
-
-    // Variant Styles
-    let dynamicStyles: React.CSSProperties = {};
-    let textColor = '';
-
-    if (variant === 'filled') {
-      textColor = isLightBg ? darkTextColor : whiteTextColor;
-      dynamicStyles = {
-        backgroundColor: mainColor,
-        color: textColor,
-        border: 'none',
-      };
-    } else if (variant === 'outline') {
-      textColor = mainColor;
-      const borderWidth =
-        size === 'large' ? '2.5px' : size === 'small' ? '1.5px' : '2px';
-      dynamicStyles = {
-        backgroundColor: 'transparent',
-        color: textColor,
-        border: `${borderWidth} solid ${mainColor}`,
-      };
-    } else if (variant === 'transparent') {
-      textColor = mainColor;
-      dynamicStyles = {
-        backgroundColor: 'transparent',
-        color: textColor,
-        border: 'none',
-      };
-    }
-
+    const resolvedColor = colorScheme ?? color ?? "dark";
+    const palette = colorMap[resolvedColor] ?? colorMap.dark;
+    const { css: sizeCss, iconSize, borderWidth } = getSizeStyles(size);
     const isDisabledOrLoading = disabled || isLoading;
-    const Comp = asChild ? Slot : 'button';
+    const Comp = asChild ? Slot : "button";
+
+    const variantStyle: CSSProperties =
+      variant === "outline"
+        ? {
+            backgroundColor: "transparent",
+            color: palette.border,
+            border: `${borderWidth} solid ${palette.border}`,
+          }
+        : variant === "transparent"
+          ? {
+              backgroundColor: "transparent",
+              color: palette.border,
+              border: "none",
+            }
+          : {
+              backgroundColor: palette.bg,
+              color: palette.text,
+              border: "none",
+            };
+
+    const iconNode =
+      icon ??
+      (hasIcon ? <ChevronRight color="currentColor" size={iconSize} /> : null);
 
     return (
       <Comp
         ref={ref}
         disabled={isDisabledOrLoading}
-        onClick={onClick}
+        aria-busy={isLoading || undefined}
         className={cn(
           buttonVariants({ variant, size }),
           isDisabledOrLoading
-            ? 'opacity-50 cursor-not-allowed transform-none'
-            : 'hover:opacity-90 active:scale-95',
-          className
+            ? "transform-none cursor-not-allowed"
+            : "hover:opacity-90 active:scale-[0.98]",
+          className,
         )}
         style={{
-          boxSizing: 'border-box',
-          letterSpacing: '0.05em',
-          fontFamily: "'Brothers OT', 'Cinzel', serif, sans-serif",
-          ...dynamicStyles,
+          display: "inline-flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "8px",
+          fontFamily:
+            "var(--_typography---font-family--button, var(--font-button))",
+          letterSpacing:
+            "var(--_size---button--letter-spacing, 0.05em)",
+          cursor: isDisabledOrLoading ? "not-allowed" : "pointer",
+          opacity: isDisabledOrLoading ? 0.6 : 1,
+          boxSizing: "border-box",
+          transition: "all 0.2s ease-in-out",
+          ...variantStyle,
+          ...sizeCss,
           ...style,
         }}
-        {...props}
+        data-button-name={buttonName}
+        data-button-page={buttonPage}
+        data-button-content={buttonContent}
+        {...restProps}
       >
-        {isLoading ? <Spinner size={iconSize} color={textColor} /> : null}
+        {isLoading ? (
+          <Spinner size={iconSize} color="currentColor" />
+        ) : iconPosition === "left" && iconNode ? (
+          <span className="inline-flex items-center justify-center">{iconNode}</span>
+        ) : null}
 
-        <span className="leading-none pt-0.5">{children}</span>
+        <span>{children}</span>
 
-        {!isLoading && hasIcon && (
-          <span className="inline-flex items-center justify-center">
-            {icon || <ChevronRight color={textColor} size={iconSize} />}
-          </span>
-        )}
+        {!isLoading && iconPosition === "right" && iconNode ? (
+          <span className="inline-flex items-center justify-center">{iconNode}</span>
+        ) : null}
       </Comp>
     );
-  }
+  },
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";
 
-/**
- * Showcase Layout & Testing Preview
- */
-export default function ButtonShowcase() {
-  return (
-    <div className="min-h-screen bg-stone-900 text-stone-100 p-8 space-y-8">
-      <header className="border-b border-stone-800 pb-4">
-        <h1 className="text-2xl font-bold text-amber-500">
-          Design System Button Showcase
-        </h1>
-        <p className="text-stone-400 text-sm mt-1">
-          TypeScript exportable React button component.
-        </p>
-      </header>
-
-      <section className="space-y-6">
-        <h2 className="text-lg font-semibold text-amber-400">
-          Variants & Colors
-        </h2>
-        <div className="flex flex-wrap gap-4 items-center bg-stone-950 p-6 rounded-2xl border border-stone-800">
-          <Button variant="filled" color="dark" hasIcon>
-            Dark Filled
-          </Button>
-          <Button variant="outline" color="dark">
-            Dark Outline
-          </Button>
-          <Button variant="transparent" color="dark">
-            Dark Transparent
-          </Button>
-          <Button variant="filled" color="lodge-yellow">
-            Lodge Yellow
-          </Button>
-          <Button variant="filled" color="bandana-red" hasIcon>
-            Bandana Red
-          </Button>
-          <Button variant="filled" color="lake-forest" isLoading>
-            Loading
-          </Button>
-          <Button variant="filled" color="copper" disabled>
-            Disabled
-          </Button>
-        </div>
-      </section>
-    </div>
-  );
-}
+export default Button;

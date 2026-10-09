@@ -1,7 +1,7 @@
 import type { Localized } from "../types/mews";
 import { getLang, LOCALE } from "./lang";
 
-// Locale Intl courante (fr-FR | en-GB). La langue est fixe par chargement de page.
+// Locale Intl courante (fr-FR | en-US). La langue est fixe par chargement de page.
 const locale = () => LOCALE[getLang()];
 
 // Sélection de la valeur localisée selon la langue active : la langue courante
@@ -10,8 +10,8 @@ export function loc(value: Localized | null | undefined, fallback = ""): string 
   if (!value) return fallback;
   const order =
     getLang() === "en"
-      ? ["en-GB", "en-US", "en", "fr-FR", "fr"]
-      : ["fr-FR", "fr", "en-GB", "en-US", "en"];
+      ? ["en-US", "en-GB", "en", "fr-FR", "fr"]
+      : ["fr-FR", "fr", "en-US", "en-GB", "en"];
   for (const k of order) {
     const v = value[k];
     if (v) return v;
@@ -38,11 +38,16 @@ export function regionName(code: string): string {
 // Currency formatters cached by locale + ISO currency + decimals.
 const numCache = new Map<string, Intl.NumberFormat>();
 const moneyFmt = (currency: string, decimals: number) => {
-  const code = currency || "USD";
-  const key = `${locale()}:${code}:${decimals}`;
+  const code = (currency || "USD").toUpperCase();
+  // USD prices belong to the Catskills property and should retain the familiar
+  // American price treatment ($282.24) in both language variants. Formatting
+  // USD with fr-FR/en-GB produces "$US"/"US$", which reads like an accidental
+  // currency conversion rather than the hotel's native rate.
+  const formatLocale = code === "USD" ? "en-US" : locale();
+  const key = `${formatLocale}:${code}:${decimals}`;
   let f = numCache.get(key);
   if (!f) {
-    f = new Intl.NumberFormat(locale(), {
+    f = new Intl.NumberFormat(formatLocale, {
       style: "currency",
       currency: code,
       minimumFractionDigits: decimals,
@@ -79,6 +84,27 @@ export function eur(value: number | null | undefined, opts?: { decimals?: 0 | 2 
 export function toUtc(date: string): string {
   if (!date) return date;
   return /T/.test(date) ? date : `${date}T00:00:00Z`;
+}
+
+// Mews stay boundaries must represent midnight at the property, not UTC midnight.
+// Catskills is currently the only configured property, so booking API calls use
+// America/New_York while display-only date math can continue using toUtc().
+export function toPropertyUtc(date: string, timeZone = "America/New_York"): string {
+  if (!date || /T/.test(date)) return date;
+  const guess = Date.parse(`${date}T00:00:00Z`);
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(guess));
+  const value = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
+  const representedAsUtc = Date.UTC(value("year"), value("month") - 1, value("day"), value("hour"), value("minute"), value("second"));
+  return new Date(guess - (representedAsUtc - guess)).toISOString();
 }
 
 // Nombre de nuits entre deux dates (calcul en UTC, robuste DST).

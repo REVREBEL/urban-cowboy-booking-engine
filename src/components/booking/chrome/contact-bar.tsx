@@ -11,7 +11,7 @@ const RECEPTION_EMAIL = "reservations@example.com";
 // étape : APPELER (tel:), ÉCRIRE (mailto:) ou PARTAGER le lien courant — qui
 // contient tous les choix (dates, hébergements, chambre, tarif, extras, langue),
 // pour que le destinataire arrive avec la même sélection sans rien refaire.
-export function ContactBar() {
+export function ContactBar({ preview = false }: { preview?: boolean } = {}) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -62,7 +62,10 @@ export function ContactBar() {
   }
 
   return (
-    <div ref={wrapRef} className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+    <div
+      ref={wrapRef}
+      className={`${preview ? "absolute" : "fixed"} bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6`}
+    >
       {open && (
         <div className="w-72 animate-scale-in overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-float">
           <div className="flex items-start justify-between gap-3 bg-teal-deep px-4 py-3 text-cream">
@@ -90,7 +93,7 @@ export function ContactBar() {
               </span>
               <span className="min-w-0">
                 <span className="block text-sm font-semibold text-ink">{t("contact.call")}</span>
-                <span className="block truncate text-xs text-ink/55">{RECEPTION_PHONE_DISPLAY}</span>
+                <span className="block truncate font-number text-xs text-ink/55">{RECEPTION_PHONE_DISPLAY}</span>
               </span>
             </a>
 
