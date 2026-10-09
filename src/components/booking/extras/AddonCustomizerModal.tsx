@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import type { MerchandisedAddOn } from '@/types/add-on-cms';
-import { imgUrl, money } from '@/lib/format';
+import { fmtDate, imgUrl, money } from '@/lib/format';
 import type { AddonSchedulePreference, AddonStayCriteria } from './addon-types';
 import {
   addOnKind,
@@ -52,7 +52,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
     smartPreference.selectedDateIso ?? arrivalDateInfo.isoDate,
   );
   const [selectedTime, setSelectedTime] = useState(
-    smartPreference.selectedTime ?? 'Waiting in suite prior to check-in',
+    smartPreference.selectedTime ?? 'Waiting in room prior to check-in',
   );
   const [customTime, setCustomTime] = useState(smartPreference.customTime ?? '');
   const [giftRecipient, setGiftRecipient] = useState(smartPreference.giftRecipient ?? '');
@@ -68,7 +68,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
     setDeliveryType(smartPreference.deliveryType ?? 'scheduled-day');
     setIsGift(smartPreference.isGift ?? false);
     setSelectedDateIso(smartPreference.selectedDateIso ?? arrivalDateInfo.isoDate);
-    setSelectedTime(smartPreference.selectedTime ?? 'Waiting in suite prior to check-in');
+    setSelectedTime(smartPreference.selectedTime ?? 'Waiting in room prior to check-in');
     setCustomTime(smartPreference.customTime ?? '');
     setGiftRecipient(smartPreference.giftRecipient ?? '');
     setIncludeCard(smartPreference.includeCard ?? false);
@@ -118,10 +118,6 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="font-woodblock uppercase tracking-[0.2em] text-[11px] sm:text-xs 2xl:text-sm font-bold text-[#9A5636]">
               URBAN COWBOY CATSKILLS
-            </span>
-            <span className="text-[#4E332D]/40" aria-hidden="true">·</span>
-            <span className="font-sans text-[11px] sm:text-xs 2xl:text-sm uppercase tracking-wider text-[#73716D]">
-              BESPOKE STAY CONCIERGE
             </span>
           </div>
 
@@ -175,7 +171,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
               <div className="bg-white/80 p-4 sm:p-5 2xl:p-6 rounded-2xl 2xl:rounded-3xl border border-[#4E332D]/15 shadow-2xs space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="font-woodblock text-[10px] 2xl:text-xs uppercase tracking-widest text-[#9A5636] font-bold">
-                    CONCIERGE DELIVERY TIMELINE
+                    REQUESTED DELIVERY TIME
                   </span>
                   <Clock className="w-3.5 h-3.5 text-[#9A5636]" />
                 </div>
@@ -230,7 +226,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                 YOUR ITINERARY
               </span>
               <span className="block mt-1">
-                {searchCriteria.checkIn} to {searchCriteria.checkOut} · {searchCriteria.nights} {searchCriteria.nights === 1 ? 'Night' : 'Nights'}
+                {fmtDate(searchCriteria.checkIn)} to {fmtDate(searchCriteria.checkOut)} · {searchCriteria.nights} {searchCriteria.nights === 1 ? 'Night' : 'Nights'}
               </span>
             </div>
           </div>
@@ -258,7 +254,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                     onClick={() => {
                       setIsGift(false);
                       setDeliveryType('waiting-in-room');
-                      setSelectedTime('Waiting in suite prior to check-in (4:00 PM)');
+                      setSelectedTime('Waiting in room prior to check-in (4:00 PM)');
                     }}
                     className={`p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between group ${
                       !isGift
@@ -269,7 +265,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-brothers text-base sm:text-lg 2xl:text-xl uppercase text-[#1C1917] font-bold">
-                          Just for us in the suite
+                          Just for us in the room
                         </span>
                         {!isGift && (
                           <span className="w-6 h-6 2xl:w-7 2xl:h-7 rounded-full bg-[#0E301A] text-white flex items-center justify-center shrink-0">
@@ -278,7 +274,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                         )}
                       </div>
                       <p className="font-uchen text-xs sm:text-sm 2xl:text-base text-[#60605E] leading-relaxed mt-2">
-                        Arranged in a glass vase and waiting in your suite prior to 4:00 PM check-in, so you can enjoy fresh flowers throughout your entire stay.
+                        Arranged in a glass vase and waiting in your room prior to 4:00 PM check-in, so you can enjoy fresh flowers throughout your entire stay.
                       </p>
                     </div>
 
@@ -334,7 +330,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                 <div>
                   <h4 className="font-display text-xl sm:text-2xl lg:text-3xl 2xl:text-4xl text-[#1C1917] tracking-tight">
                     {isOneNightStay
-                      ? `What time should we deliver it on ${arrivalDateInfo.dayName}, ${arrivalDateInfo.monthDay}?`
+                      ? `Requested Delivery Time on ${arrivalDateInfo.fullDateLabel}?`
                       : `Which day of your stay should we schedule this?`}
                   </h4>
                   <p className="font-uchen text-xs sm:text-sm lg:text-base 2xl:text-lg text-[#60605E] mt-2 leading-relaxed">
@@ -367,7 +363,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                             {dateObj.dayName}
                           </span>
                           <span className={`block text-xs sm:text-sm 2xl:text-base mt-0.5 ${isSelected ? 'text-[#EBE8E0]/90' : 'text-[#60605E]'}`}>
-                            {dateObj.monthDay}
+                            {dateObj.fullDateLabel}
                           </span>
                         </button>
                       );
@@ -591,7 +587,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
           <div className="text-xs sm:text-sm lg:text-base 2xl:text-lg text-[#73716D] text-center sm:text-left font-sans">
             <span className="font-bold text-[#221C18]">Summary: </span>
             {addonKind === 'fresh-cut-flowers' && !isGift ? (
-              <span>Arranged in suite prior to check-in ({arrivalDateInfo.dayName})</span>
+              <span>Arranged in room prior to check-in ({arrivalDateInfo.dayName})</span>
             ) : (
               <span>
                 {isOneNightStay ? arrivalDateInfo.dayName : selectedDateObj.dayName} · {selectedTime}
@@ -614,7 +610,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
               onClick={handleConfirm}
               className="flex-1 sm:flex-initial bg-[#4E332D] hover:bg-[#221C18] text-white px-7 sm:px-8 2xl:px-12 py-3 sm:py-3.5 2xl:py-4.5 rounded-full text-xs sm:text-sm 2xl:text-base font-woodblock uppercase tracking-widest transition-all cursor-pointer shadow-md active:scale-95 flex items-center justify-center gap-2 group"
             >
-              <span>Confirm Experience & Add to Stay</span>
+              <span>Confirm & Add to Stay</span>
               <ArrowRight className="w-4 h-4 2xl:w-5 2xl:h-5 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>

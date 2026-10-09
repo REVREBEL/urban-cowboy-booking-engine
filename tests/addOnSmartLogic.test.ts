@@ -76,7 +76,7 @@ test("wine gets a useful default selection and arrival delivery", () => {
 
   assert.equal(preference.itemCustomization, "Natural Red (Earth & Fruit)");
   assert.equal(preference.selectedDateIso, "2026-10-15");
-  assert.equal(preference.selectedTime, "Chilled & waiting in suite upon check-in");
+  assert.equal(preference.selectedTime, "Chilled & waiting in room upon check-in");
 });
 
 test("multi-night stays produce one scheduling choice per night", () => {

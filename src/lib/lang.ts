@@ -12,7 +12,7 @@ export type Lang = "fr" | "en";
 // The property is in the US, so English Mews content, payment pages, and emails
 // request the US locale. UI formatting can remain independent from this value.
 export const MEWS_LANG: Record<Lang, string> = { fr: "fr-FR", en: "en-US" };
-export const LOCALE: Record<Lang, string> = { fr: "fr-FR", en: "en-GB" };
+export const LOCALE: Record<Lang, string> = { fr: "fr-FR", en: "en-US" };
 
 const LS_KEY = "urban_cowboy_lang";
 
@@ -36,6 +36,7 @@ export function initLang(): Lang {
 }
 
 export const getLang = (): Lang => active;
+export const uiLocale = (): string => LOCALE[active];
 export const isEn = (): boolean => active === "en";
 
 // LanguageCode Mews de la langue courante (pour la couche réseau).

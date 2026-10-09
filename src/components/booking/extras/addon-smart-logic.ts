@@ -4,6 +4,7 @@ import type {
   AddonSchedulePreference,
   AddonStayCriteria,
 } from "./addon-types";
+import { uiLocale } from "../../../lib/lang.ts";
 
 export type AddOnKind =
   | "fresh-cut-flowers"
@@ -19,6 +20,7 @@ export interface AddOnStayDate {
   isoDate: string;
   dayName: string;
   monthDay: string;
+  fullDateLabel: string;
   fullLabel: string;
   isArrival: boolean;
   isDepartureNight: boolean;
@@ -86,29 +88,38 @@ export function addOnStayDates(criteria: AddonStayCriteria): AddOnStayDate[] {
   const [year, month, day] = (criteria.checkIn || DEFAULT_CHECK_IN)
     .split("-")
     .map(Number);
-  const startDate = new Date(year, month - 1, day);
+  const startDate = new Date(Date.UTC(year, month - 1, day));
   const nights = Math.max(1, criteria.nights || 1);
 
   for (let i = 0; i < nights; i += 1) {
     const d = new Date(startDate);
-    d.setDate(startDate.getDate() + i);
-    const dayName = d.toLocaleDateString("en-US", { weekday: "long" });
-    const monthDay = d.toLocaleDateString("en-US", {
+    d.setUTCDate(startDate.getUTCDate() + i);
+    const isoDate = d.toISOString().split("T")[0]!;
+    const dayName = new Intl.DateTimeFormat(uiLocale(), { weekday: "long", timeZone: "UTC" }).format(d);
+    const monthDay = new Intl.DateTimeFormat(uiLocale(), {
       month: "2-digit",
       day: "2-digit",
-    });
+      timeZone: "UTC",
+    }).format(d);
+    const fullDateLabel = new Intl.DateTimeFormat(uiLocale(), {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    }).format(d);
 
     dates.push({
       index: i,
-      isoDate: d.toISOString().split("T")[0],
+      isoDate,
       dayName,
       monthDay,
+      fullDateLabel,
       fullLabel:
         i === 0
-          ? `${dayName}, ${monthDay} (Arrival Night)`
+          ? `${fullDateLabel} (Arrival Night)`
           : i === nights - 1
-            ? `${dayName}, ${monthDay} (Final Night)`
-            : `${dayName}, ${monthDay}`,
+            ? `${fullDateLabel} (Final Night)`
+            : fullDateLabel,
       isArrival: i === 0,
       isDepartureNight: i === nights - 1,
     });
@@ -151,13 +162,13 @@ export function defaultAddOnPreference(
   let deliveryType: AddonDeliveryType = "scheduled-day";
   let isGift = false;
   let includeCard = false;
-  let selectedTime = "Waiting in suite prior to check-in";
+  let selectedTime = "Waiting in room prior to check-in";
   let itemCustomization = "";
 
   switch (kind) {
     case "fresh-cut-flowers":
       deliveryType = "waiting-in-room";
-      selectedTime = "Waiting in suite prior to 4:00 PM arrival";
+      selectedTime = "Waiting in room prior to 4:00 PM arrival";
       break;
     case "celebration-cake":
       deliveryType = "scheduled-day";
@@ -167,13 +178,13 @@ export function defaultAddOnPreference(
       break;
     case "wine-bottle":
       itemCustomization = WINE_PREFERENCES[0];
-      selectedTime = "Chilled & waiting in suite upon check-in";
+      selectedTime = "Chilled & waiting in room upon check-in";
       break;
     case "pup-stay":
       selectedTime = "Ready in room prior to arrival";
       break;
     default:
-      selectedTime = "Waiting in suite prior to check-in";
+      selectedTime = "Waiting in room prior to check-in";
       break;
   }
 
@@ -203,9 +214,13 @@ export function normalizeAddOnPreference(
   criteria: AddonStayCriteria,
   preference?: AddonSchedulePreference,
 ): AddonSchedulePreference {
-  return {
+  const normalized = {
     ...defaultAddOnPreference(addon, criteria),
     ...(preference ?? {}),
+  };
+  return {
+    ...normalized,
+    selectedTime: normalized.selectedTime?.replace(/\bsuite\b/gi, "room"),
   };
 }
 

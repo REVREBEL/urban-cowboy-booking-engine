@@ -1,7 +1,7 @@
 import type { Localized } from "../types/mews";
 import { getLang, LOCALE } from "./lang";
 
-// Locale Intl courante (fr-FR | en-GB). La langue est fixe par chargement de page.
+// Locale Intl courante (fr-FR | en-US). La langue est fixe par chargement de page.
 const locale = () => LOCALE[getLang()];
 
 // Sélection de la valeur localisée selon la langue active : la langue courante
@@ -10,8 +10,8 @@ export function loc(value: Localized | null | undefined, fallback = ""): string 
   if (!value) return fallback;
   const order =
     getLang() === "en"
-      ? ["en-GB", "en-US", "en", "fr-FR", "fr"]
-      : ["fr-FR", "fr", "en-GB", "en-US", "en"];
+      ? ["en-US", "en-GB", "en", "fr-FR", "fr"]
+      : ["fr-FR", "fr", "en-US", "en-GB", "en"];
   for (const k of order) {
     const v = value[k];
     if (v) return v;
