@@ -41,28 +41,28 @@ const getStepStyle = (state: ProgressStepState) => {
   switch (state) {
     case 'current':
       return {
-        containerBg: '#9A5636',
+        containerBg: 'var(--chart-1)',
         containerBorder: 'transparent',
-        circleBorder: '#EBE8E0',
-        circleText: '#EBE8E0',
-        labelText: '#EBE8E0',
+        circleBorder: 'var(--chart-3)',
+        circleText: 'var(--chart-3)',
+        labelText: 'var(--chart-3)',
       };
     case 'complete':
       return {
-        containerBg: '#4E332D',
+        containerBg: 'var(--chart-2)',
         containerBorder: 'transparent',
-        circleBorder: '#EBE8E0',
-        circleText: '#EBE8E0',
-        labelText: '#EBE8E0',
+        circleBorder: 'var(--chart-3)',
+        circleText: 'var(--chart-3)',
+        labelText: 'var(--chart-3)',
       };
     case 'default':
     default:
       return {
         containerBg: 'transparent',
-        containerBorder: 'rgba(235, 232, 224, 0.25)',
-        circleBorder: 'rgba(235, 232, 224, 0.4)',
-        circleText: '#767470',
-        labelText: '#767470',
+        containerBorder: 'color-mix(in srgb, var(--chart-3) 25%, transparent)',
+        circleBorder: 'color-mix(in srgb, var(--chart-3) 40%, transparent)',
+        circleText: 'var(--chart-4)',
+        labelText: 'var(--chart-4)',
       };
   }
 };
