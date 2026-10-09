@@ -123,7 +123,7 @@ export const PropertyPropertyLabelGroup: React.FC<PropertyGroupProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col justify-center items-start p-3 gap-3 w-[235px] h-[90px] rounded-field bg-transparent ${className}`}
+      className={`flex flex-col justify-center items-start p-3 gap-3 w-58.75 h-22.5 rounded-field bg-transparent ${className}`}
       role="group"
       aria-label="Urban Cowboy Property Location Selection"
     >

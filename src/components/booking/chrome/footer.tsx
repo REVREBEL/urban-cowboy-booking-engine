@@ -90,9 +90,9 @@ export function BookingFooter() {
   );
 
   return (
-    <footer className="mt-20 w-full border-t-4 border-smoke bg-cowboy-umber pb-12 pt-14 text-alpine-linen">
+    <footer className="mt-20 w-full border-t-4 border-foreground bg-foreground pb-12 pt-14 text-background">
       <div className="booking-shell">
-        <div className="flex flex-col items-center justify-between gap-8 border-b border-alpine-linen/15 pb-10 text-center md:flex-row md:text-left">
+        <div className="flex flex-col items-center justify-between gap-8 border-b border-background/15 pb-10 text-center md:flex-row md:text-left">
           <img
             src="./assets/brand/logos/urban-cowboy.svg"
             alt="Urban Cowboy"
@@ -100,10 +100,10 @@ export function BookingFooter() {
           />
 
           {location ? (
-            <div className="flex flex-col items-center gap-1 font-label uppercase tracking-widest text-alpine-linen/80 md:items-end">
+            <div className="flex flex-col items-center gap-1 font-label uppercase tracking-widest text-background/80 md:items-end">
               <span className="text-xs">{location.fullLocationName}</span>
               {cityState ? (
-                <span className="text-[10px] tracking-[0.18em] text-alpine-linen/55">
+                <span className="text-[10px] tracking-[0.18em] text-background/55">
                   {cityState}
                 </span>
               ) : null}
@@ -111,7 +111,7 @@ export function BookingFooter() {
           ) : null}
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-5 pt-8 text-[11px] text-alpine-linen/60 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-5 pt-8 text-[11px] text-background/60 sm:flex-row">
           <span>
             © <span className="font-number">{new Date().getFullYear()}</span>{" "}
             {locationName}. All rights reserved.
@@ -130,8 +130,8 @@ export function BookingFooter() {
                 className={
                   "rounded-full border px-2.5 py-1 font-button text-[10px] font-bold transition " +
                   (active === language.code
-                    ? "border-alpine-linen bg-alpine-linen text-cowboy-umber"
-                    : "border-alpine-linen/30 text-alpine-linen/70 hover:border-alpine-linen hover:text-alpine-linen")
+                    ? "border-background bg-background text-foreground"
+                    : "border-background/30 text-background/70 hover:border-background hover:text-background")
                 }
               >
                 {language.label}
@@ -151,7 +151,7 @@ export function BookingFooter() {
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="transition hover:text-alpine-linen"
+                    className="transition hover:text-background"
                   >
                     {link.label}
                   </a>

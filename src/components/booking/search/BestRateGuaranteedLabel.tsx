@@ -62,24 +62,24 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       onFocus={() => setShowTooltip(true)}
       onBlur={() => setShowTooltip(false)}
       tabIndex={0}
-      className={`box-border relative inline-flex w-max min-w-[179px] flex-row items-center justify-center gap-[8px] p-0 h-[17px] select-none cursor-default group focus:outline-none focus-visible:ring-1 focus-visible:ring-cowboy-umber rounded-hairline ${className}`}
+      className={`box-border relative inline-flex w-max min-w-44.75 flex-row items-center justify-center gap-2 p-0 h-4.25 select-none cursor-default group focus:outline-none focus-visible:ring-1 focus-visible:ring-cowboy-umber rounded-hairline ${className}`}
     >
       {/* 1. best-rate-guaranteed-icon (17px x 17px, padding: 1px, gap: 10px) */}
-      <div className="box-border flex flex-row justify-center items-center p-[1px] gap-[10px] w-[17px] h-[17px] shrink-0">
+      <div className="box-border flex flex-row justify-center items-center p-px gap-2.5 w-4.25 h-4.25 shrink-0">
         {iconSlot ? (
           iconSlot
         ) : (
-          <div className="w-[15px] h-[15px] shrink-0 flex items-center justify-center">
+          <div className="w-3.75 h-3.75 shrink-0 flex items-center justify-center">
             <SheriffBadgeIcon color={color} />
           </div>
         )}
       </div>
 
       {/* 2. Text keeps the original 154px minimum but may grow to fit the full label. */}
-      <div className="flex h-[16px] min-w-[154px] w-max shrink-0 flex-col items-center justify-center p-0">
+      <div className="flex h-4 min-w-38.5 w-max shrink-0 flex-col items-center justify-center p-0">
         <span
           style={{ color }}
-          className="flex h-[16px] w-max min-w-[154px] items-center whitespace-nowrap font-label text-[13px] font-normal uppercase leading-[16px] tracking-[0.5px]"
+          className="flex h-4 w-max min-w-38.5 items-center whitespace-nowrap font-label text-[13px] font-normal uppercase leading-4 tracking-[0.5px]"
         >
           {text}
         </span>
@@ -89,13 +89,13 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       {showTooltip && tooltipText && (
         <div
           role="tooltip"
-          className="absolute bottom-[24px] left-1/2 -translate-x-1/2 z-50 w-[240px] p-2.5 bg-paper border border-cowboy-umber text-cowboy-umber text-[11px] leading-[15px] font-urbanist rounded shadow-lg pointer-events-none transition-all duration-150 animate-in fade-in zoom-in-95"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 w-60 p-2.5 bg-paper border border-cowboy-umber text-cowboy-umber text-[11px] leading-3.75 font-urbanist rounded shadow-lg pointer-events-none transition-all duration-150 animate-in fade-in zoom-in-95"
         >
           <div className="font-label uppercase font-bold text-[10px] mb-1 tracking-wider text-cowboy-umber">
             Direct Booking Perk
           </div>
           {tooltipText}
-          <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-paper border-b border-r border-cowboy-umber transform rotate-45" />
+          <div className="absolute -bottom-1.25 left-1/2 -translate-x-1/2 w-2 h-2 bg-paper border-b border-r border-cowboy-umber transform rotate-45" />
         </div>
       )}
     </div>

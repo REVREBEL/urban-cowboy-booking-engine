@@ -117,7 +117,7 @@ export function RoomMatcherPage({
     <section className="min-h-screen bg-paper pb-24 text-smoke">
       <MatcherProgress step={step} />
 
-      <div className="mx-auto max-w-[1360px] px-4 py-10 sm:px-8 sm:py-14">
+      <div className="mx-auto max-w-340 px-4 py-10 sm:px-8 sm:py-14">
         {step === 1 ? (
           <div className="space-y-10">
             <header className="mx-auto max-w-3xl space-y-3 text-center">
@@ -146,7 +146,7 @@ export function RoomMatcherPage({
                     aria-pressed={selected}
                     onClick={() => setParty(item.id)}
                     className={[
-                      "flex min-h-[150px] flex-col justify-between rounded-2xl border-2 p-5 text-left transition-all sm:min-h-[165px] sm:p-7",
+                      "flex min-h-37.5 flex-col justify-between rounded-2xl border-2 p-5 text-left transition-all sm:min-h-41.25 sm:p-7",
                       selected
                         ? "border-cowboy-umber bg-alpine-linen/70 ring-1 ring-cowboy-umber shadow-sm"
                         : "border-alpine-linen bg-white hover:border-cowboy-umber/40 hover:bg-paper",
@@ -181,7 +181,7 @@ export function RoomMatcherPage({
               })}
             </div>
 
-            <div className="min-h-[150px] rounded-2xl border-2 border-alpine-linen bg-white p-5 sm:min-h-[175px] sm:p-7">
+            <div className="min-h-37.5 rounded-2xl border-2 border-alpine-linen bg-white p-5 sm:min-h-43.75 sm:p-7">
               <div className="flex h-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 items-center gap-4 sm:gap-6">
                   <div className="flex h-20 w-20 shrink-0 items-center justify-center sm:h-28 sm:w-28">
@@ -222,7 +222,7 @@ export function RoomMatcherPage({
                         aria-pressed={selected}
                         onClick={() => setDog(option.value)}
                         className={[
-                          "min-w-[66px] rounded-full border px-5 py-2.5 font-label text-xs uppercase tracking-wider transition-all",
+                          "min-w-16.5 rounded-full border px-5 py-2.5 font-label text-xs uppercase tracking-wider transition-all",
                           selected
                             ? "border-cowboy-umber bg-cowboy-umber font-bold text-white shadow-sm"
                             : "border-alpine-linen bg-white text-smoke hover:bg-paper",
@@ -294,7 +294,7 @@ export function RoomMatcherPage({
             </header>
 
             <div
-              className="mx-auto grid max-w-[1360px] grid-cols-2 gap-5 sm:gap-6 md:grid-cols-4 lg:gap-8"
+              className="mx-auto grid max-w-340 grid-cols-2 gap-5 sm:gap-6 md:grid-cols-4 lg:gap-8"
               role="group"
               aria-label="Choose up to two room preferences"
             >

@@ -43,7 +43,7 @@ export function PreferenceIconButton({ id, label, description, selected, onToggl
           alt=""
           aria-hidden="true"
           className={cn(
-            "h-[188px] w-[188px] object-contain transition-opacity duration-200",
+            "h-47 w-47 object-contain transition-opacity duration-200",
             selected ? "opacity-100" : "opacity-55 group-hover:opacity-75",
           )}
         />

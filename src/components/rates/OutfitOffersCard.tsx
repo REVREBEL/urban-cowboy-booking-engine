@@ -154,7 +154,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
         {/* ================= PRIMARY CARD ================= */}
         <div
           className={`relative z-20 shrink-0 box-border ${
-            isCompact ? 'w-[482px]' : 'w-[480px]'
+            isCompact ? 'w-120.5' : 'w-120'
           }`}
         >
           {isCompact ? (
@@ -213,7 +213,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
               </div>
 
               {/* Price Display */}
-              <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
+              <div className="w-full flex flex-col justify-center px-7.5 box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
                   className="w-full text-left font-normal uppercase select-none whitespace-nowrap"
                   style={{
@@ -333,7 +333,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     </div>
                   </div>
 
-                  <div className="w-full max-w-[340px] flex flex-row justify-center items-center mt-3">
+                  <div className="w-full max-w-85 flex flex-row justify-center items-center mt-3">
                     <p
                       className="w-full font-medium text-center m-0 text-balance"
                       style={{
@@ -350,7 +350,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
 
                 {/* Bottom Action Group */}
                 <div className="w-full flex flex-col items-center gap-4">
-                  <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
+                  <div className="w-full flex flex-col justify-center px-7.5 box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
                       className="w-full text-left font-normal uppercase select-none whitespace-nowrap"
                       style={{
@@ -379,14 +379,14 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
 
                   <div className="w-full flex flex-col items-center gap-2">
                     {isUnlocked && (
-                      <div className="w-full max-w-[380px] rounded-full border border-nude-ember/40 bg-lake-forest px-4 py-3 text-center text-nude-ember" role="status">
+                      <div className="w-full max-w-95 rounded-full border border-nude-ember/40 bg-lake-forest px-4 py-3 text-center text-nude-ember" role="status">
                         <span className="font-normal text-[18px] tracking-[1px] uppercase" style={{ fontFamily: 'var(--font-button)' }}>
                           Member rate unlocked
                         </span>
                       </div>
                     )}
                     {showEmailInput && !isUnlocked ? (
-                      <form onSubmit={handleUnlock} className="w-full max-w-[380px] flex flex-col gap-2.5">
+                      <form onSubmit={handleUnlock} className="w-full max-w-95 flex flex-col gap-2.5">
                         <input
                           type="email"
                           value={email}
@@ -402,7 +402,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                         <button
                           type="submit"
                           disabled={disabled || isSubmitting}
-                          className="w-full min-h-[64px] rounded-full bg-nude-ember px-6 py-3 text-lake-forest transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
+                          className="w-full min-h-16 rounded-full bg-nude-ember px-6 py-3 text-lake-forest transition-all hover:brightness-105 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
                         >
                           <span className="font-normal text-[20px] tracking-[1.2px] uppercase" style={{ fontFamily: 'var(--font-button)' }}>
                             {isSubmitting ? 'Unlocking…' : 'Confirm & Save'}
@@ -415,7 +415,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className={`group w-full max-w-[380px] min-h-[64px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-nude-ember/30 active:scale-[0.98] whitespace-nowrap ${
+                      className={`group w-full max-w-95 min-h-16 px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-nude-ember/30 active:scale-[0.98] whitespace-nowrap ${
                         disabled
                           ? 'cursor-not-allowed bg-nude-ember text-lake-forest border-[length:var(--border-width-control)] border-nude-ember'
                           : isExpanded
@@ -484,7 +484,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
         <div
           className={`relative z-10 overflow-hidden transition-all duration-500 ease-out flex flex-row shrink-0 -ml-12 ${
             isExpanded
-              ? `opacity-100 ${isCompact ? 'w-[557px]' : 'w-[512px]'} translate-x-0 pointer-events-auto`
+              ? `opacity-100 ${isCompact ? 'w-139.25' : 'w-128'} translate-x-0 pointer-events-auto`
               : 'opacity-0 w-0 max-w-0 -translate-x-6 pointer-events-none'
           }`}
           style={{
@@ -493,7 +493,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
           }}
         >
           <div
-            className={`h-full ${isCompact ? 'w-[557px]' : 'w-[512px]'} pl-8 pt-0 shrink-0`}
+            className={`h-full ${isCompact ? 'w-139.25' : 'w-128'} pl-8 pt-0 shrink-0`}
             style={{
               width: isCompact ? '557px' : '512px',
               minWidth: isCompact ? '557px' : '512px',

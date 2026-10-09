@@ -44,7 +44,7 @@ function JsonNode({ name, value, depth }: { name?: string; value: unknown; depth
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-start gap-1 text-left transition hover:text-cream"
       >
-        <IconChevron className={`mt-[3px] h-3 w-3 shrink-0 text-cream/40 transition-transform ${open ? "rotate-90" : ""}`} />
+        <IconChevron className={`mt-0.75 h-3 w-3 shrink-0 text-cream/40 transition-transform ${open ? "rotate-90" : ""}`} />
         <span>
           {name !== undefined && <span className="text-turquoise-vivid">{name}</span>}
           {name !== undefined && <span className="text-cream/40">: </span>}

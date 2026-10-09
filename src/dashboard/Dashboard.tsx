@@ -391,7 +391,7 @@ function Panel({ email }: { email: string }) {
                 <div className="w-28 shrink-0 text-right text-sm font-medium text-smoke/70">{r.label}</div>
                 <div className="relative h-8 flex-1 overflow-hidden rounded-lg bg-sand/60">
                   <div
-                    className="flex h-full items-center rounded-lg bg-gradient-to-r from-teal-deep to-turquoise px-3 text-sm font-semibold text-cream transition-all"
+                    className="flex h-full items-center rounded-lg bg-linear-to-r from-teal-deep to-turquoise px-3 text-sm font-semibold text-cream transition-all"
                     style={{ width: `${Math.max(r.shareOfTop * 100, r.count > 0 ? 6 : 0)}%` }}
                   >
                     {r.count > 0 && <span>{r.count}</span>}

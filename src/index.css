@@ -72,9 +72,42 @@ text-cowboy-umber, font-heading, shadow-card).
 --shadow-float: 0 10px 30px -4px rgba(78, 51, 45, 0.15);
 }
 
+/* Semantic theme variables shared by the booking UI. */
+:root {
+  --background: var(--color-mist);
+  --foreground: var(--color-lake-forest);
+  --accent: var(--color-lake-forest-fade);
+  --input-bg: var(--color-paper);
+  --input-border: var(--color-lake-forest);
+  --button-primary-bg: var(--color-lake-forest);
+  --button-primary-foreground: var(--color-mist);
+  --button-primary-hover-bg: var(--color-lake-forest-100);
+
+  /* Calendar date status colors. */
+  --calendar-date-foreground: var(--foreground);
+  --calendar-date-muted-foreground: color-mix(in srgb, var(--foreground) 45%, transparent);
+  --calendar-date-disabled-foreground: color-mix(in srgb, var(--foreground) 20%, transparent);
+  --calendar-date-selected-bg: var(--button-primary-bg);
+  --calendar-date-selected-foreground: var(--button-primary-foreground);
+  --calendar-date-range-bg: color-mix(in srgb, var(--color-copper) 10%, transparent);
+  --calendar-date-restricted-foreground: var(--color-copper);
+  --calendar-date-restricted-ring: color-mix(in srgb, var(--color-copper) 35%, transparent);
+  --calendar-date-hover-bg: var(--color-copper);
+  --calendar-date-hover-foreground: var(--button-primary-foreground);
+  --calendar-date-rate-foreground: color-mix(in srgb, var(--foreground) 65%, transparent);
+  --calendar-date-rate-unavailable-foreground: color-mix(in srgb, var(--foreground) 30%, transparent);
+  --calendar-date-focus-ring: var(--color-copper);
+  --calendar-date-ring-offset-bg: var(--color-paper);
+  --calendar-tooltip-bg: var(--color-lake-forest);
+  --calendar-tooltip-foreground: var(--color-paper);
+}
+
 /* ==========================================================================
 2. Pure CSS Custom Properties (:root)
-Scoped CSS properties, Webflow sizing tokens, and raw values.
+========================================================================== /
+
+Scoped CSS properties, Webflow sizing tokens, and raw values. */
+
 @font-face {
 font-family: "Uchen";
 src: url("/fonts/Uchen/Uchen-Regular.woff2") format("woff2");
@@ -106,7 +139,7 @@ font-display: swap;
 
 /* ==========================================================================
 7. Rate Card System & Checkout Custom Styles
-}
+========================================================================== */
 
 .rate-card-price {
 width: 100%;

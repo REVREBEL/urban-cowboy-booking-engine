@@ -177,23 +177,23 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
     <div
       role="dialog"
       aria-label="Promo code entry"
-      className={`box-border relative flex flex-col items-start p-[24px] w-[275px] max-w-[2089px] h-[151px] max-h-[520px] bg-paper border-2 border-smoke shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none overflow-hidden ${className}`}
+      className={`box-border relative flex flex-col items-start p-6 w-68.75 max-w-522.25 h-37.75 max-h-130 bg-paper border-2 border-smoke shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none overflow-hidden ${className}`}
     >
       {/* Container: 223px x 99px, padding: 8px 0px, gap: 8px */}
-      <div className="flex flex-col items-start py-[8px] px-0 gap-[8px] w-[223px] h-[99px] self-stretch">
+      <div className="flex flex-col items-start py-2 px-0 gap-2 w-55.75 h-24.75 self-stretch">
         {/* Label: 223px x 17px, font-label */}
-        <div className="flex flex-col items-start p-0 w-[223px] h-[17px] self-stretch">
+        <div className="flex flex-col items-start p-0 w-55.75 h-4.25 self-stretch">
           <label
             htmlFor={inputId}
-            className="w-[223px] h-[17px] font-label text-[14px] leading-[17px] uppercase text-smoke flex items-center cursor-pointer tracking-wider"
+            className="w-55.75 h-4.25 font-label text-[14px] leading-[17px] uppercase text-smoke flex items-center cursor-pointer tracking-wider"
           >
             PROMO
           </label>
         </div>
 
         {/* Input Container: 223px x 58px */}
-        <div className="relative w-[223px] h-[58px] flex flex-col justify-end">
-          <div className="box-border flex flex-row items-center w-full h-[50px] border-b border-cowboy-umber bg-paper transition-colors focus-within:border-b-2 focus-within:border-smoke">
+        <div className="relative w-55.75 h-14.5 flex flex-col justify-end">
+          <div className="box-border flex flex-row items-center w-full h-12.5 border-b border-cowboy-umber bg-paper transition-colors focus-within:border-b-2 focus-within:border-smoke">
             {/* Promo / Group Code Input Field */}
             <input
               ref={inputRef}
@@ -205,7 +205,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
               disabled={isVerifying}
               placeholder="Promo/Group Code"
               aria-invalid={statusFeedback ? !statusFeedback.isValid : undefined}
-              className="w-full h-[36px] bg-transparent font-body text-[16px] leading-[30px] text-cowboy-umber placeholder:text-cowboy-umber placeholder:opacity-100 border-none outline-none p-0 pr-2"
+              className="w-full h-9 bg-transparent font-body text-[16px] leading-[30px] text-cowboy-umber placeholder:text-cowboy-umber placeholder:opacity-100 border-none outline-none p-0 pr-2"
             />
 
             {/* Trailing action / status indicator */}
@@ -235,7 +235,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
           </div>
 
           {/* Validation Feedback Line */}
-          <div className="h-[16px] mt-1 flex items-center">
+          <div className="h-4 mt-1 flex items-center">
             {statusFeedback?.errorMessage && (
               <span className="text-[11px] font-urbanist font-medium text-bandana-red">
                 {statusFeedback.errorMessage}

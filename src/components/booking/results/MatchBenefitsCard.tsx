@@ -39,7 +39,7 @@ export function MatchBenefitsCard({
   return (
     <aside
       className={`flex h-full flex-col overflow-hidden border-[length:var(--border-width-medium)] border-oxblood bg-white/80 text-oxblood ${
-        compact ? "min-h-[310px] p-4" : "min-h-[620px] p-6"
+        compact ? "min-h-77.5 p-4" : "min-h-155 p-6"
       }`}
     >
       <img
@@ -58,7 +58,7 @@ export function MatchBenefitsCard({
             src="/assets/icons/ui/left_hand_pointing.svg"
             alt=""
             aria-hidden="true"
-            className={`${compact ? "h-6 w-12" : "h-10 w-[82px]"} text-oxblood shrink-0 object-contain`}
+            className={`${compact ? "h-6 w-12" : "h-10 w-20.5"} text-oxblood shrink-0 object-contain`}
           />
           <h3 className={`${compact ? "text-base" : "text-2xl"} max-w-48 font-heading leading-[1.08] text-oxblood`}>
             You’ll love it because …

@@ -119,7 +119,7 @@ export const PropertyLocationGroup: React.FC<LocationGroupProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col justify-center items-start p-3 gap-3 w-[98px] h-[90px] rounded-field bg-transparent ${className}`}
+      className={`flex flex-col justify-center items-start p-3 gap-3 w-24.5 h-22.5 rounded-field bg-transparent ${className}`}
       role="group"
       aria-label="Property Location Filters"
     >

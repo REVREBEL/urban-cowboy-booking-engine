@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import { RoomType, SearchCriteria } from '../types';
 import type { RoomTypeCmsReview } from '../types/room-type-cms';
 import { AmenityWoodcutIcon } from './WoodcutArt';
@@ -18,7 +19,7 @@ function formatReviewDate(value: string | null | undefined): string | null {
   }).format(new Date(timestamp));
 }
 
-interface RoomDetailModalProps {
+export interface RoomDetailModalProps {
   room: RoomType | null;
   criteria: SearchCriteria;
   onClose: () => void;
@@ -32,12 +33,13 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   onClose,
   onProceedToRates,
   review = null,
-}) => {
+}: RoomDetailModalProps) => {
   if (!room) return null;
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-  const reviewDate = formatReviewDate(review?.reviewDate);
+  const activeReview: RoomTypeCmsReview | null = review ?? null;
+  const reviewDate = formatReviewDate(activeReview?.reviewDate);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
@@ -75,7 +77,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
             {/* Thumbnails */}
             <div className="flex items-center gap-3 overflow-x-auto pb-2">
-              {room.images.map((img, idx) => (
+              {room.images.map((img: string, idx: number) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
@@ -151,10 +153,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
                     type={room.bedType.toLowerCase().includes('double') ? 'double-beds' : 'bed'}
-                    className="h-16 sm:h-20 md:h-22 w-auto max-w-[130px] transition-transform duration-300 group-hover:scale-105"
+                    className="h-16 sm:h-20 md:h-22 w-auto max-w-32.5 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-32.5">
                   {room.bedType.toUpperCase().includes('KING') ? 'KING BED' : room.bedType.toUpperCase()}
                 </span>
               </div>
@@ -164,10 +166,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
                     type="robes"
-                    className="h-16 sm:h-20 md:h-22 w-auto max-w-[110px] transition-transform duration-300 group-hover:scale-105"
+                    className="h-16 sm:h-20 md:h-22 w-auto max-w-27.5 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-32.5">
                   PENDLETON<br />WOOL ROBES
                 </span>
               </div>
@@ -177,10 +179,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
                     type="bath-amenities"
-                    className="h-16 sm:h-20 md:h-22 w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
+                    className="h-16 sm:h-20 md:h-22 w-auto max-w-30 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-32.5">
                   SIGNATURE<br />BATH AMENITIES
                 </span>
               </div>
@@ -190,10 +192,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
                     type="minibar"
-                    className="h-16 sm:h-20 md:h-22 w-auto max-w-[110px] transition-transform duration-300 group-hover:scale-105"
+                    className="h-16 sm:h-20 md:h-22 w-auto max-w-27.5 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-32.5">
                   MINIBAR
                 </span>
               </div>
@@ -203,10 +205,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
                     type="desk"
-                    className="h-16 sm:h-20 md:h-22 w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
+                    className="h-16 sm:h-20 md:h-22 w-auto max-w-30 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-32.5">
                   LETTER<br />WRITING DESK
                 </span>
               </div>
@@ -216,10 +218,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
                     type="radiant"
-                    className="h-16 sm:h-20 md:h-22 w-auto max-w-[125px] transition-transform duration-300 group-hover:scale-105"
+                    className="h-16 sm:h-20 md:h-22 w-auto max-w-31.25 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-32.5">
                   RADIANT<br />HEATED FLOORS
                 </span>
               </div>
@@ -229,10 +231,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
                     type="stove"
-                    className="h-16 sm:h-20 md:h-22 w-auto max-w-[110px] transition-transform duration-300 group-hover:scale-105"
+                    className="h-16 sm:h-20 md:h-22 w-auto max-w-27.5 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-32.5">
                   CAST IRON<br />WOOD STOVE
                 </span>
               </div>
@@ -242,10 +244,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
                     type={room.soakType === 'outdoor-cedar-tub' ? 'cedar-tub' : 'clawfoot-tub'}
-                    className="h-16 sm:h-20 md:h-22 w-auto max-w-[130px] transition-transform duration-300 group-hover:scale-105"
+                    className="h-16 sm:h-20 md:h-22 w-auto max-w-32.5 transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
-                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-[130px]">
+                <span className="font-label font-bold text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.22em] text-smoke leading-tight max-w-32.5">
                   {room.soakType === 'outdoor-cedar-tub' ? (
                     <>OUTDOOR CEDAR<br />SOAKING TUB</>
                   ) : (
@@ -256,14 +258,14 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             </div>
           </div>
 
-          {review?.quote?.trim() ? (
+          {activeReview && activeReview.quote && activeReview.quote.trim() ? (
             <div className="border-t border-cowboy-umber/15 pt-4">
               <GuestReviewQuoteCard
-                quote={review.quote}
-                reviewer={review.reviewer}
+                quote={activeReview.quote}
+                reviewer={activeReview.reviewer}
                 date={reviewDate}
-                site={review.source}
-                sourceUrl={review.sourceUrl}
+                site={activeReview.source}
+                sourceUrl={activeReview.sourceUrl}
                 size="lg"
                 className="my-2 px-6 py-10 sm:px-12 sm:py-14"
               />

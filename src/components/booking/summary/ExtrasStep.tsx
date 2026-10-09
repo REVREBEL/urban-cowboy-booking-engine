@@ -51,7 +51,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
   };
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full max-w-400 mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Top Back Navigation */}
       <button
         onClick={onBackToRates}
@@ -120,7 +120,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
       </div>
 
       {/* ================= FLOATING SUMMARY & SCHEDULE BAR ================= */}
-      <div className="sticky bottom-6 z-40 bg-smoke text-white p-4 sm:p-5 rounded-3xl shadow-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-[1600px] mx-auto">
+      <div className="sticky bottom-6 z-40 bg-smoke text-white p-4 sm:p-5 rounded-3xl shadow-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-400 mx-auto">
         <div className="text-center sm:text-left">
           <span className="font-label text-[11px] uppercase tracking-widest text-alpine-linen block">
             RESERVATION SUMMARY

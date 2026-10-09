@@ -136,7 +136,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
         {/* ================= LEFT PRIMARY CARD (482px x 657px in compact) ================= */}
         <div
           className={`relative z-20 shrink-0 box-border ${
-            isCompact ? 'w-[482px]' : 'w-[480px]'
+            isCompact ? 'w-120.5' : 'w-120'
           }`}
         >
           {isCompact ? (
@@ -156,7 +156,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
             >
               {/* offer-card-content / headline section (414px x 251.01px) */}
               <div
-                className="w-full flex flex-col justify-center items-center p-0 gap-[10px]"
+                className="w-full flex flex-col justify-center items-center p-0 gap-2.5"
                 style={{
                   width: '414px',
                   maxWidth: '100%',
@@ -359,7 +359,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     {eyebrow}
                   </div>
 
-                  <div className="w-full flex flex-row items-center justify-between min-h-[120px] select-none">
+                  <div className="w-full flex flex-row items-center justify-between min-h-30 select-none">
                   <div
                     className="font-bold tracking-[-2px] uppercase whitespace-pre-line leading-[0.85]"
                     style={{
@@ -417,7 +417,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                 </div>
 
                 {/* 5. Price Row */}
-                <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
+                <div className="w-full flex flex-col justify-center px-7.5 box-border select-none" style={{ containerType: 'inline-size' }}>
                   <div
                     className="w-full text-smoke font-bold tracking-[0.5px] leading-tight text-left whitespace-nowrap"
                     style={{
@@ -441,7 +441,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     type="button"
                     onClick={handleAction}
                     disabled={disabled || isSubmitting}
-                    className="w-full max-w-[420px] py-4 px-6 rounded-full bg-smoke hover:bg-smoke text-white font-button font-normal text-sm sm:text-base uppercase tracking-[0.1em] shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
+                    className="w-full max-w-105 py-4 px-6 rounded-full bg-smoke hover:bg-smoke text-white font-button font-normal text-sm sm:text-base uppercase tracking-[0.1em] shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
                   >
                     {isSubmitting ? 'Confirming...' : isExpanded ? confirmLabel : ctaLabel}
                   </button>
@@ -461,7 +461,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
         <div
           className={`relative z-10 overflow-hidden transition-all duration-500 ease-out flex flex-row shrink-0 -ml-12 ${
             isExpanded
-              ? `opacity-100 ${isCompact ? 'w-[557px]' : 'w-[512px]'} translate-x-0 pointer-events-auto`
+              ? `opacity-100 ${isCompact ? 'w-139.25' : 'w-128'} translate-x-0 pointer-events-auto`
               : 'opacity-0 w-0 max-w-0 -translate-x-6 pointer-events-none'
           }`}
           style={{
@@ -470,7 +470,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
           }}
         >
           <div
-            className={`h-full ${isCompact ? 'w-[557px]' : 'w-[512px]'} pl-8 pt-0 shrink-0`}
+            className={`h-full ${isCompact ? 'w-139.25' : 'w-128'} pl-8 pt-0 shrink-0`}
             style={{
               width: isCompact ? '557px' : '512px',
               minWidth: isCompact ? '557px' : '512px',

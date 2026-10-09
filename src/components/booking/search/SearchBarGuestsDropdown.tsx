@@ -154,41 +154,41 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
     <div
       role="dialog"
       aria-label="Guest selection"
-      className={`box-border relative flex h-[345px] max-h-[520px] w-[360px] max-w-full flex-col items-start border-2 border-smoke bg-paper p-[24px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none ${className}`}
+      className={`box-border relative flex h-86.25 max-h-130 w-90 max-w-full flex-col items-start border-2 border-smoke bg-paper p-6 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none ${className}`}
     >
       {/* guests-dropdown (308px x 293px, gap: 12px) */}
-      <div className="flex h-[293px] w-full flex-col items-start gap-[12px] p-0 self-stretch">
+      <div className="flex h-73.25 w-full flex-col items-start gap-3 p-0 self-stretch">
         {/* ROW 1: Adults (308px x 57px, padding: 8px 0px) */}
-        <div className="flex flex-row items-center py-[8px] px-0 w-[308px] h-[57px] self-stretch">
+        <div className="flex flex-row items-center py-2 px-0 w-77 h-14.25 self-stretch">
           {/* Text block: Adults + Age 13+ (196px x 41px) */}
-          <div className="flex flex-col items-start p-0 gap-[1px] w-[196px] h-[41px] flex-1">
+          <div className="flex flex-col items-start p-0 gap-px w-49 h-10.25 flex-1">
             <p
               id={adultId}
-              className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-[196px] h-[17px] flex items-center"
+              className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-49 h-4.25 flex items-center"
             >
               Adults
             </p>
-            <p className="font-body text-[12.1px] leading-[23px] text-ash m-0 w-[196px] h-[23px] flex items-center">
+            <p className="font-body text-[12.1px] leading-[23px] text-ash m-0 w-49 h-5.75 flex items-center">
               Age 13+
             </p>
           </div>
 
           {/* Stepper container (112px x 32px, padding-left: 12px) */}
-          <div className="flex flex-col items-start pl-[12px] pr-0 py-0 w-[112px] h-[32px] shrink-0">
-            <div className="flex flex-row items-center p-0 w-[100px] h-[32px] justify-between">
+          <div className="flex flex-col items-start pl-3 pr-0 py-0 w-28 h-8 shrink-0">
+            <div className="flex flex-row items-center p-0 w-25 h-8 justify-between">
               {/* Component Subtract (32px x 32px, border-radius: 17px) */}
               <button
                 type="button"
                 onClick={() => handleAdultsChange(-1)}
                 disabled={isAdultMinusDisabled}
                 aria-label="Decrease adult guests"
-                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-paper rounded-card-media transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
+                className={`box-border flex flex-row justify-center items-center p-1.375 w-8 h-8 bg-paper rounded-card-media transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   isAdultMinusDisabled
                     ? 'border border-mist cursor-not-allowed opacity-40'
                     : 'border border-smoke cursor-pointer hover:bg-alpine-linen-fade active:scale-95'
                 }`}
               >
-                <div className="w-[18px] h-[18px] flex items-center justify-center opacity-80">
+                <div className="w-4.5 h-4.5 flex items-center justify-center opacity-80">
                   <StepperMinusIcon
                     color={isAdultMinusDisabled ? '#F2F2F2' : '#343833'}
                   />
@@ -198,7 +198,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               {/* Count (36px x 30px, Uchen font) */}
               <p
                 aria-live="polite"
-                className="w-[36px] h-[30px] font-number text-[16px] leading-[30px] text-center text-smoke m-0 flex items-center justify-center"
+                className="w-9 h-7.5 font-number text-[16px] leading-[30px] text-center text-smoke m-0 flex items-center justify-center"
               >
                 {currentCounts.adults}
               </p>
@@ -208,9 +208,9 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 type="button"
                 onClick={() => handleAdultsChange(1)}
                 aria-label="Increase adult guests"
-                className="box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-paper border border-smoke rounded-card-media cursor-pointer hover:bg-alpine-linen-fade active:scale-95 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke"
+                className="box-border flex flex-row justify-center items-center p-1.375 w-8 h-8 bg-paper border border-smoke rounded-card-media cursor-pointer hover:bg-alpine-linen-fade active:scale-95 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke"
               >
-                <div className="w-[18px] h-[18px] flex items-center justify-center opacity-80">
+                <div className="w-4.5 h-4.5 flex items-center justify-center opacity-80">
                   <StepperPlusIcon color="#343833" />
                 </div>
               </button>
@@ -220,41 +220,41 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
         {/* Divider 1 (308px x 1px, #E1E0E0) */}
         <div
-          className="w-[308px] h-[1px] bg-alpine-linen-fade self-stretch shrink-0"
+          className="w-77 h-0.25 bg-alpine-linen-fade self-stretch shrink-0"
           aria-hidden="true"
         />
 
         {/* ROW 2: Children (308px x 58px, padding: 8px 0px) */}
-        <div className="flex flex-row items-center py-[8px] px-0 w-[308px] h-[58px] self-stretch">
+        <div className="flex flex-row items-center py-2 px-0 w-77 h-14.5 self-stretch">
           {/* Text block: Children + Age up to 12 (196px x 42px) */}
-          <div className="flex flex-col items-start p-0 gap-[1px] w-[196px] h-[42px] flex-1">
+          <div className="flex flex-col items-start p-0 gap-px w-49 h-10.5 flex-1">
             <p
               id={childrenId}
-              className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-[196px] h-[17px] flex items-center"
+              className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-49 h-4.25 flex items-center"
             >
               Children
             </p>
-            <p className="font-body text-[12.9px] leading-[24px] text-ash m-0 w-[196px] h-[24px] flex items-center">
+            <p className="font-body text-[12.9px] leading-[24px] text-ash m-0 w-49 h-6 flex items-center">
               Ages 4–12
             </p>
           </div>
 
           {/* Stepper container (112px x 32px, padding-left: 12px) */}
-          <div className="flex flex-col items-start pl-[12px] pr-0 py-0 w-[112px] h-[32px] shrink-0">
-            <div className="flex flex-row items-center p-0 w-[100px] h-[32px] justify-between">
+          <div className="flex flex-col items-start pl-3 pr-0 py-0 w-28 h-8 shrink-0">
+            <div className="flex flex-row items-center p-0 w-25 h-8 justify-between">
               {/* Component Subtract */}
               <button
                 type="button"
                 onClick={() => handleChildrenChange(-1)}
                 disabled={isChildrenMinusDisabled}
                 aria-label="Decrease child guests"
-                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-paper rounded-card-media transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
+                className={`box-border flex flex-row justify-center items-center p-1.375 w-8 h-8 bg-paper rounded-card-media transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   isChildrenMinusDisabled
                     ? 'border border-mist cursor-not-allowed opacity-40'
                     : 'border border-smoke cursor-pointer hover:bg-alpine-linen-fade active:scale-95'
                 }`}
               >
-                <div className="w-[18px] h-[18px] flex items-center justify-center opacity-80">
+                <div className="w-4.5 h-4.5 flex items-center justify-center opacity-80">
                   <StepperMinusIcon
                     color={isChildrenMinusDisabled ? '#F2F2F2' : '#343833'}
                   />
@@ -264,7 +264,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               {/* Count (36px x 30px, Uchen font) */}
               <p
                 aria-live="polite"
-                className="w-[36px] h-[30px] font-number text-[16px] leading-[30px] text-center text-smoke m-0 flex items-center justify-center"
+                className="w-9 h-7.5 font-number text-[16px] leading-[30px] text-center text-smoke m-0 flex items-center justify-center"
               >
                 {currentCounts.children}
               </p>
@@ -274,13 +274,13 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 type="button"
                 onClick={() => handleChildrenChange(1)}
                 aria-label="Increase child guests"
-                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-paper rounded-card-media cursor-pointer hover:bg-alpine-linen-fade active:scale-95 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
+                className={`box-border flex flex-row justify-center items-center p-1.375 w-8 h-8 bg-paper rounded-card-media cursor-pointer hover:bg-alpine-linen-fade active:scale-95 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   currentCounts.children === 0
                     ? 'border border-alpine-linen-fade'
                     : 'border border-smoke'
                 }`}
               >
-                <div className="w-[18px] h-[18px] flex items-center justify-center opacity-80">
+                <div className="w-4.5 h-4.5 flex items-center justify-center opacity-80">
                   <StepperPlusIcon color="#343833" />
                 </div>
               </button>
@@ -290,45 +290,45 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
         {/* Divider 2 (308px x 1px, #E1E0E0) */}
         <div
-          className="w-[308px] h-[1px] bg-alpine-linen-fade self-stretch shrink-0"
+          className="w-77 h-0.25 bg-alpine-linen-fade self-stretch shrink-0"
           aria-hidden="true"
         />
 
         {/* ROW 3: Infants (308px x 58px, padding: 8px 0px) */}
-        <div className="flex h-[58px] w-full flex-row items-center px-0 py-[8px] self-stretch">
-          <div className="flex h-[42px] flex-1 flex-col items-start gap-[1px] p-0">
+        <div className="flex h-14.5 w-full flex-row items-center px-0 py-2 self-stretch">
+          <div className="flex h-10.5 flex-1 flex-col items-start gap-px p-0">
             <p
               id={infantsId}
-              className="m-0 flex h-[17px] items-center font-label text-[14px] uppercase leading-[17px] text-smoke"
+              className="m-0 flex h-4.25 items-center font-label text-[14px] uppercase leading-[17px] text-smoke"
             >
               Infants
             </p>
-            <p className="m-0 flex h-[24px] items-center font-body text-[12.9px] leading-[24px] text-ash">
+            <p className="m-0 flex h-6 items-center font-body text-[12.9px] leading-[24px] text-ash">
               Under 4 · in a cot
             </p>
           </div>
 
-          <div className="flex h-[32px] w-[112px] shrink-0 flex-col items-start py-0 pl-[12px] pr-0">
-            <div className="flex h-[32px] w-[100px] flex-row items-center justify-between p-0">
+          <div className="flex h-8 w-28 shrink-0 flex-col items-start py-0 pl-3 pr-0">
+            <div className="flex h-8 w-25 flex-row items-center justify-between p-0">
               <button
                 type="button"
                 onClick={() => handleInfantsChange(-1)}
                 disabled={isInfantsMinusDisabled}
                 aria-label="Decrease infant guests"
-                className={`box-border flex h-[32px] w-[32px] flex-row items-center justify-center rounded-card-media bg-paper p-[5.5px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
+                className={`box-border flex h-8 w-8 flex-row items-center justify-center rounded-card-media bg-paper p-1.375 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   isInfantsMinusDisabled
                     ? 'cursor-not-allowed border border-mist opacity-40'
                     : 'cursor-pointer border border-smoke hover:bg-alpine-linen-fade active:scale-95'
                 }`}
               >
-                <div className="flex h-[18px] w-[18px] items-center justify-center opacity-80">
+                <div className="flex h-4.5 w-4.5 items-center justify-center opacity-80">
                   <StepperMinusIcon color={isInfantsMinusDisabled ? '#F2F2F2' : '#343833'} />
                 </div>
               </button>
 
               <p
                 aria-live="polite"
-                className="m-0 flex h-[30px] w-[36px] items-center justify-center text-center font-number text-[16px] leading-[30px] text-smoke"
+                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-[30px] text-smoke"
               >
                 {currentCounts.infants}
               </p>
@@ -338,13 +338,13 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 onClick={() => handleInfantsChange(1)}
                 disabled={isInfantsPlusDisabled}
                 aria-label="Increase infant guests"
-                className={`box-border flex h-[32px] w-[32px] flex-row items-center justify-center rounded-card-media bg-paper p-[5.5px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
+                className={`box-border flex h-8 w-8 flex-row items-center justify-center rounded-card-media bg-paper p-1.375 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   isInfantsPlusDisabled
                     ? 'cursor-not-allowed border border-mist opacity-40'
                     : 'cursor-pointer border border-smoke hover:bg-alpine-linen-fade active:scale-95'
                 }`}
               >
-                <div className="flex h-[18px] w-[18px] items-center justify-center opacity-80">
+                <div className="flex h-4.5 w-4.5 items-center justify-center opacity-80">
                   <StepperPlusIcon color={isInfantsPlusDisabled ? '#F2F2F2' : '#343833'} />
                 </div>
               </button>
@@ -353,22 +353,22 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
         </div>
 
         <div
-          className="h-[1px] w-full shrink-0 self-stretch bg-alpine-linen-fade"
+          className="h-0.25 w-full shrink-0 self-stretch bg-alpine-linen-fade"
           aria-hidden="true"
         />
 
         {/* ROW 4: Accessible (308px x 57px, padding: 8px 0px) */}
-        <div className="flex flex-row items-center py-[8px] px-0 w-[308px] h-[57px] self-stretch">
+        <div className="flex flex-row items-center py-2 px-0 w-77 h-14.25 self-stretch">
           {/* Text block: Accessible + ADA Rooms (258px x 41px, pr: 16px) */}
-          <div className="flex flex-col items-start pr-[16px] py-0 w-[258px] h-[41px] flex-1">
-            <div className="flex flex-col justify-center items-start p-0 w-[242px] h-[41px] self-stretch">
+          <div className="flex flex-col items-start pr-4 py-0 w-64.5 h-10.25 flex-1">
+            <div className="flex flex-col justify-center items-start p-0 w-60.5 h-10.25 self-stretch">
               <p
                 id={accessibleId}
-                className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-[240px] h-[17px] flex items-center"
+                className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-60 h-4.25 flex items-center"
               >
                 Accessible
               </p>
-              <p className="font-body text-[12.9px] leading-[24px] text-ash m-0 w-[242px] h-[24px] flex items-center">
+              <p className="font-body text-[12.9px] leading-[24px] text-ash m-0 w-60.5 h-6 flex items-center">
                 ADA Rooms
               </p>
             </div>
@@ -381,14 +381,14 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
             aria-checked={currentCounts.accessible}
             aria-labelledby={accessibleId}
             onClick={handleToggleAccessible}
-            className={`box-border relative flex flex-row items-center p-[2px] w-[50px] h-[32px] rounded-card cursor-pointer transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke shrink-0 ${
+            className={`box-border relative flex flex-row items-center p-0.5 w-12.5 h-8 rounded-card cursor-pointer transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke shrink-0 ${
               currentCounts.accessible ? 'bg-smoke' : 'bg-alpine-linen-fade'
             }`}
           >
             {/* Sliding Thumb (28px x 28px, rounded: 14px, #FAF9F9) */}
             <div
-              className={`flex flex-col justify-center items-center w-[28px] h-[28px] bg-paper rounded-control shadow-sm transform transition-transform duration-200 ${
-                currentCounts.accessible ? 'translate-x-[18px]' : 'translate-x-0'
+              className={`flex flex-col justify-center items-center w-7 h-7 bg-paper rounded-control shadow-sm transform transition-transform duration-200 ${
+                currentCounts.accessible ? 'translate-x-4.5' : 'translate-x-0'
               }`}
             >
               {currentCounts.accessible && <ToggleCheckIcon color="#343833" />}

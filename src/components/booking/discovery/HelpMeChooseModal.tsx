@@ -118,14 +118,14 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
                   options={ROOM_MATCHER_PARTY_OPTIONS}
                   value={party}
                   onChange={(value) => setParty(value as PartyType)}
-                  className="max-w-none justify-items-stretch [&>button]:!h-[104px] [&>button]:!w-full"
+                  className="max-w-none justify-items-stretch [&>button]:!h-26 [&>button]:!w-full"
                 />
 
                 <div className="rounded-2xl border border-alpine-linen bg-alpine-linen/60 p-5 text-center">
                   <p className="font-number text-xs font-bold uppercase tracking-[2px] text-cowboy-umber">
                     Bringing the dog?
                   </p>
-                  <p className="mx-auto mt-2 max-w-[190px] font-body text-xs leading-5 text-ash-900">
+                  <p className="mx-auto mt-2 max-w-47.5 font-body text-xs leading-5 text-ash-900">
                     Tap to include your pup in the room match.
                   </p>
 
@@ -147,7 +147,7 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
                   type="button"
                   disabled={!party}
                   onClick={() => setStep(1)}
-                  className="rounded-full bg-cowboy-umber px-8 pb-3 pt-[14px] font-number text-xs font-bold uppercase tracking-[2px] text-white transition-all hover:-translate-y-0.5 hover:bg-smoke disabled:cursor-not-allowed disabled:opacity-35"
+                  className="rounded-full bg-cowboy-umber px-8 pb-3 pt-3.5 font-number text-xs font-bold uppercase tracking-[2px] text-white transition-all hover:-translate-y-0.5 hover:bg-smoke disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   Continue →
                 </button>
@@ -220,7 +220,7 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
                   type="button"
                   disabled={interests.length === 0}
                   onClick={submit}
-                  className="rounded-full bg-cowboy-umber px-8 pb-3 pt-[14px] font-number text-xs font-bold uppercase tracking-[2px] text-white transition-all hover:-translate-y-0.5 hover:bg-smoke disabled:cursor-not-allowed disabled:opacity-35"
+                  className="rounded-full bg-cowboy-umber px-8 pb-3 pt-3.5 font-number text-xs font-bold uppercase tracking-[2px] text-white transition-all hover:-translate-y-0.5 hover:bg-smoke disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   Find My Matches →
                 </button>
