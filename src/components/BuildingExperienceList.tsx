@@ -4,11 +4,7 @@ import type { ShapedRoom } from '@/types/mews';
 import { ROOM_TYPE_GROUPS } from '../data/roomTypeGroups';
 import { ROOM_TYPE_GROUP_PRESENTATION } from '../data/roomTypeGroupPresentation';
 import { RoomsListCard, type RoomCardTheme, type RoomCardLayout } from '@/components/RoomsListCard';
-import {
-  AlpineHausWoodcut,
-  WaldenHausWoodcut,
-  LodgeWoodcut,
-} from './WoodcutArt';
+import { BuildingWoodcut } from './icons/BuildingWoodcut';
 import {
   Calendar,
   Sparkles,
@@ -311,7 +307,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                 {/* Left Column: Architectural Woodcut + Story (Screenshot 1 left) */}
                 <div className="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left pt-2 pb-6 border-b lg:border-b-0 lg:border-r border-cowboy-umber/15 pr-0 lg:pr-8">
                   <div className="mb-4 inline-block">
-                    <AlpineHausWoodcut className="w-60 h-36 sm:w-64 sm:h-40" />
+                    <BuildingWoodcut group="alpine" className="w-60 h-36 sm:w-64 sm:h-40" />
                   </div>
 
                   <h2 className="font-heading font-bold text-4xl sm:text-5xl text-smoke tracking-tight leading-none mb-1">
@@ -352,7 +348,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                 {/* Left Column: Woodcut + Walden Story */}
                 <div className="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left pt-2 pb-6 border-b lg:border-b-0 lg:border-r border-cowboy-umber/15 pr-0 lg:pr-8">
                   <div className="mb-4 inline-block">
-                    <WaldenHausWoodcut className="w-60 h-36 sm:w-64 sm:h-40" />
+                    <BuildingWoodcut group="walden" className="w-60 h-36 sm:w-64 sm:h-40" />
                   </div>
 
                   <h2 className="font-heading font-bold text-4xl sm:text-5xl text-smoke tracking-tight leading-none mb-1">
@@ -402,7 +398,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                 {/* Right Column: Woodcut + Lodge Narrative (Screenshot 4 right) */}
                 <div className="lg:col-span-4 order-1 lg:order-2 flex flex-col items-center lg:items-start text-center lg:text-left pt-2 pb-6 border-b lg:border-b-0 lg:border-l border-cowboy-umber/15 pl-0 lg:pl-8">
                   <div className="mb-4 inline-block">
-                    <LodgeWoodcut className="w-64 h-40 sm:w-72 sm:h-44" />
+                    <BuildingWoodcut group="lodge" className="w-64 h-40 sm:w-72 sm:h-44" />
                   </div>
 
                   <h2 className="font-heading font-bold text-4xl sm:text-5xl text-smoke tracking-tight leading-none mb-1">
@@ -430,11 +426,10 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             <div key={group.key} className="relative border-t border-cowboy-umber/15 pt-16">
               <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
                 <div className="flex flex-col items-center border-b border-cowboy-umber/15 pb-6 text-center lg:col-span-4 lg:items-start lg:border-b-0 lg:border-r lg:pr-8 lg:text-left">
-                  <img
-                    src={presentation.iconPath}
-                    alt=""
-                    aria-hidden="true"
-                    className="mb-4 h-40 w-64 object-contain"
+                  <BuildingWoodcut
+                    group={group.key}
+                    decorative
+                    className="mb-4 h-40 w-64"
                   />
 
                   <h2 className="mb-1 font-heading text-4xl font-bold leading-none tracking-tight text-smoke sm:text-5xl">
