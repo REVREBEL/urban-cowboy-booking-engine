@@ -154,7 +154,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
     <div
       role="dialog"
       aria-label="Guest selection"
-      className={`box-border relative flex h-[345px] max-h-[520px] w-[360px] max-w-full flex-col items-start border-2 border-[#343833] bg-[#FAF9F9] p-[24px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none ${className}`}
+      className={`box-border relative flex h-[345px] max-h-[520px] w-[360px] max-w-full flex-col items-start border-2 border-smoke bg-paper p-[24px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none ${className}`}
     >
       {/* guests-dropdown (308px x 293px, gap: 12px) */}
       <div className="flex h-[293px] w-full flex-col items-start gap-[12px] p-0 self-stretch">
@@ -164,11 +164,11 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
           <div className="flex flex-col items-start p-0 gap-[1px] w-[196px] h-[41px] flex-1">
             <p
               id={adultId}
-              className="font-brothers text-[14px] leading-[17px] uppercase text-[#343833] m-0 w-[196px] h-[17px] flex items-center"
+              className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-[196px] h-[17px] flex items-center"
             >
               Adults
             </p>
-            <p className="font-uchen text-[12.1px] leading-[23px] text-[#AFAEAE] m-0 w-[196px] h-[23px] flex items-center">
+            <p className="font-body text-[12.1px] leading-[23px] text-ash m-0 w-[196px] h-[23px] flex items-center">
               Age 13+
             </p>
           </div>
@@ -182,10 +182,10 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 onClick={() => handleAdultsChange(-1)}
                 disabled={isAdultMinusDisabled}
                 aria-label="Decrease adult guests"
-                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-[#FAF9F9] rounded-[17px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] ${
+                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-paper rounded-card-media transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   isAdultMinusDisabled
-                    ? 'border border-[#F2F2F2] cursor-not-allowed opacity-40'
-                    : 'border border-[#343833] cursor-pointer hover:bg-[#F0EFEB] active:scale-95'
+                    ? 'border border-mist cursor-not-allowed opacity-40'
+                    : 'border border-smoke cursor-pointer hover:bg-alpine-linen-fade active:scale-95'
                 }`}
               >
                 <div className="w-[18px] h-[18px] flex items-center justify-center opacity-80">
@@ -198,7 +198,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               {/* Count (36px x 30px, Uchen font) */}
               <p
                 aria-live="polite"
-                className="w-[36px] h-[30px] font-number text-[16px] leading-[30px] text-center text-[#343833] m-0 flex items-center justify-center"
+                className="w-[36px] h-[30px] font-number text-[16px] leading-[30px] text-center text-smoke m-0 flex items-center justify-center"
               >
                 {currentCounts.adults}
               </p>
@@ -208,7 +208,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 type="button"
                 onClick={() => handleAdultsChange(1)}
                 aria-label="Increase adult guests"
-                className="box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-[#FAF9F9] border border-[#343833] rounded-[17px] cursor-pointer hover:bg-[#F0EFEB] active:scale-95 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833]"
+                className="box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-paper border border-smoke rounded-card-media cursor-pointer hover:bg-alpine-linen-fade active:scale-95 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke"
               >
                 <div className="w-[18px] h-[18px] flex items-center justify-center opacity-80">
                   <StepperPlusIcon color="#343833" />
@@ -220,7 +220,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
         {/* Divider 1 (308px x 1px, #E1E0E0) */}
         <div
-          className="w-[308px] h-[1px] bg-[#E1E0E0] self-stretch shrink-0"
+          className="w-[308px] h-[1px] bg-alpine-linen-fade self-stretch shrink-0"
           aria-hidden="true"
         />
 
@@ -230,11 +230,11 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
           <div className="flex flex-col items-start p-0 gap-[1px] w-[196px] h-[42px] flex-1">
             <p
               id={childrenId}
-              className="font-brothers text-[14px] leading-[17px] uppercase text-[#343833] m-0 w-[196px] h-[17px] flex items-center"
+              className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-[196px] h-[17px] flex items-center"
             >
               Children
             </p>
-            <p className="font-uchen text-[12.9px] leading-[24px] text-[#AFAEAE] m-0 w-[196px] h-[24px] flex items-center">
+            <p className="font-body text-[12.9px] leading-[24px] text-ash m-0 w-[196px] h-[24px] flex items-center">
               Ages 4–12
             </p>
           </div>
@@ -248,10 +248,10 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 onClick={() => handleChildrenChange(-1)}
                 disabled={isChildrenMinusDisabled}
                 aria-label="Decrease child guests"
-                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-[#FAF9F9] rounded-[17px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] ${
+                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-paper rounded-card-media transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   isChildrenMinusDisabled
-                    ? 'border border-[#F2F2F2] cursor-not-allowed opacity-40'
-                    : 'border border-[#343833] cursor-pointer hover:bg-[#F0EFEB] active:scale-95'
+                    ? 'border border-mist cursor-not-allowed opacity-40'
+                    : 'border border-smoke cursor-pointer hover:bg-alpine-linen-fade active:scale-95'
                 }`}
               >
                 <div className="w-[18px] h-[18px] flex items-center justify-center opacity-80">
@@ -264,7 +264,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               {/* Count (36px x 30px, Uchen font) */}
               <p
                 aria-live="polite"
-                className="w-[36px] h-[30px] font-number text-[16px] leading-[30px] text-center text-[#343833] m-0 flex items-center justify-center"
+                className="w-[36px] h-[30px] font-number text-[16px] leading-[30px] text-center text-smoke m-0 flex items-center justify-center"
               >
                 {currentCounts.children}
               </p>
@@ -274,10 +274,10 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 type="button"
                 onClick={() => handleChildrenChange(1)}
                 aria-label="Increase child guests"
-                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-[#FAF9F9] rounded-[17px] cursor-pointer hover:bg-[#F0EFEB] active:scale-95 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] ${
+                className={`box-border flex flex-row justify-center items-center p-[5.5px] w-[32px] h-[32px] bg-paper rounded-card-media cursor-pointer hover:bg-alpine-linen-fade active:scale-95 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   currentCounts.children === 0
-                    ? 'border border-[#E1E0E0]'
-                    : 'border border-[#343833]'
+                    ? 'border border-alpine-linen-fade'
+                    : 'border border-smoke'
                 }`}
               >
                 <div className="w-[18px] h-[18px] flex items-center justify-center opacity-80">
@@ -290,7 +290,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
         {/* Divider 2 (308px x 1px, #E1E0E0) */}
         <div
-          className="w-[308px] h-[1px] bg-[#E1E0E0] self-stretch shrink-0"
+          className="w-[308px] h-[1px] bg-alpine-linen-fade self-stretch shrink-0"
           aria-hidden="true"
         />
 
@@ -299,11 +299,11 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
           <div className="flex h-[42px] flex-1 flex-col items-start gap-[1px] p-0">
             <p
               id={infantsId}
-              className="m-0 flex h-[17px] items-center font-brothers text-[14px] uppercase leading-[17px] text-[#343833]"
+              className="m-0 flex h-[17px] items-center font-label text-[14px] uppercase leading-[17px] text-smoke"
             >
               Infants
             </p>
-            <p className="m-0 flex h-[24px] items-center font-uchen text-[12.9px] leading-[24px] text-[#AFAEAE]">
+            <p className="m-0 flex h-[24px] items-center font-body text-[12.9px] leading-[24px] text-ash">
               Under 4 · in a cot
             </p>
           </div>
@@ -315,10 +315,10 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 onClick={() => handleInfantsChange(-1)}
                 disabled={isInfantsMinusDisabled}
                 aria-label="Decrease infant guests"
-                className={`box-border flex h-[32px] w-[32px] flex-row items-center justify-center rounded-[17px] bg-[#FAF9F9] p-[5.5px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] ${
+                className={`box-border flex h-[32px] w-[32px] flex-row items-center justify-center rounded-card-media bg-paper p-[5.5px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   isInfantsMinusDisabled
-                    ? 'cursor-not-allowed border border-[#F2F2F2] opacity-40'
-                    : 'cursor-pointer border border-[#343833] hover:bg-[#F0EFEB] active:scale-95'
+                    ? 'cursor-not-allowed border border-mist opacity-40'
+                    : 'cursor-pointer border border-smoke hover:bg-alpine-linen-fade active:scale-95'
                 }`}
               >
                 <div className="flex h-[18px] w-[18px] items-center justify-center opacity-80">
@@ -328,7 +328,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
               <p
                 aria-live="polite"
-                className="m-0 flex h-[30px] w-[36px] items-center justify-center text-center font-number text-[16px] leading-[30px] text-[#343833]"
+                className="m-0 flex h-[30px] w-[36px] items-center justify-center text-center font-number text-[16px] leading-[30px] text-smoke"
               >
                 {currentCounts.infants}
               </p>
@@ -338,10 +338,10 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
                 onClick={() => handleInfantsChange(1)}
                 disabled={isInfantsPlusDisabled}
                 aria-label="Increase infant guests"
-                className={`box-border flex h-[32px] w-[32px] flex-row items-center justify-center rounded-[17px] bg-[#FAF9F9] p-[5.5px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] ${
+                className={`box-border flex h-[32px] w-[32px] flex-row items-center justify-center rounded-card-media bg-paper p-[5.5px] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke ${
                   isInfantsPlusDisabled
-                    ? 'cursor-not-allowed border border-[#F2F2F2] opacity-40'
-                    : 'cursor-pointer border border-[#343833] hover:bg-[#F0EFEB] active:scale-95'
+                    ? 'cursor-not-allowed border border-mist opacity-40'
+                    : 'cursor-pointer border border-smoke hover:bg-alpine-linen-fade active:scale-95'
                 }`}
               >
                 <div className="flex h-[18px] w-[18px] items-center justify-center opacity-80">
@@ -353,7 +353,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
         </div>
 
         <div
-          className="h-[1px] w-full shrink-0 self-stretch bg-[#E1E0E0]"
+          className="h-[1px] w-full shrink-0 self-stretch bg-alpine-linen-fade"
           aria-hidden="true"
         />
 
@@ -364,11 +364,11 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
             <div className="flex flex-col justify-center items-start p-0 w-[242px] h-[41px] self-stretch">
               <p
                 id={accessibleId}
-                className="font-brothers text-[14px] leading-[17px] uppercase text-[#343833] m-0 w-[240px] h-[17px] flex items-center"
+                className="font-label text-[14px] leading-[17px] uppercase text-smoke m-0 w-[240px] h-[17px] flex items-center"
               >
                 Accessible
               </p>
-              <p className="font-uchen text-[12.9px] leading-[24px] text-[#AFAEAE] m-0 w-[242px] h-[24px] flex items-center">
+              <p className="font-body text-[12.9px] leading-[24px] text-ash m-0 w-[242px] h-[24px] flex items-center">
                 ADA Rooms
               </p>
             </div>
@@ -381,13 +381,13 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
             aria-checked={currentCounts.accessible}
             aria-labelledby={accessibleId}
             onClick={handleToggleAccessible}
-            className={`box-border relative flex flex-row items-center p-[2px] w-[50px] h-[32px] rounded-[16px] cursor-pointer transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] shrink-0 ${
-              currentCounts.accessible ? 'bg-[#343833]' : 'bg-[#E1E0E0]'
+            className={`box-border relative flex flex-row items-center p-[2px] w-[50px] h-[32px] rounded-card cursor-pointer transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke shrink-0 ${
+              currentCounts.accessible ? 'bg-smoke' : 'bg-alpine-linen-fade'
             }`}
           >
             {/* Sliding Thumb (28px x 28px, rounded: 14px, #FAF9F9) */}
             <div
-              className={`flex flex-col justify-center items-center w-[28px] h-[28px] bg-[#FAF9F9] rounded-[14px] shadow-sm transform transition-transform duration-200 ${
+              className={`flex flex-col justify-center items-center w-[28px] h-[28px] bg-paper rounded-control shadow-sm transform transition-transform duration-200 ${
                 currentCounts.accessible ? 'translate-x-[18px]' : 'translate-x-0'
               }`}
             >

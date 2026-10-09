@@ -113,7 +113,7 @@ export function RoomDetailDrawer({
       <div
         onClick={close}
         aria-hidden="true"
-        className={`absolute inset-0 bg-ink/55 transition-opacity duration-300 ${entered ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 bg-smoke/55 transition-opacity duration-300 ${entered ? "opacity-100" : "opacity-0"}`}
       />
       <div
         ref={drawerRef}
@@ -137,7 +137,7 @@ export function RoomDetailDrawer({
               type="button"
               onClick={close}
               aria-label={t("roomDetail.close")}
-              className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-ink shadow-card backdrop-blur transition hover:bg-white"
+              className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-smoke shadow-card backdrop-blur transition hover:bg-white"
             >
               <IconClose className="h-5 w-5" />
             </button>
@@ -166,7 +166,7 @@ export function RoomDetailDrawer({
           <div className="grid gap-x-7 gap-y-6 px-5 py-5 sm:grid-cols-2 sm:px-6">
             {/* Colonne gauche : infos */}
             <div>
-              <h2 id={titleId} className="font-display text-2xl text-ink">{room.name}</h2>
+              <h2 id={titleId} className="font-heading text-2xl text-smoke">{room.name}</h2>
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-teal-deep/85">
                 {room.capacity > 0 && (
                   <span className="inline-flex items-center gap-1.5">
@@ -189,16 +189,16 @@ export function RoomDetailDrawer({
                 <RoomTagsPanel tags={tags} />
               </div>
               {room.description && (
-                <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink/75">{room.description}</p>
+                <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-smoke/75">{room.description}</p>
               )}
             </div>
 
             {/* Colonne droite : tarifs */}
             <div>
               <div className="flex items-center justify-between gap-3">
-                <h3 className="font-display text-lg text-teal-deep">{t("roomDetail.chooseRate")}</h3>
+                <h3 className="font-heading text-lg text-teal-deep">{t("roomDetail.chooseRate")}</h3>
                 <div className="flex items-center gap-2">
-                  <span className={`text-[11px] ${confirmError ? "text-red-600" : "text-ink/45"}`}>
+                  <span className={`text-[11px] ${confirmError ? "text-red-600" : "text-smoke/45"}`}>
                     {confirming
                       ? t("roomDetail.confirming")
                       : confirmError
@@ -226,12 +226,12 @@ export function RoomDetailDrawer({
                   return (
                     <li
                       key={rate.rateId}
-                      className={`rounded-2xl border p-4 transition ${best ? "border-turquoise bg-white shadow-card" : "border-ink/10 bg-white/70"}`}
+                      className={`rounded-2xl border p-4 transition ${best ? "border-turquoise bg-white shadow-card" : "border-smoke/10 bg-white/70"}`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="font-semibold text-ink">{rate.name}</p>
+                            <p className="font-semibold text-smoke">{rate.name}</p>
                             {best && (
                               <span className="chip bg-turquoise text-white">
                                 <IconCheck className="h-3.5 w-3.5" /> {t("roomDetail.bestPrice")}
@@ -239,17 +239,17 @@ export function RoomDetailDrawer({
                             )}
                             {rate.isPrivate && <span className="chip bg-creole/20 text-creole">{t("roomDetail.privateRate")}</span>}
                           </div>
-                          {rate.description && <p className="mt-1 text-sm leading-relaxed text-ink/60">{rate.description}</p>}
+                          {rate.description && <p className="mt-1 text-sm leading-relaxed text-smoke/60">{rate.description}</p>}
                           <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-teal-deep/70">
                             <IconShield className="h-3.5 w-3.5" />
                             {rate.settlement.isAutomatic ? t("roomDetail.securePayment") : t("roomDetail.payAtHotel")}
                           </p>
                         </div>
                         <div className="shrink-0 text-right">
-                          {rate.maxGross != null && <p className="text-xs text-ink/40 line-through">{money(rate.maxGross, rate.currency)}</p>}
-                          <p className="font-display text-2xl text-teal-deep">{money(total, rate.currency)}</p>
+                          {rate.maxGross != null && <p className="text-xs text-smoke/40 line-through">{money(rate.maxGross, rate.currency)}</p>}
+                          <p className="font-heading text-2xl text-teal-deep">{money(total, rate.currency)}</p>
                           {rate.perNightGross != null && (
-                            <p className="text-[11px] text-ink/45">
+                            <p className="text-[11px] text-smoke/45">
                               {money(rate.perNightGross, rate.currency)}{t("roomDetail.perNightNights", { count: nightsCount })}
                             </p>
                           )}

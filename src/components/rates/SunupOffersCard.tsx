@@ -5,7 +5,7 @@ const SunupCornerFlourish = ({ className = '' }: { className?: string }) => (
   <svg
     aria-hidden="true"
     viewBox="0 0 42 42"
-    className={`absolute h-9 w-9 text-[#9A5636] ${className}`}
+    className={`absolute h-9 w-9 text-copper ${className}`}
     fill="none"
   >
     <path d="M1 20C12 20 20 12 20 1" stroke="currentColor" strokeWidth="3.5" />
@@ -15,7 +15,7 @@ const SunupCornerFlourish = ({ className = '' }: { className?: string }) => (
 );
 
 const SunupInsetFrame = () => (
-  <div aria-hidden="true" className="pointer-events-none absolute inset-[10px] z-10 rounded-[40px] border-[4px] border-[#9A5636]">
+  <div aria-hidden="true" className="pointer-events-none absolute inset-[10px] z-10 rounded-modal-xl border-[length:var(--border-width-heavy)] border-copper">
     <SunupCornerFlourish className="-left-[11px] -top-[11px]" />
     <SunupCornerFlourish className="-right-[11px] -top-[11px] rotate-90" />
     <SunupCornerFlourish className="-bottom-[11px] -right-[11px] rotate-180" />
@@ -142,7 +142,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 maxWidth: '100%',
                 height: '657px',
                 padding: '54px 30px',
-                backgroundColor: '#EBE8E0',
+                backgroundColor: 'var(--color-alpine-linen)',
                 border: '4px solid #9A5636',
                 borderRadius: '45px',
               }}
@@ -151,7 +151,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
               <div
                 className="w-full text-center font-bold uppercase select-none tracking-[-0.5px]"
                 style={{
-                  color: '#69253A',
+                  color: 'var(--color-oxblood)',
                   fontFamily: "'Noto Serif Tibetan', 'Noto Serif', Georgia, serif",
                   fontSize: '26px',
                   lineHeight: '30px',
@@ -166,7 +166,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 <h2
                   className="w-full font-bold uppercase text-center m-0 select-none whitespace-pre-line tracking-tight"
                   style={{
-                    color: '#9A5636',
+                    color: 'var(--color-copper)',
                     fontFamily: "'Rundeck', 'League Spartan', 'Arial Black', sans-serif",
                     fontSize: 'clamp(50px, 12vw, 68px)',
                     lineHeight: '62px',
@@ -183,7 +183,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 <div
                   className="w-full text-left font-bold uppercase select-none whitespace-nowrap"
                   style={{
-                    color: '#9A5636',
+                    color: 'var(--color-copper)',
                     fontFamily: "'Rundeck', 'League Spartan', sans-serif",
                     fontSize: 'clamp(28px, 9cqw, 44px)',
                     lineHeight: '44px',
@@ -195,7 +195,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 <div
                   className="w-full text-right font-normal select-none mt-0.5"
                   style={{
-                    color: '#69253A',
+                    color: 'var(--color-oxblood)',
                     fontFamily: "'Noto Serif Tibetan', 'Noto Serif', serif",
                     fontSize: '17px',
                     lineHeight: '20px',
@@ -211,7 +211,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 <p
                   className="w-full font-normal text-center m-0 whitespace-normal"
                   style={{
-                    color: '#9A5636',
+                    color: 'var(--color-copper)',
                     fontFamily: "'Noto Serif Tibetan', 'Noto Serif', Georgia, serif",
                     fontSize: '15px',
                     lineHeight: '22px',
@@ -227,13 +227,13 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3.5 rounded-full bg-[#9A5636] text-[#EBE8E0] font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:brightness-110 whitespace-nowrap"
+                      className="px-8 py-3.5 rounded-full bg-copper text-alpine-linen font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:brightness-110 whitespace-nowrap"
                       style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
                     <span
-                      className="text-xs text-[#69253A] text-center"
+                      className="text-xs text-oxblood text-center"
                       style={{ fontFamily: "'Noto Serif Tibetan', 'Noto Serif', serif" }}
                     >
                       {cancellationText}
@@ -247,7 +247,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
             <div
               className="relative w-full h-full box-border transition-all duration-300 shadow-lg hover:shadow-xl"
               style={{
-                backgroundColor: '#EBE8E0',
+                backgroundColor: 'var(--color-alpine-linen)',
                 borderRadius: '50px',
                 padding: '6px',
               }}
@@ -265,7 +265,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                     <div
                       className="w-full text-center uppercase font-bold tracking-[-1px] select-none leading-none"
                       style={{
-                        color: '#69253A',
+                        color: 'var(--color-oxblood)',
                         fontFamily: "'Noto Serif Tibetan', 'Noto Serif', Georgia, serif",
                         fontSize: '26px',
                         transform: 'rotate(0.28deg)',
@@ -277,7 +277,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                     <h2
                       className="w-full font-bold uppercase text-center m-0 select-none whitespace-pre-line"
                       style={{
-                        color: '#9A5636',
+                        color: 'var(--color-copper)',
                         fontFamily: "'Rundeck', 'League Spartan', 'Arial Black', sans-serif",
                         fontSize: 'clamp(52px, 13vw, 72px)',
                         lineHeight: '68px',
@@ -293,7 +293,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                     <p
                       className="w-full font-normal text-center m-0 whitespace-normal"
                       style={{
-                        color: '#9A5636',
+                        color: 'var(--color-copper)',
                         fontFamily: "'Noto Serif Tibetan', 'Noto Serif', Georgia, serif",
                         fontSize: '20px',
                         lineHeight: '28px',
@@ -311,7 +311,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                     <div
                       className="w-full text-left font-bold uppercase select-none whitespace-nowrap"
                       style={{
-                        color: '#9A5636',
+                        color: 'var(--color-copper)',
                         fontFamily: "'Rundeck', 'League Spartan', sans-serif",
                         fontSize: 'clamp(28px, 9cqw, 42px)',
                         lineHeight: '44px',
@@ -323,7 +323,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                     <div
                       className="w-full text-right font-normal select-none mt-0.5"
                       style={{
-                        color: '#69253A',
+                        color: 'var(--color-oxblood)',
                         fontFamily: "'Noto Serif Tibetan', 'Noto Serif', serif",
                         fontSize: '17px',
                         lineHeight: '20px',
@@ -339,14 +339,14 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className={`group w-full max-w-[380px] min-h-[66px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#9A5636]/30 active:scale-[0.98] whitespace-nowrap ${
+                      className={`group w-full max-w-[380px] min-h-[66px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-copper/30 active:scale-[0.98] whitespace-nowrap ${
                         disabled
-                          ? 'opacity-50 cursor-not-allowed bg-[#9A5636]/50 text-[#EBE8E0]/60 border-[#9A5636]/50'
+                          ? 'opacity-50 cursor-not-allowed bg-copper/50 text-alpine-linen/60 border-copper/50'
                           : isExpanded
-                          ? 'bg-[#9A5636] text-[#EBE8E0]'
+                          ? 'bg-copper text-alpine-linen'
                           : isSubmitting
-                          ? 'bg-[#9A5636] text-[#EBE8E0] cursor-wait'
-                          : 'cursor-pointer bg-[#9A5636] text-[#EBE8E0] hover:bg-transparent hover:text-[#9A5636]'
+                          ? 'bg-copper text-alpine-linen cursor-wait'
+                          : 'cursor-pointer bg-copper text-alpine-linen hover:bg-transparent hover:text-copper'
                       }`}
                       style={{
                         border: '3.5px solid #9A5636',
@@ -373,7 +373,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                     <div
                       className="w-full text-center font-normal text-[13px] tracking-[1px] select-none whitespace-nowrap"
                       style={{
-                        color: '#69253A',
+                        color: 'var(--color-oxblood)',
                         fontFamily: "'Noto Serif Tibetan', 'Noto Serif', serif",
                       }}
                     >

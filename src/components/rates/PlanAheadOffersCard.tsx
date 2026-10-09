@@ -117,7 +117,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                 maxWidth: '100%',
                 height: '657px',
                 padding: '54px 30px',
-                backgroundColor: '#F2F2F2',
+                backgroundColor: 'var(--color-mist)',
                 border: '4px solid #343833',
                 borderRadius: '45px',
               }}
@@ -141,7 +141,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
               {/* Price Display */}
               <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
-                  className="w-full text-left font-semibold text-[#343833] uppercase select-none whitespace-nowrap"
+                  className="w-full text-left font-semibold text-smoke uppercase select-none whitespace-nowrap"
                   style={{
                     fontFamily: "'League Spartan', sans-serif",
                     fontSize: 'clamp(28px, 9cqw, 44px)',
@@ -152,7 +152,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                   {price} {priceUnit}
                 </div>
                 <div
-                  className="w-full text-right text-[#343833] font-normal select-none mt-0.5"
+                  className="w-full text-right text-smoke font-normal select-none mt-0.5"
                   style={{
                     fontFamily: "'Arvo', Georgia, serif",
                     fontSize: '17px',
@@ -185,7 +185,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3.5 rounded-full bg-[#343833] text-[#F9F9F9] font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-[#221C18] whitespace-nowrap border-2 border-[#4E332D]"
+                      className="px-8 py-3.5 rounded-full bg-smoke text-paper font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-smoke whitespace-nowrap border-2 border-cowboy-umber"
                       style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
@@ -205,7 +205,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
             <div
               className="relative w-full h-full box-border transition-all duration-300 shadow-lg hover:shadow-xl"
               style={{
-                backgroundColor: '#F2F2F2',
+                backgroundColor: 'var(--color-mist)',
                 border: '4px solid #343833',
                 borderRadius: '50px',
                 padding: '40px 28px',
@@ -252,7 +252,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                 <div className="w-full flex flex-col items-center gap-4">
                   <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
-                      className="w-full text-left font-semibold text-[#343833] uppercase select-none whitespace-nowrap"
+                      className="w-full text-left font-semibold text-smoke uppercase select-none whitespace-nowrap"
                       style={{
                         fontFamily: "'League Spartan', sans-serif",
                         fontSize: 'clamp(28px, 9cqw, 44px)',
@@ -263,7 +263,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                       {price} {priceUnit}
                     </div>
                     <div
-                      className="w-full text-right text-[#343833] font-normal select-none mt-0.5"
+                      className="w-full text-right text-smoke font-normal select-none mt-0.5"
                       style={{
                         fontFamily: "'Arvo', Georgia, serif",
                         fontSize: '17px',
@@ -280,14 +280,14 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className={`group w-full max-w-[380px] min-h-[66px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#343833]/30 active:scale-[0.98] whitespace-nowrap ${
+                      className={`group w-full max-w-[380px] min-h-[66px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-smoke/30 active:scale-[0.98] whitespace-nowrap ${
                         disabled
-                          ? 'opacity-50 cursor-not-allowed bg-[#343833]/50 text-white/50 border-[#4E332D]/50'
+                          ? 'opacity-50 cursor-not-allowed bg-smoke/50 text-white/50 border-cowboy-umber/50'
                           : isExpanded
-                          ? 'bg-[#343833] text-white'
+                          ? 'bg-smoke text-white'
                           : isSubmitting
-                          ? 'bg-[#343833] text-white cursor-wait'
-                          : 'cursor-pointer bg-[#343833] text-[#F9F9F9] hover:bg-transparent hover:text-[#343833]'
+                          ? 'bg-smoke text-white cursor-wait'
+                          : 'cursor-pointer bg-smoke text-paper hover:bg-transparent hover:text-smoke'
                       }`}
                       style={{
                         border: '3.5px solid #4E332D',

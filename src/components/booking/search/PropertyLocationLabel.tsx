@@ -55,7 +55,7 @@ export const PropertyLocationLabel: React.FC<PropertyLocationLabelProps> = ({
       aria-busy={isSubmitting}
       className={`
         inline-flex items-center justify-center transition-all duration-200 select-none
-        ${interactive ? 'cursor-pointer hover:opacity-80 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4E332D]' : ''}
+        ${interactive ? 'cursor-pointer hover:opacity-80 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber' : ''}
         ${selected ? 'opacity-100 font-bold' : interactive ? 'opacity-60 hover:opacity-100' : 'opacity-100'}
         ${isSubmitting ? 'cursor-wait opacity-50' : ''}
         ${className}
@@ -67,7 +67,7 @@ export const PropertyLocationLabel: React.FC<PropertyLocationLabelProps> = ({
         fontSize: '12px',
         lineHeight: '14px',
         letterSpacing: '2px',
-        color: '#4E332D',
+        color: 'var(--color-cowboy-umber)',
         textTransform: 'uppercase',
         ...style,
       }}
@@ -75,7 +75,7 @@ export const PropertyLocationLabel: React.FC<PropertyLocationLabelProps> = ({
       {isSubmitting ? (
         <span className="flex items-center gap-1.5">
           <svg
-            className="animate-spin h-3 w-3 text-[#4E332D]"
+            className="animate-spin h-3 w-3 text-cowboy-umber"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -119,7 +119,7 @@ export const PropertyLocationGroup: React.FC<LocationGroupProps> = ({
 }) => {
   return (
     <div
-      className={`flex flex-col justify-center items-start p-3 gap-3 w-[98px] h-[90px] rounded-[5px] bg-transparent ${className}`}
+      className={`flex flex-col justify-center items-start p-3 gap-3 w-[98px] h-[90px] rounded-field bg-transparent ${className}`}
       role="group"
       aria-label="Property Location Filters"
     >

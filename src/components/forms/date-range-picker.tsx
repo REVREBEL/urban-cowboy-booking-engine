@@ -189,7 +189,7 @@ export function DateRangePicker({
         aria-expanded={open}
         aria-controls={pickerId}
         onClick={() => (open ? closePicker(false) : openPicker())}
-        className="flex w-full items-stretch overflow-hidden rounded-2xl border border-ink/15 bg-white text-left transition hover:border-turquoise"
+        className="flex w-full items-stretch overflow-hidden rounded-2xl border border-smoke/15 bg-white text-left transition hover:border-turquoise"
       >
         <Segment
           label={t("datePicker.checkIn")}
@@ -197,7 +197,7 @@ export function DateRangePicker({
           active={open && !checkIn}
           icon
         />
-        <span className="my-2 w-px bg-ink/10" />
+        <span className="my-2 w-px bg-smoke/10" />
         <Segment
           label={t("datePicker.checkOut")}
           value={checkOut ? fmtDate(checkOut) : t("datePicker.when")}
@@ -212,7 +212,7 @@ export function DateRangePicker({
           role="dialog"
           aria-modal="false"
           aria-label={t("datePicker.selectDates")}
-          className="absolute left-0 right-0 z-50 mt-2 animate-scale-in rounded-2xl border border-ink/10 bg-white p-4 shadow-float sm:left-auto sm:right-auto sm:w-[640px] sm:p-5"
+          className="absolute left-0 right-0 z-50 mt-2 animate-scale-in rounded-2xl border border-smoke/10 bg-white p-4 shadow-float sm:left-auto sm:right-auto sm:w-[640px] sm:p-5"
         >
           <div className="mb-3 flex items-center justify-between">
             <button
@@ -224,7 +224,7 @@ export function DateRangePicker({
             >
               <IconChevron aria-hidden="true" className="h-4 w-4 rotate-180" />
             </button>
-            <p className="font-number text-base capitalize text-ink">
+            <p className="font-number text-base capitalize text-smoke">
               {n > 0 ? t("datePicker.nights", { count: n }) : t("datePicker.selectDates")}
             </p>
             <button
@@ -240,7 +240,7 @@ export function DateRangePicker({
           <div className="grid gap-6 sm:grid-cols-2">
             {months.map((mv, idx) => (
               <div key={`${mv.y}-${mv.m}`} className={idx === 1 ? "hidden sm:block" : ""}>
-                <p className="mb-2 text-center font-number text-sm font-semibold capitalize text-ink">
+                <p className="mb-2 text-center font-number text-sm font-semibold capitalize text-smoke">
                   {monthLabel(mv.y, mv.m)}
                 </p>
                 <div role="grid" className="grid grid-cols-7 gap-y-1 text-center">
@@ -249,7 +249,7 @@ export function DateRangePicker({
                       key={w}
                       role="columnheader"
                       aria-label={w}
-                      className="pb-1 text-[11px] font-medium uppercase text-ink/35"
+                      className="pb-1 text-[11px] font-medium uppercase text-smoke/35"
                     >
                       {w.charAt(0)}
                     </span>
@@ -295,10 +295,10 @@ export function DateRangePicker({
                           aria-current={day === isoDay(0) ? "date" : undefined}
                           className={`absolute inset-0 m-auto grid h-9 w-9 place-items-center rounded-full font-number text-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-turquoise ${
                             disabled
-                              ? "cursor-not-allowed text-ink/25 line-through"
+                              ? "cursor-not-allowed text-smoke/25 line-through"
                               : edge
                                 ? "bg-teal-deep font-semibold text-cream"
-                                : "text-ink hover:bg-turquoise/20"
+                                : "text-smoke hover:bg-turquoise/20"
                           }`}
                         >
                           {parseInt(day.slice(8), 10)}
@@ -311,7 +311,7 @@ export function DateRangePicker({
             ))}
           </div>
 
-          <div className="mt-4 flex items-center justify-between border-t border-ink/10 pt-3">
+          <div className="mt-4 flex items-center justify-between border-t border-smoke/10 pt-3">
             <button
               type="button"
               onClick={() => {
@@ -321,7 +321,7 @@ export function DateRangePicker({
                 setViewForDay(minDate);
                 focusDay(minDate);
               }}
-              className="text-sm font-semibold text-ink/60 underline-offset-4 hover:text-ink hover:underline"
+              className="text-sm font-semibold text-smoke/60 underline-offset-4 hover:text-smoke hover:underline"
             >
               {t("datePicker.clear")}
             </button>
@@ -353,7 +353,7 @@ function Segment({
         <span className="block text-[11px] font-semibold uppercase tracking-wide text-teal-deep/60">{label}</span>
         <span
           className={`block truncate font-number text-sm ${
-            value === t("datePicker.when") ? "text-ink/40" : "font-medium text-ink"
+            value === t("datePicker.when") ? "text-smoke/40" : "font-medium text-smoke"
           }`}
         >
           {value}

@@ -161,7 +161,7 @@ export function Payment() {
         : "Confirm & Guarantee Stay";
 
   return (
-    <div className="min-h-screen bg-[#FAF9F9]">
+    <div className="min-h-screen bg-paper">
       <CheckoutStep
         eyebrow="STEP 5 OF 5 · RESERVATION GUARANTEE"
         title="Review & Guarantee"
@@ -174,18 +174,18 @@ export function Payment() {
         backLabel="Back to Curated Add-ons"
       >
         <div className="space-y-5 sm:space-y-6 2xl:space-y-7">
-          <div className="rounded-2xl border-2 border-[#D1C9BE] bg-white p-5 shadow-2xs 2xl:rounded-3xl 2xl:p-6">
+          <div className="rounded-2xl border-2 border-alpine-linen bg-white p-5 shadow-2xs 2xl:rounded-3xl 2xl:p-6">
             <div className="flex items-start gap-4">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#0E301A]/10 text-[#0E301A]">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-lake-forest/10 text-lake-forest">
                 <ShieldCheck className="h-6 w-6" aria-hidden="true" />
               </span>
               <div>
-                <h2 className="font-brothers text-base font-bold uppercase tracking-wide text-[#4E332D] sm:text-lg">
+                <h2 className="font-label text-base font-bold uppercase tracking-wide text-cowboy-umber sm:text-lg">
                   {onSession
                     ? t("payment.methodOnlineTitle")
                     : t("payment.methodArrivalTitle")}
                 </h2>
-                <p className="mt-1 font-editorial text-sm leading-6 text-[#6B6259] sm:text-base">
+                <p className="mt-1 font-body text-sm leading-6 text-ash-900 sm:text-base">
                   {onSession
                     ? t("payment.methodOnlineDesc")
                     : t("payment.methodArrivalDesc")}
@@ -194,7 +194,7 @@ export function Payment() {
             </div>
           </div>
 
-          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-[#D1C9BE] bg-white p-5 text-sm leading-6 text-[#6B6259] shadow-2xs">
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-alpine-linen bg-white p-5 text-sm leading-6 text-ash-900 shadow-2xs">
             <input
               type="checkbox"
               className="mt-1 h-5 w-5 shrink-0 accent-[#9A5636]"
@@ -208,12 +208,12 @@ export function Payment() {
                   href={hotel.TermsAndConditionsUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-bold text-[#4E332D] underline underline-offset-4"
+                  className="font-bold text-cowboy-umber underline underline-offset-4"
                 >
                   {t("payment.termsLink")}
                 </a>
               ) : (
-                <strong className="text-[#4E332D]">
+                <strong className="text-cowboy-umber">
                   {t("payment.termsLink")}
                 </strong>
               )}{" "}
@@ -227,7 +227,7 @@ export function Payment() {
               <button
                 type="button"
                 onClick={() => goTo("results")}
-                className="mt-3 rounded-full bg-[#4E332D] px-5 py-2.5 font-woodblock text-xs uppercase tracking-wider text-white"
+                className="mt-3 rounded-full bg-cowboy-umber px-5 py-2.5 font-label text-xs uppercase tracking-wider text-white"
               >
                 {t("payment.editSearch")}
               </button>
@@ -248,17 +248,17 @@ export function Payment() {
               <button
                 type="button"
                 onClick={refreshQuote}
-                className="font-woodblock text-xs uppercase tracking-wider text-[#4E332D] underline underline-offset-4"
+                className="font-label text-xs uppercase tracking-wider text-cowboy-umber underline underline-offset-4"
               >
                 {t("common.retry")}
               </button>
             </div>
           ) : null}
 
-          <div className="border-t-2 border-[#D1C9BE] pt-4 2xl:pt-6">
+          <div className="border-t-2 border-alpine-linen pt-4 2xl:pt-6">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3 2xl:mb-6">
-              <div className="flex items-center gap-3 text-xs text-[#6B6259] sm:text-sm">
-                <Check className="h-5 w-5 text-[#0E301A]" aria-hidden="true" />
+              <div className="flex items-center gap-3 text-xs text-ash-900 sm:text-sm">
+                <Check className="h-5 w-5 text-lake-forest" aria-hidden="true" />
                 <span>{t("payment.reassurance")}</span>
               </div>
               <SecureBadge />
@@ -274,7 +274,7 @@ export function Payment() {
                 quoteProblem ||
                 !quoteUsable
               }
-              className="group flex w-full items-center justify-center gap-2 rounded-full bg-[#4E332D] py-4 font-woodblock text-sm uppercase tracking-widest text-white shadow-lg transition-all hover:bg-[#221C18] hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-[#D1C9BE] disabled:text-[#73716D] disabled:shadow-none sm:py-5 sm:text-base 2xl:py-6 2xl:text-lg"
+              className="group flex w-full items-center justify-center gap-2 rounded-full bg-cowboy-umber py-4 font-label text-sm uppercase tracking-widest text-white shadow-lg transition-all hover:bg-smoke hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-alpine-linen disabled:text-smoke-fade disabled:shadow-none sm:py-5 sm:text-base 2xl:py-6 2xl:text-lg"
             >
               <span>{ctaLabel}</span>
               {!submitting && !quoteLoading ? (

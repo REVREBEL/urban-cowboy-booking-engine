@@ -29,8 +29,8 @@ export function RatingPill({
   return (
     <span className={`inline-flex items-center gap-1.5 text-sm ${className}`}>
       <IconStar aria-hidden="true" className="h-4 w-4 text-creole" />
-      <strong className="font-semibold text-ink">{score}</strong>
-      <span className="text-ink/50">{t("conv.reviewsCount", { count })}</span>
+      <strong className="font-semibold text-smoke">{score}</strong>
+      <span className="text-smoke/50">{t("conv.reviewsCount", { count })}</span>
     </span>
   );
 }
@@ -51,8 +51,8 @@ export function TrustRow({ compact = false }: { compact?: boolean }) {
             <row.icon aria-hidden="true" className="h-3.5 w-3.5" />
           </span>
           <span>
-            <span className="font-semibold text-ink">{t(row.labelKey as TKey)}</span>
-            {!compact && <span className="block text-[11px] text-ink/45">{t(row.subKey as TKey)}</span>}
+            <span className="font-semibold text-smoke">{t(row.labelKey as TKey)}</span>
+            {!compact && <span className="block text-[11px] text-smoke/45">{t(row.subKey as TKey)}</span>}
           </span>
         </li>
       ))}
@@ -99,7 +99,7 @@ export function ViewersNudge({
   if (!hasViewers && !hasBooked) return null;
 
   return (
-    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink/55">
+    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-smoke/55">
       {hasViewers && (
         <span className="inline-flex items-center gap-1.5">
           <IconUsers aria-hidden="true" className="h-3.5 w-3.5 text-turquoise" />
@@ -129,8 +129,8 @@ export function UrgencyBanner({
       <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-creole/20 text-creole">
         <IconFlame aria-hidden="true" className="h-4 w-4" />
       </span>
-      <p className="text-ink/80">
-        {title && <strong className="font-semibold text-ink">{title}</strong>}
+      <p className="text-smoke/80">
+        {title && <strong className="font-semibold text-smoke">{title}</strong>}
         {title && body ? " " : null}
         {body}
       </p>

@@ -57,10 +57,10 @@ export function CreoleUpsellStories() {
   return (
     <section>
       <div className="mb-3">
-        <h2 className="inline-flex items-center gap-2 font-display text-lg text-creole">
+        <h2 className="inline-flex items-center gap-2 font-heading text-lg text-creole">
           <IconSparkles className="h-4 w-4" /> {t("creoleUp.title")}
         </h2>
-        <p className="mt-0.5 text-xs text-ink/55">{t("creoleUp.subtitle")}</p>
+        <p className="mt-0.5 text-xs text-smoke/55">{t("creoleUp.subtitle")}</p>
       </div>
 
       {/* Rangée scrollable de cartes verticales (stories). px/py = marge de sécurité pour
@@ -88,13 +88,13 @@ export function CreoleUpsellStories() {
               <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/25 to-transparent" />
               <span
                 className={`absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full transition ${
-                  on ? "bg-turquoise text-white" : "bg-white/85 text-ink"
+                  on ? "bg-turquoise text-white" : "bg-white/85 text-smoke"
                 }`}
               >
                 {on ? <IconCheck className="h-4 w-4" /> : <IconPlus className="h-4 w-4" />}
               </span>
               <div className="absolute inset-x-0 bottom-0 p-3 text-cream">
-                <p className="font-display text-base leading-tight">{o.title}</p>
+                <p className="font-heading text-base leading-tight">{o.title}</p>
                 <p className="mt-0.5 line-clamp-2 text-[11px] leading-snug text-cream/85">{o.desc}</p>
                 <p className="mt-1.5 inline-block rounded-full bg-cream/20 px-2 py-0.5 text-[11px] font-semibold backdrop-blur">
                   {o.priceLabel}

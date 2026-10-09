@@ -67,10 +67,10 @@ export function ContactBar({ preview = false }: { preview?: boolean } = {}) {
       className={`${preview ? "absolute" : "fixed"} bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6`}
     >
       {open && (
-        <div className="w-72 animate-scale-in overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-float">
+        <div className="w-72 animate-scale-in overflow-hidden rounded-2xl border border-smoke/10 bg-white shadow-float">
           <div className="flex items-start justify-between gap-3 bg-teal-deep px-4 py-3 text-cream">
             <div>
-              <p className="font-display text-lg leading-tight">{t("contact.title")}</p>
+              <p className="font-heading text-lg leading-tight">{t("contact.title")}</p>
               <p className="mt-0.5 text-xs text-cream/70">{t("contact.subtitle")}</p>
             </div>
             <button
@@ -92,8 +92,8 @@ export function ContactBar({ preview = false }: { preview?: boolean } = {}) {
                 <IconPhone className="h-4 w-4" />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-semibold text-ink">{t("contact.call")}</span>
-                <span className="block truncate font-number text-xs text-ink/55">{RECEPTION_PHONE_DISPLAY}</span>
+                <span className="block text-sm font-semibold text-smoke">{t("contact.call")}</span>
+                <span className="block truncate font-number text-xs text-smoke/55">{RECEPTION_PHONE_DISPLAY}</span>
               </span>
             </a>
 
@@ -105,8 +105,8 @@ export function ContactBar({ preview = false }: { preview?: boolean } = {}) {
                 <IconMail className="h-4 w-4" />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-semibold text-ink">{t("contact.email")}</span>
-                <span className="block truncate text-xs text-ink/55">{RECEPTION_EMAIL}</span>
+                <span className="block text-sm font-semibold text-smoke">{t("contact.email")}</span>
+                <span className="block truncate text-xs text-smoke/55">{RECEPTION_EMAIL}</span>
               </span>
             </a>
 
@@ -119,8 +119,8 @@ export function ContactBar({ preview = false }: { preview?: boolean } = {}) {
                 <IconShare className="h-4 w-4" />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-semibold text-ink">{t("contact.share")}</span>
-                <span className="block truncate text-xs text-ink/55">
+                <span className="block text-sm font-semibold text-smoke">{t("contact.share")}</span>
+                <span className="block truncate text-xs text-smoke/55">
                   {copied ? t("contact.copied") : window.location.host}
                 </span>
               </span>

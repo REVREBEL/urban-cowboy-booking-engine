@@ -43,7 +43,7 @@ export function Upgrade() {
     >
       <div className="space-y-5">
         {/* Choix courant */}
-        <div className="flex items-center gap-3 rounded-xl2 border border-ink/10 bg-white p-3.5">
+        <div className="flex items-center gap-3 rounded-xl2 border border-smoke/10 bg-white p-3.5">
           <Photo
             src={imgUrl(imageBaseUrl, selectedRoom.imageIds[0], 200)}
             alt={selectedRoom.name}
@@ -51,10 +51,10 @@ export function Upgrade() {
           />
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-teal-deep/60">{t("upgrade.currentChoice")}</p>
-            <p className="truncate font-medium text-ink">{selectedRoom.name}</p>
-            <p className="text-xs text-ink/50">{selectedRate.name}</p>
+            <p className="truncate font-medium text-smoke">{selectedRoom.name}</p>
+            <p className="text-xs text-smoke/50">{selectedRate.name}</p>
           </div>
-          <p className="shrink-0 font-display text-lg text-teal-deep">{money(selectedRate.totalGross, currency)}</p>
+          <p className="shrink-0 font-heading text-lg text-teal-deep">{money(selectedRate.totalGross, currency)}</p>
         </div>
 
         {/* Upsells « stories » Culture Créole (repas + pack romantique) — se pré-cochent à Extras. */}
@@ -63,8 +63,8 @@ export function Upgrade() {
         {ups.length === 0 ? (
           <div className="card p-8 text-center">
             <IconCheck className="mx-auto h-8 w-8 text-emerald-500" />
-            <p className="mt-2 font-display text-lg text-ink">{t("upgrade.bestAlready")}</p>
-            <p className="mt-1 text-sm text-ink/60">{t("upgrade.noneAvailable")}</p>
+            <p className="mt-2 font-heading text-lg text-smoke">{t("upgrade.bestAlready")}</p>
+            <p className="mt-1 text-sm text-smoke/60">{t("upgrade.noneAvailable")}</p>
           </div>
         ) : (
           <>
@@ -92,15 +92,15 @@ export function Upgrade() {
                     </div>
                     <div className="flex flex-1 flex-col p-5">
                       <div className="flex items-start justify-between gap-3">
-                        <h3 className="line-clamp-2 font-display text-xl text-ink">{room.name}</h3>
+                        <h3 className="line-clamp-2 font-heading text-xl text-smoke">{room.name}</h3>
                         <div className="shrink-0 text-right">
-                          <p className="font-display text-xl text-creole">+{money(diff, currency)}</p>
-                          <p className="text-[11px] text-ink/45">{t("upgrade.perStay")}</p>
+                          <p className="font-heading text-xl text-creole">+{money(diff, currency)}</p>
+                          <p className="text-[11px] text-smoke/45">{t("upgrade.perStay")}</p>
                         </div>
                       </div>
                       <ul className="mt-2 space-y-1.5">
                         {benefits.map((b) => (
-                          <li key={b} className="inline-flex items-center gap-2 text-sm text-ink/75">
+                          <li key={b} className="inline-flex items-center gap-2 text-sm text-smoke/75">
                             <IconCheck className="h-4 w-4 shrink-0 text-turquoise" /> {b}
                           </li>
                         ))}
@@ -113,7 +113,7 @@ export function Upgrade() {
                           <IconBed className="h-3.5 w-3.5 text-turquoise" /> {t("upgrade.beds", { count: room.normalBedCount })}
                           {room.extraBedCount > 0 ? ` +${room.extraBedCount}` : ""}
                         </span>
-                        <span className="text-ink/40">{t("upgrade.soit")} {money(room.fromGross, room.rates[0]?.currency ?? currency)} · {t("upgrade.nights", { count: nightsCount })}</span>
+                        <span className="text-smoke/40">{t("upgrade.soit")} {money(room.fromGross, room.rates[0]?.currency ?? currency)} · {t("upgrade.nights", { count: nightsCount })}</span>
                       </div>
                       <div className="mt-auto pt-4">
                         {isSelected ? (

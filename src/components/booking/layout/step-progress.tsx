@@ -24,7 +24,7 @@ export function StepProgress({
     <nav aria-label={t("stepProgress.navLabel")} className="w-full">
       <div className="sm:hidden">
         <div className="flex items-baseline justify-between gap-3">
-          <p className="truncate font-display text-xl leading-tight text-marine">{currentLabel}</p>
+          <p className="truncate font-heading text-xl leading-tight text-marine">{currentLabel}</p>
           <p className="shrink-0 text-xs font-semibold tabular-nums text-marine/45">
             {isConfirmation ? t("stepProgress.done") : `${current + 1} / ${steps.length}`}
           </p>
@@ -78,7 +78,7 @@ export function StepProgress({
                     ? "bg-marine text-cream"
                     : done
                       ? "text-marine hover:bg-corail/10"
-                      : "text-ink/35"
+                      : "text-smoke/35"
                 } ${clickable ? "cursor-pointer" : "cursor-default"}`}
               >
                 <span
@@ -87,7 +87,7 @@ export function StepProgress({
                       ? "bg-corail text-marine"
                       : done
                         ? "bg-marine text-white"
-                        : "border border-ink/20 text-ink/40"
+                        : "border border-smoke/20 text-smoke/40"
                   }`}
                 >
                   {done ? <IconCheck aria-hidden="true" className="h-3.5 w-3.5" /> : i + 1}
@@ -95,7 +95,7 @@ export function StepProgress({
                 {s.label}
               </button>
               {i < steps.length - 1 && (
-                <span className={`h-px flex-1 ${i < current ? "bg-marine/50" : "bg-ink/10"}`} />
+                <span className={`h-px flex-1 ${i < current ? "bg-marine/50" : "bg-smoke/10"}`} />
               )}
             </li>
           );

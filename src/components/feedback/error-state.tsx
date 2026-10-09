@@ -9,16 +9,16 @@ export default function ErrorState({
 }: Props) {
   return (
     <div className="flex flex-col items-center justify-center py-24 gap-5 text-center px-5">
-      <div className="w-12 h-12 rounded-full border-2 border-[#8b3a2e] flex items-center justify-center">
-        <span className="text-[#8b3a2e] text-xl font-bold">!</span>
+      <div className="w-12 h-12 rounded-full border-2 border-copper flex items-center justify-center">
+        <span className="text-copper text-xl font-bold">!</span>
       </div>
-      <p className="text-sm text-[#4e332d] max-w-xs" style={{ fontFamily: 'var(--font-inter)' }}>
+      <p className="text-sm text-cowboy-umber max-w-xs" style={{ fontFamily: 'var(--font-body)' }}>
         {message}
       </p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="px-6 py-2.5 border border-[#4e332d] text-[#4e332d] text-xs tracking-widest uppercase rounded-full hover:bg-[#4e332d] hover:text-white transition-colors"
+          className="px-6 py-2.5 border border-cowboy-umber text-cowboy-umber text-xs tracking-widest uppercase rounded-full hover:bg-cowboy-umber hover:text-white transition-colors"
           style={{ fontFamily: 'var(--font-urbanist)', fontWeight: 600 }}
         >
           Try again

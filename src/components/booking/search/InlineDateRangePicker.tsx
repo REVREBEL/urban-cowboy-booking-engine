@@ -97,15 +97,15 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   };
 
   return (
-    <div className="rounded-2xl border border-[#4E332D]/15 bg-white p-4 sm:p-5">
+    <div className="rounded-2xl border border-cowboy-umber/15 bg-white p-4 sm:p-5">
       <div className="mb-4 flex items-center justify-between">
-        <button type="button" aria-label="Previous month" onClick={() => setView(shiftMonth(view.year, view.month, -1))} className="grid h-9 w-9 place-items-center rounded-full text-[#4E332D] transition hover:bg-[#EBE8E0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9A5636]">
+        <button type="button" aria-label="Previous month" onClick={() => setView(shiftMonth(view.year, view.month, -1))} className="grid h-9 w-9 place-items-center rounded-full text-cowboy-umber transition hover:bg-alpine-linen focus-visible:outline focus-visible:outline-2 focus-visible:outline-copper">
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </button>
-        <p className="font-brothers text-sm uppercase tracking-[1.5px] text-[#4E332D]">
+        <p className="font-label text-sm uppercase tracking-[1.5px] text-cowboy-umber">
           {nightCount > 0 ? `${nightCount} night${nightCount === 1 ? "" : "s"} selected` : "Select your dates"}
         </p>
-        <button type="button" aria-label="Next month" onClick={() => setView(shiftMonth(view.year, view.month, 1))} className="grid h-9 w-9 place-items-center rounded-full text-[#4E332D] transition hover:bg-[#EBE8E0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9A5636]">
+        <button type="button" aria-label="Next month" onClick={() => setView(shiftMonth(view.year, view.month, 1))} className="grid h-9 w-9 place-items-center rounded-full text-cowboy-umber transition hover:bg-alpine-linen focus-visible:outline focus-visible:outline-2 focus-visible:outline-copper">
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
@@ -115,10 +115,10 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
           <React.Fragment key={`${calendarMonth.year}-${calendarMonth.month}`}>
             {monthIndex === 1 && <div className="hidden self-stretch bg-gradient-to-b from-transparent via-[#4E332D]/15 to-transparent md:block" aria-hidden="true" />}
             <div className={monthIndex === 1 ? "hidden md:block" : ""}>
-              <p className="mb-3 text-center font-uchen text-sm text-[#4E332D]">{monthName(calendarMonth.year, calendarMonth.month)}</p>
+              <p className="mb-3 text-center font-body text-sm text-cowboy-umber">{monthName(calendarMonth.year, calendarMonth.month)}</p>
               <div role="grid" aria-label={monthName(calendarMonth.year, calendarMonth.month)} className="grid grid-cols-7 text-center">
                 {["M", "T", "W", "T", "F", "S", "S"].map((weekday, index) => (
-                  <span key={`${weekday}-${index}`} role="columnheader" className="pb-2 font-bianco text-[10px] font-bold uppercase text-[#4E332D]/45">{weekday}</span>
+                  <span key={`${weekday}-${index}`} role="columnheader" className="pb-2 font-number text-[10px] font-bold uppercase text-cowboy-umber/45">{weekday}</span>
                 ))}
                 {monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
                   if (!date) return <span key={`blank-${index}`} role="gridcell" className={hasDailyRates ? "h-14" : "h-10"} />;
@@ -153,21 +153,21 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                   const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
                   const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
                   return (
-                    <div key={date} role="gridcell" aria-selected={start || end || inRange} className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-[#9A5636]/10" : ""}`} onMouseEnter={() => !disabled && setHoveredDate(date)} onMouseLeave={() => setHoveredDate(null)}>
+                    <div key={date} role="gridcell" aria-selected={start || end || inRange} className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-copper/10" : ""}`} onMouseEnter={() => !disabled && setHoveredDate(date)} onMouseLeave={() => setHoveredDate(null)}>
                       <button
                         type="button"
                         disabled={disabled}
                         onClick={() => selectDate(date)}
                         aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
                         aria-pressed={start || end}
-                        className="group absolute inset-0 flex w-full flex-col items-center justify-center font-uchen transition focus-visible:outline-none"
+                        className="group absolute inset-0 flex w-full flex-col items-center justify-center font-body transition focus-visible:outline-none"
                       >
-                        <span className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-[#9A5636] group-focus-visible:ring-offset-2 ${disabled ? "text-[#4E332D]/20 line-through" : start || end ? `bg-[#4E332D] text-[#FAF9F9] ${start && rate?.minNights ? "ring-2 ring-[#4E332D] ring-offset-2 ring-offset-white" : ""}` : restrictionAdvisory ? "text-[#9A5636] ring-1 ring-[#9A5636]/35" : "text-[#4E332D] group-hover:bg-[#9A5636] group-hover:text-[#FAF9F9]"}`}>
+                        <span className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-copper group-focus-visible:ring-offset-2 ${disabled ? "text-cowboy-umber/20 line-through" : start || end ? `bg-cowboy-umber text-paper ${start && rate?.minNights ? "ring-2 ring-cowboy-umber ring-offset-2 ring-offset-white" : ""}` : restrictionAdvisory ? "text-copper ring-1 ring-copper/35" : "text-cowboy-umber group-hover:bg-copper group-hover:text-paper"}`}>
                           {fromIso(date).day}
                         </span>
-                        {rate && <span className={`mt-1.5 font-bianco text-[9px] font-bold leading-none ${unavailable ? "text-[#4E332D]/30" : "text-[#4E332D]/65"}`}>{unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}</span>}
+                        {rate && <span className={`mt-1.5 font-number text-[9px] font-bold leading-none ${unavailable ? "text-cowboy-umber/30" : "text-cowboy-umber/65"}`}>{unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}</span>}
                         {rate?.minNights && (
-                          <span role="tooltip" className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-[#292326] px-2 py-1 font-bianco text-[10px] font-normal normal-case tracking-normal text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                          <span role="tooltip" className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-lake-forest px-2 py-1 font-number text-[10px] font-normal normal-case tracking-normal text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                             Min. of {rate.minNights} nights.
                           </span>
                         )}

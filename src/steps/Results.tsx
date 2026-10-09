@@ -404,12 +404,12 @@ export function Results() {
   return (
     <div className="booking-shell py-8">
       {/* Barre de recherche / résumé */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl2 border border-ink/10 bg-white p-4 shadow-card">
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-ink/80">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl2 border border-smoke/10 bg-white p-4 shadow-card">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-smoke/80">
           <span className="inline-flex items-center gap-1.5">
             <IconCalendar className="h-4 w-4 text-turquoise" />
             {fmtDate(checkIn)} → {fmtDate(checkOut)}
-            <span className="text-ink/45">
+            <span className="text-smoke/45">
               · {t("results.nights", { count: nightsCount })}
             </span>
           </span>
@@ -428,10 +428,10 @@ export function Results() {
       {!recommendationPreferences && (
         <div className="mt-6 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl text-ink sm:text-3xl">
+            <h1 className="font-heading text-2xl text-smoke sm:text-3xl">
               {rooms.length > 0 ? t("results.availableCount", { count: rooms.length }) : t("results.ourAccommodations")}
             </h1>
-            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink/55">
+            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-smoke/55">
               <span>{t("results.subtitle")}</span>
             </div>
           </div>
@@ -490,13 +490,13 @@ export function Results() {
       {/* Autres hébergements dispos sur ces dates — accordéons, EN BAS. */}
       {!loading && !hotelError && !error && teasers.length > 0 && (
         <div className="mt-10">
-          <h2 className="font-display text-xl text-ink">{t("results.alsoAvailable")}</h2>
+          <h2 className="font-heading text-xl text-smoke">{t("results.alsoAvailable")}</h2>
           <div className="mt-3 space-y-3">
             {teasers.map((x) => {
               const isOpen = openProps.includes(x.key);
               const propRooms = allRooms.filter((r) => r.property === x.key);
               return (
-                <div key={x.key} className="overflow-hidden rounded-xl2 border border-ink/10 bg-white shadow-card">
+                <div key={x.key} className="overflow-hidden rounded-xl2 border border-smoke/10 bg-white shadow-card">
                   <button
                     type="button"
                     onClick={() => toggleProp(x.key)}
@@ -504,7 +504,7 @@ export function Results() {
                     className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-cream"
                   >
                     <span className="flex flex-wrap items-baseline gap-x-2">
-                      <span className="font-display text-lg text-ink">{x.label}</span>
+                      <span className="font-heading text-lg text-smoke">{x.label}</span>
                       <span className="text-sm font-normal text-teal-deep/60">
                         · {t("results.availableSuffix", { count: x.count })}
                       </span>
@@ -514,7 +514,7 @@ export function Results() {
                     />
                   </button>
                   {isOpen && (
-                    <div className="space-y-4 border-t border-ink/10 bg-cream/40 p-4">
+                    <div className="space-y-4 border-t border-smoke/10 bg-cream/40 p-4">
                       {propRooms.map((room) => (
                         <RoomsListCard
                           key={room.roomTypeId}
@@ -583,9 +583,9 @@ function ErrorBox({ message, onRetry }: { message: string; onRetry: () => void }
 
 function EmptyBox({ onModify }: { onModify: () => void }) {
   return (
-    <div className="mt-6 rounded-xl2 border border-ink/10 bg-white p-10 text-center shadow-card">
-      <p className="font-display text-xl text-ink">{t("results.emptyTitle")}</p>
-      <p className="mt-2 text-sm text-ink/60">
+    <div className="mt-6 rounded-xl2 border border-smoke/10 bg-white p-10 text-center shadow-card">
+      <p className="font-heading text-xl text-smoke">{t("results.emptyTitle")}</p>
+      <p className="mt-2 text-sm text-smoke/60">
         {t("results.emptyBody")}
       </p>
       <button type="button" onClick={onModify} className="btn-primary mt-5">
@@ -597,9 +597,9 @@ function EmptyBox({ onModify }: { onModify: () => void }) {
 
 function NoEligibleMatchBox({ onModify }: { onModify: () => void }) {
   return (
-    <div className="mt-6 rounded-xl2 border border-ink/10 bg-white p-10 text-center shadow-card">
-      <p className="font-display text-xl text-ink">{t("results.noEligibleTitle")}</p>
-      <p className="mt-2 text-sm text-ink/60">{t("results.noEligibleBody")}</p>
+    <div className="mt-6 rounded-xl2 border border-smoke/10 bg-white p-10 text-center shadow-card">
+      <p className="font-heading text-xl text-smoke">{t("results.noEligibleTitle")}</p>
+      <p className="mt-2 text-sm text-smoke/60">{t("results.noEligibleBody")}</p>
       <button type="button" onClick={onModify} className="btn-primary mt-5">
         {t("results.editSearch")}
       </button>

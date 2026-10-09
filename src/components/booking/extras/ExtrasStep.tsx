@@ -130,21 +130,21 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
       <button
         type="button"
         onClick={onBack}
-        className="group mb-6 inline-flex items-center gap-2 font-button text-xs uppercase tracking-widest text-[#73716D] transition-colors hover:text-[#4E332D]"
+        className="group mb-6 inline-flex items-center gap-2 font-button text-xs uppercase tracking-widest text-smoke-fade transition-colors hover:text-cowboy-umber"
       >
         <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
         <span>Back to Guest Details</span>
       </button>
 
-      <div className="mb-8 flex flex-col gap-6 border-b border-[#D1C9BE] pb-6 md:flex-row md:items-end md:justify-between">
+      <div className="mb-8 flex flex-col gap-6 border-b border-alpine-linen pb-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <span className="mb-1 block font-button text-xs font-bold uppercase tracking-widest text-[#9A5636]">
+          <span className="mb-1 block font-button text-xs font-bold uppercase tracking-widest text-copper">
             STEP 4 OF 5 · CURATED ADD-ONS & EXPERIENCES
           </span>
-          <h1 className="font-display text-3xl uppercase tracking-tight text-[#221C18] sm:text-4xl lg:text-5xl">
+          <h1 className="font-heading text-3xl uppercase tracking-tight text-smoke sm:text-4xl lg:text-5xl">
             Add-ons & Personal Touches
           </h1>
-          <p className="mt-2 max-w-2xl font-body text-sm text-[#6B6259] sm:text-base">
+          <p className="mt-2 max-w-2xl font-body text-sm text-ash-900 sm:text-base">
             From fresh Catskill bouquets waiting in your room to celebration cakes and fireside s&apos;mores, schedule every detail and add custom notes for our front desk.
           </p>
         </div>
@@ -156,10 +156,10 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
               type="button"
               onClick={() => setActiveFilter(tab.id)}
               aria-pressed={activeFilter === tab.id}
-              className={`rounded-[10px] px-3.5 py-1.5 font-button text-xs uppercase tracking-wider transition-all ${
+              className={`rounded-control-xs px-3.5 py-1.5 font-button text-xs uppercase tracking-wider transition-all ${
                 activeFilter === tab.id
-                  ? "bg-[#4E332D] font-bold text-[#EBE8E0] shadow-xs"
-                  : "border border-[#D1C9BE]/60 bg-white/70 text-[#73716D] hover:bg-white"
+                  ? "bg-cowboy-umber font-bold text-alpine-linen shadow-xs"
+                  : "border border-alpine-linen/60 bg-white/70 text-smoke-fade hover:bg-white"
               }`}
             >
               {tab.label}
@@ -171,8 +171,8 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
       {showAirportTransfer && (
         <section className="mb-8">
         <div className="mb-3 flex items-center gap-3">
-          <span className="h-5 w-1 rounded-full bg-[#236B7D]" />
-          <h2 className="font-display text-lg uppercase text-[#221C18]">
+          <span className="h-5 w-1 rounded-full bg-oxidized-teal" />
+          <h2 className="font-heading text-lg uppercase text-smoke">
             {t("extras.serviceSection")}
           </h2>
         </div>
@@ -180,36 +180,36 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
           type="button"
           onClick={onToggleAirportTransfer}
           aria-pressed={airportTransfer}
-          className={`flex w-full items-start gap-3 rounded-[17px] border p-4 text-left transition ${
+          className={`flex w-full items-start gap-3 rounded-card-media border p-4 text-left transition ${
             airportTransfer
-              ? "border-[#236B7D] bg-[#236B7D]/5 ring-1 ring-[#236B7D]"
-              : "border-[#D1C9BE] bg-[#FAF9F9] hover:border-[#236B7D]/60"
+              ? "border-oxidized-teal bg-oxidized-teal/5 ring-1 ring-oxidized-teal"
+              : "border-alpine-linen bg-paper hover:border-oxidized-teal/60"
           }`}
         >
           <span
             className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md border transition ${
               airportTransfer
-                ? "border-[#236B7D] bg-[#236B7D] text-white"
-                : "border-[#4E332D]/25 text-transparent"
+                ? "border-oxidized-teal bg-oxidized-teal text-white"
+                : "border-cowboy-umber/25 text-transparent"
             }`}
           >
             <Check className="h-3.5 w-3.5" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="flex items-center gap-2 font-button text-sm uppercase text-[#221C18]">
+            <span className="flex items-center gap-2 font-button text-sm uppercase text-smoke">
               <span
-                className="font-emoji-mono text-lg leading-none"
+                className="font-emoji emoji-text text-lg leading-none"
                 aria-hidden="true"
               >
                 ✈
               </span>
               <span>{t("extras.transferTitle")}</span>
             </span>
-            <span className="mt-1 block font-body text-sm leading-relaxed text-[#6B6259]">
+            <span className="mt-1 block font-body text-sm leading-relaxed text-ash-900">
               {t("extras.transferDesc")}
             </span>
           </span>
-          <span className="shrink-0 rounded-full bg-[#EBE8E0] px-2 py-0.5 font-body text-[11px] text-[#4E332D]/70">
+          <span className="shrink-0 rounded-full bg-alpine-linen px-2 py-0.5 font-body text-[11px] text-cowboy-umber/70">
             {t("extras.transferBadge")}
           </span>
         </button>
@@ -240,14 +240,14 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
           })}
         </div>
       ) : (
-        <div className="mb-24 rounded-[17px] border border-[#D1C9BE] bg-[#FAF9F9] p-10 text-center font-body text-sm text-[#73716D]">
+        <div className="mb-24 rounded-card-media border border-alpine-linen bg-paper p-10 text-center font-body text-sm text-smoke-fade">
           No add-ons in this category yet.
         </div>
       )}
 
-      <div className="sticky bottom-6 z-40 mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 rounded-[19px] border border-white/10 bg-[#221C18] p-4 text-white shadow-2xl sm:flex-row sm:p-5">
+      <div className="sticky bottom-6 z-40 mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 rounded-control-lg border border-white/10 bg-smoke p-4 text-white shadow-2xl sm:flex-row sm:p-5">
         <div className="text-center sm:text-left">
-          <span className="block font-button text-[11px] uppercase tracking-widest text-[#D1C9BE]">
+          <span className="block font-button text-[11px] uppercase tracking-widest text-alpine-linen">
             RESERVATION SUMMARY
           </span>
           <div className="mt-0.5 font-body text-sm text-white">
@@ -255,7 +255,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
             {rateName ? (
               <>
                 {" · "}
-                <span className="text-[#F2AAA9]">{rateName}</span>
+                <span className="text-nude-ember">{rateName}</span>
               </>
             ) : null}
             {" · "}
@@ -264,15 +264,15 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
 
           {extrasTotal > 0 && (
             <div className="mt-1 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-              <span className="rounded-full bg-white/10 px-2 py-0.5 font-numbers text-xs font-bold text-[#F2AAA9]">
+              <span className="rounded-full bg-white/10 px-2 py-0.5 font-numbers text-xs font-bold text-nude-ember">
                 +{money(extrasTotal, currency)} in add-ons
               </span>
-              <span className="font-body text-xs text-[#EBE8E0]/70">
+              <span className="font-body text-xs text-alpine-linen/70">
                 ({totalSelectedCount} {totalSelectedCount === 1 ? "item" : "items"} selected)
               </span>
               {customizedSelectedCount > 0 && (
-                <span className="flex items-center gap-1 font-body text-[11px] text-[#D1C9BE]">
-                  <Check className="h-3 w-3 text-[#F2AAA9]" />
+                <span className="flex items-center gap-1 font-body text-[11px] text-alpine-linen">
+                  <Check className="h-3 w-3 text-nude-ember" />
                   <span>{customizedSelectedCount} personalized</span>
                 </span>
               )}
