@@ -173,13 +173,13 @@ export const SearchButton = React.forwardRef<
           onClick={onClick}
           aria-label="Search"
           aria-busy={isLoading}
-          className={`${baseClasses} ${stateClasses} w-[48px] h-[48px] rounded-full p-0 shrink-0 ${className}`}
+          className={`${baseClasses} ${stateClasses} w-12 h-12 rounded-full p-0 shrink-0 ${className}`}
           {...props}
         >
           {isLoading ? (
             <ButtonSpinner />
           ) : (
-            <div className="w-[16.76px] h-[16.76px] p-[2px] flex items-center justify-center">
+            <div className="w-4.19 h-4.19 p-0.5 flex items-center justify-center">
               <SearchIcon size="icon" />
             </div>
           )}
@@ -196,13 +196,13 @@ export const SearchButton = React.forwardRef<
           onClick={onClick}
           aria-label="Search"
           aria-busy={isLoading}
-          className={`${baseClasses} ${stateClasses} w-[48px] h-[48px] rounded-field p-0 shrink-0 ${className}`}
+          className={`${baseClasses} ${stateClasses} w-12 h-12 rounded-field p-0 shrink-0 ${className}`}
           {...props}
         >
           {isLoading ? (
             <ButtonSpinner />
           ) : (
-            <div className="w-[16.76px] h-[16.76px] p-[2px] flex items-center justify-center">
+            <div className="w-4.19 h-4.19 p-0.5 flex items-center justify-center">
               <SearchIcon size="icon" />
             </div>
           )}
@@ -218,17 +218,17 @@ export const SearchButton = React.forwardRef<
           disabled={!isInteractive}
           onClick={onClick}
           aria-busy={isLoading}
-          className={`${baseClasses} ${stateClasses} w-[115px] h-[56px] rounded-field px-[24px] py-[18px] gap-[8px] shrink-0 ${className}`}
+          className={`${baseClasses} ${stateClasses} w-28.75 h-14 rounded-field px-6 py-4.5 gap-2 shrink-0 ${className}`}
           {...props}
         >
           {isLoading ? (
             <ButtonSpinner />
           ) : (
             <>
-              <span className="flex h-[20px] w-[44px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-alpine-linen">
+              <span className="flex h-5 w-11 items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-alpine-linen">
                 {children || 'Search'}
               </span>
-              <div className="relative w-[15px] h-[11px] shrink-0 flex items-center justify-center">
+              <div className="relative w-3.75 h-2.75 shrink-0 flex items-center justify-center">
                 <SearchIcon size="full" />
               </div>
             </>
@@ -245,17 +245,17 @@ export const SearchButton = React.forwardRef<
         disabled={!isInteractive}
         onClick={onClick}
         aria-busy={isLoading}
-        className={`${baseClasses} ${stateClasses} w-[115px] h-[56px] rounded-full px-[24px] py-[18px] gap-[8px] shrink-0 ${className}`}
+        className={`${baseClasses} ${stateClasses} w-28.75 h-14 rounded-full px-6 py-4.5 gap-2 shrink-0 ${className}`}
         {...props}
       >
         {isLoading ? (
           <ButtonSpinner />
         ) : (
           <>
-            <span className="flex h-[20px] w-[44px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-alpine-linen">
+            <span className="flex h-5 w-11 items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-alpine-linen">
               {children || 'Search'}
             </span>
-            <div className="relative w-[15px] h-[11px] shrink-0 flex items-center justify-center">
+            <div className="relative w-3.75 h-2.75 shrink-0 flex items-center justify-center">
               <SearchIcon size="full" />
             </div>
           </>
@@ -295,29 +295,29 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   // Section button style
   const sectionBaseStyle =
-    'group relative box-border flex flex-col justify-center items-start min-w-0 px-[24px] py-0 gap-[2px] h-[54px] bg-paper transition-colors rounded-full hover:bg-alpine-linen-fade focus:outline-none cursor-pointer text-left';
+    'group relative box-border flex flex-col justify-center items-start min-w-0 px-6 py-0 gap-0.5 h-13.5 bg-paper transition-colors rounded-full hover:bg-alpine-linen-fade focus:outline-none cursor-pointer text-left';
 
   return (
     <div
       role="search"
       aria-label="Accommodation search bar"
-      className={`box-border flex flex-row items-center justify-center w-[692px] min-w-[692px] h-[56px] bg-paper border border-alpine-linen-fade shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)] ${
-        isCircle ? 'rounded-full pr-[5px]' : 'rounded-field pr-[3px]'
+      className={`box-border flex flex-row items-center justify-center w-173 min-w-173 h-14 bg-paper border border-alpine-linen-fade shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.1),0px_2px_4px_-2px_rgba(0,0,0,0.1)] ${
+        isCircle ? 'rounded-full pr-1.25' : 'rounded-field pr-0.75'
       } ${className}`}
     >
       {/* 1. Date Section (WHEN) */}
       <button
         type="button"
         onClick={onDateClick}
-        className={`${sectionBaseStyle} w-[201px] flex-1`}
+        className={`${sectionBaseStyle} w-50.25 flex-1`}
         aria-label={`${dateLabel}: ${dateValue}`}
       >
-        <div className="flex flex-row items-center p-0 w-[153px] h-[12px] self-stretch">
-          <span className="h-[12px] w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-cowboy-umber/60">
+        <div className="flex flex-row items-center p-0 w-38.25 h-3 self-stretch">
+          <span className="h-3 w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-cowboy-umber/60">
             {dateLabel}
           </span>
         </div>
-        <div className="flex flex-row items-center p-0 w-[153px] h-[22px] max-h-[28px] self-stretch">
+        <div className="flex flex-row items-center p-0 w-38.25 h-5.5 max-h-7 self-stretch">
           <span className="truncate font-body text-[12px] font-normal leading-[22px] normal-case text-cowboy-umber">
             {dateValue}
           </span>
@@ -330,25 +330,25 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
       {/* Vertical Rule */}
       <div
-        className="flex flex-row items-start px-[8px] py-0 w-[17px] h-[30px] shrink-0"
+        className="flex flex-row items-start px-2 py-0 w-4.25 h-7.5 shrink-0"
         aria-hidden="true"
       >
-        <div className="w-[1px] h-[30px] bg-alpine-linen-fade" />
+        <div className="w-0.25 h-7.5 bg-alpine-linen-fade" />
       </div>
 
       {/* 2. Guest Section (GUESTS) */}
       <button
         type="button"
         onClick={onGuestClick}
-        className={`${sectionBaseStyle} w-[201px] flex-1`}
+        className={`${sectionBaseStyle} w-50.25 flex-1`}
         aria-label={`${guestLabel}: ${guestValue}`}
       >
-        <div className="flex flex-row items-center p-0 w-[153px] h-[12px] self-stretch">
-          <span className="h-[12px] w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-cowboy-umber/60">
+        <div className="flex flex-row items-center p-0 w-38.25 h-3 self-stretch">
+          <span className="h-3 w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-cowboy-umber/60">
             {guestLabel}
           </span>
         </div>
-        <div className="flex flex-row items-center p-0 w-[153px] h-[22px] max-h-[28px] self-stretch">
+        <div className="flex flex-row items-center p-0 w-38.25 h-5.5 max-h-7 self-stretch">
           <span className="truncate font-body text-[12px] font-normal leading-[22px] normal-case text-cowboy-umber">
             {guestValue}
           </span>
@@ -361,25 +361,25 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
       {/* Vertical Rule */}
       <div
-        className="flex flex-row items-start px-[8px] py-0 w-[17px] h-[30px] shrink-0"
+        className="flex flex-row items-start px-2 py-0 w-4.25 h-7.5 shrink-0"
         aria-hidden="true"
       >
-        <div className="w-[1px] h-[30px] bg-alpine-linen-fade" />
+        <div className="w-0.25 h-7.5 bg-alpine-linen-fade" />
       </div>
 
       {/* 3. Promo Section (PROMO) */}
       <button
         type="button"
         onClick={onPromoClick}
-        className={`${sectionBaseStyle} w-[201px] flex-1`}
+        className={`${sectionBaseStyle} w-50.25 flex-1`}
         aria-label={`${promoLabel}: ${promoValue}`}
       >
-        <div className="flex flex-row items-center p-0 w-[153px] h-[12px] self-stretch">
-          <span className="h-[12px] w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-cowboy-umber/60">
+        <div className="flex flex-row items-center p-0 w-38.25 h-3 self-stretch">
+          <span className="h-3 w-auto font-label text-[10px] font-normal uppercase leading-[12px] tracking-[0.08em] text-cowboy-umber/60">
             {promoLabel}
           </span>
         </div>
-        <div className="flex flex-row items-center p-0 w-[153px] h-[14px] max-h-[28px] self-stretch">
+        <div className="flex flex-row items-center p-0 w-38.25 h-3.5 max-h-7 self-stretch">
           <span className="truncate font-body text-[12px] font-normal leading-[14px] normal-case text-cowboy-umber">
             {promoValue}
           </span>
@@ -393,7 +393,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       {/* 4. Button Slot — expands to the custom button width while remaining inside the 692px bar */}
       <div
         className={`box-border flex flex-row items-center justify-center p-0 shrink-0 ${
-          buttonSlot ? 'w-fit h-[56px]' : 'w-[48px] h-[48px]'
+          buttonSlot ? 'w-fit h-14' : 'w-12 h-12'
         }`}
       >
         {buttonSlot ? (

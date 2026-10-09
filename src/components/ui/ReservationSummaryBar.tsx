@@ -27,7 +27,7 @@ export const ReservationSummaryBar: React.FC<ReservationSummaryBarProps> = ({
   return (
     <aside 
       aria-label="Reservation Summary Bar"
-      className={`sticky bottom-6 z-40 bg-smoke text-white p-4 sm:p-5 rounded-3xl shadow-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-[1600px] mx-auto backdrop-blur-md ${className}`}
+      className={`sticky bottom-6 z-40 bg-smoke text-white p-4 sm:p-5 rounded-3xl shadow-2xl border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-400 mx-auto backdrop-blur-md ${className}`}
     >
       <div className="text-center sm:text-left">
         <span className="font-label text-[11px] uppercase tracking-widest text-alpine-linen block">

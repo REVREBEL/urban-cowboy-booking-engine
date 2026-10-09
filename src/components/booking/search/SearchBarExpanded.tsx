@@ -56,7 +56,7 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
         onClick={onClick}
         aria-label="Search accommodations"
         aria-busy={isLoading}
-        className={`grid h-12 w-12 shrink-0 place-items-center text-center font-button bg-cowboy-umber text-paper transition md:flex md:h-14 md:w-[116px] md:items-center md:justify-center md:gap-2 ${rounded} ${
+        className={`grid h-12 w-12 shrink-0 place-items-center text-center font-button bg-cowboy-umber text-paper transition md:flex md:h-14 md:w-29 md:items-center md:justify-center md:gap-2 ${rounded} ${
           isInteractive
             ? "cursor-pointer hover:bg-smoke active:scale-[0.98]"
             : "cursor-not-allowed opacity-60"
@@ -67,7 +67,7 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-paper/35 border-t-[#FAF9F9]" aria-hidden="true" />
         ) : (
           <>
-            <span className="hidden h-[20px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] md:inline-flex">
+            <span className="hidden h-5 items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] md:inline-flex">
               {children || "Search"}
             </span>
             <span
@@ -109,7 +109,7 @@ function SearchSection({ label, value, section, activeSection, onClick, classNam
       type="button"
       aria-expanded={active}
       onClick={() => onClick(section)}
-      className={`group relative flex min-h-[64px] min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-cowboy-umber transition-colors hover:text-copper focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-copper md:min-h-[58px] ${className}`}
+      className={`group relative flex min-h-16 min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-cowboy-umber transition-colors hover:text-copper focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-copper md:min-h-14.5 ${className}`}
     >
       <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-cowboy-umber/60">
         {label}
@@ -166,7 +166,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
       : `${currentValues.checkInDate} — ${currentValues.checkOutDate}`;
 
   return (
-    <div className={`relative w-full max-w-[1057px] ${className}`}>
+    <div className={`relative w-full max-w-264.25 ${className}`}>
       <div
         role="search"
         aria-label="Expanded accommodation search bar"

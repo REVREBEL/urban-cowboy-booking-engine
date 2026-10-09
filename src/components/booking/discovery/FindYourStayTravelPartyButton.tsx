@@ -160,7 +160,7 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
       )}
 
       {/* Primary Headline Title */}
-      <div className="w-full flex flex-row items-center h-[24px]">
+      <div className="w-full flex flex-row items-center h-6">
         <span
           className="font-normal uppercase select-none transition-colors duration-200"
           style={{
@@ -176,7 +176,7 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
       </div>
 
       {/* Descriptive Narrative Subtitle */}
-      <div className="w-full flex flex-row items-center h-[16px]">
+      <div className="w-full flex flex-row items-center h-4">
         <span
           className="font-normal select-none transition-colors duration-200"
           style={{
@@ -220,7 +220,7 @@ export const TravelPartyGroup: React.FC<TravelPartyGroupProps> = ({
     <div
       role="radiogroup"
       aria-label="Select your travel party"
-      className={`grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-[516px] select-none ${className}`}
+      className={`grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-129 select-none ${className}`}
     >
       {options.map((option) => (
         <FindYourStayTravelPartyButton

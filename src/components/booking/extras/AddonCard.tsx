@@ -42,12 +42,12 @@ export function AddonCard({
 
   return (
     <article
-      className={`group flex min-h-[449px] w-full max-w-[461px] flex-col rounded-card-media bg-alpine-linen p-[17px_20px] transition-all duration-300 ${
+      className={`group flex min-h-112.25 w-full max-w-115.25 flex-col rounded-card-media bg-alpine-linen p-[17px_20px] transition-all duration-300 ${
         selected || locked ? "ring-2 ring-cowboy-umber" : "hover:-translate-y-0.5 hover:shadow-lg"
       } ${className}`}
     >
       <div className="flex flex-1 flex-col gap-3">
-        <div className="relative h-[237px] overflow-hidden rounded-2xl">
+        <div className="relative h-59.25 overflow-hidden rounded-2xl">
           <Photo
             src={product.imageUrl ?? imgUrl(imageBaseUrl, product.imageId, 900)}
             alt={product.name}
@@ -65,7 +65,7 @@ export function AddonCard({
           <h3 className="truncate font-label text-[28px] font-normal uppercase leading-none tracking-[-0.45px] text-smoke" title={product.name}>
             {product.name}
           </h3>
-          <p className="mt-3 line-clamp-3 min-h-[51px] font-body text-sm leading-[17px] tracking-[-0.15px] text-ash-900">
+          <p className="mt-3 line-clamp-3 min-h-12.75 font-body text-sm leading-[17px] tracking-[-0.15px] text-ash-900">
             {product.description}
           </p>
           {(mode || lineTotal !== product.price) && (
@@ -83,22 +83,22 @@ export function AddonCard({
           <button type="button" onClick={onOpenCustomize} className="flex min-w-0 items-center gap-2 text-left text-xs text-smoke-fade hover:text-cowboy-umber">
             <Clock className="h-4 w-4 shrink-0 text-copper" />
             <span className="min-w-0">
-              <span className="block max-w-[210px] truncate font-bold text-cowboy-umber">{addOnPreferenceSummary(preference)}</span>
+              <span className="block max-w-52.5 truncate font-bold text-cowboy-umber">{addOnPreferenceSummary(preference)}</span>
               <span className="inline-flex items-center gap-1 text-copper underline">Customize <Edit2 className="h-3 w-3" /></span>
             </span>
           </button>
         )}
 
         {!selected && !locked ? (
-          <button type="button" onClick={add} className="h-12 w-[151px] rounded-full bg-cowboy-umber px-5 pt-0.5 font-button text-sm uppercase tracking-[0.05em] text-white transition hover:brightness-110 active:scale-[0.98]">
+          <button type="button" onClick={add} className="h-12 w-37.75 rounded-full bg-cowboy-umber px-5 pt-0.5 font-button text-sm uppercase tracking-[0.05em] text-white transition hover:brightness-110 active:scale-[0.98]">
             Add to stay
           </button>
         ) : locked ? (
-          <span className="inline-flex h-12 min-w-[151px] items-center justify-center gap-2 rounded-full bg-lake-forest px-5 font-button text-sm uppercase tracking-[0.05em] text-white">
+          <span className="inline-flex h-12 min-w-37.75 items-center justify-center gap-2 rounded-full bg-lake-forest px-5 font-button text-sm uppercase tracking-[0.05em] text-white">
             <Check className="h-4 w-4 text-nude-ember" /> Included
           </span>
         ) : (
-          <button type="button" onClick={onToggle} className="inline-flex h-12 min-w-[151px] items-center justify-center gap-2 rounded-full bg-lake-forest px-4 font-button text-sm uppercase tracking-[0.05em] text-white transition hover:brightness-110" aria-label={`Remove ${product.name} from stay`}>
+          <button type="button" onClick={onToggle} className="inline-flex h-12 min-w-37.75 items-center justify-center gap-2 rounded-full bg-lake-forest px-4 font-button text-sm uppercase tracking-[0.05em] text-white transition hover:brightness-110" aria-label={`Remove ${product.name} from stay`}>
             <Minus className="h-4 w-4" /> Added
           </button>
         )}

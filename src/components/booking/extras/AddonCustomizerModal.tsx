@@ -107,7 +107,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 lg:p-8 2xl:p-12 animate-in fade-in duration-200">
       <div 
-        className="bg-paper border-2 border-cowboy-umber rounded-panel-sm sm:rounded-modal 2xl:rounded-modal-xl w-full max-w-lg sm:max-w-2xl lg:max-w-[1100px] 2xl:max-w-[1520px] shadow-2xl overflow-hidden flex flex-col my-auto relative transition-all duration-300"
+        className="bg-paper border-2 border-cowboy-umber rounded-panel-sm sm:rounded-modal 2xl:rounded-modal-xl w-full max-w-lg sm:max-w-2xl lg:max-w-275 2xl:max-w-380 shadow-2xl overflow-hidden flex flex-col my-auto relative transition-all duration-300"
         style={{ maxHeight: '92vh' }}
         role="dialog"
         aria-modal="true"
@@ -137,7 +137,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
 
           {/* LEFT PANE: Visual Cinema & Concierge Heritage */}
           {/* Mobile: Full width top hero | Desktop: 380px | Widescreen: 480px-520px */}
-          <div className="w-full lg:w-[380px] 2xl:w-[480px] shrink-0 bg-alpine-linen-fade p-5 sm:p-7 lg:p-8 2xl:p-12 border-b lg:border-b-0 lg:border-r border-cowboy-umber/15 flex flex-col justify-between">
+          <div className="w-full lg:w-95 2xl:w-120 shrink-0 bg-alpine-linen-fade p-5 sm:p-7 lg:p-8 2xl:p-12 border-b lg:border-b-0 lg:border-r border-cowboy-umber/15 flex flex-col justify-between">
             <div className="space-y-5 sm:space-y-6 2xl:space-y-8">
               {/* Item Card Artwork */}
               <div className="relative rounded-2xl 2xl:rounded-3xl overflow-hidden shadow-md border border-cowboy-umber/15 group">
@@ -543,7 +543,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                       onChange={(e) => setIncludeCard(e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-12 h-6 2xl:w-14 2xl:h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 2xl:after:h-6 2xl:after:w-6 after:transition-all peer-checked:bg-cowboy-umber"></div>
+                    <div className="w-12 h-6 2xl:w-14 2xl:h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 2xl:after:h-6 2xl:after:w-6 after:transition-all peer-checked:bg-cowboy-umber"></div>
                   </label>
                 </div>
 

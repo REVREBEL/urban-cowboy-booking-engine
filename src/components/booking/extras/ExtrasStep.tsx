@@ -126,7 +126,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
   }).length;
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="w-full max-w-400 mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <button
         type="button"
         onClick={onBack}
@@ -245,7 +245,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
         </div>
       )}
 
-      <div className="sticky bottom-6 z-40 mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-4 rounded-control-lg border border-white/10 bg-smoke p-4 text-white shadow-2xl sm:flex-row sm:p-5">
+      <div className="sticky bottom-6 z-40 mx-auto flex max-w-400 flex-col items-center justify-between gap-4 rounded-control-lg border border-white/10 bg-smoke p-4 text-white shadow-2xl sm:flex-row sm:p-5">
         <div className="text-center sm:text-left">
           <span className="block font-button text-[11px] uppercase tracking-widest text-alpine-linen">
             RESERVATION SUMMARY

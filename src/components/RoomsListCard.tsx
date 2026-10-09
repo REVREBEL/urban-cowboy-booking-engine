@@ -124,7 +124,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
 
   // Original approved media proportions and treatment.
   const mediaElement = mediaSlot ?? (
-    <div className="flex min-h-[260px] w-full shrink-0 flex-col self-stretch sm:min-h-[300px] lg:min-h-[336px] lg:w-[46%] xl:w-[48%]">
+    <div className="flex min-h-65 w-full shrink-0 flex-col self-stretch sm:min-h-75 lg:min-h-84 lg:w-[46%] xl:w-[48%]">
       <div className="group relative h-full w-full flex-1 overflow-hidden rounded-card-media bg-[var(--media-placeholder)]">
         {imageUrl ? (
           <img
@@ -228,7 +228,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <div
                   key={pill.key}
                   data-pill-source={pill.source}
-                  className={`room-list-card__pill rounded-control-sm border px-2.5 pb-1 pt-[6.5px] font-label text-[10px] font-bold uppercase tracking-[1px] ${
+                  className={`room-list-card__pill rounded-control-sm border px-2.5 pb-1 pt-1.625 font-label text-[10px] font-bold uppercase tracking-[1px] ${
                     pill.emphasis === "highlight"
                       ? "room-list-card__highlight"
                       : "room-list-card__amenity"
@@ -248,7 +248,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onSelectRoom(room)}
-                  className="room-list-card__action room-list-card__primary rounded-card-media px-5 pb-2.5 pt-[12.5px] font-label text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95"
+                  className="room-list-card__action room-list-card__primary rounded-card-media px-5 pb-2.5 pt-3.125 font-label text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95"
                 >
                   Select Room
                 </button>
@@ -257,7 +257,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenRoomDetails(room)}
-                  className="room-list-card__action room-list-card__secondary rounded-card-media border px-5 pb-2 pt-[10.5px] font-label text-[11px] font-bold uppercase tracking-[1.1px] transition-colors"
+                  className="room-list-card__action room-list-card__secondary rounded-card-media border px-5 pb-2 pt-2.625 font-label text-[11px] font-bold uppercase tracking-[1.1px] transition-colors"
                 >
                   View Details
                 </button>

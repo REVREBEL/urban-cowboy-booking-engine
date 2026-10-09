@@ -155,7 +155,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
     >
       {/* Loading Overlay */}
       {isBusy ? (
-        <div className="flex items-center justify-center gap-1 h-[16px]">
+        <div className="flex items-center justify-center gap-1 h-4">
           <svg
             className="animate-spin h-3 w-3 text-current"
             xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +178,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
           </svg>
         </div>
       ) : (
-        <div className="flex items-center justify-center gap-1 h-[16px]">
+        <div className="flex items-center justify-center gap-1 h-4">
           {/* Step Number Circle (16px x 16px) */}
           <div
             className="flex-shrink-0 flex items-center justify-center box-border transition-colors duration-200"

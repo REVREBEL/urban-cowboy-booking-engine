@@ -15,11 +15,11 @@ const SunupCornerFlourish = ({ className = '' }: { className?: string }) => (
 );
 
 const SunupInsetFrame = () => (
-  <div aria-hidden="true" className="pointer-events-none absolute inset-[10px] z-10 rounded-modal-xl border-[length:var(--border-width-heavy)] border-copper">
-    <SunupCornerFlourish className="-left-[11px] -top-[11px]" />
-    <SunupCornerFlourish className="-right-[11px] -top-[11px] rotate-90" />
-    <SunupCornerFlourish className="-bottom-[11px] -right-[11px] rotate-180" />
-    <SunupCornerFlourish className="-bottom-[11px] -left-[11px] -rotate-90" />
+  <div aria-hidden="true" className="pointer-events-none absolute inset-2.5 z-10 rounded-modal-xl border-[length:var(--border-width-heavy)] border-copper">
+    <SunupCornerFlourish className="-left-2.75 -top-2.75" />
+    <SunupCornerFlourish className="-right-2.75 -top-2.75 rotate-90" />
+    <SunupCornerFlourish className="-bottom-2.75 -right-2.75 rotate-180" />
+    <SunupCornerFlourish className="-bottom-2.75 -left-2.75 -rotate-90" />
   </div>
 );
 
@@ -129,7 +129,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
         {/* ================= PRIMARY CARD ================= */}
         <div
           className={`relative z-20 shrink-0 box-border ${
-            isCompact ? 'w-[482px]' : 'w-[480px]'
+            isCompact ? 'w-120.5' : 'w-120'
           }`}
         >
           {isCompact ? (
@@ -179,7 +179,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
               </div>
 
               {/* Price Display */}
-              <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
+              <div className="w-full flex flex-col justify-center px-7.5 box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
                   className="w-full text-left font-bold uppercase select-none whitespace-nowrap"
                   style={{
@@ -289,7 +289,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                     </h2>
                   </div>
 
-                  <div className="w-full max-w-[340px] flex flex-row justify-center items-center mt-3">
+                  <div className="w-full max-w-85 flex flex-row justify-center items-center mt-3">
                     <p
                       className="w-full font-normal text-center m-0 whitespace-normal"
                       style={{
@@ -307,7 +307,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 </div>
 
                 <div className="w-full flex flex-col items-center gap-4">
-                  <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
+                  <div className="w-full flex flex-col justify-center px-7.5 box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
                       className="w-full text-left font-bold uppercase select-none whitespace-nowrap"
                       style={{
@@ -339,7 +339,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className={`group w-full max-w-[380px] min-h-[66px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-copper/30 active:scale-[0.98] whitespace-nowrap ${
+                      className={`group w-full max-w-95 min-h-16.5 px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-copper/30 active:scale-[0.98] whitespace-nowrap ${
                         disabled
                           ? 'opacity-50 cursor-not-allowed bg-copper/50 text-alpine-linen/60 border-copper/50'
                           : isExpanded
@@ -390,7 +390,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
         <div
           className={`relative z-10 overflow-hidden transition-all duration-500 ease-out flex flex-row self-center -ml-12 shrink-0 ${
             isExpanded
-              ? `opacity-100 ${isCompact ? 'w-[557px]' : 'w-[512px]'} translate-x-0 pointer-events-auto`
+              ? `opacity-100 ${isCompact ? 'w-139.25' : 'w-128'} translate-x-0 pointer-events-auto`
               : 'opacity-0 w-0 max-w-0 -translate-x-6 pointer-events-none'
           }`}
           style={{
@@ -399,7 +399,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
           }}
         >
           <div
-            className={`h-full ${isCompact ? 'w-[557px]' : 'w-[512px]'} pl-8 pt-0 shrink-0`}
+            className={`h-full ${isCompact ? 'w-139.25' : 'w-128'} pl-8 pt-0 shrink-0`}
             style={{
               width: isCompact ? '557px' : '512px',
               minWidth: isCompact ? '557px' : '512px',

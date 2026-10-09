@@ -12,7 +12,7 @@ export function MatcherProgress({ step }: MatcherProgressProps) {
   return (
     <div className="border-b border-alpine-linen bg-alpine-linen/40 px-4 py-3.5">
       <div
-        className="mx-auto flex max-w-[1000px] items-center justify-between text-xs font-mono text-smoke-fade"
+        className="mx-auto flex max-w-250 items-center justify-between text-xs font-mono text-smoke-fade"
         aria-label={"Step " + step + " of 3"}
       >
         {STEPS.map((item, index) => {

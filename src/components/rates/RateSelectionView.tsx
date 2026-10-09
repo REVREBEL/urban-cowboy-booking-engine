@@ -421,8 +421,8 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     <div className="w-full texture-linen min-h-screen pb-24 overflow-x-hidden">
       {/* ================= TOP HEADER BAR: SELECTED ROOM & TRIP SPECS ================= */}
       <div className="bg-paper border-b-2 border-cowboy-umber/20 shadow-xs sticky top-0 z-30 backdrop-blur-md bg-paper/95">
-        <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 max-w-[1600px] w-full mx-auto">
+        <div className="max-w-400 w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 max-w-400 w-full mx-auto">
             
             {/* Left Section: Back to Room Selection + Room Type Name */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
@@ -436,7 +436,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 <span>Back to Room Selection</span>
               </button>
 
-              <div className="h-7 w-[1px] bg-cowboy-umber/20 hidden sm:block" />
+              <div className="h-7 w-0.25 bg-cowboy-umber/20 hidden sm:block" />
 
               <div>
                 <span className="font-label text-[10px] uppercase tracking-widest text-copper font-bold block">
@@ -505,7 +505,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
       </div>
 
       {/* ================= MAIN CONTAINER: RATE SELECTION & OFFERS CARDS ================= */}
-      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div className="w-full max-w-400 mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="space-y-4">
           
           {/* Header Bar: SELECT A RATE + CAROUSEL CONTROLS */}
@@ -886,7 +886,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 );
               })()}
               {/* Generous right-side spacer to ensure cards have 100% full scroll clearance when expanded */}
-              <div className="shrink-0 w-64 sm:w-96 lg:w-[480px] h-1 pointer-events-none" aria-hidden="true" />
+              <div className="shrink-0 w-64 sm:w-96 lg:w-120 h-1 pointer-events-none" aria-hidden="true" />
             </div>
           </div>
 

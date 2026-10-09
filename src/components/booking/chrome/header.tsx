@@ -37,7 +37,7 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
   return (
     <header className="sticky top-0 z-40 w-full border-b border-cowboy-umber/10 bg-alpine-linen/95 backdrop-blur-md">
       <div className="booking-shell">
-        <div className="flex h-16 w-full items-center justify-between gap-5 sm:h-[67px]">
+        <div className="flex h-16 w-full items-center justify-between gap-5 sm:h-16.75">
           <button
             type="button"
             onClick={onHome}

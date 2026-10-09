@@ -104,7 +104,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
         {/* ================= PRIMARY CARD ================= */}
         <div
           className={`relative z-20 shrink-0 box-border ${
-            isCompact ? 'w-[482px]' : 'w-[480px]'
+            isCompact ? 'w-120.5' : 'w-120'
           }`}
         >
           {isCompact ? (
@@ -139,7 +139,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
               </div>
 
               {/* Price Display */}
-              <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
+              <div className="w-full flex flex-col justify-center px-7.5 box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
                   className="w-full text-left font-semibold text-smoke uppercase select-none whitespace-nowrap"
                   style={{
@@ -235,7 +235,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
 
                   <div className="w-full flex flex-row justify-end items-center mt-2">
                     <p
-                      className="w-full max-w-[320px] font-normal text-black text-left m-0 whitespace-pre-line"
+                      className="w-full max-w-80 font-normal text-black text-left m-0 whitespace-pre-line"
                       style={{
                         fontFamily: "'Arvo', Georgia, serif",
                         fontSize: '18px',
@@ -250,7 +250,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                 </div>
 
                 <div className="w-full flex flex-col items-center gap-4">
-                  <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
+                  <div className="w-full flex flex-col justify-center px-7.5 box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
                       className="w-full text-left font-semibold text-smoke uppercase select-none whitespace-nowrap"
                       style={{
@@ -280,7 +280,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className={`group w-full max-w-[380px] min-h-[66px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-smoke/30 active:scale-[0.98] whitespace-nowrap ${
+                      className={`group w-full max-w-95 min-h-16.5 px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-smoke/30 active:scale-[0.98] whitespace-nowrap ${
                         disabled
                           ? 'opacity-50 cursor-not-allowed bg-smoke/50 text-white/50 border-cowboy-umber/50'
                           : isExpanded
@@ -331,7 +331,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
         <div
           className={`relative z-10 overflow-hidden transition-all duration-500 ease-out flex flex-row shrink-0 -ml-12 ${
             isExpanded
-              ? `opacity-100 ${isCompact ? 'w-[557px]' : 'w-[512px]'} translate-x-0 pointer-events-auto`
+              ? `opacity-100 ${isCompact ? 'w-139.25' : 'w-128'} translate-x-0 pointer-events-auto`
               : 'opacity-0 w-0 max-w-0 -translate-x-6 pointer-events-none'
           }`}
           style={{
@@ -340,7 +340,7 @@ export const OffersCardPlanAhead: React.FC<OffersCardPlanAheadProps> = ({
           }}
         >
           <div
-            className={`h-full ${isCompact ? 'w-[557px]' : 'w-[512px]'} pl-8 pt-0 shrink-0`}
+            className={`h-full ${isCompact ? 'w-139.25' : 'w-128'} pl-8 pt-0 shrink-0`}
             style={{
               width: isCompact ? '557px' : '512px',
               minWidth: isCompact ? '557px' : '512px',

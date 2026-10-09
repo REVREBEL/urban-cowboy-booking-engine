@@ -193,7 +193,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={onOpenHelpMeChoose}
-              className="flex items-center gap-2 px-5 pb-2.5 pt-[12.5px] rounded-full bg-paper border border-cowboy-umber/30 hover:border-cowboy-umber font-label text-xs uppercase tracking-wider text-cowboy-umber shadow-xs transition-all hover:bg-white cursor-pointer"
+              className="flex items-center gap-2 px-5 pb-2.5 pt-3.125 rounded-full bg-paper border border-cowboy-umber/30 hover:border-cowboy-umber font-label text-xs uppercase tracking-wider text-cowboy-umber shadow-xs transition-all hover:bg-white cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-copper" />
               <span>Help Me Choose</span>
@@ -203,7 +203,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             <div className="flex items-center bg-paper border border-cowboy-umber/20 rounded-full p-1 text-xs font-label uppercase tracking-wider text-cowboy-umber">
               <button
                 onClick={() => setLayoutMode('spread')}
-                className={`flex items-center gap-1.5 px-3 pb-1 pt-[6.5px] rounded-full transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 pb-1 pt-1.625 rounded-full transition-all cursor-pointer ${
                   layoutMode === 'spread'
                     ? 'bg-cowboy-umber text-alpine-linen shadow-xs'
                     : 'text-smoke-fade hover:text-cowboy-umber'
@@ -214,7 +214,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               </button>
               <button
                 onClick={() => setLayoutMode('catalog')}
-                className={`flex items-center gap-1.5 px-3 pb-1 pt-[6.5px] rounded-full transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 pb-1 pt-1.625 rounded-full transition-all cursor-pointer ${
                   layoutMode === 'catalog'
                     ? 'bg-cowboy-umber text-alpine-linen shadow-xs'
                     : 'text-smoke-fade hover:text-cowboy-umber'
@@ -226,7 +226,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </div>
 
             {/* Active search pill */}
-            <div className="px-4 pb-2 pt-[10.5px] rounded-full border border-cowboy-umber/20 bg-paper font-label text-xs uppercase tracking-wider text-cowboy-umber flex items-center gap-2">
+            <div className="px-4 pb-2 pt-2.625 rounded-full border border-cowboy-umber/20 bg-paper font-label text-xs uppercase tracking-wider text-cowboy-umber flex items-center gap-2">
               <Calendar className="w-3.5 h-3.5 text-copper" />
               <span>
                 {formatSummaryDate(criteria.checkIn)} — {formatSummaryDate(criteria.checkOut)} · {criteria.guests} Adults
@@ -243,7 +243,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </span>
             <button
               onClick={() => setSelectedRoomTypeGroupKey('all')}
-              className={`px-3.5 pb-1 pt-[6.5px] rounded-full text-xs font-label uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`px-3.5 pb-1 pt-1.625 rounded-full text-xs font-label uppercase tracking-wider transition-colors cursor-pointer ${
                 selectedRoomTypeGroupKey === 'all'
                   ? 'bg-cowboy-umber text-alpine-linen'
                   : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
@@ -255,7 +255,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               <button
                 key={group.key}
                 onClick={() => setSelectedRoomTypeGroupKey(group.key)}
-                className={`px-3.5 pb-1 pt-[6.5px] rounded-full text-xs font-label uppercase tracking-wider transition-colors cursor-pointer ${
+                className={`px-3.5 pb-1 pt-1.625 rounded-full text-xs font-label uppercase tracking-wider transition-colors cursor-pointer ${
                   selectedRoomTypeGroupKey === group.key
                     ? 'bg-cowboy-umber text-alpine-linen'
                     : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
@@ -269,7 +269,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'cedar' ? 'all' : 'cedar')}
-              className={`px-3 pb-1 pt-[6.5px] rounded-full text-[11px] font-label uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`px-3 pb-1 pt-1.625 rounded-full text-[11px] font-label uppercase tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'cedar'
                   ? 'bg-copper text-alpine-linen'
                   : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
@@ -279,7 +279,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </button>
             <button
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'dog' ? 'all' : 'dog')}
-              className={`px-3 pb-1 pt-[6.5px] rounded-full text-[11px] font-label uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`px-3 pb-1 pt-1.625 rounded-full text-[11px] font-label uppercase tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'dog'
                   ? 'bg-copper text-alpine-linen'
                   : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
@@ -289,7 +289,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </button>
             <button
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'fireplace' ? 'all' : 'fireplace')}
-              className={`px-3 pb-1 pt-[6.5px] rounded-full text-[11px] font-label uppercase tracking-wider transition-colors cursor-pointer ${
+              className={`px-3 pb-1 pt-1.625 rounded-full text-[11px] font-label uppercase tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'fireplace'
                   ? 'bg-copper text-alpine-linen'
                   : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'

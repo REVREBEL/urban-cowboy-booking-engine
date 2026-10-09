@@ -163,7 +163,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
     // ================= COMPACT VARIANT (Active_Open.png) =================
     return (
       <div
-        className="w-[525px] h-[625px] rounded-r-[45px] rounded-l-none p-6 sm:p-7 flex flex-col justify-between shadow-xl relative box-border transition-colors duration-300 shrink-0"
+        className="w-131.25 h-156.25 rounded-r-[45px] rounded-l-none p-6 sm:p-7 flex flex-col justify-between shadow-xl relative box-border transition-colors duration-300 shrink-0"
         style={{
           width: '525px',
           minWidth: '525px',
@@ -405,7 +405,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   // ================= NORMAL VARIANT (Normal Active Open.png) =================
   return (
     <div
-      className="w-[528px] h-[800px] rounded-r-[40px] rounded-l-none py-6 pr-6 pl-[72px] sm:py-8 sm:pr-8 sm:pl-[80px] lg:py-10 lg:pr-10 lg:pl-[88px] flex flex-col items-center justify-center gap-8 shadow-xl relative box-border transition-colors duration-300 shrink-0"
+      className="w-132 h-200 rounded-r-[40px] rounded-l-none py-6 pr-6 pl-18 sm:py-8 sm:pr-8 sm:pl-20 lg:py-10 lg:pr-10 lg:pl-22 flex flex-col items-center justify-center gap-8 shadow-xl relative box-border transition-colors duration-300 shrink-0"
       style={{
         width: '528px',
         minWidth: '528px',

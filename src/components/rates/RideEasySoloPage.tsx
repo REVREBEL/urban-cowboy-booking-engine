@@ -57,7 +57,7 @@ export const RideEasySoloPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="h-4 w-[1px] bg-smoke/20 mx-1 hidden sm:block" />
+        <div className="h-4 w-0.25 bg-smoke/20 mx-1 hidden sm:block" />
 
         <span className="font-sans text-xs uppercase tracking-wider text-smoke-fade font-bold">
           Layout:
@@ -83,7 +83,7 @@ export const RideEasySoloPage: React.FC = () => {
           Compact
         </button>
 
-        <div className="h-4 w-[1px] bg-smoke/20 mx-1 hidden sm:block" />
+        <div className="h-4 w-0.25 bg-smoke/20 mx-1 hidden sm:block" />
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}

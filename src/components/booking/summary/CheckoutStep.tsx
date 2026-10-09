@@ -28,7 +28,7 @@ export function CheckoutStep({
   children,
 }: CheckoutStepProps) {
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-8 sm:py-10 2xl:py-14">
+    <div className="w-full max-w-400 mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 py-8 sm:py-10 2xl:py-14">
       {onBack ? (
         <button
           type="button"

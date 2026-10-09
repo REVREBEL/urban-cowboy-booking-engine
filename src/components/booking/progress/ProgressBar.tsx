@@ -189,7 +189,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
       {...buttonProps}
     >
       {isBusy ? (
-        <div className="flex items-center justify-center h-[16px] px-2">
+        <div className="flex items-center justify-center h-4 px-2">
           <svg
             className="animate-spin h-3 w-3 text-current"
             xmlns="http://www.w3.org/2000/svg"
@@ -242,7 +242,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
 
           {/* Step Label: matching 16px flex height aligned on center axis */}
           <span
-            className="select-none capitalize tracking-[0.2px] inline-flex items-center justify-center h-[16px] text-center"
+            className="select-none capitalize tracking-[0.2px] inline-flex items-center justify-center h-4 text-center"
             style={{
               fontFamily: "var(--font-label)",
               fontSize: '11px',
@@ -263,7 +263,7 @@ const ProgressSlashSeparator: React.FC<{ className?: string }> = ({
 }) => (
   <span
     aria-hidden="true"
-    className={`select-none inline-flex items-center justify-center flex-shrink-0 mx-[15px] ${className}`}
+    className={`select-none inline-flex items-center justify-center flex-shrink-0 mx-3.75 ${className}`}
     style={{
       width: '3px',
       height: '17px',
