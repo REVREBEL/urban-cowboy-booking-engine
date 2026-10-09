@@ -117,8 +117,8 @@ const CALL_META: Record<string, { label: string; why: string }> = {
     why: "Sends cart state (status, selection, and contact details) to n8n throughout the funnel to support abandoned, payment-started, and completed booking records.",
   },
   "room-type-reviews": {
-    label: "Room-type reviews · Webflow CMS",
-    why: "Loads published review copy for Room Types from Webflow, joined by Mews Room Type ID. Blank CMS review fields intentionally return no review.",
+    label: "Room-type content · Webflow CMS",
+    why: "Loads published short/long Room Type descriptions and review copy from Webflow, joined by Mews Room Type ID. Blank editorial fields fall back safely without changing Mews availability or pricing.",
   },
   locations: {
     label: "Location chrome · Webflow CMS",
