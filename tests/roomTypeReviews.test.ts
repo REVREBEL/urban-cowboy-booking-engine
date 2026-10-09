@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  normalizeRoomTypeDescription,
+  normalizeRoomTypeDescriptions,
   normalizeRoomTypeReview,
   normalizeRoomTypeReviews,
 } from "../worker/webflow/room-type-reviews.ts";
@@ -94,4 +96,57 @@ test("unknown review source metadata is omitted instead of leaking a Webflow opt
 
   assert.equal(review?.source, null);
   assert.equal(review?.quote, "The room was great.");
+});
+
+
+test("normalizes published Webflow short and long descriptions by Mews Room Type ID", () => {
+  const description = normalizeRoomTypeDescription({
+    id: "cms-room",
+    isArchived: false,
+    isDraft: false,
+    fieldData: {
+      "mews-room-type-id": "mews-room-type-123",
+      "short-description": "Concise card copy.",
+      "long-description": "Long-form detail copy for the room experience.",
+    },
+  });
+
+  assert.deepEqual(description, {
+    roomTypeId: "mews-room-type-123",
+    shortDescription: "Concise card copy.",
+    longDescription: "Long-form detail copy for the room experience.",
+  });
+});
+
+test("room descriptions are optional per field and ignore unpublished CMS items", () => {
+  const descriptions = normalizeRoomTypeDescriptions([
+    {
+      id: "short-only",
+      isArchived: false,
+      isDraft: false,
+      fieldData: {
+        "mews-room-type-id": "short-room",
+        "short-description": "Short only.",
+        "long-description": "   ",
+      },
+    },
+    {
+      id: "draft-room",
+      isArchived: false,
+      isDraft: true,
+      fieldData: {
+        "mews-room-type-id": "draft-room",
+        "short-description": "Should not leak.",
+        "long-description": "Should not leak.",
+      },
+    },
+  ]);
+
+  assert.deepEqual(descriptions, {
+    "short-room": {
+      roomTypeId: "short-room",
+      shortDescription: "Short only.",
+      longDescription: null,
+    },
+  });
 });
