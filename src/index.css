@@ -862,12 +862,12 @@ color: rgb(107 98 89 / 0.55);
 }
 
 .room-list-card__primary {
-  background-color: var(--card-primary-bg);
+  background-color: var(--button-primary-bg);
   color: var(--background);
 }
 
 .room-list-card__primary:hover {
-  background-color: var(--card-primary-hover);
+  background-color: var(--button-primary-hover-bg);
 }
 
 .room-list-card__secondary {

@@ -243,12 +243,12 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
 
         <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-current/15 pt-3">
           {actionsSlot ?? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-start gap-3">
               {onSelectRoom && (
                 <button
                   type="button"
                   onClick={() => onSelectRoom(room)}
-                  className="room-list-card__action room-list-card__primary rounded-card-media px-5 pb-2.5 pt-3.125 font-label text-[11px] font-bold uppercase tracking-[1.1px] shadow-sm transition-transform active:scale-95"
+                  className="room-list-card__action room-list-card__primary inline-flex min-h-8 items-center justify-center rounded-card-media px-5 py-2 font-label text-[11px] font-bold uppercase leading-none tracking-[1.1px] shadow-sm transition-transform active:scale-95"
                 >
                   Select Room
                 </button>
@@ -257,7 +257,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenRoomDetails(room)}
-                  className="room-list-card__action room-list-card__secondary rounded-card-media border px-5 pb-2 pt-2.625 font-label text-[11px] font-bold uppercase tracking-[1.1px] transition-colors"
+                  className="room-list-card__action room-list-card__secondary inline-flex min-h-8 items-center justify-start rounded-card-media border px-5 py-2 text-left font-label text-[11px] font-bold uppercase leading-none tracking-[1.1px] transition-colors"
                 >
                   View Details
                 </button>
