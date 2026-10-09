@@ -8,3 +8,11 @@ export interface RoomTypeCmsReview {
 }
 
 export type RoomTypeCmsReviewMap = Record<string, RoomTypeCmsReview>;
+
+export interface RoomTypeCmsDescription {
+  roomTypeId: string;
+  shortDescription: string | null;
+  longDescription: string | null;
+}
+
+export type RoomTypeCmsDescriptionMap = Record<string, RoomTypeCmsDescription>;
