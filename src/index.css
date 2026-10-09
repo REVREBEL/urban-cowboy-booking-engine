@@ -29,7 +29,12 @@ text-cowboy-umber, font-heading, shadow-card).
 --color-oxidized-teal: #236b7d;
 --color-nude-ember: #f2aaa9;
 --color-lake-forest: #0e301a;
---color-lake-forest-fade: #566e5f;
+--color-lake-forest-100: #566e5f;
+--color-lake-forest-300: #3e5948;
+--color-oxblood-300: #875161;
+--color-ash-900: #7a7770;
+--color-alpine-linen-fade: #f1efe9;
+--color-lodge-yellow-fade: #fee783;
 
 /* Shared interface neutrals. These preserve the existing visual values while
    replacing repeated arbitrary hex classes with named utilities. */
@@ -64,7 +69,7 @@ text-cowboy-umber, font-heading, shadow-card).
 --radius-control: 14px;
 --radius-card: 16px;
 --radius-card-media: 17px;
---radius-control-lg: 18px;
+--radius-control-lg: 19px;
 --radius-control-xl: 20px;
 --radius-hairline: 2px;
 --radius-field: 5px;
@@ -113,19 +118,19 @@ color-scheme: light;
 --cowboy-umber--normal: var(--color-cowboy-umber);
 --alpine-linen--normal: var(--color-alpine-linen);
 --lodge-yellow--normal: #fddc4e;
---ash--normal: #ccc7bb;
---paper--normal: #faf9f9;
---lake-forest--normal: #0e301a;
---whiskey-sour--normal: #ddc5a4;
+--ash--normal: var(--color-ash);
+--paper--normal: var(--color-paper);
+--lake-forest--normal: var(--color-lake-forest);
+--whiskey-sour--normal: var(--color-whiskey-sour);
 --smoke--normal: var(--color-smoke);
 --smoke--fade: var(--color-smoke-fade);
---mist--normal: #f2f2f2;
---copper--normal: #9a5636;
---oxblood--normal: #69253a;
---bandana-red--normal: #d65241;
---oxidized-teal--normal: #236b7d;
---nude-ember--normal: #f2aaa9;
---lake-forest--fade: #566e5f;
+--mist--normal: var(--color-mist);
+--copper--normal: var(--color-copper);
+--oxblood--normal: var(--color-oxblood);
+--bandana-red--normal: var(--color-bandana-red);
+--oxidized-teal--normal: var(--color-oxidized-teal);
+--nude-ember--normal: var(--color-nude-ember);
+--lake-forest--fade: var(--color-lake-forest-100);
 
 /* Button typography + sizing tokens mirrored from Webflow */
 --_typography---font-family--button: "BrothersOT", "Brothers OT", "Brothers", "Rockwell", "Clarendon", Georgia, serif;
@@ -142,18 +147,18 @@ color-scheme: light;
 --_size---button--padding-left: 1.15rem;
 --_size---button--font-size: var(--_typography---text-size--base);
 --_size---button--font-weight: 700;
---_size---button--border-radius: 14px;
+--_size---button--border-radius: var(--radius-control);
 --_size---button--border-width: 3px;
 --_size---button--line-height: 1;
 --_size---button--letter-spacing: 0.05em;
 
 --_size---button-md--font-size: var(--_typography---text-size--md);
 --_size---button-md--text-size: var(--_typography---text-size--md);
---_size---button-md--border-radius: 16px;
+--_size---button-md--border-radius: var(--radius-card);
 
 --_size---button-lg--font-size: var(--_typography---text-size--lg);
 --_size---button-lg--font-weight: 700;
---_size---button-lg--border-radius: 18px;
+--_size---button-lg--border-radius: var(--radius-control-lg);
 --_size---button-lg--border-width: 3.5px;
 --_size---button-lg--padding-top: 1.25rem;
 --_size---button-lg--padding-bottom: 1.25rem;
@@ -161,14 +166,14 @@ color-scheme: light;
 --_size---button-lg--padding-right: 1.75rem;
 
 --_size---button-xl--font-size: var(--_typography---text-size--xl);
---_size---button-xl--border-radius: 20px;
+--_size---button-xl--border-radius: var(--radius-control-xl);
 
 --_size---button-xs--font-size: var(--_typography---text-size--xs);
---_size---button-xs--border-radius: 10px;
+--_size---button-xs--border-radius: var(--radius-control-xs);
 
 --_size---button-sm--font-size: var(--_typography---text-size--sm);
 --_size---button-sm--font-weight: 700;
---_size---button-sm--border-radius: 12px;
+--_size---button-sm--border-radius: var(--radius-control-sm);
 --_size---button-sm--border-width: 3px;
 --_size---button-sm--padding-top: 0.75rem;
 --_size---button-sm--padding-bottom: 0.75rem;
@@ -384,7 +389,7 @@ color: #ffffff;
 box-shadow: var(--shadow-card);
 }
 .btn-primary:hover {
-background-color: var(--color-lake-forest-fade);
+background-color: var(--color-lake-forest-100);
 box-shadow: var(--shadow-float);
 }
 
