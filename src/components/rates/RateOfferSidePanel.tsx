@@ -61,7 +61,7 @@ const buttonColorForTheme = (theme: OfferCardTheme): ButtonColor => {
 const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   'ride-easy': {
     panelBg: '#F2F2F2',
-    borderColor: '#343833',
+    borderColor: 'var(--color-smoke)',
     ticketBg: '#FFFFFF',
     ticketBorder: 'rgba(52, 56, 51, 0.12)',
     textPrimary: '#221C18',
@@ -76,7 +76,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'outfit': {
     panelBg: '#0E301A',
-    borderColor: '#F2AAA9',
+    borderColor: 'var(--color-nude-ember)',
     ticketBg: '#153C22',
     ticketBorder: 'rgba(242, 170, 169, 0.25)',
     textPrimary: '#EBE8E0',
@@ -91,7 +91,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'sunup': {
     panelBg: '#EBE8E0',
-    borderColor: '#9A5636',
+    borderColor: 'var(--color-copper)',
     ticketBg: '#FAF8F5',
     ticketBorder: 'rgba(154, 86, 54, 0.25)',
     textPrimary: '#69253A',
@@ -106,7 +106,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'stay-while': {
     panelBg: '#343833',
-    borderColor: '#EBE8E0',
+    borderColor: 'var(--color-alpine-linen)',
     ticketBg: '#272B26',
     ticketBorder: 'rgba(235, 232, 224, 0.25)',
     textPrimary: '#EBE8E0',
@@ -121,7 +121,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'plan-ahead': {
     panelBg: '#F2F2F2',
-    borderColor: '#343833',
+    borderColor: 'var(--color-smoke)',
     ticketBg: '#FFFFFF',
     ticketBorder: 'rgba(52, 56, 51, 0.15)',
     textPrimary: '#000000',
@@ -188,7 +188,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
 
         {/* Embedded Ticket Box with 2 Columns */}
         <div
-          className="rounded-[22px] px-5 shadow-xs mb-3 mx-auto flex items-center justify-center box-border transition-colors duration-300"
+          className="rounded-panel-xs px-5 shadow-xs mb-3 mx-auto flex items-center justify-center box-border transition-colors duration-300"
           style={{
             width: '465px',
             height: '325px',
@@ -474,7 +474,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
 
       {/* Embedded Ticket Box (Financial Breakdown Only) */}
       <div
-        className="w-full rounded-[24px] p-6 sm:p-7 shadow-xs transition-colors duration-300"
+        className="w-full rounded-panel-sm p-6 sm:p-7 shadow-xs transition-colors duration-300"
         style={{
           backgroundColor: themeConfig.ticketBg,
           border: `1.5px solid ${themeConfig.ticketBorder}`,

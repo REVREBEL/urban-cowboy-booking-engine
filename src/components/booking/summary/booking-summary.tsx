@@ -72,21 +72,21 @@ export function BookingSummary() {
   ].filter(Boolean).join(" · ");
 
   return (
-    <aside className="space-y-5 rounded-[28px] border-2 border-[#4E332D] bg-white p-6 shadow-lg sm:p-8 2xl:space-y-6 2xl:rounded-[36px] 2xl:p-10">
-      <div className="space-y-3 border-b border-[#D1C9BE] pb-5 2xl:pb-6">
+    <aside className="space-y-5 rounded-panel-lg border-2 border-cowboy-umber bg-white p-6 shadow-lg sm:p-8 2xl:space-y-6 2xl:rounded-modal-lg 2xl:p-10">
+      <div className="space-y-3 border-b border-alpine-linen pb-5 2xl:pb-6">
         <div className="flex items-center justify-between gap-4">
-          <span className="font-woodblock text-xs font-bold uppercase tracking-widest text-[#9A5636] 2xl:text-sm">
+          <span className="font-label text-xs font-bold uppercase tracking-widest text-copper 2xl:text-sm">
             {selectedRoom ? spaceLabel(selectedRoom.roomClass) : t("summary.yourStay")}
           </span>
           {nightsCount > 0 ? (
-            <span className="font-mono text-xs text-[#73716D] 2xl:text-sm">
+            <span className="font-mono text-xs text-smoke-fade 2xl:text-sm">
               {nightsCount} {nightsCount === 1 ? "Night" : "Nights"}
             </span>
           ) : null}
         </div>
 
         {roomImage ? (
-          <div className="h-36 overflow-hidden rounded-xl border border-[#D1C9BE] sm:h-44 2xl:h-52 2xl:rounded-2xl">
+          <div className="h-36 overflow-hidden rounded-xl border border-alpine-linen sm:h-44 2xl:h-52 2xl:rounded-2xl">
             <img
               src={roomImage}
               alt={selectedRoom?.name ?? ""}
@@ -96,11 +96,11 @@ export function BookingSummary() {
         ) : null}
 
         <div>
-          <h2 className="font-display text-2xl font-bold leading-tight text-[#221C18] sm:text-3xl 2xl:text-4xl">
+          <h2 className="font-heading text-2xl font-bold leading-tight text-smoke sm:text-3xl 2xl:text-4xl">
             {selectedRoom?.name ?? t("summary.toCompose")}
           </h2>
           {selectedRate ? (
-            <span className="mt-0.5 block font-sans text-xs text-[#73716D] sm:text-sm 2xl:text-base">
+            <span className="mt-0.5 block font-sans text-xs text-smoke-fade sm:text-sm 2xl:text-base">
               {selectedRate.name}
               {nightly != null ? ` · ${money(nightly, currency)} / night` : ""}
             </span>
@@ -108,16 +108,16 @@ export function BookingSummary() {
         </div>
 
         {(checkIn || party) ? (
-          <div className="grid gap-2 pt-1 text-xs text-[#6B6259] sm:grid-cols-2 sm:text-sm">
+          <div className="grid gap-2 pt-1 text-xs text-ash-900 sm:grid-cols-2 sm:text-sm">
             {checkIn && checkOut ? (
               <div className="flex items-start gap-2">
-                <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-[#9A5636]" aria-hidden="true" />
+                <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-copper" aria-hidden="true" />
                 <span>{fmtDate(checkIn)} → {fmtDate(checkOut)}</span>
               </div>
             ) : null}
             {party ? (
               <div className="flex items-start gap-2">
-                <Users className="mt-0.5 h-4 w-4 shrink-0 text-[#9A5636]" aria-hidden="true" />
+                <Users className="mt-0.5 h-4 w-4 shrink-0 text-copper" aria-hidden="true" />
                 <span>{party}</span>
               </div>
             ) : null}
@@ -125,14 +125,14 @@ export function BookingSummary() {
         ) : null}
       </div>
 
-      <div className="space-y-3.5 border-b border-[#D1C9BE] pb-5 font-sans text-xs sm:text-sm 2xl:space-y-4 2xl:pb-6 2xl:text-base">
+      <div className="space-y-3.5 border-b border-alpine-linen pb-5 font-sans text-xs sm:text-sm 2xl:space-y-4 2xl:pb-6 2xl:text-base">
         {selectedRate ? (
           <Line
             label={
               <>
                 {t("summary.accommodation", { count: nightsCount })}
                 {nightly != null && nightsCount > 0 ? (
-                  <span className="block text-[11px] text-[#8A7E74]">
+                  <span className="block text-[11px] text-cowboy-umber-100">
                     {money(nightly, currency)} × {nightsCount}
                   </span>
                 ) : null}
@@ -144,7 +144,7 @@ export function BookingSummary() {
 
         {selectedProducts.length > 0 ? (
           <div className="space-y-2 pt-1">
-            <div className="flex items-center justify-between gap-4 font-bold text-[#9A5636]">
+            <div className="flex items-center justify-between gap-4 font-bold text-copper">
               <span className="flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5 2xl:h-4 2xl:w-4" aria-hidden="true" />
                 Curated Add-ons
@@ -152,7 +152,7 @@ export function BookingSummary() {
               <span>{money(displayedProductsTotal, currency)}</span>
             </div>
 
-            <div className="space-y-2 border-l-2 border-[#9A5636]/35 pl-3">
+            <div className="space-y-2 border-l-2 border-copper/35 pl-3">
               {selectedProducts.map((product) => (
                 <Line
                   key={product.id}
@@ -161,7 +161,7 @@ export function BookingSummary() {
                     <>
                       {product.name}
                       {chargingLabel(product.chargingMode) ? (
-                        <span className="block text-[11px] text-[#8A7E74]">
+                        <span className="block text-[11px] text-cowboy-umber-100">
                           {chargingLabel(product.chargingMode)}
                         </span>
                       ) : null}
@@ -180,16 +180,16 @@ export function BookingSummary() {
         ) : null}
 
         {!selectedRate && selectedProducts.length === 0 ? (
-          <p className="text-[#73716D]">{t("summary.selectPrompt")}</p>
+          <p className="text-smoke-fade">{t("summary.selectPrompt")}</p>
         ) : null}
       </div>
 
       <div className="flex items-baseline justify-between gap-4 pt-1">
         <div>
-          <span className="block font-woodblock text-xs uppercase tracking-wider text-[#73716D] sm:text-sm 2xl:text-base">
+          <span className="block font-label text-xs uppercase tracking-wider text-smoke-fade sm:text-sm 2xl:text-base">
             Total Balance
           </span>
-          <span className="text-xs text-[#8A7E74] 2xl:text-sm">
+          <span className="text-xs text-cowboy-umber-100 2xl:text-sm">
             {quoteLoading
               ? t("summary.verifyingTotal")
               : quoteError
@@ -197,13 +197,13 @@ export function BookingSummary() {
                 : t("summary.taxesIncluded")}
           </span>
         </div>
-        <span className="font-display text-3xl font-bold text-[#4E332D] sm:text-4xl 2xl:text-5xl">
+        <span className="font-heading text-3xl font-bold text-cowboy-umber sm:text-4xl 2xl:text-5xl">
           {grandTotal > 0 ? money(grandTotal, currency) : "—"}
         </span>
       </div>
 
       {amountDueNow != null && grandTotal > 0 ? (
-        <div className="space-y-2 border-t border-[#D1C9BE] pt-4 text-sm">
+        <div className="space-y-2 border-t border-alpine-linen pt-4 text-sm">
           <Line label={t("summary.dueNow")} value={money(amountDueNow, currency)} />
           {remainingBalance != null && remainingBalance > 0 ? (
             <Line
@@ -215,7 +215,7 @@ export function BookingSummary() {
       ) : null}
 
       {savings > 0 ? (
-        <div className="border-t border-[#D1C9BE] pt-4">
+        <div className="border-t border-alpine-linen pt-4">
           <SavingsLine amount={savings} currency={currency} />
         </div>
       ) : null}
@@ -239,8 +239,8 @@ function Line({
         compact ? "text-xs sm:text-sm" : "",
       ].join(" ")}
     >
-      <span className="min-w-0 text-[#6B6259]">{label}</span>
-      <span className="shrink-0 font-number font-bold text-[#221C18]">{value}</span>
+      <span className="min-w-0 text-ash-900">{label}</span>
+      <span className="shrink-0 font-number font-bold text-smoke">{value}</span>
     </div>
   );
 }

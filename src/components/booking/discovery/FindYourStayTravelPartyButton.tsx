@@ -102,7 +102,7 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
       aria-label={`${title}: ${subtitle}${isSelected ? ', selected' : ''}`}
       disabled={isInteractiveDisabled}
       onClick={handleClick}
-      className={`group relative flex flex-col justify-center items-start text-left box-border transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#4E332D]/30 ${
+      className={`group relative flex flex-col justify-center items-start text-left box-border transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-cowboy-umber/30 ${
         disabled
           ? 'opacity-40 cursor-not-allowed'
           : isBusy
@@ -127,10 +127,10 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
     >
       {/* Loading Overlay per SKILL.md */}
       {isBusy && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-[14px]">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-control">
           <div className="flex items-center gap-2">
             <svg
-              className="animate-spin h-4 w-4 text-[#4E332D]"
+              className="animate-spin h-4 w-4 text-cowboy-umber"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -150,7 +150,7 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
               />
             </svg>
             <span
-              className="text-[10px] font-bold tracking-wider uppercase text-[#4E332D]"
+              className="text-[10px] font-bold tracking-wider uppercase text-cowboy-umber"
               style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
             >
               UPDATING...

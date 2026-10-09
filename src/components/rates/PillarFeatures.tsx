@@ -37,10 +37,10 @@ export const PillarFeatures: React.FC = () => {
                 className="w-12 h-12 md:w-14 md:h-14 object-contain select-none"
               />
             </div>
-            <h3 className="font-woodblock text-sm md:text-base font-bold text-[#4E332D] tracking-wider uppercase mb-2">
+            <h3 className="font-label text-sm md:text-base font-bold text-cowboy-umber tracking-wider uppercase mb-2">
               {p.title}
             </h3>
-            <p className="font-editorial text-sm md:text-[15px] text-[#4E332D]/80 leading-relaxed">
+            <p className="font-body text-sm md:text-[15px] text-cowboy-umber/80 leading-relaxed">
               {p.text}
             </p>
           </div>

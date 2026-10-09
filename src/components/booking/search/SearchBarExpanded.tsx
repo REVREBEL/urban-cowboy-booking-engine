@@ -46,7 +46,7 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
     ref,
   ) => {
     const isInteractive = !disabled && !isLoading;
-    const rounded = variant === "circle" ? "rounded-full" : "rounded-[5px]";
+    const rounded = variant === "circle" ? "rounded-full" : "rounded-field";
 
     return (
       <button
@@ -56,15 +56,15 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
         onClick={onClick}
         aria-label="Search accommodations"
         aria-busy={isLoading}
-        className={`grid h-12 w-12 shrink-0 place-items-center text-center font-button bg-[#4E332D] text-[#FAF9F9] transition md:flex md:h-14 md:w-[116px] md:items-center md:justify-center md:gap-2 ${rounded} ${
+        className={`grid h-12 w-12 shrink-0 place-items-center text-center font-button bg-cowboy-umber text-paper transition md:flex md:h-14 md:w-[116px] md:items-center md:justify-center md:gap-2 ${rounded} ${
           isInteractive
-            ? "cursor-pointer hover:bg-[#343833] active:scale-[0.98]"
+            ? "cursor-pointer hover:bg-smoke active:scale-[0.98]"
             : "cursor-not-allowed opacity-60"
-        } focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4E332D] focus-visible:ring-offset-2 ${className}`}
+        } focus:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${className}`}
         {...props}
       >
         {isLoading ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#FAF9F9]/35 border-t-[#FAF9F9]" aria-hidden="true" />
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-paper/35 border-t-[#FAF9F9]" aria-hidden="true" />
         ) : (
           <>
             <span className="hidden h-[20px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] md:inline-flex">
@@ -109,17 +109,17 @@ function SearchSection({ label, value, section, activeSection, onClick, classNam
       type="button"
       aria-expanded={active}
       onClick={() => onClick(section)}
-      className={`group relative flex min-h-[64px] min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-[#4E332D] transition-colors hover:text-[#9A5636] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#9A5636] md:min-h-[58px] ${className}`}
+      className={`group relative flex min-h-[64px] min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-cowboy-umber transition-colors hover:text-copper focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-copper md:min-h-[58px] ${className}`}
     >
-      <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-[#4E332D]/60">
+      <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-cowboy-umber/60">
         {label}
       </span>
-      <span className="mt-0.5 block max-w-full truncate font-body text-[14px] font-normal leading-5 normal-case text-[#4E332D]">
+      <span className="mt-0.5 block max-w-full truncate font-body text-[14px] font-normal leading-5 normal-case text-cowboy-umber">
         {value}
       </span>
       <span
         aria-hidden="true"
-        className={`absolute bottom-1.5 left-4 right-4 h-0.5 origin-left bg-[#9A5636] transition-transform ${
+        className={`absolute bottom-1.5 left-4 right-4 h-0.5 origin-left bg-copper transition-transform ${
           active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
         }`}
       />
@@ -152,7 +152,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   const currentValues = controlledValues ?? internalValues;
   const controlledSection = controlledActiveSection !== undefined;
   const currentActiveSection = controlledSection ? controlledActiveSection : internalActiveSection;
-  const rounded = variant === "circle" ? "rounded-[26px] md:rounded-full" : "rounded-[5px]";
+  const rounded = variant === "circle" ? "rounded-panel md:rounded-full" : "rounded-field";
 
   const toggleSection = (section: Exclude<ActiveDropdownSection, null>) => {
     const next = currentActiveSection === section ? null : section;
@@ -170,18 +170,18 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
       <div
         role="search"
         aria-label="Expanded accommodation search bar"
-        className={`grid w-full grid-cols-1 overflow-hidden border-2 border-[#4E332D] bg-[#FAF9F9] p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${rounded} md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)_auto] md:items-center md:overflow-visible md:p-1.5 md:pl-4`}
+        className={`grid w-full grid-cols-1 overflow-hidden border-2 border-cowboy-umber bg-paper p-2 shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${rounded} md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)_auto] md:items-center md:overflow-visible md:p-1.5 md:pl-4`}
       >
-        <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
+        <div className="border-b border-cowboy-umber/10 md:border-b-0 md:border-r">
           <SearchSection label="Property" value={<span>{properCase(currentValues.property)}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
-        <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
+        <div className="border-b border-cowboy-umber/10 md:border-b-0 md:border-r">
           <SearchSection label="When" value={<span>{dateValue}</span>} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
-        <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
+        <div className="border-b border-cowboy-umber/10 md:border-b-0 md:border-r">
           <SearchSection label="Guests" value={<span>{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
-        <div className="border-b border-[#4E332D]/10 md:border-b-0 md:border-r">
+        <div className="border-b border-cowboy-umber/10 md:border-b-0 md:border-r">
           <SearchSection label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="flex justify-end p-1.5 md:pl-3">

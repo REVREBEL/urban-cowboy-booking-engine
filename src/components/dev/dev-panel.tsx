@@ -144,7 +144,7 @@ export function DevPanel() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-4 left-4 z-[60] inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 font-mono text-xs font-semibold text-cream shadow-float transition hover:bg-teal-deep"
+        className="fixed bottom-4 left-4 z-[60] inline-flex items-center gap-2 rounded-full bg-smoke px-4 py-2.5 font-mono text-xs font-semibold text-cream shadow-float transition hover:bg-teal-deep"
         aria-expanded={open}
         aria-label="API call log"
       >
@@ -154,13 +154,13 @@ export function DevPanel() {
         </span>
         {"</>"} API
         {entries.length > 0 && (
-          <span className="rounded-full bg-turquoise-vivid px-1.5 text-[10px] text-ink">{entries.length}</span>
+          <span className="rounded-full bg-turquoise-vivid px-1.5 text-[10px] text-smoke">{entries.length}</span>
         )}
       </button>
 
       {open && (
         <section
-          className="fixed bottom-16 left-4 z-[60] flex max-h-[74vh] w-[min(460px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink text-cream shadow-float"
+          className="fixed bottom-16 left-4 z-[60] flex max-h-[74vh] w-[min(460px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-smoke text-cream shadow-float"
           aria-label="Mews API call log"
         >
           <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">

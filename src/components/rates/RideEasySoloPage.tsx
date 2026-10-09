@@ -19,28 +19,28 @@ export const RideEasySoloPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#FAF9F6] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12 relative">
+    <div className="min-h-screen w-full bg-paper flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12 relative">
       {/* Toast Notification */}
       {confirmationNotice && (
-        <div className="fixed top-6 z-50 animate-bounce bg-[#0E301A] text-[#FAF9F9] px-6 py-3 rounded-full shadow-xl flex items-center gap-3 border border-[#F2AAA9]/40 text-sm font-sans">
-          <CheckCircle2 className="w-5 h-5 text-[#F2AAA9]" />
+        <div className="fixed top-6 z-50 animate-bounce bg-lake-forest text-paper px-6 py-3 rounded-full shadow-xl flex items-center gap-3 border border-nude-ember/40 text-sm font-sans">
+          <CheckCircle2 className="w-5 h-5 text-nude-ember" />
           <span>{confirmationNotice}</span>
         </div>
       )}
 
       {/* Top minimal controls for testing states */}
-      <div className="mb-8 flex flex-wrap items-center justify-center gap-3 bg-white/90 backdrop-blur-xs border border-[#343833]/20 px-5 py-2.5 rounded-full shadow-xs">
+      <div className="mb-8 flex flex-wrap items-center justify-center gap-3 bg-white/90 backdrop-blur-xs border border-smoke/20 px-5 py-2.5 rounded-full shadow-xs">
         {/* Version Switcher */}
-        <span className="font-sans text-xs uppercase tracking-wider text-[#73716D] font-bold">
+        <span className="font-sans text-xs uppercase tracking-wider text-smoke-fade font-bold">
           Version:
         </span>
-        <div className="flex items-center bg-[#FAF9F9] border border-[#343833]/20 rounded-full p-0.5 text-xs">
+        <div className="flex items-center bg-paper border border-smoke/20 rounded-full p-0.5 text-xs">
           <button
             onClick={() => setVersion('v1')}
             className={`px-3 py-1 rounded-full text-xs font-sans font-semibold uppercase tracking-wider transition-all cursor-pointer ${
               version === 'v1'
-                ? 'bg-[#343833] text-white shadow-xs'
-                : 'text-[#73716D] hover:text-[#343833]'
+                ? 'bg-smoke text-white shadow-xs'
+                : 'text-smoke-fade hover:text-smoke'
             }`}
           >
             V1 (Stored)
@@ -49,25 +49,25 @@ export const RideEasySoloPage: React.FC = () => {
             onClick={() => setVersion('v2')}
             className={`px-3 py-1 rounded-full text-xs font-sans font-semibold uppercase tracking-wider transition-all cursor-pointer ${
               version === 'v2'
-                ? 'bg-[#D65241] text-white shadow-xs'
-                : 'text-[#73716D] hover:text-[#D65241]'
+                ? 'bg-bandana-red text-white shadow-xs'
+                : 'text-smoke-fade hover:text-bandana-red'
             }`}
           >
             V2 (Active)
           </button>
         </div>
 
-        <div className="h-4 w-[1px] bg-[#343833]/20 mx-1 hidden sm:block" />
+        <div className="h-4 w-[1px] bg-smoke/20 mx-1 hidden sm:block" />
 
-        <span className="font-sans text-xs uppercase tracking-wider text-[#73716D] font-bold">
+        <span className="font-sans text-xs uppercase tracking-wider text-smoke-fade font-bold">
           Layout:
         </span>
         <button
           onClick={() => setVariant('default')}
           className={`px-3 py-1 rounded-full text-xs font-sans font-semibold uppercase tracking-wider transition-all cursor-pointer ${
             variant === 'default'
-              ? 'bg-[#343833] text-white shadow-xs'
-              : 'text-[#73716D] hover:text-[#343833]'
+              ? 'bg-smoke text-white shadow-xs'
+              : 'text-smoke-fade hover:text-smoke'
           }`}
         >
           Normal
@@ -76,21 +76,21 @@ export const RideEasySoloPage: React.FC = () => {
           onClick={() => setVariant('compact')}
           className={`px-3 py-1 rounded-full text-xs font-sans font-semibold uppercase tracking-wider transition-all cursor-pointer ${
             variant === 'compact'
-              ? 'bg-[#343833] text-white shadow-xs'
-              : 'text-[#73716D] hover:text-[#343833]'
+              ? 'bg-smoke text-white shadow-xs'
+              : 'text-smoke-fade hover:text-smoke'
           }`}
         >
           Compact
         </button>
 
-        <div className="h-4 w-[1px] bg-[#343833]/20 mx-1 hidden sm:block" />
+        <div className="h-4 w-[1px] bg-smoke/20 mx-1 hidden sm:block" />
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={`px-3.5 py-1 rounded-full text-xs font-sans font-semibold uppercase tracking-wider transition-all cursor-pointer ${
             isExpanded
-              ? 'bg-[#D65241] text-white shadow-xs'
-              : 'bg-neutral-100 text-[#343833] hover:bg-neutral-200'
+              ? 'bg-bandana-red text-white shadow-xs'
+              : 'bg-neutral-100 text-smoke hover:bg-neutral-200'
           }`}
         >
           {isExpanded ? 'Drawer Open (Active)' : 'Drawer Closed'}

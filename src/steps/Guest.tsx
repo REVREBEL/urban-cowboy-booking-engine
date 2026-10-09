@@ -42,7 +42,7 @@ export function Guest() {
   if (!selectedRoom || !selectedRate) return null;
 
   return (
-    <div className="min-h-screen bg-[#FAF9F9]">
+    <div className="min-h-screen bg-paper">
       <CheckoutStep
         eyebrow="STEP 3 OF 5 · GUEST DETAILS"
         title="Guest Information"
@@ -122,7 +122,7 @@ export function Guest() {
               required
             >
               <div className="checkout-phone-shell">
-                <Suspense fallback={<div className="checkout-field animate-pulse text-[#4E332D]/30">…</div>}>
+                <Suspense fallback={<div className="checkout-field animate-pulse text-cowboy-umber/30">…</div>}>
                   <PhoneInput
                     id="guest-phone"
                     name="telephone"
@@ -153,7 +153,7 @@ export function Guest() {
             />
           </Field>
 
-          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-[#D1C9BE] bg-white p-4 text-sm text-[#6B6259] shadow-2xs sm:p-5">
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-alpine-linen bg-white p-4 text-sm text-ash-900 shadow-2xs sm:p-5">
             <input
               type="checkbox"
               className="mt-0.5 h-5 w-5 shrink-0 accent-[#9A5636]"
@@ -165,9 +165,9 @@ export function Guest() {
             <span>{t("guest.marketing")}</span>
           </label>
 
-          <div className="border-t-2 border-[#D1C9BE] pt-4 2xl:pt-6">
-            <div className="mb-5 flex items-start gap-3 text-xs text-[#6B6259] sm:items-center sm:text-sm 2xl:mb-6 2xl:text-base">
-              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#0E301A] sm:mt-0 2xl:h-6 2xl:w-6" aria-hidden="true" />
+          <div className="border-t-2 border-alpine-linen pt-4 2xl:pt-6">
+            <div className="mb-5 flex items-start gap-3 text-xs text-ash-900 sm:items-center sm:text-sm 2xl:mb-6 2xl:text-base">
+              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-lake-forest sm:mt-0 2xl:h-6 2xl:w-6" aria-hidden="true" />
               <span>
                 Your guest details stay with this booking session as you finish your curated add-ons and reservation guarantee.
               </span>
@@ -175,7 +175,7 @@ export function Guest() {
 
             <button
               type="submit"
-              className="group flex w-full items-center justify-center gap-2 rounded-full bg-[#4E332D] py-4 font-woodblock text-sm uppercase tracking-widest text-white shadow-lg transition-all hover:bg-[#221C18] hover:shadow-xl active:scale-[0.99] sm:py-5 sm:text-base 2xl:py-6 2xl:text-lg"
+              className="group flex w-full items-center justify-center gap-2 rounded-full bg-cowboy-umber py-4 font-label text-sm uppercase tracking-widest text-white shadow-lg transition-all hover:bg-smoke hover:shadow-xl active:scale-[0.99] sm:py-5 sm:text-base 2xl:py-6 2xl:text-lg"
             >
               <span>Continue to Curated Add-ons</span>
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1 2xl:h-6 2xl:w-6" aria-hidden="true" />
@@ -204,9 +204,9 @@ function Field({
     <div>
       <label
         htmlFor={htmlFor}
-        className="mb-1.5 block font-brothers text-xs font-bold uppercase tracking-wider text-[#4E332D] sm:text-sm 2xl:text-base"
+        className="mb-1.5 block font-label text-xs font-bold uppercase tracking-wider text-cowboy-umber sm:text-sm 2xl:text-base"
       >
-        {label} {required ? <span className="text-[#9A5636]">*</span> : null}
+        {label} {required ? <span className="text-copper">*</span> : null}
       </label>
       {children}
       {error ? (

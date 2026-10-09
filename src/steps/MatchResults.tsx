@@ -24,34 +24,34 @@ function MatchRoomResult({
 
   return (
     <article
-      className={`rounded-2xl border bg-white p-6 shadow-sm ${top ? "border-[#9a5636]" : "border-[#ccc7bb]"}`}
+      className={`rounded-2xl border bg-white p-6 shadow-sm ${top ? "border-copper" : "border-ash"}`}
     >
       <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div className="min-w-0">
           {top && (
             <p
-              className="mb-2 text-[10px] uppercase tracking-[0.2em] text-[#9a5636]"
-              style={{ fontFamily: "var(--font-brothers)" }}
+              className="mb-2 text-[10px] uppercase tracking-[0.2em] text-copper"
+              style={{ fontFamily: "var(--font-label)" }}
             >
               {copy?.match_badge || "Top Match"}
             </p>
           )}
           <h2
-            className="text-3xl leading-none text-[#4e332d]"
-            style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}
+            className="text-3xl leading-none text-cowboy-umber"
+            style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}
           >
             {result.room.name}
           </h2>
           <p
-            className="mt-2 max-w-xl text-sm leading-relaxed text-[#767470]"
-            style={{ fontFamily: "var(--font-uchen)" }}
+            className="mt-2 max-w-xl text-sm leading-relaxed text-ash-900"
+            style={{ fontFamily: "var(--font-body)" }}
           >
             {copy?.top_match_reason || result.room.description}
           </p>
           {result.matchedInterests.length > 0 && (
             <p
-              className="mt-3 text-[10px] uppercase tracking-widest text-[#9a5636]"
-              style={{ fontFamily: "var(--font-brothers)" }}
+              className="mt-3 text-[10px] uppercase tracking-widest text-copper"
+              style={{ fontFamily: "var(--font-label)" }}
             >
               {result.matchedInterests.length} preference
               {result.matchedInterests.length === 1 ? "" : "s"} matched
@@ -62,8 +62,8 @@ function MatchRoomResult({
         <button
           type="button"
           onClick={() => onViewRoom(result.room.id)}
-          className="shrink-0 rounded-full bg-[#9a5636] px-5 py-2.5 text-xs uppercase tracking-widest text-white transition-opacity hover:opacity-80"
-          style={{ fontFamily: "var(--font-brothers)" }}
+          className="shrink-0 rounded-full bg-copper px-5 py-2.5 text-xs uppercase tracking-widest text-white transition-opacity hover:opacity-80"
+          style={{ fontFamily: "var(--font-label)" }}
         >
           View Room
         </button>
@@ -93,13 +93,13 @@ export default function MatchResults({
 
   if (results.length === 0) {
     return (
-      <main className="min-h-screen bg-[#ebe8e0]">
+      <main className="min-h-screen bg-alpine-linen">
         <div className="booking-shell pb-20 pt-10">
           <button
             type="button"
             onClick={onBack}
-            className="mb-8 text-xs uppercase tracking-widest text-[#767470] transition-colors hover:text-[#4e332d]"
-            style={{ fontFamily: "var(--font-brothers)" }}
+            className="mb-8 text-xs uppercase tracking-widest text-ash-900 transition-colors hover:text-cowboy-umber"
+            style={{ fontFamily: "var(--font-label)" }}
           >
             ← Back
           </button>
@@ -116,27 +116,27 @@ export default function MatchResults({
   const [top, ...alternates] = results;
 
   return (
-    <main className="min-h-screen bg-[#ebe8e0]">
+    <main className="min-h-screen bg-alpine-linen">
       <div className="booking-shell pb-20 pt-10">
         <button
           type="button"
           onClick={onBack}
-          className="mb-8 text-xs uppercase tracking-widest text-[#767470] transition-colors hover:text-[#4e332d]"
-          style={{ fontFamily: "var(--font-brothers)" }}
+          className="mb-8 text-xs uppercase tracking-widest text-ash-900 transition-colors hover:text-cowboy-umber"
+          style={{ fontFamily: "var(--font-label)" }}
         >
           ← Back
         </button>
 
         <div className="mb-8">
           <p
-            className="mb-2 text-xs uppercase tracking-widest text-[#9a5636]"
-            style={{ fontFamily: "var(--font-brothers)" }}
+            className="mb-2 text-xs uppercase tracking-widest text-copper"
+            style={{ fontFamily: "var(--font-label)" }}
           >
             Matched for You
           </p>
           <h1
-            className="text-4xl leading-none text-[#4e332d] md:text-5xl"
-            style={{ fontFamily: "var(--font-desert)", fontWeight: 700 }}
+            className="text-4xl leading-none text-cowboy-umber md:text-5xl"
+            style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}
           >
             Your Best Match
           </h1>
@@ -153,18 +153,18 @@ export default function MatchResults({
           ))}
         </div>
 
-        <div className="mt-10 border-t border-[#ccc7bb] pt-4 text-center">
+        <div className="mt-10 border-t border-ash pt-4 text-center">
           <p
-            className="mb-3 text-sm text-[#767470]"
-            style={{ fontFamily: "var(--font-uchen)" }}
+            className="mb-3 text-sm text-ash-900"
+            style={{ fontFamily: "var(--font-body)" }}
           >
             Not seeing what you&apos;re after?
           </p>
           <button
             type="button"
             onClick={onBrowseAll}
-            className="text-xs uppercase tracking-widest text-[#9a5636] hover:underline"
-            style={{ fontFamily: "var(--font-brothers)" }}
+            className="text-xs uppercase tracking-widest text-copper hover:underline"
+            style={{ fontFamily: "var(--font-label)" }}
           >
             Browse All {totalAvailable} Rooms →
           </button>

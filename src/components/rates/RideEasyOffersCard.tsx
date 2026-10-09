@@ -176,7 +176,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     lineHeight: '38px',
                     letterSpacing: '2px',
                     textTransform: 'uppercase',
-                    color: '#D65241',
+                    color: 'var(--color-bandana-red)',
                     transform: 'matrix(1, 0.01, 0, 1, 0, 0)',
                   }}
                 >
@@ -206,7 +206,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                       fontSize: '100px',
                       lineHeight: '100px',
                       letterSpacing: '-2.5px',
-                      color: '#343833',
+                      color: 'var(--color-smoke)',
                       display: 'flex',
                       alignItems: 'center',
                     }}
@@ -228,7 +228,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                       fontSize: '42px',
                       lineHeight: '40px',
                       letterSpacing: '-2.5px',
-                      color: '#000000',
+                      color: 'var(--color-black)',
                       transform: 'matrix(1, 0.01, 0, 1, 0, 0)',
                     }}
                   >
@@ -262,7 +262,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     fontSize: '45px',
                     lineHeight: '45px',
                     letterSpacing: '2px',
-                    color: '#000000',
+                    color: 'var(--color-black)',
                   }}
                 >
                   {price} {priceUnit}
@@ -279,7 +279,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     fontSize: '21.25px',
                     lineHeight: '21px',
                     letterSpacing: '2px',
-                    color: '#000000',
+                    color: 'var(--color-black)',
                   }}
                 >
                   {taxDisclaimer}
@@ -299,7 +299,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   style={{
                     fontFamily: "'Quattrocento', Georgia, serif",
                     fontSize: '15px',
-                    color: '#000000',
+                    color: 'var(--color-black)',
                   }}
                 >
                   {description}
@@ -312,13 +312,13 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3 rounded-full bg-[#343833] text-[#EBE8E0] font-button font-normal text-base sm:text-lg uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-[#221C18] whitespace-nowrap"
+                      className="px-8 py-3 rounded-full bg-smoke text-alpine-linen font-button font-normal text-base sm:text-lg uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-smoke whitespace-nowrap"
                       style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
                     <span
-                      className="text-sm text-[#343833] text-center"
+                      className="text-sm text-smoke text-center"
                       style={{ fontFamily: "'Noto Serif Tibetan', 'Noto Serif', serif" }}
                     >
                       {cancellationText}
@@ -351,7 +351,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   <div
                     className="w-full uppercase font-bold tracking-[1.5px] leading-tight select-none"
                     style={{
-                      color: '#D65241',
+                      color: 'var(--color-bandana-red)',
                       fontFamily: "'Lato', sans-serif",
                       fontSize: '25px',
                     }}
@@ -363,7 +363,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   <div
                     className="font-bold tracking-[-2px] uppercase whitespace-pre-line leading-[0.85]"
                     style={{
-                      color: '#343833',
+                      color: 'var(--color-smoke)',
                       fontFamily: "'Noto Serif', serif",
                       fontSize: 'clamp(64px, 12vw, 90px)',
                     }}
@@ -372,7 +372,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   </div>
 
                   <div
-                    className="font-bold tracking-[-0.5px] leading-[1.05] text-[#221C18] text-left flex flex-col items-start pl-2"
+                    className="font-bold tracking-[-0.5px] leading-[1.05] text-smoke text-left flex flex-col items-start pl-2"
                     style={{
                       fontFamily: "'Quattrocento', Georgia, serif",
                       fontSize: '30px',
@@ -389,7 +389,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                 {/* 3. Prominent Narrative Paragraph */}
                 <div className="w-full">
                   <p
-                    className="text-[#221C18] font-normal leading-[1.35] tracking-[0.2px] m-0 text-left"
+                    className="text-smoke font-normal leading-[1.35] tracking-[0.2px] m-0 text-left"
                     style={{
                       fontFamily: "'Lato', sans-serif",
                       fontSize: '24px',
@@ -403,7 +403,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                 {/* 4. Cowboy Best Rate Guarantee Row with Sheriff Badge */}
                 <div className="w-full flex items-center justify-between">
                   <span
-                    className="font-bold uppercase tracking-[1.5px] text-[#221C18] leading-tight text-left text-balance"
+                    className="font-bold uppercase tracking-[1.5px] text-smoke leading-tight text-left text-balance"
                     style={{
                       fontFamily: "'Lato', sans-serif",
                       fontSize: '22px',
@@ -419,7 +419,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                 {/* 5. Price Row */}
                 <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
                   <div
-                    className="w-full text-[#221C18] font-bold tracking-[0.5px] leading-tight text-left whitespace-nowrap"
+                    className="w-full text-smoke font-bold tracking-[0.5px] leading-tight text-left whitespace-nowrap"
                     style={{
                       fontFamily: "'Quattrocento', Georgia, serif",
                       fontSize: 'clamp(28px, 9cqw, 40px)',
@@ -428,7 +428,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     {price} {priceUnit}
                   </div>
                   <div
-                    className="w-full text-right text-[#343833] font-normal tracking-[0.5px] mt-1 text-sm opacity-90"
+                    className="w-full text-right text-smoke font-normal tracking-[0.5px] mt-1 text-sm opacity-90"
                     style={{ fontFamily: "'Lato', sans-serif" }}
                   >
                     {taxDisclaimer}
@@ -441,12 +441,12 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     type="button"
                     onClick={handleAction}
                     disabled={disabled || isSubmitting}
-                    className="w-full max-w-[420px] py-4 px-6 rounded-full bg-[#343833] hover:bg-[#221C18] text-white font-button font-normal text-sm sm:text-base uppercase tracking-[0.1em] shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
+                    className="w-full max-w-[420px] py-4 px-6 rounded-full bg-smoke hover:bg-smoke text-white font-button font-normal text-sm sm:text-base uppercase tracking-[0.1em] shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
                   >
                     {isSubmitting ? 'Confirming...' : isExpanded ? confirmLabel : ctaLabel}
                   </button>
                   <span
-                    className="text-xs text-[#221C18] tracking-wide mt-1 whitespace-nowrap text-center"
+                    className="text-xs text-smoke tracking-wide mt-1 whitespace-nowrap text-center"
                     style={{ fontFamily: "'Lato', sans-serif" }}
                   >
                     {cancellationText}

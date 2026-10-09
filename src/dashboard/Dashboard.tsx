@@ -85,7 +85,7 @@ function timeAgo(iso: string): string {
 const STEP_LABEL = new Map(STEPS.map((s) => [s.key, s.label]));
 const stepLabel = (key: string | null) => (key ? STEP_LABEL.get(key) ?? key : "—");
 const statusColor = (c: { paid: boolean; payment_initiated: boolean }) =>
-  c.paid ? "bg-emerald-400" : c.payment_initiated ? "bg-amber-400" : "bg-ink/20";
+  c.paid ? "bg-emerald-400" : c.payment_initiated ? "bg-amber-400" : "bg-smoke/20";
 const fmtDay = (iso: string) =>
   new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(new Date(`${iso}T00:00:00`));
 const fmtRange = (ci: string, co: string | null) => (co ? `${fmtDay(ci)} → ${fmtDay(co)}` : fmtDay(ci));
@@ -136,8 +136,8 @@ function ConfigNeeded() {
   return (
     <div className="grid min-h-dvh place-items-center bg-cream px-6 text-center">
       <div className="max-w-md">
-        <h1 className="font-display text-2xl text-ink">Dashboard à configurer</h1>
-        <p className="mt-3 text-sm text-ink/70">
+        <h1 className="font-heading text-2xl text-smoke">Dashboard à configurer</h1>
+        <p className="mt-3 text-sm text-smoke/70">
           Ajoute ta clé <b>anon public</b> Supabase dans <code>src/dashboard/config.ts</code>
           (Supabase → Project Settings → API), puis recharge.
         </p>
@@ -166,10 +166,10 @@ function Login() {
     <div className="grid min-h-dvh place-items-center bg-cream px-5">
       <form onSubmit={submit} className="card w-full max-w-sm p-7">
         <p className="text-xs font-semibold uppercase tracking-[0.15em] text-corail">Urban Cowboy · Back-office</p>
-        <h1 className="mt-1 font-display text-2xl text-ink">Dashboard funnel</h1>
-        <p className="mt-1 text-sm text-ink/60">Connecte-toi pour piloter le tunnel.</p>
+        <h1 className="mt-1 font-heading text-2xl text-smoke">Dashboard funnel</h1>
+        <p className="mt-1 text-sm text-smoke/60">Connecte-toi pour piloter le tunnel.</p>
 
-        <label className="mt-5 block text-sm font-medium text-ink/80">
+        <label className="mt-5 block text-sm font-medium text-smoke/80">
           E-mail
           <input
             type="email"
@@ -180,7 +180,7 @@ function Login() {
             placeholder="you@example.com"
           />
         </label>
-        <label className="mt-3 block text-sm font-medium text-ink/80">
+        <label className="mt-3 block text-sm font-medium text-smoke/80">
           Mot de passe
           <input
             type="password"
@@ -322,13 +322,13 @@ function Panel({ email }: { email: string }) {
   }, [carts]);
 
   return (
-    <div className="min-h-dvh bg-cream text-ink">
+    <div className="min-h-dvh bg-cream text-smoke">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-ink/10 bg-cream/85 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-smoke/10 bg-cream/85 backdrop-blur">
         <div className="booking-shell flex flex-wrap items-center justify-between gap-3 py-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-corail">Urban Cowboy · Back-office</p>
-            <h1 className="font-display text-xl text-ink">Dashboard funnel</h1>
+            <h1 className="font-heading text-xl text-smoke">Dashboard funnel</h1>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1 rounded-full bg-white p-1 shadow-card">
@@ -337,21 +337,21 @@ function Panel({ email }: { email: string }) {
                   key={r.key}
                   onClick={() => setRange(r.key)}
                   className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-                    range === r.key ? "bg-teal-deep text-cream" : "text-ink/60 hover:text-ink"
+                    range === r.key ? "bg-teal-deep text-cream" : "text-smoke/60 hover:text-smoke"
                   }`}
                 >
                   {r.label}
                 </button>
               ))}
             </div>
-            <span className="inline-flex items-center gap-1.5 text-xs text-ink/50">
+            <span className="inline-flex items-center gap-1.5 text-xs text-smoke/50">
               <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
               {updatedAt ? `MàJ ${updatedAt.toLocaleTimeString("fr-FR")}` : "…"}
             </span>
             <button onClick={() => load()} className="btn-ghost text-sm">
               Rafraîchir
             </button>
-            <button onClick={() => supabase.auth.signOut()} className="text-sm text-ink/55 hover:text-ink" title={email}>
+            <button onClick={() => supabase.auth.signOut()} className="text-sm text-smoke/55 hover:text-smoke" title={email}>
               Déconnexion
             </button>
           </div>
@@ -382,13 +382,13 @@ function Panel({ email }: { email: string }) {
         {/* Funnel */}
         <section className="card p-5">
           <div className="flex items-baseline justify-between">
-            <h2 className="font-display text-lg text-ink">Funnel — paniers par étape</h2>
-            <span className="text-xs text-ink/45">nombre de paniers distincts ayant atteint l'étape</span>
+            <h2 className="font-heading text-lg text-smoke">Funnel — paniers par étape</h2>
+            <span className="text-xs text-smoke/45">nombre de paniers distincts ayant atteint l'étape</span>
           </div>
           <div className="mt-4 space-y-2.5">
             {funnelBars.map((r, i) => (
               <div key={r.key} className="flex items-center gap-3">
-                <div className="w-28 shrink-0 text-right text-sm font-medium text-ink/70">{r.label}</div>
+                <div className="w-28 shrink-0 text-right text-sm font-medium text-smoke/70">{r.label}</div>
                 <div className="relative h-8 flex-1 overflow-hidden rounded-lg bg-sand/60">
                   <div
                     className="flex h-full items-center rounded-lg bg-gradient-to-r from-teal-deep to-turquoise px-3 text-sm font-semibold text-cream transition-all"
@@ -397,14 +397,14 @@ function Panel({ email }: { email: string }) {
                     {r.count > 0 && <span>{r.count}</span>}
                   </div>
                 </div>
-                <div className="w-16 shrink-0 text-right text-xs text-ink/50">
+                <div className="w-16 shrink-0 text-right text-xs text-smoke/50">
                   {i > 0 && r.count > 0 ? pct(r.fromPrev) : ""}
                 </div>
               </div>
             ))}
-            {loading && funnel.length === 0 && <p className="text-sm text-ink/45">Chargement…</p>}
+            {loading && funnel.length === 0 && <p className="text-sm text-smoke/45">Chargement…</p>}
             {!loading && funnel.length === 0 && (
-              <p className="text-sm text-ink/45">Aucune donnée sur cette période.</p>
+              <p className="text-sm text-smoke/45">Aucune donnée sur cette période.</p>
             )}
           </div>
         </section>
@@ -412,10 +412,10 @@ function Panel({ email }: { email: string }) {
         <div className="space-y-6">
           {/* Sources */}
           <section className="card p-5">
-            <h2 className="font-display text-lg text-ink">Sources d'acquisition</h2>
+            <h2 className="font-heading text-lg text-smoke">Sources d'acquisition</h2>
             <table className="mt-3 w-full text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase tracking-wide text-ink/45">
+                <tr className="text-left text-xs uppercase tracking-wide text-smoke/45">
                   <th className="pb-2 font-medium">Source</th>
                   <th className="pb-2 text-right font-medium">Paniers</th>
                   <th className="pb-2 text-right font-medium">Résa</th>
@@ -424,10 +424,10 @@ function Panel({ email }: { email: string }) {
               </thead>
               <tbody>
                 {sources.map((s) => (
-                  <tr key={s.source} className="border-t border-ink/5">
-                    <td className="py-2 font-medium text-ink">{s.source}</td>
-                    <td className="py-2 text-right text-ink/70">{s.carts}</td>
-                    <td className="py-2 text-right text-ink/70">{s.paid}</td>
+                  <tr key={s.source} className="border-t border-smoke/5">
+                    <td className="py-2 font-medium text-smoke">{s.source}</td>
+                    <td className="py-2 text-right text-smoke/70">{s.carts}</td>
+                    <td className="py-2 text-right text-smoke/70">{s.paid}</td>
                     <td className="py-2 text-right font-semibold text-teal-deep">
                       {pct(s.carts ? s.paid / s.carts : 0)}
                     </td>
@@ -435,7 +435,7 @@ function Panel({ email }: { email: string }) {
                 ))}
                 {sources.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="py-3 text-ink/45">
+                    <td colSpan={4} className="py-3 text-smoke/45">
                       —
                     </td>
                   </tr>
@@ -447,8 +447,8 @@ function Panel({ email }: { email: string }) {
           {/* Paniers — liste enrichie, recherchable, cliquable */}
           <section className="card p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="font-display text-lg text-ink">
-                Paniers <span className="text-sm font-normal text-ink/45">· {filteredCarts.length}</span>
+              <h2 className="font-heading text-lg text-smoke">
+                Paniers <span className="text-sm font-normal text-smoke/45">· {filteredCarts.length}</span>
               </h2>
               <input
                 value={query}
@@ -457,7 +457,7 @@ function Panel({ email }: { email: string }) {
                 className="field-input w-full max-w-xs text-sm"
               />
             </div>
-            <p className="mt-1 text-xs text-ink/45">Clique un panier pour voir son historique de comportement.</p>
+            <p className="mt-1 text-xs text-smoke/45">Clique un panier pour voir son historique de comportement.</p>
             <div className="mt-3 max-h-[560px] divide-y divide-ink/5 overflow-y-auto">
               {filteredCarts.map((c) => (
                 <button
@@ -467,17 +467,17 @@ function Panel({ email }: { email: string }) {
                 >
                   <span className={`h-9 w-1 shrink-0 rounded-full ${statusColor(c)}`} aria-hidden></span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-ink">
+                    <p className="truncate text-sm font-semibold text-smoke">
                       {c.customer_name || c.customer_email || "Anonyme"}
                     </p>
-                    <p className="truncate text-xs text-ink/50">
+                    <p className="truncate text-xs text-smoke/50">
                       {c.room_name || "—"}
                       {c.check_in ? ` · ${fmtRange(c.check_in, c.check_out)}` : ""} · {c.utm_source || "Direct"}
                     </p>
                   </div>
                   <div className="hidden shrink-0 text-right sm:block">
-                    <p className="text-sm font-semibold tabular-nums text-ink">{c.total_grand ? eur(c.total_grand) : "—"}</p>
-                    <p className="text-[11px] text-ink/45">
+                    <p className="text-sm font-semibold tabular-nums text-smoke">{c.total_grand ? eur(c.total_grand) : "—"}</p>
+                    <p className="text-[11px] text-smoke/45">
                       {stepLabel(c.last_step)} · {timeAgo(c.last_seen)}
                     </p>
                   </div>
@@ -491,11 +491,11 @@ function Panel({ email }: { email: string }) {
                     </span>
                   )}
                   <StatusBadge cart={c} />
-                  <span className="shrink-0 text-lg text-ink/25 transition group-hover:translate-x-0.5 group-hover:text-ink/45">›</span>
+                  <span className="shrink-0 text-lg text-smoke/25 transition group-hover:translate-x-0.5 group-hover:text-smoke/45">›</span>
                 </button>
               ))}
               {filteredCarts.length === 0 && (
-                <p className="py-4 text-sm text-ink/45">
+                <p className="py-4 text-sm text-smoke/45">
                   {carts.length ? "Aucun panier ne correspond à la recherche." : "Aucun panier sur cette période."}
                 </p>
               )}
@@ -513,7 +513,7 @@ function Panel({ email }: { email: string }) {
 
 // ── Petits composants ───────────────────────────────────────────────────────
 const ACCENT: Record<string, string> = {
-  ink: "text-ink",
+  ink: "text-smoke",
   emerald: "text-emerald-600",
   teal: "text-teal-deep",
   amber: "text-amber-600",
@@ -523,8 +523,8 @@ const ACCENT: Record<string, string> = {
 function StatTile({ label, value, accent = "ink" }: { label: string; value: string | number; accent?: string }) {
   return (
     <div className="card p-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-ink/45">{label}</p>
-      <p className={`mt-1 font-display text-2xl ${ACCENT[accent] ?? ACCENT.ink}`}>{value}</p>
+      <p className="text-xs font-medium uppercase tracking-wide text-smoke/45">{label}</p>
+      <p className={`mt-1 font-heading text-2xl ${ACCENT[accent] ?? ACCENT.ink}`}>{value}</p>
     </div>
   );
 }
@@ -534,7 +534,7 @@ function StatusBadge({ cart }: { cart: Cart }) {
     ? ["Payé", "bg-emerald-100 text-emerald-700"]
     : cart.payment_initiated
       ? ["Non abouti", "bg-amber-100 text-amber-700"]
-      : ["Abandonné", "bg-ink/10 text-ink/60"];
+      : ["Abandonné", "bg-smoke/10 text-smoke/60"];
   return <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${cls}`}>{label}</span>;
 }
 
@@ -602,7 +602,7 @@ function CartDrawer({
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={`Panier — ${name}`}>
       <div
         onClick={close}
-        className={`absolute inset-0 bg-ink/50 transition-opacity duration-300 ${entered ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 bg-smoke/50 transition-opacity duration-300 ${entered ? "opacity-100" : "opacity-0"}`}
       ></div>
       <div
         className={`absolute right-0 top-0 flex h-full w-full max-w-md flex-col bg-cream shadow-float transition-transform duration-300 ease-out ${
@@ -612,7 +612,7 @@ function CartDrawer({
         <div className="flex items-start justify-between gap-3 bg-teal-deep px-5 py-4 text-cream">
           <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-cream/60">Panier</p>
-            <h2 className="truncate font-display text-xl">{name}</h2>
+            <h2 className="truncate font-heading text-xl">{name}</h2>
             {cart.customer_email && cart.customer_name && (
               <p className="truncate text-xs text-cream/70">{cart.customer_email}</p>
             )}
@@ -664,9 +664,9 @@ function CartDrawer({
 
           <div className="mt-6">
             <div className="flex items-baseline justify-between">
-              <h3 className="font-display text-lg text-ink">Comportement</h3>
+              <h3 className="font-heading text-lg text-smoke">Comportement</h3>
               {durationMin != null && (
-                <span className="text-xs text-ink/45">
+                <span className="text-xs text-smoke/45">
                   {durationMin === 0 ? "< 1 min" : `${durationMin} min`} sur le site
                 </span>
               )}
@@ -678,8 +678,8 @@ function CartDrawer({
                 setup).
               </div>
             )}
-            {!error && events === null && <p className="mt-3 text-sm text-ink/45">Chargement…</p>}
-            {!error && events?.length === 0 && <p className="mt-3 text-sm text-ink/45">Aucun événement enregistré.</p>}
+            {!error && events === null && <p className="mt-3 text-sm text-smoke/45">Chargement…</p>}
+            {!error && events?.length === 0 && <p className="mt-3 text-sm text-smoke/45">Aucun événement enregistré.</p>}
 
             {events && events.length > 0 && (
               <ol className="mt-4 max-h-[42vh] overflow-y-auto pr-1">
@@ -688,13 +688,13 @@ function CartDrawer({
                   const last = i === timeline.length - 1;
                   return (
                     <li key={e.id} className="relative flex gap-3 pb-4">
-                      {!last && <span className="absolute left-[5px] top-3 h-full w-px bg-ink/12" aria-hidden></span>}
+                      {!last && <span className="absolute left-[5px] top-3 h-full w-px bg-smoke/12" aria-hidden></span>}
                       <span
                         className={`relative z-10 mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${m.dot} ring-4 ring-cream`}
                       ></span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-ink">{m.label}</p>
-                        <p className="text-xs tabular-nums text-ink/45">{fmtClock(e.event_at || e.received_at)}</p>
+                        <p className="text-sm font-medium text-smoke">{m.label}</p>
+                        <p className="text-xs tabular-nums text-smoke/45">{fmtClock(e.event_at || e.received_at)}</p>
                       </div>
                       <div className="shrink-0 text-right">
                         {delta !== 0 && (
@@ -707,7 +707,7 @@ function CartDrawer({
                             {eur(Math.abs(delta))}
                           </span>
                         )}
-                        {total != null && <p className="mt-0.5 text-[11px] tabular-nums text-ink/45">{eur(total)}</p>}
+                        {total != null && <p className="mt-0.5 text-[11px] tabular-nums text-smoke/45">{eur(total)}</p>}
                       </div>
                     </li>
                   );
@@ -723,11 +723,11 @@ function CartDrawer({
 
 function Fact({ label, value, strong, mono }: { label: string; value: string; strong?: boolean; mono?: boolean }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-ink/5 pb-2">
-      <dt className="shrink-0 text-ink/50">{label}</dt>
+    <div className="flex justify-between gap-4 border-b border-smoke/5 pb-2">
+      <dt className="shrink-0 text-smoke/50">{label}</dt>
       <dd
         className={`min-w-0 truncate text-right ${
-          strong ? "font-display text-base text-teal-deep" : mono ? "font-mono text-xs text-ink/70" : "font-medium text-ink"
+          strong ? "font-heading text-base text-teal-deep" : mono ? "font-mono text-xs text-smoke/70" : "font-medium text-smoke"
         }`}
       >
         {value}

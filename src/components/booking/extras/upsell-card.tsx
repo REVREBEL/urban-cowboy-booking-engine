@@ -54,7 +54,7 @@ export function UpsellCard({
           </span>
           <span className="flex min-w-0 flex-1 flex-col p-4 pr-24">
             <span className="flex items-start justify-between gap-2">
-              <span className="line-clamp-2 font-semibold leading-snug text-ink">{product.name}</span>
+              <span className="line-clamp-2 font-semibold leading-snug text-smoke">{product.name}</span>
               {locked ? (
                 <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-turquoise px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
                   <IconCheck aria-hidden="true" className="h-3 w-3" /> {t("upsell.mandatory")}
@@ -63,7 +63,7 @@ export function UpsellCard({
                 <span
                   aria-hidden="true"
                   className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border transition ${
-                    selected ? "border-turquoise bg-turquoise text-white" : "border-ink/25 text-ink/40"
+                    selected ? "border-turquoise bg-turquoise text-white" : "border-smoke/25 text-smoke/40"
                   }`}
                 >
                   {selected ? <IconCheck className="h-4 w-4" /> : <IconPlus className="h-4 w-4" />}
@@ -71,15 +71,15 @@ export function UpsellCard({
               )}
             </span>
             {product.description && (
-              <span className="mt-1 line-clamp-2 text-xs leading-relaxed text-ink/60">{product.description}</span>
+              <span className="mt-1 line-clamp-2 text-xs leading-relaxed text-smoke/60">{product.description}</span>
             )}
             <span className="mt-auto pt-2 text-sm">
-              <span className="font-display text-lg text-teal-deep">{money(product.price, product.currency)}</span>
+              <span className="font-heading text-lg text-teal-deep">{money(product.price, product.currency)}</span>
               {chargingLabel(product.chargingMode) && (
-                <span className="text-xs text-ink/45"> {chargingLabel(product.chargingMode)}</span>
+                <span className="text-xs text-smoke/45"> {chargingLabel(product.chargingMode)}</span>
               )}
               {lineTotal !== product.price && (
-                <span className="text-xs text-ink/45">
+                <span className="text-xs text-smoke/45">
                   {" "}· {money(lineTotal, product.currency)} {t("upsell.total")}
                 </span>
               )}
@@ -165,7 +165,7 @@ function ExtraDetailModal({
       aria-modal="true"
       aria-labelledby={titleId}
     >
-      <div className="absolute inset-0 bg-ink/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-smoke/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
       <div
         ref={dialogRef}
         className="relative z-10 max-h-[90vh] w-full max-w-md animate-scale-in overflow-y-auto rounded-t-2xl bg-cream shadow-float sm:rounded-2xl"
@@ -181,24 +181,24 @@ function ExtraDetailModal({
             type="button"
             onClick={onClose}
             aria-label={t("upsell.close")}
-            className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/85 text-ink shadow transition hover:bg-white"
+            className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/85 text-smoke shadow transition hover:bg-white"
           >
             <IconClose aria-hidden="true" className="h-4 w-4" />
           </button>
         </div>
         <div className="p-5">
-          <h3 id={titleId} className="font-display text-xl text-ink">{product.name}</h3>
+          <h3 id={titleId} className="font-heading text-xl text-smoke">{product.name}</h3>
           <p className="mt-1 text-sm">
-            <span className="font-display text-lg text-teal-deep">{money(product.price, product.currency)}</span>
+            <span className="font-heading text-lg text-teal-deep">{money(product.price, product.currency)}</span>
             {chargingLabel(product.chargingMode) && (
-              <span className="text-ink/50"> {chargingLabel(product.chargingMode)}</span>
+              <span className="text-smoke/50"> {chargingLabel(product.chargingMode)}</span>
             )}
             {lineTotal !== product.price && (
-              <span className="text-ink/50"> · {money(lineTotal, product.currency)} {t("upsell.total")}</span>
+              <span className="text-smoke/50"> · {money(lineTotal, product.currency)} {t("upsell.total")}</span>
             )}
           </p>
           {product.description && (
-            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink/70">{product.description}</p>
+            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-smoke/70">{product.description}</p>
           )}
           <div className="mt-5 flex items-center gap-2">
             {locked ? (
@@ -243,10 +243,10 @@ export function InlineUpsell({
         <IconSparkles aria-hidden="true" className="h-6 w-6" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-ink">
+        <p className="text-sm font-semibold text-smoke">
           {t("upsell.enhance", { name: product.name })}
         </p>
-        <p className="text-xs text-ink/60">
+        <p className="text-xs text-smoke/60">
           {product.description || t("upsell.descFallback")} ·{" "}
           <span className="font-semibold text-teal-deep">{money(product.price, product.currency)}</span>
         </p>
