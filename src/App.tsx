@@ -54,7 +54,7 @@ function Shell() {
   }, []);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-cream">
+    <div className="flex flex-col bg-background">
       <BookingHeader
         step={step}
         onNavigate={goTo}

@@ -1,5 +1,4 @@
 @tailwind base;
-@tailwind components;
 @tailwind utilities;
 
 @import "tailwindcss";
@@ -39,6 +38,131 @@ text-cowboy-umber, font-heading, shadow-card).
 --color-alpine-linen-fade: #f1efe9;
 --color-lodge-yellow-fade: #fee783;
 
+
+--color-alpine-linen-200: #F1EFE9;
+--color-alpine-linen-500: #EBE8E0;
+--color-alpine-linen-700: #d9d7d2;
+--color-alpine-linen-900: #c1bfba; 
+
+--color-alpine-linen: var(--color-alpine-linen-500);
+--color-alpine-linen-fade: var(--color-alpine-linen-200);
+
+  --color-bandana-red-400: #DA6354;
+  --color-bandana-red-500: #D65241;
+  --color-bandana-red-600: #C14A3B;
+  --color-bandana-red-700: #AB4234;
+  --color-bandana-red-800: #96392E;
+  --color-bandana-red-900: #803127;
+  --color-bandana-red-950: #6B2921;
+  --color-bandana-red: var(--color-bandana-red-500);
+  --color-bandana-red-fade: rgb(214 82 65 / 70%);
+  --color-bandana-red-inverse: #D65241;
+  --color-bandana-red-inverse-fade: #D65241;
+
+  /* copper */
+  --color-copper-50: #CDAB9B;
+  --color-copper-100: #C29A86;
+  --color-copper-200: #B88972;
+  --color-copper-300: #AE785E;
+  --color-copper-400: #A4674A;
+  --color-copper-500: #9A5636;
+  --color-copper-600: #8B4D31;
+  --color-copper-700: #7B452B;
+  --color-copper-800: #6C3C26;
+  --color-copper-900: #5C3420;
+  --color-copper-950: #4D2B1B;
+  --color-copper: var(--color-copper-500);
+  --color-copper-fade: var(--color-copper-200);
+  --color-copper-inverse: var(--color-alpine-linen);
+  --color-copper-inverse-fade: var(--color-alpine-linen-fade);
+
+  /* oxblood */
+  --color-oxblood-50: #69253A;
+  --color-oxblood-100: #A57C89;
+  --color-oxblood-200: #966675;
+  --color-oxblood-300: #875161;
+  --color-oxblood-400: #783B4E;
+  --color-oxblood-500: #69253A;
+  --color-oxblood-600: #5F2134;
+  --color-oxblood-700: #541E2E;
+  --color-oxblood-800: #4A1A29;
+  --color-oxblood-900: #3F1623;
+  --color-oxblood-950: #35131D;
+  --color-oxblood: var(--color-oxblood-500);
+  --color-oxblood-fade: rgb(150 102 117 / 70%);
+  --color-oxblood-inverse: var(--color-alpine-linen);
+  --color-oxblood-inverse-fade: var(--color-alpine-linen-fade);
+
+  /* oxidized-teal */
+  --color-oxidized-teal-50: #91B5BE;
+  --color-oxidized-teal-100: #7BA6B1;
+  --color-oxidized-teal-200: #6597A4;
+  --color-oxidized-teal-300: #4F8997;
+  --color-oxidized-teal-400: #397A8A;
+  --color-oxidized-teal-500: #236B7D;
+  --color-oxidized-teal-600: #206071;
+  --color-oxidized-teal-700: #1C5664;
+  --color-oxidized-teal-800: #194B58;
+  --color-oxidized-teal-900: #15404B;
+  --color-oxidized-teal-950: #12363F;
+  --color-oxidized-teal: var(--color-oxidized-teal-500);
+  --color-oxidized-teal-fade: var(--color-oxidized-teal-200);
+  --color-oxidized-teal-inverse: #FFFFFF;
+  --color-oxidized-teal-inverse-fade: #FFFFFF;
+
+  /* lake-forest */
+  --color-lake-forest-50: #87988D;
+  --color-lake-forest-100: #6E8376;
+  --color-lake-forest-200: #566E5F;
+  --color-lake-forest-300: #3E5948;
+  --color-lake-forest-400: #264531;
+  --color-lake-forest-500: #0E301A;
+  --color-lake-forest-600: #0D2B17;
+  --color-lake-forest-700: #0B2615;
+  --color-lake-forest-800: #0A2212;
+  --color-lake-forest-900: #081D10;
+  --color-lake-forest-950: #07180D;
+  --color-lake-forest: var(--color-lake-forest-500);
+  --color-lake-forest-fade: var(--color-lake-forest-200);
+  --color-lake-forest-inverse: var(--color-paper);
+  --color-lake-forest-inverse-fade: var(--color-paper-fade);
+
+  /* cowboy-umber */
+  --color-cowboy-umber-50: #A79996;
+  --color-cowboy-umber-100: #958581;
+  --color-cowboy-umber-200: #83706C;
+  --color-cowboy-umber-300: #715C57;
+  --color-cowboy-umber-400: #604742;
+  --color-cowboy-umber-500: #4E332D;
+  --color-cowboy-umber-600: #462E29;
+  --color-cowboy-umber-700: #3E2924;
+  --color-cowboy-umber-800: #37241F;
+  --color-cowboy-umber-900: #2F1F1B;
+  --color-cowboy-umber-950: #271A17;
+  --color-cowboy-umber: var(--color-cowboy-umber-500);
+  --color-cowboy-umber-fade: var(--color-cowboy-umber-200);
+  --color-cowboy-umber-inverse: var(--color-alpine-linen);
+  --color-cowboy-umber-inverse-fade: rgb(235 232 224 / 70%);
+
+  /* smoke */
+  --color-smoke-50: #9A9C99;
+  --color-smoke-100: #858885;
+  --color-smoke-200: #717470;
+  --color-smoke-300: #5D605C;
+  --color-smoke-400: #484C47;
+  --color-smoke-500: #343833;
+  --color-smoke-600: #2F322E;
+  --color-smoke-700: #2A2D29;
+  --color-smoke-800: #242724;
+  --color-smoke-900: #1F221F;
+  --color-smoke-950: #1A1C1A;
+  --color-smoke: var(--color-smoke-500);
+  --color-smoke-fade: var(--color-smoke-200);
+  --color-smoke-inverse: var(--color-paper);
+  --color-smoke-inverse-fade: var(--color-paper-fade);
+
+
+
 /* Typography Families */
 --font-body: "Uchen", Georgia, serif;
 --font-heading: "DesertRain", Georgia, serif;
@@ -48,6 +172,7 @@ text-cowboy-umber, font-heading, shadow-card).
 --font-number: "Bianco Sans", "League Spartan", sans-serif;
 --font-blockquote: "Cedarville", cursive;
 --font-emoji: "Noto Emoji", sans-serif;
+
 
 /* Custom Radii & Shadows */
 --radius-xl2: 1rem;
@@ -70,6 +195,34 @@ text-cowboy-umber, font-heading, shadow-card).
 --radius-modal-2xl: 48px;
 --shadow-card: 0 4px 20px -2px rgba(78, 51, 45, 0.08);
 --shadow-float: 0 10px 30px -4px rgba(78, 51, 45, 0.15);
+
+
+--color-background: var(--color-mist);
+--color-foreground: var(--color-lake-forest);
+--color-accent: var(--color-lake-forest-fade);
+
+--color-input-bg: var(--color-paper);
+--color-input-border: var(--color-lake-forest);
+
+--color-button-primary-bg: var(--color-lake-forest);
+--color-button-primary-foreground: var(--color-mist);
+--color-button-primary-hover-bg: var(--color-lake-forest-100);
+
+--color-button-secondary-bg: var(--color-alpine-linen);
+--color-button-secondary-foreground: var(--color-alpine-linen);
+--color-button-secondary-hover-bg: var(--color-alpine-linen);
+
+/* Semantic colors registered with Tailwind v4 utilities. */
+--color-background: var(--background);
+--color-foreground: var(--foreground);
+--color-accent: var(--accent);
+--color-input-bg: var(--input-bg);
+--color-input-border: var(--input-border);
+--color-button-primary-bg: var(--button-primary-bg);
+--color-button-primary-foreground: var(--button-primary-foreground);
+
+
+  
 }
 
 /* Semantic theme variables shared by the booking UI. */
@@ -212,4 +365,93 @@ box-shadow: 0 0 0 3px rgb(78 51 45 / 0.08);
 
 .checkout-field::placeholder {
 color: rgb(107 98 89 / 0.55);
+}
+
+
+
+[data-card-theme="paper"] {
+  --card-bg: var(--color-paper);
+  --card-border: var(--color-lake-forest);
+  --card-title: var(--color-lake-forest);
+  --card-text: var(--color-lake-forest);
+  --card-accent: var(--color-lake-forest-300);
+  --card-pill: var(--color-lake-forest-300);
+  --card-primary-bg: var(--color-paper);
+  --card-primary-text: var(--color-lake-forest);
+  --card-primary-hover: color-mix(in srgb, var(--color-paper) 82%, black);
+  --card-secondary-hover: color-mix(in srgb, var(--color-paper) 10%, transparent);
+}
+
+[data-card-theme="copper"] {
+  --card-bg: var(--color-alpine-linen);
+  --card-border: var(--color-alpine-linen);
+  --card-title: var(--color-smoke);
+  --card-text: var(--color-smoke);
+  --card-accent: color-mix(in srgb, var(--color-smoke) 78%, black);
+  --card-pill: var(--color-smoke);
+  --card-primary-bg: color-mix(in srgb, var(--color-smoke) 78%, black);
+  --card-primary-text: var(--color-smoke);
+  --card-primary-hover: var(--color-smoke);
+  --card-secondary-hover: color-mix(in srgb, var(--color-smoke) 10%, transparent);
+}
+
+[data-card-theme="lake-forest"] {
+  --card-bg: var(--color-lake-forest);
+  --card-border: var(--color-lake-forest);
+  --card-title: var(--color-paper);
+  --card-text: var(--color-paper);
+  --card-accent: var(--color-alpine-linen);
+  --card-pill: var(--color-paper);
+  --card-primary-bg: var(--color-alpine-linen);
+  --card-primary-text: var(--color-lake-forest);
+  --card-primary-hover:
+    color-mix(in srgb, var(--color-alpine-linen) 85%, var(--color-paper));
+  --card-secondary-hover:
+    color-mix(in srgb, var(--color-alpine-linen) 10%, transparent);
+}
+
+.room-list-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+.room-list-card__title,
+.room-list-card__price {
+  color: var(--card-title);
+}
+
+.room-list-card__description {
+  color: var(--card-text);
+}
+
+.room-list-card__tagline {
+  color: var(--card-accent);
+}
+
+.room-list-card__amenity {
+  border-color: var(--card-pill);
+  color: var(--card-pill);
+}
+
+.room-list-card__highlight {
+  border-color: var(--card-accent);
+  color: var(--card-accent);
+}
+
+.room-list-card__primary {
+  background-color: var(--card-primary-bg);
+  color: var(--card-primary-text);
+}
+
+.room-list-card__primary:hover {
+  background-color: var(--card-primary-hover);
+}
+
+.room-list-card__secondary {
+  border-color: var(--card-accent);
+  color: var(--card-accent);
+}
+
+.room-list-card__secondary:hover {
+  background-color: var(--card-secondary-hover);
 }

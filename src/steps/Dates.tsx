@@ -172,11 +172,11 @@ export function Dates() {
   }
 
   return (
-    <section className="min-h-[calc(100vh-4rem)] bg-alpine-linen pb-20 pt-12 text-cowboy-umber md:pt-16">
+    <section className="bg-background pb-10 pt-12 text-foreground md:pt-16">
       <div className="booking-shell text-center">
         <p className="mb-2 font-number text-xs font-bold uppercase tracking-[2px] text-copper">Catskills · Big Indian, NY</p>
         <h1 className="font-heading text-[44px] font-bold uppercase leading-none tracking-[2px] sm:text-[55px]">Book Your Stay</h1>
-        <p className="mt-4 font-body text-lg text-cowboy-umber/80 sm:text-xl">Arrive as Strangers. Leave as Friends.</p>
+        <p className="mt-4 font-body text-lg text-foreground/80 sm:text-xl">Arrive as Strangers. Leave as Friends.</p>
       </div>
 
       <div className="booking-shell relative z-20 mt-10">
@@ -200,10 +200,10 @@ export function Dates() {
                 )}
 
                 {activeSection === "dates" && (
-                  <div className="w-full rounded-3xl border-2 border-cowboy-umber bg-paper p-4 shadow-2xl sm:p-6">
-                    <div className="mb-4 flex items-center justify-between border-b border-cowboy-umber/20 pb-3 text-left">
-                      <span className="font-number text-sm font-bold uppercase tracking-[2px] text-cowboy-umber">Select dates of stay</span>
-                      <button type="button" onClick={() => setActiveSection(null)} aria-label="Close date picker" className="grid h-8 w-8 place-items-center rounded-full text-xl text-cowboy-umber hover:bg-alpine-linen">×</button>
+                  <div className="w-full rounded-3xl border-2 border-input-border bg-input-bg p-4 text-foreground shadow-2xl sm:p-6">
+                    <div className="mb-4 flex items-center justify-between border-b border-input-border/20 pb-3 text-left">
+                      <span className="font-number text-sm font-bold uppercase tracking-[2px] text-foreground">Select dates of stay</span>
+                      <button type="button" onClick={() => setActiveSection(null)} aria-label="Close date picker" className="grid h-8 w-8 place-items-center rounded-full text-xl text-foreground hover:bg-background">×</button>
                     </div>
                     <InlineDateRangePicker
                       checkIn={form.checkIn}
@@ -214,7 +214,7 @@ export function Dates() {
                     />
                     <div className="mt-4 flex flex-col gap-4 border-t border-cowboy-umber/10 pt-4 text-left sm:flex-row sm:items-end sm:justify-between">
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                        <span className="font-number text-[10px] font-bold uppercase tracking-[1.5px] text-cowboy-umber/60">Quick Select</span>
+                        <span className="font-number text-[10px] font-bold uppercase tracking-[1.5px] text-foreground/60">Quick Select</span>
                         <div className="flex flex-wrap gap-2">
                           {[
                             ["Fall Foliage (Oct 14–17)", "2026-10-14", "2026-10-17"],
@@ -225,7 +225,7 @@ export function Dates() {
                               key={label}
                               type="button"
                               onClick={() => setDates(checkIn, checkOut)}
-                              className="rounded-full border border-cowboy-umber bg-transparent px-3 pb-1 pt-1.5 font-body text-xs leading-none text-cowboy-umber transition-colors hover:bg-cowboy-umber hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper"
+                              className="rounded-full border border-input-border bg-transparent px-3 pb-1 pt-1.5 font-body text-xs leading-none text-foreground transition-colors hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                             >
                               {label}
                             </button>
@@ -284,7 +284,7 @@ export function Dates() {
           {error && <p role="alert" className="mt-3 text-left font-body text-sm font-semibold text-oxblood-300">{error}</p>}
           {!error && nightCount > 0 && (
             <div className="mt-3 text-left">
-              <p className="font-body text-xs text-cowboy-umber/65">
+              <p className="font-body text-xs text-foreground/65">
                 {nightCount} night{nightCount === 1 ? "" : "s"} · {guestCount} guest{guestCount === 1 ? "" : "s"}
               </p>
               {cachedRestrictionConflict && (
@@ -302,21 +302,17 @@ export function Dates() {
       <div className="booking-shell mt-16">
         <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-3">
           {PILLARS.map((pillar) => (
-            <article key={pillar.title} className="text-center md:text-left">
-              {"useMask" in pillar ? (
-                <span
-                  aria-hidden="true"
-                  className="mx-auto mb-4 block h-14 w-14 bg-current md:mx-0"
-                  style={{
-                    WebkitMask: `url("${pillar.icon}") center / contain no-repeat`,
-                    mask: `url("${pillar.icon}") center / contain no-repeat`,
-                  }}
-                />
-              ) : (
-                <img src={pillar.icon} alt="" aria-hidden="true" className="mx-auto mb-4 h-14 w-14 object-contain md:mx-0" />
-              )}
+            <article key={pillar.title} className="text-center text-foreground md:text-left">
+              <span
+                aria-hidden="true"
+                className="mx-auto mb-4 block h-14 w-14 bg-current md:mx-0"
+                style={{
+                  WebkitMask: `url("${pillar.icon}") center / contain no-repeat`,
+                  mask: `url("${pillar.icon}") center / contain no-repeat`,
+                }}
+              />
               <h2 className="font-label text-base font-bold uppercase tracking-[1px]">{pillar.title}</h2>
-              <p className="mt-2 font-body text-sm leading-relaxed text-cowboy-umber/75">{pillar.text}</p>
+              <p className="mt-2 font-body text-sm leading-relaxed text-foreground/75">{pillar.text}</p>
             </article>
           ))}
         </div>

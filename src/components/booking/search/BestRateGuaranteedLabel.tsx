@@ -23,7 +23,7 @@ export interface BestRateGuaranteedLabelProps {
 export const SheriffBadgeIcon: React.FC<{
   color?: string;
   className?: string;
-}> = ({ color = '#4E332D', className = '' }) => (
+}> = ({ color = 'currentColor', className = '' }) => (
   <svg 
     width="15"
     height="15"
@@ -46,7 +46,7 @@ export const SheriffBadgeIcon: React.FC<{
  */
 export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = ({
   text = 'BEST PRICE GUARANTEED',
-  color = '#4E332D',
+  color,
   iconSlot,
   tooltipText = 'Book direct for the lowest rate, complimentary room upgrades when available, and flexible cancellations.',
   className = '',
@@ -62,14 +62,14 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       onFocus={() => setShowTooltip(true)}
       onBlur={() => setShowTooltip(false)}
       tabIndex={0}
-      className={`box-border relative inline-flex w-max min-w-44.75 flex-row items-center justify-center gap-2 p-0 h-4.25 select-none cursor-default group focus:outline-none focus-visible:ring-1 focus-visible:ring-cowboy-umber rounded-hairline ${className}`}
+      className={`group relative box-border inline-flex h-4.25 w-max min-w-44.75 cursor-default select-none flex-row items-center justify-center gap-2 rounded-hairline p-0 text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-foreground ${className}`}
     >
       {/* 1. best-rate-guaranteed-icon (17px x 17px, padding: 1px, gap: 10px) */}
       <div className="box-border flex flex-row justify-center items-center p-px gap-2.5 w-4.25 h-4.25 shrink-0">
         {iconSlot ? (
           iconSlot
         ) : (
-          <div className="w-3.75 h-3.75 shrink-0 flex items-center justify-center">
+          <div className="flex h-3.75 w-3.75 shrink-0 items-center justify-center text-accent">
             <SheriffBadgeIcon color={color} />
           </div>
         )}
@@ -78,8 +78,8 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       {/* 2. Text keeps the original 154px minimum but may grow to fit the full label. */}
       <div className="flex h-4 min-w-38.5 w-max shrink-0 flex-col items-center justify-center p-0">
         <span
-          style={{ color }}
-          className="flex h-4 w-max min-w-38.5 items-center whitespace-nowrap font-label text-[13px] font-normal uppercase leading-4 tracking-[0.5px]"
+          style={color ? { color } : undefined}
+          className="flex h-4 w-max min-w-38.5 items-center whitespace-nowrap font-label text-[13px] font-normal uppercase leading-4 tracking-[0.5px] text-foreground"
         >
           {text}
         </span>
