@@ -53,7 +53,6 @@
     "@radix-ui/react-toggle-group": "^1.1.20",
     "@radix-ui/react-tooltip": "^1.3.0",
     "@supabase/supabase-js": "^2.117.3",
-    "@tailwindcss/postcss": "^4.0.0",
     "@tailwindcss/upgrade": "^4.0.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -74,6 +73,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261009.1",
+    "@tailwindcss/postcss": "^4.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
@@ -88,9 +88,11 @@
     "wrangler": "^4.149.0"
   },
   "allowScripts": {
-    "esbuild@0.21.5": true,
-    "esbuild@0.28.1": true,
     "fsevents@2.3.3": true,
-    "workerd@1.20260926.1": true
+    "tree-sitter@0.22.4": true,
+    "tree-sitter-javascript@0.23.1": true,
+    "tree-sitter-typescript@0.23.2": true,
+    "workerd@1.20261006.1": true,
+    "esbuild@0.28.2": true
   }
 }
