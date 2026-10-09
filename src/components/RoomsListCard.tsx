@@ -228,7 +228,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
                 <div
                   key={pill.key}
                   data-pill-source={pill.source}
-                  className={`room-list-card__pill rounded-control-sm border px-2.5 pb-1 pt-1.625 font-label text-[10px] font-bold uppercase tracking-[1px] ${
+                  className={`room-list-card__pill rounded-control-sm border font-label text-[10px] font-bold uppercase leading-none tracking-[1px] ${
                     pill.emphasis === "highlight"
                       ? "room-list-card__highlight"
                       : "room-list-card__amenity"

@@ -134,7 +134,7 @@ export function ContactBar({ preview = false }: { preview?: boolean } = {}) {
         onClick={() => setOpen((v) => !v)}
         aria-label={t("contact.open")}
         aria-expanded={open}
-        className="grid h-14 w-14 place-items-center rounded-full bg-corail text-white shadow-float ring-1 ring-black/5 transition hover:brightness-105 active:scale-95"
+        className="grid h-14 w-14 place-items-center rounded-full bg-background text-accent shadow-float ring-1 ring-accent/20 transition hover:brightness-95 active:scale-95"
       >
         {open ? <IconClose className="h-6 w-6" /> : <IconPhone className="h-6 w-6" />}
       </button>
