@@ -3,7 +3,7 @@ import type { SearchCriteria } from '../types';
 import type { ShapedRoom } from '@/types/mews';
 import { ROOM_TYPE_GROUPS } from '../data/roomTypeGroups';
 import { ROOM_TYPE_GROUP_PRESENTATION } from '../data/roomTypeGroupPresentation';
-import { RoomsListCard, type RoomCardColor, type RoomCardLayout } from '@/components/RoomsListCard';
+import { RoomsListCard, type RoomCardTheme, type RoomCardLayout } from '@/components/RoomsListCard';
 import {
   AlpineHausWoodcut,
   WaldenHausWoodcut,
@@ -114,7 +114,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   const roomCardColorForPosition = (
     index: number,
     total: number,
-  ): RoomCardColor => {
+  ): RoomCardTheme => {
     if (total <= 1 || index === 0) return "paper";
     if (index === total - 1) return "lake-forest";
     return "copper";
@@ -134,7 +134,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
         key={room.roomTypeId}
         room={room}
         imageBaseUrl={imageBaseUrl}
-        color={roomCardColorForPosition(index, total)}
+        theme={roomCardColorForPosition(index, total)}
         layout={roomCardLayoutForPosition(index)}
         onSelectRoom={onSelectRoom}
         onOpenRoomDetails={onOpenRoomDetails}
@@ -148,7 +148,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
 
   const renderMappedRoom = (
     key: string,
-    color: RoomCardColor,
+    color: RoomCardTheme,
     layout: RoomCardLayout,
   ) => {
     const room = roomByKey(key);
@@ -158,7 +158,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
       <RoomsListCard
         room={room}
         imageBaseUrl={imageBaseUrl}
-        color={color}
+        theme={color}
         layout={layout}
         onSelectRoom={onSelectRoom}
         onOpenRoomDetails={onOpenRoomDetails}
@@ -499,7 +499,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                     key={room.roomTypeId}
                     room={room}
                     imageBaseUrl={imageBaseUrl}
-                    color={roomCardColorForPosition(index, unresolvedRooms.length)}
+                    theme={roomCardColorForPosition(index, unresolvedRooms.length)}
                     layout={roomCardLayoutForPosition(index)}
                     onSelectRoom={onSelectRoom}
                     onOpenRoomDetails={onOpenRoomDetails}
@@ -595,7 +595,7 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                     key={room.roomTypeId}
                     room={room}
                     imageBaseUrl={imageBaseUrl}
-                    color={roomCardColorForPosition(index, unresolvedRooms.length)}
+                    theme={roomCardColorForPosition(index, unresolvedRooms.length)}
                     layout={roomCardLayoutForPosition(index)}
                     onSelectRoom={onSelectRoom}
                     onOpenRoomDetails={onOpenRoomDetails}
