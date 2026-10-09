@@ -42,6 +42,13 @@ text-cowboy-umber, font-heading, shadow-card).
 
 /* Custom Radii & Shadows */
 --radius-xl2: 1rem;
+--radius-control-xs: 10px;
+--radius-control-sm: 12px;
+--radius-control: 14px;
+--radius-card: 16px;
+--radius-card-media: 17px;
+--radius-control-lg: 18px;
+--radius-control-xl: 20px;
 --shadow-card: 0 4px 20px -2px rgba(78, 51, 45, 0.08);
 --shadow-float: 0 10px 30px -4px rgba(78, 51, 45, 0.15);
 }
@@ -226,6 +233,47 @@ letter-spacing: 2px;
 4. Component Classes
 ========================================================================== */
 @layer components {
+/* Three semantic card themes. Components consume these variables instead of
+   embedding palette values in JSX. */
+[data-card-theme="paper"] {
+--card-bg: var(--color-paper);
+--card-border: var(--color-lake-forest);
+--card-title: var(--color-cowboy-umber);
+--card-text: var(--color-cowboy-umber);
+--card-accent: var(--color-copper);
+--card-pill: var(--color-cowboy-umber);
+--card-primary-bg: var(--color-copper);
+--card-primary-text: var(--color-alpine-linen);
+--card-primary-hover: color-mix(in srgb, var(--color-copper) 82%, black);
+--card-secondary-hover: color-mix(in srgb, var(--color-copper) 10%, transparent);
+}
+
+[data-card-theme="copper"] {
+--card-bg: var(--color-copper);
+--card-border: var(--color-copper);
+--card-title: var(--color-whiskey-sour);
+--card-text: var(--color-whiskey-sour);
+--card-accent: color-mix(in srgb, var(--color-cowboy-umber) 78%, black);
+--card-pill: var(--color-whiskey-sour);
+--card-primary-bg: color-mix(in srgb, var(--color-cowboy-umber) 78%, black);
+--card-primary-text: var(--color-whiskey-sour);
+--card-primary-hover: var(--color-cowboy-umber);
+--card-secondary-hover: color-mix(in srgb, var(--color-cowboy-umber) 10%, transparent);
+}
+
+[data-card-theme="lake-forest"] {
+--card-bg: var(--color-lake-forest);
+--card-border: var(--color-lake-forest);
+--card-title: var(--color-paper);
+--card-text: var(--color-paper);
+--card-accent: var(--color-nude-ember);
+--card-pill: var(--color-paper);
+--card-primary-bg: var(--color-nude-ember);
+--card-primary-text: var(--color-lake-forest);
+--card-primary-hover: color-mix(in srgb, var(--color-nude-ember) 85%, var(--color-paper));
+--card-secondary-hover: color-mix(in srgb, var(--color-nude-ember) 10%, transparent);
+}
+
 .btn {
 display: inline-flex;
 align-items: center;
