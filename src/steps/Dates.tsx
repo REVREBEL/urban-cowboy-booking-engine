@@ -54,12 +54,20 @@ const PILLARS = [
   {
     title: "Disappear for a While",
     text: "Trade pavement for mountain air and the kind of quiet that makes you forget what day it is.",
+<<<<<<< Updated upstream
     icon: "/assets/icons/amenities/simple/hammock.svg",
+=======
+    icon: "/assets/icons/icons-simple/hammock.svg",
+>>>>>>> Stashed changes
   },
   {
     title: "Soak It All In",
     text: "Sauna, outdoor hangs, long baths and plenty of ways to slow the whole operation down.",
+<<<<<<< Updated upstream
     icon: "/assets/icons/amenities/simple/estonian_sauna.svg",
+=======
+    icon: "/assets/icons/icons-simple/estonian_sauna.svg",
+>>>>>>> Stashed changes
     useMask: true,
   },
   {
@@ -172,22 +180,30 @@ export function Dates() {
   }
 
   return (
+<<<<<<< Updated upstream
     <section className="min-h-[calc(100vh-4rem)] bg-[#EBE8E0] pb-20 pt-12 text-[#4E332D] md:pt-16">
       <div className="booking-shell text-center">
         <p className="mb-2 font-bianco text-xs font-bold uppercase tracking-[2px] text-[#9A5636]">Catskills · Big Indian, NY</p>
         <h1 className="font-desert text-[44px] font-bold uppercase leading-none tracking-[2px] sm:text-[55px]">Book Your Stay</h1>
         <p className="mt-4 font-editorial text-lg text-[#4E332D]/80 sm:text-xl">Arrive as Strangers. Leave as Friends.</p>
+=======
+    <section className="min-h-[calc(100vh-4rem)] bg-background pb-20 pt-12 text-foreground md:pt-16">
+      <div className="booking-shell text-center">
+        <p className="mb-2 font-number text-xs font-bold uppercase tracking-[2px] text-accent">Catskills · Big Indian, NY</p>
+        <h1 className="font-heading text-[44px] font-bold uppercase leading-none tracking-[2px] sm:text-[55px]">Book Your Stay</h1>
+        <p className="mt-4 font-body text-lg text-foreground/80 sm:text-xl">Arrive as Strangers. Leave as Friends.</p>
+>>>>>>> Stashed changes
       </div>
 
       <div className="booking-shell relative z-20 mt-10">
-        <div className="mx-auto w-full max-w-[1057px]">
+        <div className="mx-auto w-full max-w-264.25">
           <SearchBarExpanded
             variant="circle"
             values={{ property: location, checkInDate: displayDate(form.checkIn), checkOutDate: displayDate(form.checkOut), guests: guestLabel, promoCode: form.voucherCode || "Add promo" }}
             activeSection={activeSection}
             onSectionClick={setActiveSection}
             onSearch={submit}
-            className="!w-full"
+            className="w-full!"
             dropdownSlot={
               <>
                 {activeSection === "property" && (
@@ -200,10 +216,17 @@ export function Dates() {
                 )}
 
                 {activeSection === "dates" && (
+<<<<<<< Updated upstream
                   <div className="w-full rounded-3xl border-2 border-[#4E332D] bg-[#FAF9F9] p-4 shadow-2xl sm:p-6">
                     <div className="mb-4 flex items-center justify-between border-b border-[#4E332D]/20 pb-3 text-left">
                       <span className="font-bianco text-sm font-bold uppercase tracking-[2px] text-[#4E332D]">Select dates of stay</span>
                       <button type="button" onClick={() => setActiveSection(null)} aria-label="Close date picker" className="grid h-8 w-8 place-items-center rounded-full text-xl text-[#4E332D] hover:bg-[#EBE8E0]">×</button>
+=======
+                  <div className="w-full rounded-3xl border-2 border-foreground bg-input-bg p-4 shadow-2xl sm:p-6">
+                    <div className="mb-4 flex items-center justify-between border-b border-foreground/20 pb-3 text-left">
+                      <span className="font-number text-sm font-bold uppercase tracking-[2px] text-foreground">Select dates of stay</span>
+                      <button type="button" onClick={() => setActiveSection(null)} aria-label="Close date picker" className="grid h-8 w-8 place-items-center rounded-full text-xl text-foreground hover:bg-background">×</button>
+>>>>>>> Stashed changes
                     </div>
                     <InlineDateRangePicker
                       checkIn={form.checkIn}
@@ -212,9 +235,15 @@ export function Dates() {
                       dailyRates={dailyRates}
                       onVisibleRangeChange={loadCalendar}
                     />
+<<<<<<< Updated upstream
                     <div className="mt-4 flex flex-col gap-4 border-t border-[#4E332D]/10 pt-4 text-left sm:flex-row sm:items-end sm:justify-between">
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                         <span className="font-bianco text-[10px] font-bold uppercase tracking-[1.5px] text-[#4E332D]/60">Quick Select</span>
+=======
+                    <div className="mt-4 flex flex-col gap-4 border-t border-foreground/10 pt-4 text-left sm:flex-row sm:items-end sm:justify-between">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                        <span className="font-number text-[10px] font-bold uppercase tracking-[1.5px] text-foreground/60">Quick Select</span>
+>>>>>>> Stashed changes
                         <div className="flex flex-wrap gap-2">
                           {[
                             ["Fall Foliage (Oct 14–17)", "2026-10-14", "2026-10-17"],
@@ -225,7 +254,11 @@ export function Dates() {
                               key={label}
                               type="button"
                               onClick={() => setDates(checkIn, checkOut)}
+<<<<<<< Updated upstream
                               className="rounded-full border border-[#4E332D] bg-transparent px-3 pb-1 pt-1.5 font-uchen text-xs leading-none text-[#4E332D] transition-colors hover:bg-[#4E332D] hover:text-[#FAF9F9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9A5636]"
+=======
+                              className="rounded-full border border-foreground bg-transparent px-3 pb-1 pt-1.5 font-body text-xs leading-none text-foreground transition-colors hover:bg-foreground hover:text-input-bg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+>>>>>>> Stashed changes
                             >
                               {label}
                             </button>
@@ -237,7 +270,11 @@ export function Dates() {
                         type="button"
                         disabled={!form.checkIn || !form.checkOut || form.checkOut <= form.checkIn}
                         onClick={() => setActiveSection(null)}
+<<<<<<< Updated upstream
                         className="self-end rounded-full bg-[#4E332D] px-6 pb-2.5 pt-3 font-bianco text-xs font-bold uppercase tracking-[1.5px] text-[#FAF9F9] transition-colors hover:bg-[#9A5636] disabled:cursor-not-allowed disabled:opacity-35 sm:shrink-0"
+=======
+                        className="self-end rounded-full bg-[var(--button-primary-bg)] px-6 pb-2.5 pt-3 font-number text-xs font-bold uppercase tracking-[1.5px] text-[var(--button-primary-foreground)] transition-colors hover:bg-[var(--button-primary-hover-bg)] disabled:cursor-not-allowed disabled:opacity-35 sm:shrink-0"
+>>>>>>> Stashed changes
                       >
                         Confirm dates
                       </button>
@@ -281,6 +318,7 @@ export function Dates() {
             }
           />
 
+<<<<<<< Updated upstream
           {error && <p role="alert" className="mt-3 text-left font-editorial text-sm font-semibold text-[#8C2340]">{error}</p>}
           {!error && nightCount > 0 && (
             <div className="mt-3 text-left">
@@ -289,6 +327,16 @@ export function Dates() {
               </p>
               {cachedRestrictionConflict && (
                 <p className="mt-1 font-editorial text-xs font-semibold text-[#9A5636]">
+=======
+          {error && <p role="alert" className="mt-3 text-left font-body text-sm font-semibold text-error">{error}</p>}
+          {!error && nightCount > 0 && (
+            <div className="mt-3 text-left">
+              <p className="font-body text-xs text-foreground/65">
+                {nightCount} night{nightCount === 1 ? "" : "s"} · {guestCount} guest{guestCount === 1 ? "" : "s"}
+              </p>
+              {cachedRestrictionConflict && (
+                <p className="mt-1 font-body text-xs font-semibold text-accent">
+>>>>>>> Stashed changes
                   {selectedMinimumNights && nightCount < selectedMinimumNights
                     ? `Calendar guidance currently shows a minimum ${selectedMinimumNights}-night stay for this arrival. Search will verify live availability.`
                     : "Calendar guidance currently shows a restriction affecting this stay length. Search will verify live availability."}
@@ -315,8 +363,13 @@ export function Dates() {
               ) : (
                 <img src={pillar.icon} alt="" aria-hidden="true" className="mx-auto mb-4 h-14 w-14 object-contain md:mx-0" />
               )}
+<<<<<<< Updated upstream
               <h2 className="font-brothers text-base font-bold uppercase tracking-[1px]">{pillar.title}</h2>
               <p className="mt-2 font-editorial text-sm leading-relaxed text-[#4E332D]/75">{pillar.text}</p>
+=======
+              <h2 className="font-label text-base font-bold uppercase tracking-[1px]">{pillar.title}</h2>
+              <p className="mt-2 font-body text-sm leading-relaxed text-foreground/75">{pillar.text}</p>
+>>>>>>> Stashed changes
             </article>
           ))}
         </div>

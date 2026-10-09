@@ -90,20 +90,33 @@ export function BookingFooter() {
   );
 
   return (
+<<<<<<< Updated upstream
     <footer className="mt-20 w-full border-t-4 border-[#343833] bg-[#4E332D] pb-12 pt-14 text-[#EBE8E0]">
       <div className="booking-shell">
         <div className="flex flex-col items-center justify-between gap-8 border-b border-[#EBE8E0]/15 pb-10 text-center md:flex-row md:text-left">
+=======
+    <footer className="mt-20 w-full border-t-4 border-background bg-background pb-12 pt-14 text-foregorund">
+      <div className="booking-shell">
+        <div className="flex flex-col items-center justify-between gap-8 border-b border-background/15 pb-10 text-center md:flex-row md:text-left">
+>>>>>>> Stashed changes
           <img
-            src="./assets/brand/logos/urban-cowboy_light.svg"
+            src="./assets/brand/logos/urban-cowboy.svg"
             alt="Urban Cowboy"
-            className="mx-auto h-10 w-auto select-none object-contain sm:h-12 md:mx-0"
+            className="mx-auto h-18 w-auto text-foreground select-none object-contain sm:h-28 md:mx-0"
           />
 
           {location ? (
+<<<<<<< Updated upstream
             <div className="flex flex-col items-center gap-1 font-woodblock uppercase tracking-widest text-[#EBE8E0]/80 md:items-end">
               <span className="text-xs">{location.fullLocationName}</span>
               {cityState ? (
                 <span className="text-[10px] tracking-[0.18em] text-[#EBE8E0]/55">
+=======
+            <div className="flex flex-col items-center gap-1 font-label uppercase tracking-widest text-background/80 md:items-end">
+              <span className="text-xs">{location.fullLocationName}</span>
+              {cityState ? (
+                <span className="text-[10px] tracking-[0.18em] text-background/55">
+>>>>>>> Stashed changes
                   {cityState}
                 </span>
               ) : null}
@@ -111,7 +124,11 @@ export function BookingFooter() {
           ) : null}
         </div>
 
+<<<<<<< Updated upstream
         <div className="flex flex-col items-center justify-between gap-5 pt-8 text-[11px] text-[#EBE8E0]/60 sm:flex-row">
+=======
+        <div className="flex flex-col items-center justify-between gap-5 pt-8 text-[11px] text-background/60 sm:flex-row">
+>>>>>>> Stashed changes
           <span>
             © <span className="font-number">{new Date().getFullYear()}</span>{" "}
             {locationName}. All rights reserved.
@@ -130,8 +147,13 @@ export function BookingFooter() {
                 className={
                   "rounded-full border px-2.5 py-1 font-button text-[10px] font-bold transition " +
                   (active === language.code
+<<<<<<< Updated upstream
                     ? "border-[#EBE8E0] bg-[#EBE8E0] text-[#4E332D]"
                     : "border-[#EBE8E0]/30 text-[#EBE8E0]/70 hover:border-[#EBE8E0] hover:text-[#EBE8E0]")
+=======
+                    ? "border-background bg-background text-foreground"
+                    : "border-background/30 text-background/70 hover:border-background hover:text-background")
+>>>>>>> Stashed changes
                 }
               >
                 {language.label}
@@ -151,7 +173,11 @@ export function BookingFooter() {
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
+<<<<<<< Updated upstream
                     className="transition hover:text-[#EBE8E0]"
+=======
+                    className="transition hover:text-background"
+>>>>>>> Stashed changes
                   >
                     {link.label}
                   </a>

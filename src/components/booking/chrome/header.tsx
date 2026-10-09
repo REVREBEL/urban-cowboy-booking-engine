@@ -35,7 +35,11 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
   const showProgress = step !== "confirmation";
 
   return (
+<<<<<<< Updated upstream
     <header className="sticky top-0 z-40 w-full border-b border-[#4E332D]/10 bg-[#EBE8E0]/95 backdrop-blur-md">
+=======
+    <header className="sticky top-0 z-40 w-full border-b border-background bg-background backdrop-blur-md">
+>>>>>>> Stashed changes
       <div className="booking-shell">
         <div className="flex h-16 w-full items-center justify-between gap-5 sm:h-[67px]">
           <button
@@ -47,7 +51,7 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
             <img
               src="/assets/brand/logos/Cowboy.svg"
               alt="Cowboy"
-              className="h-6 w-auto select-none object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-7"
+              className="h-6 w-auto select-none text-foreground object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-7"
             />
           </button>
 
@@ -77,7 +81,11 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
             </div>
           )}
 
+<<<<<<< Updated upstream
           <div className="flex items-center gap-1.5 border-b border-[#4E332D]/20 pb-0.5 text-[#4E332D] sm:border-b-0">
+=======
+          <div className="flex items-center gap-1.5 border-b border-foreground/20 pb-0.5 text-foreground sm:border-b-0">
+>>>>>>> Stashed changes
             <img
               src="/assets/icons/ui/fi-sheriff-badge.svg"
               alt=""
