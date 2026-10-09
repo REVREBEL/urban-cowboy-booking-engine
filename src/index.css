@@ -366,6 +366,9 @@ color-scheme: light;
 --_size---button-sm--padding-left: 1rem;
 --_size---button-sm--padding-right: 1rem;
 
+--border-width-control: 3px;
+--border-width-control-lg: 3.5px;
+
 /* Adaptive photography overlays */
 --icon-color-light: var(--color-paper);
 --icon-color-dark: var(--color-cowboy-umber);
@@ -498,9 +501,12 @@ border-color: var(--card-border);
 }
 
 .room-list-card__title,
-.room-list-card__description,
 .room-list-card__price {
 color: var(--card-title);
+}
+
+.room-list-card__description {
+color: var(--card-text);
 }
 
 .room-list-card__tagline {
@@ -934,6 +940,10 @@ padding-inline: clamp(1rem, 2.5vw, 3rem);
 
 .text-balance {
 text-wrap: balance;
+}
+
+.emoji-text {
+font-variant-emoji: text;
 }
 
 .no-scrollbar::-webkit-scrollbar,
