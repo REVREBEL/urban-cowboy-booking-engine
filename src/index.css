@@ -77,22 +77,6 @@ text-cowboy-umber, font-heading, shadow-card).
 --color-alpine-linen-fade: #f1efe9;
 --color-lodge-yellow-fade: #fee783;
 
-/* Shared interface neutrals. These preserve the existing visual values while
-   replacing repeated arbitrary hex classes with named utilities. */
---color-ink-deep: #1c1917;
---color-copy: #60605e;
---color-copy-warm: #6b6259;
---color-copy-soft: #767470;
---color-copy-faint: #8a7e74;
---color-line-light: #e1e0e0;
---color-line-cool: #e2e2e1;
---color-line-neutral: #dddddd;
---color-surface-muted: #f0efeb;
---color-surface-warm: #f4f1ea;
---color-surface-light: #f9f9f9;
---color-disabled: #afaeae;
---color-mauve-muted: #a79996;
-
 /* Typography Families */
 --font-body: "Uchen", Georgia, serif;
 --font-heading: "DesertRain", Georgia, serif;
