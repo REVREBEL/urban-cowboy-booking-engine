@@ -94,9 +94,9 @@ export function BookingFooter() {
       <div className="booking-shell">
         <div className="flex flex-col items-center justify-between gap-8 border-b border-alpine-linen/15 pb-10 text-center md:flex-row md:text-left">
           <img
-            src="./assets/brand/logos/urban-cowboy_light.svg"
+            src="./assets/brand/logos/urban-cowboy.svg"
             alt="Urban Cowboy"
-            className="mx-auto h-10 w-auto select-none object-contain sm:h-12 md:mx-0"
+            className="mx-auto h-18 w-auto text-foreground select-none object-contain sm:h-28 md:mx-0"
           />
 
           {location ? (

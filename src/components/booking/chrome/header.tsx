@@ -47,7 +47,7 @@ export function BookingHeader({ step, onNavigate, onHome, canNavigate }: Booking
             <img
               src="/assets/brand/logos/Cowboy.svg"
               alt="Cowboy"
-              className="h-6 w-auto select-none object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-7"
+              className="h-6 w-auto select-none text-foreground object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-7"
             />
           </button>
 

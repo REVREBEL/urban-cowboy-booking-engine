@@ -180,14 +180,14 @@ export function Dates() {
       </div>
 
       <div className="booking-shell relative z-20 mt-10">
-        <div className="mx-auto w-full max-w-[1057px]">
+        <div className="mx-auto w-full max-w-264.25">
           <SearchBarExpanded
             variant="circle"
             values={{ property: location, checkInDate: displayDate(form.checkIn), checkOutDate: displayDate(form.checkOut), guests: guestLabel, promoCode: form.voucherCode || "Add promo" }}
             activeSection={activeSection}
             onSectionClick={setActiveSection}
             onSearch={submit}
-            className="!w-full"
+            className="w-full!"
             dropdownSlot={
               <>
                 {activeSection === "property" && (

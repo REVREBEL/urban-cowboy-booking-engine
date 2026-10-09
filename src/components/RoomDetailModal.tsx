@@ -237,7 +237,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 </span>
               </div>
 
-              {/* 8. Soaking Tub (Cedar or Copper Clawfoot) */}
+              {/* 8. Soaking Tub (Cedar or accent Clawfoot) */}
               <div className="flex flex-col items-center text-center group">
                 <div className="h-20 sm:h-24 w-full flex items-center justify-center mb-3">
                   <AmenityWoodcutIcon
@@ -249,7 +249,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                   {room.soakType === 'outdoor-cedar-tub' ? (
                     <>OUTDOOR CEDAR<br />SOAKING TUB</>
                   ) : (
-                    <>COPPER CLAWFOOT<br />SOAKING TUB</>
+                    <>accent CLAWFOOT<br />SOAKING TUB</>
                   )}
                 </span>
               </div>
