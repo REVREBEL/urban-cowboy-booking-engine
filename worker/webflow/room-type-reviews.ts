@@ -1,4 +1,6 @@
 import type {
+  RoomTypeCmsDescription,
+  RoomTypeCmsDescriptionMap,
   RoomTypeCmsReview,
   RoomTypeCmsReviewMap,
 } from "../../src/types/room-type-cms.ts";
@@ -35,6 +37,7 @@ interface WebflowItemsResponse {
 interface CachedReviewPayload {
   fetchedAt: number;
   reviews: RoomTypeCmsReviewMap;
+  descriptions: RoomTypeCmsDescriptionMap;
 }
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
@@ -43,7 +46,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:room-type-reviews:v1";
+const CACHE_KEY_PREFIX = "webflow:room-type-content:v2";
 const BROWSER_CACHE_CONTROL =
   "public, max-age=300, s-maxage=21600, stale-while-revalidate=64800";
 
@@ -142,6 +145,40 @@ export function normalizeRoomTypeReviews(
   return reviews;
 }
 
+export function normalizeRoomTypeDescription(
+  item: WebflowCollectionItem,
+): RoomTypeCmsDescription | null {
+  if (item.isArchived === true || item.isDraft === true) return null;
+
+  const fields = item.fieldData ?? {};
+  const roomTypeId = text(fields["mews-room-type-id"]);
+  if (!roomTypeId) return null;
+
+  const shortDescription = text(fields["short-description"]) || null;
+  const longDescription = text(fields["long-description"]) || null;
+
+  if (!shortDescription && !longDescription) return null;
+
+  return {
+    roomTypeId,
+    shortDescription,
+    longDescription,
+  };
+}
+
+export function normalizeRoomTypeDescriptions(
+  items: readonly WebflowCollectionItem[],
+): RoomTypeCmsDescriptionMap {
+  const descriptions: RoomTypeCmsDescriptionMap = {};
+
+  for (const item of items) {
+    const description = normalizeRoomTypeDescription(item);
+    if (description) descriptions[description.roomTypeId] = description;
+  }
+
+  return descriptions;
+}
+
 async function fetchPublishedReviews(
   env: Env,
   collectionId: string,
@@ -170,6 +207,7 @@ async function fetchPublishedReviews(
       items.items ?? [],
       optionNames(collection, "review-source"),
     ),
+    descriptions: normalizeRoomTypeDescriptions(items.items ?? []),
   };
 }
 
@@ -243,6 +281,7 @@ function response(payload: CachedReviewPayload, stale: boolean): Response {
   return json(
     {
       reviews: payload.reviews,
+      descriptions: payload.descriptions,
       generatedAt: new Date(payload.fetchedAt).toISOString(),
       stale,
     },
@@ -261,7 +300,7 @@ export async function onRequestGet({
   const collectionId = env.WEBFLOW_ROOM_TYPE_COLLECTION_ID;
 
   if (!env.WEBFLOW_CMS_API_TOKEN || !collectionId) {
-    return json({ reviews: {}, generatedAt: null, stale: false }, 200, "no-store");
+    return json({ reviews: {}, descriptions: {}, generatedAt: null, stale: false }, 200, "no-store");
   }
 
   const cached = await readCachedReviews(env, collectionId);
@@ -295,7 +334,7 @@ export async function onRequestGet({
     if (cached) return response(cached, true);
 
     return json(
-      { reviews: {}, generatedAt: null, stale: false },
+      { reviews: {}, descriptions: {}, generatedAt: null, stale: false },
       200,
       "no-store",
     );
