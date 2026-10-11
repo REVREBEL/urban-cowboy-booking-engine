@@ -26,9 +26,12 @@
     "sync:room-photos": "node scripts/sync-mews-room-photos.mjs",
     "tokens:audit": "node scripts/tokenize-design-system.mjs",
     "tokens:fix": "node scripts/tokenize-design-system.mjs --write",
-    "tokens:check": "node scripts/tokenize-design-system.mjs --check"
+    "tokens:check": "node scripts/tokenize-design-system.mjs --check",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@playwright/test": "^1.64.0",
     "@radix-ui/react-accordion": "^1.2.21",
     "@radix-ui/react-alert-dialog": "^1.1.24",
     "@radix-ui/react-aspect-ratio": "^1.1.16",
@@ -75,19 +78,31 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "latest",
     "@cloudflare/workers-types": "^5.20261009.1",
+    "@storybook/addon-a11y": "^10.6.1",
+    "@storybook/addon-docs": "^10.6.1",
+    "@storybook/addon-mcp": "^10.6.1",
+    "@storybook/addon-vitest": "^10.6.1",
+    "@storybook/react-vite": "^10.6.1",
     "@tailwindcss/postcss": "^4.0.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest",
     "concurrently": "^10.0.6",
     "detect-port": "^2.1.0",
+    "playwright": "latest",
     "postcss": "^8.5.29",
+    "storybook": "^10.6.1",
     "tailwindcss": "^4.0.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.3",
-    "vite": "^5.4.21",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.3",
     "wrangler": "^4.149.0"
   },
   "allowScripts": {

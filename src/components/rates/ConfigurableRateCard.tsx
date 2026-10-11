@@ -61,6 +61,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
         "--rate-overlay-mobile-top": MOBILE_POSITION_TOP[config.mobileOverlayPosition],
         "--rate-fg": textColor,
         "--rate-border-color": textColor,
+        "--rate-accent": accentColor,
       }) as React.CSSProperties,
     [
       config.desktopOverlayPosition,

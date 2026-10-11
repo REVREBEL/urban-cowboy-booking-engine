@@ -28,9 +28,7 @@
       ]
     }
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src/**/*", ".storybook/**/*"],
   "exclude": [
     "src/components/booking/summary/ExtrasStep.tsx",
     "src/components/rates/RideEasySoloPage.tsx"

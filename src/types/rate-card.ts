@@ -63,6 +63,7 @@ export interface RateCardConfig {
   buttonStyle: RateCardButtonStyle;
   buttonColor: RateCardColor;
   textColor: RateCardColor;
+  accentColor: RateCardColor;
   borderStyle: RateCardBorderStyle;
   fontPair: RateCardFontPair;
   ctaLabel?: string | null;
