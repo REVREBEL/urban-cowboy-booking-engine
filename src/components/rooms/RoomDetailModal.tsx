@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { RoomType, SearchCriteria } from '../types';
-import type { RoomTypeCmsReview } from '../types/room-type-cms';
-import { AmenityWoodcutIcon } from './icons/AmenityWoodcutIcon';
+import { RoomType, SearchCriteria } from '@/types';
+import type { RoomTypeCmsReview } from '@/types/room-type-cms';
+import { AmenityWoodcutIcon } from '@/components/icons/AmenityWoodcutIcon';
 import { GuestReviewQuoteCard } from './GuestReviewQuoteCard';
 import { X, Bath, ArrowRight } from 'lucide-react';
 

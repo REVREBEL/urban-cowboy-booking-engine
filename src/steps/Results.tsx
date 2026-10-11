@@ -18,9 +18,9 @@ import { MatchOrBrowseScreen } from "@/components/booking/discovery/MatchOrBrows
 import { RoomMatcherPage } from "@/components/booking/discovery/RoomMatcherPage";
 import { HelpMeChooseModal } from "@/components/booking/discovery/HelpMeChooseModal";
 import { StudioMatchResults } from "./StudioMatchResults";
-import { RoomsListCard, type RoomCardTheme } from "@/components/RoomsListCard";
-import { BuildingExperienceList } from "@/components/BuildingExperienceList";
-import { RoomDetailModal } from "@/components/RoomDetailModal";
+import { RoomsListCard, type RoomCardTheme } from "@/components/rooms/RoomsListCard";
+import { BuildingExperienceList } from "@/components/rooms/BuildingExperienceList";
+import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type {

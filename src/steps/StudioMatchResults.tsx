@@ -7,7 +7,7 @@ import type { MatchInterest, RecommendationPreferences } from "@/types/merchandi
 import { PREFERENCE_LABELS } from "@/data/findYourStayPreferences";
 import { MatcherProgress } from "@/components/booking/discovery/RoomMatcherProgress";
 import type { ShapedRoom } from "@/types/mews";
-import { RoomsListCard } from "@/components/RoomsListCard";
+import { RoomsListCard } from "@/components/rooms/RoomsListCard";
 import { useBooking } from "@/state/booking";
 
 type StudioMatchResultsProps = {

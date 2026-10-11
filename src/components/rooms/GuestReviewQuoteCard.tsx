@@ -34,16 +34,17 @@ export const GuestReviewQuoteCard: React.FC<GuestReviewQuoteCardProps> = ({
 
   return (
     <div
-      className={`rounded-2xl border border-cowboy-umber/20 bg-white px-5 py-6 text-center shadow-xs sm:px-8 sm:py-8 ${className}`}
+      className={`rounded-2xl border border-current/20 bg-transparent px-5 py-6 text-center shadow-xs sm:px-8 sm:py-8 ${className}`}
     >
       <blockquote
-        className={`mx-auto max-w-2xl font-cedarville ${textSizeClass} font-normal leading-relaxed tracking-wide text-copper`}
+        style={{ fontFamily: 'var(--font-blockquote)' }}
+        className={`mx-auto max-w-2xl ${textSizeClass} font-normal leading-relaxed tracking-wide text-inherit`}
       >
         &ldquo;{normalizedQuote}&rdquo;
       </blockquote>
 
       {(attribution || sourceLabel) && (
-        <p className="mt-5 font-sans text-[11px] font-medium uppercase tracking-[0.22em] text-copper/85 sm:mt-6 sm:text-xs">
+        <p style={{ fontFamily: "var(--font-body)" }} className="mt-5 text-[11px] font-medium uppercase tracking-[0.22em] text-inherit opacity-85 sm:mt-6 sm:text-xs">
           {attribution ? <>— {attribution}</> : null}
           {attribution && sourceLabel ? " · " : null}
           {sourceLabel && sourceUrl ? (

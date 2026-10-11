@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { RoomsListCard } from '../../components/RoomsListCard';
+import { RoomsListCard } from '../../components/rooms/RoomsListCard';
 import type { ShapedRoom, ShapedRate } from '../../types/mews';
 import type { RoomMerchandising } from '../../types/merchandising';
 

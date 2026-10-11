@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { GuestReviewQuoteCard } from '../../components/GuestReviewQuoteCard';
+import { GuestReviewQuoteCard } from '../../components/rooms/GuestReviewQuoteCard';
 
 const meta: Meta<typeof GuestReviewQuoteCard> = {
   title: 'Components/GuestReviewQuoteCard',
