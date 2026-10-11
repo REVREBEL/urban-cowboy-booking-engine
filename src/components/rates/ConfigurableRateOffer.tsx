@@ -1,6 +1,7 @@
 import React from "react";
 import type { RateCardConfig, RateCardLiveContent } from "@/types/rate-card";
 import { ConfigurableRateCard } from "./ConfigurableRateCard";
+import { PolicyDisplay } from "./policy_display";
 import {
   RateOfferSidePanel,
   type OfferCardTheme,
@@ -20,6 +21,7 @@ export interface ConfigurableRateOfferProps {
   live: RateCardLiveContent;
   theme: OfferCardTheme;
   variant?: "default" | "compact";
+  layout?: "vertical" | "horizontal";
   isExpanded: boolean;
   onToggleExpand: () => void;
   onConfirmBooking: () => void;
@@ -35,6 +37,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   live,
   theme,
   variant = "default",
+  layout = "vertical",
   isExpanded,
   onToggleExpand,
   onConfirmBooking,
@@ -54,6 +57,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
         <ConfigurableRateCard
           config={config}
           live={live}
+          layout={layout}
           artworkMode={isCompact ? "mobile" : "desktop"}
           isExpanded={isExpanded}
           onExpand={onToggleExpand}
@@ -89,6 +93,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
             dueAtBooking={pricing.dueToday}
             remaining={pricing.remaining}
             policyText={fullPolicyText}
+            policyDisplay={<PolicyDisplay text={fullPolicyText} />}
             onClose={onToggleExpand}
             onConfirm={onConfirmBooking}
             height={panelHeight}
