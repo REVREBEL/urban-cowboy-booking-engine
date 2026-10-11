@@ -101,8 +101,6 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
 }) => {
   const [activeTooltip, setActiveTooltip] = useState<"initial" | "remaining" | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const textColor = config?.textColor || 'var(--foreground);
-  const accentColor = config?.accentColor || var(--foreground);
 
   // Memoized CSS custom properties with complete dependency array
   const style = useMemo(
@@ -179,7 +177,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                 {/* Offset circular badge */}
                 <div className="absolute -left-6 -top-2 z-10 w-13 h-13 rounded-full bg-(--rate-fg) text-white flex flex-col items-center justify-center shadow">
                   <span className="text-[22px] font-bold leading-none">
-                    {freeCancelDate.daysPrior}
+                    {freeCancelDate?.daysPrior}
                   </span>
                   <span className="text-[9px] font-black leading-none tracking-wider uppercase mt-0.5">
                     DAYS
@@ -189,10 +187,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                 {/* Calendar Tile */}
                 <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm pl-2">
                   <span className="text-[34px] font-bold leading-none tracking-tight text-(--rate-fg)">
-                    {freeCancelDate.day}
+                    {freeCancelDate?.day}
                   </span>
                   <span className="text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-fg)">
-                    {freeCancelDate.month}
+                    {freeCancelDate?.month}
                   </span>
                 </div>
               </div>
@@ -213,7 +211,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                 {/* Offset circular badge */}
                 <div className="absolute -left-6 -top-2 z-10 w-13 h-13 rounded-full bg-(--rate-accent) text-white flex flex-col items-center justify-center shadow">
                   <span className="text-[22px] font-bold leading-none">
-                    {nonRefundableDate.daysPrior}
+                    {nonRefundableDate?.daysPrior}
                   </span>
                   <span className="text-[9px] font-black leading-none tracking-wider uppercase mt-0.5">
                     DAYS
@@ -223,10 +221,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                 {/* Calendar Tile */}
                 <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm pl-2">
                   <span className="text-[34px] font-bold leading-none tracking-tight text-(--rate-accent)">
-                    {nonRefundableDate.day}
+                    {nonRefundableDate?.day}
                   </span>
                   <span className="text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-accent)">
-                    {nonRefundableDate.month}
+                    {nonRefundableDate?.month}
                   </span>
                 </div>
               </div>
@@ -360,7 +358,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
               <div className="relative">
                 <div className="absolute -left-7 -top-2 z-10 w-14 h-14 rounded-full bg-(--rate-fg) text-white flex flex-col items-center justify-center shadow">
                   <span className="text-[24px] font-bold leading-none">
-                    {freeCancelDate.daysPrior}
+                    {freeCancelDate?.daysPrior}
                   </span>
                   <span className="text-[10px] font-black leading-none tracking-wider uppercase mt-0.5">
                     DAYS
@@ -369,10 +367,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
 
                 <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm pl-2">
                   <span className="text-[34px] font-bold leading-none tracking-tight text-(--rate-fg)">
-                    {freeCancelDate.day}
+                    {freeCancelDate?.day}
                   </span>
                   <span className="text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-fg)">
-                    {freeCancelDate.month}
+                    {freeCancelDate?.month}
                   </span>
                 </div>
               </div>
@@ -392,7 +390,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
               <div className="relative">
                 <div className="absolute -left-7 -top-2 z-10 w-14 h-14 rounded-full bg-(--rate-accent) text-white flex flex-col items-center justify-center shadow">
                   <span className="text-[24px] font-bold leading-none">
-                    {nonRefundableDate.daysPrior}
+                    {nonRefundableDate?.daysPrior}
                   </span>
                   <span className="text-[10px] font-black leading-none tracking-wider uppercase mt-0.5">
                     DAYS
@@ -401,10 +399,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
 
                 <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm pl-2">
                   <span className="text-[34px] font-bold leading-none tracking-tight text-(--rate-accent)">
-                    {nonRefundableDate.day}
+                    {nonRefundableDate?.day}
                   </span>
                   <span className="text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-accent)">
-                    {nonRefundableDate.month}
+                    {nonRefundableDate?.month}
                   </span>
                 </div>
               </div>
