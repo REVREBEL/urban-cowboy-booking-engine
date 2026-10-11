@@ -641,6 +641,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         depositNote={depositNoteForRate(pricing)}
                         remainingNote={remainingNoteForRate(cmsConfig, pricing)}
                         fullPolicyText={fullCancellationPolicyForRate(liveRate)}
+                        checkIn={criteria.checkIn}
                       />
                     ) : <OffersCard
                       variant={rateCardsVariant}
@@ -698,6 +699,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         depositNote={depositNoteForRate(pricing)}
                         remainingNote={remainingNoteForRate(cmsConfig, pricing)}
                         fullPolicyText={fullCancellationPolicyForRate(liveRate)}
+                        checkIn={criteria.checkIn}
                         disabled={!onUnlockMember}
                       />
                     ) : <OffersCardOutfit
@@ -758,6 +760,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         depositNote={depositNoteForRate(pricing)}
                         remainingNote={remainingNoteForRate(cmsConfig, pricing)}
                         fullPolicyText={fullCancellationPolicyForRate(liveRate)}
+                        checkIn={criteria.checkIn}
                       />
                     ) : <OffersCardSunup
                       variant={rateCardsVariant}
@@ -815,6 +818,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         depositNote={depositNoteForRate(pricing)}
                         remainingNote={remainingNoteForRate(cmsConfig, pricing)}
                         fullPolicyText={fullCancellationPolicyForRate(liveRate)}
+                        checkIn={criteria.checkIn}
                       />
                     ) : <OffersCardStayAWhile
                       variant={rateCardsVariant}
@@ -872,6 +876,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         depositNote={depositNoteForRate(pricing)}
                         remainingNote={remainingNoteForRate(cmsConfig, pricing)}
                         fullPolicyText={fullCancellationPolicyForRate(liveRate)}
+                        checkIn={criteria.checkIn}
                       />
                     ) : <OffersCardPlanAhead
                       variant={rateCardsVariant}
