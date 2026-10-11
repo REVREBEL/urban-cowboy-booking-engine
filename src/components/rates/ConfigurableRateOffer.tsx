@@ -64,6 +64,11 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
     date.setUTCDate(date.getUTCDate() - days);
     return { daysPrior: days, day: date.getUTCDate(), month: date.toLocaleString("en-US", { month: "short", timeZone: "UTC" }).toUpperCase() };
   };
+  const amountDisplay = (value: number | string): string => {
+    if (typeof value !== "number") return value;
+    const prefix = live.price.match(/^[^0-9-]+/)?.[0]?.trim() ?? "";
+    return `${prefix}${new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}`;
+  };
   const freeCancelDate = milestone(config.cancellationPenaltyWindow, config.cancellationPenaltyWindowPeriod);
   const nonRefundableDate = milestone(config.cancellationFullForfeitWindow, config.cancellationFullForfeitWindowPeriod);
 
@@ -111,8 +116,8 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
             policyText={fullPolicyText}
             policyDisplay={isCompact && freeCancelDate && nonRefundableDate
               ? <PolicyDisplay orientation="vertical" size="compact"
-                  initialAmount={String(pricing.dueToday)}
-                  remainingAmount={String(pricing.remaining)}
+                  initialAmount={amountDisplay(pricing.dueToday)}
+                  remainingAmount={amountDisplay(pricing.remaining)}
                   freeCancelDate={freeCancelDate} nonRefundableDate={nonRefundableDate}
                   textColor="var(--cowboy-umber--normal, #4e332d)"
                   accentColor="var(--copper--normal, #9a5636)" />
