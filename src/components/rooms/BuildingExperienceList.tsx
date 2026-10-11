@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import type { SearchCriteria } from '../types';
+import type { SearchCriteria } from '@/types';
 import type { ShapedRoom } from '@/types/mews';
-import { ROOM_TYPE_GROUPS } from '../data/roomTypeGroups';
-import { ROOM_TYPE_GROUP_PRESENTATION } from '../data/roomTypeGroupPresentation';
-import { RoomsListCard, type RoomCardTheme, type RoomCardLayout } from '@/components/RoomsListCard';
-import { BuildingWoodcut } from './icons/BuildingWoodcut';
+import { ROOM_TYPE_GROUPS } from '@/data/roomTypeGroups';
+import { ROOM_TYPE_GROUP_PRESENTATION } from '@/data/roomTypeGroupPresentation';
+import { RoomsListCard, type RoomCardTheme, type RoomCardLayout } from '@/components/rooms/RoomsListCard';
+import { BuildingWoodcut } from '@/components/icons/BuildingWoodcut';
 import {
   Calendar,
   Sparkles,

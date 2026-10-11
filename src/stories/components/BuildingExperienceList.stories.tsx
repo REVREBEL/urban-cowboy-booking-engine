@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { BuildingExperienceList } from '../../components/BuildingExperienceList';
+import { BuildingExperienceList } from '../../components/rooms/BuildingExperienceList';
 import type { SearchCriteria } from '../../types';
 import type { ShapedRoom, ShapedRate } from '../../types/mews';
 import type { RoomMerchandising } from '../../types/merchandising';

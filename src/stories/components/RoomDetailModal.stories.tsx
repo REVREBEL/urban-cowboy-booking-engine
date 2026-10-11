@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { RoomDetailModal } from '../../components/RoomDetailModal';
+import { RoomDetailModal } from '../../components/rooms/RoomDetailModal';
 import type { RoomType, SearchCriteria } from '../../types';
 import type { RoomTypeCmsReview } from '../../types/room-type-cms';
 
