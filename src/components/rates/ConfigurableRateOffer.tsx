@@ -1,7 +1,7 @@
 import React from "react";
 import type { RateCardConfig, RateCardLiveContent } from "@/types/rate-card";
 import { ConfigurableRateCard } from "./ConfigurableRateCard";
-import { PolicyDisplay } from "./policy_display";
+import { PolicyDisplay, type MilestoneDate } from "./policy_display";
 import {
   RateOfferSidePanel,
   type OfferCardTheme,
@@ -29,6 +29,7 @@ export interface ConfigurableRateOfferProps {
   depositNote: string;
   remainingNote: string;
   fullPolicyText: string;
+  checkIn?: string;
   disabled?: boolean;
 }
 
@@ -45,11 +46,26 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   depositNote,
   remainingNote,
   fullPolicyText,
+  checkIn,
   disabled = false,
 }) => {
   const isCompact = variant === "compact";
   const sideWidth = isCompact ? 557 : 528;
   const panelHeight = isCompact ? 675 : 900;
+  const milestone = (amount: number | null | undefined, unit: "days" | "hours" | null | undefined): MilestoneDate | undefined => {
+    if (!checkIn || amount == null || !unit || amount < 0) return undefined;
+    const days = unit === "days" ? amount : amount / 24;
+    if (!Number.isInteger(days)) return undefined;
+    const parts = checkIn.split("-").map(Number);
+    if (parts.length !== 3 || parts.some((n) => !Number.isInteger(n))) return undefined;
+    const [year, month, day] = parts;
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return undefined;
+    date.setUTCDate(date.getUTCDate() - days);
+    return { daysPrior: days, day: date.getUTCDate(), month: date.toLocaleString("en-US", { month: "short", timeZone: "UTC" }).toUpperCase() };
+  };
+  const freeCancelDate = milestone(config.cancellationPenaltyWindow, config.cancellationPenaltyWindowPeriod);
+  const nonRefundableDate = milestone(config.cancellationFullForfeitWindow, config.cancellationFullForfeitWindowPeriod);
 
   return (
     <div className={`flex flex-row ${isCompact ? "items-stretch" : "items-center"}`}>
@@ -93,7 +109,14 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
             dueAtBooking={pricing.dueToday}
             remaining={pricing.remaining}
             policyText={fullPolicyText}
-            policyDisplay={<PolicyDisplay text={fullPolicyText} />}
+            policyDisplay={isCompact && freeCancelDate && nonRefundableDate
+              ? <PolicyDisplay orientation="vertical" size="compact"
+                  initialAmount={String(pricing.dueToday)}
+                  remainingAmount={String(pricing.remaining)}
+                  freeCancelDate={freeCancelDate} nonRefundableDate={nonRefundableDate}
+                  textColor="var(--cowboy-umber--normal, #4e332d)"
+                  accentColor="var(--copper--normal, #9a5636)" />
+              : <PolicyDisplay text={fullPolicyText} />}
             onClose={onToggleExpand}
             onConfirm={onConfirmBooking}
             height={panelHeight}
