@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import { PolicyDisplay } from './policy_display';
 import { Button, type ButtonColor } from '../ui/button';
 
 export type OfferCardTheme = 'ride-easy' | 'outfit' | 'sunup' | 'stay-while' | 'plan-ahead';
@@ -19,6 +20,8 @@ export interface RateOfferSidePanelProps {
   dueAtBooking?: number | string;
   remaining?: number | string;
   policyText?: string;
+  /** Optional fully resolved policy content; defaults to policyText. */
+  policyDisplay?: React.ReactNode;
   onClose: () => void;
   onConfirm?: () => void;
   isSubmitting?: boolean;
@@ -151,6 +154,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   dueAtBooking = '411.54',
   remaining = '411.54',
   policyText = 'Our standard rate for guests who want a little more freedom around their plans. Plans change. This one gives you room to move, with our most flexible cancellation terms.',
+  policyDisplay,
   onClose,
   onConfirm,
   isSubmitting = false,
@@ -374,15 +378,15 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         </div>
 
         {/* Policy Disclaimer */}
-        <p
+        <div
           className="text-xs leading-relaxed text-center sm:text-left mb-3 px-1"
           style={{
             color: themeConfig.textSecondary,
             fontFamily: themeConfig.policyFont,
           }}
         >
-          {policyText}
-        </p>
+          {policyDisplay ?? <PolicyDisplay text={policyText} />}
+        </div>
 
         {/* Oval Pill CTA Button: AGREE & CONFIRM BOOKING */}
         <div className="w-full flex justify-center">
@@ -602,15 +606,15 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
       </div>
 
       {/* Policy Disclaimer in Editorial Font at Bottom */}
-      <p
+      <div
         className="w-full text-xs sm:text-[13px] leading-relaxed text-left px-1"
         style={{
           color: themeConfig.textSecondary,
           fontFamily: themeConfig.policyFont,
         }}
       >
-        {policyText}
-      </p>
+        {policyDisplay ?? <PolicyDisplay text={policyText} />}
+      </div>
     </div>
   );
 };

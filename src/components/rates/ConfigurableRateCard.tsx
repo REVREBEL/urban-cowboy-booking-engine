@@ -8,11 +8,13 @@ import type {
 import { RATE_CARD_COLORS } from "@/lib/rateCardPresentation";
 import { normalizeRateCardCtaLabel } from "@/lib/rateCardCta";
 import { Button } from "@/components/ui/button";
+import { PolicyDisplay } from "./policy_display";
 
 export interface ConfigurableRateCardProps {
   config: RateCardConfig;
   live: RateCardLiveContent;
   artworkMode?: RateCardArtworkMode;
+  layout?: "vertical" | "horizontal";
   onBook: () => void;
   isExpanded?: boolean;
   onExpand?: () => void;
@@ -37,6 +39,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
   config,
   live,
   artworkMode = "auto",
+  layout = "vertical",
   onBook,
   isExpanded = false,
   onExpand,
@@ -50,6 +53,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
   const desktopArtwork = desktopFailed ? null : config.desktopArtworkUrl;
   const mobileArtwork = mobileFailed ? null : config.mobileArtworkUrl;
   const textColor = RATE_CARD_COLORS[config.textColor].hex;
+  const accentColor = RATE_CARD_COLORS[config.buttonColor].hex;
 
   const hasAnyArtwork = Boolean(desktopArtwork || mobileArtwork);
   const fallbackIsVisible = !hasAnyArtwork;
@@ -60,11 +64,13 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
         "--rate-overlay-desktop-top": DESKTOP_POSITION_TOP[config.desktopOverlayPosition],
         "--rate-overlay-mobile-top": MOBILE_POSITION_TOP[config.mobileOverlayPosition],
         "--rate-fg": textColor,
+        "--rate-accent": accentColor,
       }) as React.CSSProperties,
     [
       config.desktopOverlayPosition,
       config.mobileOverlayPosition,
       textColor,
+      accentColor,
     ],
   );
 
@@ -84,6 +90,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
       className={`rate-card-shell ${className}`}
       data-rate-card={config.id}
       data-artwork-mode={artworkMode}
+      data-layout={layout}
       data-text-color={config.textColor}
       data-button-color={config.buttonColor}
       data-font-pair={config.fontPair}
@@ -171,7 +178,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
               {ctaLabel}
             </Button>
 
-            <p className="rate-card-policy">{live.cancellationText}</p>
+            <PolicyDisplay className="rate-card-policy" text={live.cancellationText} />
           </div>
         </div>
       </div>
