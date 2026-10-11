@@ -1,8 +1,25 @@
 import * as React from 'react';
 import { X } from 'lucide-react';
-import { Button, type ButtonColor } from '../ui/button';
+import { Button, type ButtonColor } from '../ui/button';\nimport { PolicyDisplay, type MilestoneDate } from './policy_display';
 
 export type OfferCardTheme = 'ride-easy' | 'outfit' | 'sunup' | 'stay-while' | 'plan-ahead';
+
+export interface RateOfferPolicyDisplay {
+  initialAmount: string;
+  remainingAmount: string;
+  freeCancelDate?: MilestoneDate;
+  nonRefundableDate?: MilestoneDate;
+  textColor?: string;
+  accentColor?: string;
+  initialDepositTooltip?: {
+    title: string;
+    description: string;
+  };
+  remainingBalanceTooltip?: {
+    title: string;
+    description: string;
+  };
+}
 
 export interface RateOfferSidePanelProps {
   variant?: 'default' | 'compact';
@@ -186,12 +203,20 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           </button>
         </div>
 
+        {policyDisplay && (
+          <PolicyDisplay
+            {...policyDisplay}
+            size="compact"
+            className="mb-2"
+          />
+        )}
+
         {/* Embedded Ticket Box with 2 Columns */}
         <div
           className="rounded-panel-xs px-5 shadow-xs mb-3 mx-auto flex items-center justify-center box-border transition-colors duration-300"
           style={{
             width: '465px',
-            height: '325px',
+            height: policyDisplay ? '220px' : '325px',
             paddingTop: '20px',
             paddingBottom: '20px',
             maxWidth: '100%',
@@ -200,6 +225,8 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           }}
         >
           <div className="flex flex-row justify-between items-start gap-3 w-full">
+            {!policyDisplay && (
+              <>
             {/* Left Column: Cancellation & Schedule (width: 135px) */}
             <div
               className="space-y-3 shrink-0"
@@ -247,11 +274,15 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
               </div>
             </div>
 
+
+              </>
+            )}
+
             {/* Right Column: Financial Breakdown List (width: 225px, font-size: 18px) */}
             <div
               className="space-y-1.5 shrink-0"
               style={{
-                width: '225px',
+                width: policyDisplay ? '100%' : '225px',
                 fontSize: '18px',
                 fontFamily: themeConfig.fontFamily,
               }}
@@ -428,6 +459,14 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         </button>
       </div>
 
+      {policyDisplay ? (
+        <PolicyDisplay
+          {...policyDisplay}
+          size="default"
+          className="w-full"
+        />
+      ) : (
+        <>
       {/* Top Section: Cancellation & Schedule */}
       <div className="w-full space-y-4" style={{ fontFamily: themeConfig.fontFamily }}>
         <div>
@@ -471,6 +510,10 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           </span>
         </div>
       </div>
+
+
+        </>
+      )}
 
       {/* Embedded Ticket Box (Financial Breakdown Only) */}
       <div

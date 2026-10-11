@@ -636,7 +636,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('ride-easy')}
                         variant={rateCardsVariant}
-                        isExpanded={isExpanded}
+                        checkIn={criteria.checkIn}\n                        isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('ride-easy', idx)}
                         onConfirmBooking={() => selectCardRate('ride-easy', rate)}
                         pricing={pricing}
@@ -693,7 +693,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('member')}
                         variant={rateCardsVariant}
-                        isExpanded={isExpanded}
+                        checkIn={criteria.checkIn}\n                        isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('member', idx)}
                         onConfirmBooking={() => selectCardRate('member', rate)}
                         pricing={pricing}
@@ -753,7 +753,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('sunup')}
                         variant={rateCardsVariant}
-                        isExpanded={isExpanded}
+                        checkIn={criteria.checkIn}\n                        isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('sunup', idx)}
                         onConfirmBooking={() => selectCardRate('sunup', rate)}
                         pricing={pricing}
@@ -810,7 +810,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('stay-while')}
                         variant={rateCardsVariant}
-                        isExpanded={isExpanded}
+                        checkIn={criteria.checkIn}\n                        isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('stay-while', idx)}
                         onConfirmBooking={() => selectCardRate('stay-while', rate)}
                         pricing={pricing}
@@ -867,7 +867,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('plan-ahead')}
                         variant={rateCardsVariant}
-                        isExpanded={isExpanded}
+                        checkIn={criteria.checkIn}\n                        isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('plan-ahead', idx)}
                         onConfirmBooking={() => selectCardRate('plan-ahead', rate)}
                         pricing={pricing}
