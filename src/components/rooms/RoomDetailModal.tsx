@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RoomType, SearchCriteria } from '@/types';
 import type { RoomTypeCmsReview } from '@/types/room-type-cms';
 import { AmenityWoodcutIcon } from '@/components/icons/AmenityWoodcutIcon';
@@ -41,8 +41,23 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   const activeReview: RoomTypeCmsReview | null = review ?? null;
   const reviewDate = formatReviewDate(activeReview?.reviewDate);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="room-detail-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200"
+    >
       <div className="relative w-full max-w-4xl bg-paper rounded-modal-lg overflow-hidden shadow-2xl border-4 border-cowboy-umber my-8 max-h-[90vh] flex flex-col texture-linen">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-alpine-linen border-b-2 border-cowboy-umber/20">
@@ -81,13 +96,19 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
+                  aria-label={`View photo ${idx + 1} of ${room.images.length}`}
+                  aria-current={activeImageIndex === idx ? 'true' : undefined}
                   className={`relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
                     activeImageIndex === idx
                       ? 'border-cowboy-umber scale-105 shadow-sm'
                       : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <img src={img} alt="thumbnail" className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`${room.name} thumbnail ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -96,7 +117,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           {/* Room Title & Specs */}
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-cowboy-umber/15">
             <div>
-              <h2 className="text-balance font-heading font-extrabold text-3xl sm:text-4xl text-smoke uppercase tracking-wide">
+              <h2
+                id="room-detail-modal-title"
+                className="text-balance font-heading font-extrabold text-3xl sm:text-4xl text-smoke uppercase tracking-wide"
+              >
                 {room.name}
               </h2>
               <p className="font-body italic text-base text-copper mt-1">
