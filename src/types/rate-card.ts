@@ -1,4 +1,6 @@
-export type RateCardArtworkMode = "auto" | "desktop" | "mobile";\n\nexport type RateCardLayout = "vertical" | "horizontal";
+export type RateCardArtworkMode = "auto" | "desktop" | "mobile";
+
+export type RateCardLayout = "vertical" | "horizontal";
 
 export type RateCardOverlayPosition = "high" | "normal" | "low";
 

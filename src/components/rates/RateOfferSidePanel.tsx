@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { X } from 'lucide-react';
-import { Button, type ButtonColor } from '../ui/button';\nimport { PolicyDisplay, type MilestoneDate } from './policy_display';
+import { Button, type ButtonColor } from '../ui/button';
+import { PolicyDisplay, type MilestoneDate } from './policy_display';
 
 export type OfferCardTheme = 'ride-easy' | 'outfit' | 'sunup' | 'stay-while' | 'plan-ahead';
 
@@ -36,6 +37,7 @@ export interface RateOfferSidePanelProps {
   dueAtBooking?: number | string;
   remaining?: number | string;
   policyText?: string;
+  policyDisplay?: RateOfferPolicyDisplay;
   onClose: () => void;
   onConfirm?: () => void;
   isSubmitting?: boolean;
@@ -168,6 +170,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   dueAtBooking = '411.54',
   remaining = '411.54',
   policyText = 'Our standard rate for guests who want a little more freedom around their plans. Plans change. This one gives you room to move, with our most flexible cancellation terms.',
+  policyDisplay,
   onClose,
   onConfirm,
   isSubmitting = false,
