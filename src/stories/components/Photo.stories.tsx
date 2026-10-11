@@ -26,7 +26,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    src: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800',
+    src: "https://cdn.prod.website-files.com/6abc810fd801e90511049adb/6ac85bc2a6a679fb6f2dd9e4_Alpine%20Copper%20Soaking%20Tub%20Day.jpg",
     alt: 'Alpine Bathing Suite Room',
     className: 'w-80 h-52 object-cover rounded-xl shadow-md',
   },

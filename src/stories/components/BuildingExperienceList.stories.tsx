@@ -3,6 +3,7 @@ import { BuildingExperienceList } from '../../components/BuildingExperienceList'
 import type { SearchCriteria } from '../../types';
 import type { ShapedRoom, ShapedRate } from '../../types/mews';
 import type { RoomMerchandising } from '../../types/merchandising';
+import { ROOM_IMAGE_ASSETS } from '../../data/roomImagePlaceholders';
 
 const mockCriteria: SearchCriteria = {
   property: 'Urban Cowboy Catskills',
@@ -72,13 +73,58 @@ const mockMerchandisingAlpine: RoomMerchandising = {
   matchReasons: {},
 };
 
+
+const mockMerchandisingAlpineBathingSuiteDen: RoomMerchandising = {
+  key: 'alpine-bathing-suite',
+  mewsRoomTypeId: 'alpine-bathing-suite-with-den',
+  legacyNames: ['Alpine Bathing Suite with Den'],
+  roomTypeGroupKey: 'alpine',
+  cardTagline: 'THE ICONIC INDOOR SOAK',
+  cardDescription: "Tucked beneath the eaves at the top of Alpine, these are the building's biggest and most playful suites—dormered ceilings, exposed beams, unexpected angles and a balcony made for two. There's a copper clawfoot tub, naturally. And a fireplace for everything that comes after.",
+  dogPolicy: 'notAllowed',
+  agePolicy: 'adultsOnly21',
+  partyScores: { partner: 10, friends: 5, family: 0, solo: 8 },
+  interestScores: {},
+  interestPriority: {},
+  features: {
+    indoorTub: true,
+    outdoorSoak: false,
+    fireplace: true,
+    scenicView: true,
+  },
+  matchReasons: {},
+};
+
+const mockMerchandisingAlpinePenthouse: RoomMerchandising = {
+  key: 'alpine-bathing-suite',
+  mewsRoomTypeId: 'alpine-penthouse-bathing-suite',
+  legacyNames: ['Alpine Penthouse Bathing Suite'],
+  roomTypeGroupKey: 'alpine',
+  cardTagline: 'THE ICONIC INDOOR SOAK',
+  cardDescription: "There's only one like this. Stretch out in the built-in chaise den by the fire, or climb into the copper clawfoot tub and take in one of Alpine's best mountain views. It's part bathing suite, part hideaway, and exactly the kind of room that makes leaving for dinner feel optional.",
+  dogPolicy: 'notAllowed',
+  agePolicy: 'adultsOnly21',
+  partyScores: { partner: 10, friends: 5, family: 0, solo: 8 },
+  interestScores: {},
+  interestPriority: {},
+  features: {
+    indoorTub: true,
+    outdoorSoak: false,
+    fireplace: true,
+    scenicView: true,
+  },
+  matchReasons: {},
+};
+
+
+
 const mockMerchandisingWalden: RoomMerchandising = {
   key: 'walden-king',
   mewsRoomTypeId: 'walden-king',
   legacyNames: ['Walden King'],
   roomTypeGroupKey: 'walden',
   cardTagline: 'BATHING OUTSIDE AMONG THE TREES',
-  cardDescription: 'Cabin-style room with a private outdoor cedar soaking tub.',
+  cardDescription: "Simple, warm and tucked into the woods, the Walden King is for guests who want the forest outside and just enough Cowboy inside. Take your coffee to the deck. Write something at the desk. Wander off for the day. Or don't.",
   dogPolicy: 'allowed',
   agePolicy: 'adultsOnly21',
   partyScores: { partner: 9, friends: 6, family: 0, solo: 7 },
@@ -93,44 +139,134 @@ const mockMerchandisingWalden: RoomMerchandising = {
   matchReasons: {},
 };
 
+const mockMerchandisingWaldenBathingSuiteDen: RoomMerchandising = {
+  key: 'walden-king',
+  mewsRoomTypeId: 'walden-forest-bathing-suite-with-den',
+  legacyNames: ['Walden Forest Bathing Suite with Den'],
+  roomTypeGroupKey: 'walden',
+  cardTagline: 'BATHING OUTSIDE AMONG THE TREES',
+  cardDescription: "Walden's largest suite gives you more room inside and your own cedar soaking tub outside. Start slow in the lounge. Take the afternoon to the deck. Stay in the water until the stars come out. There is, technically, a desk too. We prefer the original purpose: writing letters to your lover.",
+  dogPolicy: 'allowed',
+  agePolicy: 'adultsOnly21',
+  partyScores: { partner: 9, friends: 6, family: 0, solo: 7 },
+  interestScores: {},
+  interestPriority: {},
+  features: {
+    indoorTub: false,
+    outdoorSoak: true,
+    fireplace: false,
+    scenicView: true,
+  },
+  matchReasons: {},
+};
+
+const mockMerchandisingWaldenSunriseBathingSuite: RoomMerchandising = {
+  key: 'walden-king',
+  mewsRoomTypeId: 'walden-sunrise-bathing-suite',
+  legacyNames: ['Walden Sunrise Bathing Suite'],
+  roomTypeGroupKey: 'walden',
+  cardTagline: 'BATHING OUTSIDE AMONG THE TREES',
+  cardDescription: 'Some of the best sunrise views on the property belong to this room. Watch the first light arrive through the diamond-shaped window or, better yet, from the cedar soaking tub on your private porch. Two leather loungers inside give you somewhere to do very little afterward.',
+  dogPolicy: 'allowed',
+  agePolicy: 'adultsOnly21',
+  partyScores: { partner: 9, friends: 6, family: 0, solo: 7 },
+  interestScores: {},
+  interestPriority: {},
+  features: {
+    indoorTub: false,
+    outdoorSoak: true,
+    fireplace: false,
+    scenicView: true,
+  },
+  matchReasons: {},
+};
+
+const makeMockRoom = ({
+  roomTypeId,
+  name,
+  description,
+  imageIds,
+  rate,
+  merchandising,
+}: {
+  roomTypeId: string;
+  name: string;
+  description?: string;
+  imageIds: string[];
+  rate: ShapedRate;
+  merchandising: RoomMerchandising;
+}): ShapedRoom => ({
+  roomTypeId,
+  categoryId: roomTypeId,
+  name,
+  description: description ?? '',
+  cmsShortDescription: description ?? '',
+  cmsLongDescription: description ?? '',
+  imageIds,
+  normalBedCount: 1,
+  extraBedCount: 0,
+  roomClass: 'Suite',
+  spaceType: 'Suite',
+  availableRoomCount: 3,
+  capacity: 2,
+  rates: [rate],
+  fromGross: rate.perNightGross,
+  property: 'Urban Cowboy Catskills',
+  merchandising,
+  merchandisingSource: 'mewsRoomTypeId',
+});
+
 const mockRooms: ShapedRoom[] = [
-  {
+  makeMockRoom({
     roomTypeId: 'alpine-bathing-suite',
-    categoryId: 'alpine-bathing-suite',
     name: 'Alpine Bathing Suite',
-    description: 'Hillside suite with a copper clawfoot tub in front of a picture window.',
-    cmsShortDescription: 'Hillside suite with a copper clawfoot tub in front of a picture window.',
-    imageIds: ['img-1'],
-    normalBedCount: 1,
-    extraBedCount: 0,
-    roomClass: 'Suite',
-    spaceType: 'Suite',
-    availableRoomCount: 2,
-    capacity: 2,
-    rates: [mockRate1],
-    fromGross: 425,
+    description: mockMerchandisingAlpine.cardDescription,
+    imageIds: [ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE, ROOM_IMAGE_ASSETS.ALPINE_HEADBOARD],
+    rate: mockRate1,
     merchandising: mockMerchandisingAlpine,
-    merchandisingSource: 'mewsRoomTypeId',
-  },
-  {
+  }),
+  makeMockRoom({
+    roomTypeId: 'alpine-bathing-suite-with-den',
+    name: 'Alpine Bathing Suite with Den',
+    description: mockMerchandisingAlpineBathingSuiteDen.cardDescription,
+    imageIds: [ROOM_IMAGE_ASSETS.ALPINE_HEADBOARD, ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE],
+    rate: mockRate1,
+    merchandising: mockMerchandisingAlpineBathingSuiteDen,
+  }),
+  makeMockRoom({
+    roomTypeId: 'alpine-penthouse-bathing-suite',
+    name: 'Alpine Penthouse Bathing Suite',
+    description: mockMerchandisingAlpinePenthouse.cardDescription,
+    imageIds: [ROOM_IMAGE_ASSETS.ALPINE_PENTHOUSE_COPPER_TUB, ROOM_IMAGE_ASSETS.ALPINE_HEADBOARD],
+    rate: mockRate1,
+    merchandising: mockMerchandisingAlpinePenthouse,
+  }),
+  makeMockRoom({
     roomTypeId: 'walden-king',
-    categoryId: 'walden-king',
     name: 'Walden King',
-    description: 'Cabin-style room with a private deck and forest views.',
-    cmsShortDescription: 'Cabin-style room with a private deck and forest views.',
-    imageIds: ['img-2'],
-    normalBedCount: 1,
-    extraBedCount: 0,
-    roomClass: 'Standard',
-    spaceType: 'Standard',
-    availableRoomCount: 4,
-    capacity: 2,
-    rates: [mockRate2],
-    fromGross: 395,
+    description: mockMerchandisingWalden.cardDescription,
+    imageIds: [ROOM_IMAGE_ASSETS.WALDEN_SUNRISE_BATHING_SUITE],
+    rate: mockRate2,
     merchandising: mockMerchandisingWalden,
-    merchandisingSource: 'mewsRoomTypeId',
-  },
+  }),
+  makeMockRoom({
+    roomTypeId: 'walden-forest-bathing-suite-with-den',
+    name: 'Walden Forest Bathing Suite with Den',
+    description: mockMerchandisingWaldenBathingSuiteDen.cardDescription,
+    imageIds: [ROOM_IMAGE_ASSETS.WALDEN_FOREST_BATHING_SUITE],
+    rate: mockRate2,
+    merchandising: mockMerchandisingWaldenBathingSuiteDen,
+  }),
+  makeMockRoom({
+    roomTypeId: 'walden-sunrise-bathing-suite',
+    name: 'Walden Sunrise Bathing Suite',
+    description: mockMerchandisingWaldenSunriseBathingSuite.cardDescription,
+    imageIds: [ROOM_IMAGE_ASSETS.WALDEN_SUNRISE_BATHING_SUITE, ROOM_IMAGE_ASSETS.WALDEN_FOREST_BATHING_SUITE],
+    rate: mockRate2,
+    merchandising: mockMerchandisingWaldenSunriseBathingSuite,
+  }),
 ];
+
 
 const meta: Meta<typeof BuildingExperienceList> = {
   title: 'Components/BuildingExperienceList',
@@ -163,9 +299,47 @@ export const Default: Story = {
   args: {
     criteria: mockCriteria,
     rooms: mockRooms,
-    imageBaseUrl: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200',
+    imageBaseUrl: 'https://cdn.prod.website-files.com/6abc810fd801e90511049adb/6ac85bc2a6a679fb6f2dd9e4_Alpine%20Copper%20Soaking%20Tub%20Day-p-1600.jpg',
   },
 };
+
+export const AlpineBathingSuiteWithDen: Story = {
+  args: {
+    ...Default.args,
+    rooms: [mockRooms[1]],
+  },
+};
+
+export const AlpinePenthouse: Story = {
+  args: {
+    ...Default.args,
+    rooms: [mockRooms[2]],
+  },
+};
+
+export const WaldenKing: Story = {
+  args: {
+    ...Default.args,
+    rooms: [mockRooms[3]],
+  },
+};
+
+export const WaldenBathingSuiteWithDen: Story = {
+  args: {
+    ...Default.args,
+    rooms: [mockRooms[4]],
+  },
+};
+
+export const WaldenSunriseBathingSuite: Story = {
+  args: {
+    ...Default.args,
+    rooms: [mockRooms[5]],
+  },
+};
+
+
+
 
 export const SingleRoomAvailable: Story = {
   args: {
@@ -173,6 +347,12 @@ export const SingleRoomAvailable: Story = {
     rooms: [mockRooms[0]],
   },
 };
+
+
+
+
+
+
 
 export const EmptyRoomList: Story = {
   args: {

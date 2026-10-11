@@ -6,7 +6,7 @@ Storybook meta configuration for PolicyDisplay.
 Demonstrates cancellation policies, payment milestones, and interactive tooltips.
 */
 
-const meta: Meta = {
+const meta: Meta<typeof PolicyDisplay> = {
   title: 'Components/PolicyDisplay',
   component: PolicyDisplay,
   parameters: {
@@ -14,31 +14,37 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'A reservation policy breakdown card showing payment milestones, cancellation cutoffs, and deposit schedules with interactive tooltips.',
+          'A reservation policy breakdown card displaying payment schedules and cancellation milestones in both horizontal and vertical orientations.',
       },
     },
   },
+
   tags: ['autodocs'],
   argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['horizontal', 'vertical'],
+      description: 'Layout orientation of the card',
+    },
     title: {
       control: 'text',
-      description: 'Heading text for the policy card',
+      description: 'Card section header title',
     },
     initialAmount: {
       control: 'text',
-      description: 'Initial deposit amount due upon confirmation',
+      description: 'Initial deposit amount due upon booking confirmation',
     },
     remainingAmount: {
       control: 'text',
-      description: 'Remaining balance due prior to arrival',
+      description: 'Remaining deposit amount due prior to arrival',
     },
     freeCancelDate: {
       control: 'object',
-      description: 'Milestone date for the 100% refundable cancellation cutoff',
+      description: 'Free cancellation cutoff date and days-prior milestone',
     },
     nonRefundableDate: {
       control: 'object',
-      description: 'Milestone date when the stay becomes non-refundable / locked',
+      description: 'Non-refundable lock-in date and days-prior milestone',
     },
     initialDepositTooltip: {
       control: 'object',
@@ -51,14 +57,17 @@ const meta: Meta = {
   },
 } satisfies Meta<typeof PolicyDisplay>;
 
+
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+
 /**
-Default story showing placeholder zero balances and default October milestones.
-*/
-export const Default: Story = {
+ * Default horizontal card layout matching the primary design mockup.
+ */
+export const Horizontal: Story = {
   args: {
+    orientation: 'horizontal',
     title: 'POLICY INFORMATION',
     initialAmount: '$000.00',
     remainingAmount: '$000.00',
@@ -76,26 +85,50 @@ export const Default: Story = {
 };
 
 /**
-Realistic scenario with concrete deposit numbers and dates.
-*/
-export const RealisticBooking: Story = {
+ * Vertical variant matching the side-by-side vertical divider design mockup.
+ */
+export const Vertical: Story = {
   args: {
+    orientation: 'vertical',
     title: 'POLICY INFORMATION',
-    initialAmount: '$150.00',
-    remainingAmount: '$450.00',
+    initialAmount: '$000.00',
+    remainingAmount: '$000.00',
     freeCancelDate: {
       daysPrior: '14',
-      day: '15',
-      month: 'NOV',
+      day: '11',
+      month: 'OCT',
     },
     nonRefundableDate: {
-      daysPrior: '03',
-      day: '26',
-      month: 'NOV',
+      daysPrior: '05',
+      day: '30',
+      month: 'OCT',
     },
+    showTooltips: false,
   },
 };
 
+/**
+ * Vertical variant with populated booking values and active tooltips.
+ */
+export const VerticalWithAmounts: Story = {
+  args: {
+    orientation: 'vertical',
+    title: 'POLICY INFORMATION',
+    initialAmount: '$120.00',
+    remainingAmount: '$480.00',
+    freeCancelDate: {
+      daysPrior: '14',
+      day: '11',
+      month: 'OCT',
+    },
+    nonRefundableDate: {
+      daysPrior: '05',
+      day: '30',
+      month: 'OCT',
+    },
+    showTooltips: true,
+  },
+};
 
 /**
 Custom tooltip and messaging copy.

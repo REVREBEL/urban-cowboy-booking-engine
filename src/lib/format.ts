@@ -144,7 +144,11 @@ export function fmtDateLong(date: string): string {
 // résolution TRONQUÉE à 1 Mio (illisible → image cassée). `width` renvoie une image
 // complète ET redimensionnée (prod + demo).
 export function imgUrl(baseUrl: string | undefined, imageId: string | null | undefined, width = 900): string | null {
-  if (!baseUrl || !imageId) return null;
+  if (!imageId) return null;
+  if (/^(?:https?:)?\/\//i.test(imageId) || /^(?:data|blob):/i.test(imageId)) {
+    return imageId;
+  }
+  if (!baseUrl) return null;
   return `${baseUrl}/${imageId}?width=${width}`;
 }
 
