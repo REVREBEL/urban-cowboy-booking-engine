@@ -163,6 +163,37 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   const isCompact = variant === 'compact';
   const themeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS['ride-easy'];
 
+  if (isCompact && policyDisplay) {
+    return (
+      <section
+        className="relative box-border flex w-full min-w-0 flex-col rounded-r-[32px] border-2 p-5 shadow-xl"
+        style={{
+          width: "525px",
+          maxWidth: "100%",
+          height: height ? `${height}px` : "675px",
+          backgroundColor: themeConfig.panelBg,
+          borderColor: themeConfig.borderColor,
+        }}
+        aria-label="Rate policy and deposit details"
+      >
+        <button type="button" onClick={onClose} aria-label="Close rate details"
+          className="absolute right-4 top-4 z-20 rounded-full p-2"
+          style={{ color: themeConfig.closeBtnColor }}>
+          <X className="h-5 w-5" />
+        </button>
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto pt-6">
+          {policyDisplay}
+        </div>
+        <div className="flex justify-center pt-3">
+          <Button type="button" variant="filled" color={buttonColorForTheme(theme)}
+            onClick={onConfirm} disabled={isSubmitting || !onConfirm}>
+            AGREE &amp; CONFIRM BOOKING
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
   if (isCompact) {
     // ================= COMPACT VARIANT (Active_Open.png) =================
     return (
