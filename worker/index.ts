@@ -26,6 +26,7 @@ import { onRequestGet as rateCards } from "./webflow/rate-cards";
 import { onRequestGet as addOns } from "./webflow/add-ons";
 import { onRequestGet as roomTypeReviews } from "./webflow/room-type-reviews";
 import { onRequestGet as locations } from "./webflow/locations";
+import { onRequestGet as buildings } from "./webflow/buildings";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
 // waitUntil permet de lancer les webhooks en tâche de fond sans bloquer la réponse.
@@ -72,6 +73,10 @@ export default {
     if (url.pathname.match(/^\/api\/content\/locations\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return locations({ env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    if (url.pathname.match(/^\/api\/content\/buildings\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return buildings({ env, waitUntil: (p) => ctx.waitUntil(p) });
     }
     const match = url.pathname.match(/^\/api\/mews\/([a-z-]+)\/?$/);
     if (match) {

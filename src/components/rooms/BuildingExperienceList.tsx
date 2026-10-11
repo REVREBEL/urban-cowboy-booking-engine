@@ -4,7 +4,12 @@ import type { ShapedRoom } from '@/types/mews';
 import { ROOM_TYPE_GROUPS } from '@/data/roomTypeGroups';
 import { ROOM_TYPE_GROUP_PRESENTATION } from '@/data/roomTypeGroupPresentation';
 import { RoomsListCard, type RoomCardTheme, type RoomCardLayout } from '@/components/rooms/RoomsListCard';
+import {
+  RoomsListBuilding,
+  type RoomsListBuildingRoomSlotProps,
+} from '@/components/rooms/RoomsListBuilding';
 import { BuildingWoodcut } from '@/components/icons/BuildingWoodcut';
+import type { BuildingCms, BuildingCmsMap } from '@/types/building-cms';
 import {
   Calendar,
   Sparkles,
@@ -22,14 +27,16 @@ interface BuildingExperienceListProps {
   onOpenRoomDetails: (room: ShapedRoom) => void;
   onOpenHelpMeChoose: () => void;
   onBackToSearch: () => void;
+  buildings?: BuildingCmsMap;
   /**
    * Slot allowing custom or specialized cards to be injected for complex room configurations
    */
-  roomCardSlot?: (props: {
-    room: ShapedRoom;
-    defaultCard: React.ReactNode;
-    onSelectRoom: (room: ShapedRoom) => void;
-    onOpenRoomDetails: (room: ShapedRoom) => void;
+  roomCardSlot?: (props: RoomsListBuildingRoomSlotProps) => React.ReactNode;
+  /** Slot for replacing a complete building section while preserving its live rooms. */
+  buildingSlot?: (props: {
+    building: BuildingCms;
+    rooms: ShapedRoom[];
+    defaultBuilding: React.ReactNode;
   }) => React.ReactNode;
 }
 
@@ -47,7 +54,9 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
   onOpenRoomDetails,
   onOpenHelpMeChoose,
   onBackToSearch,
-  roomCardSlot
+  buildings = {},
+  roomCardSlot,
+  buildingSlot,
 }) => {
   const [selectedRoomTypeGroupKey, setSelectedRoomTypeGroupKey] = useState<string>('all');
   const [activeFeatureFilter, setActiveFeatureFilter] = useState<string>('all');
@@ -162,6 +171,30 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
     );
   };
 
+  const waldenPresentation = ROOM_TYPE_GROUP_PRESENTATION.walden;
+  const waldenBuilding: BuildingCms = buildings.walden ?? {
+    id: "fallback-walden",
+    groupKey: "walden",
+    name: "Walden Haus",
+    slug: "walden-haus",
+    subheading: waldenPresentation.headline ?? null,
+    shortDescription: waldenPresentation.paragraphs[0] ?? null,
+    featureBenefits: waldenPresentation.callout ?? null,
+    policy: [],
+  };
+
+  const waldenRooms = orderedRoomsForGroup("walden");
+  const defaultWaldenBuilding = (
+    <RoomsListBuilding
+      building={waldenBuilding}
+      rooms={waldenRooms}
+      imageBaseUrl={imageBaseUrl}
+      onSelectRoom={onSelectRoom}
+      onOpenRoomDetails={onOpenRoomDetails}
+      roomCardSlot={roomCardSlot}
+    />
+  );
+
   return (
     <div className="w-full texture-linen min-h-screen pb-24">
       {/* Top Editorial Bar */}
@@ -170,15 +203,15 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           <div>
             <button
               onClick={onBackToSearch}
-              className="inline-flex items-center gap-2 font-label text-[11px] uppercase tracking-widest text-smoke-fade hover:text-cowboy-umber mb-3 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 font-label text-[11px] uppercase tracking-widest text-foreground/30 hover:text-foreground/30 mb-3 transition-colors cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back to Dates</span>
             </button>
-            <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-smoke uppercase tracking-tight">
+            <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-foreground uppercase tracking-tight">
               Find Your Stay
             </h1>
-            <p className="font-body text-sm sm:text-base text-cowboy-umber/80 mt-1 max-w-2xl">
+            <p className="font-body text-sm sm:text-base text-foreground/80 mt-1 max-w-2xl">
               {filteredRooms.length} Distinct Room Experiences Available. Each one with its own way of doing Cowboy.
               Whether you’re looking for a quiet retreat, a little adventure, or room to gather,
               explore the soul of each building.
@@ -189,20 +222,20 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={onOpenHelpMeChoose}
-              className="flex items-center gap-2 px-5 pb-2.5 pt-3.125 rounded-full bg-paper border border-cowboy-umber/30 hover:border-cowboy-umber font-label text-xs uppercase tracking-wider text-cowboy-umber shadow-xs transition-all hover:bg-white cursor-pointer"
+              className="flex items-center gap-2 px-5 pb-1.5 pt-2 rounded-full bg-background border border-foreground/30 hover:border-foreground font-label text-xs uppercase tracking-wider text-foreground shadow-xs transition-all hover:bg-background cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-copper" />
+              <Sparkles className="w-3.5 h-3.5 text-accent" />
               <span>Help Me Choose</span>
             </button>
 
             {/* Layout switch: Magazine Spread vs Catalog */}
-            <div className="flex items-center bg-paper border border-cowboy-umber/20 rounded-full p-1 text-xs font-label uppercase tracking-wider text-cowboy-umber">
+            <div className="flex items-center bg-background border border-foreground/20 rounded-full p-1 text-xs font-label uppercase tracking-wider text-foreground">
               <button
                 onClick={() => setLayoutMode('spread')}
-                className={`flex min-h-7 items-center justify-center gap-1.5 rounded-full px-3 py-1 leading-none transition-all cursor-pointer ${
+                className={`flex min-h-7 items-center justify-center gap-1.5 rounded-full px-3.5 pb-1 pt-2 leading-none transition-all cursor-pointer ${
                   layoutMode === 'spread'
-                    ? 'bg-cowboy-umber text-alpine-linen shadow-xs'
-                    : 'text-smoke-fade hover:text-cowboy-umber'
+                    ? 'bg-button-primary-bg text-button-primary-foreground shadow-xs'
+                    : 'text-button-primary-foreground hover:text-button-primary-bg'
                 }`}
               >
                 <BookOpen className="w-3 h-3" />
@@ -210,10 +243,10 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               </button>
               <button
                 onClick={() => setLayoutMode('catalog')}
-                className={`flex min-h-7 items-center justify-center gap-1.5 rounded-full px-3 py-1 leading-none transition-all cursor-pointer ${
+                className={`flex min-h-7 items-center justify-center gap-1.5 rounded-full px-3.5 pb-1 pt-2 leading-none transition-all cursor-pointer ${
                   layoutMode === 'catalog'
-                    ? 'bg-cowboy-umber text-alpine-linen shadow-xs'
-                    : 'text-smoke-fade hover:text-cowboy-umber'
+                    ? 'bg-button-primary-foreground text-button-primary-bg shadow-xs'
+                    : 'text-button-primary-bg hover:text-button-primary-foreground/20'
                 }`}
               >
                 <LayoutGrid className="w-3 h-3" />
@@ -222,8 +255,8 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
             </div>
 
             {/* Active search pill */}
-            <div className="px-4 pb-2 pt-2.625 rounded-full border border-cowboy-umber/20 bg-paper font-label text-xs uppercase tracking-wider text-cowboy-umber flex items-center gap-2">
-              <Calendar className="w-3.5 h-3.5 text-copper" />
+            <div className="px-4 pb-1.5 pt-2 rounded-full border border-button-primary-foreground/20 bg-button-primary-foreground font-label text-xs uppercase tracking-wider text-button-primary-bg flex items-center gap-2">
+              <Calendar className="w-3.5 h-3.5 text-accent" />
               <span>
                 {formatSummaryDate(criteria.checkIn)} — {formatSummaryDate(criteria.checkOut)} · {criteria.guests} Adults
               </span>
@@ -232,17 +265,17 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
         </div>
 
         {/* Building Filter Pills & Craft Tags */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mt-6 pt-4 border-t border-cowboy-umber/10">
+        <div className="flex flex-wrap items-center justify-between gap-4 mt-6 pt-4 border-t border-foreground/10">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-label text-[11px] uppercase tracking-wider text-smoke-fade mr-2">
+            <span className="font-label text-11px uppercase tracking-wider text-foreground/40 mr-2">
               Filter by Building:
             </span>
             <button
               onClick={() => setSelectedRoomTypeGroupKey('all')}
-              className={`inline-flex min-h-7 items-center justify-center rounded-full px-3.5 py-1 font-label text-xs uppercase leading-none tracking-wider transition-colors cursor-pointer ${
+              className={`inline-flex min-h-7 items-center justify-center rounded-full px-3.5 pb-1 pt-2 font-label text-xs uppercase leading-none tracking-wider transition-colors hover:border-button-primary-bg not-last:cursor-pointer ${
                 selectedRoomTypeGroupKey === 'all'
-                  ? 'bg-cowboy-umber text-alpine-linen'
-                  : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
+                  ? 'bg-button-primary-bg text-button-primary-foreground'
+                  : 'bg-button-primary-foreground text-button-primary-bg border border-button-primary-bg/20 hover:border-button-primary-bg'
               }`}
             >
               All Buildings
@@ -251,10 +284,10 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               <button
                 key={group.key}
                 onClick={() => setSelectedRoomTypeGroupKey(group.key)}
-                className={`inline-flex min-h-7 items-center justify-center rounded-full px-3.5 py-1 font-label text-xs uppercase leading-none tracking-wider transition-colors cursor-pointer ${
+                className={`inline-flex min-h-7 items-center justify-center rounded-full px-3.5 pb-1 pt-2  font-label text-xs uppercase leading-none tracking-wider transition-colors cursor-pointer ${
                   selectedRoomTypeGroupKey === group.key
-                    ? 'bg-cowboy-umber text-alpine-linen'
-                    : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
+                    ? 'bg-button-primary-bg text-button-primary-foreground'
+                  : 'bg-button-primary-foreground text-button-primary-bg border border-button-primary-bg/20 hover:border-button-primary-bg/20'
                 }`}
               >
                 {group.name}
@@ -267,8 +300,8 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'cedar' ? 'all' : 'cedar')}
               className={`inline-flex min-h-7 items-center justify-center rounded-full px-3 py-1 font-label text-[11px] uppercase leading-none tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'cedar'
-                  ? 'bg-copper text-alpine-linen'
-                  : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
+                    ? 'bg-button-primary-bg text-button-primary-foreground'
+                  : 'bg-button-primary-foreground text-button-primary-bg border border-button-primary-bg/20 hover:border-button-primary-bg/20'
               }`}
             >
               Outdoor Cedar Tub
@@ -277,8 +310,8 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'dog' ? 'all' : 'dog')}
               className={`inline-flex min-h-7 items-center justify-center rounded-full px-3 py-1 font-label text-[11px] uppercase leading-none tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'dog'
-                  ? 'bg-copper text-alpine-linen'
-                  : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
+                    ? 'bg-button-primary-bg text-button-primary-foreground'
+                  : 'bg-button-primary-foreground text-button-primary-bg border border-button-primary-bg/20 hover:border-button-primary-bg/20'
               }`}
             >
               Dog-Friendly
@@ -287,8 +320,8 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
               onClick={() => setActiveFeatureFilter(activeFeatureFilter === 'fireplace' ? 'all' : 'fireplace')}
               className={`inline-flex min-h-7 items-center justify-center rounded-full px-3 py-1 font-label text-[11px] uppercase leading-none tracking-wider transition-colors cursor-pointer ${
                 activeFeatureFilter === 'fireplace'
-                  ? 'bg-copper text-alpine-linen'
-                  : 'bg-paper text-cowboy-umber border border-cowboy-umber/20 hover:border-cowboy-umber'
+                    ? 'bg-button-primary-bg text-button-primary-foreground'
+                  : 'bg-button-primary-foreground text-button-primary-bg border border-button-primary-bg/20 hover:border-button-primary-bg/20'
               }`}
             >
               Fireplace / Stove
@@ -297,23 +330,21 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
         </div>
       </div>
 
-      {/* SPREAD MODE: Exact Artboards from User PDF Screenshots 1 & 4 */}
       {layoutMode === 'spread' && (
         <div className="booking-shell space-y-20 py-10">
-          {/* SECTION 1: ALPINE HAUS SPREAD (Exact layout from Screenshot 1!) */}
           {(selectedRoomTypeGroupKey === 'all' || selectedRoomTypeGroupKey === 'alpine') && hasRoomTypeGroup("alpine") && (
             <div className="relative">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 {/* Left Column: Architectural Woodcut + Story (Screenshot 1 left) */}
-                <div className="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left pt-2 pb-6 border-b lg:border-b-0 lg:border-r border-cowboy-umber/15 pr-0 lg:pr-8">
+                <div className="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left pt-2 pb-6 border-b lg:border-b-0 lg:border-r border-foreground/15 pr-0 lg:pr-8">
                   <div className="mb-4 inline-block">
                     <BuildingWoodcut group="alpine" className="w-60 h-36 sm:w-64 sm:h-40" />
                   </div>
 
-                  <h2 className="font-heading font-bold text-4xl sm:text-5xl text-smoke tracking-tight leading-none mb-1">
+                  <h2 className="font-heading font-bold text-4xl sm:text-5xl text-foreground tracking-tight leading-none mb-1">
                     Alpine Haus
                   </h2>
-                  <span className="font-label text-xs uppercase tracking-[0.25em] text-copper font-bold block mt-1 mb-4">
+                  <span className="font-label text-xs uppercase tracking-[0.25em] text-accent font-bold block mt-1 mb-4">
                     The Iconic Indoor Soak
                   </span>
 
@@ -343,51 +374,19 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
 
           {/* SECTION 2: WALDEN HAUS SPREAD */}
           {(selectedRoomTypeGroupKey === 'all' || selectedRoomTypeGroupKey === 'walden') && hasRoomTypeGroup("walden") && (
-            <div className="relative text-smoke border-t border-cowboy-umber/15 pt-16">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Left Column: Woodcut + Walden Story */}
-                <div className="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left pt-2 pb-6 border-b lg:border-b-0 lg:border-r border-cowboy-umber/15 pr-0 lg:pr-8">
-                  <div className="mb-4 inline-block">
-                    <BuildingWoodcut group="walden" className="w-60 h-36 sm:w-64 sm:h-40" />
-                  </div>
-
-                  <h2 className="font-heading font-bold text-4xl sm:text-5xl text-smoke tracking-tight leading-none mb-1">
-                    Walden Haus
-                  </h2>
-                  <span className="font-label text-xs uppercase tracking-[0.25em] text-copper font-bold block mt-1 mb-4">
-                    Deep in the Pines · Outdoor Soaks
-                  </span>
-
-                  <p className="font-body text-sm sm:text-base text-cowboy-umber/85 leading-relaxed mb-4">
-                    Walden sits closer to the woods. Its ten cabin-style rooms trade Alpine’s
-                    lodge-like romance for something quieter and more elemental: private decks,
-                    forest views and, in the bathing suites, cedar tubs made for soaking outside.
-                  </p>
-                  <p className="font-body italic text-sm text-cowboy-umber/90 font-medium mb-5">
-                    This is where the Cowboy gets a little wilder.
-                  </p>
-
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cowboy-umber/10 border border-cowboy-umber/20 text-[11px] font-label uppercase tracking-wider text-cowboy-umber font-bold">
-                    <span>✦ Walden is reserved for guests 21+</span>
-                  </div>
-                </div>
-
-                {/* Right Rooms Grid for Walden */}
-                <div className="lg:col-span-8 space-y-6">
-                  {renderMappedRoom("walden-king", "paper", "left")}
-                  {renderMappedRoom("walden-forest-bathing-suite", "copper", "right")}
-                  {renderMappedRoom("walden-forest-bathing-suite-den", "copper", "left")}
-                  {renderMappedRoom("walden-sunrise-bathing-suite", "lake-forest", "right")}
-                </div>
-              </div>
-            </div>
+            buildingSlot
+              ? buildingSlot({
+                  building: waldenBuilding,
+                  rooms: waldenRooms,
+                  defaultBuilding: defaultWaldenBuilding,
+                })
+              : defaultWaldenBuilding
           )}
 
           {/* SECTION 3: THE LODGE SPREAD (Exact layout from Screenshot 4!) */}
           {(selectedRoomTypeGroupKey === 'all' || selectedRoomTypeGroupKey === 'lodge') && hasRoomTypeGroup("lodge") && (
-            <div className="relative border-t border-cowboy-umber/15 pt-16">
+            <div className="relative border-t border-foreground/15 pt-16">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                {/* Left/Middle Column: 3 Lodge Rooms Collage (Screenshot 4) */}
                 <div className="lg:col-span-8 order-2 lg:order-1 space-y-6">
                   {renderMappedRoom("lodge-king", "paper", "left")}
                   {renderMappedRoom("lodge-2-bedroom", "copper", "right")}
@@ -395,24 +394,23 @@ export const BuildingExperienceList: React.FC<BuildingExperienceListProps> = ({
                   {renderMappedRoom("lodge-penthouse-suite", "lake-forest", "right")}
                 </div>
 
-                {/* Right Column: Woodcut + Lodge Narrative (Screenshot 4 right) */}
-                <div className="lg:col-span-4 order-1 lg:order-2 flex flex-col items-center lg:items-start text-center lg:text-left pt-2 pb-6 border-b lg:border-b-0 lg:border-l border-cowboy-umber/15 pl-0 lg:pl-8">
+                <div className="lg:col-span-4 order-1 lg:order-2 flex flex-col items-center lg:items-start text-center lg:text-left pt-2 pb-6 border-b lg:border-b-0 lg:border-l border-foreground/15 pl-0 lg:pl-8">
                   <div className="mb-4 inline-block">
                     <BuildingWoodcut group="lodge" className="w-64 h-40 sm:w-72 sm:h-44" />
                   </div>
 
-                  <h2 className="font-heading font-bold text-4xl sm:text-5xl text-smoke tracking-tight leading-none mb-1">
+                  <h2 className="font-heading font-bold text-4xl sm:text-5xl text-foreground tracking-tight leading-none mb-1">
                     The Lodge
                   </h2>
-                  <span className="font-label text-xs uppercase tracking-[0.25em] text-copper font-bold block mt-1 mb-4">
+                  <span className="font-label text-xs uppercase tracking-[0.25em] text-accent font-bold block mt-1 mb-4">
                     Stay in the Middle of It All.
                   </span>
 
-                  <p className="font-body text-sm sm:text-base text-cowboy-umber/85 leading-relaxed mb-4">
+                  <p className="font-body text-sm sm:text-base text-foreground/85 leading-relaxed mb-4">
                     The Lodge rooms sit directly above the restaurant, bar and fireside gathering
                     spaces—the right choice for guests who want the Cowboy close at hand.
                   </p>
-                  <p className="font-body italic text-sm text-cowboy-umber/90 font-medium mb-5">
+                  <p className="font-body italic text-sm text-foreground/90 font-medium mb-5">
                     Book one room or take over the floor with your people. Either way, you're never
                     far from dinner, drinks or the fire.
                   </p>

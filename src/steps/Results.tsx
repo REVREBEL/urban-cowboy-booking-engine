@@ -27,6 +27,7 @@ import type {
   RoomTypeCmsDescriptionMap,
   RoomTypeCmsReviewMap,
 } from "../types/room-type-cms";
+import type { BuildingCmsMap } from "../types/building-cms";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 import { roomTypeGroupName } from "@/data/roomTypeGroups";
 import { roomDetailTags } from "@/lib/roomTags";
@@ -113,6 +114,7 @@ export function Results() {
   const [roomTypeReviews, setRoomTypeReviews] = useState<RoomTypeCmsReviewMap>({});
   const [roomTypeDescriptions, setRoomTypeDescriptions] =
     useState<RoomTypeCmsDescriptionMap>({});
+  const [buildings, setBuildings] = useState<BuildingCmsMap>({});
   const toggleProp = (key: string) =>
     setOpenProps((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
 
@@ -156,6 +158,16 @@ export function Results() {
       if (!alive) return;
       setRoomTypeReviews(content.reviews);
       setRoomTypeDescriptions(content.descriptions);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    api.buildings().then((content) => {
+      if (alive) setBuildings(content);
     });
     return () => {
       alive = false;
@@ -367,6 +379,7 @@ export function Results() {
         <BuildingExperienceList
           criteria={studioCriteria}
           rooms={rooms}
+          buildings={buildings}
           imageBaseUrl={imageBaseUrl}
           onUpdateCriteria={() => goTo("dates")}
           onSelectRoom={(room) => {

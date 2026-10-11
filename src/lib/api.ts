@@ -24,6 +24,7 @@ import type {
   RoomTypeCmsReviewMap,
 } from "../types/room-type-cms";
 import type { BookingLocationCmsMap } from "../types/location-cms";
+import type { BuildingCmsMap } from "../types/building-cms";
 
 export class ApiError extends Error {
   status: number;
@@ -210,6 +211,18 @@ export const api = {
     })
       .then((response) => response.locations)
       .catch((): BookingLocationCmsMap => ({})),
+
+  buildings: () =>
+    contentCall<{
+      buildings: BuildingCmsMap;
+      generatedAt?: string | null;
+      stale?: boolean;
+    }>("buildings", {
+      label: "Building CMS content",
+      why: "Loads published building names, subheadings, descriptions, and referenced policy names from Webflow for the room-list building sections.",
+    })
+      .then((response) => response.buildings)
+      .catch((): BuildingCmsMap => ({})),
 
   hotel: () =>
     call<HotelConfig>(`hotel?lang=${getLang()}`, undefined, {
