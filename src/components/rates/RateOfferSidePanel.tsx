@@ -206,9 +206,10 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           </button>
         </div>
 
-        {policyDisplay && (
+        {policyDisplay?.freeCancelDate && policyDisplay.nonRefundableDate && (
           <PolicyDisplay
             {...policyDisplay}
+            orientation="vertical"
             size="compact"
             className="mb-2"
           />
@@ -465,6 +466,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
       {policyDisplay ? (
         <PolicyDisplay
           {...policyDisplay}
+          orientation="horizontal"
           size="default"
           className="w-full"
         />
