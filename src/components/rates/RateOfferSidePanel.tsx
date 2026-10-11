@@ -378,7 +378,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         </div>
 
         {/* Policy Disclaimer */}
-        <p
+        <div
           className="text-xs leading-relaxed text-center sm:text-left mb-3 px-1"
           style={{
             color: themeConfig.textSecondary,
@@ -386,7 +386,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           }}
         >
           {policyDisplay ?? <PolicyDisplay text={policyText} />}
-        </p>
+        </div>
 
         {/* Oval Pill CTA Button: AGREE & CONFIRM BOOKING */}
         <div className="w-full flex justify-center">
@@ -606,7 +606,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
       </div>
 
       {/* Policy Disclaimer in Editorial Font at Bottom */}
-      <p
+      <div
         className="w-full text-xs sm:text-[13px] leading-relaxed text-left px-1"
         style={{
           color: themeConfig.textSecondary,
@@ -614,7 +614,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         }}
       >
         {policyDisplay ?? <PolicyDisplay text={policyText} />}
-      </p>
+      </div>
     </div>
   );
 };
