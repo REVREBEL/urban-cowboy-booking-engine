@@ -177,6 +177,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   height,
 }) => {
   const isCompact = variant === 'compact';
+  const showTimeline = Boolean(policyDisplay?.freeCancelDate && policyDisplay?.nonRefundableDate);
   const themeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS['ride-easy'];
 
   if (isCompact) {
@@ -206,7 +207,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           </button>
         </div>
 
-        {policyDisplay?.freeCancelDate && policyDisplay.nonRefundableDate && (
+        {showTimeline && policyDisplay && (
           <PolicyDisplay
             {...policyDisplay}
             orientation="vertical"
@@ -215,6 +216,8 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           />
         )}
 
+        {!showTimeline && (
+          <>
         {/* Embedded Ticket Box with 2 Columns */}
         <div
           className="rounded-panel-xs px-5 shadow-xs mb-3 mx-auto flex items-center justify-center box-border transition-colors duration-300"
@@ -407,6 +410,9 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
             </div>
           </div>
         </div>
+
+          </>
+        )}
 
         {/* Policy Disclaimer */}
         <p
