@@ -108,7 +108,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
       config.cancellationFullForfeitWindowPeriod,
     ),
     textColor: RATE_CARD_COLORS[config.textColor].hex,
-    accentColor: RATE_CARD_COLORS[config.accentColor].hex,
+    accentColor: RATE_CARD_COLORS[config.accentColor ?? "bandana-red"].hex,
     initialDepositTooltip: {
       title: "INITIAL DEPOSIT",
       description: depositNote,

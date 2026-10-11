@@ -65,7 +65,8 @@ export interface RateCardConfig {
   buttonStyle: RateCardButtonStyle;
   buttonColor: RateCardColor;
   textColor: RateCardColor;
-  accentColor: RateCardColor;
+  /** Optional policy/accent color. Defaults to bandana red when CMS does not provide one. */
+  accentColor?: RateCardColor;
   borderStyle: RateCardBorderStyle;
   fontPair: RateCardFontPair;
   ctaLabel?: string | null;

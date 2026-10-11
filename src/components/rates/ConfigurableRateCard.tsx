@@ -69,7 +69,7 @@ function VerticalRateCard({
   const desktopArtwork = desktopFailed ? null : config.desktopArtworkUrl;
   const mobileArtwork = mobileFailed ? null : config.mobileArtworkUrl;
   const textColor = RATE_CARD_COLORS[config.textColor].hex;
-  const accentColor = RATE_CARD_COLORS[config.accentColor].hex;
+  const accentColor = RATE_CARD_COLORS[config.accentColor ?? "bandana-red"].hex;
   const fallbackIsVisible = !desktopArtwork && !mobileArtwork;
 
   const style = useMemo(
@@ -209,7 +209,7 @@ function HorizontalRateCard({
   const artwork = artworkFailed ? null : config.horizontalArtworkUrl;
   const fallbackIsVisible = !artwork;
   const textColor = RATE_CARD_COLORS[config.textColor].hex;
-  const accentColor = RATE_CARD_COLORS[config.accentColor].hex;
+  const accentColor = RATE_CARD_COLORS[config.accentColor ?? "bandana-red"].hex;
 
   const style = useMemo(
     () =>
