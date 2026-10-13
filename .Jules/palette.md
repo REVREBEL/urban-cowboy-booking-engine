@@ -1,0 +1,3 @@
+## 2025-05-18 - Modal Dialog Accessibility and Gallery Thumbnails
+**Learning:** Custom modal dialogs without `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, and `Escape` key listeners present major barriers for screen reader and keyboard users. Additionally, image gallery thumbnail controls require explicit `type="button"`, `aria-label`, and `aria-current` attributes to properly communicate selection state to assistive technology.
+**Action:** When implementing or editing modal dialogs or image galleries, always include dialog ARIA semantics, keyboard `Escape` dismissability, focus-visible outlines, and descriptive `aria-label` / `aria-current` attributes on thumbnail buttons.
