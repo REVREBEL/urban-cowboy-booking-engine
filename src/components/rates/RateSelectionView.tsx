@@ -63,7 +63,17 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   memberRate = null,
   onUnlockMember,
 }) => {
-  const [rateCardsVariant] = useState<'default' | 'compact'>('default');
+  const [studioLayout, setStudioLayout] = useState(() =>
+    typeof window !== "undefined" && /^\/booking\/studio\/?$/.test(window.location.pathname)
+      ? new URLSearchParams(window.location.search).get("studioLayout") || "vertical"
+      : "vertical",
+  );
+  useEffect(() => {
+    const update = () => setStudioLayout(new URLSearchParams(window.location.search).get("studioLayout") || "vertical");
+    window.addEventListener("studio-layout-change", update);
+    return () => window.removeEventListener("studio-layout-change", update);
+  }, []);
+  const rateCardsVariant: "default" | "compact" = studioLayout === "compact" ? "compact" : "default";
   const [expandedRateId, setExpandedRateId] = useState<string | null>(null);
   const [showInclusionsMatrix, setShowInclusionsMatrix] = useState<boolean>(false);
 
@@ -636,6 +646,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('ride-easy')}
                         variant={rateCardsVariant}
+                        layout={studioLayout === "horizontal" ? "horizontal" : "vertical"}
                         checkIn={criteria.checkIn}
                         isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('ride-easy', idx)}
@@ -694,6 +705,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('member')}
                         variant={rateCardsVariant}
+                        layout={studioLayout === "horizontal" ? "horizontal" : "vertical"}
                         checkIn={criteria.checkIn}
                         isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('member', idx)}
@@ -755,6 +767,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('sunup')}
                         variant={rateCardsVariant}
+                        layout={studioLayout === "horizontal" ? "horizontal" : "vertical"}
                         checkIn={criteria.checkIn}
                         isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('sunup', idx)}
@@ -813,6 +826,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('stay-while')}
                         variant={rateCardsVariant}
+                        layout={studioLayout === "horizontal" ? "horizontal" : "vertical"}
                         checkIn={criteria.checkIn}
                         isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('stay-while', idx)}
@@ -871,6 +885,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                         live={configurableLiveContent(liveRate, cmsConfig)}
                         theme={offerThemeForCard('plan-ahead')}
                         variant={rateCardsVariant}
+                        layout={studioLayout === "horizontal" ? "horizontal" : "vertical"}
                         checkIn={criteria.checkIn}
                         isExpanded={isExpanded}
                         onToggleExpand={() => handleToggleExpandCard('plan-ahead', idx)}
