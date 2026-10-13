@@ -16,6 +16,7 @@ import { toPropertyUtc } from "./format";
 import { getLang, mewsLang } from "./lang";
 import { t } from "../i18n";
 import { apiLog } from "./apiLog";
+import { isStudioRoute, studioMewsResponse, studioContentResponse } from "@/studio/demoApi";
 import type { RateCardConfig } from "../types/rate-card";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 import type { AddOnCmsItem } from "../types/add-on-cms";
@@ -46,6 +47,8 @@ interface Meta {
 }
 
 async function call<T>(path: string, init: RequestInit | undefined, meta: Meta): Promise<T> {
+  // Strictly local demo adapter. No Mews request leaves this browser in Studio.
+  if (isStudioRoute()) return studioMewsResponse(path, init) as T;
   const id = apiLog.start(init?.method ?? "GET", path, meta.label, meta.why, meta.request);
   const t0 = performance.now();
   const ms = () => Math.round(performance.now() - t0);
@@ -77,6 +80,8 @@ async function call<T>(path: string, init: RequestInit | undefined, meta: Meta):
 }
 
 async function contentCall<T>(path: string, meta: Meta): Promise<T> {
+  // The Locations endpoint remains live to read the Webflow enable switch.
+  if (isStudioRoute() && path !== "locations") return studioContentResponse(path) as T;
   const id = apiLog.start("GET", path, meta.label, meta.why);
   const t0 = performance.now();
   const ms = () => Math.round(performance.now() - t0);
