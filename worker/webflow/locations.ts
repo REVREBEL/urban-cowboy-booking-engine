@@ -23,9 +23,10 @@ interface CachedLocationPayload {
 const WEBFLOW_CONTENT_API = "https://api-cdn.webflow.com/v2";
 const WEBFLOW_TIMEOUT_MS = 8_000;
 
-const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
-const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:booking-locations:v1";
+// The demo enable switch must respond quickly when editors disable Studio.
+const CACHE_FRESH_MS = 60 * 1000;
+const CACHE_TTL_SECONDS = 5 * 60;
+const CACHE_KEY_PREFIX = "webflow:booking-locations:v2";
 
 const memoryCache = new Map<string, CachedLocationPayload>();
 
@@ -200,7 +201,7 @@ function response(payload: CachedLocationPayload, stale: boolean): Response {
       stale,
     },
     200,
-    "public, max-age=300",
+    "public, max-age=30",
   );
 }
 
