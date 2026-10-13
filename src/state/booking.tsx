@@ -160,7 +160,7 @@ function writeUrl(s: BookingState) {
   // REV-102 recommendation inputs are owned by the quiz/ranking layer. Preserve
   // them while this booking state serializes its own fields so REV-103 can explain
   // the actual ranked result without losing the guest's choices.
-  for (const key of ["party", "dog", "interest", "interest2"] as const) {
+  for (const key of ["party", "dog", "interest", "interest2", "scenario", "studioLayout"] as const) {
     const value = current.get(key);
     if (value) q.set(key, value);
   }
