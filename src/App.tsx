@@ -14,6 +14,7 @@ import { Extras } from "./steps/Extras";
 import { Payment } from "./steps/Payment";
 import { Confirmation } from "./steps/Confirmation";
 import { t } from "./i18n";
+import { StudioGate } from "./studio/StudioGate";
 
 const SHOW_API_DEBUGGER =
   import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
@@ -99,6 +100,7 @@ function HydrateLoader() {
 }
 
 export default function App() {
+  if (/^\/booking\/studio\/?$/.test(window.location.pathname)) return <StudioGate />;
   return (
     <BookingProvider>
       <Shell />

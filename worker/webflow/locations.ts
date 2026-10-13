@@ -82,6 +82,7 @@ export function normalizeLocationItem(
   return {
     id,
     fullLocationName,
+    enableDemoEngine: fields["enable-demo-engine"] === true,
     city: text(fields.city) || null,
     state: text(fields.state) || null,
     privacyPolicyUrl: safeUrl(fields["privacy-policy"]),

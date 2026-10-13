@@ -1,6 +1,7 @@
 export interface BookingLocationCms {
   id: string;
   fullLocationName: string;
+  enableDemoEngine: boolean;
   city: string | null;
   state: string | null;
   privacyPolicyUrl: string | null;
