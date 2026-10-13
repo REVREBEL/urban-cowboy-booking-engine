@@ -27,13 +27,39 @@ const fromIso = (value: string) => {
   return { year, month: month - 1, day };
 };
 
+// Module-level caches for expensive Intl instances and month cell calculations
+// to avoid GC pressure and repeated allocations during high-frequency mouseover events.
+const monthNameFmt = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const rateNumFmtCache = new Map<string, Intl.NumberFormat>();
+
+function defaultFormatRate(rate: DailyRate): string {
+  const currency = rate.currency || "USD";
+  let fmt = rateNumFmtCache.get(currency);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    });
+    rateNumFmtCache.set(currency, fmt);
+  }
+  return fmt.format(rate.amount);
+}
+
+const monthCellsCache = new Map<string, Array<string | null>>();
 const monthCells = (year: number, month: number): Array<string | null> => {
-  const mondayIndex = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
-  const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-  return [
-    ...Array<string | null>(mondayIndex).fill(null),
-    ...Array.from({ length: dayCount }, (_, index) => toIso(year, month, index + 1)),
-  ];
+  const key = `${year}-${month}`;
+  let cached = monthCellsCache.get(key);
+  if (!cached) {
+    const mondayIndex = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
+    const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    cached = [
+      ...Array<string | null>(mondayIndex).fill(null),
+      ...Array.from({ length: dayCount }, (_, index) => toIso(year, month, index + 1)),
+    ];
+    monthCellsCache.set(key, cached);
+  }
+  return cached;
 };
 
 const shiftMonth = (year: number, month: number, amount: number) => {
@@ -42,9 +68,7 @@ const shiftMonth = (year: number, month: number, amount: number) => {
 };
 
 const monthName = (year: number, month: number) =>
-  new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" }).format(
-    new Date(Date.UTC(year, month, 1)),
-  );
+  monthNameFmt.format(new Date(Date.UTC(year, month, 1)));
 
 export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   checkIn,
@@ -52,12 +76,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   onChange,
   minDate = new Date().toISOString().slice(0, 10),
   dailyRates,
-  formatRate = (rate) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: rate.currency || "USD",
-      maximumFractionDigits: 0,
-    }).format(rate.amount),
+  formatRate = defaultFormatRate,
   onVisibleRangeChange,
 }) => {
   const initial = fromIso(checkIn || minDate);
@@ -147,68 +166,70 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                     {weekday}
                   </span>
                 ))}
-                {monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
-                  if (!date) return <span key={`blank-${index}`} role="gridcell" className={hasDailyRates ? "h-14" : "h-10"} />;
-                  const rate = dailyRates?.[date];
-                  const unavailable = rate?.available === false && !rate.minNights;
-                  const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
-                  const candidateNights = choosingCheckout && checkIn
-                    ? Math.max(
-                        0,
-                        Math.round(
-                          (new Date(`${date}T00:00:00Z`).getTime() -
-                            new Date(`${checkIn}T00:00:00Z`).getTime()) /
-                            86_400_000,
-                        ),
-                      )
-                    : 0;
-                  const minimumStayAdvisory = Boolean(
-                    choosingCheckout &&
-                      selectedMinimumNights &&
-                      candidateNights < selectedMinimumNights,
-                  );
-                  const stayThroughAdvisory = Boolean(
-                    choosingCheckout &&
-                      selectedRate?.invalidStayLengths?.includes(candidateNights),
-                  );
-                  const restrictionAdvisory = minimumStayAdvisory || stayThroughAdvisory;
-                  // A sold night may still be used as the departure date because the guest
-                  // does not occupy the room that night. Cached restrictions are advisory:
-                  // they never disable checkout selection or prevent a live Search.
-                  const disabled = date < minDate || (unavailable && !choosingCheckout);
-                  const start = date === checkIn;
-                  const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
-                  const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
-                  return (
-                    <div
-                      key={date}
-                      role="gridcell"
-                      aria-selected={start || end || inRange}
-                      className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-(--calendar-date-range-bg)" : ""}`}
-                      onMouseEnter={() => !disabled && setHoveredDate(date)}
-                      onMouseLeave={() => setHoveredDate(null)}
-                    >
-                      <button
-                        type="button"
-                        disabled={disabled}
-                        onClick={() => selectDate(date)}
-                        aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
-                        aria-pressed={start || end}
-                        className="group absolute inset-0 flex w-full flex-col items-center justify-center font-body transition focus-visible:outline-none"
+                {(() => {
+                  const checkInTime = checkIn ? new Date(`${checkIn}T00:00:00Z`).getTime() : 0;
+                  return monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
+                    if (!date) return <span key={`blank-${index}`} role="gridcell" className={hasDailyRates ? "h-14" : "h-10"} />;
+                    const rate = dailyRates?.[date];
+                    const unavailable = rate?.available === false && !rate.minNights;
+                    const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
+                    const candidateNights = choosingCheckout && checkIn
+                      ? Math.max(
+                          0,
+                          Math.round(
+                            (new Date(`${date}T00:00:00Z`).getTime() - checkInTime) /
+                              86_400_000,
+                          ),
+                        )
+                      : 0;
+                    const minimumStayAdvisory = Boolean(
+                      choosingCheckout &&
+                        selectedMinimumNights &&
+                        candidateNights < selectedMinimumNights,
+                    );
+                    const stayThroughAdvisory = Boolean(
+                      choosingCheckout &&
+                        selectedRate?.invalidStayLengths?.includes(candidateNights),
+                    );
+                    const restrictionAdvisory = minimumStayAdvisory || stayThroughAdvisory;
+                    // A sold night may still be used as the departure date because the guest
+                    // does not occupy the room that night. Cached restrictions are advisory:
+                    // they never disable checkout selection or prevent a live Search.
+                    const disabled = date < minDate || (unavailable && !choosingCheckout);
+                    const start = date === checkIn;
+                    const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
+                    const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
+                    const dayNum = parseInt(date.slice(8), 10);
+                    return (
+                      <div
+                        key={date}
+                        role="gridcell"
+                        aria-selected={start || end || inRange}
+                        className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-(--calendar-date-range-bg)" : ""}`}
+                        onMouseEnter={() => !disabled && setHoveredDate(date)}
+                        onMouseLeave={() => setHoveredDate(null)}
                       >
-                        <span
-                          className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${
-                            disabled
-                              ? "text-(--calendar-date-disabled-foreground) line-through"
-                              : start || end
-                                ? `bg-(--calendar-date-selected-bg) text-(--calendar-date-selected-foreground) ${start && rate?.minNights ? "ring-2 ring-(--calendar-date-selected-bg) ring-offset-2 ring-offset-(--calendar-date-ring-offset-bg)" : ""}`
-                                : restrictionAdvisory
-                                  ? "text-(--calendar-date-restricted-foreground) ring-1 ring-(--calendar-date-restricted-ring)"
-                                  : "text-(--calendar-date-foreground) group-hover:bg-(--calendar-date-hover-bg) group-hover:text-(--calendar-date-hover-foreground)"
-                          }`}
+                        <button
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => selectDate(date)}
+                          aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
+                          aria-pressed={start || end}
+                          className="group absolute inset-0 flex w-full flex-col items-center justify-center font-body transition focus-visible:outline-none"
                         >
-                          {fromIso(date).day}
-                        </span>
+                          <span
+                            className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${
+                              disabled
+                                ? "text-(--calendar-date-disabled-foreground) line-through"
+                                : start || end
+                                  ? `bg-(--calendar-date-selected-bg) text-(--calendar-date-selected-foreground) ${start && rate?.minNights ? "ring-2 ring-(--calendar-date-selected-bg) ring-offset-2 ring-offset-(--calendar-date-ring-offset-bg)" : ""}`
+                                  : restrictionAdvisory
+                                    ? "text-(--calendar-date-restricted-foreground) ring-1 ring-(--calendar-date-restricted-ring)"
+                                    : "text-(--calendar-date-foreground) group-hover:bg-(--calendar-date-hover-bg) group-hover:text-(--calendar-date-hover-foreground)"
+                            }`}
+                          >
+                            {dayNum}
+                          </span>
                         {rate && (
                           <span
                             className={`mt-1.5 font-number text-[9px] font-bold leading-none ${unavailable ? "text-(--calendar-date-rate-unavailable-foreground)" : "text-(--calendar-date-rate-foreground)"}`}
@@ -227,7 +248,8 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                       </button>
                     </div>
                   );
-                })}
+                });
+              })()}
               </div>
             </div>
           </React.Fragment>
