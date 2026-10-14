@@ -15,7 +15,7 @@ import type { ShapedRate } from "../types/mews";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
 const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-alpine-linen px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper disabled:opacity-40";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-button-secondary-bg px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-button-secondary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper disabled:opacity-40";
 
 export function PhotoRateStep() {
   const booking = useBooking();
@@ -39,7 +39,7 @@ export function PhotoRateStep() {
       {image && (
         <figure className="relative w-full">
           <img src={image} alt={room.name} className="block h-auto w-full" fetchPriority="high" />
-          <div className="absolute inset-0 bg-gradient-to-t from-smoke via-smoke/40 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/40 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-6 sm:px-8">
             <button type="button" onClick={() => booking.goTo("results")} className="text-sm text-paper/80 underline underline-offset-4">← Change room</button>
             <p className={`${label} mt-4 text-alpine-linen`}>03 — How would you like to stay?</p>

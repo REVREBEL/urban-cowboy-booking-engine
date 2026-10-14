@@ -12,7 +12,7 @@ import { toPhotoTourRoom } from "../data/photoTourRooms";
 
 const PhoneInput = lazy(() => import("../components/forms/phone-input").then(module => ({ default: module.PhoneInput })));
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const btnPrimary = "inline-flex items-center justify-center gap-2 rounded-full bg-alpine-linen px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
+const btnPrimary = "inline-flex items-center justify-center gap-2 rounded-full bg-button-secondary-bg px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-bg-button-secondary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
 function Row({ title, value, onEdit }: { title: string; value: string; onEdit: () => void }) {
   return (
     <div className="grid grid-cols-[72px_minmax(0,1fr)_auto] gap-3 py-3 text-sm">
@@ -27,7 +27,7 @@ function Field({ id, title, error, children }: { id: string; title: string; erro
     <div className="min-w-0">
       <label className="mb-1.5 block font-label text-xs uppercase tracking-widest text-foreground" htmlFor={id}>{title}</label>
       {children}
-      {error && <p className="mt-1 text-xs text-red-700" role="alert" id={`${id}-error`}>{error}</p>}
+      {error && <p className="mt-1 text-xs text-error" role="alert" id={`${id}-error`}>{error}</p>}
     </div>
   );
 }

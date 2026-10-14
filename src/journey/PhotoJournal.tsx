@@ -11,7 +11,7 @@ import type { Feature, MatchProfile, Occasion } from "./data";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
 const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-alpine-linen px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:brightness-110";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-alpine-linen px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-button-secondary-foregroundbutton-secondary-foreground transition hover:brightness-110";
 const btnGhost =
   "inline-flex items-center justify-center gap-2 rounded-full border border-paper/75 px-5 py-2.5 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-paper/10";
 const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);

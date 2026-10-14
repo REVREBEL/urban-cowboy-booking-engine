@@ -10,7 +10,7 @@ import { resetPhotoJourney } from "./photoSession";
 const HERO = ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE;
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
 const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-alpine-linen px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper disabled:opacity-40";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-button-secondary-bg px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-button-secondary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper disabled:opacity-40";
 const btnGhost =
   "inline-flex items-center justify-center gap-2 rounded-full border border-paper/75 px-5 py-2.5 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
 
@@ -89,8 +89,10 @@ function Arrive(props: {
         <div className="absolute inset-0 bg-linear-to-t from-secondary-foreground via-secondary-foreground/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-8 sm:px-8 lg:pb-14">
           <p className={`${label} text-paper/80`}>Big Indian, New York · Urban Cowboy Lodge & Resort</p>
-          <h1 className="mt-3 max-w-[16ch] font-headline text-4xl leading-[0.95] sm:text-6xl lg:text-8xl">
-            Come for the soak. Stay for the woods.
+          <h1 className="mt-3 max-w-[16ch] font-headline text-2xl leading-[0.95] sm:text-6xl lg:text-8xl text-balance">
+            Come for the soak. 
+            <br />
+            Stay for the woods.
           </h1>
         </div>
       </FullFrame>

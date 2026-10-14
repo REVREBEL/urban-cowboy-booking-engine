@@ -30,7 +30,7 @@ type Props = {
 };
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const btnPrimary = "inline-flex items-center justify-center gap-2 rounded-full bg-alpine-linen px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
+const btnPrimary = "inline-flex items-center justify-center gap-2 rounded-full bg-button-secondary-bg px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-button-secondary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
 const timingOptions = [
   { id: "arrival", title: "Waiting on arrival" },
   { id: "during", title: "Delivered during stay" },

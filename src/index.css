@@ -165,6 +165,7 @@ text-cowboy-umber, font-heading, shadow-card).
 
 /* Typography Families */
 --font-body: "Uchen", Georgia, serif;
+--font-headline: "DesertRain", Georgia, serif;
 --font-heading: "DesertRain", Georgia, serif;
 --font-subheading: "Brothers", "League Spartan", sans-serif;
 --font-button: "Brothers", "League Spartan", sans-serif;
