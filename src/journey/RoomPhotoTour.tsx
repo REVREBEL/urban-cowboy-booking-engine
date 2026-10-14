@@ -137,7 +137,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                     if (image.naturalHeight) setRatios((old) => ({ ...old, [index]: image.naturalWidth / image.naturalHeight }));
                   }} />
                 <div className={`j-hotspots ${details && photo === index ? 'is-open' : ''}`} inert={!details || photo !== index} aria-hidden={!details || photo !== index}>
-                  {(PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex) => (
+                  {(room.cmsAmenities ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots) : PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex) => (
                     <div key={pin.id} className="j-hotspot-anchor" style={{ left: `${pin.x}%`, top: `${pin.y}%` }}>
                       <div className="j-pin-desktop">
                         <FeatureFocus count={pinIndex + 1} icon={pin.icon} iconPath={pin.iconPath} title={pin.title}
