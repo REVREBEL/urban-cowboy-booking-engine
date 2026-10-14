@@ -15,6 +15,7 @@ import { Upgrade } from "./steps/Upgrade";
 import { Extras } from "./steps/Extras";
 import { Payment } from "./steps/Payment";
 import { Confirmation } from "./steps/Confirmation";
+
 import { t } from "./i18n";
 
 const SHOW_API_DEBUGGER =
@@ -30,8 +31,7 @@ const PROGRESS_NUMBER: Record<Step, number> = {
   payment: 5,
   confirmation: 6,
 };
-
-const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
+const STEP_COMPONENTS: Record<Step, () => React.JSX.Element | null> = {
   dates: Dates,
   results: Results,
   rates: Rates,
