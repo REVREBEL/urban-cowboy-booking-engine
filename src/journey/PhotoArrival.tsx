@@ -6,13 +6,10 @@ import { useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import { resetPhotoJourney } from "./photoSession";
+import { Button } from "../components/ui/button";
 
 const HERO = ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE;
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-button-secondary-bg px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-button-secondary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper disabled:opacity-40";
-const btnGhost =
-  "inline-flex items-center justify-center gap-2 rounded-full border border-paper/75 px-5 py-2.5 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
 
 export function PhotoArrival() {
   const booking = useBooking();
@@ -117,12 +114,12 @@ function Arrive(props: {
               Find the room that feels right for your stay, or wander through every available room.
             </p>
             <div className="flex flex-wrap gap-3">
-              <button type="button" className={`${btnPrimary} ${ready ? "" : "opacity-50"}`} aria-disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onMatch()}>
+              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" className="rounded-full uppercase tracking-[0.2em]" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onMatch()}>
                 Match me with a room →
-              </button>
-              <button type="button" className={`${btnGhost} ${ready ? "" : "opacity-50"}`} aria-disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onBrowse()}>
+              </Button>
+              <Button type="button" variant="outline" colorScheme="paper" size="small" className="rounded-full uppercase tracking-[0.2em]" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onBrowse()}>
                 Browse every room
-              </button>
+              </Button>
             </div>
             {!ready && <p id="dates-hint" className="text-sm text-paper/75">Pick your arrival and departure dates to continue.</p>}
           </div>
@@ -140,9 +137,9 @@ function Counter({ label: l, hint, value, min, max, onChange }: { label: string;
         {hint && <p className="text-sm text-paper/75">{hint}</p>}
       </div>
       <div className="flex items-center gap-4">
-        <button type="button" aria-label={`Fewer ${l}`} disabled={value <= min} onClick={() => onChange(value - 1)} className="grid size-10 place-items-center rounded-full border border-paper/40 disabled:opacity-30">−</button>
+        <Button type="button" aria-label={`Fewer ${l}`} disabled={value <= min} onClick={() => onChange(value - 1)} variant="outline" colorScheme="paper" size="xsmall" className="size-10 rounded-full" style={{padding: 0, borderWidth: "1px"}}>−</Button>
         <span className="w-6 text-center tabular-nums" aria-live="polite">{value}</span>
-        <button type="button" aria-label={`More ${l}`} disabled={value >= max} onClick={() => onChange(value + 1)} className="grid size-10 place-items-center rounded-full border border-paper/40 disabled:opacity-30">+</button>
+        <Button type="button" aria-label={`More ${l}`} disabled={value >= max} onClick={() => onChange(value + 1)} variant="outline" colorScheme="paper" size="xsmall" className="size-10 rounded-full" style={{padding: 0, borderWidth: "1px"}}>+</Button>
       </div>
     </div>
   );
@@ -176,11 +173,11 @@ function RangeCalendar({ checkIn, checkOut, onChange }: { checkIn: string | null
   return (
     <div>
       <div className="flex items-center justify-between">
-        <button type="button" onClick={() => shift(-1)} aria-label="Previous month" className="grid size-10 place-items-center rounded-full hover:bg-ash">←</button>
+        <Button type="button" onClick={() => shift(-1)} aria-label="Previous month" variant="transparent" colorScheme="lake-forest" size="xsmall" className="size-10 rounded-full" style={{padding: 0}}>←</Button>
         <p className={`${label} text-foreground/70`}>
           {checkIn ? (checkOut ? `${checkIn} → ${checkOut}` : "Now choose departure") : "Choose arrival"}
         </p>
-        <button type="button" onClick={() => shift(1)} aria-label="Next month" className="grid size-10 place-items-center rounded-full hover:bg-ash">→</button>
+        <Button type="button" onClick={() => shift(1)} aria-label="Next month" variant="transparent" colorScheme="lake-forest" size="xsmall" className="size-10 rounded-full" style={{padding: 0}}>→</Button>
       </div>
       <div className="mt-4 grid gap-8 sm:grid-cols-2">
         {months.map(({ y, m }, idx) => {
@@ -202,17 +199,21 @@ function RangeCalendar({ checkIn, checkOut, onChange }: { checkIn: string | null
                   const edge = d === checkIn || d === checkOut;
                   const inRange = checkIn && checkOut && d > checkIn && d < checkOut;
                   return (
-                    <button
+                    <Button
                       key={d}
                       type="button"
                       disabled={past}
                       onClick={() => pick(d)}
                       aria-pressed={edge}
                       aria-label={d}
-                      className={`h-10 text-sm tabular-nums transition disabled:text-foreground/25 ${edge ? "rounded-full bg-foreground text-paper" : inRange ? "bg-ash" : "rounded-full hover:bg-ash"}`}
+                      variant={edge ? "filled" : inRange ? "filled" : "transparent"}
+                      colorScheme={edge ? "lake-forest" : inRange ? "ash" : "lake-forest"}
+                      size="xsmall"
+                      style={{ padding: 0, borderRadius: edge ? "999px" : "0" }}
+                      className="h-10 w-full tabular-nums disabled:opacity-30"
                     >
                       {i + 1}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
