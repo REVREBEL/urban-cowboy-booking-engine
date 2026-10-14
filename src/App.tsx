@@ -55,8 +55,8 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
   const photoJourney = layout === "photo";
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [step]);
+    window.scrollTo({ top: 0, behavior: photoJourney ? "auto" : "smooth" });
+  }, [step, photoJourney]);
 
   // Titre d'onglet dans la langue courante (l'index.html est statique en FR).
   useEffect(() => {
