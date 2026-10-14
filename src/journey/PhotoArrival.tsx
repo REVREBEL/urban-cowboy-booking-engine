@@ -2,7 +2,7 @@
  * Photo-first arrival screen, ported from visual-booking-flow/src/routes/journey.tsx.
  * Only the editorial UI is imported; stay criteria use the canonical BookingProvider.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import { resetPhotoJourney } from "./photoSession";
@@ -11,6 +11,7 @@ import { SearchBarExpanded, type ActiveDropdownSection } from "../components/boo
 import { SearchBarGuestDropdown } from "../components/booking/search/SearchBarGuestsDropdown";
 import { SearchBarLocationDropdown } from "../components/booking/search/SearchBarLocationDropdown";
 import { SearchBarPromoDropdown } from "../components/booking/search/SearchBarPromoDropdown";
+import { DateSearchDropdown } from "../components/booking/search/DateSearchDropdown";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 import { api } from "../lib/api";
 
@@ -41,23 +42,6 @@ const displayDate = (value: string | null) => {
     day: "numeric",
     year: "numeric",
   });
-};
-
-const formatSelectedRange = (checkIn: string, checkOut: string) => {
-  const start = new Date(`${checkIn}T00:00:00Z`);
-  const end = new Date(`${checkOut}T00:00:00Z`);
-  const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
-  const sameMonth = sameYear && start.getUTCMonth() === end.getUTCMonth();
-  const monthDay = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", timeZone: "UTC" });
-  const fullDate = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
-
-  if (sameMonth) {
-    return `${monthDay.format(start)}–${end.getUTCDate()}, ${end.getUTCFullYear()}`;
-  }
-  if (sameYear) {
-    return `${monthDay.format(start)} – ${fullDate.format(end)}`;
-  }
-  return `${fullDate.format(start)} – ${fullDate.format(end)}`;
 };
 
 export function PhotoArrival() {
@@ -215,19 +199,14 @@ function Arrive(props: {
                     />
                   )}
                   {props.activeSection === "dates" && (
-                    <div className="rounded-3xl border-2 border-input-border bg-input-bg p-4 text-foreground shadow-2xl sm:p-6">
-                      <div className="mb-4 flex items-center justify-between border-b border-input-border/20 pb-3">
-                        <span className={`${label} text-foreground`}>Select dates of stay</span>
-                        <Button type="button" aria-label="Close date picker" variant="transparent" colorScheme="smoke" size="xsmall" className="size-8 rounded-full p-0!" onClick={() => props.setActiveSection(null)}>×</Button>
-                      </div>
-                      <RangeCalendar
-                        checkIn={props.checkIn}
-                        checkOut={props.checkOut}
-                        onChange={props.setRange}
-                        dailyRates={props.dailyRates}
-                        onVisibleRangeChange={props.loadCalendar}
-                      />
-                    </div>
+                    <DateSearchDropdown
+                      checkIn={props.checkIn || ""}
+                      checkOut={props.checkOut || ""}
+                      dailyRates={props.dailyRates}
+                      onChange={(checkIn, checkOut) => props.setRange(checkIn || null, checkOut || null)}
+                      onClose={() => props.setActiveSection(null)}
+                      onVisibleRangeChange={props.loadCalendar}
+                    />
                   )}
                   {props.activeSection === "guests" && (
                     <div className="flex justify-end">
@@ -309,118 +288,5 @@ function Arrive(props: {
         </div>
       </div>
     </section>
-  );
-}
-
-const iso = (y: number, m: number, d: number) => `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-
-function RangeCalendar({ checkIn, checkOut, onChange, dailyRates, onVisibleRangeChange }: {
-  checkIn: string | null;
-  checkOut: string | null;
-  onChange: (a: string | null, b: string | null) => void;
-  dailyRates: Record<string, DailyRate>;
-  onVisibleRangeChange: (startDate: string, endDate: string) => Promise<void>;
-}) {
-  const [today, setToday] = useState<string | null>(null);
-  const [view, setView] = useState<{ y: number; m: number } | null>(null);
-  useEffect(() => {
-    const d = new Date();
-    setToday(iso(d.getFullYear(), d.getMonth(), d.getDate()));
-    setView({ y: d.getFullYear(), m: d.getMonth() });
-  }, []);
-  if (!view || !today) return <div className="h-80" aria-hidden />;
-
-  useEffect(() => {
-    const startDate = iso(view.y, view.m, 1);
-    const afterVisibleMonths = new Date(Date.UTC(view.y, view.m + 2, 1));
-    void onVisibleRangeChange(
-      startDate,
-      iso(afterVisibleMonths.getUTCFullYear(), afterVisibleMonths.getUTCMonth(), 1),
-    );
-  }, [onVisibleRangeChange, view.m, view.y]);
-
-  const months = [0, 1].map((o) => {
-    const dt = new Date(view.y, view.m + o, 1);
-    return { y: dt.getFullYear(), m: dt.getMonth() };
-  });
-  const pick = (d: string) => {
-    if (!checkIn || checkOut || d <= checkIn) onChange(d, null);
-    else onChange(checkIn, d);
-  };
-  const shift = (n: number) => {
-    const dt = new Date(view.y, view.m + n, 1);
-    setView({ y: dt.getFullYear(), m: dt.getMonth() });
-  };
-
-  return (
-    <div>
-      <div className="flex items-center justify-between">
-        <Button type="button" onClick={() => shift(-1)} aria-label="Previous month" variant="transparent" colorScheme="lake-forest" size="xsmall" className="size-8 rounded-full" style={{ padding: 0 }}>
-          <span aria-hidden="true" className="inline-block size-4 shrink-0 bg-current" style={{ WebkitMask: 'url("/assets/icons/ui/arrow-left.svg") center / contain no-repeat', mask: 'url("/assets/icons/ui/arrow-left.svg") center / contain no-repeat' }} />
-        </Button>
-        <p className={`${label} text-foreground/70`}>
-          {checkIn ? (checkOut ? formatSelectedRange(checkIn, checkOut) : "Now choose departure") : "Choose arrival"}
-        </p>
-        <Button type="button" onClick={() => shift(1)} aria-label="Next month" variant="transparent" colorScheme="lake-forest" size="xsmall" className="size-8 rounded-full" style={{ padding: 0 }}>
-          <span aria-hidden="true" className="inline-block size-4 shrink-0 bg-current" style={{ WebkitMask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat', mask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat' }} />
-        </Button>
-      </div>
-      <div className="mt-4 grid gap-8 sm:grid-cols-2">
-        {months.map(({ y, m }, idx) => {
-          const first = new Date(y, m, 1).getDay();
-          const days = new Date(y, m + 1, 0).getDate();
-          return (
-            <div key={`${y}-${m}`} className={idx === 1 ? "hidden sm:block" : ""}>
-              <p className={`${label} mb-3 text-foreground`}>
-                {new Date(y, m, 1).toLocaleString("en-US", { month: "long", year: "numeric" })}
-              </p>
-              <div className="grid grid-cols-7 text-center text-xs text-foreground/75">
-                {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => <span key={i} className="py-1">{d}</span>)}
-              </div>
-              <div className="grid grid-cols-7 gap-y-1">
-                {Array.from({ length: first }).map((_, i) => <span key={`e${i}`} />)}
-                {Array.from({ length: days }).map((_, i) => {
-                  const d = iso(y, m, i + 1);
-                  const past = d < today;
-                  const rate = dailyRates[d];
-                  const unavailable = rate?.available === false && !rate.minNights;
-                  const edge = d === checkIn || d === checkOut;
-                  const inRange = checkIn && checkOut && d > checkIn && d < checkOut;
-                  const rateLabel = unavailable
-                    ? "Sold"
-                    : rate?.minNights
-                      ? `Min ${rate.minNights}nt`
-                      : rate
-                        ? new Intl.NumberFormat("en-US", { style: "currency", currency: rate.currency || "USD", maximumFractionDigits: 0 }).format(rate.amount)
-                        : null;
-                  return (
-                    <Button
-                      key={d}
-                      type="button"
-                      disabled={past || unavailable}
-                      onClick={() => pick(d)}
-                      aria-pressed={edge}
-                      aria-label={`${d}${rateLabel ? `, ${rateLabel}` : ""}`}
-                      variant={edge ? "filled" : inRange ? "filled" : "transparent"}
-                      colorScheme={edge ? "lake-forest" : inRange ? "alpine-linen" : "lake-forest"}
-                      size="xsmall"
-                      style={{ padding: 0, borderRadius: edge ? "999px" : "0", flexDirection: "column" }}
-                      className="h-14 w-full gap-0.5 tabular-nums disabled:opacity-30"
-                    >
-                      <span>{i + 1}</span>
-                      {rateLabel && (
-                        <span className="font-number text-[9px] font-bold normal-case leading-none opacity-70">
-                          {rateLabel}
-                        </span>
-                      )}
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
   );
 }
