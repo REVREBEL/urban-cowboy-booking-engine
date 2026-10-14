@@ -19,7 +19,7 @@ export type Feature =
 export interface JourneyRoom {
   id: string;
   name: string;
-  building: "Alpine" | "Walden" | "Lodge" | "Creekside";
+  building: string;
   eyebrow: string;
   tagline: string;
   description: string;
