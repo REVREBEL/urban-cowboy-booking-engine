@@ -5,6 +5,7 @@ import { buildRooms } from "../lib/shaping";
 import { studioAvailability, studioHotel } from "./demoData";
 import { getDemoScenario, setDemoScenario, type DemoScenario } from "./runtime";
 import { currentStudioLayout, type RoomResultsLayout } from "./roomLayout";
+import { resetPhotoJourney } from "../journey/photoSession";
 
 const steps: { id: Step; label: string }[] = [
   { id: "dates", label: "Search" }, { id: "results", label: "Rooms / Find Your Stay" },
@@ -35,6 +36,7 @@ export function StudioController() {
     url.searchParams.set("roomLayout", layout);
     // Each engine has its own opening screen. A layout switch is a fresh
     // journey, not a jump into whichever Card step happened to be active.
+    resetPhotoJourney();
     url.searchParams.delete("photoPath");
     url.searchParams.delete("step");
     window.history.replaceState({}, "", url);
