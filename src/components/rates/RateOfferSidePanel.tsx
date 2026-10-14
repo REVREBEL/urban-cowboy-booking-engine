@@ -166,6 +166,63 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   const isCompact = variant === 'compact';
   const themeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS['ride-easy'];
 
+  if (standalone) {
+    const formattedAmount = (value: number | string | undefined) =>
+      typeof value === 'number' ? value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : value ?? '—';
+    const line = (label: string, value: number | string | undefined, strong = false) => (
+      <div className={`flex items-baseline justify-between gap-4 py-2 ${strong ? 'border-t pt-4 text-base font-bold' : 'text-sm'}`}
+        style={{ borderColor: themeConfig.ticketBorder, color: themeConfig.textPrimary }}>
+        <span className="font-label uppercase tracking-[0.12em]">{label}</span>
+        <span className="font-number tabular-nums">{formattedAmount(value)}</span>
+      </div>
+    );
+    return (
+      <section
+        className="relative flex max-h-[calc(100dvh-2rem)] min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[28px] border shadow-2xl sm:max-h-[calc(100dvh-4rem)]"
+        style={{ backgroundColor: themeConfig.panelBg, borderColor: themeConfig.borderColor, color: themeConfig.textPrimary }}
+        aria-label="Rate policy and deposit details"
+      >
+        <header className="flex shrink-0 items-center justify-between border-b px-6 py-4 sm:px-8"
+          style={{ borderColor: themeConfig.ticketBorder }}>
+          <h2 className="font-heading text-2xl uppercase leading-none">Rate Details</h2>
+          <button type="button" onClick={onClose} aria-label="Close rate details"
+            className="rounded-full p-2 transition-opacity hover:opacity-65 focus-visible:outline-2 focus-visible:outline-offset-2"
+            style={{ color: themeConfig.closeBtnColor }}>
+            <X className="h-6 w-6" />
+          </button>
+        </header>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-8 sm:py-6">
+          <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <div className="min-w-0">
+              <h3 className="mb-3 font-label text-xs uppercase tracking-[0.18em]">Policy information</h3>
+              <div className="overflow-hidden rounded-2xl bg-[#F4F4F5] text-[#4e332d] [&>div]:max-w-none [&>div]:shadow-none">
+                {policyDisplay ?? <PolicyDisplay text={policyText} />}
+              </div>
+              {policyText && <p className="mt-4 text-xs leading-relaxed opacity-80">{policyText}</p>}
+            </div>
+            <div className="min-w-0 rounded-2xl border p-5" style={{ backgroundColor: themeConfig.ticketBg, borderColor: themeConfig.ticketBorder }}>
+              <h3 className="mb-3 font-label text-xs uppercase tracking-[0.18em]">Stay pricing</h3>
+              {line('Nightly average', nightlyRate)}
+              {line('Stay before taxes', stayTotal)}
+              {line('Taxes & fees', taxesAndFees)}
+              {line('Total stay', totalStay, true)}
+              {line('Due at booking', dueAtBooking)}
+              {line('Remaining balance', remaining)}
+            </div>
+          </div>
+        </div>
+        <footer className="shrink-0 border-t px-5 py-4 sm:px-8"
+          style={{ backgroundColor: themeConfig.panelBg, borderColor: themeConfig.ticketBorder }}>
+          <Button type="button" variant="filled" color={buttonColorForTheme(theme)}
+            disabled={isSubmitting || !onConfirm} onClick={onConfirm}
+            className="w-full sm:w-auto">
+            CHOOSE THIS RATE
+          </Button>
+        </footer>
+      </section>
+    );
+  }
+
   if (isCompact && policyDisplay) {
     return (
       <section
