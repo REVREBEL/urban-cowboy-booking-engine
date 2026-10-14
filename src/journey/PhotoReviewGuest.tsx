@@ -9,6 +9,7 @@ import { useBooking } from "../state/booking";
 import { EMAIL_RE, money } from "../lib/format";
 import { getLang } from "../lib/lang";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
+import { photoGalleryForRoom } from "../data/photoGalleries";
 import { Button } from "../components/ui/button";
 
 const PhoneInput = lazy(() => import("../components/forms/phone-input").then(module => ({ default: module.PhoneInput })));
@@ -40,7 +41,7 @@ export function PhotoReviewGuest() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [phoneValid, setPhoneValid] = useState(true);
   if (!room || !rate) return null;
-  const photo = toPhotoTourRoom(room, booking.imageBaseUrl);
+  const photo = toPhotoTourRoom(room, booking.imageBaseUrl, photoGalleryForRoom(room.roomTypeId));
   const image = photo.images[0];
   const { guest, setGuest } = booking;
   const total = booking.grandTotal;
