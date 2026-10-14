@@ -46,8 +46,14 @@ function defaultFormatRate(rate: DailyRate): string {
   return fmt.format(rate.amount);
 }
 
-const monthCellsCache = new Map<string, Array<string | null>>();
-const monthCells = (year: number, month: number): Array<string | null> => {
+export interface MonthCell {
+  date: string;
+  time: number;
+  dayNum: number;
+}
+
+const monthCellsCache = new Map<string, Array<MonthCell | null>>();
+const monthCells = (year: number, month: number): Array<MonthCell | null> => {
   const key = `${year}-${month}`;
   let cached = monthCellsCache.get(key);
   if (!cached) {
@@ -55,11 +61,13 @@ const monthCells = (year: number, month: number): Array<string | null> => {
     const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
     // Reserve six weeks for every month so changing months cannot shift an
     // upward-anchored dropdown or the booking controls underneath it.
-    cached = [
-      ...Array<string | null>(mondayIndex).fill(null),
-      ...Array.from({ length: dayCount }, (_, index) => toIso(year, month, index + 1)),
-    ];
-    cached.push(...Array<string | null>(42 - cached.length).fill(null));
+    cached = Array<MonthCell | null>(mondayIndex).fill(null);
+    for (let day = 1; day <= dayCount; day++) {
+      const date = toIso(year, month, day);
+      const time = Date.UTC(year, month, day);
+      cached.push({ date, time, dayNum: day });
+    }
+    cached.push(...Array<MonthCell | null>(42 - cached.length).fill(null));
     monthCellsCache.set(key, cached);
   }
   return cached;
@@ -181,19 +189,17 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                   </span>
                 ))}
                 {(() => {
-                  const checkInTime = checkIn ? new Date(`${checkIn}T00:00:00Z`).getTime() : 0;
-                  return monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
-                    if (!date) return <span key={`blank-${index}`} role="gridcell" className="h-14" />;
+                  const checkInTime = checkIn ? Date.parse(`${checkIn}T00:00:00Z`) : 0;
+                  return monthCells(calendarMonth.year, calendarMonth.month).map((cell, index) => {
+                    if (!cell) return <span key={`blank-${index}`} role="gridcell" className="h-14" />;
+                    const { date, time, dayNum } = cell;
                     const rate = dailyRates?.[date];
                     const unavailable = rate?.available === false && !rate.minNights;
                     const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
                     const candidateNights = choosingCheckout && checkIn
                       ? Math.max(
                           0,
-                          Math.round(
-                            (new Date(`${date}T00:00:00Z`).getTime() - checkInTime) /
-                              86_400_000,
-                          ),
+                          Math.round((time - checkInTime) / 86_400_000),
                         )
                       : 0;
                     const minimumStayAdvisory = Boolean(
@@ -213,7 +219,6 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                     const start = date === checkIn;
                     const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
                     const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
-                    const dayNum = parseInt(date.slice(8), 10);
                     return (
                       <div
                         key={date}

@@ -25,7 +25,7 @@ test("Calendar Clear removes the entire range without closing the dropdown", () 
 
 test("Calendar layout reserves identical cell space across months and rate loading", () => {
   const picker = source("components/booking/search/InlineDateRangePicker.tsx");
-  assert.match(picker, /cached\.push\(\.\.\.Array<string \| null>\(42 - cached\.length\)\.fill\(null\)\)/);
+  assert.match(picker, /cached\.push\(\.\.\.Array<MonthCell \| null>\(42 - cached\.length\)\.fill\(null\)\)/);
   assert.match(picker, /className="h-14"/);
   assert.match(picker, /className=\{`relative h-14/);
   assert.doesNotMatch(picker, /hasDailyRates/);

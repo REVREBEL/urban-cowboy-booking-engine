@@ -14,8 +14,12 @@ export function cmsHighlightsForPhoto(
 ): PhotoHighlight[] {
   const key = cmsPhotoKey(imageUrl);
   if (!key) return [];
+  const photoHotspots = hotspots[key];
+  if (!photoHotspots || photoHotspots.length === 0) return [];
+  if (amenities.length === 0) return [];
+
   const byId = new Map(amenities.map((amenity) => [amenity.id, amenity]));
-  return (hotspots[key] ?? []).flatMap((hotspot) => {
+  return photoHotspots.flatMap((hotspot) => {
     const amenity = byId.get(hotspot.amenityId);
     if (!amenity) return [];
     return [{
