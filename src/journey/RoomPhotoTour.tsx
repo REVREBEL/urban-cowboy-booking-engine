@@ -85,6 +85,26 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     setActivePin(id);
     highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   };
+  // Swiping the mobile editorial cards keeps its numbered photo dot in sync.
+  const syncMobileHighlight = () => {
+    const row = highlightRow.current;
+    if (!row) return;
+    const bounds = row.getBoundingClientRect();
+    const center = bounds.left + bounds.width / 2;
+    const cards = row.querySelectorAll<HTMLButtonElement>("[data-pin]");
+    let nearest: string | null = null;
+    let distance = Infinity;
+    cards.forEach((card) => {
+      const box = card.getBoundingClientRect();
+      const delta = Math.abs(box.left + box.width / 2 - center);
+      if (delta < distance) {
+        nearest = card.dataset.pin ?? null;
+        distance = delta;
+      }
+    });
+    if (nearest) setActivePin((current) => current === nearest ? current : nearest);
+  };
+
   const roomNav = (cls: string) => (
     <div className={cls}>
       <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><PhotoTourArrow direction="up" size={18} /></Button>
@@ -172,7 +192,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
         <div className="j-tour-amenities">
           {pins.length > 0 && <>
             <p className="j-mobile-only text-[11px] uppercase tracking-[0.2em] opacity-60">In this photo · tap a number or swipe</p>
-            <div ref={highlightRow} className="j-highlight-row no-scrollbar">
+            <div ref={highlightRow} onScroll={syncMobileHighlight} className="j-highlight-row no-scrollbar">
               {pins.map((pin, i) => (
                 <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{padding:"12px",fontWeight:400,textAlign:"left",borderRadius:"10px"}} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => pickPin(pin.id)} className="j-highlight-card">
                   <span className="j-highlight-num">{i + 1}</span>
