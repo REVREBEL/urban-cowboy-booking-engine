@@ -171,6 +171,7 @@ export function Extras({ photoMode = false }: { photoMode?: boolean } = {}) {
       checkIn={checkIn}
       checkOut={checkOut}
       nights={nightsCount}
+      guestsCount={guestsCount}
       onToggle={toggleDisplayProduct}
       onSavePreference={savePreference}
       onNext={() => goTo("guest")}
