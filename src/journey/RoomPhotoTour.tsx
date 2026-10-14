@@ -4,7 +4,7 @@ import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { money, type JourneyRoom } from './data';
 import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
-import { TourIcon } from './TourIcon';
+import { TourIcon } from '@/components/rooms/TourIcon';
 import { FeatureFocus } from '@/components/rooms/FeatureFocus';
 
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
