@@ -1,37 +1,14 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import type { JourneyRoom } from './data';
 import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
 import { TourIcon } from '@/components/rooms/TourIcon';
 import { FeatureFocus } from '@/components/rooms/FeatureFocus';
-
-/** Use the photo tour SVGs from public/assets/icons/ui, falling back to Lucide if an asset cannot load. */
-function TourArrow({ direction, size = 18 }: { direction: 'up' | 'down' | 'left' | 'right'; size?: number }) {
-  const [fallback, setFallback] = useState(false);
-  const isUp = direction !== 'down';
-  const src = `/assets/icons/ui/ui-arrow-${isUp ? 'up' : 'down'}.svg`;
-  const rotation = direction === 'left' ? -90 : direction === 'right' ? 90 : 0;
-  const LucideArrow = direction === 'up' ? ArrowUp : direction === 'down' ? ArrowDown : direction === 'left' ? ChevronLeft : ChevronRight;
-  return fallback ? (
-    <LucideArrow size={size} aria-hidden="true" />
-  ) : (
-    <img
-      src={src}
-      width={size}
-      height={size}
-      alt=""
-      aria-hidden="true"
-      className="j-tour-arrow"
-      style={{ transform: rotation ? `rotate(${rotation}deg)` : undefined }}
-      onError={() => setFallback(true)}
-    />
-  );
-}
-
+import { PhotoTourArrow } from './PhotoTourArrow';
 
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
 const FX: (string | undefined)[] = [];
@@ -100,8 +77,8 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
   };
   const roomNav = (cls: string) => (
     <div className={cls}>
-      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><TourArrow direction="up" size={18} /></Button>
-      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onNext} aria-label={`Next room from ${room.name}`} title="Next room" onClick={onNext}><TourArrow direction="down" size={18} /></Button>
+      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><PhotoTourArrow direction="up" size={18} /></Button>
+      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onNext} aria-label={`Next room from ${room.name}`} title="Next room" onClick={onNext}><PhotoTourArrow direction="down" size={18} /></Button>
     </div>
   );
 
@@ -164,8 +141,8 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
 
 
       {room.images.length > 1 && <>
-        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><TourArrow direction="left" size={24} /></Button>
-        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><TourArrow direction="right" size={24} /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><PhotoTourArrow direction="left" size={24} /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><PhotoTourArrow direction="right" size={24} /></Button>
       </>}
 
       <div className="j-photo-pagination" aria-label="Photo selection">
