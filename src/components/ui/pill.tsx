@@ -17,10 +17,13 @@ export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: PillSize;
 }
 
+// The label font has an uneven visual baseline. The extra 1–2px on top
+// optically centers the text without offsetting it with transforms.
+// Keep all four sides independent so each size can be tuned in Storybook.
 const PILL_SIZES: Record<PillSize, React.CSSProperties> = {
-  small: { fontSize: "0.75rem", padding: "0.25rem 0.625rem" },
-  default: { fontSize: "0.875rem", padding: "0.375rem 0.875rem" },
-  large: { fontSize: "1rem", padding: "0.5rem 1rem" },
+  small: { fontSize: "0.75rem", paddingTop: "5px", paddingRight: "10px", paddingBottom: "4px", paddingLeft: "10px" },
+  default: { fontSize: "0.875rem", paddingTop: "8px", paddingRight: "14px", paddingBottom: "6px", paddingLeft: "14px" },
+  large: { fontSize: "1rem", paddingTop: "10px", paddingRight: "16px", paddingBottom: "8px", paddingLeft: "16px" },
 };
 
 export function Pill({
