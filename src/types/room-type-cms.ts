@@ -16,3 +16,12 @@ export interface RoomTypeCmsDescription {
 }
 
 export type RoomTypeCmsDescriptionMap = Record<string, RoomTypeCmsDescription>;
+
+/** Published Webflow Room Types photographs, indexed by the stable Mews ID. */
+export interface RoomTypeCmsGallery {
+  roomTypeId: string;
+  /** Ordered public Webflow CDN URLs (hero first, then collection gallery). */
+  images: string[];
+}
+
+export type RoomTypeCmsGalleryMap = Record<string, RoomTypeCmsGallery>;

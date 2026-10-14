@@ -10,6 +10,7 @@ import { resolveRateCardConfig } from "../lib/rateCardConfig";
 import { cancellationConfirmation } from "../lib/rateCardLiveContent";
 import type { RateCardConfig } from "../types/rate-card";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
+import { photoGalleryForRoom } from "../data/photoGalleries";
 import { money } from "../lib/format";
 import type { ShapedRate } from "../types/mews";
 import { Button } from "../components/ui/button";
@@ -26,7 +27,7 @@ export function PhotoRateStep() {
   }, []);
   const room = booking.selectedRoom;
   if (!room) return null;
-  const photo = toPhotoTourRoom(room, booking.imageBaseUrl);
+  const photo = toPhotoTourRoom(room, booking.imageBaseUrl, photoGalleryForRoom(room.roomTypeId));
   const image = photo.images[photo.images.length > 1 ? 1 : 0];
   const choose = (rate: ShapedRate) => {
     booking.selectRoomRate(room, rate);

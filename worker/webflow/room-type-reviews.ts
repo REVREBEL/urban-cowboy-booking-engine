@@ -3,6 +3,8 @@ import type {
   RoomTypeCmsDescriptionMap,
   RoomTypeCmsReview,
   RoomTypeCmsReviewMap,
+  RoomTypeCmsGallery,
+  RoomTypeCmsGalleryMap,
 } from "../../src/types/room-type-cms.ts";
 import type { Env } from "../mews/_lib.ts";
 import { json } from "../mews/_lib.ts";
@@ -38,6 +40,7 @@ interface CachedReviewPayload {
   fetchedAt: number;
   reviews: RoomTypeCmsReviewMap;
   descriptions: RoomTypeCmsDescriptionMap;
+  galleries: RoomTypeCmsGalleryMap;
 }
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
@@ -46,7 +49,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:room-type-content:v2";
+const CACHE_KEY_PREFIX = "webflow:room-type-content:v3";
 const BROWSER_CACHE_CONTROL =
   "public, max-age=300, s-maxage=21600, stale-while-revalidate=64800";
 
@@ -179,6 +182,31 @@ export function normalizeRoomTypeDescriptions(
   return descriptions;
 }
 
+/** Webflow MultiImage is the ordered gallery. Only published and active items qualify. */
+export function normalizeRoomTypeGallery(item: WebflowCollectionItem): RoomTypeCmsGallery | null {
+  if (item.isArchived === true || item.isDraft === true) return null;
+  const fields = item.fieldData ?? {};
+  if (fields.active === false) return null;
+  const roomTypeId = text(fields["mews-room-type-id"]);
+  if (!roomTypeId) return null;
+  const hero = fields["hero-image"] as { url?: unknown } | null;
+  const gallery = Array.isArray(fields.images) ? fields.images : [];
+  const images = [hero, ...gallery]
+    .map((image) => image && typeof image === "object" ? safeUrl((image as { url?: unknown }).url) : null)
+    .filter((url): url is string => Boolean(url));
+  const uniqueImages = [...new Set(images)];
+  return uniqueImages.length ? { roomTypeId, images: uniqueImages } : null;
+}
+
+export function normalizeRoomTypeGalleries(items: readonly WebflowCollectionItem[]): RoomTypeCmsGalleryMap {
+  const galleries: RoomTypeCmsGalleryMap = {};
+  for (const item of items) {
+    const gallery = normalizeRoomTypeGallery(item);
+    if (gallery) galleries[gallery.roomTypeId] = gallery;
+  }
+  return galleries;
+}
+
 async function fetchPublishedReviews(
   env: Env,
   collectionId: string,
@@ -208,6 +236,7 @@ async function fetchPublishedReviews(
       optionNames(collection, "review-source"),
     ),
     descriptions: normalizeRoomTypeDescriptions(items.items ?? []),
+    galleries: normalizeRoomTypeGalleries(items.items ?? []),
   };
 }
 
@@ -282,6 +311,7 @@ function response(payload: CachedReviewPayload, stale: boolean): Response {
     {
       reviews: payload.reviews,
       descriptions: payload.descriptions,
+      galleries: payload.galleries,
       generatedAt: new Date(payload.fetchedAt).toISOString(),
       stale,
     },
@@ -300,7 +330,7 @@ export async function onRequestGet({
   const collectionId = env.WEBFLOW_ROOM_TYPE_COLLECTION_ID;
 
   if (!env.WEBFLOW_CMS_API_TOKEN || !collectionId) {
-    return json({ reviews: {}, descriptions: {}, generatedAt: null, stale: false }, 200, "no-store");
+    return json({ reviews: {}, descriptions: {}, galleries: {}, generatedAt: null, stale: false }, 200, "no-store");
   }
 
   const cached = await readCachedReviews(env, collectionId);

@@ -81,7 +81,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
   );
 
   return (
-    <article ref={section} id={`tour-${room.id}`} className={`j-room-tour ${fx ?? ''}`} aria-label={room.name}
+    <article ref={section} id={`tour-${room.id}`} className={`j-room-tour ${fx ?? ''}`} aria-label={room.name} data-photo-source={room.photoSource ?? "unknown"}
       onKeyDown={(event) => {
         if ((event.target as HTMLElement).matches('select, input, textarea')) return;
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -98,7 +98,8 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
               {fx?.includes('fx-backlight') && <img className="j-fx-halo" src={src} alt="" aria-hidden="true" draggable={false} />}
               <div className="j-photo-image">
                 <img src={src} alt={`${room.name} — photo ${index + 1}`} draggable={false}
-                  loading={position === 0 || photo === index ? 'eager' : 'lazy'}
+                  loading={position === 0 && index === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={position === 0 && index === 0 ? 'high' : 'low'} decoding="async"
                   onLoad={(event) => {
                     const image = event.currentTarget;
                     if (image.naturalHeight) setRatios((old) => ({ ...old, [index]: image.naturalWidth / image.naturalHeight }));
