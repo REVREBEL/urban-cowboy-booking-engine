@@ -9,7 +9,6 @@ import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
 import { cmsHighlightsForPhoto } from './cmsTour';
 import type { CmsPhotoHotspotMap } from '@/types/photo-hotspot-cms';
 import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
-import { TourIcon } from '@/components/rooms/TourIcon';
 import { FeatureFocus } from '@/components/rooms/FeatureFocus';
 import { PhotoTourArrow } from './PhotoTourArrow';
 
