@@ -70,7 +70,7 @@ function useHorizontalFilterStrip(itemsKey: string) {
 }
 
 
-export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", guests, children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
+export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
   const [building, setBuilding] = useState<string>("all");
   const [features, setFeatures] = useState<Feature[]>([]);
   const [sort, setSort] = useState<Sort>(profile ? "match" : "price-asc");
@@ -122,7 +122,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     const matched = profile?.mustHaves.filter(feature => room.features.includes(feature)).length ?? 0;
     const underBudget = profile?.budget !== undefined && room.basePrice <= profile.budget ? 1 : 0;
     return { room, source, excludedBy, score: matched * 100 + underBudget };
-  }), [rooms, imageBaseUrl, galleries, cmsAmenities, photoSource, guests, children, profile]);
+  }), [rooms, imageBaseUrl, galleries, cmsAmenities, photoSource, children, profile]);
 
   const filterRooms = (b: string, fs: Feature[], s: Sort) => scored
     .filter((m) => !m.excludedBy)
