@@ -4,6 +4,8 @@
  */
 import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
+import { Button } from "../components/ui/button";
+import { PillButton } from "../components/ui/pill";
 import { AddonCustomizerModal } from "../components/booking/extras/AddonCustomizerModal";
 import { defaultAddOnPreference } from "../components/booking/extras/addon-smart-logic";
 import { imgUrl, money } from "../lib/format";
@@ -30,7 +32,6 @@ type Props = {
 };
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const btnPrimary = "inline-flex items-center justify-center gap-2 rounded-full bg-button-secondary-bg px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-button-secondary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
 const timingOptions = [
   { id: "arrival", title: "Waiting on arrival" },
   { id: "during", title: "Delivered during stay" },
@@ -94,22 +95,22 @@ export function PhotoExtrasStep(props: Props) {
                   {selected && (
                     <div role="group" aria-label={`Delivery timing for ${product.name}`} className="mt-4 flex flex-wrap gap-2">
                       {timingOptions.map(t => (
-                        <button key={t.id} type="button" aria-pressed={timingOf(pref) === t.id} onClick={() => changeTiming(product, t.id)}
-                          className={`rounded-full border px-3 py-1 text-xs ${timingOf(pref) === t.id ? "border-foreground bg-foreground text-paper" : "border-foreground/30"}`}>
+                        <PillButton key={t.id} type="button" pressed={timingOf(pref) === t.id} size="small" variant={timingOf(pref) === t.id ? "filled" : "outline"} colorScheme="lake-forest" onClick={() => changeTiming(product, t.id)}
+                          className="text-xs">
                           {t.title}
-                        </button>
+                        </PillButton>
                       ))}
                     </div>
                   )}
-                  <button type="button" disabled={locked}
+                  <Button type="button" disabled={locked} variant={selected ? "filled" : "outline"} colorScheme="lake-forest" size="small"
                     onClick={() => props.onToggle(product)}
-                    className={`mt-4 w-full rounded-full border-2 border-foreground py-2.5 font-label text-xs uppercase tracking-[0.2em] ${selected ? "bg-foreground text-paper" : ""} disabled:cursor-not-allowed disabled:opacity-60`}>
+                    className="mt-4 w-full rounded-full uppercase tracking-[0.2em]">
                     {locked ? "Included with stay" : selected ? "Added ✓ — remove" : "Add to stay"}
-                  </button>
+                  </Button>
                   {selected && (
-                    <button type="button" onClick={() => setEditing(product)} className="mt-3 w-full text-center text-sm underline underline-offset-4">
+                    <Button type="button" onClick={() => setEditing(product)} variant="transparent" colorScheme="lake-forest" size="xsmall" className="mt-3 w-full underline underline-offset-4" style={{padding:0}}>
                       Customize timing, gift or special requests
-                    </button>
+                    </Button>
                   )}
                 </div>
               </li>
@@ -121,14 +122,14 @@ export function PhotoExtrasStep(props: Props) {
       <div className="fixed inset-x-0 bottom-0 z-30 bg-smoke/90 backdrop-blur">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
           <div className="flex flex-wrap items-center gap-4">
-            <button type="button" onClick={props.onBack} className="flex items-center gap-1 text-sm text-paper/80 underline underline-offset-4 hover:text-paper">
+            <Button type="button" onClick={props.onBack} variant="transparent" colorScheme="paper" size="xsmall" className="gap-1 underline underline-offset-4" style={{padding:0}}>
               <ChevronLeft className="h-4 w-4" aria-hidden="true" /> Back to rate
-            </button>
+            </Button>
             <p className="tabular-nums">{displayedSelected} extras · <strong>{money(props.total, props.currency)}</strong></p>
           </div>
-          <button type="button" className={btnPrimary} onClick={props.onNext}>
+          <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" className="rounded-full uppercase tracking-[0.2em]" onClick={props.onNext}>
             {displayedSelected ? "Review stay →" : "Skip extras →"}
-          </button>
+          </Button>
         </div>
       </div>
       {editing && (
