@@ -3,14 +3,14 @@
 
 @import "tailwindcss";
 
-/* ==========================================================================
+/** ==========================================================================
 
 Tailwind CSS v4 Theme Token Registration
 All tokens here automatically generate utility classes (e.g. bg-copper,
 text-cowboy-umber, font-heading, shadow-card).
-========================================================================== /
+========================================================================== */
 
-/Brand Color Palette */
+/** Brand Color Palette */
 
 @theme {
 --color-cowboy-umber: oklch(35.125% 0.04088 32.97);
@@ -38,17 +38,17 @@ text-cowboy-umber, font-heading, shadow-card).
 --color-alpine-linen-fade: oklch(95.201% 0.00816 91.496);
 --color-lodge-yellow-fade: oklch(92.615% 0.12307 96.736);
 
-
+  /* paper */
 --color-paper-fade: oklch(90.748% 0.00106 11.828);
 
+  /* alpine-linen */
+  --color-alpine-linen-fade: var(--color-alpine-linen-200);
+  --color-alpine-linen-200: oklch(95.201% 0.00816 91.496);
+  --color-alpine-linen-500: oklch(93.112% 0.01107 89.719);
+  --color-alpine-linen-700: oklch(87.933% 0.00704 88.619);
+  --color-alpine-linen-900: oklch(80.483% 0.00721 88.629);
 
---color-alpine-linen-fade: var(--color-alpine-linen-200);
---color-alpine-linen-200: oklch(95.201% 0.00816 91.496);
---color-alpine-linen-500: oklch(93.112% 0.01107 89.719);
---color-alpine-linen-700: oklch(87.933% 0.00704 88.619);
---color-alpine-linen-900: oklch(80.483% 0.00721 88.629); 
-
-
+  /* bandana-red */
   --color-bandana-red-400: #DA6354;
   --color-bandana-red-500: #D65241;
   --color-bandana-red-600: #C14A3B;
@@ -155,10 +155,8 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-smoke-950: #1A1C1A;
   --color-smoke: var(--color-smoke-500);
   --color-smoke-fade: var(--color-smoke-200);
-  --color-smoke-inverse: var(var(--color-paper) ;
+  --color-smoke-inverse: var(--color-paper);
   --color-smoke-inverse-fade: var(--color-paper-fade);
-
-
 
 /* Typography Families */
 --font-body: "Uchen", Georgia, serif;
@@ -170,7 +168,6 @@ text-cowboy-umber, font-heading, shadow-card).
 --font-number: "Bianco Sans", "League Spartan", sans-serif;
 --font-blockquote: "Cedarville", cursive;
 --font-emoji: "Noto Emoji", sans-serif;
-
 
 /* Custom Radii & Shadows */
 --radius-xl2: 1rem;
@@ -215,12 +212,9 @@ text-cowboy-umber, font-heading, shadow-card).
 
 --color-emphasis: var(--color-cowboy-umber-200);
 
-
 --color-error: oklch(61.112% 0.16959 30.026);
 --destructive:  oklch(61.112% 0.16959 30.026);
 --destructive-foreground: oklch(0.9829 0.0011 17.1780);
-
-
 
 --ring: oklch(0.2773 0.0567 152.3989);
 --sidebar: oklch(0.2773 0.0567 152.3989);
@@ -231,8 +225,6 @@ text-cowboy-umber, font-heading, shadow-card).
 --sidebar-accent-foreground: oklch(0.9829 0.0011 17.1780);
 --sidebar-border: oklch(0.9829 0.0011 17.1780);
 --sidebar-ring: oklch(0.9829 0.0011 17.1780);
-
-
 
   --radius: 0px;
   --shadow-x: 0px;
@@ -252,13 +244,11 @@ text-cowboy-umber, font-heading, shadow-card).
   --tracking-normal: 0.02em;
   --spacing: 0.25rem;
 
-
 --color-background: var(--color-mist);
 --color-foreground: var(--lake-forest);
 
 --color-accent: var(--color-lake-forest-fade);
 --accent-foreground: oklch(0.9829 0.0011 17.1780);
-
 
 --color-input-bg: var(--color-paper);
 --color-input-border: var(--lake-forest);
@@ -273,7 +263,6 @@ text-cowboy-umber, font-heading, shadow-card).
 --color-button-secondary-bg: var(--color-alpine-linen);
 --color-button-secondary-foreground: vvar(--color-lake-forest);
 --color-button-secondary-hover-bg: var(--color-alpine-linen-200);
-
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -290,7 +279,6 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
 
-
   /* Semantic colors registered with Tailwind v4 utilities. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -300,8 +288,6 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-button-primary-bg: var(--button-primary-bg);
   --color-button-primary-foreground: var(--button-primary-foreground);
 
-
-  
 }
 
 /* Semantic theme variables shared by the booking UI. */
