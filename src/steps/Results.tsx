@@ -464,7 +464,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
       return (
         <div className="min-h-dvh bg-smoke font-body text-paper">
           <PhotoRooms
-            profile={journalProfile}
+            profile={studioPhoto ? null : journalProfile}
             rooms={rooms}
             imageBaseUrl={imageBaseUrl}
             galleries={roomTypeGalleries}
@@ -472,7 +472,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
             cmsHotspots={photoHotspots}
             photoSource={photoSource}
             guests={adults + children + infants}
-            children={children + infants}
+            children={studioPhoto ? 0 : children + infants}
             onChoose={choose}
             onEditJournal={() => {
               setPhotoPath("journal");
