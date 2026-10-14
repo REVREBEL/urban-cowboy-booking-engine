@@ -11,9 +11,9 @@ import type { Feature, MatchProfile, Occasion } from "./data";
 
 const label = "font-j-label text-[11px] uppercase tracking-[0.22em]";
 const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-j-ember px-6 py-3 font-j-label text-xs uppercase tracking-[0.2em] text--paper transition hover:brightness-110";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-j-ember px-6 py-3 font-j-label text-xs uppercase tracking-[0.2em] text-j-paper transition hover:brightness-110";
 const btnGhost =
-  "inline-flex items-center justify-center gap-2 rounded-full border border--paper/75 px-5 py-2.5 font-j-label text-xs uppercase tracking-[0.2em] text--paper transition hover:bg--paper/10";
+  "inline-flex items-center justify-center gap-2 rounded-full border border-j-paper/75 px-5 py-2.5 font-j-label text-xs uppercase tracking-[0.2em] text-j-paper transition hover:bg-j-paper/10";
 const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 const FEATURE_LABEL: Record<Feature, string> = {
   "indoor-tub": "Tub by the window",
@@ -70,7 +70,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
       <div className="relative mx-auto grid max-w-[1600px] gap-10 px-5 pb-16 pt-28 sm:px-8 lg:grid-cols-[1.3fr_1fr]">
         <div>
           <p className={`${label} text-j-ember`}>Your stay journal · page {page + 1} of {pages}</p>
-          <div className="mt-2 h-px w-full bg--paper/15">
+          <div className="mt-2 h-px w-full bg-j-paper/15">
             <div className="h-px bg-j-ember transition-all" style={{ width: `${((page + 1) / pages) * 100}%` }} />
           </div>
 
@@ -84,7 +84,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
                     <span className="absolute inset-0 bg-gradient-to-t from-secondary-foreground/90 to-transparent" />
                     <span className="absolute bottom-0 p-4">
                       <span className="block font-headline text-2xl">{o.title}</span>
-                      <span className="text-sm text--paper/80">{o.note}</span>
+                      <span className="text-sm text-j-paper/80">{o.note}</span>
                     </span>
                   </button>
                 ))}
@@ -100,7 +100,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
                   return (
                     <button key={f} type="button" aria-pressed={on}
                       onClick={() => set("mustHaves", on ? p.mustHaves.filter((x) => x !== f) : [...p.mustHaves, f])}
-                      className={`rounded-full border px-5 py-3 text-base transition ${on ? "border-j-ember bg-j-ember text--paper" : "border--paper/40 hover:border--paper"}`}>
+                      className={`rounded-full border px-5 py-3 text-base transition ${on ? "border-j-ember bg-j-ember text-j-paper" : "border-j-paper/40 hover:border-j-paper"}`}>
                       {FEATURE_LABEL[f]}
                     </button>
                   );
@@ -117,7 +117,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
             <JournalPage title="How tucked away do you want to be?">
               <input type="range" min={1} max={5} value={p.quiet} onChange={(e) => set("quiet", Number(e.target.value))}
                 aria-label="Seclusion" className="w-full accent-j-ember" />
-              <div className="mt-2 flex justify-between text-sm text--paper/70">
+              <div className="mt-2 flex justify-between text-sm text-j-paper/70">
                 <span>Steps from the bar</span><span>Deep in the pines</span>
               </div>
             </JournalPage>
@@ -138,11 +138,11 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
             ) : (
               <button type="button" className={btnPrimary} onClick={() => onDone({ ...p, adults, children })}>See my matches →</button>
             )}
-            <button type="button" onClick={onSkip} className="ml-auto text-sm text--paper/70 underline underline-offset-4 hover:text--paper">Skip — show me everything</button>
+            <button type="button" onClick={onSkip} className="ml-auto text-sm text-j-paper/70 underline underline-offset-4 hover:text-j-paper">Skip — show me everything</button>
           </div>
         </div>
 
-        <aside aria-live="polite" className="self-start rounded-2xl bg--paper/95 p-5 text-j-ink lg:sticky lg:top-28">
+        <aside aria-live="polite" className="self-start rounded-2xl bg-j-paper/95 p-5 text-j-ink lg:sticky lg:top-28">
           <p className={`${label} text-j-moss`}>Matching · {eligible.length} of {rooms.length} available room types</p>
           <ol className="mt-4 space-y-3">
             {eligible.slice(0, 4).map((m, i) => (
@@ -167,7 +167,7 @@ function JournalPage({ title, note, children }: { title: string; note?: string; 
   return (
     <div className="mt-8">
       <h2 className="max-w-[20ch] font-headline text-4xl leading-tight sm:text-5xl">{title}</h2>
-      {note && <p className="mt-3 max-w-[60ch] text--paper/70">{note}</p>}
+      {note && <p className="mt-3 max-w-[60ch] text-j-paper/70">{note}</p>}
       <div className="mt-8">{children}</div>
     </div>
   );
