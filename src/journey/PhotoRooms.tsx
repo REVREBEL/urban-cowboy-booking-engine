@@ -13,7 +13,7 @@ import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";
 import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
-import { photoGalleryForRoom, type PhotoSource } from "../data/photoGalleries";
+import { photoGalleryForRoom, studioEditorialRoomTypeId, type PhotoSource } from "../data/photoGalleries";
 import type { Feature, MatchProfile } from "./data";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
@@ -111,7 +111,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   }, []);
 
   const scored = useMemo(() => rooms.map((source) => {
-    const room = toPhotoTourRoom(source, imageBaseUrl, photoGalleryForRoom(source.roomTypeId, galleries), photoSource, cmsAmenities[source.roomTypeId] ?? []);
+    const room = toPhotoTourRoom(source, imageBaseUrl, photoGalleryForRoom(source.roomTypeId, galleries), photoSource, cmsAmenities[studioEditorialRoomTypeId(source.roomTypeId)] ?? []);
     const excludedBy =
       source.rates.length === 0 ? "Unavailable for these dates" :
       // The shaped capacity is a bed count, not guest occupancy. Mews availability
