@@ -25,7 +25,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:booking-locations:v1";
+const CACHE_KEY_PREFIX = "webflow:booking-locations:v2";
 
 const memoryCache = new Map<string, CachedLocationPayload>();
 
@@ -82,6 +82,9 @@ export function normalizeLocationItem(
   return {
     id,
     fullLocationName,
+    productionLayout: fields["production-layout"] === "f4859a16a8556038b0f026679aaa6a02" ? "photo" : "card",
+    demoLayout: fields["demo-layout"] === "2142905a00c88401810632b026107cf2" ? "photo" : "card",
+    enableDemoEngine: fields["enable-demo-engine"] === true,
     city: text(fields.city) || null,
     state: text(fields.state) || null,
     privacyPolicyUrl: safeUrl(fields["privacy-policy"]),
@@ -274,6 +277,7 @@ export async function onRequestStudioConfig({ env, request }: { env: Env; reques
     return json({
       enabled: item?.fieldData?.["enable-demo-engine"] === true,
       property: key,
+      demoLayout: item?.fieldData?.["demo-layout"] === "2142905a00c88401810632b026107cf2" ? "photo" : "card",
     }, 200, "no-store");
   } catch {
     return denied();
