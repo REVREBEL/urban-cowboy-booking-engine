@@ -3,26 +3,22 @@ import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { money, type JourneyRoom } from './data';
+import type { JourneyRoom } from './data';
 import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
 import { TourIcon } from '@/components/rooms/TourIcon';
 import { FeatureFocus } from '@/components/rooms/FeatureFocus';
 
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
-const FX: (string | undefined)[] = [
-  'fx-backlight fx-grain',
-  undefined,
-  undefined,
-];
+const FX: (string | undefined)[] = [];
 const FX_LABEL: Record<string, string> = {
   'fx-backlight': 'Ambient backlight',
   'fx-grain': 'Film grain + vignette',
 };
 
 
-export function RoomPhotoTour({ room, position, count, score, details, onDetails, onChoose, onPrevious, onNext }: {
+export function RoomPhotoTour({ room, position, count, score, details, onDetails, onChoose, onPrevious, onNext, currency = "USD" }: {
   room: JourneyRoom; position: number; count: number; score?: number;
-  details: boolean; onDetails: (open: boolean) => void; onChoose: () => void;
+  details: boolean; onDetails: (open: boolean) => void; onChoose: () => void; currency?: string;
   onPrevious?: () => void; onNext?: () => void;
 }) {
   const section = useRef<HTMLElement>(null);
@@ -192,7 +188,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
           <p className="mt-1 hidden text-sm text-j-paper/80 lg:block">{room.tagline}</p>
         </div>
         <div className="j-tour-actions">
-          <p className="shrink-0 tabular-nums"><span className="text-xs text-j-paper/75">from </span><span className="font-j-display text-xl sm:text-3xl">{money(room.basePrice)}</span><span className="text-xs text-j-paper/75"> /night</span></p>
+          <p className="shrink-0 tabular-nums"><span className="text-xs text-j-paper/75">from </span><span className="font-j-display text-xl sm:text-3xl">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text-j-paper/75"> /night</span></p>
           <Button variant="outline" className="j-tour-button" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)}>{details ? 'Hide details' : 'Details'}</Button>
           <Button className="j-tour-button j-tour-choose" onClick={onChoose}>Choose room</Button>
           <div className="j-roomnav-desktop flex items-center gap-1">
