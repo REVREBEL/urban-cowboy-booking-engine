@@ -1,7 +1,22 @@
-@import "tailwindcss/preflight";
-@tailwind utilities;
-
+/* Tailwind v4 provides its own preflight, theme, and utility layers. */
 @import "tailwindcss";
+
+/*
+ * Lovable Photo Engine theme. Register these utilities in the actual
+ * Tailwind entrypoint, not only in a component CSS file. The --j-* values
+ * are scoped to .photo-journey in room-photo-tour.css.
+ */
+@theme inline {
+  --color-j-night: var(--j-night);
+  --color-j-paper: var(--j-paper);
+  --color-j-ink: var(--j-ink);
+  --color-j-ember: var(--j-ember);
+  --color-j-moss: var(--j-moss);
+  --color-j-line: var(--j-line);
+  --font-j-display: var(--font-heading);
+  --font-j-label: var(--font-eyebrow);
+  --font-j-body: var(--font-body);
+}
 
 /** ==========================================================================
 
