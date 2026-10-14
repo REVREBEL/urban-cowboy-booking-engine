@@ -21,6 +21,9 @@ import { StudioMatchResults } from "./StudioMatchResults";
 import { RoomsListCard, type RoomCardTheme } from "@/components/rooms/RoomsListCard";
 import { BuildingExperienceList } from "@/components/rooms/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
+import { RoomPhotoTour } from "@/journey/RoomPhotoTour";
+import { toPhotoTourRoom } from "@/data/photoTourRooms";
+import { isStudioRoute } from "@/studio/runtime";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type {
@@ -97,6 +100,13 @@ export function Results() {
   } = useBooking();
 
   const [data, setData] = useState<AvailabilityResponse | null>(null);
+  const [photoLayout, setPhotoLayout] = useState(() => isStudioRoute() && new URLSearchParams(window.location.search).get("roomLayout") === "photo");
+  const [tourDetailsId, setTourDetailsId] = useState<string | null>(null);
+  useEffect(() => {
+    const update = () => setPhotoLayout(isStudioRoute() && new URLSearchParams(window.location.search).get("roomLayout") === "photo");
+    window.addEventListener("studio-room-layout-change", update);
+    return () => window.removeEventListener("studio-room-layout-change", update);
+  }, []);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openRoom, setOpenRoom] = useState<ShapedRoom | null>(null);
@@ -376,7 +386,24 @@ export function Results() {
 
     return (
       <div className="studio-room-experience">
-        <BuildingExperienceList
+        {photoLayout ? (
+          <div className="j-room-spreads" aria-label="Available room photo tours">
+            {rooms.filter(room => room.rates.length > 0).map((room, index, bookableRooms) => (
+              <RoomPhotoTour
+                key={room.roomTypeId}
+                room={toPhotoTourRoom(room, imageBaseUrl)}
+                position={index}
+                count={bookableRooms.length}
+                currency={room.rates[0]?.currency ?? hotel?.DefaultCurrencyCode ?? "USD"}
+                details={tourDetailsId === room.roomTypeId}
+                onDetails={(open) => setTourDetailsId(open ? room.roomTypeId : null)}
+                onChoose={() => choose(room)}
+                onPrevious={index > 0 ? () => document.getElementById(`tour-${bookableRooms[index - 1].roomTypeId}`)?.scrollIntoView({ behavior: "smooth" }) : undefined}
+                onNext={index < bookableRooms.length - 1 ? () => document.getElementById(`tour-${bookableRooms[index + 1].roomTypeId}`)?.scrollIntoView({ behavior: "smooth" }) : undefined}
+              />
+            ))}
+          </div>
+        ) : <BuildingExperienceList
           criteria={studioCriteria}
           rooms={rooms}
           buildings={buildings}
@@ -388,7 +415,7 @@ export function Results() {
           onOpenRoomDetails={setOpenRoom}
           onOpenHelpMeChoose={() => setShowMatcherModal(true)}
           onBackToSearch={() => goTo("dates")}
-        />
+        />}
         {openRoom && (
           <RoomDetailModal
             room={toStudioRoom(openRoom, imageBaseUrl)}
