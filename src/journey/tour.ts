@@ -51,9 +51,7 @@ export const PHOTO_HIGHLIGHTS: Record<string, PhotoHighlight[]> = {
   ],
 };
 
-export function roomAmenities(room: JourneyRoom): { id?: string; title: string; icon: TourIcon; iconPath?: string | null; note?: string | null; longNote?: string | null }[] {
-  const features = ROOMS.find((r) => r.id === room.id)?.features ?? room.highlights;
-  const iconFor = (title: string): TourIcon => {
+export function tourIconForTitle(title: string): TourIcon {
     const text = title.toLowerCase();
     if (text.includes('robe')) return 'robes';
     if (text.includes('marshall') || text.includes('sound')) return 'speaker';
@@ -67,14 +65,18 @@ export function roomAmenities(room: JourneyRoom): { id?: string; title: string; 
     if (text.includes('window') || text.includes('vista') || text.includes('view')) return 'window';
     if (text.includes('bed') || text.includes('headboard')) return 'bed';
     return 'seat';
-  };
+}
+
+export function roomAmenities(room: JourneyRoom): { id?: string; title: string; icon: TourIcon; iconPath?: string | null; note?: string | null; longNote?: string | null }[] {
+  const features = ROOMS.find((r) => r.id === room.id)?.features ?? room.highlights;
+
   if (room.cmsAmenities) return room.cmsAmenities.map((amenity) => ({
     id: amenity.id,
     title: amenity.shortName,
-    icon: iconFor(amenity.name),
+    icon: tourIconForTitle(amenity.name),
     iconPath: amenity.iconPath,
     note: amenity.shortDescription,
     longNote: amenity.longDescription,
   }));
-  return features.map((title) => ({ title, icon: iconFor(title) }));
+  return features.map((title) => ({ title, icon: tourIconForTitle(title) }));
 }
