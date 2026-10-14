@@ -24,6 +24,7 @@ import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
 import { RoomPhotoTour } from "@/journey/RoomPhotoTour";
 import { toPhotoTourRoom } from "@/data/photoTourRooms";
 import { isStudioRoute } from "@/studio/runtime";
+import { currentStudioLayout } from "@/studio/roomLayout";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type {
@@ -100,8 +101,16 @@ export function Results() {
   } = useBooking();
 
   const [data, setData] = useState<AvailabilityResponse | null>(null);
-  const [photoLayout, setPhotoLayout] = useState(() => isStudioRoute() && new URLSearchParams(window.location.search).get("roomLayout") === "photo");
+  const [photoLayout, setPhotoLayout] = useState(() => isStudioRoute() && currentStudioLayout() === "photo");
   const [tourDetailsId, setTourDetailsId] = useState<string | null>(null);
+  useEffect(() => {
+    if (isStudioRoute()) return;
+    let alive = true;
+    api.locations().then(locations => {
+      if (alive) setPhotoLayout((locations.hotel?.productionLayout ?? "card") === "photo");
+    });
+    return () => { alive = false; };
+  }, []);
   useEffect(() => {
     const update = () => setPhotoLayout(isStudioRoute() && new URLSearchParams(window.location.search).get("roomLayout") === "photo");
     window.addEventListener("studio-room-layout-change", update);
