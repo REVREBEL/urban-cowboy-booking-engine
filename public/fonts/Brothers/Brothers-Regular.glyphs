@@ -2,7 +2,7 @@
 .appVersion = "128";
 copyright = "Copyright (C) 1999, Emigre, Inc. Designed by John Downer";
 date = "1904-01-01 00:00:00 +0000";
-familyName = "Brothers OT";
+familyName = "Brothers";
 featurePrefixes = (
 {
 automatic = 1;

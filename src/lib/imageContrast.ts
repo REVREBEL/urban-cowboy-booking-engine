@@ -50,46 +50,19 @@ function resolvedRegion(region: ImageContrastRegion) {
   };
 }
 
-// Bolt performance optimization: Pre-compute sRGB to linear conversion for all 256 possible byte values (0-255).
-// Eliminates tens of thousands of Math.pow(..., 2.4) calls per image analysis frame.
-const SRGB_TO_LINEAR_LUT = new Float64Array(256);
-for (let i = 0; i < 256; i++) {
-  const channel = i / 255;
-  SRGB_TO_LINEAR_LUT[i] =
-    channel <= 0.04045
-      ? channel / 12.92
-      : Math.pow((channel + 0.055) / 1.055, 2.4);
+function srgbToLinear(value: number): number {
+  const channel = value / 255;
+  return channel <= 0.04045
+    ? channel / 12.92
+    : Math.pow((channel + 0.055) / 1.055, 2.4);
 }
 
 function pixelLuminance(r: number, g: number, b: number): number {
   return (
-    0.2126 * SRGB_TO_LINEAR_LUT[r] +
-    0.7152 * SRGB_TO_LINEAR_LUT[g] +
-    0.0722 * SRGB_TO_LINEAR_LUT[b]
+    0.2126 * srgbToLinear(r) +
+    0.7152 * srgbToLinear(g) +
+    0.0722 * srgbToLinear(b)
   );
-}
-
-// Bolt performance optimization: Reuse a single canvas context across analyses
-// to avoid repeated DOM element creation (document.createElement("canvas")) on every frame/render.
-let sharedCanvasContext: CanvasRenderingContext2D | null = null;
-
-function getAnalysisContext(sampleSize: number): CanvasRenderingContext2D | null {
-  if (typeof document === "undefined") return null;
-
-  if (!sharedCanvasContext) {
-    const canvas = document.createElement("canvas");
-    canvas.width = sampleSize;
-    canvas.height = sampleSize;
-    sharedCanvasContext = canvas.getContext("2d", { willReadFrequently: true });
-  } else {
-    const canvas = sharedCanvasContext.canvas;
-    if (canvas.width !== sampleSize || canvas.height !== sampleSize) {
-      canvas.width = sampleSize;
-      canvas.height = sampleSize;
-    }
-  }
-
-  return sharedCanvasContext;
 }
 
 /**
@@ -110,7 +83,11 @@ export function analyzeImageContrast(
     return { tone: "dark", luminance: 0 };
   }
 
-  const context = getAnalysisContext(sampleSize);
+  const canvas = document.createElement("canvas");
+  canvas.width = sampleSize;
+  canvas.height = sampleSize;
+
+  const context = canvas.getContext("2d", { willReadFrequently: true });
   if (!context) return { tone: "dark", luminance: 0 };
 
   const sourceAspect = image.naturalWidth / image.naturalHeight;

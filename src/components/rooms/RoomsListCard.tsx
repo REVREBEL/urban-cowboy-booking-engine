@@ -216,7 +216,7 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           {bodySlot ??
             (cardDescription ? (
               <p
-                className="room-list-card__description mb-4 line-clamp-3 font-body text-xs leading-[22px] sm:text-sm sm:leading-[23px] md:line-clamp-4"
+                className="room-list-card__description mb-4 line-clamp-3 font-body text-xs leading-5.5 sm:text-sm sm:leading-5.75 md:line-clamp-4"
               >
                 {cardDescription}
               </p>

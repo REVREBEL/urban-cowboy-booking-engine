@@ -124,6 +124,8 @@ const renderedPaths = new Set([
   "src/components/ui/tabs.tsx",
 ]);
 
+// Inventory needs file paths only. Use raw-source imports so this catalog does not
+// dynamically import executable modules already loaded by its live previews.
 const componentModules = import.meta.glob([
   "../components/**/*.tsx",
   "../steps/**/*.tsx",
@@ -134,7 +136,7 @@ const componentModules = import.meta.glob([
   "!../components/booking/summary/CheckoutStep.tsx",
   "!../components/booking/summary/ExtrasStep.tsx",
   "!../components/rates/RideEasySoloPage.tsx",
-]);
+], { query: "?raw", import: "default" });
 
 const allComponentPaths = Object.keys(componentModules)
   .map((path) => path.replace("../", "src/"))
@@ -202,7 +204,7 @@ function Preview({
           View source
         </a>
       </header>
-      <div className={`overflow-auto ${surfaceClasses[surface]} ${tall ? "max-h-[760px]" : ""}`}>
+      <div className={`overflow-auto ${surfaceClasses[surface]} ${tall ? "max-h-190" : ""}`}>
         <div className="min-w-max p-6 md:p-8">{children}</div>
       </div>
     </article>
@@ -244,7 +246,7 @@ function Toolbar({
 
   return (
     <div className="sticky top-0 z-40 border-b border-cowboy-umber/10 bg-paper/95 px-4 py-3 backdrop-blur md:px-6">
-      <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-3">
+      <div className="mx-auto flex max-w-375 flex-wrap items-center justify-between gap-3">
         <div>
           <p className="font-label text-xs uppercase tracking-[0.18em] text-cowboy-umber">Component Library</p>
           <p className="text-[11px] text-ash-900">Canonical components only · development surface</p>
@@ -657,7 +659,7 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
           path="src/components/booking/results/MatchBenefitsCard.tsx"
           surface="cream"
         >
-          <div className="w-[448px]">
+          <div className="w-md">
             <MatchBenefitsCard
               room={demoMatchRoom}
               reasons={[
@@ -673,7 +675,7 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
           path="src/components/booking/summary/stay-summary.tsx"
           surface={surface}
         >
-          <div className="w-[420px]">
+          <div className="w-105">
             <StaySummary {...demoStaySummary} />
           </div>
         </Preview>
@@ -755,8 +757,8 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
               <h2 className="mt-1 font-heading text-4xl">Heading · DesertRain</h2>
             </div>
             <p className="text-base">Body · Uchen Regular. Built for the quieter reading moments between decisions.</p>
-            <p className="font-label text-sm uppercase">Label · Brothers OT</p>
-            <Button variant="outline" color="dark">Button · Brothers OT</Button>
+            <p className="font-label text-sm uppercase">Label · Brothers</p>
+            <Button variant="outline" color="dark">Button · Brothers</Button>
             <p className="font-number text-2xl">$425.00 · Oct 14–17 · 2 Guests</p>
             <blockquote className="text-3xl">Blockquote · Cedarville</blockquote>
           </div>
@@ -937,7 +939,7 @@ export default function ComponentLibrary() {
     <div className="min-h-screen bg-alpine-linen-fade text-cowboy-umber">
       <Toolbar width={width} onWidth={setWidth} surface={surface} onSurface={setSurface} />
 
-      <div className="mx-auto grid max-w-[1500px] gap-8 px-4 py-8 md:px-6 lg:grid-cols-[230px_minmax(0,1fr)]">
+      <div className="mx-auto grid max-w-375 gap-8 px-4 py-8 md:px-6 lg:grid-cols-[230px_minmax(0,1fr)]">
         <aside className="hidden lg:block">
           <div className="sticky top-24 rounded-2xl border border-cowboy-umber/10 bg-white p-4">
             <div className="mb-4 border-b border-cowboy-umber/10 pb-4">

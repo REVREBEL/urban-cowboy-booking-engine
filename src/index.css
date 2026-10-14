@@ -1,52 +1,63 @@
-@tailwind base;
-@tailwind utilities;
-
+/* Tailwind v4 provides its own preflight, theme, and utility layers. */
 @import "tailwindcss";
 
-/* ==========================================================================
+@theme inline {
+  --color-j-night: var(--smoke);
+}
+
+/*
+ * Lovable Photo Engine theme. Register these utilities in the actual
+ * Tailwind entrypoint, not only in a component CSS file. The --j-* values
+ * are scoped to .photo-journey in room-photo-tour.css.
+ */
+/** @theme inline {} */
+
+/** ==========================================================================
 
 Tailwind CSS v4 Theme Token Registration
 All tokens here automatically generate utility classes (e.g. bg-copper,
 text-cowboy-umber, font-heading, shadow-card).
-========================================================================== /
+========================================================================== */
 
-/Brand Color Palette */
+/** Brand Color Palette */
 
 @theme {
---color-cowboy-umber: #4e332d;
---color-cowboy-umber-100: #958581;
---color-alpine-linen: #EBE8E0
---color-lodge-yellow: #fddc4e;
---color-ash: #ccc7bb;
---color-paper: #faf9f9;
+--color-cowboy-umber: oklch(35.125% 0.04088 32.97);
+--color-cowboy-umber-100: oklch(62.988% 0.02039 34.138);
+--color-alpine-linen: oklch(93.112% 0.01107 89.719);
+--color-lodge-yellow: oklch(89.776% 0.15849 95.795);
+--color-ash: oklch(83.035% 0.01728 88.003);
+--color-paper: oklch(98.288% 0.00104 11.251);
 
---color-whiskey-sour: #ddc5a4;
---color-smoke: #221c18;
---color-smoke-fade: #717470;
---color-mist: #f2f2f2;
---color-copper: #9a5636;
---color-oxblood: #69253a;
---color-bandana-red: #d65241;
---color-bandana-red-fade: #b83d2e;
---color-oxidized-teal: #236b7d;
---color-nude-ember: #f2aaa9;
---color-lake-forest: #0e301a;
---color-lake-forest-100: #566e5f;
---color-lake-forest-300: #3e5948;
---color-oxblood-300: #875161;
---color-ash-900: #7a7770;
---color-alpine-linen-fade: #f1efe9;
---color-lodge-yellow-fade: #fee783;
+--color-whiskey-sour: oklch(83.522% 0.0518 75.687);
+--color-smoke: oklch(23.203% 0.01205 55.648);
+--color-smoke-fade: oklch(55.51% 0.00703 138.16);
+--color-mist: oklch(96.115% 0.00011 271.152);
+--color-copper: oklch(52.608% 0.10105 45.07);
+--color-oxblood: oklch(37.197% 0.09934 4.073);
+--color-bandana-red: oklch(61.112% 0.16959 30.026);
+--color-bandana-red-fade: oklch(53.449% 0.16143 30.123);
+--color-oxidized-teal: oklch(49.173% 0.07482 217.863);
+--color-nude-ember: oklch(80.633% 0.08523 19.941);
+--color-lake-forest: oklch(27.726% 0.05667 152.427);
+--color-lake-forest-100: oklch(51.426% 0.03691 157.484);
+--color-lake-forest-300: oklch(43.692% 0.04288 156.575);
+--color-oxblood-300: oklch(50.15% 0.07502 0.968);
+--color-ash-900: oklch(56.976% 0.01111 87.496);
+--color-alpine-linen-fade: oklch(95.201% 0.00816 91.496);
+--color-lodge-yellow-fade: oklch(92.615% 0.12307 96.736);
 
+  /* paper */
+--color-paper-fade: oklch(90.748% 0.00106 11.828);
 
---color-alpine-linen-200: #F1EFE9;
---color-alpine-linen-500: #EBE8E0;
---color-alpine-linen-700: #d9d7d2;
---color-alpine-linen-900: #c1bfba; 
+  /* alpine-linen */
+  --color-alpine-linen-fade: var(--color-alpine-linen-200);
+  --color-alpine-linen-200: oklch(95.201% 0.00816 91.496);
+  --color-alpine-linen-500: oklch(93.112% 0.01107 89.719);
+  --color-alpine-linen-700: oklch(87.933% 0.00704 88.619);
+  --color-alpine-linen-900: oklch(80.483% 0.00721 88.629);
 
---color-alpine-linen: var(--color-alpine-linen-500);
---color-alpine-linen-fade: var(--color-alpine-linen-200);
-
+  /* bandana-red */
   --color-bandana-red-400: #DA6354;
   --color-bandana-red-500: #D65241;
   --color-bandana-red-600: #C14A3B;
@@ -54,9 +65,8 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-bandana-red-800: #96392E;
   --color-bandana-red-900: #803127;
   --color-bandana-red-950: #6B2921;
-  --color-bandana-red: var(--color-bandana-red-500);
   --color-bandana-red-fade: rgb(214 82 65 / 70%);
-  --color-bandana-red-inverse: #D65241;
+  --color-bandana-red-inverse: oklch(61.112% 0.16959 30.026);
   --color-bandana-red-inverse-fade: #D65241;
 
   /* copper */
@@ -71,7 +81,6 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-copper-800: #6C3C26;
   --color-copper-900: #5C3420;
   --color-copper-950: #4D2B1B;
-  --color-copper: var(--color-copper-500);
   --color-copper-fade: var(--color-copper-200);
   --color-copper-inverse: var(--color-alpine-linen);
   --color-copper-inverse-fade: var(--color-alpine-linen-fade);
@@ -88,7 +97,6 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-oxblood-800: #4A1A29;
   --color-oxblood-900: #3F1623;
   --color-oxblood-950: #35131D;
-  --color-oxblood: var(--color-oxblood-500);
   --color-oxblood-fade: rgb(150 102 117 / 70%);
   --color-oxblood-inverse: var(--color-alpine-linen);
   --color-oxblood-inverse-fade: var(--color-alpine-linen-fade);
@@ -105,26 +113,24 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-oxidized-teal-800: #194B58;
   --color-oxidized-teal-900: #15404B;
   --color-oxidized-teal-950: #12363F;
-  --color-oxidized-teal: var(--color-oxidized-teal-500);
   --color-oxidized-teal-fade: var(--color-oxidized-teal-200);
   --color-oxidized-teal-inverse: #FFFFFF;
   --color-oxidized-teal-inverse-fade: #FFFFFF;
 
   /* lake-forest */
-  --color-lake-forest-50: #87988D;
-  --color-lake-forest-100: #6E8376;
-  --color-lake-forest-200: #566E5F;
-  --color-lake-forest-300: #3E5948;
-  --color-lake-forest-400: #264531;
-  --color-lake-forest-500: #0E301A;
-  --color-lake-forest-600: #0D2B17;
-  --color-lake-forest-700: #0B2615;
-  --color-lake-forest-800: #0A2212;
+  --color-lake-forest-50: oklch(66.287% 0.02518 157.442);
+  --color-lake-forest-100: oklch(58.922% 0.03132 158.234);
+  --color-lake-forest-200: oklch(51.426% 0.03691 157.484);
+  --color-lake-forest-300: oklch(43.692% 0.04288 156.575);
+  --color-lake-forest-400: oklch(35.974% 0.05097 154.703);
+  --color-lake-forest-500: oklch(27.726% 0.05667 152.427);
+  --color-lake-forest-600: oklch(25.984% 0.05193 152.019);
+  --color-lake-forest-700: oklch(24.195% 0.04646 153.471);
+  --color-lake-forest-800: oklch(22.733% 0.04333 152.355);
   --color-lake-forest-900: #081D10;
-  --color-lake-forest-950: #07180D;
-  --color-lake-forest: var(--color-lake-forest-500);
+  --color-lake-forest-950: oklch(19.003% 0.03243 154.093);
   --color-lake-forest-fade: var(--color-lake-forest-200);
-  --color-lake-forest-inverse: var(--color-paper);
+  --color-lake-forest-inverse: var(--color-paper) ;
   --color-lake-forest-inverse-fade: var(--color-paper-fade);
 
   /* cowboy-umber */
@@ -142,7 +148,7 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-cowboy-umber: var(--color-cowboy-umber-500);
   --color-cowboy-umber-fade: var(--color-cowboy-umber-200);
   --color-cowboy-umber-inverse: var(--color-alpine-linen);
-  --color-cowboy-umber-inverse-fade: rgb(235 232 224 / 70%);
+  --color-cowboy-umber-inverse-fade: var(--color-alpine-linen-fade);
 
   /* smoke */
   --color-smoke-50: #9A9C99;
@@ -161,19 +167,17 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-smoke-inverse: var(--color-paper);
   --color-smoke-inverse-fade: var(--color-paper-fade);
 
-
-
 /* Typography Families */
 --font-body: "Uchen", Georgia, serif;
+--font-headline: "DesertRain", Georgia, serif;
 --font-heading: "DesertRain", Georgia, serif;
---font-subheading: "BrothersOT", "League Spartan", sans-serif;
---font-button: "BrothersOT", "League Spartan", sans-serif;
---font-label: "BrothersOT", "League Spartan", sans-serif;
+--font-subheading: "Brothers", "League Spartan", sans-serif;
+--font-button: "Brothers", "League Spartan", sans-serif;
+--font-label: "Brothers", "League Spartan", sans-serif;
 --font-eyebrow: "Bianco Sans", "League Spartan", sans-serif;
 --font-number: "Bianco Sans", "League Spartan", sans-serif;
 --font-blockquote: "Cedarville", cursive;
 --font-emoji: "Noto Emoji", sans-serif;
-
 
 /* Custom Radii & Shadows */
 --radius-xl2: 1rem;
@@ -216,15 +220,13 @@ text-cowboy-umber, font-heading, shadow-card).
 --muted: oklch(0.9311 0.0112 89.7258);
 --muted-foreground: oklch(0.2320 0.0121 55.7153);
 
---color-emphasis: var(--color-cowboy-umber-200)
+--color-emphasis: var(--color-cowboy-umber-200);
 
+--color-error: oklch(61.112% 0.16959 30.026);
 --destructive:  oklch(61.112% 0.16959 30.026);
 --destructive-foreground: oklch(0.9829 0.0011 17.1780);
 
-
-
 --ring: oklch(0.2773 0.0567 152.3989);
-
 --sidebar: oklch(0.2773 0.0567 152.3989);
 --sidebar-foreground: oklch(0.9829 0.0011 17.1780);
 --sidebar-primary: oklch(0.9829 0.0011 17.1780);
@@ -233,8 +235,6 @@ text-cowboy-umber, font-heading, shadow-card).
 --sidebar-accent-foreground: oklch(0.9829 0.0011 17.1780);
 --sidebar-border: oklch(0.9829 0.0011 17.1780);
 --sidebar-ring: oklch(0.9829 0.0011 17.1780);
-
-
 
   --radius: 0px;
   --shadow-x: 0px;
@@ -254,13 +254,11 @@ text-cowboy-umber, font-heading, shadow-card).
   --tracking-normal: 0.02em;
   --spacing: 0.25rem;
 
-
 --color-background: var(--color-mist);
 --color-foreground: var(--color-lake-forest);
 
---color-accent: var(--color-lake-forest-fade);;
+--color-accent: var(--color-lake-forest-fade);
 --accent-foreground: oklch(0.9829 0.0011 17.1780);
-
 
 --color-input-bg: var(--color-paper);
 --color-input-border: var(--color-lake-forest);
@@ -275,7 +273,6 @@ text-cowboy-umber, font-heading, shadow-card).
 --color-button-secondary-bg: var(--color-alpine-linen);
 --color-button-secondary-foreground: vvar(--color-lake-forest);
 --color-button-secondary-hover-bg: var(--color-alpine-linen-200);
-
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -292,24 +289,15 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
 
+  /* Semantic colors registered with Tailwind v4 utilities. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-button-primary-bg: var(--button-primary-bg);
+  --color-button-primary-foreground: var(--button-primary-foreground);
 
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-
-
-
-
-/* Semantic colors registered with Tailwind v4 utilities. */
---color-background: var(--background);
---color-foreground: var(--foreground);
---color-accent: var(--accent);
---color-input-bg: var(--input-bg);
---color-input-border: var(--input-border);
---color-button-primary-bg: var(--button-primary-bg);
---color-button-primary-foreground: var(--button-primary-foreground);
-
-
-  
 }
 
 /* Semantic theme variables shared by the booking UI. */
@@ -317,10 +305,10 @@ text-cowboy-umber, font-heading, shadow-card).
   --background: var(--color-mist);
   --foreground: var(--color-lake-forest);
   --accent: var(--color-lake-forest-fade);
-  --input-bg: var(--color-paper);
+  --input-bg: var(--color-paper) ;
   --input-border: var(--color-lake-forest);
   --button-primary-bg: var(--color-lake-forest);
-  --button-primary-foreground: var(--color-mist);
+  --button-primary-foreground: var(--color-color-mist);
   --button-primary-hover-bg: var(--color-lake-forest-100);
 
   /* Shared data and booking-progress palette. */
@@ -344,11 +332,11 @@ text-cowboy-umber, font-heading, shadow-card).
   --calendar-date-rate-foreground: color-mix(in srgb, var(--foreground) 65%, transparent);
   --calendar-date-rate-unavailable-foreground: color-mix(in srgb, var(--foreground) 30%, transparent);
   --calendar-date-focus-ring: var(--color-copper);
-  --calendar-date-ring-offset-bg: var(--color-paper);
+  --calendar-date-ring-offset-bg: var(--color-paper) ;
   --calendar-tooltip-bg: var(--color-lake-forest);
-  --calendar-tooltip-foreground: var(--color-paper);
+  --calendar-tooltip-foreground: var(--color-paper) ;
 
---_typography---font-family--button: "BrothersOT", "Brothers OT", "Brothers", "Rockwell", "Clarendon", Georgia, serif;
+--_typography---font-family--button: "Brothers", "Brothers", "Brothers", "Rockwell", "Clarendon", Georgia, serif;
 --_typography---text-size--xs: clamp(0.85rem, 0.82rem + 0.12vw, 0.95rem);
 --_typography---text-size--sm: clamp(0.95rem, 0.92rem + 0.12vw, 1.05rem);
 --_typography---text-size--base: clamp(1.05rem, 1rem + 0.12vw, 1.15rem);
@@ -430,22 +418,22 @@ font-style: normal;
 font-display: swap;
 }
 @font-face {
-font-family: "BrothersOT";
-src: url("/fonts/BrothersOT/BrothersOT-Regular.woff2") format("woff2");
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Regular.woff2") format("woff2");
 font-weight: 400;
 font-style: normal;
 font-display: swap;
 }
 @font-face {
-font-family: "BrothersOT";
-src: url("/fonts/BrothersOT/BrothersOT-Bold.woff2") format("woff2");
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Bold.woff2") format("woff2");
 font-weight: 700;
 font-style: normal;
 font-display: swap;
 }
 @font-face {
-font-family: "BrothersOT";
-src: url("/fonts/BrothersOT/BrothersOT-Italic.woff2") format("woff2");
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Italic.woff2") format("woff2");
 font-weight: 400;
 font-style: italic;
 font-display: swap;
@@ -546,7 +534,7 @@ aspect-ratio: 500 / 1038;
 overflow: hidden;
 --rate-card-radius: 50px;
 border-radius: var(--rate-card-radius);
-background: var(--color-paper);
+background: var(--paper) ;
 }
 
 .rate-card-artwork {
@@ -659,7 +647,7 @@ transform-origin: top left;
 position: relative;
 isolation: isolate;
 overflow: hidden;
-background: var(--color-paper);
+background: var(--paper) ;
 }
 
 .horizontal-rate-card-artwork {
@@ -771,7 +759,7 @@ line-height: 1.35;
 
 .checkout-field {
 width: 100%;
-border: 2px solid var(--color-alpine-linen);
+border: 2px solid var(--alpine-linen);
 border-radius: 0.75rem;
 background: #ffffff;
 padding: 0.75rem 1rem;
@@ -795,21 +783,21 @@ color: rgb(107 98 89 / 0.55);
 
 
 [data-card-theme="paper"] {
-  --card-bg: var(--color-paper);
-  --card-border: var(--color-lake-forest);
-  --card-title: var(--color-lake-forest);
-  --card-text: var(--color-lake-forest);
+  --card-bg: var(--paper) ;
+  --card-border: var(--lake-forest);
+  --card-title: var(--lake-forest);
+  --card-text: var(--lake-forest);
   --card-accent: var(--color-lake-forest-300);
   --card-pill: var(--color-lake-forest-300);
-  --card-primary-bg: var(--color-paper);
-  --card-primary-text: var(--color-lake-forest);
-  --card-primary-hover: color-mix(in srgb, var(--color-paper) 82%, black);
-  --card-secondary-hover: color-mix(in srgb, var(--color-paper) 10%, transparent);
+  --card-primary-bg: var(--paper) ;
+  --card-primary-text: var(--lake-forest);
+  --card-primary-hover: color-mix(in srgb, var(--paper)  82%, black);
+  --card-secondary-hover: color-mix(in srgb, var(--paper)  10%, transparent);
 }
 
 [data-card-theme="copper"] {
-  --card-bg: var(--color-alpine-linen);
-  --card-border: var(--color-alpine-linen);
+  --card-bg: var(--alpine-linen);
+  --card-border: var(--alpine-linen);
   --card-title: var(--color-smoke);
   --card-text: var(--color-smoke);
   --card-accent: color-mix(in srgb, var(--color-smoke) 78%, black);
@@ -821,18 +809,18 @@ color: rgb(107 98 89 / 0.55);
 }
 
 [data-card-theme="lake-forest"] {
-  --card-bg: var(--color-lake-forest);
-  --card-border: var(--color-lake-forest);
-  --card-title: var(--color-paper);
-  --card-text: var(--color-paper);
-  --card-accent: var(--color-alpine-linen);
-  --card-pill: var(--color-paper);
-  --card-primary-bg: var(--color-alpine-linen);
-  --card-primary-text: var(--color-lake-forest);
+  --card-bg: var(--lake-forest);
+  --card-border: var(--lake-forest);
+  --card-title: var(--paper) ;
+  --card-text: var(--paper) ;
+  --card-accent: var(--alpine-linen);
+  --card-pill: var(--paper) ;
+  --card-primary-bg: var(--alpine-linen);
+  --card-primary-text: var(--lake-forest);
   --card-primary-hover:
-    color-mix(in srgb, var(--color-alpine-linen) 85%, var(--color-paper));
+    color-mix(in srgb, var(--alpine-linen) 85%, var(--paper) );
   --card-secondary-hover:
-    color-mix(in srgb, var(--color-alpine-linen) 10%, transparent);
+    color-mix(in srgb, var(--alpine-linen) 10%, transparent);
 }
 
 .room-list-card {

@@ -28,7 +28,16 @@ export const ROOM_IMAGE_ASSETS = {
   ALPINE_HEADBOARD:
     'https://res.cloudinary.com/revrebel/image/upload/v1790024888/cowboy/Alpine_Headboard_xh3syd.jpg',
   ALPINE_BATHING_SUITE:
-    'https://res.cloudinary.com/revrebel/image/upload/v1790024884/cowboy/Alpine_Bathing_Suite_wosvih.jpg'
+    'https://res.cloudinary.com/revrebel/image/upload/v1790024884/cowboy/Alpine_Bathing_Suite_wosvih.jpg',
+
+    // Cabin
+  CABIN_BEDŞ:
+    'https://res.cloudinary.com/revrebel/image/upload/v1791950143/cowboy/Cabin_Haus_Rooms_001_yzucui.jpg',
+  CABIN_SITTING_AREA_SOAKING_TUB:
+    'https://res.cloudinary.com/revrebel/image/upload/v1791950143/cowboy/Cabin_003_bpppqa.jpg',
+  CABIN_SIDE_VIEW_SITTING_AREA:
+  'https://res.cloudinary.com/revrebel/image/upload/v1791950073/cowboy/001_-_Grand_Cabin_-_Premium_bedding_down_comforters_memory_foam_beds_minibar_a2f8f641_dmxkxh.jpg',
+
 } as const;
 
 export type RoomImageAssetKey = keyof typeof ROOM_IMAGE_ASSETS;
@@ -37,7 +46,7 @@ export interface RoomImagePlaceholder {
   id: string;
   assetKey: RoomImageAssetKey;
   title: string;
-  buildingId: 'alpine' | 'walden' | 'lodge';
+  buildingId: 'alpine' | 'walden' | 'lodge' | 'cabin';
   buildingName: string;
   url: string;
   description: string;
@@ -132,7 +141,46 @@ export const ROOM_IMAGE_PLACEHOLDERS: RoomImagePlaceholder[] = [
       'Generous living room and private parlor with wet bar, hearth fireplace, and mountain view deck.',
     caption: 'Private timber living parlor with cocktail bar and comfortable fireside seating.',
     tags: ['living-room', 'wet-bar', 'gathering', 'parlor', 'lodge']
+  },
+  {
+    id: 'cabin',
+    assetKey: 'CABIN_BEDŞ',
+    title: 'The Lodge Penthouse Living Room & Parlor',
+    buildingId: 'cabin',
+    buildingName: 'The Cabin',
+    url: ROOM_IMAGE_ASSETS.CABIN_BEDŞ,
+    description:
+      'Generous living room and private parlor with wet bar, hearth fireplace, and mountain view deck.',
+    caption: 'Private timber living parlor with cocktail bar and comfortable fireside seating.',
+    tags: ['living-room', 'wet-bar', 'gathering', 'parlor', 'lodge']
+  },
+    {
+    id: 'cabin-sitting-area-soaking-tub',
+    assetKey: 'CABIN_SITTING_AREA_SOAKING_TUB',
+    title: 'The Lodge Penthouse Living Room & Parlor',
+    buildingId: 'cabin',
+    buildingName: 'The Cabin',
+    url: ROOM_IMAGE_ASSETS.CABIN_SITTING_AREA_SOAKING_TUB,
+    description:
+      'Generous living room and private parlor with wet bar, hearth fireplace, and mountain view deck.',
+    caption: 'Private timber living parlor with cocktail bar and comfortable fireside seating.',
+    tags: ['living-room', 'wet-bar', 'gathering', 'parlor', 'lodge']
+  },
+    {
+    id: 'cabin-side-view-sitting-area',
+    assetKey: 'CABIN_SIDE_VIEW_SITTING_AREA',
+    title: 'The Lodge Penthouse Living Room & Parlor',
+    buildingId: 'cabin',
+    buildingName: 'The Cabin',
+    url: ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA,
+    description:
+      'Generous living room and private parlor with wet bar, hearth fireplace, and mountain view deck.',
+    caption: 'Private timber living parlor with cocktail bar and comfortable fireside seating.',
+    tags: ['living-room', 'wet-bar', 'gathering', 'parlor', 'lodge']
   }
+
+
+
 ];
 
 /**
@@ -188,6 +236,13 @@ export function getRoomImagesByRoomId(roomId: string): string[] {
         ROOM_IMAGE_ASSETS.LODGE_PENTHOUSE_LIVING_ROOM,
         ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE
       ];
+    case 'cabin':
+    return [
+      ROOM_IMAGE_ASSETS.CABIN_BEDŞ,
+      ROOM_IMAGE_ASSETS.CABIN_SITTING_AREA_SOAKING_TUB,
+      ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA,
+
+    ]
     default:
       return [
         ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE,

@@ -158,7 +158,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                 <h3 
                   id="addon-modal-title"
                   className="font-label text-xl sm:text-2xl lg:text-3xl 2xl:text-4xl text-smoke uppercase tracking-[-0.4px] leading-tight"
-                  style={{ fontFamily: "'BrothersOT', 'Cinzel', serif" }}
+                  style={{ fontFamily: "'Brothers', 'Cinzel', serif" }}
                 >
                   {addon.name}
                 </h3>
@@ -269,7 +269,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                         </span>
                         {!isGift && (
                           <span className="w-6 h-6 2xl:w-7 2xl:h-7 rounded-full bg-lake-forest text-white flex items-center justify-center shrink-0">
-                            <Check className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 stroke-[3]" />
+                            <Check className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 stroke-3" />
                           </span>
                         )}
                       </div>
@@ -306,7 +306,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                         </span>
                         {isGift && (
                           <span className="w-6 h-6 2xl:w-7 2xl:h-7 rounded-full bg-lake-forest text-white flex items-center justify-center shrink-0">
-                            <Check className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 stroke-[3]" />
+                            <Check className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 stroke-3" />
                           </span>
                         )}
                       </div>
@@ -394,7 +394,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                           }`}
                         >
                           <span>{timeOption}</span>
-                          {isSelected && <Check className="w-4 h-4 2xl:w-5 2xl:h-5 text-cowboy-umber stroke-[3]" />}
+                          {isSelected && <Check className="w-4 h-4 2xl:w-5 2xl:h-5 text-cowboy-umber stroke-3" />}
                         </button>
                       );
                     })}

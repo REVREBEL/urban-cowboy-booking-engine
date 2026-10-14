@@ -163,7 +163,7 @@ export function RoomMatcherPage({
                         />
                         {selected ? (
                           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-lake-forest text-white">
-                            <Check className="h-3.5 w-3.5 stroke-[3]" aria-hidden="true" />
+                            <Check className="h-3.5 w-3.5 stroke-3" aria-hidden="true" />
                           </span>
                         ) : null}
                       </div>
@@ -324,7 +324,7 @@ export function RoomMatcherPage({
 
                     {selected ? (
                       <span className="absolute right-3.5 top-3.5 flex h-7 w-7 items-center justify-center rounded-full bg-lake-forest text-white shadow-md sm:right-4 sm:top-4 sm:h-8 sm:w-8">
-                        <Check className="h-4 w-4 stroke-[3]" aria-hidden="true" />
+                        <Check className="h-4 w-4 stroke-3" aria-hidden="true" />
                       </span>
                     ) : null}
                   </button>

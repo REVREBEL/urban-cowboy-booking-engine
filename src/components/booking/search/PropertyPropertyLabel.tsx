@@ -64,7 +64,7 @@ export const PropertyPropertyLabel: React.FC<PropertyPropertyLabelProps> = ({
         ${className}
       `}
       style={{
-        fontFamily: "'DesertRain', 'Brothers OT', 'League Spartan', sans-serif",
+        fontFamily: "'DesertRain', 'Brothers', 'League Spartan', sans-serif",
         fontStyle: 'normal',
         fontWeight: 700,
         fontSize: '12px',
@@ -157,7 +157,7 @@ export default function PropertyPropertyLabelShowcase() {
       <div className="text-center max-w-md">
         <h1
           className="text-2xl font-bold mb-2 tracking-wide text-smoke"
-          style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+          style={{ fontFamily: "'Brothers', 'League Spartan', sans-serif" }}
         >
           PROPERTY PROPERTY LABEL
         </h1>

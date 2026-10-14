@@ -21,6 +21,11 @@ import { StudioMatchResults } from "./StudioMatchResults";
 import { RoomsListCard, type RoomCardTheme } from "@/components/rooms/RoomsListCard";
 import { BuildingExperienceList } from "@/components/rooms/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
+import type { RoomResultsLayout } from "@/studio/roomLayout";
+import { PhotoJournal } from "@/journey/PhotoJournal";
+import { PhotoRooms } from "@/journey/PhotoRooms";
+import type { MatchProfile } from "@/journey/data";
+import { getPhotoProfile, savePhotoProfile, setPhotoPath } from "@/journey/photoSession";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type {
@@ -69,7 +74,7 @@ function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
   };
 }
 
-export function Results() {
+export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayout }) {
   const {
     hotel,
     hotelError,
@@ -97,17 +102,29 @@ export function Results() {
   } = useBooking();
 
   const [data, setData] = useState<AvailabilityResponse | null>(null);
+  const photoLayout = roomLayout === "photo";
+  const [journalProfile, setJournalProfile] = useState<MatchProfile | null>(getPhotoProfile);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openRoom, setOpenRoom] = useState<ShapedRoom | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   // Accordéons « autres hébergements » (ouverts/fermés par clé d'hébergement).
   const [openProps, setOpenProps] = useState<string[]>([]);
-  const [discoveryView, setDiscoveryView] = useState<"explore" | "matcher" | "matches" | "rooms">(() =>
-    typeof window !== "undefined" && new URLSearchParams(window.location.search).has("interest")
-      ? "matches"
-      : "explore",
-  );
+  const [discoveryView, setDiscoveryView] = useState<"explore" | "matcher" | "matches" | "rooms" | "journal">(() => {
+    const query = new URLSearchParams(window.location.search);
+    if (photoLayout) return query.get("photoPath") === "journal" ? "journal" : "rooms";
+    return query.has("interest") ? "matches" : "explore";
+  });
+  useEffect(() => {
+    if (photoLayout) {
+      setDiscoveryView((current) =>
+        current === "explore" || current === "matcher" || current === "matches"
+          ? new URLSearchParams(window.location.search).get("photoPath") === "journal" ? "journal" : "rooms"
+          : current);
+    } else if (discoveryView === "journal") {
+      setDiscoveryView("explore");
+    }
+  }, [photoLayout, discoveryView]);
   const [quizPreferences, setQuizPreferences] = useState<DiscoveryPreferences | null>(null);
   const [showMatcherModal, setShowMatcherModal] = useState(false);
   const [matchBackView, setMatchBackView] = useState<"matcher" | "rooms">("matcher");
@@ -307,6 +324,32 @@ export function Results() {
     setDiscoveryView("matches");
   }
 
+  if (photoLayout && discoveryView === "journal") {
+    return (
+      <div className="min-h-dvh bg-smoke text-paper font-body">
+        <PhotoJournal
+          adults={adults}
+          children={children}
+          rooms={rooms}
+          imageBaseUrl={imageBaseUrl}
+          initial={journalProfile}
+          onDone={(profile) => {
+            savePhotoProfile(profile);
+            setJournalProfile(profile);
+            setPhotoPath("rooms");
+            setDiscoveryView("rooms");
+          }}
+          onSkip={() => {
+            savePhotoProfile(null);
+            setJournalProfile(null);
+            setPhotoPath("rooms");
+            setDiscoveryView("rooms");
+          }}
+        />
+      </div>
+    );
+  }
+
   // Date search opens the visual match-or-browse decision first. The imported
   // mockup components are adapters only; live Mews inventory and our canonical
   // matching rules remain the source of truth.
@@ -372,8 +415,39 @@ export function Results() {
   }
 
   if (discoveryView === "rooms") {
+    if (photoLayout) {
+      if (loading) return (
+        <div className="grid min-h-[65dvh] place-items-center bg-smoke px-5 pt-24 text-paper" role="status">
+          <p className="font-heading text-2xl">Finding rooms for your dates…</p>
+        </div>
+      );
+      if (error || hotelError) return (
+        <div className="grid min-h-[65dvh] place-items-center bg-smoke px-5 pt-24 text-paper">
+          <div className="text-center">
+            <h2 className="font-heading text-2xl">We couldn't load available rooms.</h2>
+            <p className="mt-3 text-sm text-paper/70">{error ?? "Please try again."}</p>
+            <button type="button" className="mt-6 rounded-full border border-paper px-5 py-3" onClick={() => setReloadKey(key => key + 1)}>Try again</button>
+          </div>
+        </div>
+      );
+      return (
+        <div className="min-h-dvh bg-smoke font-body text-paper">
+          <PhotoRooms
+            profile={journalProfile}
+            rooms={rooms}
+            imageBaseUrl={imageBaseUrl}
+            guests={adults + children + infants}
+            children={children + infants}
+            onChoose={choose}
+            onEditJournal={() => {
+              setPhotoPath("journal");
+              setDiscoveryView("journal");
+            }}
+          />
+        </div>
+      );
+    }
     const studioCriteria = discoveryCriteria;
-
     return (
       <div className="studio-room-experience">
         <BuildingExperienceList
@@ -570,7 +644,7 @@ function SkeletonList() {
     <div className="mt-5 space-y-4">
       {[0, 1, 2].map((i) => (
         <div key={i} className="card flex animate-pulse flex-col overflow-hidden sm:flex-row">
-          <div className="aspect-[4/3] w-full bg-sand sm:aspect-auto sm:w-64" />
+          <div className="aspect-4/3 w-full bg-sand sm:aspect-auto sm:w-64" />
           <div className="flex-1 space-y-3 p-5">
             <div className="h-5 w-1/3 rounded bg-sand" />
             <div className="h-3 w-3/4 rounded bg-sand/70" />
@@ -586,7 +660,7 @@ function SkeletonList() {
 function ErrorBox({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div className="mt-6 rounded-xl2 border border-red-200 bg-red-50 p-6 text-center">
-      <p className="font-medium text-red-700">{message}</p>
+      <p className="font-medium text-error">{message}</p>
       <button type="button" onClick={onRetry} className="btn-primary mt-4">
         {t("results.retry")}
       </button>

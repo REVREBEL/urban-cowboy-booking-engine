@@ -38,14 +38,14 @@ export function MatchBenefitsCard({
 
   return (
     <aside
-      className={`flex h-full flex-col overflow-hidden border-[length:var(--border-width-medium)] border-oxblood bg-white/80 text-oxblood ${
+      className={`flex h-full flex-col overflow-hidden border-(length:--border-width-medium) border-oxblood bg-white/80 text-oxblood ${
         compact ? "min-h-77.5 p-4" : "min-h-155 p-6"
       }`}
     >
       <img
         src="/assets/labels/top_match.svg"
         alt="Top Match"
-        className={`h-auto w-full text-oxblood object-contain ${compact ? "max-w-28" : "max-w-[15rem]"}`}
+        className={`h-auto w-full text-oxblood object-contain ${compact ? "max-w-28" : "max-w-60"}`}
       />
 
       <p className={`${compact ? "mt-4 text-xs" : "mt-10 text-base"} max-w-[20rem] self-center leading-tight text-oxblood`}>

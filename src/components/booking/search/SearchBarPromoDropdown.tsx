@@ -73,7 +73,7 @@ const ClearIcon: React.FC<{ color?: string; className?: string }> = ({
  * - Outer Box: 275px width, 151px height, 24px padding
  * - Background: #FAF9F9, Border: 2px solid #343833, Radius: 0px
  * - Inner container: 223px x 99px, padding 8px 0px, gap 8px
- * - Label: 'Brothers OT', 14px / 17px, uppercase, #343833
+ * - Label: 'Brothers', 14px / 17px, uppercase, #343833
  * - Input line: border-bottom 1px solid #4E332D, 'Uchen' 16px / 30px
  */
 export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({

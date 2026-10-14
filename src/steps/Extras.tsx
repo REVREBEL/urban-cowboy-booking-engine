@@ -8,6 +8,7 @@ import {
   isReveillonProduct,
 } from "../lib/shaping";
 import { ExtrasStep } from "@/components/booking/extras/ExtrasStep";
+import { PhotoExtrasStep } from "@/journey/PhotoExtrasStep";
 import {
   defaultAddOnPreference,
   normalizeAddOnPreference,
@@ -19,7 +20,7 @@ import { BOOKING_FEATURES } from "@/config/bookingFeatures";
 const SHOW_API_DEBUGGER =
   import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
 
-export function Extras() {
+export function Extras({ photoMode = false }: { photoMode?: boolean } = {}) {
   const [cmsAddOns, setCmsAddOns] = useState<AddOnCmsItem[]>([]);
   const {
     products,
@@ -155,6 +156,27 @@ export function Extras() {
   };
 
   if (!selectedRoom || !selectedRate) return null;
+
+  if (photoMode) return (
+    <PhotoExtrasStep
+      products={visibleProducts}
+      selectedProductIds={productIds}
+      selectedDisplayByProduct={selectedAddOnDisplayByProduct}
+      lockedProductIds={forcedReveillonIds}
+      preferences={addonPreferences}
+      imageBaseUrl={imageBaseUrl}
+      currency={currency}
+      total={productsTotal}
+      roomName={selectedRoom.name}
+      checkIn={checkIn}
+      checkOut={checkOut}
+      nights={nightsCount}
+      onToggle={toggleDisplayProduct}
+      onSavePreference={savePreference}
+      onNext={() => goTo("guest")}
+      onBack={() => goTo("rates")}
+    />
+  );
 
   return (
     <ExtrasStep

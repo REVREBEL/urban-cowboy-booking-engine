@@ -151,7 +151,7 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
             </svg>
             <span
               className="text-[10px] font-bold tracking-wider uppercase text-cowboy-umber"
-              style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+              style={{ fontFamily: "'Brothers', 'League Spartan', sans-serif" }}
             >
               UPDATING...
             </span>
@@ -164,7 +164,7 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
         <span
           className="font-normal uppercase select-none transition-colors duration-200"
           style={{
-            fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
+            fontFamily: "'Brothers', 'League Spartan', sans-serif",
             fontSize: '24px',
             lineHeight: '24px',
             letterSpacing: '1.28px',

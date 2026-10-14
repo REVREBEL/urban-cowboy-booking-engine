@@ -21,8 +21,8 @@ const mockRoom: RoomType = {
   soakType: 'clawfoot-window',
   soakHighlight: 'Freestanding copper clawfoot tub in front of a forest picture window',
   images: [
-    'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200',
-    'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200',
+    'https://res.cloudinary.com/revrebel/image/upload/v1790024884/cowboy/Alpine_Bathing_Suite_wosvih.jpg',
+    'https://res.cloudinary.com/revrebel/image/upload/v1790024980/cowboy/Walden_Haus_Forest_Bathing_Suite_Long_Angle_Door_Open_r9rukz.jpg',
   ],
   features: ['Clawfoot Soaking Tub', 'Radiant Heated Floors', 'Cast Iron Wood Stove', 'Letter Writing Desk'],
   tags: ['indoor-soak', 'picture-window', '21-plus'],

@@ -125,7 +125,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'stay-while': {
     panelBg: '#343833',
-    borderColor: 'var(--color-alpine-linen)',
+    borderColor: 'var(--alpine-linen)',
     ticketBg: '#272B26',
     ticketBorder: 'rgba(235, 232, 224, 0.25)',
     textPrimary: '#EBE8E0',

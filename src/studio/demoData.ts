@@ -1,5 +1,6 @@
 import type { AvailabilityResponse, HotelConfig, PricingResult, ReservationQuoteResult } from "../types/mews";
 import { getDemoScenario } from "./runtime.ts";
+import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders.ts";
 
 export const studioHotel: HotelConfig = {
   Id: "studio-location-hotel",
@@ -9,9 +10,9 @@ export const studioHotel: HotelConfig = {
   DefaultCurrencyCode: "USD",
   PaymentGateway: null,
   RoomCategories: [
-    { Id: "demo-alpine", Name: { en: "Alpine Bathing Suite" }, Description: { en: "Iconic indoor soaking tub and forest views." }, ImageIds: [], NormalBedCount: 1, ExtraBedCount: 0, SpaceType: "Suite", Property: "hotel" },
-    { Id: "demo-forest", Name: { en: "Forest House Double Queen" }, Description: { en: "Cozy Catskills comfort with two queen beds." }, ImageIds: [], NormalBedCount: 2, ExtraBedCount: 0, SpaceType: "Room", Property: "hotel" },
-    { Id: "demo-cabin", Name: { en: "Private Cabin" }, Description: { en: "Your own secluded mountain hideaway." }, ImageIds: [], NormalBedCount: 1, ExtraBedCount: 0, SpaceType: "Cabin", Property: "hotel" },
+    { Id: "demo-alpine", Name: { en: "Alpine Bathing Suite" }, Description: { en: "Iconic indoor soaking tub and forest views." }, ImageIds: [ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE, ROOM_IMAGE_ASSETS.ALPINE_HEADBOARD, ROOM_IMAGE_ASSETS.ALPINE_PENTHOUSE_COPPER_TUB], NormalBedCount: 1, ExtraBedCount: 0, SpaceType: "Suite", Property: "hotel" },
+    { Id: "demo-forest", Name: { en: "Forest House Double Queen" }, Description: { en: "Cozy Catskills comfort with two queen beds." }, ImageIds: [ROOM_IMAGE_ASSETS.LODGE_PENTHOUSE_BEDROOM, ROOM_IMAGE_ASSETS.LODGE_PENTHOUSE_LIVING_ROOM], NormalBedCount: 2, ExtraBedCount: 0, SpaceType: "Room", Property: "hotel" },
+    { Id: "demo-cabin", Name: { en: "Private Cabin" }, Description: { en: "Your own secluded mountain hideaway." }, ImageIds: [ROOM_IMAGE_ASSETS.CABIN_BEDŞ, ROOM_IMAGE_ASSETS.CABIN_SITTING_AREA_SOAKING_TUB, ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA], NormalBedCount: 1, ExtraBedCount: 0, SpaceType: "Cabin", Property: "hotel" },
   ],
   Products: [],
   Properties: [{ key: "hotel", label: "Urban Cowboy Lodge Catskills" }],

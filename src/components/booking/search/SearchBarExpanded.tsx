@@ -21,6 +21,7 @@ export interface SearchBarExpandedProps {
   onValuesChange?: (values: SearchBarExpandedValues) => void;
   onSearch?: (values: SearchBarExpandedValues) => Promise<void> | void;
   buttonSlot?: React.ReactNode;
+  showSearchButton?: boolean;
   dropdownSlot?: React.ReactNode;
   isLoading?: boolean;
   className?: string;
@@ -136,6 +137,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   onSectionClick,
   onSearch,
   buttonSlot,
+  showSearchButton = true,
   dropdownSlot,
   isLoading = false,
   className = "",
@@ -170,7 +172,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
       <div
         role="search"
         aria-label="Expanded accommodation search bar"
-        className={`grid w-full grid-cols-1 overflow-hidden border-2 border-input-border bg-input-bg p-2 text-foreground shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${rounded} md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)_auto] md:items-center md:overflow-visible md:p-1.5 md:pl-4`}
+        className={`grid w-full grid-cols-1 overflow-hidden border-2 border-input-border bg-input-bg p-2 text-foreground shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${rounded} ${showSearchButton ? "md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)_auto]" : "md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)]"} md:items-center md:overflow-visible md:p-1.5 md:pl-4`}
       >
         <div className="border-b border-input-border/10 md:border-b-0 md:border-r">
           <SearchSection label="Property" value={<span>{properCase(currentValues.property)}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
@@ -184,11 +186,13 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
         <div className="border-b border-input-border/10 md:border-b-0 md:border-r">
           <SearchSection label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
-        <div className="flex justify-end p-1.5 md:pl-3">
-          {buttonSlot ?? (
-            <ExpandedSearchButton variant={variant} isLoading={isLoading} onClick={() => !isLoading && onSearch?.(currentValues)} />
-          )}
-        </div>
+        {showSearchButton && (
+          <div className="flex justify-end p-1.5 md:pl-3">
+            {buttonSlot ?? (
+              <ExpandedSearchButton variant={variant} isLoading={isLoading} onClick={() => !isLoading && onSearch?.(currentValues)} />
+            )}
+          </div>
+        )}
       </div>
 
       {(dropdownVisible || dropdownSlot) && dropdownSlot && (

@@ -1,7 +1,7 @@
 SplineFontDB: 3.2
-FontName: BrothersOT-Light
-FullName: Brothers OT Light
-FamilyName: Brothers OT
+FontName: Brothers-Light
+FullName: Brothers Light
+FamilyName: Brothers
 Weight: Light
 Copyright: Copyright \\(C\\) 1999, Emigre, Inc. Designed by John Downer
 Version: 001.000
@@ -62,7 +62,7 @@ Lookup: 258 8 0 "'kern' Horizontal Kerning in Latin lookup 0" { "'kern' Horizont
 Lookup: 258 8 0 "'kern' Horizontal Kerning in Latin lookup 1" { "'kern' Horizontal Kerning in Latin lookup 1 subtable"  } ['kern' ('DFLT' <'dflt' > 'latn' <'dflt' > ) ]
 MarkAttachClasses: 1
 DEI: 91125
-LangName: 1033 "Copyright (C) 1999, Emigre, Inc. Designed by John Downer" "" "" "1.000;UKWN;BrothersOT-Light" "" "Version 1.000;hotconv 1.0.109;makeotfexe 2.5.65596" "" "" "" "" "" "" "" "" "" "" "Brothers OT" "Light"
+LangName: 1033 "Copyright (C) 1999, Emigre, Inc. Designed by John Downer" "" "" "1.000;UKWN;Brothers-Light" "" "Version 1.000;hotconv 1.0.109;makeotfexe 2.5.65596" "" "" "" "" "" "" "" "" "" "" "Brothers" "Light"
 Encoding: UnicodeBmp
 UnicodeInterp: none
 NameList: AGL For New Fonts
