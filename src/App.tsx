@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { isStudioRoute } from "./studio/runtime";
 import { StudioController } from "./studio/StudioController";
+import { setStudioDefaultLayout } from "./studio/roomLayout";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
@@ -109,7 +110,10 @@ export default function App() {
     const controller = new AbortController();
     fetch("/api/studio/config?property=hotel", { cache: "no-store", signal: controller.signal })
       .then((response) => response.ok ? response.json() : null)
-      .then((data) => setAllowed(data?.enabled === true))
+      .then((data) => {
+        setStudioDefaultLayout(data?.demoLayout === "photo" ? "photo" : "card");
+        setAllowed(data?.enabled === true);
+      })
       .catch(() => setAllowed(false));
     return () => controller.abort();
   }, [studio]);
