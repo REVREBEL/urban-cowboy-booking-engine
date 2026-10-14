@@ -121,7 +121,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             type="button"
             ref={closeButtonRef}
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white border border-cowboy-umber/20 hover:bg-alpine-linen flex items-center justify-center text-cowboy-umber transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-white border border-cowboy-umber/20 hover:bg-alpine-linen flex items-center justify-center text-cowboy-umber transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-hidden"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" />
@@ -152,7 +152,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                   onClick={() => setActiveImageIndex(idx)}
                   aria-label={`View photo ${idx + 1} of ${room.images.length}`}
                   aria-current={activeImageIndex === idx ? 'true' : undefined}
-                  className={`relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                  className={`relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-hidden ${
                     activeImageIndex === idx
                       ? 'border-cowboy-umber scale-105 shadow-sm'
                       : 'border-transparent opacity-60 hover:opacity-100'
