@@ -46,7 +46,7 @@ export interface RoomImagePlaceholder {
   id: string;
   assetKey: RoomImageAssetKey;
   title: string;
-  buildingId: 'alpine' | 'walden' | 'lodge';
+  buildingId: 'alpine' | 'walden' | 'lodge' | 'cabin';
   buildingName: string;
   url: string;
   description: string;
@@ -147,7 +147,7 @@ export const ROOM_IMAGE_PLACEHOLDERS: RoomImagePlaceholder[] = [
     assetKey: 'CABIN_BEDŞ',
     title: 'The Lodge Penthouse Living Room & Parlor',
     buildingId: 'cabin',
-    buildingId: 'The Cabin',
+    buildingName: 'The Cabin',
     url: ROOM_IMAGE_ASSETS.CABIN_BEDŞ,
     description:
       'Generous living room and private parlor with wet bar, hearth fireplace, and mountain view deck.',
@@ -155,11 +155,11 @@ export const ROOM_IMAGE_PLACEHOLDERS: RoomImagePlaceholder[] = [
     tags: ['living-room', 'wet-bar', 'gathering', 'parlor', 'lodge']
   },
     {
-    id: 'cabin',
+    id: 'cabin-sitting-area-soaking-tub',
     assetKey: 'CABIN_SITTING_AREA_SOAKING_TUB',
     title: 'The Lodge Penthouse Living Room & Parlor',
     buildingId: 'cabin',
-    buildingId: 'The Cabin',
+    buildingName: 'The Cabin',
     url: ROOM_IMAGE_ASSETS.CABIN_SITTING_AREA_SOAKING_TUB,
     description:
       'Generous living room and private parlor with wet bar, hearth fireplace, and mountain view deck.',
@@ -167,11 +167,11 @@ export const ROOM_IMAGE_PLACEHOLDERS: RoomImagePlaceholder[] = [
     tags: ['living-room', 'wet-bar', 'gathering', 'parlor', 'lodge']
   },
     {
-    id: 'cabin',
+    id: 'cabin-side-view-sitting-area',
     assetKey: 'CABIN_SIDE_VIEW_SITTING_AREA',
     title: 'The Lodge Penthouse Living Room & Parlor',
     buildingId: 'cabin',
-    buildingId: 'The Cabin',
+    buildingName: 'The Cabin',
     url: ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA,
     description:
       'Generous living room and private parlor with wet bar, hearth fireplace, and mountain view deck.',
