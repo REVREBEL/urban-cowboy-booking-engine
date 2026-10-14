@@ -20,7 +20,8 @@ const photoComponents = [
 test("Photo Engine actions use the shared Button or its PillButton composition", () => {
   for (const file of photoComponents) {
     const source = read(file);
-    assert.doesNotMatch(source, /<button\b/i, `Unshared native button in ${file}`);
+    // JSX component names are case-sensitive: <Button> is not a native <button>.
+    assert.doesNotMatch(source, /<button\b/, `Unshared native button in ${file}`);
     assert.match(source, /<Button\b|<PillButton\b/, `Missing shared button in ${file}`);
     const count = (source.match(/<Button\b/g) ?? []).length;
     const closing = (source.match(/<\/Button>/g) ?? []).length;
@@ -28,6 +29,13 @@ test("Photo Engine actions use the shared Button or its PillButton composition",
     assert.ok(count >= closing, `Extra Button close in ${file}`);
     assert.ok(count <= closing + selfClosing + 1, `Possible unmatched Button in ${file}`);
   }
+});
+
+test("native button detector is case-sensitive for JSX components", () => {
+  const nativeButton = /<button\\b/;
+  assert.match('<button type="button">Click</button>', nativeButton);
+  assert.doesNotMatch('<Button type="button">Click</Button>', nativeButton);
+  assert.doesNotMatch('<PillButton type="button">Click</PillButton>', nativeButton);
 });
 
 test("Pill shares the Button palette and interactive PillButton delegates to Button", () => {
