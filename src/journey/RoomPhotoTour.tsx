@@ -154,7 +154,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
         <div className="j-tour-feature" id={`tour-highlight-${room.id}`} aria-live="polite">
           {selected && <>
             <TourIcon name={selected.icon} className="size-14 shrink-0" />
-            <div><p className="font-headline text-2xl leading-tight">{selected.title}</p><p className="mt-1 text-sm leading-relaxed">{selected.note}</p></div>
+            <div><p className="font-headline text-2xl leading-none">{selected.title}</p><p className="mt-1 text-sm leading-relaxed">{selected.note}</p></div>
           </>}
         </div>
         <div className="j-tour-amenities">
@@ -165,13 +165,13 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
                 <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{padding:"12px",fontWeight:400,textAlign:"left",borderRadius:"10px"}} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => pickPin(pin.id)} className="j-highlight-card">
                   <span className="j-highlight-num">{i + 1}</span>
                   <TourIcon name={pin.icon} className="size-10 shrink-0" />
-                  <span className="min-w-0 text-left"><span className="block font-headline text-base leading-tight">{pin.title}</span><span className="mt-0.5 block text-xs leading-snug opacity-75">{pin.note}</span></span>
+                  <span className="min-w-0 text-left"><span className="block font-headline text-base leading-none">{pin.title}</span><span className="mt-0.5 block text-xs leading-snug opacity-75">{pin.note}</span></span>
                 </Button>
               ))}
             </div>
           </>}
           <div className="flex items-start justify-between gap-3">
-            <div><h3 className="font-headline text-xl">The little comforts</h3><p className="mt-1 text-xs">{room.bedType} · {room.squareFeet} sq ft · {room.adultsOnly ? 'Guests 21+' : 'All ages'}{room.dogFriendly ? ' · Dogs welcome' : ''}</p></div>
+            <div><h3 className="font-headline text-xl leading-none">The little comforts</h3><p className="mt-1 text-xs">{room.bedType} · {room.squareFeet} sq ft · {room.adultsOnly ? 'Guests 21+' : 'All ages'}{room.dogFriendly ? ' · Dogs welcome' : ''}</p></div>
             <Button variant="transparent" colorScheme="lake-forest" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-panel-close" aria-label={`Close details for ${room.name}`} title="Close details" onClick={() => onDetails(false)}><X size={20} /></Button>
           </div>
           <ul className="j-amenity-list">
@@ -185,7 +185,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
         {roomNav('j-roomnav-mobile')}
         <div className="j-tour-info min-w-0">
           <p className="truncate text-xs uppercase text--paper/75">{room.building} · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · {position + 1}/{count}</span></p>
-          <h2 className="mt-1 truncate font-headline text-xl leading-tight sm:text-4xl sm:whitespace-normal">{room.name}</h2>
+          <h2 className="mt-1 truncate font-headline text-xl leading-none sm:text-4xl sm:whitespace-normal">{room.name}</h2>
           <p className="mt-1 hidden text-sm text--paper/80 lg:block">{room.tagline}</p>
         </div>
         <div className="j-tour-actions">
