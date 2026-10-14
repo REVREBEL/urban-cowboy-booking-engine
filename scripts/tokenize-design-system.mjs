@@ -146,7 +146,7 @@ const BORDER_CLASS_REPLACEMENTS = new Map([
   ["border-[1px]", "border"],
   ["border-[1.5px]", "border-[length:var(--border-width-medium)]"],
   ["border-[2px]", "border-2"],
-  ["border-[3px]", "border-[length:var(--border-width-control)]"],
+  ["border-[3px]", "border-(length:--border-width-control)"],
   ["border-[3.5px]", "border-[length:var(--border-width-control-lg)]"],
   ["border-[4px]", "border-[length:var(--border-width-heavy)]"],
 ]);

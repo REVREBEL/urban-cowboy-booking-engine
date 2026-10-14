@@ -1,7 +1,7 @@
 //stories/components/FeatureFocus.stories.tsx
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { FeatureFocus } from '@storybook/components/rooms/FeatureFocus';
+import { FeatureFocus } from '@/components/rooms/FeatureFocus';
 
 const meta: Meta<typeof FeatureFocus> = {
   title: 'Components/Rooms/FeatureFocus',

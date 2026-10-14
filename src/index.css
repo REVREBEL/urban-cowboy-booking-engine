@@ -213,7 +213,7 @@ text-cowboy-umber, font-heading, shadow-card).
 --muted: oklch(0.9311 0.0112 89.7258);
 --muted-foreground: oklch(0.2320 0.0121 55.7153);
 
---color-emphasis: var(--color-cowboy-umber-200)
+--color-emphasis: var(--color-cowboy-umber-200);
 
 
 --color-error: oklch(61.112% 0.16959 30.026);

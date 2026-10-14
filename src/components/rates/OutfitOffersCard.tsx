@@ -189,7 +189,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
               {/* Headline Lockup */}
               <div className="w-full flex flex-col items-center justify-center my-auto">
                 <h2
-                  className="w-full text-center font-normal uppercase m-0 p-0 select-none whitespace-pre-line tracking-[0.02em]"
+                  className="w-full text-center font-normal uppercase m-0 p-0 select-none whitespace-pre-line tracking-normal"
                   style={{
                     color: 'var(--color-nude-ember)',
                     fontFamily: "'League Gothic', 'Impact', sans-serif-condensed, sans-serif",
@@ -309,7 +309,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     </div>
 
                     <h2
-                      className="w-full text-center font-normal uppercase m-0 p-0 select-none whitespace-pre-line tracking-[0.02em]"
+                      className="w-full text-center font-normal uppercase m-0 p-0 select-none whitespace-pre-line tracking-normal"
                       style={{
                         color: 'var(--color-nude-ember)',
                         fontFamily: "'League Gothic', 'Impact', sans-serif-condensed, sans-serif",
@@ -417,12 +417,12 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                       disabled={disabled || isSubmitting}
                       className={`group w-full max-w-95 min-h-16 px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-nude-ember/30 active:scale-[0.98] whitespace-nowrap ${
                         disabled
-                          ? 'cursor-not-allowed bg-nude-ember text-lake-forest border-[length:var(--border-width-control)] border-nude-ember'
+                          ? 'cursor-not-allowed bg-nude-ember text-lake-forest border-(length:--border-width-control) border-nude-ember'
                           : isExpanded
                           ? 'bg-nude-ember text-lake-forest'
                           : isSubmitting
                           ? 'bg-nude-ember text-lake-forest cursor-wait border-transparent'
-                          : 'cursor-pointer bg-nude-ember text-lake-forest border-[length:var(--border-width-control)] border-nude-ember hover:bg-transparent hover:text-nude-ember'
+                          : 'cursor-pointer bg-nude-ember text-lake-forest border-(length:--border-width-control) border-nude-ember hover:bg-transparent hover:text-nude-ember'
                       }`}
                       aria-busy={isSubmitting}
                     >
@@ -484,7 +484,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
         <div
           className={`relative z-10 overflow-hidden transition-all duration-500 ease-out flex flex-row shrink-0 -ml-12 ${
             isExpanded
-              ? `opacity-100 ${isCompact ? 'w-139.25' : 'w-128'} translate-x-0 pointer-events-auto`
+              ? `opacity-100 ${isCompact ? 'w-139.25' : 'w-lg'} translate-x-0 pointer-events-auto`
               : 'opacity-0 w-0 max-w-0 -translate-x-6 pointer-events-none'
           }`}
           style={{
@@ -493,7 +493,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
           }}
         >
           <div
-            className={`h-full ${isCompact ? 'w-139.25' : 'w-128'} pl-8 pt-0 shrink-0`}
+            className={`h-full ${isCompact ? 'w-139.25' : 'w-lg'} pl-8 pt-0 shrink-0`}
             style={{
               width: isCompact ? '557px' : '512px',
               minWidth: isCompact ? '557px' : '512px',
