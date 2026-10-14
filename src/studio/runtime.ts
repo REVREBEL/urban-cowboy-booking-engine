@@ -1,6 +1,7 @@
-/** Studio is route-scoped. Never infer demo mode from a public query parameter. */
+/** Studio is route-scoped. Never infer demo mode from public query parameters. */
 export const isStudioRoute = () =>
-  typeof window !== "undefined" && /^\\/booking\\/studio\\/?$/.test(window.location.pathname);
+  typeof window !== "undefined" &&
+  (window.location.pathname === "/booking/studio" || window.location.pathname === "/booking/studio/");
 
 export type DemoScenario = "standard" | "soldout" | "family" | "dog" | "member" | "nonrefundable" | "error";
 let selectedScenario: DemoScenario = "standard";
