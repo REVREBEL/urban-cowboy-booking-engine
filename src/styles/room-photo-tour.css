@@ -16,6 +16,12 @@
 /* Keep Buildings and Features in two independent, equal-width horizontal strips.
    Sort/view sit underneath so neither section can squeeze the other. */
 @media (min-width: 640px) {
+  /* One shared inset for both rows keeps the building pills and right-hand view controls
+     aligned as the desktop viewport widens. */
+  .j-photo-filter-desktop { padding-inline: clamp(24px, 3vw, 48px); }
+}
+
+@media (min-width: 640px) {
   .j-photo-filter-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: center; }
   .j-photo-filter-segment { display: flex; align-items: center; min-width: 0; gap: 6px; }
   .j-photo-filter-segment + .j-photo-filter-segment { border-left: 1px solid color-mix(in srgb, var(--paper) 25%, transparent); padding-left: 12px; }

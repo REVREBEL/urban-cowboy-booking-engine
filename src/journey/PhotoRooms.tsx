@@ -274,7 +274,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
             </div>
           </div>
         )}
-        <div className="hidden rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:block">
+        <div className="j-photo-filter-desktop hidden rounded-2xl bg-smoke/85 py-2 backdrop-blur-md sm:block">
           <div className="j-photo-filter-pair">
             <div role="group" aria-label="Buildings" className="j-photo-filter-segment">
               <Button type="button" variant="transparent" colorScheme="paper" size="xsmall"
