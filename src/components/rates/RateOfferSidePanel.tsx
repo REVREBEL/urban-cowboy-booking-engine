@@ -27,6 +27,8 @@ export interface RateOfferSidePanelProps {
   isSubmitting?: boolean;
   /** Optional explicit panel height for CMS artwork cards. */
   height?: number;
+  /** Render as an independent surface instead of the docked card-side treatment. */
+  standalone?: boolean;
 }
 
 interface ThemeStyles {
@@ -159,6 +161,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   onConfirm,
   isSubmitting = false,
   height,
+  standalone = false,
 }) => {
   const isCompact = variant === 'compact';
   const themeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS['ride-easy'];
@@ -449,7 +452,11 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   // ================= NORMAL VARIANT (Normal Active Open.png) =================
   return (
     <div
-      className="w-132 h-200 rounded-r-[40px] rounded-l-none py-6 pr-6 pl-18 sm:py-8 sm:pr-8 sm:pl-20 lg:py-10 lg:pr-10 lg:pl-22 flex flex-col items-center justify-center gap-8 shadow-xl relative box-border transition-colors duration-300 shrink-0"
+      className={
+        standalone
+          ? "w-132 h-200 rounded-[32px] p-6 sm:p-8 flex flex-col items-center justify-center gap-6 shadow-xl relative box-border transition-colors duration-300 shrink-0"
+          : "w-132 h-200 rounded-r-[40px] rounded-l-none py-6 pr-6 pl-18 sm:py-8 sm:pr-8 sm:pl-20 lg:py-10 lg:pr-10 lg:pl-22 flex flex-col items-center justify-center gap-8 shadow-xl relative box-border transition-colors duration-300 shrink-0"
+      }
       style={{
         width: '528px',
         minWidth: '528px',

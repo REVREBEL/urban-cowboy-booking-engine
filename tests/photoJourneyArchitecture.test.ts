@@ -65,3 +65,14 @@ test("Photo Journal matches center beside image selections and labels keep a dar
   assert.match(journal, /pointer-events-none absolute inset-0/);
   assert.match(journal, /absolute inset-x-0 bottom-0 z-10/);
 });
+
+test("Photo rate cards expose reusable detail panels with the policy timeline", () => {
+  const rates = source("journey/PhotoRateStep.tsx");
+  assert.match(rates, />\s*Details\s*</);
+  assert.match(rates, /aria-haspopup="dialog"/);
+  assert.match(rates, /<RateOfferSidePanel/);
+  assert.match(rates, /<PolicyDisplay/);
+  assert.match(rates, /orientation="vertical"/);
+  assert.match(rates, /freeCancelDate && nonRefundableDate/);
+  assert.match(rates, /event\.key === "Escape"/);
+});
