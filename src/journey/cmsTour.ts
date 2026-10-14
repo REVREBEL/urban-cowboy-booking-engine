@@ -1,6 +1,6 @@
-import { cmsPhotoKey } from "@/lib/cmsPhotoHotspots";
-import type { CmsPhotoHotspotMap, CmsRoomAmenity } from "@/types/photo-hotspot-cms";
-import type { PhotoHighlight } from "./tour";
+import { cmsPhotoKey } from "../lib/cmsPhotoHotspots.ts";
+import type { CmsPhotoHotspotMap, CmsRoomAmenity } from "../types/photo-hotspot-cms.ts";
+import type { PhotoHighlight } from "./tour.ts";
 
 /**
  * Hotspots belong to the exact photograph, but are visible only when the
