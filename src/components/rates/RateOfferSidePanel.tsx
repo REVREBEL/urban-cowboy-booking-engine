@@ -178,7 +178,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
     );
     return (
       <section
-        className="relative flex w-full min-w-0 flex-col overflow-hidden rounded-[28px] border shadow-2xl"
+        className="relative flex max-h-[calc(100dvh-2rem)] min-h-0 w-full min-w-0 flex-col overflow-hidden rounded-[28px] border shadow-2xl sm:max-h-[calc(100dvh-4rem)]"
         style={{ backgroundColor: themeConfig.panelBg, borderColor: themeConfig.borderColor, color: themeConfig.textPrimary }}
         aria-label="Rate policy and deposit details"
       >
