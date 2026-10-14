@@ -39,10 +39,10 @@ export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string): Journey
     eyebrow: roomTypeGroupName(group),
     tagline: merchandising?.cardTagline ?? "",
     description: room.cmsLongDescription ?? room.description,
-    basePrice: room.rates[0]?.perNightGross ?? room.fromGross ?? 0,
+    basePrice: room.rates[0]?.perNightGross ?? 0,
     squareFeet: 0, // not present in the canonical Mews-shaped response
     bedType: room.normalBedCount === 1 ? "1 bed" : `${room.normalBedCount} beds`,
-    maxGuests: room.capacity, // legacy estimate, not an occupancy authority
+    maxGuests: room.capacity, // display estimate only; booking eligibility is decided upstream
     dogFriendly: merchandising?.dogPolicy === "allowed",
     adultsOnly: merchandising?.agePolicy === "adultsOnly21",
     quiet: 3, // photo-tour prototype field: not used for booking or eligibility
