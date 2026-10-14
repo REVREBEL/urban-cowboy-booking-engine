@@ -5,6 +5,8 @@ import { currentStudioLayout, setStudioDefaultLayout, type RoomResultsLayout } f
 import { api } from "./lib/api";
 import { PhotoArrival } from "./journey/PhotoArrival";
 import { PhotoJourneyHeader } from "./journey/PhotoJourneyHeader";
+import { PhotoRateStep } from "./journey/PhotoRateStep";
+import { PhotoReviewGuest } from "./journey/PhotoReviewGuest";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
@@ -85,7 +87,13 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
       )}
 
       <main className="flex-1">
-        {hydrating ? <HydrateLoader /> : step === "dates" && photoJourney ? <PhotoArrival /> : step === "results" ? <Results roomLayout={layout} /> : <StepView />}
+        {hydrating ? <HydrateLoader /> :
+          photoJourney && step === "dates" ? <PhotoArrival /> :
+          step === "results" ? <Results roomLayout={layout} /> :
+          photoJourney && step === "rates" ? <PhotoRateStep /> :
+          photoJourney && step === "extras" ? <Extras photoMode /> :
+          photoJourney && step === "guest" ? <PhotoReviewGuest /> :
+          <StepView />}
       </main>
 
       {!photoJourney && <BookingFooter />}
