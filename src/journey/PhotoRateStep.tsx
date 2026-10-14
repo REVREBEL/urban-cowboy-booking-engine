@@ -286,12 +286,12 @@ export function PhotoRateStep() {
               variant="default"
               theme={offerThemeForRate(detailsRate)}
               cancellationHeader={detailsPolicy}
-              nightlyRate={detailsPricing.nightly}
-              stayTotal={detailsPricing.subtotal}
-              taxesAndFees={detailsPricing.taxes}
-              totalStay={detailsPricing.total}
-              dueAtBooking={detailsPricing.dueToday}
-              remaining={detailsPricing.remaining}
+              nightlyRate={money(detailsPricing.nightly, detailsRate.currency)}
+              stayTotal={money(detailsPricing.subtotal, detailsRate.currency)}
+              taxesAndFees={money(detailsPricing.taxes, detailsRate.currency)}
+              totalStay={money(detailsPricing.total, detailsRate.currency)}
+              dueAtBooking={money(detailsPricing.dueToday, detailsRate.currency)}
+              remaining={money(detailsPricing.remaining, detailsRate.currency)}
               policyText={detailsRate.description || detailsPolicy}
               policyDisplay={
                 freeCancelDate && nonRefundableDate ? (
