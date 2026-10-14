@@ -165,10 +165,10 @@ function Arrive(props: {
       <div className="relative z-10 mx-auto w-full max-w-[1600px] px-5 pb-6 pt-28 sm:px-8 lg:pb-10">
         <div className="mx-auto max-w-5xl">
           <div className="mb-8 lg:mb-10">
-          <p className={`${label} text-paper/80`}>Big Indian, New York · Urban Cowboy Lodge & Resort</p>
-          <h1 className="mt-3 max-w-[23ch] text-balance font-heading text-4xl leading-none sm:text-5xl lg:text-6xl">
-            Come for the soak. Stay for the woods.
-          </h1>
+            <p className={`${label} text-paper/80`}>Big Indian, New York · Urban Cowboy Lodge & Resort</p>
+            <h1 className="mt-3 max-w-[23ch] text-balance font-heading text-4xl leading-none sm:text-5xl lg:text-6xl">
+              Come for the soak. Stay for the woods.
+            </h1>
           </div>
           <p className={`${label} text-alpine-linen`}>01 — When are you coming?</p>
 
