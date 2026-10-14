@@ -20,6 +20,14 @@ const scenarios: { id: DemoScenario; label: string }[] = [
 export function StudioController() {
   const booking = useBooking();
   const [open, setOpen] = useState(false);
+  const [roomLayout, setRoomLayout] = useState(() => new URLSearchParams(window.location.search).get("roomLayout") === "photo" ? "photo" : "card");
+  const changeRoomLayout = (layout: string) => {
+    setRoomLayout(layout);
+    const url = new URL(window.location.href);
+    url.searchParams.set("roomLayout", layout);
+    window.history.replaceState({}, "", url);
+    window.dispatchEvent(new Event("studio-room-layout-change"));
+  };
   const [scenario, chooseScenario] = useState<DemoScenario>(getDemoScenario);
   const input = "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900";
   const apply = (target: Step, nextScenario: DemoScenario) => {
@@ -61,6 +69,12 @@ export function StudioController() {
           <label className="mb-3 block text-xs font-semibold">Jump to screen
             <select className={input + " mt-1"} value={booking.step} onChange={(e) => apply(e.target.value as Step, scenario)}>
               {steps.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
+          </label>
+          <label className="mb-3 block text-xs font-semibold">Room results layout
+            <select className={input + " mt-1"} value={roomLayout} onChange={(event) => changeRoomLayout(event.target.value)}>
+              <option value="card">Card Layout</option>
+              <option value="photo">Photo Layout</option>
             </select>
           </label>
           <p className="text-xs text-gray-600">The booking engine retains its full width behind these controls.</p>
