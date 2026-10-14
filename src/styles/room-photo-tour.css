@@ -13,6 +13,17 @@
 }
 
 
+/* Keep Buildings and Features in two independent, equal-width horizontal strips.
+   Sort/view sit underneath so neither section can squeeze the other. */
+@media (min-width: 640px) {
+  .j-photo-filter-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: center; }
+  .j-photo-filter-segment { display: flex; align-items: center; min-width: 0; gap: 6px; }
+  .j-photo-filter-segment + .j-photo-filter-segment { border-left: 1px solid color-mix(in srgb, var(--paper) 25%, transparent); padding-left: 12px; }
+  .j-photo-filter-strip { min-width: 0; flex: 1 1 0; white-space: nowrap; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .j-photo-filter-strip > button { flex-shrink: 0; }
+  .j-photo-filter-nav { flex: none; }
+}
+
 /* Photo-first room tours: photography remains uncropped in both axes. */
 .j-room-tour { position: relative; scroll-margin-top: 155px; overflow: clip; background: var(--smoke); }
 .j-photo-viewport { overflow: hidden; touch-action: pan-y pinch-zoom; outline-offset: -4px; }
