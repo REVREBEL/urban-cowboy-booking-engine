@@ -415,6 +415,20 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
 
   if (discoveryView === "rooms") {
     if (photoLayout) {
+      if (loading) return (
+        <div className="grid min-h-[65dvh] place-items-center bg-j-night px-5 pt-24 text-j-paper" role="status">
+          <p className="font-j-display text-2xl">Finding rooms for your dates…</p>
+        </div>
+      );
+      if (error || hotelError) return (
+        <div className="grid min-h-[65dvh] place-items-center bg-j-night px-5 pt-24 text-j-paper">
+          <div className="text-center">
+            <h2 className="font-j-display text-2xl">We couldn't load available rooms.</h2>
+            <p className="mt-3 text-sm text-j-paper/70">{error ?? "Please try again."}</p>
+            <button type="button" className="mt-6 rounded-full border border-j-paper px-5 py-3" onClick={() => setReloadKey(key => key + 1)}>Try again</button>
+          </div>
+        </div>
+      );
       return (
         <div className="min-h-dvh bg-j-night font-j-body text-j-paper">
           <PhotoRooms
