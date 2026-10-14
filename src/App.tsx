@@ -4,6 +4,7 @@ import { StudioController } from "./studio/StudioController";
 import { currentStudioLayout, setStudioDefaultLayout, type RoomResultsLayout } from "./studio/roomLayout";
 import { api } from "./lib/api";
 import { PhotoArrival } from "./journey/PhotoArrival";
+import { PhotoJourneyHeader } from "./journey/PhotoJourneyHeader";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
@@ -48,7 +49,8 @@ const STEP_COMPONENTS: Record<Step, () => React.JSX.Element | null> = {
 function Shell({ layout }: { layout: RoomResultsLayout }) {
   const { step, hotelError, reloadHotel, resetAll, goTo, hydrating } = useBooking();
   const StepView = STEP_COMPONENTS[step];
-  const photoJourney = layout === "photo" && (step === "dates" || step === "results");
+  // The Photo experience owns its chrome and step bar for the full journey.
+  const photoJourney = layout === "photo";
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -61,6 +63,7 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
 
   return (
     <div className={photoJourney ? "flex min-h-dvh flex-col bg-j-night text-j-paper" : "flex min-h-dvh flex-col bg-background px-4 sm:px-6 lg:px-8"}>
+      {photoJourney && <PhotoJourneyHeader />}
       {!photoJourney && <BookingHeader
         step={step}
         onNavigate={goTo}
