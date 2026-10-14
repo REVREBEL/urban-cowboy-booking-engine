@@ -4,8 +4,9 @@
  * sheet, sorting, photo/index toggle, and full-frame RoomPhotoTour.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import { RoomPhotoTour } from "./RoomPhotoTour";
+import { PhotoTourArrow } from "./PhotoTourArrow";
 import { Button } from "../components/ui/button";
 import { Pill, PillButton } from "../components/ui/pill";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
@@ -173,7 +174,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
             <Button type="button" variant="outline" colorScheme="paper" size="xsmall" aria-label="Earlier buildings" tabIndex={stripScroll.left ? 0 : -1}
               onClick={() => buildingStrip.current?.scrollBy({ left: -240, behavior: "smooth" })}
               className={`mr-0.5 size-7 shrink-0 rounded-full ${stripScroll.left ? "opacity-100" : "pointer-events-none opacity-0"}`} style={{padding:0,borderWidth:"1px"}}>
-              <ChevronLeft className="h-4 w-4" aria-hidden />
+              <PhotoTourArrow direction="left" size={16} />
             </Button>
             <div ref={buildingStrip} onScroll={updateStrip} className="no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
               {buildings.map((b) => (
@@ -186,7 +187,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
             <Button type="button" variant="outline" colorScheme="paper" size="xsmall" aria-label="More buildings" tabIndex={stripScroll.right ? 0 : -1}
               onClick={() => buildingStrip.current?.scrollBy({ left: 240, behavior: "smooth" })}
               className={`ml-0.5 size-7 shrink-0 rounded-full ${stripScroll.right ? "opacity-100" : "pointer-events-none opacity-0"}`} style={{padding:0,borderWidth:"1px"}}>
-              <ChevronRight className="h-4 w-4" aria-hidden />
+              <PhotoTourArrow direction="right" size={16} />
             </Button>
           </div>
           <span className="mx-1 hidden h-6 w-px bg-paper/20 sm:block" />
