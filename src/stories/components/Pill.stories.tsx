@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Pill, PillButton } from "../../components/ui/pill";
-import { COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "../../components/ui/button";
+import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "../../components/ui/button";
 
 const colors = Object.keys(COLOR_PALETTE) as ButtonColor[];
 const styles: ButtonStyle[] = ["filled", "outline", "transparent"];
@@ -96,3 +96,20 @@ function InteractiveExamples() {
 }
 
 export const Selectable: Story = { render: () => <InteractiveExamples /> };
+
+/** Side-by-side check that the Pill uses exactly the same color palette as Button. */
+export const ComparedWithButtons: Story = {
+  render: () => (
+    <div className="space-y-4">
+      {colors.map(color => (
+        <div key={color} className="flex flex-wrap items-center gap-4 border-b border-ash/30 py-3">
+          <span className="w-32 text-sm">{color}</span>
+          <Button colorScheme={color} variant="filled" size="xsmall">Button</Button>
+          <Pill colorScheme={color} variant="filled">Pill</Pill>
+          <Button colorScheme={color} variant="outline" size="xsmall">Button outline</Button>
+          <Pill colorScheme={color} variant="outline">Pill outline</Pill>
+        </div>
+      ))}
+    </div>
+  ),
+};
