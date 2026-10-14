@@ -37,8 +37,8 @@ test("Scroll controls react to resizing, font loading and actual horizontal posi
 test("Building and feature filtering, sorting, and mobile filters are retained", () => {
   assert.match(rooms, /setBuilding\(b\)/);
   assert.match(rooms, /setFeatures\(on \? features\.filter/);
-  assert.match(rooms, /aria-label="Sort rooms"/);
-  assert.match(rooms, /aria-pressed=\{sort === value\}/);
+  assert.match(rooms, /j-price-sort-toggle/);
+  assert.match(rooms, /aria-pressed=\{sort === "price-desc"\}/);
   assert.match(rooms, /sheetOpen/);
   assert.match(rooms, /const measure = \(\) => stage\.style\.setProperty\('--j-room-top'/);
 });
