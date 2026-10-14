@@ -10,13 +10,17 @@ import { RATE_CARD_COLORS } from "@/lib/rateCardPresentation";
 import { normalizeRateCardCtaLabel } from "@/lib/rateCardCta";
 import { Button } from "@/components/ui/button";
 import { PolicyDisplay } from "./policy_display";
+import {
+  useHorizontalOfferLayout,
+  HORIZONTAL_OFFER_BASE_HEIGHT,
+  HORIZONTAL_OFFER_BASE_WIDTH,
+} from "./useHorizontalOfferLayout";
 
 export interface ConfigurableRateCardProps {
   config: RateCardConfig;
   live: RateCardLiveContent;
   layout?: RateCardLayout;
   artworkMode?: RateCardArtworkMode;
-  layout?: "vertical" | "horizontal";
   onBook: () => void;
   isExpanded?: boolean;
   onExpand?: () => void;
@@ -53,7 +57,6 @@ function VerticalRateCard({
   config,
   live,
   artworkMode = "auto",
-  layout = "vertical",
   onBook,
   isExpanded = false,
   onExpand,
@@ -103,7 +106,7 @@ function VerticalRateCard({
       data-rate-card={config.id}
       data-rate-card-layout="vertical"
       data-artwork-mode={artworkMode}
-      data-layout={layout}
+      data-layout="vertical"
       data-text-color={config.textColor}
       data-button-color={config.buttonColor}
       data-font-pair={config.fontPair}
