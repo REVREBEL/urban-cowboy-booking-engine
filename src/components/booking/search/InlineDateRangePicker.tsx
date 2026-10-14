@@ -53,10 +53,13 @@ const monthCells = (year: number, month: number): Array<string | null> => {
   if (!cached) {
     const mondayIndex = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
     const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    // Reserve six weeks for every month so changing months cannot shift an
+    // upward-anchored dropdown or the booking controls underneath it.
     cached = [
       ...Array<string | null>(mondayIndex).fill(null),
       ...Array.from({ length: dayCount }, (_, index) => toIso(year, month, index + 1)),
     ];
+    cached.push(...Array<string | null>(42 - cached.length).fill(null));
     monthCellsCache.set(key, cached);
   }
   return cached;
@@ -112,7 +115,6 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
     const afterSecondMonth = shiftMonth(view.year, view.month, 2);
     onVisibleRangeChange(startDate, toIso(afterSecondMonth.year, afterSecondMonth.month, 1));
   }, [view.year, view.month, onVisibleRangeChange]);
-  const hasDailyRates = Boolean(dailyRates && Object.keys(dailyRates).length > 0);
   const selectedRate = checkIn ? dailyRates?.[checkIn] : undefined;
   const selectedMinimumNights = selectedRate?.minNights;
   const previewEnd = !checkOut && hoveredDate && hoveredDate > checkIn ? hoveredDate : checkOut;
@@ -138,7 +140,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
         >
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </button>
-        <p className="font-label text-sm uppercase tracking-[1.5px] text-(--calendar-date-foreground)">
+        <p className="min-w-0 flex-1 truncate px-2 text-center font-label text-sm uppercase tracking-[1.5px] text-(--calendar-date-foreground)">
           {checkIn && checkOut ? formatSelectedRange(checkIn, checkOut) : "Select your dates"}
         </p>
         <button
@@ -181,7 +183,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                 {(() => {
                   const checkInTime = checkIn ? new Date(`${checkIn}T00:00:00Z`).getTime() : 0;
                   return monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
-                    if (!date) return <span key={`blank-${index}`} role="gridcell" className={hasDailyRates ? "h-14" : "h-10"} />;
+                    if (!date) return <span key={`blank-${index}`} role="gridcell" className="h-14" />;
                     const rate = dailyRates?.[date];
                     const unavailable = rate?.available === false && !rate.minNights;
                     const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
@@ -217,7 +219,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                         key={date}
                         role="gridcell"
                         aria-selected={start || end || inRange}
-                        className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-(--calendar-date-range-bg)" : ""}`}
+                        className={`relative h-14 ${inRange ? "bg-(--calendar-date-range-bg)" : ""}`}
                         onMouseEnter={() => !disabled && setHoveredDate(date)}
                         onMouseLeave={() => setHoveredDate(null)}
                       >
