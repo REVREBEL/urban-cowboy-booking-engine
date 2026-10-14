@@ -21,6 +21,8 @@ interface CachedLocationPayload {
 }
 
 const WEBFLOW_CONTENT_API = "https://api-cdn.webflow.com/v2";
+// Authorization checks must read the published record directly, not a CDN cache.
+const WEBFLOW_DATA_API = "https://api.webflow.com/v2";
 const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
@@ -48,12 +50,12 @@ const cacheKey = (
   return `${CACHE_KEY_PREFIX}:${collectionId}:${signature}`;
 };
 
-async function webflowGet<T>(env: Env, path: string): Promise<T> {
+async function webflowGet<T>(env: Env, path: string, baseUrl = WEBFLOW_CONTENT_API): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), WEBFLOW_TIMEOUT_MS);
 
   try {
-    const response = await fetch(`${WEBFLOW_CONTENT_API}${path}`, {
+    const response = await fetch(`${baseUrl}${path}`, {
       headers: {
         Authorization: `Bearer ${env.WEBFLOW_CMS_API_TOKEN}`,
         Accept: "application/json",
@@ -277,10 +279,19 @@ export async function onRequestStudioConfig({ env, request }: { env: Env; reques
   if (!env.WEBFLOW_CMS_API_TOKEN) return denied("cms_token_missing");
   try {
     const collection = encodeURIComponent(env.WEBFLOW_LOCATION_COLLECTION_ID);
-    const data = await webflowGet<WebflowItemsResponse>(env, `/collections/${collection}/items/live?limit=100`);
-    const item = data.items?.find((candidate) =>
-      candidate.id === binding.locationCmsItemId && candidate.isArchived !== true && candidate.isDraft !== true);
-    if (!item) return denied("published_location_not_found");
+    const itemId = encodeURIComponent(binding.locationCmsItemId);
+    // Use the authoritative Webflow Data API for this access-control decision.
+    // The CDN-backed list used by public Locations may be delayed by caching.
+    const item = await webflowGet<WebflowCollectionItem>(
+      env,
+      `/collections/${collection}/items/${itemId}/live`,
+      WEBFLOW_DATA_API,
+    );
+    if (
+      item.id !== binding.locationCmsItemId ||
+      item.isArchived === true ||
+      item.isDraft === true
+    ) return denied("published_location_not_found");
     if (item.fieldData?.["enable-demo-engine"] !== true) {
       return denied("cms_switch_off");
     }
