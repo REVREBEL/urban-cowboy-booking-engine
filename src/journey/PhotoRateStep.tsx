@@ -43,7 +43,7 @@ export function PhotoRateStep() {
           <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-6 sm:px-8">
             <Button type="button" onClick={() => booking.goTo("results")} variant="transparent" colorScheme="paper" size="xsmall" className="underline underline-offset-4" style={{padding:0}}>← Change room</Button>
             <p className={`${label} mt-4 text-alpine-linen`}>03 — How would you like to stay?</p>
-            <h1 className="mt-2 font-heading text-4xl sm:text-6xl">{room.name}</h1>
+            <h1 className="mt-2 font-heading text-4xl leading-none sm:text-6xl">{room.name}</h1>
           </div>
         </figure>
       )}
@@ -55,7 +55,7 @@ export function PhotoRateStep() {
             "See rate details for cancellation terms";
           return <article key={rate.rateId} className={`flex flex-col rounded-2xl bg-paper p-6 text-foreground ring-4 ${booking.selectedRate?.rateId === rate.rateId ? "ring-alpine-linen" : "ring-transparent"}`}>
             <p className={`${label} text-alpine-linen`}>{config?.eyebrow || (rate.isPrivate ? "Exclusive rate" : index === 0 ? "Available rate" : "Stay your way")}</p>
-            <h2 className="mt-2 font-heading text-3xl">{config?.headline || rate.name}</h2>
+            <h2 className="mt-2 font-heading text-3xl leading-none">{config?.headline || rate.name}</h2>
             {(config?.description || rate.description) && <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground/80">{config?.description || rate.description}</p>}
             <div className="mt-auto border-t border-ash pt-4 tabular-nums">
               {rate.perNightGross != null && (
@@ -85,7 +85,7 @@ export function PhotoRateStep() {
       </div>
       {room.rates.length === 0 && (
         <div className="mx-auto max-w-xl px-5 py-14 text-center">
-          <p className="font-heading text-2xl">No rates available for this room on these dates.</p>
+          <p className="font-heading text-2xl leading-none">No rates available for this room on these dates.</p>
           <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" className="mt-4 underline underline-offset-4" style={{padding:0}} onClick={() => booking.goTo("results")}>Browse other rooms</Button>
         </div>
       )}
