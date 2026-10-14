@@ -1,14 +1,13 @@
 /**
- * Lovable Photo Journey add-on cards adapted to Webflow/Mews merchandised
- * products, with the existing smart customizer retaining its full capabilities.
+ * Photo Journey layout uses the canonical AddonCard and the shared smart customizer.
+ * Product selection, Mews pricing and preferences still flow through Extras.
  */
 import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { PillButton } from "../components/ui/pill";
 import { AddonCustomizerModal } from "../components/booking/extras/AddonCustomizerModal";
-import { defaultAddOnPreference } from "../components/booking/extras/addon-smart-logic";
-import { imgUrl, money } from "../lib/format";
+import { AddonCard } from "../components/booking/extras/AddonCard";
+import { money } from "../lib/format";
 import type { MerchandisedAddOn } from "../types/add-on-cms";
 import type { AddonSchedulePreference } from "../components/booking/extras/addon-types";
 
@@ -25,6 +24,7 @@ type Props = {
   checkIn: string;
   checkOut: string;
   nights: number;
+  guestsCount: number;
   onToggle: (product: MerchandisedAddOn) => void;
   onSavePreference: (product: MerchandisedAddOn, preference: AddonSchedulePreference) => void;
   onNext: () => void;
@@ -32,20 +32,6 @@ type Props = {
 };
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const timingOptions = [
-  { id: "arrival", title: "Waiting on arrival" },
-  { id: "during", title: "Delivered during stay" },
-] as const;
-
-function timingOf(preference?: AddonSchedulePreference) {
-  return preference?.deliveryType === "scheduled-day" ? "during" : "arrival";
-}
-function unitLabel(mode: string) {
-  if (/per.?person/i.test(mode)) return "person";
-  if (/per.?night|per.?time.?unit/i.test(mode)) return "night";
-  return "stay";
-}
-
 export function PhotoExtrasStep(props: Props) {
   const [editing, setEditing] = useState<MerchandisedAddOn | null>(null);
   const criteria = { checkIn: props.checkIn, checkOut: props.checkOut, nights: props.nights };
@@ -53,15 +39,6 @@ export function PhotoExtrasStep(props: Props) {
     props.selectedProductIds.includes(product.id) &&
     (props.selectedDisplayByProduct[product.id] ?? props.products.find(p => p.id === product.id)?.displayId) === product.displayId,
   ).length;
-
-  const changeTiming = (product: MerchandisedAddOn, timing: "arrival" | "during") => {
-    const current = props.preferences[product.displayId] ?? defaultAddOnPreference(product, criteria);
-    props.onSavePreference(product, {
-      ...current,
-      deliveryType: timing === "arrival" ? "waiting-in-room" : "scheduled-day",
-      selectedTime: timing === "arrival" ? "Waiting in room prior to arrival" : "During your stay",
-    });
-  };
 
   return (
     <section className="min-h-dvh bg-smoke pb-32 pt-24 text-paper" data-photo-extras-step>
@@ -81,38 +58,20 @@ export function PhotoExtrasStep(props: Props) {
             const selected = props.selectedProductIds.includes(product.id) &&
               (props.selectedDisplayByProduct[product.id] ?? props.products.find(p => p.id === product.id)?.displayId) === product.displayId;
             const locked = props.lockedProductIds.has(product.id);
-            const pref = props.preferences[product.displayId];
-            const url = product.imageUrl || imgUrl(props.imageBaseUrl, product.imageId, 900);
             return (
-              <li key={product.displayId} className={`overflow-hidden rounded-2xl bg-paper text-foreground ring-4 ${selected ? "ring-alpine-linen" : "ring-transparent"}`}>
-                {url && <img src={url} alt="" className="aspect-3/2 w-full object-cover" loading="lazy" />}
-                <div className="p-5">
-                  <h3 className="font-heading text-2xl leading-none">{product.name}</h3>
-                  {product.description && <p className="mt-1 text-sm text-foreground/70">{product.description}</p>}
-                  <p className="mt-3 tabular-nums">
-                    {money(product.price, product.currency)} <span className="text-sm text-foreground/75">/ {unitLabel(product.chargingMode)}</span>
-                  </p>
-                  {selected && (
-                    <div role="group" aria-label={`Delivery timing for ${product.name}`} className="mt-4 flex flex-wrap gap-2">
-                      {timingOptions.map(t => (
-                        <PillButton key={t.id} type="button" pressed={timingOf(pref) === t.id} size="small" variant={timingOf(pref) === t.id ? "filled" : "outline"} colorScheme="lake-forest" onClick={() => changeTiming(product, t.id)}
-                          className="text-xs">
-                          {t.title}
-                        </PillButton>
-                      ))}
-                    </div>
-                  )}
-                  <Button type="button" disabled={locked} variant={selected ? "filled" : "outline"} colorScheme="lake-forest" size="small"
-                    onClick={() => props.onToggle(product)}
-                    className="mt-4 w-full rounded-full uppercase tracking-[0.2em]">
-                    {locked ? "Included with stay" : selected ? "Added ✓ — remove" : "Add to stay"}
-                  </Button>
-                  {selected && (
-                    <Button type="button" onClick={() => setEditing(product)} variant="transparent" colorScheme="lake-forest" size="xsmall" className="mt-3 w-full underline underline-offset-4" style={{padding:0}}>
-                      Customize timing, gift or special requests
-                    </Button>
-                  )}
-                </div>
+              <li key={product.displayId} className="flex min-w-0">
+                <AddonCard
+                  product={product}
+                  imageBaseUrl={props.imageBaseUrl}
+                  selected={selected}
+                  locked={locked}
+                  nightsCount={props.nights}
+                  guestsCount={props.guestsCount}
+                  preference={props.preferences[product.displayId]}
+                  onToggle={() => props.onToggle(product)}
+                  onOpenCustomize={locked ? undefined : () => setEditing(product)}
+                  className="max-w-none"
+                />
               </li>
             );
           })}
