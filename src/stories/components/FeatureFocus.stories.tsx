@@ -1,36 +1,10 @@
-//stories/components/FeatureFocus.stories.tsx
-
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FeatureFocus } from '../../components/rooms/FeatureFocus';
-import type { TourIcon } from '@/journey/tour';
-import bed from '@/assets/feature-focus/bed.png.asset.json';
-import tub from '@/assets/feature-focus/tub.png.asset.json';
-import outdoorTub from '@/assets/feature-focus/outdoor-tub.png.asset.json';
-import windowArt from '@/assets/feature-focus/window.png.asset.json';
-import seat from '@/assets/feature-focus/seat.png.asset.json';
-import stove from '@/assets/feature-focus/stove.png.asset.json';
-import robes from '@/assets/feature-focus/robes.png.asset.json';
-import speaker from '@/assets/feature-focus/speaker.png.asset.json';
-import shower from '@/assets/feature-focus/shower.png.asset.json';
-import floors from '@/assets/feature-focus/floors.png.asset.json';
-import desk from '@/assets/feature-focus/desk.png.asset.json';
-import balcony from '@/assets/feature-focus/balcony.png.asset.json';
-import plus from '@/assets/feature-focus/plus.png.asset.json';
-import close from '@/assets/feature-focus/close.png.asset.json';
 
-const ART: Record<TourIcon, string> = {
-  bed: bed.url, tub: tub.url, 'outdoor-tub': outdoorTub.url, window: windowArt.url, seat: seat.url,
-  stove: stove.url, robes: robes.url, speaker: speaker.url, shower: shower.url, floors: floors.url,
-  desk: desk.url, balcony: balcony.url,
-};
-
-
-const meta: Meta<typeof FeatureFocus> = {
+const meta = {
   title: 'Components/Rooms/FeatureFocus',
   component: FeatureFocus,
-  parameters: {},
   tags: ['autodocs'],
-  argTypes: {},
 } satisfies Meta<typeof FeatureFocus>;
 
 export default meta;
@@ -40,3 +14,6 @@ export const Default: Story = {
   args: { count: 1, icon: 'bed', title: 'King bed', active: false, onSelect: () => {} },
 };
 
+export const Active: Story = {
+  args: { count: 1, icon: 'tub', title: 'Clawfoot soaking tub', active: true, onSelect: () => {} },
+};
