@@ -28,6 +28,7 @@ import type {
 } from "../types/room-type-cms";
 import type { BookingLocationCmsMap } from "../types/location-cms";
 import type { BuildingCmsMap } from "../types/building-cms";
+import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
 
 export class ApiError extends Error {
   status: number;
@@ -196,15 +197,19 @@ export const api = {
       reviews: RoomTypeCmsReviewMap;
       descriptions: RoomTypeCmsDescriptionMap;
       galleries: RoomTypeCmsGalleryMap;
+      amenities: RoomTypeCmsAmenityMap;
+      hotspots: CmsPhotoHotspotMap;
       generatedAt?: string | null;
       stale?: boolean;
     }>("room-type-reviews", {
       label: "Room-type CMS content",
-      why: "Loads published room descriptions, reviews, and Webflow CDN photo galleries, keyed by durable Mews Room Type IDs. Mews remains the source of live room availability and pricing.",
+      why: "Loads published room descriptions, reviews, galleries, referenced Amenities and image-anchored Photo Hotspots. Mews remains the source of availability and prices.",
     }).catch(() => ({
       reviews: {} as RoomTypeCmsReviewMap,
       descriptions: {} as RoomTypeCmsDescriptionMap,
       galleries: {} as RoomTypeCmsGalleryMap,
+      amenities: {} as RoomTypeCmsAmenityMap,
+      hotspots: {} as CmsPhotoHotspotMap,
     })),
 
   roomTypeReviews: () =>
