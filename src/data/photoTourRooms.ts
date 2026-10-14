@@ -8,6 +8,7 @@
 import type { ShapedRoom } from "../types/mews";
 import type { JourneyRoom, Feature } from "../journey/data";
 import type { RoomTypeCmsGallery } from "../types/room-type-cms";
+import type { CmsRoomAmenity } from "../types/photo-hotspot-cms";
 import { photoSourceFromUrl, selectPhotoImages, type PhotoSource } from "./photoGalleries";
 import { imgUrl } from "../lib/format";
 import { getRoomImagesByRoomId } from "./roomImagePlaceholders";
@@ -26,7 +27,7 @@ function verifiedFeatures(room: ShapedRoom): Feature[] {
   return features;
 }
 
-export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string, gallery?: RoomTypeCmsGallery, source: PhotoSource = photoSourceFromUrl()): JourneyRoom {
+export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string, gallery?: RoomTypeCmsGallery, source: PhotoSource = photoSourceFromUrl(), cmsAmenities?: CmsRoomAmenity[]): JourneyRoom {
   const merchandising = room.merchandising;
   const group = merchandising?.roomTypeGroupKey ?? "other";
   const images = room.imageIds
@@ -52,6 +53,7 @@ export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string, gallery?
     quiet: 3, // photo-tour prototype field: not used for booking or eligibility
     features: verifiedFeatures(room),
     highlights: [],
+    cmsAmenities,
     images: displayImages.length ? displayImages : mappedImages,
     photoSource,
     isMock: false,

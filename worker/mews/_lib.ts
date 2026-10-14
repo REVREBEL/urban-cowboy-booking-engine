@@ -23,6 +23,7 @@ export interface Env {
   WEBFLOW_LOCATION_COLLECTION_ID?: string;
   WEBFLOW_BUILDING_COLLECTION_ID?: string;
   WEBFLOW_AMENITY_COLLECTION_ID?: string;
+  WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID?: string;
   WEBFLOW_LOCATION_ITEM_ID?: string;
   // Webflow Cloud Key Value Store binding for slow-changing CMS overlays.
   // Optional in local/dev; production should bind this as WEBFLOW_CONTENT_CACHE.
