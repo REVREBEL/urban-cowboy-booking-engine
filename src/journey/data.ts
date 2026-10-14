@@ -6,6 +6,7 @@
  */
 import { ROOMS, RATE_OPTIONS, EXTRAS, ROOM_IMAGE_ASSETS } from "../data/hotelData.ts";
 import type { RoomType, RateOption } from "../types.ts";
+import type { CmsRoomAmenity } from "../types/photo-hotspot-cms";
 
 export type Feature =
   | "indoor-tub"
@@ -32,6 +33,8 @@ export interface JourneyRoom {
   quiet: number; // 1 (near the action) – 5 (secluded)
   features: Feature[];
   highlights: string[];
+  /** Authoritative, published Webflow amenities assigned to this room category. */
+  cmsAmenities?: CmsRoomAmenity[];
   images: string[];
   /** Diagnostic source of displayed imagery. Booking values still come from Mews. */
   photoSource?: "webflow" | "mews" | "fallback";
