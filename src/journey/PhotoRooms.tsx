@@ -97,6 +97,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   const roomStage = useRef<HTMLElement>(null);
   const filterOverlay = useRef<HTMLDivElement>(null);
   const roomScrollFrame = useRef<number | null>(null);
+  const lastWheelNavigation = useRef(0);
 
   const cancelRoomScroll = useCallback(() => {
     if (roomScrollFrame.current !== null) {
@@ -219,7 +220,6 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   // Native wheel scrolling plus CSS snap was bypassing the animated navigation.
   useEffect(() => {
     if (view !== "spreads" || window.matchMedia("(max-width: 639px)").matches) return;
-    let lastGesture = 0;
     const onWheel = (event: WheelEvent) => {
       if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       if (!(event.target instanceof Element)) return;
@@ -235,8 +235,8 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
       if (next < 0 || next >= sections.length) return;
       event.preventDefault();
       const now = performance.now();
-      if (now - lastGesture < 1300) return;
-      lastGesture = now;
+      if (now - lastWheelNavigation.current < 1300) return;
+      lastWheelNavigation.current = now;
       visitRoom(next);
     };
     window.addEventListener("wheel", onWheel, { passive: false });
