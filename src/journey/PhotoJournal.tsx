@@ -8,12 +8,10 @@ import type { ShapedRoom } from "../types/mews";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import type { Feature, MatchProfile, Occasion } from "./data";
+import { Button } from "../components/ui/button";
+import { PillButton } from "../components/ui/pill";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-alpine-linen px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-button-secondary-foregroundbutton-secondary-foreground transition hover:brightness-110";
-const btnGhost =
-  "inline-flex items-center justify-center gap-2 rounded-full border border-paper/75 px-5 py-2.5 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-paper/10";
 const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 const FEATURE_LABEL: Record<Feature, string> = {
   "indoor-tub": "Tub by the window",
@@ -78,7 +76,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
             <JournalPage title="What brings you to the mountains?">
               <div className="grid gap-4 sm:grid-cols-2">
                 {OCCASIONS.map((o) => (
-                  <button key={o.id} type="button" aria-pressed={p.occasion === o.id} onClick={() => set("occasion", o.id)}
+                  <Button key={o.id} type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "12px", width: "100%", display: "block", textAlign: "left" }} aria-pressed={p.occasion === o.id} onClick={() => set("occasion", o.id)}
                     className={`group relative overflow-hidden rounded-xl text-left ring-2 transition ${p.occasion === o.id ? "ring-alpine-linen" : "ring-transparent hover:ring--paper/40"}`}>
                     <img src={o.img} alt="" className="aspect-4/3 w-full object-cover" loading="lazy" />
                     <span className="absolute inset-0 bg-linear-to-t from-secondary-foreground/90 to-transparent" />
@@ -86,7 +84,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
                       <span className="block font-headline text-2xl">{o.title}</span>
                       <span className="text-sm text-paper/80">{o.note}</span>
                     </span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             </JournalPage>
@@ -98,11 +96,11 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
                 {MUST.map((f) => {
                   const on = p.mustHaves.includes(f);
                   return (
-                    <button key={f} type="button" aria-pressed={on}
+                    <PillButton key={f} type="button" pressed={on} size="large" variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"}
                       onClick={() => set("mustHaves", on ? p.mustHaves.filter((x) => x !== f) : [...p.mustHaves, f])}
-                      className={`rounded-full border px-5 py-3 text-base transition ${on ? "border-alpine-linen bg-alpine-linen text-paper" : "border-paper/40 hover:border-paper"}`}>
+                      className="transition">
                       {FEATURE_LABEL[f]}
-                    </button>
+                    </PillButton>
                   );
                 })}
               </div>
@@ -132,13 +130,13 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
           )}
 
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            {page > 0 && <button type="button" className={btnGhost} onClick={() => setPage(page - 1)}>← Back</button>}
+            {page > 0 && <Button type="button" variant="outline" colorScheme="paper" size="small" className="rounded-full" onClick={() => setPage(page - 1)}>← Back</Button>}
             {page < pages - 1 ? (
-              <button type="button" className={btnPrimary} onClick={() => setPage(page + 1)}>Next page →</button>
+              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" className="rounded-full" onClick={() => setPage(page + 1)}>Next page →</Button>
             ) : (
-              <button type="button" className={btnPrimary} onClick={() => onDone({ ...p, adults, children })}>See my matches →</button>
+              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" className="rounded-full" onClick={() => onDone({ ...p, adults, children })}>See my matches →</Button>
             )}
-            <button type="button" onClick={onSkip} className="ml-auto text-sm text-paper/70 underline underline-offset-4 hover:text-paper">Skip — show me everything</button>
+            <Button type="button" onClick={onSkip} variant="transparent" colorScheme="paper" size="xsmall" className="ml-auto underline underline-offset-4" style={{padding:0}}>Skip — show me everything</Button>
           </div>
         </div>
 
