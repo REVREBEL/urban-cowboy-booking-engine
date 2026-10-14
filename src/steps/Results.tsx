@@ -333,6 +333,11 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
   }
 
   if (photoLayout && discoveryView === "journal") {
+    if (photoSource === "webflow" && !roomCmsLoaded) return (
+      <div className="grid min-h-[65dvh] place-items-center bg-smoke px-5 pt-24 text-paper" role="status">
+        <p className="font-heading text-2xl">Preparing your Stay Journal…</p>
+      </div>
+    );
     return (
       <div className="min-h-dvh bg-smoke text-paper font-body">
         <PhotoJournal
