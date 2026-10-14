@@ -8,7 +8,7 @@
 import type { ShapedRoom } from "../types/mews";
 import type { JourneyRoom, Feature } from "../journey/data";
 import type { RoomTypeCmsGallery } from "../types/room-type-cms";
-import { photoSourceFromUrl, type PhotoSource } from "./photoGalleries";
+import { photoSourceFromUrl, selectPhotoImages, type PhotoSource } from "./photoGalleries";
 import { imgUrl } from "../lib/format";
 import { getRoomImagesByRoomId } from "./roomImagePlaceholders";
 import { roomTypeGroupName } from "./roomTypeGroups";
@@ -35,8 +35,7 @@ export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string, gallery?
   // The existing design assets are an editorial fallback, never a source of
   // availability, eligibility, or price.
   const mappedImages = getRoomImagesByRoomId(merchandising?.key ?? "");
-  const displayImages = source === "webflow" && gallery?.images.length ? gallery.images : images;
-  const photoSource = source === "webflow" && gallery?.images.length ? "webflow" : images.length ? "mews" : "fallback";
+  const { images: displayImages, photoSource } = selectPhotoImages(images, gallery, source);
   return {
     id: room.roomTypeId,
     name: room.name,
