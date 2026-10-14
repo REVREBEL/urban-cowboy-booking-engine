@@ -37,22 +37,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {},
+  args: { count: 1, icon: 'bed', title: 'King bed', active: false, onSelect: () => {} },
 };
-
-/** Hotspot marker from the Feature Focus design: count + toggle squares beside a ringed artwork medallion. */
-export function FeatureFocus({ count, icon, title, active, onSelect }: {
-  count: number; icon: TourIcon; title: string; active: boolean; onSelect: () => void;
-}) {
-  return (
-    <button type="button" className={`j-focus ${active ? 'is-active' : ''}`} aria-pressed={active}
-      aria-label={`${String(count).padStart(2, '0')} ${title}`} title={title} onClick={onSelect}>
-      <span className="j-focus-medallion" aria-hidden="true"><img src={ART[icon]} alt="" draggable={false} /></span>
-      <span className="j-focus-actions" aria-hidden="true">
-        <span className="j-focus-square j-focus-count">{String(count).padStart(2, '0')}</span>
-        <span className="j-focus-square"><img src={active ? close.url : plus.url} alt="" draggable={false} /></span>
-      </span>
-    </button>
-  );
-}
 
