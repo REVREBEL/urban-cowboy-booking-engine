@@ -280,7 +280,7 @@ export function PhotoRateStep() {
             role="dialog"
             aria-modal="true"
             aria-label={`${detailsConfig?.headline || detailsRate.name} rate details`}
-            className="max-h-[calc(100dvh-2rem)] max-w-full overflow-auto rounded-[28px] shadow-2xl sm:max-h-[calc(100dvh-4rem)]"
+            className="flex max-h-[calc(100dvh-2rem)] w-full max-w-[1050px] flex-col overflow-hidden rounded-[28px] shadow-2xl sm:max-h-[calc(100dvh-4rem)]"
           >
             <RateOfferSidePanel
               variant="default"
@@ -296,7 +296,7 @@ export function PhotoRateStep() {
               policyDisplay={
                 freeCancelDate && nonRefundableDate ? (
                   <PolicyDisplay
-                    orientation="vertical"
+                    orientation="horizontal"
                     size="compact"
                     initialAmount={money(detailsPricing.dueToday, detailsRate.currency)}
                     remainingAmount={money(detailsPricing.remaining, detailsRate.currency)}
@@ -311,22 +311,9 @@ export function PhotoRateStep() {
                 )
               }
               onClose={() => setDetailsRateId(null)}
-              height={720}
+              onConfirm={() => choose(detailsRate)}
               standalone
             />
-            <div className="-mt-20 flex justify-center px-8 pb-8">
-              <Button
-                type="button"
-                onClick={() => choose(detailsRate)}
-                disabled={detailsRate.totalGross == null}
-                variant="filled"
-                colorScheme="alpine-linen"
-                size="small"
-                className="relative z-10 min-w-56 uppercase tracking-[0.18em]"
-              >
-                Choose this rate
-              </Button>
-            </div>
           </div>
         </div>
       )}
