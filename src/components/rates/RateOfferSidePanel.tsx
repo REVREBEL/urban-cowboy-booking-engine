@@ -2,26 +2,8 @@ import * as React from 'react';
 import { X } from 'lucide-react';
 import { PolicyDisplay } from './policy_display';
 import { Button, type ButtonColor } from '../ui/button';
-import { PolicyDisplay, type MilestoneDate } from './policy_display';
 
 export type OfferCardTheme = 'ride-easy' | 'outfit' | 'sunup' | 'stay-while' | 'plan-ahead';
-
-export interface RateOfferPolicyDisplay {
-  initialAmount: string;
-  remainingAmount: string;
-  freeCancelDate?: MilestoneDate;
-  nonRefundableDate?: MilestoneDate;
-  textColor?: string;
-  accentColor?: string;
-  initialDepositTooltip?: {
-    title: string;
-    description: string;
-  };
-  remainingBalanceTooltip?: {
-    title: string;
-    description: string;
-  };
-}
 
 export interface RateOfferSidePanelProps {
   variant?: 'default' | 'compact';
@@ -179,7 +161,6 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   height,
 }) => {
   const isCompact = variant === 'compact';
-  const showTimeline = Boolean(policyDisplay?.freeCancelDate && policyDisplay?.nonRefundableDate);
   const themeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS['ride-easy'];
 
   if (isCompact && policyDisplay) {
@@ -240,17 +221,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           </button>
         </div>
 
-        {showTimeline && policyDisplay && (
-          <PolicyDisplay
-            {...policyDisplay}
-            orientation="vertical"
-            size="compact"
-            className="mb-2"
-          />
-        )}
-
-        {!showTimeline && (
-          <>
+        <>
         {/* Embedded Ticket Box with 2 Columns */}
         <div
           className="rounded-panel-xs px-5 shadow-xs mb-3 mx-auto flex items-center justify-center box-border transition-colors duration-300"
@@ -445,7 +416,6 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         </div>
 
           </>
-        )}
 
         {/* Policy Disclaimer */}
         <div
@@ -503,12 +473,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
       </div>
 
       {policyDisplay ? (
-        <PolicyDisplay
-          {...policyDisplay}
-          orientation="horizontal"
-          size="default"
-          className="w-full"
-        />
+        <div className="w-full">{policyDisplay}</div>
       ) : (
         <>
       {/* Top Section: Cancellation & Schedule */}
