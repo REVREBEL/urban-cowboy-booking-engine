@@ -267,19 +267,31 @@ export async function onRequestGet({
 export async function onRequestStudioConfig({ env, request }: { env: Env; request: Request }): Promise<Response> {
   const key = new URL(request.url).searchParams.get("property") || "hotel";
   const binding = propertiesForEnv(env).find((property) => property.key === key);
-  const denied = () => json({ enabled: false, property: key }, 200, "no-store");
-  if (!binding?.locationCmsItemId || !env.WEBFLOW_LOCATION_COLLECTION_ID || !env.WEBFLOW_CMS_API_TOKEN) return denied();
+  const denied = (reason: string) => {
+    // Log only the failure category. Do not print Webflow tokens or CMS data.
+    console.warn("[booking studio] access check denied", { property: key, reason });
+    return json({ enabled: false, property: key, demoLayout: "card" }, 200, "no-store");
+  };
+  if (!binding?.locationCmsItemId) return denied("location_binding_missing");
+  if (!env.WEBFLOW_LOCATION_COLLECTION_ID) return denied("collection_id_missing");
+  if (!env.WEBFLOW_CMS_API_TOKEN) return denied("cms_token_missing");
   try {
     const collection = encodeURIComponent(env.WEBFLOW_LOCATION_COLLECTION_ID);
     const data = await webflowGet<WebflowItemsResponse>(env, `/collections/${collection}/items/live?limit=100`);
     const item = data.items?.find((candidate) =>
       candidate.id === binding.locationCmsItemId && candidate.isArchived !== true && candidate.isDraft !== true);
+    if (!item) return denied("published_location_not_found");
+    if (item.fieldData?.["enable-demo-engine"] !== true) {
+      return denied("cms_switch_off");
+    }
     return json({
-      enabled: item?.fieldData?.["enable-demo-engine"] === true,
+      enabled: true,
       property: key,
       demoLayout: item?.fieldData?.["demo-layout"] === "2142905a00c88401810632b026107cf2" ? "photo" : "card",
     }, 200, "no-store");
-  } catch {
-    return denied();
+  } catch (error) {
+    // Separate CMS outages / authentication failures from a disabled switch.
+    const reason = error instanceof Error ? error.message : "cms_fetch_failed";
+    return denied(reason.startsWith("webflow_") ? reason : "cms_fetch_failed");
   }
 }
