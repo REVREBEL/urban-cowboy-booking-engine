@@ -93,6 +93,8 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
           photoJourney && step === "rates" ? <PhotoRateStep /> :
           photoJourney && step === "extras" ? <Extras photoMode /> :
           photoJourney && step === "guest" ? <PhotoReviewGuest /> :
+          photoJourney && (step === "payment" || step === "upgrade") ?
+            <div className="min-h-dvh bg-paper pt-20 text-smoke"><StepView /></div> :
           <StepView />}
       </main>
 
