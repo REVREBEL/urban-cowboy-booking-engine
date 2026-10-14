@@ -32,3 +32,18 @@ export function photoGalleryForRoom(
 ): RoomTypeCmsGallery | undefined {
   return map[roomTypeId] ?? (studio ? map[STUDIO_GALLERY_IDS[roomTypeId]] : undefined);
 }
+
+/** Pure photo selection: switch only the image URLs, never bookability or price. */
+export function selectPhotoImages(
+  mewsImages: readonly string[],
+  gallery: RoomTypeCmsGallery | undefined,
+  source: PhotoSource,
+): { images: string[]; photoSource: "webflow" | "mews" | "fallback" } {
+  if (source === "webflow" && gallery?.images.length) {
+    return { images: gallery.images, photoSource: "webflow" };
+  }
+  if (mewsImages.length) {
+    return { images: [...mewsImages], photoSource: "mews" };
+  }
+  return { images: [], photoSource: "fallback" };
+}
