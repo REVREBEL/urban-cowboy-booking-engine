@@ -3,6 +3,12 @@ import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
+import type { JourneyRoom } from './data';
+import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
+import { TourIcon } from '@/components/rooms/TourIcon';
+import { FeatureFocus } from '@/components/rooms/FeatureFocus';
+
 /** The supplied UI arrow assets live in public/assets/icons/ui. Keep Lucide fallbacks until the files are deployed. */
 function TourArrow({ direction, size = 18 }: { direction: 'up' | 'down' | 'left' | 'right'; size?: number }) {
   const [fallback, setFallback] = useState(false);
@@ -26,11 +32,6 @@ function TourArrow({ direction, size = 18 }: { direction: 'up' | 'down' | 'left'
   );
 }
 
-import { Button } from '@/components/ui/button';
-import type { JourneyRoom } from './data';
-import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
-import { TourIcon } from '@/components/rooms/TourIcon';
-import { FeatureFocus } from '@/components/rooms/FeatureFocus';
 
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
 const FX: (string | undefined)[] = [];
@@ -208,7 +209,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
       <footer className="j-tour-footer" data-tour-panel>
         {roomNav('j-roomnav-mobile')}
         <div className="j-tour-info min-w-0">
-          <p className="truncate text-xs uppercase text--paper/75">{room.building} · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · {position + 1}/{count}</span></p>
+          <p className="truncate text-xs uppercase text--paper/75">{room.building} · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · <span className="font-number">{position + 1}/{count}</span></span></p>
           <h2 className="mt-1 truncate font-headline text-xl leading-none sm:text-4xl sm:whitespace-normal">{room.name}</h2>
           <p className="mt-1 hidden text-sm text--paper/80 lg:block">{room.tagline}</p>
         </div>
