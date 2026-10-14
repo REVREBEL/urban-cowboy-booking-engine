@@ -302,6 +302,35 @@ export async function onRequestStudioConfig({ env, request }: { env: Env; reques
       item.isDraft === true
     ) return denied("published_location_not_found");
     if (item.fieldData?.["enable-demo-engine"] !== true) {
+      if (localDiagnostics) {
+        // Compare staged and published switch values without exposing unrelated
+        // CMS fields, IDs, access tokens, or guest information.
+        const state = (value: unknown) =>
+          value === true ? "true" : value === false ? "false" :
+          value === undefined ? "missing" : typeof value;
+        let stagedSwitch: string = "unavailable";
+        try {
+          const staged = await webflowGet<WebflowCollectionItem>(
+            env,
+            `/collections/${collection}/items/${itemId}`,
+            WEBFLOW_DATA_API,
+          );
+          stagedSwitch = state(staged.fieldData?.["enable-demo-engine"]);
+        } catch { /* Do not bypass live authorization if stage read fails. */ }
+        console.warn("[booking studio] switch comparison", {
+          property: key,
+          publishedSwitch: state(item.fieldData?.["enable-demo-engine"]),
+          stagedSwitch,
+        });
+        return json({
+          enabled: false,
+          property: key,
+          demoLayout: "card",
+          diagnostic: "cms_switch_off",
+          publishedSwitch: state(item.fieldData?.["enable-demo-engine"]),
+          stagedSwitch,
+        }, 200, "no-store");
+      }
       return denied("cms_switch_off");
     }
     return json({
