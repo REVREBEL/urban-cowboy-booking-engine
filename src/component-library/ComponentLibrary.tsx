@@ -122,7 +122,9 @@ const renderedPaths = new Set([
   "src/components/ui/tabs.tsx",
 ]);
 
-// Inventory needs file paths only. Use raw-source imports so this catalog does not\n// dynamically import executable modules already loaded by its live previews.\nconst componentModules = import.meta.glob([
+// Inventory needs file paths only. Use raw-source imports so this catalog does not
+// dynamically import executable modules already loaded by its live previews.
+const componentModules = import.meta.glob([
   "../components/**/*.tsx",
   "../steps/**/*.tsx",
   // Stored prototype pages are not production components and contain imports
