@@ -4,7 +4,6 @@
  */
 import { ChevronLeft } from "lucide-react";
 import { useBooking, type Step } from "../state/booking";
-import { resetPhotoJourney } from "./photoSession";
 import { Button } from "../components/ui/button";
 import "../styles/room-photo-tour.css";
 
@@ -38,17 +37,11 @@ export function PhotoJourneyHeader() {
     payment: "guest",
     confirmation: "dates",
   };
-  const goHome = () => {
-    const url = new URL(window.location.href);
-    resetPhotoJourney();
-    url.searchParams.delete("photoPath");
-    window.history.replaceState(null, "", url);
-    booking.resetAll();
-  };
+
   return (
     <header className="j-journey-header fixed inset-x-0 top-0 z-40 text-paper" data-photo-journey-header>
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex w-20 shrink-0 items-center gap-3">
           {index > 0 && (
             <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{padding: 0, fontSize: "11px", fontWeight: 400}} onClick={() => booking.goTo(previous[booking.step])}
               className={`${label} flex items-center gap-1 text-paper/80 transition hover:text-paper`}>
@@ -56,9 +49,7 @@ export function PhotoJourneyHeader() {
               Back
             </Button>
           )}
-          <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{padding: 0, fontSize: "11px", fontWeight: 400}} className={label} onClick={goHome}>
-            Urban Cowboy · Catskills
-          </Button>
+
         </div>
         <nav aria-label="Booking progress" className="hidden md:block">
           <ol className="flex items-center gap-5">
