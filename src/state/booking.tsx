@@ -171,6 +171,10 @@ function writeUrl(s: BookingState) {
     const layout = current.get("roomLayout");
     if (layout === "photo" || layout === "card") q.set("roomLayout", layout);
   }
+  // Preserve the photo journey's native branch between the original Arrive,
+  // Stay Journal and photo rooms screens as criteria change.
+  const photoPath = current.get("photoPath");
+  if (photoPath === "journal" || photoPath === "rooms") q.set("photoPath", photoPath);
   const qs = q.toString();
   const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
   window.history.replaceState(null, "", url);
