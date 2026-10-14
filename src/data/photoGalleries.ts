@@ -12,6 +12,11 @@ const STUDIO_GALLERY_IDS: Record<string, string> = {
   "demo-cabin": "e90c2a72-1cf8-4246-84d7-b10600706caf", // The Cabin
 };
 
+/** Look up editorial Webflow content for Studio fixture IDs without changing their booking IDs. */
+export function studioEditorialRoomTypeId(roomTypeId: string): string {
+  return isStudioRoute() ? (STUDIO_GALLERY_IDS[roomTypeId] ?? roomTypeId) : roomTypeId;
+}
+
 export type PhotoSource = "webflow" | "mews";
 
 export function photoSourceFromUrl(): PhotoSource {
