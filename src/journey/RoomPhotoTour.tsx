@@ -75,8 +75,8 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
   };
   const roomNav = (cls: string) => (
     <div className={cls}>
-      <Button variant="transparent" className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><ArrowUp size={18} /></Button>
-      <Button variant="transparent" className="j-tour-control" disabled={!onNext} aria-label={`Next room from ${room.name}`} title="Next room" onClick={onNext}><ArrowDown size={18} /></Button>
+      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><ArrowUp size={18} /></Button>
+      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onNext} aria-label={`Next room from ${room.name}`} title="Next room" onClick={onNext}><ArrowDown size={18} /></Button>
     </div>
   );
 
@@ -110,8 +110,8 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
                         <FeatureFocus count={pinIndex + 1} icon={pin.icon} title={pin.title}
                           active={activePin === pin.id} onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)} />
                       </div>
-                      <button type="button" className="j-pin-mobile" aria-label={pin.title} aria-pressed={(selected?.id ?? null) === pin.id}
-                        onClick={() => pickPin(pin.id)}>{pinIndex + 1}</button>
+                      <Button type="button" variant={(selected?.id ?? null) === pin.id ? "filled" : "outline"} colorScheme={(selected?.id ?? null) === pin.id ? "alpine-linen" : "paper"} size="xsmall" style={{padding: 0, width: "30px", height: "30px", borderRadius: "50%", borderWidth: "1px"}} className="j-pin-mobile" aria-label={pin.title} aria-pressed={(selected?.id ?? null) === pin.id}
+                        onClick={() => pickPin(pin.id)}>{pinIndex + 1}</Button>
                     </div>
                   ))}
                 </div>
@@ -120,7 +120,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
                 const neighbor = room.images[neighborIndex];
                 if (!neighbor || neighbor === src) return null;
                 return (
-                  <Button key={direction} variant="transparent" tabIndex={-1} aria-hidden="true"
+                  <Button key={direction} variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:0}} tabIndex={-1} aria-hidden="true"
                     className={`j-photo-peek ${direction < 0 ? 'is-prev' : 'is-next'}`}
                     style={{ '--peek-ratio': ratios[neighborIndex] ?? 1.5 } as CSSProperties}
                     onClick={() => goPhoto(direction)}>
@@ -138,12 +138,12 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
 
 
       {room.images.length > 1 && <>
-        <Button variant="transparent" className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><ChevronLeft size={24} /></Button>
-        <Button variant="transparent" className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><ChevronRight size={24} /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><ChevronLeft size={24} /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><ChevronRight size={24} /></Button>
       </>}
 
       <div className="j-photo-pagination" aria-label="Photo selection">
-        {room.images.map((_, index) => <Button key={index} variant="transparent" className="j-tour-control j-photo-dot"
+        {room.images.map((_, index) => <Button key={index} variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-dot"
           title={`Photo ${index + 1}`} aria-label={`Show photo ${index + 1} of ${room.name}`} aria-pressed={photo === index}
           onClick={() => carousel?.scrollTo(index)}><span /></Button>)}
         <span className="text-xs tabular-nums text--paper/85" aria-live="polite">{photo + 1} / {room.images.length}</span>
@@ -161,17 +161,17 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
             <p className="j-mobile-only text-[11px] uppercase tracking-[0.2em] opacity-60">In this photo · tap a number or swipe</p>
             <div ref={highlightRow} className="j-highlight-row no-scrollbar">
               {pins.map((pin, i) => (
-                <button key={pin.id} type="button" data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => pickPin(pin.id)} className="j-highlight-card">
+                <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{padding:"12px",fontWeight:400,textAlign:"left",borderRadius:"10px"}} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => pickPin(pin.id)} className="j-highlight-card">
                   <span className="j-highlight-num">{i + 1}</span>
                   <TourIcon name={pin.icon} className="size-10 shrink-0" />
                   <span className="min-w-0 text-left"><span className="block font-headline text-base leading-tight">{pin.title}</span><span className="mt-0.5 block text-xs leading-snug opacity-75">{pin.note}</span></span>
-                </button>
+                </Button>
               ))}
             </div>
           </>}
           <div className="flex items-start justify-between gap-3">
             <div><h3 className="font-headline text-xl">The little comforts</h3><p className="mt-1 text-xs">{room.bedType} · {room.squareFeet} sq ft · {room.adultsOnly ? 'Guests 21+' : 'All ages'}{room.dogFriendly ? ' · Dogs welcome' : ''}</p></div>
-            <Button variant="transparent" className="j-tour-control j-panel-close" aria-label={`Close details for ${room.name}`} title="Close details" onClick={() => onDetails(false)}><X size={20} /></Button>
+            <Button variant="transparent" colorScheme="lake-forest" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-panel-close" aria-label={`Close details for ${room.name}`} title="Close details" onClick={() => onDetails(false)}><X size={20} /></Button>
           </div>
           <ul className="j-amenity-list">
             {amenities.map((a) => <li key={a.title}><TourIcon name={a.icon} /><span>{a.title}</span></li>)}
@@ -189,8 +189,8 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
         </div>
         <div className="j-tour-actions">
           <p className="shrink-0 tabular-nums"><span className="text-xs text--paper/75">from </span><span className="font-headline text-xl sm:text-3xl">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text--paper/75"> /night</span></p>
-          <Button variant="outline" className="j-tour-button" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)}>{details ? 'Hide details' : 'Details'}</Button>
-          <Button className="j-tour-button j-tour-choose" onClick={onChoose}>Choose room</Button>
+          <Button variant="outline" colorScheme="paper" size="small" className="j-tour-button" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)}>{details ? 'Hide details' : 'Details'}</Button>
+          <Button variant="filled" colorScheme="alpine-linen" size="small" className="j-tour-button j-tour-choose" onClick={onChoose}>Choose room</Button>
           <div className="j-roomnav-desktop flex items-center gap-1">
             <span className="mr-1 text-xs tabular-nums text--paper/75">{position + 1}/{count}</span>
             {roomNav('flex items-center gap-1')}
