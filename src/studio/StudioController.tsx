@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useBooking, type Step } from "../state/booking";
 import { buildRooms } from "../lib/shaping";
 import { studioAvailability, studioHotel } from "./demoData";
 import { getDemoScenario, setDemoScenario, type DemoScenario } from "./runtime";
+import { currentStudioLayout } from "./roomLayout";
 
 const steps: { id: Step; label: string }[] = [
   { id: "dates", label: "Search" }, { id: "results", label: "Rooms / Find Your Stay" },
@@ -20,7 +21,12 @@ const scenarios: { id: DemoScenario; label: string }[] = [
 export function StudioController() {
   const booking = useBooking();
   const [open, setOpen] = useState(false);
-  const [roomLayout, setRoomLayout] = useState(() => new URLSearchParams(window.location.search).get("roomLayout") === "photo" ? "photo" : "card");
+  const [roomLayout, setRoomLayout] = useState(() => currentStudioLayout());
+  useEffect(() => {
+    const sync = () => setRoomLayout(currentStudioLayout());
+    window.addEventListener("studio-room-layout-change", sync);
+    return () => window.removeEventListener("studio-room-layout-change", sync);
+  }, []);
   const changeRoomLayout = (layout: string) => {
     setRoomLayout(layout);
     const url = new URL(window.location.href);
