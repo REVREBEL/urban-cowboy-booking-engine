@@ -35,8 +35,8 @@
 /* Photo-first room tours: photography remains uncropped in both axes. */
 .j-room-tour { position: relative; scroll-margin-top: 155px; overflow: clip; background: var(--smoke); }
 .j-photo-viewport { overflow: hidden; touch-action: pan-y pinch-zoom; outline-offset: -4px; }
-.j-photo-track { display: flex; align-items: stretch; }
-.j-photo-slide { flex: 0 0 100%; min-width: 0; position: relative; display: flex; align-items: center; justify-content: center; overflow: clip; }
+.j-photo-track { display: flex; align-items: stretch; height: 100%; }
+.j-photo-slide { flex: 0 0 100%; min-width: 0; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; overflow: clip; }
 .j-photo-image { position: relative; z-index: 2; width: 100%; aspect-ratio: var(--photo-ratio); }
 .j-photo-image > img { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; }
 .j-tour-control { min-width: 44px !important; height: 44px !important; padding: 0 !important; border-radius: 50% !important; color: var(--paper) !important; background: color-mix(in oklab, var(--smoke) 85%, transparent) !important; letter-spacing: 0 !important; }
@@ -77,8 +77,8 @@
   .j-room-spreads { margin-top: 0; }
   .j-room-tour { height: calc(100dvh - var(--j-room-top)); min-height: 0; scroll-margin-top: var(--j-room-top); display: flex; flex-direction: column; }
   .j-room-tour::before { content: ''; position: absolute; inset: 0 0 auto; height: 100px; z-index: 3; pointer-events: none; background: linear-gradient(to bottom, var(--smoke), color-mix(in oklab, var(--smoke) 0%, transparent)); }
-  .j-photo-viewport { flex: 1; min-height: 0; display: grid; align-content: center; }
-  .j-photo-image { width: min(100%, calc((100dvh - var(--j-room-top)) * var(--photo-ratio))); margin-inline: auto; }
+  .j-photo-viewport { flex: 1; min-height: 0; display: block; }
+  .j-photo-image { width: min(100%, calc((100dvh - var(--j-room-top)) * var(--photo-ratio))); height: 100%; aspect-ratio: auto; margin-inline: auto; }
   .j-tour-footer { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
 }
 
