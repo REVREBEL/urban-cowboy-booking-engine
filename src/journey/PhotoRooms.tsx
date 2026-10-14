@@ -97,6 +97,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   const roomStage = useRef<HTMLElement>(null);
   const filterOverlay = useRef<HTMLDivElement>(null);
   const roomScrollFrame = useRef<number | null>(null);
+  const lastWheelNavigation = useRef(0);
 
   const cancelRoomScroll = useCallback(() => {
     if (roomScrollFrame.current !== null) {
@@ -108,10 +109,8 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
 
   // Navigation can be interrupted by a normal wheel/touch gesture.
   useEffect(() => {
-    window.addEventListener("wheel", cancelRoomScroll, { passive: true });
     window.addEventListener("touchstart", cancelRoomScroll, { passive: true });
     return () => {
-      window.removeEventListener("wheel", cancelRoomScroll);
       window.removeEventListener("touchstart", cancelRoomScroll);
       cancelRoomScroll();
     };
@@ -216,6 +215,33 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     };
     roomScrollFrame.current = window.requestAnimationFrame(animate);
   };
+
+  // Route desktop wheel gestures through the same guided easing as the room arrows.
+  // Native wheel scrolling plus CSS snap was bypassing the animated navigation.
+  useEffect(() => {
+    if (view !== "spreads" || window.matchMedia("(max-width: 639px)").matches) return;
+    const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      if (!(event.target instanceof Element)) return;
+      if (event.target.closest("button, select, input, textarea, [data-tour-panel], .j-room-filters, .j-tour-details")) return;
+      const stage = roomStage.current;
+      if (!stage?.contains(event.target)) return;
+      const offset = Number.parseFloat(getComputedStyle(stage).getPropertyValue("--j-room-top")) || 160;
+      const sections = list.map((item) => document.getElementById(`tour-${item.room.id}`)).filter((node): node is HTMLElement => Boolean(node));
+      if (!sections.length) return;
+      const current = sections.reduce((best, section, index) =>
+        Math.abs(section.getBoundingClientRect().top - offset) < Math.abs(sections[best].getBoundingClientRect().top - offset) ? index : best, 0);
+      const next = current + (event.deltaY > 0 ? 1 : -1);
+      if (next < 0 || next >= sections.length) return;
+      event.preventDefault();
+      const now = performance.now();
+      if (now - lastWheelNavigation.current < 1300) return;
+      lastWheelNavigation.current = now;
+      visitRoom(next);
+    };
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, [view, list]);
 
   return (
     <section ref={roomStage} className="j-room-stage pb-24">
