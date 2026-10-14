@@ -186,6 +186,7 @@ function Arrive(props: {
               activeSection={props.activeSection}
               onSectionClick={props.setActiveSection}
               dropdownPlacement="above"
+              constrainAboveToViewport
               className="max-w-none!"
               dropdownSlot={
                 <>
