@@ -41,6 +41,16 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   const activeReview: RoomTypeCmsReview | null = review ?? null;
   const reviewDate = formatReviewDate(activeReview?.reviewDate);
 
@@ -124,7 +134,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             className="w-8 h-8 rounded-full bg-white border border-cowboy-umber/20 hover:bg-alpine-linen flex items-center justify-center text-cowboy-umber transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-hidden"
             aria-label="Close modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -361,10 +371,10 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           <button
             type="button"
             onClick={() => onProceedToRates(room)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-cowboy-umber hover:bg-smoke text-white px-8 py-3.5 rounded-full font-label text-xs sm:text-sm uppercase tracking-widest shadow-md transition-all cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-cowboy-umber hover:bg-smoke text-white px-8 py-3.5 rounded-full font-label text-xs sm:text-sm uppercase tracking-widest shadow-md transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2"
           >
             <span>Proceed to Rate Selection</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>

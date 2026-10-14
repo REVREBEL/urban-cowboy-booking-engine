@@ -20,6 +20,8 @@ import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
 import { ContactBar } from "@/components/booking/chrome/contact-bar";
 
+import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
+import type { RoomType } from "@/types";
 import { DogToggleButton } from "@/components/booking/discovery/DogToggleButton";
 import { MatchBenefitsCard } from "@/components/booking/results/MatchBenefitsCard";
 import { PreferenceIconButton } from "@/components/booking/discovery/PreferenceIconButton";
@@ -550,6 +552,31 @@ function FindFlowsSection({ width }: { width: PreviewWidth }) {
   );
 }
 
+const demoModalRoom: RoomType = {
+  id: "alpine-bathing-suite",
+  buildingId: "alpine",
+  buildingName: "Alpine Haus",
+  name: "Alpine Bathing Suite",
+  eyebrow: "Building 01 · First Floor",
+  tagline: "The Iconic Indoor Soak",
+  description: "Freestanding clawfoot tub facing a picture window, radiant heated floors, and forest views.",
+  longDescription: "Built into the hillside above the Lodge, Alpine is home to ten of the Cowboy’s most iconic rooms. Every suite pairs a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside.",
+  basePrice: 425,
+  squareFeet: 430,
+  bedType: "King Bed",
+  maxGuests: 2,
+  isDogFriendly: false,
+  ageRestricted21: true,
+  soakType: "clawfoot-window",
+  soakHighlight: "Freestanding copper clawfoot tub in front of a forest picture window",
+  images: [
+    "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200",
+    "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200",
+  ],
+  features: ["Clawfoot Soaking Tub", "Radiant Heated Floors", "Cast Iron Wood Stove", "Letter Writing Desk"],
+  tags: ["indoor-soak", "picture-window", "21-plus"],
+};
+
 function BookingSection({ width, surface }: { width: PreviewWidth; surface: PreviewSurface }) {
   const [dog, setDog] = useState(false);
   const [selectedPreference, setSelectedPreference] = useState<PreferenceId | null>(null);
@@ -561,6 +588,31 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
         title="Booking Components"
         body="Retained booking components promoted from the evaluation branch into the canonical feature tree."
       />
+
+      <Preview
+        title="RoomDetailModal"
+        path="src/components/rooms/RoomDetailModal.tsx"
+        surface="cream"
+        tall
+      >
+        <WidthFrame width={width}>
+          <div className="relative min-h-[750px] w-full">
+            <RoomDetailModal
+              room={demoModalRoom}
+              criteria={{
+                property: "Urban Cowboy Catskills",
+                checkIn: "2026-10-14",
+                checkOut: "2026-10-17",
+                nights: 3,
+                guests: 2,
+                rooms: 1,
+              }}
+              onClose={() => undefined}
+              onProceedToRates={() => undefined}
+            />
+          </div>
+        </WidthFrame>
+      </Preview>
 
       <Preview
         title="DogToggleButton"
