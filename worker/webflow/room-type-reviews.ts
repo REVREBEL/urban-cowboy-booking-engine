@@ -7,6 +7,8 @@ import type {
   RoomTypeCmsGalleryMap,
 } from "../../src/types/room-type-cms.ts";
 import type { Env } from "../mews/_lib.ts";
+import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../../src/types/photo-hotspot-cms.ts";
+import { normalizePublishedAmenities, normalizeRoomAmenityMap, normalizePhotoHotspots } from "./photo-hotspots.ts";
 import { json } from "../mews/_lib.ts";
 
 interface WebflowOption {
@@ -41,6 +43,8 @@ interface CachedReviewPayload {
   reviews: RoomTypeCmsReviewMap;
   descriptions: RoomTypeCmsDescriptionMap;
   galleries: RoomTypeCmsGalleryMap;
+  amenities: RoomTypeCmsAmenityMap;
+  hotspots: CmsPhotoHotspotMap;
 }
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
@@ -49,7 +53,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:room-type-content:v3";
+const CACHE_KEY_PREFIX = "webflow:room-type-content:v4";
 const BROWSER_CACHE_CONTROL =
   "public, max-age=300, s-maxage=21600, stale-while-revalidate=64800";
 
@@ -63,8 +67,8 @@ const safeUrl = (value: unknown): string | null => {
   return /^https?:\/\//i.test(candidate) ? candidate : null;
 };
 
-const cacheKey = (collectionId: string) =>
-  `${CACHE_KEY_PREFIX}:${collectionId}`;
+const cacheKey = (collectionId: string, hotspotCollectionId: string) =>
+  `${CACHE_KEY_PREFIX}:${collectionId}:${hotspotCollectionId}`;
 
 async function webflowGet<T>(
   env: Env,
@@ -212,7 +216,14 @@ async function fetchPublishedReviews(
   collectionId: string,
 ): Promise<CachedReviewPayload> {
   const encoded = encodeURIComponent(collectionId);
-  const [items, collection] = await Promise.all([
+  const amenitiesId = env.WEBFLOW_AMENITY_COLLECTION_ID;
+  const hotspotsId = env.WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID;
+  const optionalLive = (id?: string) => id
+    ? webflowGet<WebflowItemsResponse>(env, WEBFLOW_CONTENT_API,
+        `/collections/${encodeURIComponent(id)}/items/live?limit=100`)
+        .catch((): WebflowItemsResponse => ({ items: [] }))
+    : Promise.resolve({ items: [] } as WebflowItemsResponse);
+  const [items, collection, amenityItems, hotspotItems] = await Promise.all([
     // Published room content is the required payload and uses Webflow's Content
     // Delivery API/CDN.
     webflowGet<WebflowItemsResponse>(
@@ -227,7 +238,10 @@ async function fetchPublishedReviews(
       WEBFLOW_API,
       `/collections/${encoded}`,
     ).catch((): WebflowCollectionResponse => ({ fields: [] })),
+    optionalLive(amenitiesId),
+    optionalLive(hotspotsId),
   ]);
+  const amenities = normalizePublishedAmenities(amenityItems.items ?? []);
 
   return {
     fetchedAt: Date.now(),
@@ -237,14 +251,15 @@ async function fetchPublishedReviews(
     ),
     descriptions: normalizeRoomTypeDescriptions(items.items ?? []),
     galleries: normalizeRoomTypeGalleries(items.items ?? []),
+    amenities: normalizeRoomAmenityMap(items.items ?? [], amenities),
+    hotspots: normalizePhotoHotspots(hotspotItems.items ?? [], amenities),
   };
 }
 
 async function readCachedReviews(
   env: Env,
-  collectionId: string,
+  key: string,
 ): Promise<CachedReviewPayload | null> {
-  const key = cacheKey(collectionId);
 
   if (env.WEBFLOW_CONTENT_CACHE) {
     try {
@@ -276,10 +291,9 @@ async function readCachedReviews(
 
 async function writeCachedReviews(
   env: Env,
-  collectionId: string,
+  key: string,
   payload: CachedReviewPayload,
 ): Promise<void> {
-  const key = cacheKey(collectionId);
   memoryCache.set(key, payload);
 
   if (!env.WEBFLOW_CONTENT_CACHE) return;
@@ -302,7 +316,7 @@ async function refreshReviews(
   collectionId: string,
 ): Promise<CachedReviewPayload> {
   const payload = await fetchPublishedReviews(env, collectionId);
-  await writeCachedReviews(env, collectionId, payload);
+  await writeCachedReviews(env, cacheKey(collectionId, env.WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID || ""), payload);
   return payload;
 }
 
@@ -312,6 +326,8 @@ function response(payload: CachedReviewPayload, stale: boolean): Response {
       reviews: payload.reviews,
       descriptions: payload.descriptions,
       galleries: payload.galleries,
+      amenities: payload.amenities,
+      hotspots: payload.hotspots,
       generatedAt: new Date(payload.fetchedAt).toISOString(),
       stale,
     },
@@ -330,10 +346,10 @@ export async function onRequestGet({
   const collectionId = env.WEBFLOW_ROOM_TYPE_COLLECTION_ID;
 
   if (!env.WEBFLOW_CMS_API_TOKEN || !collectionId) {
-    return json({ reviews: {}, descriptions: {}, galleries: {}, generatedAt: null, stale: false }, 200, "no-store");
+    return json({ reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {}, generatedAt: null, stale: false }, 200, "no-store");
   }
 
-  const cached = await readCachedReviews(env, collectionId);
+  const cached = await readCachedReviews(env, cacheKey(collectionId, env.WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID || ""));
 
   if (cached) {
     const stale = cached.fetchedAt + CACHE_FRESH_MS <= Date.now();
@@ -364,7 +380,7 @@ export async function onRequestGet({
     if (cached) return response(cached, true);
 
     return json(
-      { reviews: {}, descriptions: {}, generatedAt: null, stale: false },
+      { reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {}, generatedAt: null, stale: false },
       200,
       "no-store",
     );
