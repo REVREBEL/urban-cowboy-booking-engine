@@ -208,7 +208,13 @@ async function fetchPublishedLocations(
     ) return item;
     try {
       const verified = await fetchPublishedLocationItem(env, collectionId, itemId);
-      return { ...item, fieldData: { ...item.fieldData, ...verified.fieldData } };
+      const fields = { ...item.fieldData };
+      for (const key of LOCATION_SETTING_FIELDS) {
+        if (fields[key] === undefined && verified.fieldData?.[key] !== undefined) {
+          fields[key] = verified.fieldData[key];
+        }
+      }
+      return { ...item, fieldData: fields };
     } catch {
       return item;
     }
