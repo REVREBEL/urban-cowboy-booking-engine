@@ -340,6 +340,8 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
           children={children}
           rooms={rooms}
           imageBaseUrl={imageBaseUrl}
+          galleries={roomTypeGalleries}
+          photoSource={photoSource}
           initial={journalProfile}
           onDone={(profile) => {
             savePhotoProfile(profile);
