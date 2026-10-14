@@ -1,3 +1,5 @@
+import { isStudioRoute } from "../studio/runtime";
+import { demoMewsResponse } from "../studio/demoData";
 // FRONTIÈRE RÉSEAU UNIQUE du front. Aucun composant n'appelle Mews directement :
 // tout passe par /api/mews/* (Pages Functions, même origine). Le front ne connaît
 // ni le `Client`, ni les UUID établissement.
@@ -46,6 +48,7 @@ interface Meta {
 }
 
 async function call<T>(path: string, init: RequestInit | undefined, meta: Meta): Promise<T> {
+  if (isStudioRoute()) return demoMewsResponse<T>(path);
   const id = apiLog.start(init?.method ?? "GET", path, meta.label, meta.why, meta.request);
   const t0 = performance.now();
   const ms = () => Math.round(performance.now() - t0);

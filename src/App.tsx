@@ -1,4 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { isStudioRoute } from "./studio/runtime";
+import { StudioController } from "./studio/StudioController";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
@@ -81,7 +83,8 @@ function Shell() {
 
       <BookingFooter />
       <ContactBar />
-      {SHOW_API_DEBUGGER && <DevPanel />}
+      {SHOW_API_DEBUGGER && !isStudioRoute() && <DevPanel />}
+      {isStudioRoute() && <StudioController />}
     </div>
   );
 }
@@ -99,9 +102,18 @@ function HydrateLoader() {
 }
 
 export default function App() {
-  return (
-    <BookingProvider>
-      <Shell />
-    </BookingProvider>
-  );
+  const studio = isStudioRoute();
+  const [allowed, setAllowed] = useState<boolean | null>(studio ? null : true);
+  useEffect(() => {
+    if (!studio) return;
+    const controller = new AbortController();
+    fetch("/api/studio/config?property=hotel", { cache: "no-store", signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => setAllowed(data?.enabled === true))
+      .catch(() => setAllowed(false));
+    return () => controller.abort();
+  }, [studio]);
+  if (allowed === null) return <div className="grid min-h-screen place-items-center">Loading Studio configuration…</div>;
+  if (!allowed) return <main className="grid min-h-screen place-items-center p-8"><p>Booking Studio is disabled for this location.</p></main>;
+  return <BookingProvider><Shell /></BookingProvider>;
 }

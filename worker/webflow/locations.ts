@@ -257,3 +257,25 @@ export async function onRequestGet({
     );
   }
 }
+
+/** Live, fail-closed CMS check for property-scoped Studio access.
+ * Deliberately bypasses the long-lived public Locations cache.
+ */
+export async function onRequestStudioConfig({ env, request }: { env: Env; request: Request }): Promise<Response> {
+  const key = new URL(request.url).searchParams.get("property") || "hotel";
+  const binding = propertiesForEnv(env).find((property) => property.key === key);
+  const denied = () => json({ enabled: false, property: key }, 200, "no-store");
+  if (!binding?.locationCmsItemId || !env.WEBFLOW_LOCATION_COLLECTION_ID || !env.WEBFLOW_CMS_API_TOKEN) return denied();
+  try {
+    const collection = encodeURIComponent(env.WEBFLOW_LOCATION_COLLECTION_ID);
+    const data = await webflowGet<WebflowItemsResponse>(env, `/collections/${collection}/items/live?limit=100`);
+    const item = data.items?.find((candidate) =>
+      candidate.id === binding.locationCmsItemId && candidate.isArchived !== true && candidate.isDraft !== true);
+    return json({
+      enabled: item?.fieldData?.["enable-demo-engine"] === true,
+      property: key,
+    }, 200, "no-store");
+  } catch {
+    return denied();
+  }
+}
