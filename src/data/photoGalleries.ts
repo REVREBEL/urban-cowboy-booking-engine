@@ -1,5 +1,5 @@
 import type { RoomTypeCmsGallery, RoomTypeCmsGalleryMap } from "../types/room-type-cms";
-import { isStudioRoute } from "../studio/runtime";
+import { isStudioRoute } from "../studio/runtime.ts";
 
 /** Studio uses simulated Mews IDs. Match its three demo categories to real
  * published Webflow Room Types for photography testing only. This never
