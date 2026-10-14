@@ -185,7 +185,7 @@ function Arrive(props: {
               }}
               activeSection={props.activeSection}
               onSectionClick={props.setActiveSection}
-              dropdownPlacement={props.activeSection === "dates" ? "above" : "below"}
+              dropdownPlacement="above"
               className="max-w-none!"
               dropdownSlot={
                 <>
