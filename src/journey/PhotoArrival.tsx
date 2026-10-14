@@ -35,7 +35,6 @@ export function PhotoArrival() {
   };
   return (
     <div className="min-h-dvh bg-j-night font-j-body text-j-paper">
-      <PhotoJourneyHeader step="dates" />
       <Arrive
         checkIn={checkIn}
         checkOut={checkOut}
@@ -49,29 +48,6 @@ export function PhotoArrival() {
         nights={nights}
       />
     </div>
-  );
-}
-
-export function PhotoJourneyHeader({ step }: { step: "dates" | "results" }) {
-  const booking = useBooking();
-  return (
-    <header className="j-journey-header sticky top-0 z-40">
-      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <button type="button" onClick={() => booking.goTo("dates")} className={label + " text-j-paper/80 hover:text-j-paper"}>
-          Urban Cowboy · Catskills
-        </button>
-        <nav aria-label="Photo booking progress" className="hidden md:block">
-          <ol className="flex items-center gap-5">
-            <li className={label + (step === "dates" ? " text-j-paper" : " text-j-paper/60")}>01 Dates</li>
-            <li className={label + (step === "results" ? " text-j-paper" : " text-j-paper/35")}>02 Room</li>
-            <li className={label + " text-j-paper/35"}>03 Rate</li>
-            <li className={label + " text-j-paper/35"}>04 Extras</li>
-            <li className={label + " text-j-paper/35"}>05 Review</li>
-          </ol>
-        </nav>
-        <span className={label + " text-j-paper/70"}>Photo journey</span>
-      </div>
-    </header>
   );
 }
 
