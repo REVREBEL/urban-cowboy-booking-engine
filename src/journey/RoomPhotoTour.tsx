@@ -26,7 +26,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   onPrevious?: () => void; onNext?: () => void;
 }) {
   const section = useRef<HTMLElement>(null);
-  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, duration: 34, watchDrag: (api, event) => {
+  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, align: "center", containScroll: false, duration: 34, watchDrag: (api, event) => {
     const target = event.target;
     return !(target instanceof Element && target.closest('button, a, [data-tour-panel]'));
   } });
@@ -128,6 +128,15 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
           {room.images.map((src, index) => (
             <div className="j-photo-slide" key={`${src}-${index}`} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${room.images.length}`} aria-hidden={photo !== index} inert={photo !== index} style={{ '--photo-ratio': ratios[index] ?? 1.5 } as CSSProperties}>
               {fx?.includes('fx-backlight') && <img className="j-fx-halo" src={src} alt="" aria-hidden="true" draggable={false} />}
+              {room.images.length > 1 && ([-1, 1] as const).map((direction) => {
+                const neighborIndex = (index + direction + room.images.length) % room.images.length;
+                const neighbor = room.images[neighborIndex];
+                return (
+                  <div key={direction} className={`j-photo-neighbor ${direction < 0 ? "is-prev" : "is-next"}`} aria-hidden="true">
+                    <img src={neighbor} alt="" draggable={false} loading="lazy" />
+                  </div>
+                );
+              })}
               <div className="j-photo-image">
                 <img src={src} alt={`${room.name} — photo ${index + 1}`} draggable={false}
                   loading={position === 0 && index === 0 ? 'eager' : 'lazy'}
@@ -148,19 +157,6 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                     </div>
                   ))}
                 </div>
-              {room.images.length > 1 && [-1, 1].map((direction) => {
-                const neighborIndex = (index + direction + room.images.length) % room.images.length;
-                const neighbor = room.images[neighborIndex];
-                if (!neighbor || neighbor === src) return null;
-                return (
-                  <Button key={direction} variant="transparent" colorScheme="paper" size="xsmall" tabIndex={-1} aria-hidden="true"
-                    className={`j-photo-peek ${direction < 0 ? 'is-prev' : 'is-next'}`}
-                    style={{ padding: 0, borderRadius: 0, '--peek-ratio': ratios[neighborIndex] ?? 1.5 } as CSSProperties}
-                    onClick={() => goPhoto(direction)}>
-                    <img src={neighbor} alt="" draggable={false} loading="lazy" />
-                  </Button>
-                );
-              })}
               </div>
             </div>
           ))}
