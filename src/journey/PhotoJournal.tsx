@@ -76,13 +76,15 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
             <JournalPage title="What brings you to the mountains?">
               <div className="grid gap-4 sm:grid-cols-2">
                 {OCCASIONS.map((o) => (
-                  <Button key={o.id} type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "12px", width: "100%", display: "block", textAlign: "left" }} aria-pressed={p.occasion === o.id} onClick={() => set("occasion", o.id)}
-                    className={`group relative overflow-hidden rounded-xl text-left ring-2 transition ${p.occasion === o.id ? "ring-alpine-linen" : "ring-transparent hover:ring--paper/40"}`}>
-                    <img src={o.img} alt="" className="aspect-4/3 w-full object-cover" loading="lazy" />
-                    <span className="absolute inset-0 bg-linear-to-t from-secondary-foreground/90 to-transparent" />
-                    <span className="absolute bottom-0 p-4">
-                      <span className="block font-headline text-2xl">{o.title}</span>
-                      <span className="text-sm text-paper/80">{o.note}</span>
+                  <Button key={o.id} type="button" variant="transparent" colorScheme="paper" size="small" style={{ padding: 0, borderRadius: "12px", width: "100%", display: "block", textAlign: "left" }} aria-pressed={p.occasion === o.id} onClick={() => set("occasion", o.id)}
+                    className={`group relative overflow-hidden rounded-xl text-left text-paper ring-2 transition [&>span]:block [&>span]:w-full ${p.occasion === o.id ? "ring-alpine-linen" : "ring-transparent hover:ring-paper/40"}`}>
+                    <span className="relative block aspect-4/3 w-full overflow-hidden">
+                      <img src={o.img} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                      <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(to top, rgba(15, 18, 16, 0.92) 0%, rgba(15, 18, 16, 0.52) 42%, rgba(15, 18, 16, 0) 85%)" }} />
+                      <span className="absolute inset-x-0 bottom-0 z-10 block p-4 text-left text-paper">
+                        <span className="block font-headline text-2xl">{o.title}</span>
+                        <span className="block text-sm text-paper/90">{o.note}</span>
+                      </span>
                     </span>
                   </Button>
                 ))}
@@ -140,7 +142,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
           </div>
         </div>
 
-        <aside aria-live="polite" className="self-start rounded-2xl bg-paper/95 p-5 text-foreground lg:sticky lg:top-28">
+        <aside aria-live="polite" className={`rounded-2xl bg-paper/95 p-5 text-foreground lg:sticky lg:top-28 ${page === 0 ? "self-center" : "self-start"}`}>
           <p className={`${label} text-lake-forest-fade`}>Matching · {eligible.length} of {rooms.length} available room types</p>
           <ol className="mt-4 space-y-3">
             {eligible.slice(0, 4).map((m, i) => (
