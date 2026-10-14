@@ -23,7 +23,6 @@ import { BuildingExperienceList } from "@/components/rooms/BuildingExperienceLis
 import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
 import { RoomPhotoTour } from "@/journey/RoomPhotoTour";
 import { toPhotoTourRoom } from "@/data/photoTourRooms";
-import { isStudioRoute } from "@/studio/runtime";
 import type { RoomResultsLayout } from "@/studio/roomLayout";
 import { PhotoJournal } from "@/journey/PhotoJournal";
 import { PhotoJourneyHeader } from "@/journey/PhotoArrival";
