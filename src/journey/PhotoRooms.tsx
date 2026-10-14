@@ -176,7 +176,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     if (Math.abs(end - start) < 2) return;
 
     const startedAt = performance.now();
-    const duration = 620;
+    const duration = 980;
     const animate = (time: number) => {
       const progress = Math.min(1, (time - startedAt) / duration);
       const eased = progress < 0.5
