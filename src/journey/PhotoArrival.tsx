@@ -110,17 +110,18 @@ export function PhotoArrival() {
   );
 }
 
-function FullFrame({ src, alt, priority, children }: { src: string; alt: string; priority?: boolean; children?: React.ReactNode }) {
+function FullFrame({ src, alt, priority }: { src: string; alt: string; priority?: boolean }) {
   return (
-    <figure className="relative h-0 min-h-[clamp(300px,32vw,420px)] w-full flex-1 basis-0 overflow-hidden">
+    <figure className="pointer-events-none absolute inset-0 z-0 m-0 h-full w-full overflow-hidden" aria-hidden="true">
       <img
         src={src}
         alt={alt}
-        className="block h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-center"
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}
       />
-      {children}
+      {/* The entire arrival viewport, not only the former short image, gets the gradient. */}
+      <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/65 to-transparent" />
     </figure>
   );
 }
@@ -158,18 +159,16 @@ function Arrive(props: {
   }`;
 
   return (
-    <section className="flex min-h-dvh flex-col">
-      <FullFrame src={HERO} alt="Alpine Bathing Suite: clawfoot tub before a forest picture window" priority>
-        <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/30 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-8 sm:px-8 lg:pb-14">
+    <section className="relative isolate flex min-h-dvh flex-col justify-end bg-smoke">
+      <FullFrame src={HERO} alt="Alpine Bathing Suite: clawfoot tub before a forest picture window" priority />
+
+      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-5 pb-6 pt-28 sm:px-8 lg:pb-10">
+        <div className="mb-8 lg:mb-10">
           <p className={`${label} text-paper/80`}>Big Indian, New York · Urban Cowboy Lodge & Resort</p>
-          <h1 className="mt-3 w-full text-balance font-heading text-lg leading-none sm:text-4xl lg:text-6xl">
+          <h1 className="mt-3 max-w-[23ch] text-balance font-heading text-4xl leading-none sm:text-5xl lg:text-6xl">
             Come for the soak. Stay for the woods.
           </h1>
         </div>
-      </FullFrame>
-
-      <div className="mx-auto w-full max-w-[1600px] shrink-0 px-5 py-8 sm:px-8">
         <div className="mx-auto max-w-5xl">
           <p className={`${label} text-alpine-linen`}>01 — When are you coming?</p>
 
@@ -186,7 +185,7 @@ function Arrive(props: {
               }}
               activeSection={props.activeSection}
               onSectionClick={props.setActiveSection}
-              dropdownPlacement={props.activeSection === "dates" ? "above" : "below"}
+              dropdownPlacement="above"
               className="max-w-none!"
               dropdownSlot={
                 <>
