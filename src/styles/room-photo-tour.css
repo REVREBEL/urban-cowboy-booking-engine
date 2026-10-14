@@ -91,7 +91,7 @@
 @media (max-width: 639px) { .j-photo-neighbor { display: none; } }
 /* Scroll the document between room-sized stops without interfering with horizontal Embla. */
 @media (min-width: 640px) {
-  html:has(.j-room-spreads) { scroll-snap-type: y proximity; }
+  html:has(.j-room-spreads):not(.j-room-scroll-animating) { scroll-snap-type: y proximity; }
   .j-room-tour { scroll-snap-align: start; scroll-snap-stop: always; }
 }
 

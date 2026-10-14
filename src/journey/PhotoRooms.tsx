@@ -103,6 +103,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
       window.cancelAnimationFrame(roomScrollFrame.current);
       roomScrollFrame.current = null;
     }
+    document.documentElement.classList.remove("j-room-scroll-animating");
   }, []);
 
   // Navigation can be interrupted by a normal wheel/touch gesture.
@@ -194,15 +195,24 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     const end = Math.min(limit, Math.max(0, start + section.getBoundingClientRect().top - offset));
     if (Math.abs(end - start) < 2) return;
 
+    // Native CSS scroll snap can interrupt every animation frame and make the
+    // room change feel abrupt. Temporarily suspend it only for guided navigation.
+    document.documentElement.classList.add("j-room-scroll-animating");
     const startedAt = performance.now();
-    const duration = 980;
+    const duration = 1250;
     const animate = (time: number) => {
       const progress = Math.min(1, (time - startedAt) / duration);
+      // Smooth fifth-order ease: gentle launch and long soft arrival.
       const eased = progress < 0.5
-        ? 4 * progress * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        ? 16 * Math.pow(progress, 5)
+        : 1 - Math.pow(-2 * progress + 2, 5) / 2;
       window.scrollTo({ top: start + (end - start) * eased, behavior: "instant" });
-      roomScrollFrame.current = progress < 1 ? window.requestAnimationFrame(animate) : null;
+      if (progress < 1) {
+        roomScrollFrame.current = window.requestAnimationFrame(animate);
+      } else {
+        roomScrollFrame.current = null;
+        document.documentElement.classList.remove("j-room-scroll-animating");
+      }
     };
     roomScrollFrame.current = window.requestAnimationFrame(animate);
   };
