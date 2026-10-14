@@ -9,7 +9,7 @@ import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
 import { TourIcon } from '@/components/rooms/TourIcon';
 import { FeatureFocus } from '@/components/rooms/FeatureFocus';
 
-/** The supplied UI arrow assets live in public/assets/icons/ui. Keep Lucide fallbacks until the files are deployed. */
+/** Use the photo tour SVGs from public/assets/icons/ui, falling back to Lucide if an asset cannot load. */
 function TourArrow({ direction, size = 18 }: { direction: 'up' | 'down' | 'left' | 'right'; size?: number }) {
   const [fallback, setFallback] = useState(false);
   const isUp = direction !== 'down';
