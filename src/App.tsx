@@ -36,7 +36,7 @@ const PROGRESS_NUMBER: Record<Step, number> = {
 };
 const STEP_COMPONENTS: Record<Step, () => React.JSX.Element | null> = {
   dates: Dates,
-  results: Results,
+  results: () => <Results />,
   rates: Rates,
   guest: Guest,
   upgrade: Upgrade,
