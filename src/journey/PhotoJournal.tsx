@@ -84,7 +84,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
                       <img src={o.img} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                       <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(to top, rgba(15, 18, 16, 0.92) 0%, rgba(15, 18, 16, 0.52) 42%, rgba(15, 18, 16, 0) 85%)" }} />
                       <span className="absolute inset-x-0 bottom-0 z-10 block p-4 text-left text-paper">
-                        <span className="block font-headline text-2xl">{o.title}</span>
+                        <span className="block font-headline text-2xl leading-none">{o.title}</span>
                         <span className="block text-sm text-paper/90">{o.note}</span>
                       </span>
                     </span>
@@ -127,7 +127,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
 
           {page === 3 && (
             <JournalPage title="What feels right per night?" note="Before taxes. Rooms above this still show — just lower down.">
-              <p className="font-headline text-5xl tabular-nums">{money(p.budget)}</p>
+              <p className="font-headline text-5xl leading-none tabular-nums">{money(p.budget)}</p>
               <input type="range" min={150} max={600} step={10} value={p.budget} onChange={(e) => set("budget", Number(e.target.value))}
                 aria-label="Nightly budget" className="mt-4 w-full accent-alpine-linen" />
             </JournalPage>
@@ -151,7 +151,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
               <li key={m.room.id} className="grid grid-cols-[64px_minmax(0,1fr)_auto] items-center gap-3">
                 <img src={m.room.images[0]} alt="" className="aspect-square w-16 rounded-md object-cover" />
                 <div className="min-w-0">
-                  <p className="truncate font-headline text-lg leading-tight">{m.room.name}</p>
+                  <p className="truncate font-headline text-lg leading-none">{m.room.name}</p>
                   <p className="truncate text-xs text-foreground/70">{m.reasons.join(" · ") || m.room.tagline}</p>
                 </div>
                 <span className={`tabular-nums text-sm ${i === 0 ? "font-bold text-alpine-linen" : ""}`}>{m.reasons.length ? `${m.reasons.length} fit` : ""}</span>
@@ -168,7 +168,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
 function JournalPage({ title, note, children }: { title: string; note?: string; children: ReactNode }) {
   return (
     <div className="mt-8">
-      <h2 className="max-w-[20ch] font-headline text-4xl leading-tight sm:text-5xl">{title}</h2>
+      <h2 className="max-w-[20ch] font-headline text-4xl leading-none sm:text-5xl">{title}</h2>
       {note && <p className="mt-3 max-w-[60ch] text-paper/70">{note}</p>}
       <div className="mt-8">{children}</div>
     </div>

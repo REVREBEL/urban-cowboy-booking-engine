@@ -163,7 +163,7 @@ function Arrive(props: {
         <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-8 sm:px-8 lg:pb-14">
           <p className={`${label} text-paper/80`}>Big Indian, New York · Urban Cowboy Lodge & Resort</p>
-          <h1 className="mt-3 w-full text-balance font-heading text-lg leading-[0.95] sm:text-4xl lg:text-6xl">
+          <h1 className="mt-3 w-full text-balance font-heading text-lg leading-none sm:text-4xl lg:text-6xl">
             Come for the soak. Stay for the woods.
           </h1>
         </div>
@@ -280,7 +280,7 @@ function Arrive(props: {
                     mask: `url("${pillar.icon}") center / contain no-repeat`,
                   }}
                 />
-                <h2 className={`${label} font-bold text-paper`}>{pillar.title}</h2>
+                <h2 className={`${label} font-bold leading-none text-paper`}>{pillar.title}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-paper/75">{pillar.text}</p>
               </article>
             ))}

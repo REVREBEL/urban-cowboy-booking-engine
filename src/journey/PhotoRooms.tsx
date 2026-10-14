@@ -121,7 +121,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
             <div className="j-sheet absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-2xl bg-paper p-5 pb-6 text-foreground">
               <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-foreground/20" />
               <div className="flex items-center justify-between">
-                <h2 className="font-heading text-2xl">Filter rooms</h2>
+                <h2 className="font-heading text-2xl leading-none">Filter rooms</h2>
                 <Button type="button" aria-label="Close filters" onClick={() => setSheetOpen(false)} variant="transparent" colorScheme="lake-forest" size="xsmall" className="size-11 rounded-full" style={{ padding: 0 }}><X className="h-5 w-5" /></Button>
               </div>
               <p className={`${label} mt-5 text-foreground/60`}>Building</p>
@@ -177,7 +177,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
             </Button>
             <div ref={buildingStrip} onScroll={updateStrip} className="no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
               {buildings.map((b) => (
-                <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="small" onClick={() => setBuilding(b)}
+                <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setBuilding(b)}
                   className="shrink-0">
                   {b === "all" ? "All buildings" : b}
                 </PillButton>
@@ -194,7 +194,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
             {(["indoor-tub", "outdoor-tub", "fireplace", "gather"] as Feature[]).map((f) => {
               const on = features.includes(f);
               return (
-                <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="small" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
+                <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="xsmall" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
                   className="shrink-0">
                   {FEATURE_LABEL[f]}
                 </PillButton>
@@ -203,7 +203,9 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
           </div>
           <div className="ml-auto flex items-center gap-2">
             <label className="sr-only" htmlFor="sort">Sort</label>
-            <select id="sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="rounded-full bg-paper/10 px-3 py-1.5 text-sm text-paper">
+            <select id="sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)}
+              className="rounded-full bg-paper/10 font-label uppercase tracking-[0.05em] text-paper"
+              style={{ fontFamily: "var(--font-label)", fontSize: "0.6875rem", lineHeight: "1.2", paddingTop: "3px", paddingRight: "8px", paddingBottom: "2px", paddingLeft: "8px" }}>
               {profile && <option value="match">Best match</option>}
               <option value="price-asc">Price: low to high</option>
               <option value="price-desc">Price: high to low</option>
@@ -211,7 +213,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
             </select>
             <div role="group" aria-label="View" className="flex rounded-full bg-paper/10 p-0.5">
               {(["spreads", "index"] as const).map((v) => (
-                <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="small" onClick={() => setView(v)}
+                <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setView(v)}
                   className="capitalize">
                   {v === "spreads" ? "Full photos" : "Index"}
                 </PillButton>
@@ -229,7 +231,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
 
       {list.length === 0 && (
         <div className="mx-auto max-w-xl px-5 py-24 text-center">
-          <p className="font-heading text-3xl">No rooms fit every filter.</p>
+          <p className="font-heading text-3xl leading-none">No rooms fit every filter.</p>
           <Button type="button" variant="outline" colorScheme="paper" size="small" className="mt-6 rounded-full" onClick={() => { setFeatures([]); setBuilding("all"); }}>Clear filters</Button>
         </div>
       )}
@@ -252,7 +254,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
               <Button type="button" onClick={() => { setView("spreads"); setDetail(m.room.id); window.setTimeout(() => document.getElementById(`tour-${m.room.id}`)?.scrollIntoView({ block: "start" }), 0); }} variant="transparent" colorScheme="paper" size="xsmall" className="group block w-full text-left" style={{padding:0,display:"block",width:"100%",textAlign:"left",fontWeight:400}}>
                 <img src={m.room.images[0]} alt="" className="aspect-3/2 w-full rounded-lg bg-smoke object-contain transition group-hover:opacity-90" loading="lazy" />
                 <div className="mt-3 flex items-baseline justify-between gap-3">
-                  <h3 className="min-w-0 truncate font-heading text-xl">{m.room.name}</h3>
+                  <h3 className="min-w-0 truncate font-heading text-xl leading-none">{m.room.name}</h3>
                   <span className="shrink-0 tabular-nums">{money(m.room.basePrice)}</span>
                 </div>
                 <p className="text-sm text-paper/70">

@@ -67,7 +67,7 @@ export function PhotoExtrasStep(props: Props) {
     <section className="min-h-dvh bg-smoke pb-32 pt-24 text-paper" data-photo-extras-step>
       <div className="mx-auto max-w-[1600px] px-5 sm:px-8">
         <p className={`${label} text-alpine-linen`}>04 — Have it waiting</p>
-        <h1 className="mt-2 max-w-[22ch] font-heading text-4xl leading-tight sm:text-6xl">
+        <h1 className="mt-2 max-w-[22ch] font-heading text-4xl leading-none sm:text-6xl">
           Little things, ready in {props.roomName.split(" ")[0]} when you are.
         </h1>
         <p className="mt-4 max-w-[60ch] text-paper/75">
@@ -75,7 +75,7 @@ export function PhotoExtrasStep(props: Props) {
         </p>
       </div>
       <div className="mx-auto mt-12 max-w-[1600px] px-5 sm:px-8">
-        <h2 className={`${label} border-b border-paper/15 pb-3 text-paper/70`}>Available extras</h2>
+        <h2 className={`${label} border-b border-paper/15 pb-3 leading-none text-paper/70`}>Available extras</h2>
         <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {props.products.map(product => {
             const selected = props.selectedProductIds.includes(product.id) &&
@@ -87,7 +87,7 @@ export function PhotoExtrasStep(props: Props) {
               <li key={product.displayId} className={`overflow-hidden rounded-2xl bg-paper text-foreground ring-4 ${selected ? "ring-alpine-linen" : "ring-transparent"}`}>
                 {url && <img src={url} alt="" className="aspect-3/2 w-full object-cover" loading="lazy" />}
                 <div className="p-5">
-                  <h3 className="font-heading text-2xl leading-tight">{product.name}</h3>
+                  <h3 className="font-heading text-2xl leading-none">{product.name}</h3>
                   {product.description && <p className="mt-1 text-sm text-foreground/70">{product.description}</p>}
                   <p className="mt-3 tabular-nums">
                     {money(product.price, product.currency)} <span className="text-sm text-foreground/75">/ {unitLabel(product.chargingMode)}</span>

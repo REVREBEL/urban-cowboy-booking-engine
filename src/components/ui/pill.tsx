@@ -7,7 +7,7 @@ import {
 } from "./button";
 import { cn } from "@/lib/utils";
 
-export type PillSize = "small" | "default" | "large";
+export type PillSize = "xsmall" | "small" | "default" | "large";
 
 export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: ButtonStyle;
@@ -21,6 +21,7 @@ export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
 // optically centers the text without offsetting it with transforms.
 // Keep all four sides independent so each size can be tuned in Storybook.
 const PILL_SIZES: Record<PillSize, React.CSSProperties> = {
+  xsmall: { fontSize: "0.6875rem", paddingTop: "3px", paddingRight: "8px", paddingBottom: "2px", paddingLeft: "8px" },
   small: { fontSize: "0.75rem", paddingTop: "5px", paddingRight: "10px", paddingBottom: "4px", paddingLeft: "10px" },
   default: { fontSize: "0.875rem", paddingTop: "8px", paddingRight: "14px", paddingBottom: "6px", paddingLeft: "14px" },
   large: { fontSize: "1rem", paddingTop: "10px", paddingRight: "16px", paddingBottom: "8px", paddingLeft: "16px" },

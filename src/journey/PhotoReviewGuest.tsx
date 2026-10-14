@@ -67,14 +67,14 @@ export function PhotoReviewGuest() {
             <img src={image} alt={room.name} fetchPriority="high" className="block h-auto w-full" />
             <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-smoke to-transparent p-6 pt-24 sm:p-8 sm:pt-32">
               <p className={`${label} text-paper/80`}>{photo.building}</p>
-              <h1 className="font-heading text-4xl sm:text-5xl">{room.name}</h1>
+              <h1 className="font-heading text-4xl leading-none sm:text-5xl">{room.name}</h1>
             </div>
           </figure>
         )}
       </div>
       <div className="min-h-dvh bg-paper px-5 pb-16 pt-24 text-foreground sm:px-8">
         <p className={`${label} text-alpine-linen`}>05 — Your stay</p>
-        <h2 className="mt-3 font-heading text-4xl">Review & guest details</h2>
+        <h2 className="mt-3 font-heading text-4xl leading-none">Review & guest details</h2>
         <dl className="mt-6 divide-y divide-ash">
           <Row title="Dates" value={dateText} onEdit={() => booking.goTo("dates")} />
           <Row title="Guests" value={String(booking.adults + booking.children + booking.infants)} onEdit={() => booking.goTo("dates")} />
@@ -101,7 +101,7 @@ export function PhotoReviewGuest() {
         </div>
         <Button type="button" onClick={() => booking.goTo("extras")} variant="transparent" colorScheme="lake-forest" size="xsmall" className="mt-3 underline underline-offset-4" style={{padding:0}}>Edit extras</Button>
         <form onSubmit={submit} className="mt-9 space-y-5" noValidate>
-          <h3 className="font-heading text-2xl">Who should we expect?</h3>
+          <h3 className="font-heading text-2xl leading-none">Who should we expect?</h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field id="photo-first-name" title="First name" error={errors.firstName}>
               <input className={input} id="photo-first-name" autoComplete="given-name" value={guest.firstName} required aria-invalid={!!errors.firstName} onChange={e => setGuest({ firstName: e.target.value })} />
