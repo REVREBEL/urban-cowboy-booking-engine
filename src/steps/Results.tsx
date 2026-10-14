@@ -112,7 +112,7 @@ export function Results() {
     return () => { alive = false; };
   }, []);
   useEffect(() => {
-    const update = () => setPhotoLayout(isStudioRoute() && new URLSearchParams(window.location.search).get("roomLayout") === "photo");
+    const update = () => { if (isStudioRoute()) setPhotoLayout(currentStudioLayout() === "photo"); };
     window.addEventListener("studio-room-layout-change", update);
     return () => window.removeEventListener("studio-room-layout-change", update);
   }, []);
