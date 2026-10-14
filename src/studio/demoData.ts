@@ -1,5 +1,5 @@
 import type { AvailabilityResponse, HotelConfig, PricingResult, ReservationQuoteResult } from "../types/mews";
-import { getDemoScenario } from "./runtime";
+import { getDemoScenario } from "./runtime.ts";
 
 export const studioHotel: HotelConfig = {
   Id: "studio-location-hotel",
