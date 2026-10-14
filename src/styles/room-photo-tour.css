@@ -192,3 +192,8 @@
      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
   mix-blend-mode: soft-light; opacity: .7; }
 .fx-grain .j-hotspots { z-index: 2; }
+
+/* Explicit palette overrides for the shared Button's inline colors in the sort popover. */
+.j-photo-sort-option { color: #f7f4ee !important; background: transparent !important; border-radius: 9999px !important; }
+.j-photo-sort-option:hover, .j-photo-sort-option:focus-visible { color: #173c2d !important; background: #dfe6dd !important; }
+.j-photo-sort-option.is-selected { color: #173c2d !important; background: #f7f4ee !important; }
