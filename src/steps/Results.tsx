@@ -25,6 +25,7 @@ import type { RoomResultsLayout } from "@/studio/roomLayout";
 import { PhotoJournal } from "@/journey/PhotoJournal";
 import { PhotoRooms } from "@/journey/PhotoRooms";
 import type { MatchProfile } from "@/journey/data";
+import { getPhotoProfile, savePhotoProfile, setPhotoPath } from "@/journey/photoSession";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type {
@@ -102,7 +103,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
 
   const [data, setData] = useState<AvailabilityResponse | null>(null);
   const photoLayout = roomLayout === "photo";
-  const [journalProfile, setJournalProfile] = useState<MatchProfile | null>(null);
+  const [journalProfile, setJournalProfile] = useState<MatchProfile | null>(getPhotoProfile);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openRoom, setOpenRoom] = useState<ShapedRoom | null>(null);
@@ -332,10 +333,17 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
           rooms={rooms}
           imageBaseUrl={imageBaseUrl}
           onDone={(profile) => {
+            savePhotoProfile(profile);
             setJournalProfile(profile);
+            setPhotoPath("rooms");
             setDiscoveryView("rooms");
           }}
-          onSkip={() => { setJournalProfile(null); setDiscoveryView("rooms"); }}
+          onSkip={() => {
+            savePhotoProfile(null);
+            setJournalProfile(null);
+            setPhotoPath("rooms");
+            setDiscoveryView("rooms");
+          }}
         />
       </div>
     );
@@ -416,7 +424,10 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
             guests={adults + children + infants}
             children={children + infants}
             onChoose={choose}
-            onEditJournal={() => setDiscoveryView("journal")}
+            onEditJournal={() => {
+              setPhotoPath("journal");
+              setDiscoveryView("journal");
+            }}
           />
         </div>
       );
