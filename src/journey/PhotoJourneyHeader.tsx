@@ -2,9 +2,9 @@
  * Original visual-booking-flow Photo Journey header/progress architecture.
  * This chrome belongs to the whole Photo experience, never to the Card engine.
  */
-import { ChevronLeft } from "lucide-react";
 import { useBooking, type Step } from "../state/booking";
 import { Button } from "../components/ui/button";
+import { PhotoTourArrow } from "./PhotoTourArrow";
 import "../styles/room-photo-tour.css";
 
 const stages: { label: string; target: Step }[] = [
@@ -44,8 +44,10 @@ export function PhotoJourneyHeader() {
         <div className="flex w-20 shrink-0 items-center gap-3">
           {index > 0 && (
             <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{padding: 0, fontSize: "11px", fontWeight: 400}} onClick={() => booking.goTo(previous[booking.step])}
-              className={`${label} flex items-center gap-1 text-paper/80 transition hover:text-paper`}>
-              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+              className={`${label} j-journey-back flex items-center gap-2 text-paper/80 transition hover:text-paper`}>
+              <span className="j-journey-back-icon" aria-hidden="true">
+                <PhotoTourArrow direction="left" size={16} />
+              </span>
               Back
             </Button>
           )}

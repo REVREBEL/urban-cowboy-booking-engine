@@ -259,11 +259,11 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
         <div className="hidden rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:block">
           <div className="j-photo-filter-pair">
             <div role="group" aria-label="Buildings" className="j-photo-filter-segment">
-              <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
+              <Button type="button" variant="transparent" colorScheme="paper" size="xsmall"
                 aria-label="Scroll buildings left" aria-controls="photo-building-options"
                 disabled={!buildingStrip.edges.left} onClick={() => buildingStrip.scroll(-1)}
-                className={`j-photo-filter-nav ${!buildingStrip.edges.left ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
-                <PhotoTourArrow direction="left" size={16} />
+                className={`j-photo-filter-nav ${!buildingStrip.edges.left ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0 }}>
+                <PhotoTourArrow direction="left" size={16} chevron />
               </Button>
               <div id="photo-building-options" ref={buildingStrip.ref} onScroll={buildingStrip.update}
                 className="j-photo-filter-strip no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
@@ -274,19 +274,19 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                   </PillButton>
                 ))}
               </div>
-              <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
+              <Button type="button" variant="transparent" colorScheme="paper" size="xsmall"
                 aria-label="Scroll buildings right" aria-controls="photo-building-options"
                 disabled={!buildingStrip.edges.right} onClick={() => buildingStrip.scroll(1)}
-                className={`j-photo-filter-nav ${!buildingStrip.edges.right ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
-                <PhotoTourArrow direction="right" size={16} />
+                className={`j-photo-filter-nav ${!buildingStrip.edges.right ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0 }}>
+                <PhotoTourArrow direction="right" size={16} chevron />
               </Button>
             </div>
             <div role="group" aria-label="Features" className="j-photo-filter-segment">
-              <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
+              <Button type="button" variant="transparent" colorScheme="paper" size="xsmall"
                 aria-label="Scroll features left" aria-controls="photo-feature-options"
                 disabled={!featureStrip.edges.left} onClick={() => featureStrip.scroll(-1)}
-                className={`j-photo-filter-nav ${!featureStrip.edges.left ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
-                <PhotoTourArrow direction="left" size={16} />
+                className={`j-photo-filter-nav ${!featureStrip.edges.left ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0 }}>
+                <PhotoTourArrow direction="left" size={16} chevron />
               </Button>
               <div id="photo-feature-options" ref={featureStrip.ref} onScroll={featureStrip.update}
                 className="j-photo-filter-strip no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
@@ -300,11 +300,11 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                   );
                 })}
               </div>
-              <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
+              <Button type="button" variant="transparent" colorScheme="paper" size="xsmall"
                 aria-label="Scroll features right" aria-controls="photo-feature-options"
                 disabled={!featureStrip.edges.right} onClick={() => featureStrip.scroll(1)}
-                className={`j-photo-filter-nav ${!featureStrip.edges.right ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
-                <PhotoTourArrow direction="right" size={16} />
+                className={`j-photo-filter-nav ${!featureStrip.edges.right ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0 }}>
+                <PhotoTourArrow direction="right" size={16} chevron />
               </Button>
             </div>
           </div>
@@ -377,4 +377,3 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     </section>
   );
 }
-
