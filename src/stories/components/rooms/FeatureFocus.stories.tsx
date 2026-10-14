@@ -18,6 +18,11 @@ export const Default: Story = {
     icon: 'bed',
     title: 'Feature Hotspot',
     active: false,
-    onSelect: () => {},
+    onSelect: () => { },
   },
+};
+
+
+export const Active: Story = {
+  args: { count: 1, icon: 'tub', title: 'Clawfoot soaking tub', active: true, onSelect: () => { } },
 };

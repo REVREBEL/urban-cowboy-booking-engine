@@ -185,7 +185,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
         <div className="flex flex-col items-start p-0 w-55.75 h-4.25 self-stretch">
           <label
             htmlFor={inputId}
-            className="flex h-4.25 w-55.75 cursor-pointer items-center font-label text-[14px] uppercase leading-[17px] tracking-wider text-foreground"
+            className="flex h-4.25 w-55.75 cursor-pointer items-center font-label text-[14px] uppercase leading-4.25 tracking-wider text-foreground"
           >
             PROMO
           </label>
@@ -205,7 +205,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
               disabled={isVerifying}
               placeholder="Promo/Group Code"
               aria-invalid={statusFeedback ? !statusFeedback.isValid : undefined}
-              className="h-9 w-full border-none bg-transparent p-0 pr-2 font-body text-[16px] leading-[30px] text-foreground outline-none placeholder:text-foreground placeholder:opacity-100"
+              className="h-9 w-full border-none bg-transparent p-0 pr-2 font-body text-[16px] leading-7.5text-foreground outline-none placeholder:text-foreground placeholder:opacity-100"
             />
 
             {/* Trailing action / status indicator */}

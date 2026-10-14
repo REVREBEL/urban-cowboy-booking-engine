@@ -78,7 +78,7 @@ export const PillButton = React.forwardRef<HTMLButtonElement, PillButtonProps>(
         borderRadius: "9999px",
         borderWidth: variant === "outline" ? "1px" : undefined,
         fontWeight: "500",
-        lineHeight: "1.2",
+        lineHeight: "1",
         ...PILL_SIZES[size],
         ...style,
       }}

@@ -8,11 +8,11 @@ import { useBooking } from "../state/booking";
 import { api } from "../lib/api";
 import { resolveRateCardConfig } from "../lib/rateCardConfig";
 import { cancellationConfirmation } from "../lib/rateCardLiveContent";
-import type { RateCardConfig } from "../types/rate-card";
-import { toPhotoTourRoom } from "../data/photoTourRooms";
+import type { RateCardConfig } from "@/types/rate-card";
+import { toPhotoTourRoom } from "@/data/photoTourRooms";
 import { money } from "../lib/format";
 import type { ShapedRate } from "../types/mews";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
 

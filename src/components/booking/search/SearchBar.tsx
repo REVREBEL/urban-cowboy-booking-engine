@@ -333,7 +333,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         className="flex flex-row items-start px-2 py-0 w-4.25 h-7.5 shrink-0"
         aria-hidden="true"
       >
-        <div className="w-0.25 h-7.5 bg-alpine-linen-fade" />
+        <div className="w-px h-7.5 bg-alpine-linen-fade" />
       </div>
 
       {/* 2. Guest Section (GUESTS) */}
@@ -364,7 +364,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         className="flex flex-row items-start px-2 py-0 w-4.25 h-7.5 shrink-0"
         aria-hidden="true"
       >
-        <div className="w-0.25 h-7.5 bg-alpine-linen-fade" />
+        <div className="w-px h-7.5 bg-alpine-linen-fade" />
       </div>
 
       {/* 3. Promo Section (PROMO) */}
