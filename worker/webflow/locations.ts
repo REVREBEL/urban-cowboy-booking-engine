@@ -25,9 +25,10 @@ const WEBFLOW_CONTENT_API = "https://api-cdn.webflow.com/v2";
 const WEBFLOW_DATA_API = "https://api.webflow.com/v2";
 const WEBFLOW_TIMEOUT_MS = 8_000;
 
-const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
+// Published location settings should propagate quickly, including layout choices.
+const CACHE_FRESH_MS = 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:booking-locations:v2";
+const CACHE_KEY_PREFIX = "webflow:booking-locations:v3";
 
 const memoryCache = new Map<string, CachedLocationPayload>();
 
@@ -204,7 +205,7 @@ function response(payload: CachedLocationPayload, stale: boolean): Response {
       stale,
     },
     200,
-    "public, max-age=300",
+    "public, max-age=60",
   );
 }
 
@@ -267,12 +268,20 @@ export async function onRequestGet({
  * Deliberately bypasses the long-lived public Locations cache.
  */
 export async function onRequestStudioConfig({ env, request }: { env: Env; request: Request }): Promise<Response> {
-  const key = new URL(request.url).searchParams.get("property") || "hotel";
+  const url = new URL(request.url);
+  const key = url.searchParams.get("property") || "hotel";
   const binding = propertiesForEnv(env).find((property) => property.key === key);
+  // Local-only debugging, never expose authorization internals on deployed hosts.
+  const localDiagnostics = url.hostname === "127.0.0.1" || url.hostname === "localhost";
   const denied = (reason: string) => {
     // Log only the failure category. Do not print Webflow tokens or CMS data.
     console.warn("[booking studio] access check denied", { property: key, reason });
-    return json({ enabled: false, property: key, demoLayout: "card" }, 200, "no-store");
+    return json({
+      enabled: false,
+      property: key,
+      demoLayout: "card",
+      ...(localDiagnostics ? { diagnostic: reason } : {}),
+    }, 200, "no-store");
   };
   if (!binding?.locationCmsItemId) return denied("location_binding_missing");
   if (!env.WEBFLOW_LOCATION_COLLECTION_ID) return denied("collection_id_missing");
