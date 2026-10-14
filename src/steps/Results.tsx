@@ -24,7 +24,10 @@ import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
 import { RoomPhotoTour } from "@/journey/RoomPhotoTour";
 import { toPhotoTourRoom } from "@/data/photoTourRooms";
 import { isStudioRoute } from "@/studio/runtime";
-import { currentStudioLayout } from "@/studio/roomLayout";
+import type { RoomResultsLayout } from "@/studio/roomLayout";
+import { PhotoJournal } from "@/journey/PhotoJournal";
+import { PhotoJourneyHeader } from "@/journey/PhotoArrival";
+import type { MatchProfile } from "@/journey/data";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type {
@@ -73,7 +76,7 @@ function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
   };
 }
 
-export function Results() {
+export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayout }) {
   const {
     hotel,
     hotelError,
@@ -101,32 +104,30 @@ export function Results() {
   } = useBooking();
 
   const [data, setData] = useState<AvailabilityResponse | null>(null);
-  const [photoLayout, setPhotoLayout] = useState(() => isStudioRoute() && currentStudioLayout() === "photo");
+  const photoLayout = roomLayout === "photo";
   const [tourDetailsId, setTourDetailsId] = useState<string | null>(null);
-  useEffect(() => {
-    if (isStudioRoute()) return;
-    let alive = true;
-    api.locations().then(locations => {
-      if (alive) setPhotoLayout((locations.hotel?.productionLayout ?? "card") === "photo");
-    });
-    return () => { alive = false; };
-  }, []);
-  useEffect(() => {
-    const update = () => { if (isStudioRoute()) setPhotoLayout(currentStudioLayout() === "photo"); };
-    window.addEventListener("studio-room-layout-change", update);
-    return () => window.removeEventListener("studio-room-layout-change", update);
-  }, []);
+  const [journalProfile, setJournalProfile] = useState<MatchProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openRoom, setOpenRoom] = useState<ShapedRoom | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   // Accordéons « autres hébergements » (ouverts/fermés par clé d'hébergement).
   const [openProps, setOpenProps] = useState<string[]>([]);
-  const [discoveryView, setDiscoveryView] = useState<"explore" | "matcher" | "matches" | "rooms">(() =>
-    typeof window !== "undefined" && new URLSearchParams(window.location.search).has("interest")
-      ? "matches"
-      : "explore",
-  );
+  const [discoveryView, setDiscoveryView] = useState<"explore" | "matcher" | "matches" | "rooms" | "journal">(() => {
+    const query = new URLSearchParams(window.location.search);
+    if (photoLayout) return query.get("photoPath") === "journal" ? "journal" : "rooms";
+    return query.has("interest") ? "matches" : "explore";
+  });
+  useEffect(() => {
+    if (photoLayout) {
+      setDiscoveryView((current) =>
+        current === "explore" || current === "matcher" || current === "matches"
+          ? new URLSearchParams(window.location.search).get("photoPath") === "journal" ? "journal" : "rooms"
+          : current);
+    } else if (discoveryView === "journal") {
+      setDiscoveryView("explore");
+    }
+  }, [photoLayout, discoveryView]);
   const [quizPreferences, setQuizPreferences] = useState<DiscoveryPreferences | null>(null);
   const [showMatcherModal, setShowMatcherModal] = useState(false);
   const [matchBackView, setMatchBackView] = useState<"matcher" | "rooms">("matcher");
@@ -326,6 +327,25 @@ export function Results() {
     setDiscoveryView("matches");
   }
 
+  if (photoLayout && discoveryView === "journal") {
+    return (
+      <div className="min-h-dvh bg-j-night text-j-paper font-j-body">
+        <PhotoJourneyHeader step="results" />
+        <PhotoJournal
+          adults={adults}
+          children={children}
+          rooms={rooms}
+          imageBaseUrl={imageBaseUrl}
+          onDone={(profile) => {
+            setJournalProfile(profile);
+            setDiscoveryView("rooms");
+          }}
+          onSkip={() => { setJournalProfile(null); setDiscoveryView("rooms"); }}
+        />
+      </div>
+    );
+  }
+
   // Date search opens the visual match-or-browse decision first. The imported
   // mockup components are adapters only; live Mews inventory and our canonical
   // matching rules remain the source of truth.
@@ -393,11 +413,44 @@ export function Results() {
   if (discoveryView === "rooms") {
     const studioCriteria = discoveryCriteria;
 
+    const photoRooms = photoLayout && journalProfile
+      ? rooms.filter(room =>
+          room.rates.length > 0 &&
+          room.capacity >= adults + children &&
+          (children === 0 || room.merchandising?.agePolicy !== "adultsOnly21") &&
+          (!journalProfile.dog || room.merchandising?.dogPolicy === "allowed"))
+          .map(room => ({
+            room,
+            hits: journalProfile.mustHaves.filter(feature => {
+              const f = room.merchandising?.features;
+              return feature === "indoor-tub" ? !!f?.indoorTub :
+                feature === "outdoor-tub" ? !!f?.outdoorSoak :
+                feature === "fireplace" ? !!f?.fireplace :
+                feature === "view" ? !!f?.scenicView :
+                feature === "gather" ? !!(f?.separateLivingRoom || f?.fullKitchen) :
+                feature === "balcony" ? !!f?.privateDeck : false;
+            }).length,
+          }))
+          .sort((a, b) => b.hits - a.hits ||
+            Number((a.room.rates[0]?.perNightGross ?? Infinity) > journalProfile.budget) -
+            Number((b.room.rates[0]?.perNightGross ?? Infinity) > journalProfile.budget))
+          .map(({ room }) => room)
+      : rooms.filter(room => room.rates.length > 0);
+
     return (
-      <div className="studio-room-experience">
+      <div className={photoLayout ? "min-h-dvh bg-j-night font-j-body text-j-paper" : "studio-room-experience"}>
         {photoLayout ? (
+          <>
+          <PhotoJourneyHeader step="results" />
+          {journalProfile && (
+            <div className="mx-auto max-w-[1600px] px-5 py-4 sm:px-8">
+              <button type="button" className="text-sm text-j-paper/70 underline underline-offset-4" onClick={() => setDiscoveryView("journal")}>
+                Edit my Stay Journal
+              </button>
+            </div>
+          )}
           <div className="j-room-spreads" aria-label="Available room photo tours">
-            {rooms.filter(room => room.rates.length > 0).map((room, index, bookableRooms) => (
+            {photoRooms.map((room, index, bookableRooms) => (
               <RoomPhotoTour
                 key={room.roomTypeId}
                 room={toPhotoTourRoom(room, imageBaseUrl)}
@@ -412,6 +465,7 @@ export function Results() {
               />
             ))}
           </div>
+          </>
         ) : <BuildingExperienceList
           criteria={studioCriteria}
           rooms={rooms}
