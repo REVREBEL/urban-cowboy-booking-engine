@@ -51,11 +51,11 @@ const WEBFLOW_API = "https://api.webflow.com/v2";
 const WEBFLOW_CONTENT_API = "https://api-cdn.webflow.com/v2";
 const WEBFLOW_TIMEOUT_MS = 8_000;
 
-const CACHE_FRESH_MS = 6 * 60 * 60 * 1000;
-const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:room-type-content:v4";
+const CACHE_FRESH_MS = 5 * 60 * 1000;
+const CACHE_TTL_SECONDS = 60 * 60;
+const CACHE_KEY_PREFIX = "webflow:room-type-content:v5";
 const BROWSER_CACHE_CONTROL =
-  "public, max-age=300, s-maxage=21600, stale-while-revalidate=64800";
+  "public, max-age=60, s-maxage=120, stale-while-revalidate=300";
 
 const memoryCache = new Map<string, CachedReviewPayload>();
 
