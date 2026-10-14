@@ -3,7 +3,12 @@
  * Unlike the prototype, each offer uses the selected room's Mews ShapedRate;
  * no demo multiplier or assumed tax/cancellation policy is applied.
  */
+import { useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
+import { api } from "../lib/api";
+import { resolveRateCardConfig } from "../lib/rateCardConfig";
+import { cancellationConfirmation } from "../lib/rateCardLiveContent";
+import type { RateCardConfig } from "../types/rate-card";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import { money } from "../lib/format";
 import type { ShapedRate } from "../types/mews";
@@ -14,6 +19,12 @@ const btnPrimary =
 
 export function PhotoRateStep() {
   const booking = useBooking();
+  const [configs, setConfigs] = useState<RateCardConfig[]>([]);
+  useEffect(() => {
+    let active = true;
+    void api.rateCards().then(cards => { if (active) setConfigs(cards); });
+    return () => { active = false; };
+  }, []);
   const room = booking.selectedRoom;
   if (!room) return null;
   const photo = toPhotoTourRoom(room, booking.imageBaseUrl);
@@ -37,11 +48,15 @@ export function PhotoRateStep() {
         </figure>
       )}
       <div className="mx-auto grid max-w-[1600px] gap-4 px-5 py-10 sm:px-8 lg:grid-cols-3">
-        {room.rates.map((rate, index) => (
-          <article key={rate.rateId} className={`flex flex-col rounded-2xl bg-j-paper p-6 text-j-ink ring-4 ${booking.selectedRate?.rateId === rate.rateId ? "ring-j-ember" : "ring-transparent"}`}>
-            <p className={`${label} text-j-ember`}>{rate.isPrivate ? "Exclusive rate" : index === 0 ? "Available rate" : "Stay your way"}</p>
-            <h2 className="mt-2 font-j-display text-3xl">{rate.name}</h2>
-            {rate.description && <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-j-ink/80">{rate.description}</p>}
+        {room.rates.map((rate, index) => {
+          const config = resolveRateCardConfig(configs, rate.rateId);
+          const policy = config ? cancellationConfirmation(rate, config, booking.checkIn) :
+            rate.knownRateGroup === "NON_REFUNDABLE" ? "Full Prepay Non Refundable" :
+            "See rate details for cancellation terms";
+          return <article key={rate.rateId} className={`flex flex-col rounded-2xl bg-j-paper p-6 text-j-ink ring-4 ${booking.selectedRate?.rateId === rate.rateId ? "ring-j-ember" : "ring-transparent"}`}>
+            <p className={`${label} text-j-ember`}>{config?.eyebrow || (rate.isPrivate ? "Exclusive rate" : index === 0 ? "Available rate" : "Stay your way")}</p>
+            <h2 className="mt-2 font-j-display text-3xl">{config?.headline || rate.name}</h2>
+            {(config?.description || rate.description) && <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-j-ink/80">{config?.description || rate.description}</p>}
             <div className="mt-auto border-t border-j-line pt-4 tabular-nums">
               {rate.perNightGross != null && (
                 <div className="flex justify-between gap-2 text-sm">
@@ -60,15 +75,13 @@ export function PhotoRateStep() {
                 <span className="font-j-display text-3xl">{money(rate.totalGross, rate.currency)}</span>
               </div>
             </div>
-            <p className="mt-4 text-xs text-j-ink/65">
-              Review the rate's deposit and cancellation conditions before completing your reservation.
-            </p>
+            <p className="mt-4 rounded-lg bg-j-line/75 px-3 py-2 text-sm text-j-ink/85"><strong>Cancellation:</strong> {policy}</p>
             <button type="button" onClick={() => choose(rate)} disabled={rate.totalGross == null}
               className={`${btnPrimary} mt-4 w-full`}>
               {booking.selectedRate?.rateId === rate.rateId ? "Selected — continue" : "Choose this rate"}
             </button>
-          </article>
-        ))}
+          </article>;
+        })}
       </div>
       {room.rates.length === 0 && (
         <div className="mx-auto max-w-xl px-5 py-14 text-center">
