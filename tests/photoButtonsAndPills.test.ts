@@ -48,7 +48,7 @@ test("Pill stories cover all Button palette colors, variants and toggles", () =>
   const storybook = readFileSync(new URL("../.storybook/main.ts", import.meta.url), "utf8");
   assert.match(storybook, /src\/stories\/components\/\*\*\/\*\.stories/);
   assert.match(story, /Object\.keys\(COLOR_PALETTE\)/);
-  for (const name of ["Playground", "AllColors", "Sizes", "Selectable"]) {
+  for (const name of ["Playground", "AllColors", "Sizes", "Selectable", "ComparedWithButtons"]) {
     assert.ok(story.includes(`export const ${name}`), `Story ${name} missing`);
   }
 });
