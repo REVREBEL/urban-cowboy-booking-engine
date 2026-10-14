@@ -34,9 +34,9 @@ const OCCASIONS: { id: Occasion; title: string; note: string; img: string }[] = 
 
 const MUST: Feature[] = ["indoor-tub", "outdoor-tub", "fireplace", "view", "gather", "balcony"];
 
-export function PhotoJournal({ adults, children, rooms, imageBaseUrl, onDone, onSkip }: { adults: number; children: number; rooms: ShapedRoom[]; imageBaseUrl: string; onDone: (p: MatchProfile) => void; onSkip: () => void }) {
+export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, onDone, onSkip }: { adults: number; children: number; rooms: ShapedRoom[]; imageBaseUrl: string; initial?: MatchProfile | null; onDone: (p: MatchProfile) => void; onSkip: () => void }) {
   const [p, setP] = useState<MatchProfile>(
-    { occasion: children > 0 ? "family" : "romance", adults, children, dog: false, mustHaves: [], quiet: 4, budget: 300 },
+    initial ?? { occasion: children > 0 ? "family" : "romance", adults, children, dog: false, mustHaves: [], quiet: 4, budget: 300 },
   );
   const [page, setPage] = useState(0);
   const pages = 4;
