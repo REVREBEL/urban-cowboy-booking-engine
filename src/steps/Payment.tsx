@@ -1,3 +1,4 @@
+import { isStudioRoute } from "../studio/runtime";
 import { useEffect, useState } from "react";
 import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 import { useBooking } from "../state/booking";
@@ -69,7 +70,7 @@ export function Payment() {
   const onSession = (amountDueNow ?? 0) > 0;
 
   async function pay() {
-    if (!accepted || !selectedRoom || !selectedRate || !quoteUsable) return;
+    if (isStudioRoute() || !accepted || !selectedRoom || !selectedRate || !quoteUsable) return;
 
     setSubmitting(true);
     setError(null);
@@ -268,6 +269,7 @@ export function Payment() {
               type="button"
               onClick={pay}
               disabled={
+                isStudioRoute() ||
                 !accepted ||
                 submitting ||
                 quoteLoading ||
@@ -276,7 +278,7 @@ export function Payment() {
               }
               className="group flex w-full items-center justify-center gap-2 rounded-full bg-cowboy-umber py-4 font-label text-sm uppercase tracking-widest text-white shadow-lg transition-all hover:bg-smoke hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:bg-alpine-linen disabled:text-smoke-fade disabled:shadow-none sm:py-5 sm:text-base 2xl:py-6 2xl:text-lg"
             >
-              <span>{ctaLabel}</span>
+              <span>{isStudioRoute() ? "DEMO · Payment disabled" : ctaLabel}</span>
               {!submitting && !quoteLoading ? (
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1 2xl:h-6 2xl:w-6" aria-hidden="true" />
               ) : null}

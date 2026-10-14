@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId, useRef } from 'react';
 import { RoomType, SearchCriteria } from '@/types';
 import type { RoomTypeCmsReview } from '@/types/room-type-cms';
 import { AmenityWoodcutIcon } from '@/components/icons/AmenityWoodcutIcon';
@@ -34,9 +34,12 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   onProceedToRates,
   review = null,
 }: RoomDetailModalProps) => {
-  if (!room) return null;
-
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const titleId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,14 +54,72 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   const activeReview: RoomTypeCmsReview | null = review ?? null;
   const reviewDate = formatReviewDate(activeReview?.reviewDate);
 
+  useEffect(() => {
+    if (!room) return;
+    const previousFocus = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+
+    const focusable = () => Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ) ?? [],
+    ).filter((element) => element.getClientRects().length > 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        onCloseRef.current();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const elements = focusable();
+      if (!elements.length) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !dialogRef.current?.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !dialogRef.current?.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    const keepFocusInside = (event: FocusEvent) => {
+      if (event.target instanceof Node && !dialogRef.current?.contains(event.target)) {
+        closeButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('focusin', keepFocusInside);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('focusin', keepFocusInside);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [Boolean(room)]);
+
+  if (!room) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="room-detail-title"
-        className="relative w-full max-w-4xl bg-paper rounded-modal-lg overflow-hidden shadow-2xl border-4 border-cowboy-umber my-8 max-h-[90vh] flex flex-col texture-linen"
-      >
+    <div
+      ref={dialogRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/75 backdrop-blur-xs animate-in fade-in duration-200"
+    >
+      <div className="relative w-full max-w-4xl bg-paper rounded-modal-lg overflow-hidden shadow-2xl border-4 border-cowboy-umber my-8 max-h-[90vh] flex flex-col texture-linen">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-alpine-linen border-b-2 border-cowboy-umber/20">
           <div className="flex items-center gap-2">
@@ -68,8 +129,9 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           </div>
           <button
             type="button"
+            ref={closeButtonRef}
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white border border-cowboy-umber/20 hover:bg-alpine-linen flex items-center justify-center text-cowboy-umber transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber"
+            className="w-8 h-8 rounded-full bg-white border border-cowboy-umber/20 hover:bg-alpine-linen flex items-center justify-center text-cowboy-umber transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-hidden"
             aria-label="Close modal"
           >
             <X className="w-5 h-5" aria-hidden="true" />
@@ -99,14 +161,18 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                   type="button"
                   onClick={() => setActiveImageIndex(idx)}
                   aria-label={`View photo ${idx + 1} of ${room.images.length}`}
-                  aria-current={activeImageIndex === idx ? "true" : undefined}
-                  className={`relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${
+                  aria-current={activeImageIndex === idx ? 'true' : undefined}
+                  className={`relative w-20 h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-hidden ${
                     activeImageIndex === idx
                       ? 'border-cowboy-umber scale-105 shadow-sm'
                       : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
-                  <img src={img} alt="" aria-hidden="true" className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -116,7 +182,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6 border-b border-cowboy-umber/15">
             <div>
               <h2
-                id="room-detail-title"
+                id={titleId}
                 className="text-balance font-heading font-extrabold text-3xl sm:text-4xl text-smoke uppercase tracking-wide"
               >
                 {room.name}

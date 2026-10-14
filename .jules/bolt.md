@@ -1,0 +1,3 @@
+## 2025-05-18 - sRGB Lookup Table and Canvas Context Reuse for Image Contrast Analysis
+**Learning:** Image overlay contrast analysis sampled thousands of pixels per room card, executing `Math.pow(..., 2.4)` tens of thousands of times per image and allocating new canvas elements on every call. Precomputing sRGB-to-linear conversion in a 256-entry lookup table and reusing a shared canvas context eliminates exponential math and DOM creation overhead.
+**Action:** When working with 8-bit color channels (0-255) in canvas pixel data, use a 256-element lookup table for non-linear operations like sRGB conversions and reuse shared canvas context instances.

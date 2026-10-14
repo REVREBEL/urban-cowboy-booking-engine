@@ -1,0 +1,77 @@
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import { useBooking, type Step } from "../state/booking";
+import { buildRooms } from "../lib/shaping";
+import { studioAvailability, studioHotel } from "./demoData";
+import { getDemoScenario, setDemoScenario, type DemoScenario } from "./runtime";
+
+const steps: { id: Step; label: string }[] = [
+  { id: "dates", label: "Search" }, { id: "results", label: "Rooms / Find Your Stay" },
+  { id: "rates", label: "Rates" }, { id: "guest", label: "Guest" },
+  { id: "extras", label: "Extras" }, { id: "payment", label: "Checkout" },
+];
+const scenarios: { id: DemoScenario; label: string }[] = [
+  { id: "standard", label: "Standard availability" }, { id: "soldout", label: "Sold out" },
+  { id: "family", label: "Family with children" }, { id: "dog", label: "Traveling with dog" },
+  { id: "member", label: "Member rate" }, { id: "nonrefundable", label: "Non-refundable" },
+  { id: "error", label: "Availability error" },
+];
+
+export function StudioController() {
+  const booking = useBooking();
+  const [open, setOpen] = useState(false);
+  const [scenario, chooseScenario] = useState<DemoScenario>(getDemoScenario);
+  const input = "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900";
+  const apply = (target: Step, nextScenario: DemoScenario) => {
+    setDemoScenario(nextScenario);
+    const start = new Date();
+    start.setUTCDate(start.getUTCDate() + 21);
+    const end = new Date(start);
+    end.setUTCDate(end.getUTCDate() + 3);
+    const checkIn = start.toISOString().slice(0, 10);
+    const checkOut = end.toISOString().slice(0, 10);
+    booking.resetAll();
+    booking.setSearch({ checkIn, checkOut, adults: 2, children: nextScenario === "family" ? 1 : 0, properties: ["hotel"] });
+    // Let setSearch invalidate the previous booking selection before seeding a
+    // new demo room/rate. Otherwise React's batched updater clears the fixture.
+    window.setTimeout(() => {
+      if (target !== "dates" && target !== "results" && nextScenario !== "soldout" && nextScenario !== "error") {
+        const room = buildRooms(studioAvailability(), studioHotel).find((item) => item.rates.length);
+        if (room && room.rates[0]) booking.selectRoomRate(room, room.rates[0]);
+      }
+      booking.goTo(target);
+    }, 0);
+    setOpen(false);
+  };
+  return createPortal(
+    <div className="fixed bottom-5 right-5 z-[9999] font-sans" data-booking-studio>
+      {open && (
+        <section role="dialog" aria-label="Booking Studio controls"
+          className="mb-3 w-[min(350px,calc(100vw-40px))] max-h-[min(70vh,550px)] overflow-y-auto rounded-2xl border border-gray-300 bg-white p-5 text-gray-900 shadow-2xl">
+          <div className="mb-4 flex items-center justify-between">
+            <strong className="text-sm uppercase tracking-wide">Booking Studio</strong>
+            <button type="button" className="rounded-md px-2 py-1 text-sm" aria-label="Minimize Studio" onClick={() => setOpen(false)}>Minimize</button>
+          </div>
+          <p className="mb-4 rounded-lg bg-amber-50 p-2 text-xs text-amber-900">Demo only. Live reservations, payments and tracking are disabled.</p>
+          <label className="mb-3 block text-xs font-semibold">Scenario
+            <select className={input + " mt-1"} value={scenario} onChange={(e) => { const next = e.target.value as DemoScenario; chooseScenario(next); apply("results", next); }}>
+              {scenarios.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
+          </label>
+          <label className="mb-3 block text-xs font-semibold">Jump to screen
+            <select className={input + " mt-1"} value={booking.step} onChange={(e) => apply(e.target.value as Step, scenario)}>
+              {steps.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            </select>
+          </label>
+          <p className="text-xs text-gray-600">The booking engine retains its full width behind these controls.</p>
+        </section>
+      )}
+      <button type="button" aria-expanded={open} aria-label="Toggle Booking Studio"
+        className="ml-auto flex items-center gap-2 rounded-full bg-[#4e332d] px-5 py-3 text-sm font-semibold text-white shadow-xl"
+        onClick={() => setOpen((value) => !value)}>
+        {open ? "Close Studio" : "Studio · DEMO"}
+      </button>
+    </div>,
+    document.body,
+  );
+}
