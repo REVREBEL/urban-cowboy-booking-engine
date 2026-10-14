@@ -4,7 +4,7 @@
  * sheet, sorting, photo/index toggle, and full-frame RoomPhotoTour.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { Check, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { RoomPhotoTour } from "./RoomPhotoTour";
 import { PhotoTourArrow } from "./PhotoTourArrow";
 import { Button } from "../components/ui/button";
@@ -74,7 +74,25 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   const [building, setBuilding] = useState<string>("all");
   const [features, setFeatures] = useState<Feature[]>([]);
   const [sort, setSort] = useState<Sort>(profile ? "match" : "price-asc");
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortMenuRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<"spreads" | "index">("spreads");
+  useEffect(() => {
+    if (!sortOpen) return;
+    const dismiss = (event: PointerEvent) => {
+      if (!sortMenuRef.current?.contains(event.target as Node)) setSortOpen(false);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSortOpen(false);
+    };
+    document.addEventListener("pointerdown", dismiss);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [sortOpen]);
+
   const [detail, setDetail] = useState<string | null>(null);
   const roomStage = useRef<HTMLElement>(null);
   const filterOverlay = useRef<HTMLDivElement>(null);
@@ -309,15 +327,28 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
             </div>
           </div>
           <div className="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-paper/15 pt-2">
-            <label className="sr-only" htmlFor="sort">Sort</label>
-            <select id="sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)}
-              className="rounded-full bg-paper/10 font-label uppercase tracking-[0.05em] text-paper"
-              style={{ fontFamily: "var(--font-label)", fontSize: "0.6875rem", lineHeight: "1.2", paddingTop: "3px", paddingRight: "8px", paddingBottom: "2px", paddingLeft: "8px" }}>
-              {profile && <option value="match">Best match</option>}
-              <option value="price-asc">Price: low to high</option>
-              <option value="price-desc">Price: high to low</option>
-              {hasSizeData && <option value="size">Most space</option>}
-            </select>
+            <div ref={sortMenuRef} className="relative">
+              <Button type="button" variant="transparent" colorScheme="paper" size="xsmall"
+                aria-label="Sort rooms" aria-haspopup="true" aria-expanded={sortOpen}
+                onClick={() => setSortOpen((open) => !open)}
+                className="flex min-h-7 items-center justify-center gap-2 rounded-full bg-paper/10 px-3 py-1 font-label text-[11px] uppercase leading-none tracking-[0.05em] text-paper">
+                {sort === "match" ? "Best match" : sort === "price-asc" ? "Price: low to high" : sort === "price-desc" ? "Price: high to low" : "Most space"}
+                <ChevronDown className={`h-3 w-3 shrink-0 transition-transform ${sortOpen ? "rotate-180" : ""}`} aria-hidden="true" />
+              </Button>
+              {sortOpen && (
+                <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-48 overflow-hidden rounded-xl border border-paper/20 bg-[#173C2D] p-1.5 text-paper shadow-xl" role="group" aria-label="Sort order">
+                  {([...(profile ? [["match", "Best match"]] : []), ["price-asc", "Price: low to high"], ["price-desc", "Price: high to low"], ...(hasSizeData ? [["size", "Most space"]] : [])] as [Sort, string][]).map(([value, title]) => (
+                    <Button key={value} type="button" variant="transparent" colorScheme="paper" size="xsmall"
+                      aria-pressed={sort === value}
+                      onClick={() => { setSort(value); setSortOpen(false); }}
+                      className={`flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left font-label text-[11px] uppercase leading-tight tracking-[0.05em] transition-colors ${sort === value ? "bg-paper text-[#173C2D]" : "text-paper hover:bg-paper/15"}`}>
+                      {title}
+                      <span className="w-4 shrink-0">{sort === value && <Check className="h-4 w-4" aria-hidden="true" />}</span>
+                    </Button>
+                  ))}
+                </div>
+              )}
+            </div>
             <div role="group" aria-label="View" className="flex rounded-full bg-paper/10 p-0.5">
               {(["spreads", "index"] as const).map((v) => (
                 <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setView(v)}
