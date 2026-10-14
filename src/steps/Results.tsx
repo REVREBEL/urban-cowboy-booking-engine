@@ -326,7 +326,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
 
   if (photoLayout && discoveryView === "journal") {
     return (
-      <div className="min-h-dvh bg-secondary-foreground text--paper font-body">
+      <div className="min-h-dvh bg-j-night text-j-paper font-j-body">
         <PhotoJournal
           adults={adults}
           children={children}
