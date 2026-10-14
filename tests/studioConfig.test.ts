@@ -61,3 +61,30 @@ test("Studio remains disabled when live Webflow switch is off", async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+test("local denied response reveals only safe diagnostic; public denied response does not", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({
+    id: itemId,
+    fieldData: { "enable-demo-engine": false },
+  }), { status: 200 });
+  try {
+    const local = await onRequestStudioConfig({
+      env,
+      request: new Request("http://127.0.0.1:8787/api/studio/config?property=hotel"),
+    });
+    const localData = await local.json() as Record<string, unknown>;
+    assert.equal(localData.enabled, false);
+    assert.equal(localData.diagnostic, "cms_switch_off");
+
+    const publicResponse = await onRequestStudioConfig({
+      env,
+      request: new Request("https://booking.example.com/api/studio/config?property=hotel"),
+    });
+    const publicData = await publicResponse.json() as Record<string, unknown>;
+    assert.equal(publicData.enabled, false);
+    assert.equal("diagnostic" in publicData, false);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
