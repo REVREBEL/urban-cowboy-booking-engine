@@ -34,7 +34,7 @@ test("Photo room browser preserves original filters, mobile sheet and photo-inde
   assert.match(rooms, /j-room-filters/);
   assert.match(rooms, /sheetOpen/);
   assert.match(rooms, /buildingStrip/);
-  assert.match(rooms, /Full photos/);
+  assert.match(rooms, /Photo View/);
   assert.match(rooms, /Index/);
   assert.match(rooms, /RoomPhotoTour/);
   assert.match(rooms, /toPhotoTourRoom\(source, imageBaseUrl, photoGalleryForRoom\(source.roomTypeId, galleries\), photoSource, cmsAmenities\[studioEditorialRoomTypeId\(source.roomTypeId\)\] \?\? \[\]\)/);
