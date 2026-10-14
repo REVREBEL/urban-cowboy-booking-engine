@@ -1,26 +1,9 @@
 import * as React from 'react';
 import { X } from 'lucide-react';
+import { PolicyDisplay } from './policy_display';
 import { Button, type ButtonColor } from '../ui/button';
-import { PolicyDisplay, type MilestoneDate } from './policy_display';
 
 export type OfferCardTheme = 'ride-easy' | 'outfit' | 'sunup' | 'stay-while' | 'plan-ahead';
-
-export interface RateOfferPolicyDisplay {
-  initialAmount: string;
-  remainingAmount: string;
-  freeCancelDate?: MilestoneDate;
-  nonRefundableDate?: MilestoneDate;
-  textColor?: string;
-  accentColor?: string;
-  initialDepositTooltip?: {
-    title: string;
-    description: string;
-  };
-  remainingBalanceTooltip?: {
-    title: string;
-    description: string;
-  };
-}
 
 export interface RateOfferSidePanelProps {
   variant?: 'default' | 'compact';
@@ -37,7 +20,8 @@ export interface RateOfferSidePanelProps {
   dueAtBooking?: number | string;
   remaining?: number | string;
   policyText?: string;
-  policyDisplay?: RateOfferPolicyDisplay;
+  /** Optional fully resolved policy content; defaults to policyText. */
+  policyDisplay?: React.ReactNode;
   onClose: () => void;
   onConfirm?: () => void;
   isSubmitting?: boolean;
@@ -177,8 +161,38 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   height,
 }) => {
   const isCompact = variant === 'compact';
-  const showTimeline = Boolean(policyDisplay?.freeCancelDate && policyDisplay?.nonRefundableDate);
   const themeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS['ride-easy'];
+
+  if (isCompact && policyDisplay) {
+    return (
+      <section
+        className="relative box-border flex w-full min-w-0 flex-col rounded-r-[32px] border-2 p-5 shadow-xl"
+        style={{
+          width: "525px",
+          maxWidth: "100%",
+          height: height ? `${height}px` : "675px",
+          backgroundColor: themeConfig.panelBg,
+          borderColor: themeConfig.borderColor,
+        }}
+        aria-label="Rate policy and deposit details"
+      >
+        <button type="button" onClick={onClose} aria-label="Close rate details"
+          className="absolute right-4 top-4 z-20 rounded-full p-2"
+          style={{ color: themeConfig.closeBtnColor }}>
+          <X className="h-5 w-5" />
+        </button>
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto pt-6">
+          {policyDisplay}
+        </div>
+        <div className="flex justify-center pt-3">
+          <Button type="button" variant="filled" color={buttonColorForTheme(theme)}
+            onClick={onConfirm} disabled={isSubmitting || !onConfirm}>
+            AGREE &amp; CONFIRM BOOKING
+          </Button>
+        </div>
+      </section>
+    );
+  }
 
   if (isCompact) {
     // ================= COMPACT VARIANT (Active_Open.png) =================
@@ -207,17 +221,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           </button>
         </div>
 
-        {showTimeline && policyDisplay && (
-          <PolicyDisplay
-            {...policyDisplay}
-            orientation="vertical"
-            size="compact"
-            className="mb-2"
-          />
-        )}
-
-        {!showTimeline && (
-          <>
+        <>
         {/* Embedded Ticket Box with 2 Columns */}
         <div
           className="rounded-panel-xs px-5 shadow-xs mb-3 mx-auto flex items-center justify-center box-border transition-colors duration-300"
@@ -412,18 +416,17 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         </div>
 
           </>
-        )}
 
         {/* Policy Disclaimer */}
-        <p
+        <div
           className="text-xs leading-relaxed text-center sm:text-left mb-3 px-1"
           style={{
             color: themeConfig.textSecondary,
             fontFamily: themeConfig.policyFont,
           }}
         >
-          {policyText}
-        </p>
+          {policyDisplay ?? <PolicyDisplay text={policyText} />}
+        </div>
 
         {/* Oval Pill CTA Button: AGREE & CONFIRM BOOKING */}
         <div className="w-full flex justify-center">
@@ -470,12 +473,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
       </div>
 
       {policyDisplay ? (
-        <PolicyDisplay
-          {...policyDisplay}
-          orientation="horizontal"
-          size="default"
-          className="w-full"
-        />
+        <div className="w-full">{policyDisplay}</div>
       ) : (
         <>
       {/* Top Section: Cancellation & Schedule */}
@@ -656,15 +654,15 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
       </div>
 
       {/* Policy Disclaimer in Editorial Font at Bottom */}
-      <p
+      <div
         className="w-full text-xs sm:text-[13px] leading-relaxed text-left px-1"
         style={{
           color: themeConfig.textSecondary,
           fontFamily: themeConfig.policyFont,
         }}
       >
-        {policyText}
-      </p>
+        {policyDisplay ?? <PolicyDisplay text={policyText} />}
+      </div>
     </div>
   );
 };

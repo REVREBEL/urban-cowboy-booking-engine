@@ -56,6 +56,9 @@ export interface PolicyDisplayConfig {
 
 export interface PolicyDisplayProps {
   title?: string;
+  /** Text-only fallback for policies without verified milestone dates. */
+  text?: string;
+  label?: string;
   initialAmount?: string;
   remainingAmount?: string;
   freeCancelDate?: MilestoneDate;
@@ -78,6 +81,8 @@ export interface PolicyDisplayProps {
 
 export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
   title = "POLICY INFORMATION",
+  text,
+  label,
   initialAmount = "$000.00",
   remainingAmount = "$000.00",
   freeCancelDate,
@@ -101,6 +106,8 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
 }) => {
   const [activeTooltip, setActiveTooltip] = useState<"initial" | "remaining" | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+
 
   // Memoized CSS custom properties with complete dependency array
   const style = useMemo(
@@ -132,6 +139,9 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
   };
 
   const isVertical = orientation === 'vertical';
+  if (text !== undefined && (!freeCancelDate || !nonRefundableDate)) {
+    return text.trim() ? <div aria-label={label ?? title} className={className}>{text}</div> : null;
+  }
 
   return (
     <div

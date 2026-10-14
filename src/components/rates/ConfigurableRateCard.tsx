@@ -9,10 +9,11 @@ import type {
 import { RATE_CARD_COLORS } from "@/lib/rateCardPresentation";
 import { normalizeRateCardCtaLabel } from "@/lib/rateCardCta";
 import { Button } from "@/components/ui/button";
+import { PolicyDisplay } from "./policy_display";
 import {
+  useHorizontalOfferLayout,
   HORIZONTAL_OFFER_BASE_HEIGHT,
   HORIZONTAL_OFFER_BASE_WIDTH,
-  useHorizontalOfferLayout,
 } from "./useHorizontalOfferLayout";
 
 export interface ConfigurableRateCardProps {
@@ -69,8 +70,10 @@ function VerticalRateCard({
   const desktopArtwork = desktopFailed ? null : config.desktopArtworkUrl;
   const mobileArtwork = mobileFailed ? null : config.mobileArtworkUrl;
   const textColor = RATE_CARD_COLORS[config.textColor].hex;
-  const accentColor = RATE_CARD_COLORS[config.accentColor ?? "bandana-red"].hex;
-  const fallbackIsVisible = !desktopArtwork && !mobileArtwork;
+  const accentColor = RATE_CARD_COLORS[config.buttonColor].hex;
+
+  const hasAnyArtwork = Boolean(desktopArtwork || mobileArtwork);
+  const fallbackIsVisible = !hasAnyArtwork;
 
   const style = useMemo(
     () =>
@@ -78,7 +81,6 @@ function VerticalRateCard({
         "--rate-overlay-desktop-top": DESKTOP_POSITION_TOP[config.desktopOverlayPosition],
         "--rate-overlay-mobile-top": MOBILE_POSITION_TOP[config.mobileOverlayPosition],
         "--rate-fg": textColor,
-        "--rate-border-color": textColor,
         "--rate-accent": accentColor,
       }) as React.CSSProperties,
     [
@@ -104,6 +106,7 @@ function VerticalRateCard({
       data-rate-card={config.id}
       data-rate-card-layout="vertical"
       data-artwork-mode={artworkMode}
+      data-layout="vertical"
       data-text-color={config.textColor}
       data-button-color={config.buttonColor}
       data-font-pair={config.fontPair}
@@ -185,7 +188,8 @@ function VerticalRateCard({
             >
               {ctaLabel}
             </Button>
-            <p className="rate-card-policy">{live.cancellationText}</p>
+
+            <PolicyDisplay className="rate-card-policy" text={live.cancellationText} />
           </div>
         </div>
       </div>
