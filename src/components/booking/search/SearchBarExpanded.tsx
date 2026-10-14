@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 
 export type SearchBarExpandedVariant = "circle" | "square";
 export type ActiveDropdownSection = "property" | "dates" | "guests" | "promo" | null;
@@ -24,6 +24,8 @@ export interface SearchBarExpandedProps {
   showSearchButton?: boolean;
   dropdownSlot?: React.ReactNode;
   dropdownPlacement?: "above" | "below";
+  /** Keep an above-the-bar dropdown within the available viewport without moving its bottom anchor. */
+  constrainAboveToViewport?: boolean;
   isLoading?: boolean;
   className?: string;
 }
@@ -141,6 +143,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   showSearchButton = true,
   dropdownSlot,
   dropdownPlacement = "below",
+  constrainAboveToViewport = false,
   isLoading = false,
   className = "",
 }) => {
@@ -152,10 +155,29 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
     promoCode: initialValues?.promoCode ?? "Add promo",
   });
   const [internalActiveSection, setInternalActiveSection] = useState<ActiveDropdownSection>(null);
+  const searchBarRef = useRef<HTMLDivElement>(null);
+  const [availableAbove, setAvailableAbove] = useState<number | null>(null);
 
   const currentValues = controlledValues ?? internalValues;
   const controlledSection = controlledActiveSection !== undefined;
   const currentActiveSection = controlledSection ? controlledActiveSection : internalActiveSection;
+  // An open dropdown stays pinned to the top of the search bar. Limiting its
+  // scrollable height to the space above prevents focus/selection from moving the
+  // page when the calendar or nightly-rate text changes.
+  useLayoutEffect(() => {
+    if (!constrainAboveToViewport || dropdownPlacement !== "above" || !currentActiveSection) return;
+    const update = () => {
+      const top = searchBarRef.current?.getBoundingClientRect().top;
+      if (top === undefined) return;
+      const next = Math.max(160, Math.floor(top - 80));
+      setAvailableAbove((previous) => previous === next ? previous : next);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [constrainAboveToViewport, dropdownPlacement, currentActiveSection]);
+
+
   const rounded = variant === "circle" ? "rounded-panel md:rounded-full" : "rounded-field";
 
   const toggleSection = (section: Exclude<ActiveDropdownSection, null>) => {
@@ -170,7 +192,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
       : `${currentValues.checkInDate} — ${currentValues.checkOutDate}`;
 
   return (
-    <div className={`relative w-full max-w-264.25 ${className}`}>
+    <div ref={searchBarRef} className={`relative w-full max-w-264.25 ${className}`}>
       <div
         role="search"
         aria-label="Expanded accommodation search bar"
@@ -201,9 +223,12 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
         <div
           className={
             dropdownPlacement === "above"
-              ? "absolute bottom-full left-0 right-0 z-50 mb-3"
+              ? `absolute bottom-full left-0 right-0 z-50 mb-3 ${constrainAboveToViewport ? "overflow-y-auto overscroll-contain rounded-3xl" : ""}`
               : "absolute left-0 right-0 top-full z-50 mt-3"
           }
+          style={constrainAboveToViewport && dropdownPlacement === "above" && availableAbove !== null
+            ? { maxHeight: availableAbove }
+            : undefined}
         >
           {dropdownSlot}
         </div>
