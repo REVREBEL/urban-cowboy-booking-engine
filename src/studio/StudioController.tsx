@@ -4,7 +4,7 @@ import { useBooking, type Step } from "../state/booking";
 import { buildRooms } from "../lib/shaping";
 import { studioAvailability, studioHotel } from "./demoData";
 import { getDemoScenario, setDemoScenario, type DemoScenario } from "./runtime";
-import { currentStudioLayout } from "./roomLayout";
+import { currentStudioLayout, type RoomResultsLayout } from "./roomLayout";
 
 const steps: { id: Step; label: string }[] = [
   { id: "dates", label: "Search" }, { id: "results", label: "Rooms / Find Your Stay" },
@@ -27,7 +27,9 @@ export function StudioController() {
     window.addEventListener("studio-room-layout-change", sync);
     return () => window.removeEventListener("studio-room-layout-change", sync);
   }, []);
-  const changeRoomLayout = (layout: string) => {
+  const changeRoomLayout = (value: string) => {
+    if (value !== "card" && value !== "photo") return;
+    const layout: RoomResultsLayout = value;
     setRoomLayout(layout);
     const url = new URL(window.location.href);
     url.searchParams.set("roomLayout", layout);
