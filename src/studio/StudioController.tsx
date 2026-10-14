@@ -32,11 +32,15 @@ export function StudioController() {
     const checkOut = end.toISOString().slice(0, 10);
     booking.resetAll();
     booking.setSearch({ checkIn, checkOut, adults: 2, children: nextScenario === "family" ? 1 : 0, properties: ["hotel"] });
-    if (target !== "dates" && target !== "results" && nextScenario !== "soldout" && nextScenario !== "error") {
-      const room = buildRooms(studioAvailability(), studioHotel).find((item) => item.rates.length);
-      if (room && room.rates[0]) booking.selectRoomRate(room, room.rates[0]);
-    }
-    booking.goTo(target);
+    // Let setSearch invalidate the previous booking selection before seeding a
+    // new demo room/rate. Otherwise React's batched updater clears the fixture.
+    window.setTimeout(() => {
+      if (target !== "dates" && target !== "results" && nextScenario !== "soldout" && nextScenario !== "error") {
+        const room = buildRooms(studioAvailability(), studioHotel).find((item) => item.rates.length);
+        if (room && room.rates[0]) booking.selectRoomRate(room, room.rates[0]);
+      }
+      booking.goTo(target);
+    }, 0);
     setOpen(false);
   };
   return createPortal(
