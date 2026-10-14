@@ -1,6 +1,7 @@
-import { cmsPhotoKey } from "@/lib/cmsPhotoHotspots";
-import type { CmsPhotoHotspotMap, CmsRoomAmenity } from "@/types/photo-hotspot-cms";
-import type { PhotoHighlight } from "./tour";
+import { cmsPhotoKey } from "../lib/cmsPhotoHotspots.ts";
+import type { CmsPhotoHotspotMap, CmsRoomAmenity } from "../types/photo-hotspot-cms.ts";
+import type { PhotoHighlight } from "./tour.ts";
+import { tourIconForTitle } from "../lib/tourIconFallback.ts";
 
 /**
  * Hotspots belong to the exact photograph, but are visible only when the
@@ -25,7 +26,7 @@ export function cmsHighlightsForPhoto(
       title: amenity.shortName,
       note: amenity.shortDescription ?? amenity.name,
       longNote: amenity.longDescription ?? amenity.shortDescription ?? amenity.name,
-      icon: "seat" as const,
+      icon: tourIconForTitle(amenity.name),
       iconPath: amenity.iconPath,
     }];
   });

@@ -87,7 +87,7 @@
 .j-tour-amenities { border-radius: 6px; padding: 18px; color: var(--foreground); background: var(--paper); }
 .j-panel-close { color: var(--foreground) !important; background: transparent !important; }
 .j-amenity-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 10px; margin-top: 18px; max-height: 260px; overflow-y: auto; }
-.j-amenity-list li { display: flex; align-items: center; gap: 8px; font-size: 11px; line-height: 1.4; }
+.j-amenity-list li { display: flex; align-items: flex-start; gap: 8px; min-width: 0; font-size: 11px; line-height: 1.4; }
 .j-amenity-list svg { flex-shrink: 0; }
 @media (max-width: 1023px) {
  .j-tour-footer { align-items: end; padding: 64px 20px 20px; }
@@ -154,6 +154,10 @@
 .j-focus-count { font-family: var(--font-heading); font-size: calc(var(--ff-sq) * .5); line-height: 1; font-variant-numeric: tabular-nums; }
 .j-focus-square img { width: 42%; height: 42%; object-fit: contain; }
 .j-focus:not(.is-active) .j-focus-square img { filter: brightness(1.1); }
+.j-focus-medallion { display: grid; place-items: center; }
+.j-focus-medallion img.j-cms-icon { width: 56%; height: 56%; object-fit: contain; transform: none; mix-blend-mode: normal; }
+.j-cms-icon { display: block; flex-shrink: 0; object-fit: contain; }
+
 @media (max-width: 639px) { .j-focus { --ff-size: 56px; --ff-sq: 24px; } .j-focus.is-active { --ff-size: 96px; --ff-sq: 32px; } }
 @media (prefers-reduced-motion: reduce) { .j-focus, .j-focus-medallion, .j-focus-square { transition: none; } }
 
