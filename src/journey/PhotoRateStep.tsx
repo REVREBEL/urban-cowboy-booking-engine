@@ -3,7 +3,7 @@
  * Unlike the prototype, each offer uses the selected room's Mews ShapedRate;
  * no demo multiplier or assumed tax/cancellation policy is applied.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
 import { api } from "../lib/api";
 import { resolveRateCardConfig } from "../lib/rateCardConfig";
@@ -119,10 +119,7 @@ export function PhotoRateStep() {
     booking.goTo("extras");
   };
 
-  const detailsPricing = useMemo(
-    () => detailsRate ? pricingForRate(detailsRate) : null,
-    [detailsRate],
-  );
+  const detailsPricing = detailsRate ? pricingForRate(detailsRate) : null;
 
   const detailsPolicy = detailsRate
     ? detailsConfig
