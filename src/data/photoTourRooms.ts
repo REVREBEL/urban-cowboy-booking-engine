@@ -6,6 +6,8 @@
  * rates, occupancy estimates, or independently rank rooms for bookings.
  */
 import type { ShapedRoom } from "../types/mews";
+import { buildRooms } from "../lib/shaping";
+import { studioHotel, studioAvailability } from "../studio/demoData";
 import type { JourneyRoom, Feature } from "../journey/data";
 import type { RoomTypeCmsGallery } from "../types/room-type-cms";
 import type { CmsRoomAmenity } from "../types/photo-hotspot-cms";
@@ -62,4 +64,12 @@ export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string, gallery?
 
 export function toPhotoTourRooms(rooms: readonly ShapedRoom[], imageBaseUrl: string): JourneyRoom[] {
   return rooms.filter((room) => room.rates.length > 0).map((room) => toPhotoTourRoom(room, imageBaseUrl));
+}
+
+/** Design Studio room catalog: local fixtures only, never fetched Mews availability.
+ * This is the deterministic room source for the Photo Studio preview.
+ * Simulated rates support navigating the prototype but cannot create reservations.
+ */
+export function studioPhotoRoomCatalog(): ShapedRoom[] {
+  return buildRooms(studioAvailability(), studioHotel);
 }
