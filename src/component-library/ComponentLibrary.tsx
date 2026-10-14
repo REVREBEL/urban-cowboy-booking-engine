@@ -122,7 +122,7 @@ const renderedPaths = new Set([
   "src/components/ui/tabs.tsx",
 ]);
 
-const componentModules = import.meta.glob([
+// Inventory needs file paths only. Use raw-source imports so this catalog does not\n// dynamically import executable modules already loaded by its live previews.\nconst componentModules = import.meta.glob([
   "../components/**/*.tsx",
   "../steps/**/*.tsx",
   // Stored prototype pages are not production components and contain imports
@@ -132,7 +132,7 @@ const componentModules = import.meta.glob([
   "!../components/booking/summary/CheckoutStep.tsx",
   "!../components/booking/summary/ExtrasStep.tsx",
   "!../components/rates/RideEasySoloPage.tsx",
-]);
+], { query: "?raw", import: "default" });
 
 const allComponentPaths = Object.keys(componentModules)
   .map((path) => path.replace("../", "src/"))
