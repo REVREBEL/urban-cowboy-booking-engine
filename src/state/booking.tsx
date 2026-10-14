@@ -164,6 +164,13 @@ function writeUrl(s: BookingState) {
     const value = current.get(key);
     if (value) q.set(key, value);
   }
+  // Studio layout is a UI choice, not booking criteria. Preserve it when
+  // serializing booking state, but do not expose it as a production override.
+  if (window.location.pathname === "/booking/studio" ||
+      window.location.pathname === "/booking/studio/") {
+    const layout = current.get("roomLayout");
+    if (layout === "photo" || layout === "card") q.set("roomLayout", layout);
+  }
   const qs = q.toString();
   const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
   window.history.replaceState(null, "", url);
