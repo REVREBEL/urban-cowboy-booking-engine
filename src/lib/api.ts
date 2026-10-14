@@ -16,6 +16,8 @@ import { toPropertyUtc } from "./format";
 import { getLang, mewsLang } from "./lang";
 import { t } from "../i18n";
 import { apiLog } from "./apiLog";
+import { isStudioRoute } from "../studio/runtime";
+import { demoMewsResponse } from "../studio/demoData";
 import type { RateCardConfig } from "../types/rate-card";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 import type { AddOnCmsItem } from "../types/add-on-cms";
@@ -49,6 +51,21 @@ async function call<T>(path: string, init: RequestInit | undefined, meta: Meta):
   const id = apiLog.start(init?.method ?? "GET", path, meta.label, meta.why, meta.request);
   const t0 = performance.now();
   const ms = () => Math.round(performance.now() - t0);
+
+  // Studio is a strictly non-transactional preview. Resolve all Mews routes
+  // against local fixtures, including the startup hotel configuration. This
+  // guard runs before network I/O so no Studio page can reach live Mews.
+  if (isStudioRoute()) {
+    try {
+      const result = await demoMewsResponse<T>(path);
+      apiLog.finish(id, { ok: true, status: 200, durationMs: ms(), response: result });
+      return result;
+    } catch (error) {
+      const code = error instanceof Error ? error.message : "studio_demo_error";
+      apiLog.finish(id, { ok: false, durationMs: ms(), error: code });
+      throw new ApiError(code, 403);
+    }
+  }
 
   let res: Response;
   try {
