@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { onRequestStudioConfig } from "../worker/webflow/locations.ts";
+import { mergeVerifiedPublishedFields, onRequestStudioConfig } from "../worker/webflow/locations.ts";
 import type { Env } from "../worker/mews/_lib.ts";
 
 const collectionId = "6abc812fd98b325b281d6301";
@@ -23,6 +23,7 @@ test("Studio checks the specific live CMS item through the Data API", async () =
       isArchived: false,
       fieldData: {
         "enable-demo-engine": true,
+        "production-layout": "97075d405111e533c78daa0afa48bef5",
         "demo-layout": "2142905a00c88401810632b026107cf2",
       },
     }), { status: 200, headers: { "Content-Type": "application/json" } });
@@ -48,7 +49,7 @@ test("Studio remains disabled when live Webflow switch is off", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => new Response(JSON.stringify({
     id: itemId,
-    fieldData: { "enable-demo-engine": false },
+    fieldData: { "enable-demo-engine": false, "production-layout": "97075d405111e533c78daa0afa48bef5", "demo-layout": "b5074dbc31924c6f9feb79f1a6bdfd2c" },
   }), { status: 200 });
 
   try {
@@ -66,7 +67,7 @@ test("local denied response reveals only safe diagnostic; public denied response
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => new Response(JSON.stringify({
     id: itemId,
-    fieldData: { "enable-demo-engine": false },
+    fieldData: { "enable-demo-engine": false, "production-layout": "97075d405111e533c78daa0afa48bef5", "demo-layout": "b5074dbc31924c6f9feb79f1a6bdfd2c" },
   }), { status: 200 });
   try {
     const local = await onRequestStudioConfig({
@@ -87,4 +88,66 @@ test("local denied response reveals only safe diagnostic; public denied response
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test("published fields missing from live response are recovered only from the same publication", async () => {
+  const published = "2026-10-14T06:13:23.572Z";
+  const live = {
+    id: itemId,
+    lastPublished: published,
+    lastUpdated: published,
+    isDraft: false,
+    isArchived: false,
+    fieldData: { name: "Catskills" },
+  };
+  const staged = {
+    id: itemId,
+    lastPublished: published,
+    lastUpdated: published,
+    isDraft: false,
+    isArchived: false,
+    fieldData: {
+      "enable-demo-engine": true,
+      "production-layout": "f4859a16a8556038b0f026679aaa6a02",
+      "demo-layout": "2142905a00c88401810632b026107cf2",
+    },
+  };
+  const recovered = mergeVerifiedPublishedFields(live, staged);
+  assert.equal(recovered.fieldData?.["enable-demo-engine"], true);
+  const originalFetch = globalThis.fetch;
+  const called: string[] = [];
+  globalThis.fetch = async (input) => {
+    called.push(String(input));
+    return new Response(JSON.stringify(String(input).endsWith("/live") ? live : staged), { status: 200 });
+  };
+  try {
+    const response = await onRequestStudioConfig({
+      env,
+      request: new Request("http://localhost:8787/api/studio/config?property=hotel"),
+    });
+    assert.deepEqual(await response.json(), { enabled: true, property: "hotel", demoLayout: "photo" });
+    assert.equal(called.length, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("unpublished edits cannot enable Studio when the live switch is missing", () => {
+  const live = {
+    id: itemId, lastPublished: "2026-10-14T06:13:23.572Z",
+    isDraft: false, fieldData: {},
+  };
+  const staged = {
+    id: itemId, lastPublished: "2026-10-14T06:13:23.572Z",
+    lastUpdated: "2026-10-14T06:14:23.572Z",
+    isDraft: false, fieldData: { "enable-demo-engine": true },
+  };
+  const merged = mergeVerifiedPublishedFields(live, staged);
+  assert.equal(merged.fieldData?.["enable-demo-engine"], undefined);
+  assert.equal(
+    mergeVerifiedPublishedFields({ ...live, fieldData: { "enable-demo-engine": false } }, {
+      ...staged, lastUpdated: staged.lastPublished,
+    }).fieldData?.["enable-demo-engine"],
+    false,
+  );
 });
