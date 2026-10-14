@@ -250,7 +250,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
           {list.map((m) => (
             <li key={m.room.id}>
               <Button type="button" onClick={() => { setView("spreads"); setDetail(m.room.id); window.setTimeout(() => document.getElementById(`tour-${m.room.id}`)?.scrollIntoView({ block: "start" }), 0); }} variant="transparent" colorScheme="paper" size="xsmall" className="group block w-full text-left" style={{padding:0,display:"block",width:"100%",textAlign:"left",fontWeight:400}}>
-                <img src={m.room.images[0]} alt="" className="aspect-3/2 w-full rounded-lg object-cover transition group-hover:opacity-90" loading="lazy" />
+                <img src={m.room.images[0]} alt="" className="aspect-3/2 w-full rounded-lg bg-smoke object-contain transition group-hover:opacity-90" loading="lazy" />
                 <div className="mt-3 flex items-baseline justify-between gap-3">
                   <h3 className="min-w-0 truncate font-heading text-xl">{m.room.name}</h3>
                   <span className="shrink-0 tabular-nums">{money(m.room.basePrice)}</span>
