@@ -129,7 +129,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
               <div
                 className="w-full text-center font-bold uppercase select-none tracking-[2px]"
                 style={{
-                  color: 'var(--color-alpine-linen)',
+                  color: 'var(--alpine-linen)',
                   fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                   fontSize: '26px',
                   lineHeight: '30px',
@@ -187,7 +187,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                 <p
                   className="w-full font-bold text-center m-0 whitespace-normal"
                   style={{
-                    color: 'var(--color-alpine-linen)',
+                    color: 'var(--alpine-linen)',
                     fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                     fontSize: '15px',
                     lineHeight: '22px',
@@ -238,7 +238,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                   <div
                     className="w-full max-w-70 font-bold text-center uppercase select-none leading-none tracking-[2px]"
                     style={{
-                      color: 'var(--color-alpine-linen)',
+                      color: 'var(--alpine-linen)',
                       fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                       fontSize: '26px',
                       transform: 'rotate(0.28deg)',
@@ -264,7 +264,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                     <p
                       className="w-full font-bold text-center m-0 whitespace-normal"
                       style={{
-                        color: 'var(--color-alpine-linen)',
+                        color: 'var(--alpine-linen)',
                         fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                         fontSize: '20px',
                         lineHeight: '26px',
@@ -278,7 +278,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                     <div
                       className="w-65 h-1.25 rounded-full"
                       style={{
-                        backgroundColor: 'var(--color-alpine-linen)',
+                        backgroundColor: 'var(--alpine-linen)',
                       }}
                     />
                   </div>
@@ -350,7 +350,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                     <div
                       className="w-full text-center font-normal text-[13px] tracking-[1px] select-none whitespace-nowrap"
                       style={{
-                        color: 'var(--color-alpine-linen)',
+                        color: 'var(--alpine-linen)',
                         fontFamily: "'Noto Serif Tibetan', 'Noto Serif', serif",
                         transform: 'rotate(0.28deg)',
                       }}

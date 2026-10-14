@@ -142,7 +142,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
                 maxWidth: '100%',
                 height: '657px',
                 padding: '54px 30px',
-                backgroundColor: 'var(--color-alpine-linen)',
+                backgroundColor: 'var(--alpine-linen)',
                 border: '4px solid #9A5636',
                 borderRadius: '45px',
               }}
@@ -247,7 +247,7 @@ export const OffersCardSunup: React.FC<OffersCardSunupProps> = ({
             <div
               className="relative w-full h-full box-border transition-all duration-300 shadow-lg hover:shadow-xl"
               style={{
-                backgroundColor: 'var(--color-alpine-linen)',
+                backgroundColor: 'var(--alpine-linen)',
                 borderRadius: '50px',
                 padding: '6px',
               }}

@@ -67,7 +67,7 @@ export function StudioController() {
     setOpen(false);
   };
   return createPortal(
-    <div className="fixed bottom-5 right-5 z-[9999] font-sans" data-booking-studio>
+    <div className="fixed bottom-5 right-5 z-9999 font-sans" data-booking-studio>
       {open && (
         <section role="dialog" aria-label="Booking Studio controls"
           className="mb-3 w-[min(350px,calc(100vw-40px))] max-h-[min(70vh,550px)] overflow-y-auto rounded-2xl border border-gray-300 bg-white p-5 text-gray-900 shadow-2xl">
@@ -96,7 +96,7 @@ export function StudioController() {
         </section>
       )}
       <button type="button" aria-expanded={open} aria-label="Toggle Booking Studio"
-        className="ml-auto flex items-center gap-2 rounded-full bg-[#4e332d] px-5 py-3 text-sm font-semibold text-white shadow-xl"
+        className="ml-auto flex items-center gap-2 rounded-full bg--background: px-5 py-3 text-sm font-semibold text-white shadow-xl"
         onClick={() => setOpen((value) => !value)}>
         {open ? "Close Studio" : "Studio · DEMO"}
       </button>

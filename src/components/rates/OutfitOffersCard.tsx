@@ -167,7 +167,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 maxWidth: '100%',
                 height: '657px',
                 padding: '54px 30px',
-                backgroundColor: 'var(--color-lake-forest)',
+                backgroundColor: 'var(--lake-forest)',
                 border: '4px solid #F2AAA9',
                 borderRadius: '45px',
               }}
@@ -202,7 +202,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 <div
                   className="w-full text-center font-normal lowercase select-none mt-1"
                   style={{
-                    color: 'var(--color-alpine-linen)',
+                    color: 'var(--alpine-linen)',
                     fontFamily: "'Fineday-StyleOne', 'Instrument Serif', Georgia, serif",
                     fontSize: '26px',
                     lineHeight: '28px',
@@ -245,7 +245,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 <p
                   className="w-full font-medium text-center m-0 text-balance"
                   style={{
-                    color: 'var(--color-alpine-linen)',
+                    color: 'var(--alpine-linen)',
                     fontFamily: "'DM Sans', sans-serif",
                     fontSize: '15px',
                     lineHeight: '22px',
@@ -281,7 +281,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
             <div
               className="relative w-full h-full flex flex-col overflow-hidden box-border transition-all duration-300 shadow-lg hover:shadow-xl"
               style={{
-                backgroundColor: 'var(--color-lake-forest)',
+                backgroundColor: 'var(--lake-forest)',
                 borderRadius: '50px',
               }}
             >
@@ -298,7 +298,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <div
                       className="w-full text-center font-normal lowercase select-none m-0 p-0"
                       style={{
-                        color: 'var(--color-alpine-linen)',
+                        color: 'var(--alpine-linen)',
                         fontFamily: "'Fineday-StyleOne', 'Instrument Serif', Georgia, serif",
                         fontSize: '28px',
                         lineHeight: '28px',
@@ -323,7 +323,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <div
                       className="w-full text-center font-normal lowercase select-none m-0 p-0"
                       style={{
-                        color: 'var(--color-alpine-linen)',
+                        color: 'var(--alpine-linen)',
                         fontFamily: "'Fineday-StyleOne', 'Instrument Serif', Georgia, serif",
                         fontSize: '26px',
                         lineHeight: '26px',
@@ -337,7 +337,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <p
                       className="w-full font-medium text-center m-0 text-balance"
                       style={{
-                        color: 'var(--color-alpine-linen)',
+                        color: 'var(--alpine-linen)',
                         fontFamily: "'DM Sans', sans-serif",
                         fontSize: '18px',
                         lineHeight: '24px',
@@ -447,7 +447,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                     <div
                       className="w-full text-center font-normal text-[13px] select-none whitespace-nowrap"
                       style={{
-                        color: 'var(--color-alpine-linen)',
+                        color: 'var(--alpine-linen)',
                         fontFamily: "'DM Sans', sans-serif",
                         letterSpacing: '1px',
                       }}
@@ -469,7 +469,7 @@ export const OffersCardOutfit: React.FC<OffersCardOutfitProps> = ({
                 <span
                   className="text-center font-bold text-[16px] tracking-[1px] uppercase"
                   style={{
-                    color: 'var(--color-lake-forest)',
+                    color: 'var(--lake-forest)',
                     fontFamily: "'DM Sans', sans-serif",
                   }}
                 >

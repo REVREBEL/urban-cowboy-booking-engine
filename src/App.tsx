@@ -64,7 +64,7 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
   }, []);
 
   return (
-    <div className={photoJourney ? "flex min-h-dvh flex-col bg-j-night text-j-paper" : "flex min-h-dvh flex-col bg-background px-4 sm:px-6 lg:px-8"}>
+    <div className={photoJourney ? "flex min-h-dvh flex-col bg-secondary-foreground text--paper" : "flex min-h-dvh flex-col bg-background px-4 sm:px-6 lg:px-8"}>
       {photoJourney && <PhotoJourneyHeader />}
       {!photoJourney && <BookingHeader
         step={step}
