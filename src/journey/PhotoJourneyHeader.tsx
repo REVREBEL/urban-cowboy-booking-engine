@@ -4,6 +4,7 @@
  */
 import { ChevronLeft } from "lucide-react";
 import { useBooking, type Step } from "../state/booking";
+import { resetPhotoJourney } from "./photoSession";
 import "../styles/room-photo-tour.css";
 
 const stages: { label: string; target: Step }[] = [
@@ -38,6 +39,7 @@ export function PhotoJourneyHeader() {
   };
   const goHome = () => {
     const url = new URL(window.location.href);
+    resetPhotoJourney();
     url.searchParams.delete("photoPath");
     window.history.replaceState(null, "", url);
     booking.resetAll();
