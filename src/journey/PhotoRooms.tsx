@@ -77,6 +77,26 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
   const [detail, setDetail] = useState<string | null>(null);
   const roomStage = useRef<HTMLElement>(null);
   const filterOverlay = useRef<HTMLDivElement>(null);
+  const roomScrollFrame = useRef<number | null>(null);
+
+  const cancelRoomScroll = useCallback(() => {
+    if (roomScrollFrame.current !== null) {
+      window.cancelAnimationFrame(roomScrollFrame.current);
+      roomScrollFrame.current = null;
+    }
+  }, []);
+
+  // Navigation can be interrupted by a normal wheel/touch gesture.
+  useEffect(() => {
+    window.addEventListener("wheel", cancelRoomScroll, { passive: true });
+    window.addEventListener("touchstart", cancelRoomScroll, { passive: true });
+    return () => {
+      window.removeEventListener("wheel", cancelRoomScroll);
+      window.removeEventListener("touchstart", cancelRoomScroll);
+      cancelRoomScroll();
+    };
+  }, [cancelRoomScroll]);
+
 
   useEffect(() => {
     const stage = roomStage.current;
@@ -135,10 +155,36 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
   const visitRoom = (index: number) => {
     const target = list[index];
     if (!target) return;
+    const section = document.getElementById(`tour-${target.room.id}`);
+    if (!section) return;
     setDetail(null);
-    document.getElementById(`tour-${target.room.id}`)?.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start',
-    });
+    cancelRoomScroll();
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      section.scrollIntoView({ behavior: "instant", block: "start" });
+      return;
+    }
+
+    // Ease the viewport between full-height rooms instead of jumping to the
+    // next image. Respect the fixed filters and the room's scroll-margin-top.
+    const start = window.scrollY;
+    const offset = Number.parseFloat(window.getComputedStyle(section).scrollMarginTop) || 0;
+    const height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    const limit = Math.max(0, height - window.innerHeight);
+    const end = Math.min(limit, Math.max(0, start + section.getBoundingClientRect().top - offset));
+    if (Math.abs(end - start) < 2) return;
+
+    const startedAt = performance.now();
+    const duration = 620;
+    const animate = (time: number) => {
+      const progress = Math.min(1, (time - startedAt) / duration);
+      const eased = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      window.scrollTo({ top: start + (end - start) * eased, behavior: "instant" });
+      roomScrollFrame.current = progress < 1 ? window.requestAnimationFrame(animate) : null;
+    };
+    roomScrollFrame.current = window.requestAnimationFrame(animate);
   };
 
   return (
@@ -214,7 +260,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
               <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
                 aria-label="Scroll buildings left" aria-controls="photo-building-options"
                 disabled={!buildingStrip.edges.left} onClick={() => buildingStrip.scroll(-1)}
-                className="j-photo-filter-nav" style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
+                className={`j-photo-filter-nav ${!buildingStrip.edges.left ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
                 <PhotoTourArrow direction="left" size={16} />
               </Button>
               <div id="photo-building-options" ref={buildingStrip.ref} onScroll={buildingStrip.update}
@@ -229,7 +275,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
               <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
                 aria-label="Scroll buildings right" aria-controls="photo-building-options"
                 disabled={!buildingStrip.edges.right} onClick={() => buildingStrip.scroll(1)}
-                className="j-photo-filter-nav" style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
+                className={`j-photo-filter-nav ${!buildingStrip.edges.right ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
                 <PhotoTourArrow direction="right" size={16} />
               </Button>
             </div>
@@ -237,7 +283,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
               <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
                 aria-label="Scroll features left" aria-controls="photo-feature-options"
                 disabled={!featureStrip.edges.left} onClick={() => featureStrip.scroll(-1)}
-                className="j-photo-filter-nav" style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
+                className={`j-photo-filter-nav ${!featureStrip.edges.left ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
                 <PhotoTourArrow direction="left" size={16} />
               </Button>
               <div id="photo-feature-options" ref={featureStrip.ref} onScroll={featureStrip.update}
@@ -255,7 +301,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
               <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
                 aria-label="Scroll features right" aria-controls="photo-feature-options"
                 disabled={!featureStrip.edges.right} onClick={() => featureStrip.scroll(1)}
-                className="j-photo-filter-nav" style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
+                className={`j-photo-filter-nav ${!featureStrip.edges.right ? "is-hidden" : ""}`} style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
                 <PhotoTourArrow direction="right" size={16} />
               </Button>
             </div>

@@ -22,6 +22,8 @@
   .j-photo-filter-strip { min-width: 0; flex: 1 1 0; white-space: nowrap; overscroll-behavior-x: contain; scrollbar-width: none; }
   .j-photo-filter-strip > button { flex-shrink: 0; }
   .j-photo-filter-nav { flex: none; }
+  /* Reserve arrow width so filter pills never jump when an edge is reached. */
+  .j-photo-filter-nav.is-hidden { visibility: hidden; pointer-events: none; }
 }
 
 /* Photo-first room tours: photography remains uncropped in both axes. */
