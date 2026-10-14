@@ -9,6 +9,9 @@ export interface PhotoHighlight {
   title: string;
   note: string;
   icon: TourIcon;
+  amenityId?: string;
+  iconPath?: string | null;
+  longNote?: string;
 }
 
 // Coordinates belong to a photograph, not a room: reused demo media must
@@ -48,7 +51,7 @@ export const PHOTO_HIGHLIGHTS: Record<string, PhotoHighlight[]> = {
   ],
 };
 
-export function roomAmenities(room: JourneyRoom): { title: string; icon: TourIcon }[] {
+export function roomAmenities(room: JourneyRoom): { id?: string; title: string; icon: TourIcon; iconPath?: string | null; note?: string | null; longNote?: string | null }[] {
   const features = ROOMS.find((r) => r.id === room.id)?.features ?? room.highlights;
   const iconFor = (title: string): TourIcon => {
     const text = title.toLowerCase();
@@ -65,5 +68,13 @@ export function roomAmenities(room: JourneyRoom): { title: string; icon: TourIco
     if (text.includes('bed') || text.includes('headboard')) return 'bed';
     return 'seat';
   };
+  if (room.cmsAmenities) return room.cmsAmenities.map((amenity) => ({
+    id: amenity.id,
+    title: amenity.shortName,
+    icon: iconFor(amenity.name),
+    iconPath: amenity.iconPath,
+    note: amenity.shortDescription,
+    longNote: amenity.longDescription,
+  }));
   return features.map((title) => ({ title, icon: iconFor(title) }));
 }
