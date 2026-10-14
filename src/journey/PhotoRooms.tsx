@@ -200,7 +200,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
             {activeFilters > 0 && <Pill colorScheme="alpine-linen" size="small" style={{ minWidth: "20px", height: "20px", padding: "0 4px" }}>{activeFilters}</Pill>}
           </Button>
           <p className="min-w-0 flex-1 truncate text-right text-xs text-paper/75">
-            {building === "all" ? "All buildings" : building} · {view === "spreads" ? "Full photos" : "Index"}
+            {building === "all" ? "All buildings" : building} · {view === "spreads" ? "Photo View" : "Multi Room View"}
           </p>
         </div>
         {sheetOpen && (
@@ -244,7 +244,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
               <div className="mt-2 grid grid-cols-2 gap-2">
                 {(["spreads", "index"] as const).map((v) => (
                   <Button key={v} type="button" variant={draft.view === v ? "filled" : "outline"} colorScheme="lake-forest" size="xsmall" aria-pressed={draft.view === v} onClick={() => setDraft({ ...draft, view: v })}
-                    className="w-full">{v === "spreads" ? "Full photos" : "Index"}</Button>
+                    className="w-full">{v === "spreads" ? "Photo View" : "Multi Room View"}</Button>
                 ))}
               </div>
               <div className="mt-6 flex gap-3">
@@ -322,7 +322,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
               {(["spreads", "index"] as const).map((v) => (
                 <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setView(v)}
                   className="capitalize">
-                  {v === "spreads" ? "Full photos" : "Index"}
+                  {v === "spreads" ? "Photo View" : "Multi Room View"}
                 </PillButton>
               ))}
             </div>
