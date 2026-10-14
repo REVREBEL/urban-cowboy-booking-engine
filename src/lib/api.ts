@@ -201,7 +201,7 @@ export const api = {
       hotspots: CmsPhotoHotspotMap;
       generatedAt?: string | null;
       stale?: boolean;
-    }>("room-type-reviews", {
+    }>("room-type-reviews?cmsVersion=5", {
       label: "Room-type CMS content",
       why: "Loads published room descriptions, reviews, galleries, referenced Amenities and image-anchored Photo Hotspots. Mews remains the source of availability and prices.",
     }).catch(() => ({
