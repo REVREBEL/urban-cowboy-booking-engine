@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { X } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import type { JourneyRoom } from './data';
 import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
 import { TourIcon } from '@/components/rooms/TourIcon';
 import { FeatureFocus } from '@/components/rooms/FeatureFocus';
+import { PhotoTourArrow } from './PhotoTourArrow';
 
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
 const FX: (string | undefined)[] = [];
@@ -75,8 +77,8 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
   };
   const roomNav = (cls: string) => (
     <div className={cls}>
-      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><ArrowUp size={18} /></Button>
-      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onNext} aria-label={`Next room from ${room.name}`} title="Next room" onClick={onNext}><ArrowDown size={18} /></Button>
+      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><PhotoTourArrow direction="up" size={18} /></Button>
+      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onNext} aria-label={`Next room from ${room.name}`} title="Next room" onClick={onNext}><PhotoTourArrow direction="down" size={18} /></Button>
     </div>
   );
 
@@ -139,15 +141,15 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
 
 
       {room.images.length > 1 && <>
-        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><ChevronLeft size={24} /></Button>
-        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><ChevronRight size={24} /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><PhotoTourArrow direction="left" size={24} /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><PhotoTourArrow direction="right" size={24} /></Button>
       </>}
 
       <div className="j-photo-pagination" aria-label="Photo selection">
         {room.images.map((_, index) => <Button key={index} variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-dot"
           title={`Photo ${index + 1}`} aria-label={`Show photo ${index + 1} of ${room.name}`} aria-pressed={photo === index}
           onClick={() => carousel?.scrollTo(index)}><span /></Button>)}
-        <span className="text-xs tabular-nums text--paper/85" aria-live="polite">{photo + 1} / {room.images.length}</span>
+        <span className="font-number text-xs tabular-nums text--paper/85" aria-live="polite">{photo + 1} / {room.images.length}</span>
       </div>
 
       <aside id={`tour-details-${room.id}`} className={`j-tour-details ${details ? 'is-open' : ''}`} inert={!details} aria-hidden={!details} data-tour-panel>
@@ -184,16 +186,16 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
       <footer className="j-tour-footer" data-tour-panel>
         {roomNav('j-roomnav-mobile')}
         <div className="j-tour-info min-w-0">
-          <p className="truncate text-xs uppercase text--paper/75">{room.building} · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · {position + 1}/{count}</span></p>
+          <p className="truncate text-xs uppercase text--paper/75">{room.building} · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · <span className="font-number">{position + 1}/{count}</span></span></p>
           <h2 className="mt-1 truncate font-headline text-xl leading-none sm:text-4xl sm:whitespace-normal">{room.name}</h2>
           <p className="mt-1 hidden text-sm text--paper/80 lg:block">{room.tagline}</p>
         </div>
         <div className="j-tour-actions">
-          <p className="shrink-0 tabular-nums"><span className="text-xs text--paper/75">from </span><span className="font-headline text-xl sm:text-3xl">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text--paper/75"> /night</span></p>
-          <Button variant="outline" colorScheme="paper" size="small" className="j-tour-button" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)}>{details ? 'Hide details' : 'Details'}</Button>
-          <Button variant="filled" colorScheme="alpine-linen" size="small" className="j-tour-button j-tour-choose" onClick={onChoose}>Choose room</Button>
+          <p className="shrink-0 tabular-nums"><span className="text-xs text--paper/75">from </span><span className="font-number text-xl sm:text-3xl">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text--paper/75"> /night</span></p>
+          <Button variant="outline" colorScheme="alpine-linen" size="small" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)}>{details ? 'Hide details' : 'Details'}</Button>
+          <Button variant="filled" colorScheme="alpine-linen" size="small" onClick={onChoose}>Choose room</Button>
           <div className="j-roomnav-desktop flex items-center gap-1">
-            <span className="mr-1 text-xs tabular-nums text--paper/75">{position + 1}/{count}</span>
+            <span className="mr-1 font-number text-xs tabular-nums text--paper/75">{position + 1}/{count}</span>
             {roomNav('flex items-center gap-1')}
           </div>
         </div>
