@@ -24,7 +24,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
   onPrevious?: () => void; onNext?: () => void;
 }) {
   const section = useRef<HTMLElement>(null);
-  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, watchDrag: (api, event) => {
+  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, duration: 34, watchDrag: (api, event) => {
     const target = event.target;
     return !(target instanceof Element && target.closest('button, a, [data-tour-panel]'));
   } });
@@ -69,7 +69,12 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
   const pins = PHOTO_HIGHLIGHTS[room.images[photo]] ?? [];
   const selected = pins.find((p) => p.id === activePin) ?? pins[0];
   const amenities = roomAmenities(room);
-  const goPhoto = (direction: number) => direction > 0 ? carousel?.scrollNext() : carousel?.scrollPrev();
+  // Embla animates horizontal movement; jump immediately for reduced-motion users.
+  const goPhoto = (direction: number) => {
+    const jump = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (direction > 0) carousel?.scrollNext(jump);
+    else carousel?.scrollPrev(jump);
+  };
   const highlightRow = useRef<HTMLDivElement>(null);
   const pickPin = (id: string) => {
     setActivePin(id);
@@ -148,7 +153,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
       <div className="j-photo-pagination" aria-label="Photo selection">
         {room.images.map((_, index) => <Button key={index} variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-dot"
           title={`Photo ${index + 1}`} aria-label={`Show photo ${index + 1} of ${room.name}`} aria-pressed={photo === index}
-          onClick={() => carousel?.scrollTo(index)}><span /></Button>)}
+          onClick={() => carousel?.scrollTo(index, window.matchMedia("(prefers-reduced-motion: reduce)").matches)}><span /></Button>)}
         <span className="font-number text-xs tabular-nums text--paper/85" aria-live="polite">{photo + 1} / {room.images.length}</span>
       </div>
 
