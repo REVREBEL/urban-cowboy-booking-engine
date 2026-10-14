@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { isStudioRoute } from "./studio/runtime";
 import { StudioController } from "./studio/StudioController";
-import { setStudioDefaultLayout } from "./studio/roomLayout";
+import { currentStudioLayout, setStudioDefaultLayout, type RoomResultsLayout } from "./studio/roomLayout";
+import { api } from "./lib/api";
+import { PhotoArrival } from "./journey/PhotoArrival";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
@@ -43,9 +45,10 @@ const STEP_COMPONENTS: Record<Step, () => React.JSX.Element | null> = {
   confirmation: Confirmation,
 };
 
-function Shell() {
+function Shell({ layout }: { layout: RoomResultsLayout }) {
   const { step, hotelError, reloadHotel, resetAll, goTo, hydrating } = useBooking();
   const StepView = STEP_COMPONENTS[step];
+  const photoJourney = layout === "photo" && (step === "dates" || step === "results");
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -57,8 +60,8 @@ function Shell() {
   }, []);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background px-4 sm:px-6 lg:px-8">
-      <BookingHeader
+    <div className={photoJourney ? "flex min-h-dvh flex-col bg-j-night text-j-paper" : "flex min-h-dvh flex-col bg-background px-4 sm:px-6 lg:px-8"}>
+      {!photoJourney && <BookingHeader
         step={step}
         onNavigate={goTo}
         onHome={() => {
@@ -66,7 +69,7 @@ function Shell() {
           goTo("dates");
         }}
         canNavigate={(target) => PROGRESS_NUMBER[target] < PROGRESS_NUMBER[step]}
-      />
+      />}
 
       {hotelError && (
         <Banner
@@ -79,11 +82,11 @@ function Shell() {
       )}
 
       <main className="flex-1">
-        {hydrating ? <HydrateLoader /> : <StepView />}
+        {hydrating ? <HydrateLoader /> : step === "dates" && photoJourney ? <PhotoArrival /> : step === "results" ? <Results roomLayout={layout} /> : <StepView />}
       </main>
 
-      <BookingFooter />
-      <ContactBar />
+      {!photoJourney && <BookingFooter />}
+      {!photoJourney && <ContactBar />}
       {SHOW_API_DEBUGGER && !isStudioRoute() && <DevPanel />}
       {isStudioRoute() && <StudioController />}
     </div>
@@ -105,19 +108,34 @@ function HydrateLoader() {
 export default function App() {
   const studio = isStudioRoute();
   const [allowed, setAllowed] = useState<boolean | null>(studio ? null : true);
+  const [layout, setLayout] = useState<RoomResultsLayout | null>(null);
   useEffect(() => {
-    if (!studio) return;
+    if (!studio) {
+      let active = true;
+      void api.locations().then((locations) => {
+        if (active) setLayout(locations.hotel?.productionLayout === "photo" ? "photo" : "card");
+      }).catch(() => { if (active) setLayout("card"); });
+      return () => { active = false; };
+    }
     const controller = new AbortController();
     fetch("/api/studio/config?property=hotel", { cache: "no-store", signal: controller.signal })
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
-        setStudioDefaultLayout(data?.demoLayout === "photo" ? "photo" : "card");
+        const preferred = data?.demoLayout === "photo" ? "photo" : "card";
+        setStudioDefaultLayout(preferred);
+        setLayout(currentStudioLayout());
         setAllowed(data?.enabled === true);
       })
       .catch(() => setAllowed(false));
     return () => controller.abort();
   }, [studio]);
-  if (allowed === null) return <div className="grid min-h-screen place-items-center">Loading Studio configuration…</div>;
+  useEffect(() => {
+    if (!studio) return;
+    const update = () => setLayout(currentStudioLayout());
+    window.addEventListener("studio-room-layout-change", update);
+    return () => window.removeEventListener("studio-room-layout-change", update);
+  }, [studio]);
+  if (allowed === null || layout === null) return <div className="grid min-h-screen place-items-center">Loading booking configuration…</div>;
   if (!allowed) return <main className="grid min-h-screen place-items-center p-8"><p>Booking Studio is disabled for this location.</p></main>;
-  return <BookingProvider><Shell /></BookingProvider>;
+  return <BookingProvider><Shell layout={layout} /></BookingProvider>;
 }
