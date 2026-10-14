@@ -12,10 +12,9 @@ import type { RateCardConfig } from "../types/rate-card";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import { money } from "../lib/format";
 import type { ShapedRate } from "../types/mews";
+import { Button } from "../components/ui/button";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-button-secondary-bg px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-button-secondary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper disabled:opacity-40";
 
 export function PhotoRateStep() {
   const booking = useBooking();
@@ -41,7 +40,7 @@ export function PhotoRateStep() {
           <img src={image} alt={room.name} className="block h-auto w-full" fetchPriority="high" />
           <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/40 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-6 sm:px-8">
-            <button type="button" onClick={() => booking.goTo("results")} className="text-sm text-paper/80 underline underline-offset-4">← Change room</button>
+            <Button type="button" onClick={() => booking.goTo("results")} variant="transparent" colorScheme="paper" size="xsmall" className="underline underline-offset-4" style={{padding:0}}>← Change room</Button>
             <p className={`${label} mt-4 text-alpine-linen`}>03 — How would you like to stay?</p>
             <h1 className="mt-2 font-heading text-4xl sm:text-6xl">{room.name}</h1>
           </div>
@@ -76,17 +75,17 @@ export function PhotoRateStep() {
               </div>
             </div>
             <p className="mt-4 rounded-lg bg-ash/75 px-3 py-2 text-sm text-foreground/85"><strong>Cancellation:</strong> {policy}</p>
-            <button type="button" onClick={() => choose(rate)} disabled={rate.totalGross == null}
-              className={`${btnPrimary} mt-4 w-full`}>
+            <Button type="button" onClick={() => choose(rate)} disabled={rate.totalGross == null}
+              variant="filled" colorScheme="alpine-linen" size="small" className="mt-4 w-full rounded-full uppercase tracking-[0.2em]">
               {booking.selectedRate?.rateId === rate.rateId ? "Selected — continue" : "Choose this rate"}
-            </button>
+            </Button>
           </article>;
         })}
       </div>
       {room.rates.length === 0 && (
         <div className="mx-auto max-w-xl px-5 py-14 text-center">
           <p className="font-heading text-2xl">No rates available for this room on these dates.</p>
-          <button type="button" className="mt-4 underline underline-offset-4" onClick={() => booking.goTo("results")}>Browse other rooms</button>
+          <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" className="mt-4 underline underline-offset-4" style={{padding:0}} onClick={() => booking.goTo("results")}>Browse other rooms</Button>
         </div>
       )}
     </section>
