@@ -26,7 +26,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   onPrevious?: () => void; onNext?: () => void;
 }) {
   const section = useRef<HTMLElement>(null);
-  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, align: "center", containScroll: false, duration: 34, watchDrag: (api, event) => {
+  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, align: "center", containScroll: false, duration: 52, watchDrag: (api, event) => {
     const target = event.target;
     return !(target instanceof Element && target.closest('button, a, [data-tour-panel]'));
   } });
