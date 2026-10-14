@@ -12,9 +12,9 @@ test("Photo utility tokens are registered in the Tailwind v4 entry CSS", () => {
   assert.doesNotMatch(entry, /@tailwind utilities/);
   assert.doesNotMatch(entry, /@import "tailwindcss\/preflight"/);
   for (const token of [
-    "--color-j-night", "--color-j-paper", "--color-j-ink",
-    "--color-j-ember", "--color-j-moss", "--color-j-line",
-    "--font-j-display", "--font-j-label", "--font-j-body",
+    "--color-smoke", "--color-paper", "--color-foreground",
+    "--color-alpine-linen", "--color-lake-forest-fade", "--color-ash",
+    "--font-heading", "--font-label", "--font-body",
   ]) {
     assert.ok(entry.includes(token), `Photo utility token missing: ${token}`);
   }
@@ -26,8 +26,8 @@ test("Photo CSS loads on arrival and its color variables are scoped to Photo lay
   const app = read("App.tsx");
   assert.match(entry, /import "\.\/styles\/room-photo-tour\.css"/);
   assert.match(photo, /\.photo-journey\s*\{/);
-  assert.match(photo, /--j-night:/);
-  assert.match(photo, /--j-paper:/);
+  assert.match(photo, /--smoke:/);
+  assert.match(photo, /--paper:/);
   assert.match(photo, /\.j-room-tour/);
   assert.match(photo, /\.j-journey-header/);
   assert.match(app, /photo-journey flex min-h-dvh/);

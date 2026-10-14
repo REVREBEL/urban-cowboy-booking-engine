@@ -6,17 +6,7 @@
  * Tailwind entrypoint, not only in a component CSS file. The --j-* values
  * are scoped to .photo-journey in room-photo-tour.css.
  */
-@theme inline {
-  --color-j-night: var(--j-night);
-  --color-j-paper: var(--j-paper);
-  --color-j-ink: var(--j-ink);
-  --color-j-ember: var(--j-ember);
-  --color-j-moss: var(--j-moss);
-  --color-j-line: var(--j-line);
-  --font-j-display: var(--font-heading);
-  --font-j-label: var(--font-eyebrow);
-  --font-j-body: var(--font-body);
-}
+/** @theme inline {} */
 
 /** ==========================================================================
 
@@ -135,7 +125,7 @@ text-cowboy-umber, font-heading, shadow-card).
   --color-lake-forest-800: oklch(22.733% 0.04333 152.355);
   --color-lake-forest-900: #081D10;
   --color-lake-forest-950: oklch(19.003% 0.03243 154.093);
-  --color-lake-forest-fade: var(--lake-forest-200);
+  --color-lake-forest-fade: var(--color-lake-forest-200);
   --color-lake-forest-inverse: var(--color-paper) ;
   --color-lake-forest-inverse-fade: var(--color-paper-fade);
 
@@ -260,18 +250,18 @@ text-cowboy-umber, font-heading, shadow-card).
   --spacing: 0.25rem;
 
 --color-background: var(--color-mist);
---color-foreground: var(--lake-forest);
+--color-foreground: var(--color-lake-forest);
 
 --color-accent: var(--color-lake-forest-fade);
 --accent-foreground: oklch(0.9829 0.0011 17.1780);
 
 --color-input-bg: var(--color-paper);
---color-input-border: var(--lake-forest);
+--color-input-border: var(--color-lake-forest);
 
 --border:  var(--color-lake-forest);
 --input: var(--color-paper);
 
---color-button-primary-bg: var(--lake-forest);
+--color-button-primary-bg: var(--color-lake-forest);
 --color-button-primary-foreground: var(--color-mist);
 --color-button-primary-hover-bg: var(--color-lake-forest-100);
 
