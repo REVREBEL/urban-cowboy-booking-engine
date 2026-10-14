@@ -8,6 +8,9 @@ interface WebflowCollectionItem {
   id?: unknown;
   isArchived?: unknown;
   isDraft?: unknown;
+  lastPublished?: unknown;
+  lastUpdated?: unknown;
+  cmsLocaleId?: unknown;
   fieldData?: Record<string, unknown>;
 }
 
@@ -28,7 +31,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 // Published location settings should propagate quickly, including layout choices.
 const CACHE_FRESH_MS = 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:booking-locations:v3";
+const CACHE_KEY_PREFIX = "webflow:booking-locations:v4";
 
 const memoryCache = new Map<string, CachedLocationPayload>();
 
@@ -68,6 +71,74 @@ async function webflowGet<T>(env: Env, path: string, baseUrl = WEBFLOW_CONTENT_A
     return response.json<T>();
   } finally {
     clearTimeout(timeout);
+  }
+}
+
+const LOCATION_SETTING_FIELDS = [
+  "enable-demo-engine",
+  "production-layout",
+  "demo-layout",
+] as const;
+
+/**
+ * A live item can omit newer CMS schema fields even after the item was published.
+ * Only fill missing live fields from staged data when the *same publication*
+ * can be verified and no unpublished edit exists.
+ */
+export function mergeVerifiedPublishedFields(
+  live: WebflowCollectionItem,
+  staged: WebflowCollectionItem,
+): WebflowCollectionItem {
+  const livePublished = text(live.lastPublished);
+  const stagedPublished = text(staged.lastPublished);
+  const stagedUpdated = text(staged.lastUpdated);
+  const publishedAt = Date.parse(livePublished);
+  const updatedAt = Date.parse(stagedUpdated);
+  const sameLocale = !text(live.cmsLocaleId) || !text(staged.cmsLocaleId) ||
+    live.cmsLocaleId === staged.cmsLocaleId;
+  if (
+    !text(live.id) ||
+    live.id !== staged.id ||
+    live.isDraft === true ||
+    live.isArchived === true ||
+    staged.isDraft === true ||
+    staged.isArchived === true ||
+    !sameLocale ||
+    !livePublished ||
+    livePublished !== stagedPublished ||
+    !Number.isFinite(publishedAt) ||
+    !Number.isFinite(updatedAt) ||
+    updatedAt > publishedAt
+  ) return live;
+
+  const fields = { ...live.fieldData };
+  for (const key of LOCATION_SETTING_FIELDS) {
+    if (fields[key] === undefined && staged.fieldData?.[key] !== undefined) {
+      fields[key] = staged.fieldData[key];
+    }
+  }
+  return { ...live, fieldData: fields };
+}
+
+async function fetchPublishedLocationItem(
+  env: Env,
+  collection: string,
+  itemId: string,
+): Promise<WebflowCollectionItem> {
+  const basePath = `/collections/${encodeURIComponent(collection)}/items/${encodeURIComponent(itemId)}`;
+  const live = await webflowGet<WebflowCollectionItem>(env, `${basePath}/live`, WEBFLOW_DATA_API);
+  if (
+    live.id !== itemId ||
+    live.isDraft === true ||
+    live.isArchived === true ||
+    !LOCATION_SETTING_FIELDS.some(key => live.fieldData?.[key] === undefined)
+  ) return live;
+  try {
+    const staged = await webflowGet<WebflowCollectionItem>(env, basePath, WEBFLOW_DATA_API);
+    return mergeVerifiedPublishedFields(live, staged);
+  } catch {
+    // Missing staged data never overrides or enables the live setting.
+    return live;
   }
 }
 
@@ -128,9 +199,24 @@ async function fetchPublishedLocations(
     `/collections/${encoded}/items/live?limit=100`,
   );
 
+  const resolvedItems = await Promise.all((items.items ?? []).map(async (item) => {
+    const itemId = text(item.id);
+    if (
+      !itemId ||
+      !bindings.some(binding => binding.locationCmsItemId === itemId) ||
+      !LOCATION_SETTING_FIELDS.some(key => item.fieldData?.[key] === undefined)
+    ) return item;
+    try {
+      const verified = await fetchPublishedLocationItem(env, collectionId, itemId);
+      return { ...item, fieldData: { ...item.fieldData, ...verified.fieldData } };
+    } catch {
+      return item;
+    }
+  }));
+
   return {
     fetchedAt: Date.now(),
-    locations: normalizeConfiguredLocations(items.items ?? [], bindings),
+    locations: normalizeConfiguredLocations(resolvedItems, bindings),
   };
 }
 
@@ -289,12 +375,10 @@ export async function onRequestStudioConfig({ env, request }: { env: Env; reques
   try {
     const collection = encodeURIComponent(env.WEBFLOW_LOCATION_COLLECTION_ID);
     const itemId = encodeURIComponent(binding.locationCmsItemId);
-    // Use the authoritative Webflow Data API for this access-control decision.
-    // The CDN-backed list used by public Locations may be delayed by caching.
-    const item = await webflowGet<WebflowCollectionItem>(
+    const item = await fetchPublishedLocationItem(
       env,
-      `/collections/${collection}/items/${itemId}/live`,
-      WEBFLOW_DATA_API,
+      env.WEBFLOW_LOCATION_COLLECTION_ID,
+      binding.locationCmsItemId,
     );
     if (
       item.id !== binding.locationCmsItemId ||
