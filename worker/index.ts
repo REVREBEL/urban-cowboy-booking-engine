@@ -88,7 +88,7 @@ export default {
       const referer = request.headers.get("Referer");
       if (referer) {
         try {
-          if (/^\\/booking\\/studio\\/?$/.test(new URL(referer).pathname))
+          if (["/booking/studio", "/booking/studio/"].includes(new URL(referer).pathname))
             return json({ error: "studio_live_api_disabled" }, 403);
         } catch { /* ignore malformed referer */ }
       }
