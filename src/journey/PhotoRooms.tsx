@@ -114,7 +114,8 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     const room = toPhotoTourRoom(source, imageBaseUrl, photoGalleryForRoom(source.roomTypeId, galleries), photoSource, cmsAmenities[source.roomTypeId] ?? []);
     const excludedBy =
       source.rates.length === 0 ? "Unavailable for these dates" :
-      source.capacity < guests ? `Sleeps ${source.capacity}` :
+      // The shaped capacity is a bed count, not guest occupancy. Mews availability
+      // already validates the requested adults and children for each room type.
       children > 0 && source.merchandising?.agePolicy === "adultsOnly21" ? "Guests 21+ only" :
       profile?.dog && source.merchandising?.dogPolicy !== "allowed" ? "No dogs" :
       null;
