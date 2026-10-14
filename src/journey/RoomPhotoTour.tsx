@@ -120,9 +120,9 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
                 const neighbor = room.images[neighborIndex];
                 if (!neighbor || neighbor === src) return null;
                 return (
-                  <Button key={direction} variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:0}} tabIndex={-1} aria-hidden="true"
+                  <Button key={direction} variant="transparent" colorScheme="paper" size="xsmall" tabIndex={-1} aria-hidden="true"
                     className={`j-photo-peek ${direction < 0 ? 'is-prev' : 'is-next'}`}
-                    style={{ '--peek-ratio': ratios[neighborIndex] ?? 1.5 } as CSSProperties}
+                    style={{ padding: 0, borderRadius: 0, '--peek-ratio': ratios[neighborIndex] ?? 1.5 } as CSSProperties}
                     onClick={() => goPhoto(direction)}>
                     <img src={neighbor} alt="" draggable={false} loading="lazy" />
                   </Button>

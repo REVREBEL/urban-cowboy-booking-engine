@@ -7,9 +7,39 @@ import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import { resetPhotoJourney } from "./photoSession";
 import { Button } from "../components/ui/button";
+import { SearchBarExpanded, type ActiveDropdownSection } from "../components/booking/search/SearchBarExpanded";
+import { SearchBarGuestDropdown } from "../components/booking/search/SearchBarGuestsDropdown";
+import { SearchBarLocationDropdown } from "../components/booking/search/SearchBarLocationDropdown";
+import { SearchBarPromoDropdown } from "../components/booking/search/SearchBarPromoDropdown";
 
 const HERO = ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE;
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
+const PILLARS = [
+  {
+    title: "Disappear for a While",
+    text: "Trade pavement for mountain air and the kind of quiet that makes you forget what day it is.",
+    icon: "/assets/icons/icons-simple/hammock.svg",
+  },
+  {
+    title: "Soak It All In",
+    text: "Sauna, outdoor hangs, long baths and plenty of ways to slow the whole operation down.",
+    icon: "/assets/icons/icons-simple/estonian_sauna.svg",
+  },
+  {
+    title: "Better Together",
+    text: "Dinner, drinks, fireside nights and whatever happens next. Cowboy is made for gathering.",
+    icon: "/assets/icons/icons-simple/campfire.svg",
+  },
+] as const;
+
+const displayDate = (value: string | null) => {
+  if (!value) return "Add dates";
+  return new Date(`${value}T12:00:00`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
 
 export function PhotoArrival() {
   const booking = useBooking();
@@ -17,6 +47,11 @@ export function PhotoArrival() {
   const [checkOut, setCheckOut] = useState<string | null>(booking.checkOut || null);
   const [adults, setAdults] = useState(booking.adults);
   const [children, setChildren] = useState(booking.children);
+  const [infants, setInfants] = useState(booking.infants);
+  const [accessible, setAccessible] = useState(false);
+  const [location, setLocation] = useState("CATSKILLS");
+  const [promoCode, setPromoCode] = useState(booking.voucherCode);
+  const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
   const nights = checkIn && checkOut ? Math.max(0, Math.round((Date.parse(checkOut) - Date.parse(checkIn)) / 86400000)) : 0;
 
   const proceed = (path: "journal" | "rooms") => {
@@ -28,7 +63,7 @@ export function PhotoArrival() {
     url.searchParams.set("photoPath", path);
     window.history.replaceState({}, "", url);
     booking.setSearch({
-      checkIn, checkOut, adults, children, infants: 0, properties: ["hotel"],
+      checkIn, checkOut, adults, children, infants, voucherCode: promoCode, properties: ["hotel"],
     });
     booking.goTo("results");
   };
@@ -42,6 +77,16 @@ export function PhotoArrival() {
         children={children}
         setAdults={setAdults}
         setChildren={setChildren}
+        infants={infants}
+        setInfants={setInfants}
+        accessible={accessible}
+        setAccessible={setAccessible}
+        location={location}
+        setLocation={setLocation}
+        promoCode={promoCode}
+        setPromoCode={setPromoCode}
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
         onMatch={() => proceed("journal")}
         onBrowse={() => proceed("rooms")}
         nights={nights}
@@ -52,11 +97,11 @@ export function PhotoArrival() {
 
 function FullFrame({ src, alt, priority, children }: { src: string; alt: string; priority?: boolean; children?: React.ReactNode }) {
   return (
-    <figure className="relative w-full">
+    <figure className="relative h-[clamp(300px,32vw,420px)] w-full overflow-hidden">
       <img
         src={src}
         alt={alt}
-        className="block h-auto w-full"
+        className="block h-full w-full object-cover"
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}
       />
@@ -73,73 +118,145 @@ function Arrive(props: {
   setRange: (a: string | null, b: string | null) => void;
   adults: number;
   children: number;
+  infants: number;
   setAdults: (n: number) => void;
   setChildren: (n: number) => void;
+  setInfants: (n: number) => void;
+  accessible: boolean;
+  setAccessible: (value: boolean) => void;
+  location: string;
+  setLocation: (value: string) => void;
+  promoCode: string;
+  setPromoCode: (value: string) => void;
+  activeSection: ActiveDropdownSection;
+  setActiveSection: (section: ActiveDropdownSection) => void;
   onMatch: () => void;
   onBrowse: () => void;
   nights: number;
 }) {
   const ready = props.nights > 0;
+  const childCount = props.children + props.infants;
+  const guestLabel = `${props.adults} adult${props.adults === 1 ? "" : "s"}${
+    childCount ? ` · ${childCount} child${childCount === 1 ? "" : "ren"}` : ""
+  }`;
+
   return (
     <section>
       <FullFrame src={HERO} alt="Alpine Bathing Suite: clawfoot tub before a forest picture window" priority>
         <div className="absolute inset-0 bg-linear-to-t from-j-night via-j-night/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-8 sm:px-8 lg:pb-14">
           <p className={`${label} text-paper/80`}>Big Indian, New York · Urban Cowboy Lodge & Resort</p>
-        <h1 className="mt-3 w-full text-balance font-heading text-lg leading-[0.95] sm:text-4xl lg:text-6xl">
+          <h1 className="mt-3 w-full text-balance font-heading text-lg leading-[0.95] sm:text-4xl lg:text-6xl">
             Come for the soak. Stay for the woods.
           </h1>
         </div>
       </FullFrame>
 
-      <div className="mx-auto grid max-w-[1600px] gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-        <div>
+      <div className="mx-auto max-w-[1600px] px-5 py-12 sm:px-8">
+        <div className="mx-auto max-w-5xl">
           <p className={`${label} text-alpine-linen`}>01 — When are you coming?</p>
-          <div className="mt-6 rounded-2xl bg-paper p-4 text-foreground sm:p-6">
-            <RangeCalendar checkIn={props.checkIn} checkOut={props.checkOut} onChange={props.setRange} />
+
+          <div className="relative z-20 mt-6">
+            <SearchBarExpanded
+              variant="circle"
+              showSearchButton={false}
+              values={{
+                property: props.location,
+                checkInDate: displayDate(props.checkIn),
+                checkOutDate: displayDate(props.checkOut),
+                guests: guestLabel,
+                promoCode: props.promoCode || "Add promo",
+              }}
+              activeSection={props.activeSection}
+              onSectionClick={props.setActiveSection}
+              className="max-w-none!"
+              dropdownSlot={
+                <>
+                  {props.activeSection === "property" && (
+                    <SearchBarLocationDropdown
+                      value={props.location}
+                      onChange={props.setLocation}
+                      onClose={() => props.setActiveSection(null)}
+                      className="max-w-full"
+                    />
+                  )}
+                  {props.activeSection === "dates" && (
+                    <div className="rounded-3xl border-2 border-input-border bg-input-bg p-4 text-foreground shadow-2xl sm:p-6">
+                      <div className="mb-4 flex items-center justify-between border-b border-input-border/20 pb-3">
+                        <span className={`${label} text-foreground`}>Select dates of stay</span>
+                        <Button type="button" aria-label="Close date picker" variant="transparent" colorScheme="smoke" size="xsmall" className="size-8 rounded-full p-0!" onClick={() => props.setActiveSection(null)}>×</Button>
+                      </div>
+                      <RangeCalendar checkIn={props.checkIn} checkOut={props.checkOut} onChange={props.setRange} />
+                    </div>
+                  )}
+                  {props.activeSection === "guests" && (
+                    <div className="flex justify-end">
+                      <SearchBarGuestDropdown
+                        counts={{ adults: props.adults, children: props.children, infants: props.infants, accessible: props.accessible }}
+                        onChange={(counts) => {
+                          props.setAdults(counts.adults);
+                          props.setChildren(counts.children);
+                          props.setInfants(counts.infants);
+                          props.setAccessible(counts.accessible);
+                        }}
+                        onClose={() => props.setActiveSection(null)}
+                      />
+                    </div>
+                  )}
+                  {props.activeSection === "promo" && (
+                    <div className="flex justify-end">
+                      <SearchBarPromoDropdown
+                        value={props.promoCode}
+                        onChange={props.setPromoCode}
+                        onApply={(value) => {
+                          props.setPromoCode(value);
+                          props.setActiveSection(null);
+                        }}
+                        onClose={() => props.setActiveSection(null)}
+                      />
+                    </div>
+                  )}
+                </>
+              }
+            />
           </div>
-        </div>
-        <div className="flex flex-col justify-between gap-10">
-          <div>
-            <p className={`${label} text-alpine-linen`}>Who's coming?</p>
-            <div className="mt-6 divide-y divide--paper/15 border-y border-paper/15">
-              <Counter label="Adults" value={props.adults} min={1} max={6} onChange={props.setAdults} />
-              <Counter label="Children" hint="Some buildings are 21+" value={props.children} min={0} max={4} onChange={props.setChildren} />
+
+          <div className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12">
+            <div>
+              <p className="max-w-[48ch] text-paper/80">
+                Find the room that feels right for your stay, or wander through every available room.
+              </p>
+              {!ready && <p id="dates-hint" className="mt-3 text-sm text-paper/75">Pick your arrival and departure dates to continue.</p>}
             </div>
-          </div>
-          <div className="space-y-4">
-            <p className="max-w-[48ch] text-paper/80">
-              Find the room that feels right for your stay, or wander through every available room.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" className="rounded-full uppercase tracking-[0.2em]" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onMatch()}>
-                Match me with a room →
+            <div className="flex flex-wrap gap-3 lg:justify-end">
+              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" hasIcon className="rounded-full uppercase tracking-[0.2em]" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onMatch()}>
+                Match me with a room
               </Button>
               <Button type="button" variant="outline" colorScheme="paper" size="small" className="rounded-full uppercase tracking-[0.2em]" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onBrowse()}>
                 Browse every room
               </Button>
             </div>
-            {!ready && <p id="dates-hint" className="text-sm text-paper/75">Pick your arrival and departure dates to continue.</p>}
+          </div>
+
+          <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-12">
+            {PILLARS.map((pillar) => (
+              <article key={pillar.title} className="text-paper">
+                <span
+                  aria-hidden="true"
+                  className="mb-3 block size-11 bg-current"
+                  style={{
+                    WebkitMask: `url("${pillar.icon}") center / contain no-repeat`,
+                    mask: `url("${pillar.icon}") center / contain no-repeat`,
+                  }}
+                />
+                <h2 className={`${label} font-bold text-paper`}>{pillar.title}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-paper/75">{pillar.text}</p>
+              </article>
+            ))}
           </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function Counter({ label: l, hint, value, min, max, onChange }: { label: string; hint?: string; value: number; min: number; max: number; onChange: (n: number) => void }) {
-  return (
-    <div className="flex items-center justify-between py-4">
-      <div>
-        <p className="font-headline text-xl">{l}</p>
-        {hint && <p className="text-sm text-paper/75">{hint}</p>}
-      </div>
-      <div className="flex items-center gap-4">
-        <Button type="button" aria-label={`Fewer ${l}`} disabled={value <= min} onClick={() => onChange(value - 1)} variant="outline" colorScheme="paper" size="xsmall" className="size-10 rounded-full" style={{padding: 0, borderWidth: "1px"}}>−</Button>
-        <span className="w-6 text-center tabular-nums" aria-live="polite">{value}</span>
-        <Button type="button" aria-label={`More ${l}`} disabled={value >= max} onClick={() => onChange(value + 1)} variant="outline" colorScheme="paper" size="xsmall" className="size-10 rounded-full" style={{padding: 0, borderWidth: "1px"}}>+</Button>
-      </div>
-    </div>
   );
 }
 
