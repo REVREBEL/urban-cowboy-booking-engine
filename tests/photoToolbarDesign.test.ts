@@ -12,7 +12,7 @@ test("Photo Journey header excludes the added hotel-name action", () => {
   assert.match(header, /booking\.goTo\(previous\[booking.step\]\)/);
 });
 
-test("Photo toolbar uses xsmall pills and a label-font sort selector", () => {
+test("Photo toolbar uses xsmall pills and a two-state price sort toggle", () => {
   const rooms = src("journey/PhotoRooms.tsx");
   const pill = src("components/ui/pill.tsx");
   const story = src("stories/components/Pill.stories.tsx");
@@ -22,9 +22,9 @@ test("Photo toolbar uses xsmall pills and a label-font sort selector", () => {
   assert.match(rooms, /colorScheme="paper" size="xsmall" onClick=\{\(\) => setBuilding\(b\)\}/);
   assert.match(rooms, /colorScheme="paper" size="xsmall" onClick=\{\(\) => setView\(v\)\}/);
   assert.match(rooms, /colorScheme=\{on \? "alpine-linen" : "paper"\} size="xsmall"/);
-  assert.match(rooms, /aria-label="Sort rooms"/);
-  assert.match(rooms, /items-center justify-center gap-2/);
-  assert.match(rooms, /aria-pressed=\{sort === value\}/);
+  assert.match(rooms, /j-price-sort-toggle/);
+  assert.match(rooms, /j-price-sort-toggle-label/);
+  assert.match(rooms, /aria-pressed=\{sort === "price-desc"\}/);
   assert.match(story, /\["xsmall", "small", "default", "large"\]/);
 });
 
