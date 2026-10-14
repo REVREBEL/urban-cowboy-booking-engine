@@ -176,9 +176,9 @@ text-cowboy-umber, font-heading, shadow-card).
 /* Typography Families */
 --font-body: "Uchen", Georgia, serif;
 --font-heading: "DesertRain", Georgia, serif;
---font-subheading: "BrothersOT", "League Spartan", sans-serif;
---font-button: "BrothersOT", "League Spartan", sans-serif;
---font-label: "BrothersOT", "League Spartan", sans-serif;
+--font-subheading: "Brothers", "League Spartan", sans-serif;
+--font-button: "Brothers", "League Spartan", sans-serif;
+--font-label: "Brothers", "League Spartan", sans-serif;
 --font-eyebrow: "Bianco Sans", "League Spartan", sans-serif;
 --font-number: "Bianco Sans", "League Spartan", sans-serif;
 --font-blockquote: "Cedarville", cursive;
@@ -341,7 +341,7 @@ text-cowboy-umber, font-heading, shadow-card).
   --calendar-tooltip-bg: var(--color-lake-forest);
   --calendar-tooltip-foreground: var(--color-paper) ;
 
---_typography---font-family--button: "BrothersOT", "Brothers OT", "Brothers", "Rockwell", "Clarendon", Georgia, serif;
+--_typography---font-family--button: "Brothers", "Brothers", "Brothers", "Rockwell", "Clarendon", Georgia, serif;
 --_typography---text-size--xs: clamp(0.85rem, 0.82rem + 0.12vw, 0.95rem);
 --_typography---text-size--sm: clamp(0.95rem, 0.92rem + 0.12vw, 1.05rem);
 --_typography---text-size--base: clamp(1.05rem, 1rem + 0.12vw, 1.15rem);
@@ -423,22 +423,22 @@ font-style: normal;
 font-display: swap;
 }
 @font-face {
-font-family: "BrothersOT";
-src: url("/fonts/BrothersOT/BrothersOT-Regular.woff2") format("woff2");
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Regular.woff2") format("woff2");
 font-weight: 400;
 font-style: normal;
 font-display: swap;
 }
 @font-face {
-font-family: "BrothersOT";
-src: url("/fonts/BrothersOT/BrothersOT-Bold.woff2") format("woff2");
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Bold.woff2") format("woff2");
 font-weight: 700;
 font-style: normal;
 font-display: swap;
 }
 @font-face {
-font-family: "BrothersOT";
-src: url("/fonts/BrothersOT/BrothersOT-Italic.woff2") format("woff2");
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Italic.woff2") format("woff2");
 font-weight: 400;
 font-style: italic;
 font-display: swap;

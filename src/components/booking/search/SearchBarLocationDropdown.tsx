@@ -54,7 +54,7 @@ const SelectedCheckIcon: React.FC<{ color?: string; className?: string }> = ({
  * Conforms strictly to SearchBarLocationDropdown.css and SearchBarLocationDropdown.pdf:
  * - Dimensions: 362px width, 259px height, 25px padding, 10px gap
  * - Background: #FAF9F9, Border: 2px solid #4E332D
- * - Header: 'SELECT A COWBOY' in 'Brothers OT', 16px/19px, #A79996
+ * - Header: 'SELECT A COWBOY' in 'Brothers', 16px/19px, #A79996
  * - Items: 'CATSKILLS', 'NASHVILLE', 'DENVER' in 'DesertRain', 16px/19px, letter-spacing: 2px, font-weight: 700, #4E332D
  * - Dividers: 308px x 1px, #E2E2E1
  */

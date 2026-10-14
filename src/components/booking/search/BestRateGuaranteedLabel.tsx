@@ -42,7 +42,7 @@ export const SheriffBadgeIcon: React.FC<{
  * Strictly conforms to BestRateGuaranteedLabel.css and BestRateGuaranteedLabel.pdf:
  * - Minimum dimensions: 179px width x 17px height, gap 8px
  * - Icon container: 17px x 17px, icon: 15px x 15px, background #4E332D
- * - Text container: 154px x 16px, 'Brothers OT', 13px / 16px line-height, uppercase, #4E332D
+ * - Text container: 154px x 16px, 'Brothers', 13px / 16px line-height, uppercase, #4E332D
  */
 export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = ({
   text = 'BEST PRICE GUARANTEED',

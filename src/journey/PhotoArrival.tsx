@@ -86,7 +86,7 @@ function Arrive(props: {
   return (
     <section>
       <FullFrame src={HERO} alt="Alpine Bathing Suite: clawfoot tub before a forest picture window" priority>
-        <div className="absolute inset-0 bg-gradient-to-t from-secondary-foreground via-secondary-foreground/30 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-secondary-foreground via-secondary-foreground/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-8 sm:px-8 lg:pb-14">
           <p className={`${label} text-j-paper/80`}>Big Indian, New York · Urban Cowboy Lodge & Resort</p>
           <h1 className="mt-3 max-w-[16ch] font-headline text-4xl leading-[0.95] sm:text-6xl lg:text-8xl">

@@ -144,7 +144,7 @@ const RADIUS_CLASS_REPLACEMENTS = new Map([
 const BORDER_CLASS_REPLACEMENTS = new Map([
   ["border-[0.386px]", "border-[length:var(--border-width-hairline)]"],
   ["border-[1px]", "border"],
-  ["border-[1.5px]", "border-[length:var(--border-width-medium)]"],
+  ["border-[1.5px]", "border-(length:--border-width-medium)"],
   ["border-[2px]", "border-2"],
   ["border-[3px]", "border-(length:--border-width-control)"],
   ["border-[3.5px]", "border-[length:var(--border-width-control-lg)]"],

@@ -61,7 +61,7 @@ export const PropertyLocationLabel: React.FC<PropertyLocationLabelProps> = ({
         ${className}
       `}
       style={{
-        fontFamily: "'DesertRain', 'Brothers OT', 'League Spartan', sans-serif",
+        fontFamily: "'DesertRain', 'Brothers', 'League Spartan', sans-serif",
         fontStyle: 'normal',
         fontWeight: 700,
         fontSize: '12px',

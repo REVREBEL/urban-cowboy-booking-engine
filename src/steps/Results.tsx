@@ -644,7 +644,7 @@ function SkeletonList() {
     <div className="mt-5 space-y-4">
       {[0, 1, 2].map((i) => (
         <div key={i} className="card flex animate-pulse flex-col overflow-hidden sm:flex-row">
-          <div className="aspect-[4/3] w-full bg-sand sm:aspect-auto sm:w-64" />
+          <div className="aspect-4/3 w-full bg-sand sm:aspect-auto sm:w-64" />
           <div className="flex-1 space-y-3 p-5">
             <div className="h-5 w-1/3 rounded bg-sand" />
             <div className="h-3 w-3/4 rounded bg-sand/70" />
@@ -660,7 +660,7 @@ function SkeletonList() {
 function ErrorBox({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div className="mt-6 rounded-xl2 border border-red-200 bg-red-50 p-6 text-center">
-      <p className="font-medium text-red-700">{message}</p>
+      <p className="font-medium text-error">{message}</p>
       <button type="button" onClick={onRetry} className="btn-primary mt-4">
         {t("results.retry")}
       </button>
