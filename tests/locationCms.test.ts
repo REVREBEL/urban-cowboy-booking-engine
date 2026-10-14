@@ -23,6 +23,7 @@ test("normalizes footer content from the published Locations CMS item", () => {
   assert.deepEqual(location, {
     id: "catskills-item",
     fullLocationName: "Urban Cowboy Lodge & Resort",
+    enableDemoEngine: false,
     city: "Big Indian",
     state: "NY",
     privacyPolicyUrl: "https://example.com/privacy",
@@ -112,4 +113,20 @@ test("draft, archived, or unbound CMS locations are not exposed", () => {
   );
 
   assert.deepEqual(locations, {});
+});
+
+test("Webflow Demo Engine switch is opt-in and fails closed", () => {
+  const makeLocation = (value: unknown) => normalizeLocationItem({
+    id: "catskills-item",
+    isDraft: false,
+    isArchived: false,
+    fieldData: {
+      "full-location-name": "Urban Cowboy Lodge & Resort",
+      "enable-demo-engine": value,
+    },
+  });
+  assert.equal(makeLocation(true)?.enableDemoEngine, true);
+  assert.equal(makeLocation(false)?.enableDemoEngine, false);
+  assert.equal(makeLocation(undefined)?.enableDemoEngine, false);
+  assert.equal(makeLocation("true")?.enableDemoEngine, false);
 });
