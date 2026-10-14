@@ -37,7 +37,7 @@ test("Photo room browser preserves original filters, mobile sheet and photo-inde
   assert.match(rooms, /Full photos/);
   assert.match(rooms, /Index/);
   assert.match(rooms, /RoomPhotoTour/);
-  assert.match(rooms, /toPhotoTourRoom\(source, imageBaseUrl\)/);
+  assert.match(rooms, /toPhotoTourRoom\(source, imageBaseUrl, photoGalleryForRoom\(source.roomTypeId, galleries\), photoSource\)/);
   assert.doesNotMatch(rooms, /JOURNEY_ROOMS/);
 });
 
@@ -55,4 +55,13 @@ test("Results does not include retired photo tour branches", () => {
   assert.doesNotMatch(results, /photoRooms\.map\(/);
   assert.doesNotMatch(results, /<RoomPhotoTour/);
   assert.doesNotMatch(results, /tourDetailsId/);
+});
+
+test("Photo Journal matches center beside image selections and labels keep a dark gradient", () => {
+  const journal = source("journey/PhotoJournal.tsx");
+  assert.match(journal, /page === 0 \? "self-center" : "self-start"/);
+  assert.match(journal, /colorScheme="paper" size="small"/);
+  assert.match(journal, /linear-gradient\(to top, rgba\(15, 18, 16, 0\.92\)/);
+  assert.match(journal, /pointer-events-none absolute inset-0/);
+  assert.match(journal, /absolute inset-x-0 bottom-0 z-10/);
 });

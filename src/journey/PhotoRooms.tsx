@@ -10,6 +10,8 @@ import { Button } from "../components/ui/button";
 import { Pill, PillButton } from "../components/ui/pill";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";
+import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
+import { photoGalleryForRoom, type PhotoSource } from "../data/photoGalleries";
 import type { Feature, MatchProfile } from "./data";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
@@ -21,7 +23,7 @@ const FEATURE_LABEL: Record<Feature, string> = {
 };
 type Sort = "match" | "price-asc" | "price-desc" | "size";
 
-export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
+export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSource = "webflow", guests, children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; photoSource?: PhotoSource; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
   const [building, setBuilding] = useState<string>("all");
   const [features, setFeatures] = useState<Feature[]>([]);
   const [sort, setSort] = useState<Sort>(profile ? "match" : "price-asc");
@@ -42,7 +44,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onC
   }, []);
 
   const scored = useMemo(() => rooms.map((source) => {
-    const room = toPhotoTourRoom(source, imageBaseUrl);
+    const room = toPhotoTourRoom(source, imageBaseUrl, photoGalleryForRoom(source.roomTypeId, galleries), photoSource);
     const excludedBy =
       source.rates.length === 0 ? "Unavailable for these dates" :
       source.capacity < guests ? `Sleeps ${source.capacity}` :
@@ -52,7 +54,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onC
     const matched = profile?.mustHaves.filter(feature => room.features.includes(feature)).length ?? 0;
     const underBudget = profile?.budget !== undefined && room.basePrice <= profile.budget ? 1 : 0;
     return { room, source, excludedBy, score: matched * 100 + underBudget };
-  }), [rooms, imageBaseUrl, guests, children, profile]);
+  }), [rooms, imageBaseUrl, galleries, photoSource, guests, children, profile]);
 
   const filterRooms = (b: string, fs: Feature[], s: Sort) => scored
     .filter((m) => !m.excludedBy)
@@ -248,7 +250,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onC
           {list.map((m) => (
             <li key={m.room.id}>
               <Button type="button" onClick={() => { setView("spreads"); setDetail(m.room.id); window.setTimeout(() => document.getElementById(`tour-${m.room.id}`)?.scrollIntoView({ block: "start" }), 0); }} variant="transparent" colorScheme="paper" size="xsmall" className="group block w-full text-left" style={{padding:0,display:"block",width:"100%",textAlign:"left",fontWeight:400}}>
-                <img src={m.room.images[0]} alt="" className="aspect-3/2 w-full rounded-lg object-cover transition group-hover:opacity-90" loading="lazy" />
+                <img src={m.room.images[0]} alt="" className="aspect-3/2 w-full rounded-lg bg-smoke object-contain transition group-hover:opacity-90" loading="lazy" />
                 <div className="mt-3 flex items-baseline justify-between gap-3">
                   <h3 className="min-w-0 truncate font-heading text-xl">{m.room.name}</h3>
                   <span className="shrink-0 tabular-nums">{money(m.room.basePrice)}</span>

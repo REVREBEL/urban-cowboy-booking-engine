@@ -33,6 +33,8 @@ export interface JourneyRoom {
   features: Feature[];
   highlights: string[];
   images: string[];
+  /** Diagnostic source of displayed imagery. Booking values still come from Mews. */
+  photoSource?: "webflow" | "mews" | "fallback";
   isMock: boolean;
 }
 

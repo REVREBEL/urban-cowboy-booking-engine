@@ -6,6 +6,8 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type { ShapedRoom } from "../types/mews";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
+import { photoGalleryForRoom, type PhotoSource } from "../data/photoGalleries";
+import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import type { Feature, MatchProfile, Occasion } from "./data";
 import { Button } from "../components/ui/button";
@@ -32,7 +34,7 @@ const OCCASIONS: { id: Occasion; title: string; note: string; img: string }[] = 
 
 const MUST: Feature[] = ["indoor-tub", "outdoor-tub", "fireplace", "view", "gather", "balcony"];
 
-export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, onDone, onSkip }: { adults: number; children: number; rooms: ShapedRoom[]; imageBaseUrl: string; initial?: MatchProfile | null; onDone: (p: MatchProfile) => void; onSkip: () => void }) {
+export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries, photoSource = "webflow", initial, onDone, onSkip }: { adults: number; children: number; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; photoSource?: PhotoSource; initial?: MatchProfile | null; onDone: (p: MatchProfile) => void; onSkip: () => void }) {
   const [p, setP] = useState<MatchProfile>(
     initial ?? { occasion: children > 0 ? "family" : "romance", adults, children, dog: false, mustHaves: [], quiet: 4, budget: 300 },
   );
@@ -47,7 +49,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
       (children === 0 || room.merchandising?.agePolicy !== "adultsOnly21") &&
       (!p.dog || room.merchandising?.dogPolicy === "allowed"))
     .map(shaped => {
-      const room = toPhotoTourRoom(shaped, imageBaseUrl);
+      const room = toPhotoTourRoom(shaped, imageBaseUrl, photoGalleryForRoom(shaped.roomTypeId, galleries), photoSource);
       const hits = p.mustHaves.filter(feature => room.features.includes(feature));
       const reasons = hits.map(feature => FEATURE_LABEL[feature]);
       if (shaped.rates[0]?.perNightGross != null && shaped.rates[0].perNightGross <= p.budget) {
@@ -55,7 +57,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
       }
       return { room, reasons, score: hits.length * 100 + (room.basePrice <= p.budget ? 1 : 0) };
     })
-    .sort((a, b) => b.score - a.score), [rooms, adults, children, p.dog, p.mustHaves, p.budget, imageBaseUrl]);
+    .sort((a, b) => b.score - a.score), [rooms, adults, children, p.dog, p.mustHaves, p.budget, imageBaseUrl, galleries, photoSource]);
   const top = eligible[0];
   const set = <K extends keyof MatchProfile>(k: K, v: MatchProfile[K]) => setP((x) => ({ ...x, [k]: v }));
 
@@ -76,13 +78,15 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
             <JournalPage title="What brings you to the mountains?">
               <div className="grid gap-4 sm:grid-cols-2">
                 {OCCASIONS.map((o) => (
-                  <Button key={o.id} type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "12px", width: "100%", display: "block", textAlign: "left" }} aria-pressed={p.occasion === o.id} onClick={() => set("occasion", o.id)}
-                    className={`group relative overflow-hidden rounded-xl text-left ring-2 transition ${p.occasion === o.id ? "ring-alpine-linen" : "ring-transparent hover:ring--paper/40"}`}>
-                    <img src={o.img} alt="" className="aspect-4/3 w-full object-cover" loading="lazy" />
-                    <span className="absolute inset-0 bg-linear-to-t from-secondary-foreground/90 to-transparent" />
-                    <span className="absolute bottom-0 p-4">
-                      <span className="block font-headline text-2xl">{o.title}</span>
-                      <span className="text-sm text-paper/80">{o.note}</span>
+                  <Button key={o.id} type="button" variant="transparent" colorScheme="paper" size="small" style={{ padding: 0, borderRadius: "12px", width: "100%", display: "block", textAlign: "left" }} aria-pressed={p.occasion === o.id} onClick={() => set("occasion", o.id)}
+                    className={`group relative overflow-hidden rounded-xl text-left text-paper ring-2 transition [&>span]:block [&>span]:w-full ${p.occasion === o.id ? "ring-alpine-linen" : "ring-transparent hover:ring-paper/40"}`}>
+                    <span className="relative block aspect-4/3 w-full overflow-hidden">
+                      <img src={o.img} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                      <span aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(to top, rgba(15, 18, 16, 0.92) 0%, rgba(15, 18, 16, 0.52) 42%, rgba(15, 18, 16, 0) 85%)" }} />
+                      <span className="absolute inset-x-0 bottom-0 z-10 block p-4 text-left text-paper">
+                        <span className="block font-headline text-2xl">{o.title}</span>
+                        <span className="block text-sm text-paper/90">{o.note}</span>
+                      </span>
                     </span>
                   </Button>
                 ))}
@@ -140,7 +144,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
           </div>
         </div>
 
-        <aside aria-live="polite" className="self-start rounded-2xl bg-paper/95 p-5 text-foreground lg:sticky lg:top-28">
+        <aside aria-live="polite" className={`rounded-2xl bg-paper/95 p-5 text-foreground lg:sticky lg:top-28 ${page === 0 ? "self-center" : "self-start"}`}>
           <p className={`${label} text-lake-forest-fade`}>Matching · {eligible.length} of {rooms.length} available room types</p>
           <ol className="mt-4 space-y-3">
             {eligible.slice(0, 4).map((m, i) => (

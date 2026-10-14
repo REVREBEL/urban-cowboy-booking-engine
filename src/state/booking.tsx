@@ -175,6 +175,9 @@ function writeUrl(s: BookingState) {
   // Stay Journal and photo rooms screens as criteria change.
   const photoPath = current.get("photoPath");
   if (photoPath === "journal" || photoPath === "rooms") q.set("photoPath", photoPath);
+  // Optional editorial CDN comparison. Never changes booking requests or rates.
+  const photoSource = current.get("photoSource");
+  if (photoSource === "mews" || photoSource === "webflow") q.set("photoSource", photoSource);
   const qs = q.toString();
   const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
   window.history.replaceState(null, "", url);

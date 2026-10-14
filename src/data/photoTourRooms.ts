@@ -7,6 +7,8 @@
  */
 import type { ShapedRoom } from "../types/mews";
 import type { JourneyRoom, Feature } from "../journey/data";
+import type { RoomTypeCmsGallery } from "../types/room-type-cms";
+import { photoSourceFromUrl, selectPhotoImages, type PhotoSource } from "./photoGalleries";
 import { imgUrl } from "../lib/format";
 import { getRoomImagesByRoomId } from "./roomImagePlaceholders";
 import { roomTypeGroupName } from "./roomTypeGroups";
@@ -24,7 +26,7 @@ function verifiedFeatures(room: ShapedRoom): Feature[] {
   return features;
 }
 
-export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string): JourneyRoom {
+export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string, gallery?: RoomTypeCmsGallery, source: PhotoSource = photoSourceFromUrl()): JourneyRoom {
   const merchandising = room.merchandising;
   const group = merchandising?.roomTypeGroupKey ?? "other";
   const images = room.imageIds
@@ -33,6 +35,7 @@ export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string): Journey
   // The existing design assets are an editorial fallback, never a source of
   // availability, eligibility, or price.
   const mappedImages = getRoomImagesByRoomId(merchandising?.key ?? "");
+  const { images: displayImages, photoSource } = selectPhotoImages(images, gallery, source);
   return {
     id: room.roomTypeId,
     name: room.name,
@@ -49,7 +52,8 @@ export function toPhotoTourRoom(room: ShapedRoom, imageBaseUrl: string): Journey
     quiet: 3, // photo-tour prototype field: not used for booking or eligibility
     features: verifiedFeatures(room),
     highlights: [],
-    images: images.length ? images : mappedImages,
+    images: displayImages.length ? displayImages : mappedImages,
+    photoSource,
     isMock: false,
   };
 }

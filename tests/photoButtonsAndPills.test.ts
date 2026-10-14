@@ -51,6 +51,26 @@ test("Pill shares the Button palette and interactive PillButton delegates to But
   assert.match(button, /export const COLOR_PALETTE/);
 });
 
+
+test("both pill types use individually adjustable top and bottom padding", () => {
+  const source = read("components/ui/pill.tsx");
+  const expected = [
+    { size: "small", top: 5, bottom: 4 },
+    { size: "default", top: 8, bottom: 6 },
+    { size: "large", top: 10, bottom: 8 },
+  ];
+  for (const { size, top, bottom } of expected) {
+    const line = source.split("\n").find(value => value.trim().startsWith(size + ": { fontSize:"));
+    assert.ok(line, "Missing Pill size " + size);
+    assert.ok(line.includes('paddingTop: "' + top + 'px"'));
+    assert.ok(line.includes('paddingBottom: "' + bottom + 'px"'));
+    assert.ok(!line.includes("padding:"), "Padding must have independent sides");
+    assert.ok(top > bottom && top - bottom <= 2, "Top needs 1–2px more than bottom");
+  }
+  assert.equal(source.split("...PILL_SIZES[size]").length - 1, 2,
+    "Pill and PillButton must share the same dimensions");
+});
+
 test("Pill stories cover all Button palette colors, variants and toggles", () => {
   const story = read("stories/components/Pill.stories.tsx");
   const storybook = readFileSync(new URL("../.storybook/main.ts", import.meta.url), "utf8");
