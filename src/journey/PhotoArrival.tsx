@@ -2,7 +2,7 @@
  * Photo-first arrival screen, ported from visual-booking-flow/src/routes/journey.tsx.
  * Only the editorial UI is imported; stay criteria use the canonical BookingProvider.
  */
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import { resetPhotoJourney } from "./photoSession";
@@ -11,6 +11,9 @@ import { SearchBarExpanded, type ActiveDropdownSection } from "../components/boo
 import { SearchBarGuestDropdown } from "../components/booking/search/SearchBarGuestsDropdown";
 import { SearchBarLocationDropdown } from "../components/booking/search/SearchBarLocationDropdown";
 import { SearchBarPromoDropdown } from "../components/booking/search/SearchBarPromoDropdown";
+import { DateSearchDropdown } from "../components/booking/search/DateSearchDropdown";
+import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
+import { api } from "../lib/api";
 
 const HERO = ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE;
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
@@ -52,7 +55,17 @@ export function PhotoArrival() {
   const [location, setLocation] = useState("CATSKILLS");
   const [promoCode, setPromoCode] = useState(booking.voucherCode);
   const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
+  const [dailyRates, setDailyRates] = useState<Record<string, DailyRate>>({});
   const nights = checkIn && checkOut ? Math.max(0, Math.round((Date.parse(checkOut) - Date.parse(checkIn)) / 86400000)) : 0;
+
+  const loadCalendar = useCallback(async (startDate: string, endDate: string) => {
+    try {
+      const response = await api.calendar({ startDate, endDate, property: "hotel", currencyCode: "USD" });
+      setDailyRates((current) => ({ ...current, ...response.dates }));
+    } catch {
+      // Calendar guidance is supplemental; live availability is still verified by Search.
+    }
+  }, []);
 
   const proceed = (path: "journal" | "rooms") => {
     if (!checkIn || !checkOut || nights <= 0) return;
@@ -87,6 +100,8 @@ export function PhotoArrival() {
         setPromoCode={setPromoCode}
         activeSection={activeSection}
         setActiveSection={setActiveSection}
+        dailyRates={dailyRates}
+        loadCalendar={loadCalendar}
         onMatch={() => proceed("journal")}
         onBrowse={() => proceed("rooms")}
         nights={nights}
@@ -97,7 +112,7 @@ export function PhotoArrival() {
 
 function FullFrame({ src, alt, priority, children }: { src: string; alt: string; priority?: boolean; children?: React.ReactNode }) {
   return (
-    <figure className="relative h-[clamp(300px,32vw,420px)] w-full overflow-hidden">
+    <figure className="relative h-0 min-h-[clamp(300px,32vw,420px)] w-full flex-1 basis-0 overflow-hidden">
       <img
         src={src}
         alt={alt}
@@ -130,6 +145,8 @@ function Arrive(props: {
   setPromoCode: (value: string) => void;
   activeSection: ActiveDropdownSection;
   setActiveSection: (section: ActiveDropdownSection) => void;
+  dailyRates: Record<string, DailyRate>;
+  loadCalendar: (startDate: string, endDate: string) => Promise<void>;
   onMatch: () => void;
   onBrowse: () => void;
   nights: number;
@@ -141,9 +158,9 @@ function Arrive(props: {
   }`;
 
   return (
-    <section>
+    <section className="flex min-h-dvh flex-col">
       <FullFrame src={HERO} alt="Alpine Bathing Suite: clawfoot tub before a forest picture window" priority>
-        <div className="absolute inset-0 bg-linear-to-t from-j-night via-j-night/30 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-8 sm:px-8 lg:pb-14">
           <p className={`${label} text-paper/80`}>Big Indian, New York · Urban Cowboy Lodge & Resort</p>
           <h1 className="mt-3 w-full text-balance font-heading text-lg leading-[0.95] sm:text-4xl lg:text-6xl">
@@ -152,11 +169,11 @@ function Arrive(props: {
         </div>
       </FullFrame>
 
-      <div className="mx-auto max-w-[1600px] px-5 py-12 sm:px-8">
+      <div className="mx-auto w-full max-w-[1600px] shrink-0 px-5 py-8 sm:px-8">
         <div className="mx-auto max-w-5xl">
           <p className={`${label} text-alpine-linen`}>01 — When are you coming?</p>
 
-          <div className="relative z-20 mt-6">
+          <div className="relative z-20 mt-4">
             <SearchBarExpanded
               variant="circle"
               showSearchButton={false}
@@ -169,6 +186,7 @@ function Arrive(props: {
               }}
               activeSection={props.activeSection}
               onSectionClick={props.setActiveSection}
+              dropdownPlacement={props.activeSection === "dates" ? "above" : "below"}
               className="max-w-none!"
               dropdownSlot={
                 <>
@@ -181,13 +199,14 @@ function Arrive(props: {
                     />
                   )}
                   {props.activeSection === "dates" && (
-                    <div className="rounded-3xl border-2 border-input-border bg-input-bg p-4 text-foreground shadow-2xl sm:p-6">
-                      <div className="mb-4 flex items-center justify-between border-b border-input-border/20 pb-3">
-                        <span className={`${label} text-foreground`}>Select dates of stay</span>
-                        <Button type="button" aria-label="Close date picker" variant="transparent" colorScheme="smoke" size="xsmall" className="size-8 rounded-full p-0!" onClick={() => props.setActiveSection(null)}>×</Button>
-                      </div>
-                      <RangeCalendar checkIn={props.checkIn} checkOut={props.checkOut} onChange={props.setRange} />
-                    </div>
+                    <DateSearchDropdown
+                      checkIn={props.checkIn || ""}
+                      checkOut={props.checkOut || ""}
+                      dailyRates={props.dailyRates}
+                      onChange={(checkIn, checkOut) => props.setRange(checkIn || null, checkOut || null)}
+                      onClose={() => props.setActiveSection(null)}
+                      onVisibleRangeChange={props.loadCalendar}
+                    />
                   )}
                   {props.activeSection === "guests" && (
                     <div className="flex justify-end">
@@ -221,7 +240,7 @@ function Arrive(props: {
             />
           </div>
 
-          <div className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-12">
+          <div className="mt-6 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-10">
             <div>
               <p className="max-w-[48ch] text-paper/80">
                 Find the room that feels right for your stay, or wander through every available room.
@@ -229,16 +248,28 @@ function Arrive(props: {
               {!ready && <p id="dates-hint" className="mt-3 text-sm text-paper/75">Pick your arrival and departure dates to continue.</p>}
             </div>
             <div className="flex flex-wrap gap-3 lg:justify-end">
-              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" hasIcon className="rounded-full uppercase tracking-[0.2em]" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onMatch()}>
+              <Button
+                type="button"
+                variant="filled"
+                colorScheme="alpine-linen"
+                size="small"
+                hasIcon
+                icon={<span aria-hidden="true" className="inline-block size-4 shrink-0 bg-current" style={{ WebkitMask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat', mask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat' }} />}
+                className="rounded-full uppercase tracking-[0.2em]"
+                style={{ opacity: 1 }}
+                disabled={!ready}
+                aria-describedby="dates-hint"
+                onClick={() => ready && props.onMatch()}
+              >
                 Match me with a room
               </Button>
-              <Button type="button" variant="outline" colorScheme="paper" size="small" className="rounded-full uppercase tracking-[0.2em]" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onBrowse()}>
+              <Button type="button" variant="outline" colorScheme="alpine-linen" size="small" className="rounded-full uppercase tracking-[0.2em]" style={{ opacity: 1 }} disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onBrowse()}>
                 Browse every room
               </Button>
             </div>
           </div>
 
-          <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-12">
+          <div className="mt-8 grid gap-6 md:grid-cols-3 md:gap-10">
             {PILLARS.map((pillar) => (
               <article key={pillar.title} className="text-paper">
                 <span
@@ -257,85 +288,5 @@ function Arrive(props: {
         </div>
       </div>
     </section>
-  );
-}
-
-const iso = (y: number, m: number, d: number) => `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-
-function RangeCalendar({ checkIn, checkOut, onChange }: { checkIn: string | null; checkOut: string | null; onChange: (a: string | null, b: string | null) => void }) {
-  const [today, setToday] = useState<string | null>(null);
-  const [view, setView] = useState<{ y: number; m: number } | null>(null);
-  useEffect(() => {
-    const d = new Date();
-    setToday(iso(d.getFullYear(), d.getMonth(), d.getDate()));
-    setView({ y: d.getFullYear(), m: d.getMonth() });
-  }, []);
-  if (!view || !today) return <div className="h-80" aria-hidden />;
-
-  const months = [0, 1].map((o) => {
-    const dt = new Date(view.y, view.m + o, 1);
-    return { y: dt.getFullYear(), m: dt.getMonth() };
-  });
-  const pick = (d: string) => {
-    if (!checkIn || checkOut || d <= checkIn) onChange(d, null);
-    else onChange(checkIn, d);
-  };
-  const shift = (n: number) => {
-    const dt = new Date(view.y, view.m + n, 1);
-    setView({ y: dt.getFullYear(), m: dt.getMonth() });
-  };
-
-  return (
-    <div>
-      <div className="flex items-center justify-between">
-        <Button type="button" onClick={() => shift(-1)} aria-label="Previous month" variant="transparent" colorScheme="lake-forest" size="xsmall" className="size-10 rounded-full" style={{padding: 0}}>←</Button>
-        <p className={`${label} text-foreground/70`}>
-          {checkIn ? (checkOut ? `${checkIn} → ${checkOut}` : "Now choose departure") : "Choose arrival"}
-        </p>
-        <Button type="button" onClick={() => shift(1)} aria-label="Next month" variant="transparent" colorScheme="lake-forest" size="xsmall" className="size-10 rounded-full" style={{padding: 0}}>→</Button>
-      </div>
-      <div className="mt-4 grid gap-8 sm:grid-cols-2">
-        {months.map(({ y, m }, idx) => {
-          const first = new Date(y, m, 1).getDay();
-          const days = new Date(y, m + 1, 0).getDate();
-          return (
-            <div key={`${y}-${m}`} className={idx === 1 ? "hidden sm:block" : ""}>
-              <p className="mb-3 font-headline text-xl">
-                {new Date(y, m, 1).toLocaleString("en-US", { month: "long", year: "numeric" })}
-              </p>
-              <div className="grid grid-cols-7 text-center text-xs text-foreground/75">
-                {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => <span key={i} className="py-1">{d}</span>)}
-              </div>
-              <div className="grid grid-cols-7 gap-y-1">
-                {Array.from({ length: first }).map((_, i) => <span key={`e${i}`} />)}
-                {Array.from({ length: days }).map((_, i) => {
-                  const d = iso(y, m, i + 1);
-                  const past = d < today;
-                  const edge = d === checkIn || d === checkOut;
-                  const inRange = checkIn && checkOut && d > checkIn && d < checkOut;
-                  return (
-                    <Button
-                      key={d}
-                      type="button"
-                      disabled={past}
-                      onClick={() => pick(d)}
-                      aria-pressed={edge}
-                      aria-label={d}
-                      variant={edge ? "filled" : inRange ? "filled" : "transparent"}
-                      colorScheme={edge ? "lake-forest" : inRange ? "ash" : "lake-forest"}
-                      size="xsmall"
-                      style={{ padding: 0, borderRadius: edge ? "999px" : "0" }}
-                      className="h-10 w-full tabular-nums disabled:opacity-30"
-                    >
-                      {i + 1}
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
   );
 }

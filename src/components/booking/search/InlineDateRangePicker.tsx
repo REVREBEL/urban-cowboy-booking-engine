@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface DailyRate {
@@ -70,6 +70,29 @@ const shiftMonth = (year: number, month: number, amount: number) => {
 const monthName = (year: number, month: number) =>
   monthNameFmt.format(new Date(Date.UTC(year, month, 1)));
 
+const monthDayFmt = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
+const fullDateFmt = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+const formatSelectedRange = (checkIn: string, checkOut: string) => {
+  const start = new Date(`${checkIn}T00:00:00Z`);
+  const end = new Date(`${checkOut}T00:00:00Z`);
+  const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
+  const sameMonth = sameYear && start.getUTCMonth() === end.getUTCMonth();
+
+  if (sameMonth) return `${monthDayFmt.format(start)}–${end.getUTCDate()}, ${end.getUTCFullYear()}`;
+  if (sameYear) return `${monthDayFmt.format(start)} – ${fullDateFmt.format(end)}`;
+  return `${fullDateFmt.format(start)} – ${fullDateFmt.format(end)}`;
+};
+
 export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   checkIn,
   checkOut,
@@ -94,17 +117,6 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   const selectedMinimumNights = selectedRate?.minNights;
   const previewEnd = !checkOut && hoveredDate && hoveredDate > checkIn ? hoveredDate : checkOut;
 
-  const nightCount = useMemo(() => {
-    if (!checkIn || !checkOut) return 0;
-    return Math.max(
-      0,
-      Math.round(
-        (new Date(`${checkOut}T00:00:00Z`).getTime() - new Date(`${checkIn}T00:00:00Z`).getTime()) /
-          86_400_000,
-      ),
-    );
-  }, [checkIn, checkOut]);
-
   const selectDate = (date: string) => {
     if (date < minDate) return;
     if (!checkIn || checkOut || date <= checkIn) {
@@ -127,7 +139,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </button>
         <p className="font-label text-sm uppercase tracking-[1.5px] text-(--calendar-date-foreground)">
-          {nightCount > 0 ? `${nightCount} night${nightCount === 1 ? "" : "s"} selected` : "Select your dates"}
+          {checkIn && checkOut ? formatSelectedRange(checkIn, checkOut) : "Select your dates"}
         </p>
         <button
           type="button"
@@ -215,7 +227,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                           onClick={() => selectDate(date)}
                           aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
                           aria-pressed={start || end}
-                          className="group absolute inset-0 flex w-full flex-col items-center justify-center font-body transition focus-visible:outline-none"
+                          className="group absolute inset-0 flex w-full flex-col items-center justify-center font-number transition focus-visible:outline-none"
                         >
                           <span
                             className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${

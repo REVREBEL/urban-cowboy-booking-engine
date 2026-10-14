@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { RoomType, RateOption, SearchCriteria } from '../../types';
-import type { ShapedRate } from '../../types/mews';
-import type { RateCardConfig, RateCardLiveContent } from '../../types/rate-card';
-import { RATE_OPTIONS } from '../../data/hotelData';
+import { RoomType, RateOption, SearchCriteria } from '@/types';
+import type { ShapedRate } from '@/types/mews';
+import type { RateCardConfig, RateCardLiveContent } from '@/types/rate-card';
+import { RATE_OPTIONS } from '@/data/hotelData';
 import { resolveRateCardConfig } from '../../lib/rateCardConfig';
 import { normalizeRateCardCtaLabel } from '../../lib/rateCardCta';
 import {
@@ -422,7 +422,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   return (
     <div className="w-full texture-linen min-h-screen pb-24 overflow-x-hidden">
       {/* ================= TOP HEADER BAR: SELECTED ROOM & TRIP SPECS ================= */}
-      <div className="bg-paper border-b-2 border-cowboy-umber/20 shadow-xs sticky top-0 z-30 backdrop-blur-md bg-paper/95">
+      <div className="bg-paper border-b-2 border-cowboy-umber/20 shadow-xs sticky top-0 z-30 backdrop-blur-md bg-paper-fade">
         <div className="max-w-400 w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 max-w-400 w-full mx-auto">
             
@@ -438,7 +438,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                 <span>Back to Room Selection</span>
               </button>
 
-              <div className="h-7 w-0.25 bg-cowboy-umber/20 hidden sm:block" />
+              <div className="h-7 w-px bg-cowboy-umber/20 hidden sm:block" />
 
               <div>
                 <span className="font-label text-[10px] uppercase tracking-widest text-copper font-bold block">

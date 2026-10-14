@@ -146,7 +146,7 @@ export function Guest() {
               id="guest-notes"
               name="notes"
               rows={3}
-              className="checkout-field min-h-[112px] resize-y leading-relaxed"
+              className="checkout-field min-h-28 resize-y leading-relaxed"
               value={guest.notes}
               placeholder={t("guest.notesPlaceholder")}
               onChange={(event) => setGuest({ notes: event.target.value })}
@@ -156,7 +156,7 @@ export function Guest() {
           <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-alpine-linen bg-white p-4 text-sm text-ash-900 shadow-2xs sm:p-5">
             <input
               type="checkbox"
-              className="mt-0.5 h-5 w-5 shrink-0 accent-[#9A5636]"
+              className="mt-0.5 h-5 w-5 shrink-0 accent-accent"
               checked={guest.sendMarketingEmails}
               onChange={(event) =>
                 setGuest({ sendMarketingEmails: event.target.checked })
@@ -213,7 +213,7 @@ function Field({
         <p
           id={`${htmlFor}-error`}
           role="alert"
-          className="mt-1.5 text-xs font-medium text-red-600"
+          className="mt-1.5 text-xs font-medium text-error"
         >
           {error}
         </p>

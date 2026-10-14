@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { SearchBarExpanded, type ActiveDropdownSection } from "@/components/booking/search/SearchBarExpanded";
-import { InlineDateRangePicker } from "@/components/booking/search/InlineDateRangePicker";
+import { DateSearchDropdown } from "@/components/booking/search/DateSearchDropdown";
 import { SearchBarGuestDropdown } from "@/components/booking/search/SearchBarGuestsDropdown";
 import { SearchBarLocationDropdown } from "@/components/booking/search/SearchBarLocationDropdown";
 import { SearchBarPromoDropdown } from "@/components/booking/search/SearchBarPromoDropdown";
@@ -200,49 +200,14 @@ export function Dates() {
                 )}
 
                 {activeSection === "dates" && (
-                  <div className="w-full rounded-3xl border-2 border-input-border bg-input-bg p-4 text-foreground shadow-2xl sm:p-6">
-                    <div className="mb-4 flex items-center justify-between border-b border-input-border/20 pb-3 text-left">
-                      <span className="font-number text-sm font-bold uppercase tracking-[2px] text-foreground">Select dates of stay</span>
-                      <button type="button" onClick={() => setActiveSection(null)} aria-label="Close date picker" className="grid h-8 w-8 place-items-center rounded-full text-xl text-foreground hover:bg-background">×</button>
-                    </div>
-                    <InlineDateRangePicker
-                      checkIn={form.checkIn}
-                      checkOut={form.checkOut}
-                      onChange={(checkIn, checkOut) => setDates(checkIn, checkOut)}
-                      dailyRates={dailyRates}
-                      onVisibleRangeChange={loadCalendar}
-                    />
-                    <div className="mt-4 flex flex-col gap-4 border-t border-cowboy-umber/10 pt-4 text-left sm:flex-row sm:items-end sm:justify-between">
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                        <span className="font-number text-[10px] font-bold uppercase tracking-[1.5px] text-foreground/60">Quick Select</span>
-                        <div className="flex flex-wrap gap-2">
-                          {[
-                            ["Fall Foliage (Oct 14–17)", "2026-10-14", "2026-10-17"],
-                            ["Summer Solstice (Jun 2–5)", "2027-06-02", "2027-06-05"],
-                            ["Cozy Fireside Weekend (Nov 5–8)", "2026-11-05", "2026-11-08"],
-                          ].map(([label, checkIn, checkOut]) => (
-                            <button
-                              key={label}
-                              type="button"
-                              onClick={() => setDates(checkIn, checkOut)}
-                              className="rounded-full border border-input-border bg-transparent px-3 pb-1 pt-1.5 font-body text-xs leading-none text-foreground transition-colors hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                            >
-                              {label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        disabled={!form.checkIn || !form.checkOut || form.checkOut <= form.checkIn}
-                        onClick={() => setActiveSection(null)}
-                        className="self-end rounded-full bg-cowboy-umber px-6 pb-2.5 pt-3 font-number text-xs font-bold uppercase tracking-[1.5px] text-paper transition-colors hover:bg-copper disabled:cursor-not-allowed disabled:opacity-35 sm:shrink-0"
-                      >
-                        Confirm dates
-                      </button>
-                    </div>
-                  </div>
+                  <DateSearchDropdown
+                    checkIn={form.checkIn}
+                    checkOut={form.checkOut}
+                    dailyRates={dailyRates}
+                    onChange={(checkIn, checkOut) => setDates(checkIn, checkOut)}
+                    onClose={() => setActiveSection(null)}
+                    onVisibleRangeChange={loadCalendar}
+                  />
                 )}
 
                 {activeSection === "guests" && (
