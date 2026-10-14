@@ -24,6 +24,7 @@ import type { AddOnCmsItem } from "../types/add-on-cms";
 import type {
   RoomTypeCmsDescriptionMap,
   RoomTypeCmsReviewMap,
+  RoomTypeCmsGalleryMap,
 } from "../types/room-type-cms";
 import type { BookingLocationCmsMap } from "../types/location-cms";
 import type { BuildingCmsMap } from "../types/building-cms";
@@ -194,14 +195,16 @@ export const api = {
     contentCall<{
       reviews: RoomTypeCmsReviewMap;
       descriptions: RoomTypeCmsDescriptionMap;
+      galleries: RoomTypeCmsGalleryMap;
       generatedAt?: string | null;
       stale?: boolean;
     }>("room-type-reviews", {
       label: "Room-type CMS content",
-      why: "Loads published Room Type short/long descriptions and review content from Webflow, keyed by the durable Mews Room Type ID. Mews remains the fallback when editorial descriptions are blank.",
+      why: "Loads published room descriptions, reviews, and Webflow CDN photo galleries, keyed by durable Mews Room Type IDs. Mews remains the source of live room availability and pricing.",
     }).catch(() => ({
       reviews: {} as RoomTypeCmsReviewMap,
       descriptions: {} as RoomTypeCmsDescriptionMap,
+      galleries: {} as RoomTypeCmsGalleryMap,
     })),
 
   roomTypeReviews: () =>
