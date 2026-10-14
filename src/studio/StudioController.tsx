@@ -93,6 +93,9 @@ export function StudioController() {
               <option value="photo">Photo Layout</option>
             </select>
           </label>
+          <p className="mb-2 rounded-lg bg-gray-100 p-2 text-xs text-gray-700" data-studio-fixture-count>
+            Mock Mews catalog: {studioHotel.RoomCategories.length} room types, including Opa's Cabin. Scenario: {scenario}. CMS photos and amenities remain live Webflow editorial content.
+          </p>
           <p className="text-xs text-gray-600">The booking engine retains its full width behind these controls.</p>
         </section>
       )}
