@@ -1,6 +1,10 @@
 /* Tailwind v4 provides its own preflight, theme, and utility layers. */
 @import "tailwindcss";
 
+@theme inline {
+  --color-j-night: var(--smoke);
+}
+
 /*
  * Lovable Photo Engine theme. Register these utilities in the actual
  * Tailwind entrypoint, not only in a component CSS file. The --j-* values
