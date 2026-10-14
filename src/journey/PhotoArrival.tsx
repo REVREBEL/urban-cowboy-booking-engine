@@ -186,6 +186,7 @@ function Arrive(props: {
               activeSection={props.activeSection}
               onSectionClick={props.setActiveSection}
               dropdownPlacement="above"
+              constrainAboveToViewport
               className="max-w-none!"
               dropdownSlot={
                 <>
@@ -199,6 +200,7 @@ function Arrive(props: {
                   )}
                   {props.activeSection === "dates" && (
                     <DateSearchDropdown
+                      variant="external-actions"
                       checkIn={props.checkIn || ""}
                       checkOut={props.checkOut || ""}
                       dailyRates={props.dailyRates}
@@ -244,7 +246,9 @@ function Arrive(props: {
               <p className="max-w-[48ch] text-paper/80">
                 Find the room that feels right for your stay, or wander through every available room.
               </p>
-              {!ready && <p id="dates-hint" className="mt-3 text-sm text-paper/75">Pick your arrival and departure dates to continue.</p>}
+              <p id="dates-hint" className={`mt-3 text-sm text-paper/75 ${ready ? "invisible" : ""}`} aria-hidden={ready}>
+                Pick your arrival and departure dates to continue.
+              </p>
             </div>
             <div className="flex flex-wrap gap-3 lg:justify-end">
               <Button

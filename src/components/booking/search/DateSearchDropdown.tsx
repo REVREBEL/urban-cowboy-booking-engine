@@ -34,17 +34,31 @@ export function DateSearchDropdown({
         <span className="font-number text-sm font-bold uppercase tracking-[2px] text-foreground">
           Select dates of stay
         </span>
-        <Button
-          type="button"
-          aria-label="Close date picker"
-          variant="transparent"
-          colorScheme="smoke"
-          size="xsmall"
-          className="size-8 rounded-full p-0!"
-          onClick={onClose}
-        >
-          ×
-        </Button>
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            type="button"
+            variant="transparent"
+            colorScheme="smoke"
+            size="xsmall"
+            className="underline underline-offset-4"
+            style={{ padding: "4px 6px", fontWeight: 400 }}
+            disabled={!checkIn && !checkOut}
+            onClick={() => onChange("", "")}
+          >
+            Clear
+          </Button>
+          <Button
+            type="button"
+            aria-label="Close date picker"
+            variant="transparent"
+            colorScheme="smoke"
+            size="xsmall"
+            className="size-8 rounded-full p-0!"
+            onClick={onClose}
+          >
+            ×
+          </Button>
+        </div>
       </div>
 
       <InlineDateRangePicker
