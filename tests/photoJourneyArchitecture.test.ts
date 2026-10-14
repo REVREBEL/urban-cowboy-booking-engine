@@ -37,7 +37,7 @@ test("Photo room browser preserves original filters, mobile sheet and photo-inde
   assert.match(rooms, /Full photos/);
   assert.match(rooms, /Index/);
   assert.match(rooms, /RoomPhotoTour/);
-  assert.match(rooms, /toPhotoTourRoom\(source, imageBaseUrl, photoGalleryForRoom\(source.roomTypeId, galleries\), photoSource\)/);
+  assert.match(rooms, /toPhotoTourRoom\\(source, imageBaseUrl, photoGalleryForRoom\\(source.roomTypeId, galleries\\), photoSource, cmsAmenities\\[source.roomTypeId\\] \\?\\? \\[\\]\\)/);
   assert.doesNotMatch(rooms, /JOURNEY_ROOMS/);
 });
 
