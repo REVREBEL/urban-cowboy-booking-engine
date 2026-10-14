@@ -372,12 +372,12 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                 <ChevronDown className={`h-3 w-3 shrink-0 transition-transform ${sortOpen ? "rotate-180" : ""}`} aria-hidden="true" />
               </Button>
               {sortOpen && (
-                <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-48 overflow-hidden rounded-xl border border-paper/20 bg-[#173C2D] p-1.5 text-paper shadow-xl" role="group" aria-label="Sort order">
+                <div className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-48 overflow-hidden rounded-2xl border border-paper/20 bg-[#173C2D] p-1.5 shadow-xl" role="group" aria-label="Sort order">
                   {([...(profile ? [["match", "Best match"]] : []), ["price-asc", "Price: low to high"], ["price-desc", "Price: high to low"], ...(hasSizeData ? [["size", "Most space"]] : [])] as [Sort, string][]).map(([value, title]) => (
                     <Button key={value} type="button" variant="transparent" colorScheme="paper" size="xsmall"
                       aria-pressed={sort === value}
                       onClick={() => { setSort(value); setSortOpen(false); }}
-                      className={`flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left font-label text-[11px] uppercase leading-tight tracking-[0.05em] transition-colors ${sort === value ? "bg-paper text-[#173C2D]" : "text-paper hover:bg-paper/15"}`}>
+                      className={`j-photo-sort-option flex w-full items-center justify-between gap-4 rounded-full px-3 py-2.5 text-left font-label text-[11px] uppercase leading-tight tracking-[0.05em] transition-colors ${sort === value ? "is-selected" : ""}`}>
                       {title}
                       <span className="w-4 shrink-0">{sort === value && <Check className="h-4 w-4" aria-hidden="true" />}</span>
                     </Button>
