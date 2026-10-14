@@ -449,35 +449,8 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
     }
     const studioCriteria = discoveryCriteria;
     return (
-      <div className={photoLayout ? "min-h-dvh bg-secondary-foreground font-body text--paper" : "studio-room-experience"}>
-        {photoLayout ? (
-          <>
-          <PhotoJourneyHeader step="results" />
-          {journalProfile && (
-            <div className="mx-auto max-w-[1600px] px-5 py-4 sm:px-8">
-              <button type="button" className="text-sm text--paper/70 underline underline-offset-4" onClick={() => setDiscoveryView("journal")}>
-                Edit my Stay Journal
-              </button>
-            </div>
-          )}
-          <div className="j-room-spreads" aria-label="Available room photo tours">
-            {photoRooms.map((room, index, bookableRooms) => (
-              <RoomPhotoTour
-                key={room.roomTypeId}
-                room={toPhotoTourRoom(room, imageBaseUrl)}
-                position={index}
-                count={bookableRooms.length}
-                currency={room.rates[0]?.currency ?? hotel?.DefaultCurrencyCode ?? "USD"}
-                details={tourDetailsId === room.roomTypeId}
-                onDetails={(open) => setTourDetailsId(open ? room.roomTypeId : null)}
-                onChoose={() => choose(room)}
-                onPrevious={index > 0 ? () => document.getElementById(`tour-${bookableRooms[index - 1].roomTypeId}`)?.scrollIntoView({ behavior: "smooth" }) : undefined}
-                onNext={index < bookableRooms.length - 1 ? () => document.getElementById(`tour-${bookableRooms[index + 1].roomTypeId}`)?.scrollIntoView({ behavior: "smooth" }) : undefined}
-              />
-            ))}
-          </div>
-          </>
-        ) : <BuildingExperienceList
+      <div className="studio-room-experience">
+        <BuildingExperienceList
           criteria={studioCriteria}
           rooms={rooms}
           buildings={buildings}
