@@ -72,7 +72,7 @@ test("Photo rate cards expose reusable detail panels with the policy timeline", 
   assert.match(rates, /aria-haspopup="dialog"/);
   assert.match(rates, /<RateOfferSidePanel/);
   assert.match(rates, /<PolicyDisplay/);
-  assert.match(rates, /orientation="horizontal"/);
+  assert.match(rates, /orientation="vertical"/);
   assert.match(rates, /freeCancelDate && nonRefundableDate/);
   assert.match(rates, /event\.key === "Escape"/);
 });
