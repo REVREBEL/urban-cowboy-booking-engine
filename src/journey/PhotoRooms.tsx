@@ -6,12 +6,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
 import { RoomPhotoTour } from "./RoomPhotoTour";
+import { Button } from "../components/ui/button";
+import { Pill, PillButton } from "../components/ui/pill";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";
 import type { Feature, MatchProfile } from "./data";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const btnGhost = "inline-flex items-center justify-center gap-2 rounded-full border border-paper/75 px-5 py-2.5 font-label text-xs uppercase tracking-[0.2em] text-paper transition hover:bg-paper/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
 const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 const FEATURE_LABEL: Record<Feature, string> = {
   "indoor-tub": "Tub by the window", "outdoor-tub": "Soak outside",
@@ -103,31 +104,31 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onC
       {/* Floating filter overlay */}
       <div ref={filterOverlay} className="j-room-filters sticky top-16 z-30 mx-auto max-w-[1600px] px-3 pt-2 sm:px-6">
         <div className="flex items-center gap-2 rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:hidden">
-          <button type="button" onClick={openSheet} aria-haspopup="dialog" aria-expanded={sheetOpen}
-            className="flex items-center gap-2 rounded-full border border-paper/40 px-4 py-2 text-sm text-paper">
+          <Button type="button" variant="outline" colorScheme="paper" size="xsmall" onClick={openSheet} aria-haspopup="dialog" aria-expanded={sheetOpen}
+            className="gap-2 rounded-full">
             <SlidersHorizontal className="h-4 w-4" aria-hidden /> Filters
-            {activeFilters > 0 && <span className="grid h-5 min-w-5 place-items-center rounded-full bg-alpine-linen px-1 text-xs">{activeFilters}</span>}
-          </button>
+            {activeFilters > 0 && <Pill colorScheme="alpine-linen" size="small" style={{ minWidth: "20px", height: "20px", padding: "0 4px" }}>{activeFilters}</Pill>}
+          </Button>
           <p className="min-w-0 flex-1 truncate text-right text-xs text-paper/75">
             {building === "all" ? "All buildings" : building} · {view === "spreads" ? "Full photos" : "Index"}
           </p>
         </div>
         {sheetOpen && (
           <div className="fixed inset-0 z-50 sm:hidden" role="dialog" aria-modal="true" aria-label="Filter rooms">
-            <button type="button" aria-label="Close filters" className="absolute inset-0 bg-smoke/70" onClick={() => setSheetOpen(false)} />
+            <Button type="button" variant="transparent" colorScheme="smoke" size="xsmall" aria-label="Close filters" className="absolute inset-0" style={{ padding: 0, backgroundColor: "rgb(52 56 51 / 70%)", borderRadius: 0 }} onClick={() => setSheetOpen(false)} />
             <div className="j-sheet absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-2xl bg-paper p-5 pb-6 text-foreground">
               <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-foreground/20" />
               <div className="flex items-center justify-between">
                 <h2 className="font-heading text-2xl">Filter rooms</h2>
-                <button type="button" aria-label="Close filters" onClick={() => setSheetOpen(false)} className="grid h-11 w-11 place-items-center rounded-full"><X className="h-5 w-5" /></button>
+                <Button type="button" aria-label="Close filters" onClick={() => setSheetOpen(false)} variant="transparent" colorScheme="lake-forest" size="xsmall" className="size-11 rounded-full" style={{ padding: 0 }}><X className="h-5 w-5" /></Button>
               </div>
               <p className={`${label} mt-5 text-foreground/60`}>Building</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {buildings.map((b) => (
-                  <button key={b} type="button" aria-pressed={draft.building === b} onClick={() => setDraft({ ...draft, building: b })}
-                    className={`rounded-full border px-3 py-2 text-sm ${draft.building === b ? "border-foreground bg-foreground text-paper" : "border-foreground/25"}`}>
+                  <PillButton key={b} type="button" pressed={draft.building === b} variant={draft.building === b ? "filled" : "outline"} colorScheme="lake-forest" onClick={() => setDraft({ ...draft, building: b })}
+                    className="text-sm">
                     {b === "all" ? "All buildings" : b}
-                  </button>
+                  </PillButton>
                 ))}
               </div>
               <p className={`${label} mt-5 text-foreground/60`}>Must have</p>
@@ -135,66 +136,66 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onC
                 {(["indoor-tub", "outdoor-tub", "fireplace", "gather"] as Feature[]).map((f) => {
                   const on = draft.features.includes(f);
                   return (
-                    <button key={f} type="button" aria-pressed={on} onClick={() => setDraft({ ...draft, features: on ? draft.features.filter((x) => x !== f) : [...draft.features, f] })}
-                      className={`rounded-full border px-3 py-2 text-sm ${on ? "border-alpine-linen bg-alpine-linen text-paper" : "border-foreground/25"}`}>
+                    <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "lake-forest"} onClick={() => setDraft({ ...draft, features: on ? draft.features.filter((x) => x !== f) : [...draft.features, f] })}
+                      className="text-sm">
                       {FEATURE_LABEL[f]}
-                    </button>
+                    </PillButton>
                   );
                 })}
               </div>
               <p className={`${label} mt-5 text-foreground/60`}>Sort by</p>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 {([...(profile ? [["match", "Best match"]] : []), ["price-asc", "Price: low"], ["price-desc", "Price: high"], ...(hasSizeData ? [["size", "Most space"] as [Sort, string]] : [])] as [Sort, string][]).map(([v, t]) => (
-                  <button key={v} type="button" aria-pressed={draft.sort === v} onClick={() => setDraft({ ...draft, sort: v })}
-                    className={`rounded-xl border px-3 py-2.5 text-sm ${draft.sort === v ? "border-foreground bg-foreground text-paper" : "border-foreground/25"}`}>{t}</button>
+                  <Button key={v} type="button" variant={draft.sort === v ? "filled" : "outline"} colorScheme="lake-forest" size="xsmall" aria-pressed={draft.sort === v} onClick={() => setDraft({ ...draft, sort: v })}
+                    className="w-full">{t}</Button>
                 ))}
               </div>
               <p className={`${label} mt-5 text-foreground/60`}>View</p>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 {(["spreads", "index"] as const).map((v) => (
-                  <button key={v} type="button" aria-pressed={draft.view === v} onClick={() => setDraft({ ...draft, view: v })}
-                    className={`rounded-xl border px-3 py-2.5 text-sm ${draft.view === v ? "border-foreground bg-foreground text-paper" : "border-foreground/25"}`}>{v === "spreads" ? "Full photos" : "Index"}</button>
+                  <Button key={v} type="button" variant={draft.view === v ? "filled" : "outline"} colorScheme="lake-forest" size="xsmall" aria-pressed={draft.view === v} onClick={() => setDraft({ ...draft, view: v })}
+                    className="w-full">{v === "spreads" ? "Full photos" : "Index"}</Button>
                 ))}
               </div>
               <div className="mt-6 flex gap-3">
-                <button type="button" className="rounded-full border border-foreground/30 px-5 py-3 text-sm" onClick={() => setDraft({ ...draft, building: "all", features: [] })}>Clear</button>
-                <button type="button" disabled={draftCount === 0} className="flex-1 rounded-full bg-alpine-linen px-5 py-3 text-sm text-paper disabled:opacity-50" onClick={applySheet}>
+                <Button type="button" variant="outline" colorScheme="lake-forest" size="small" className="rounded-full" onClick={() => setDraft({ ...draft, building: "all", features: [] })}>Clear</Button>
+                <Button type="button" disabled={draftCount === 0} variant="filled" colorScheme="alpine-linen" size="small" className="flex-1 rounded-full" onClick={applySheet}>
                   {draftCount === 0 ? "No rooms match" : `Show ${draftCount} room${draftCount === 1 ? "" : "s"}`}
-                </button>
+                </Button>
               </div>
             </div>
           </div>
         )}
         <div className="hidden flex-wrap items-center gap-2 rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:flex">
           <div role="group" aria-label="Building" className="relative flex w-full min-w-0 items-center sm:w-auto sm:flex-1">
-            <button type="button" aria-label="Earlier buildings" tabIndex={stripScroll.left ? 0 : -1}
+            <Button type="button" variant="outline" colorScheme="paper" size="xsmall" aria-label="Earlier buildings" tabIndex={stripScroll.left ? 0 : -1}
               onClick={() => buildingStrip.current?.scrollBy({ left: -240, behavior: "smooth" })}
-              className={`mr-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-paper/25 text-paper/80 transition-opacity ${stripScroll.left ? "opacity-100 hover:border-paper/75" : "pointer-events-none opacity-0"}`}>
+              className={`mr-0.5 size-7 shrink-0 rounded-full ${stripScroll.left ? "opacity-100" : "pointer-events-none opacity-0"}`} style={{padding:0,borderWidth:"1px"}}>
               <ChevronLeft className="h-4 w-4" aria-hidden />
-            </button>
+            </Button>
             <div ref={buildingStrip} onScroll={updateStrip} className="no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
               {buildings.map((b) => (
-                <button key={b} type="button" aria-pressed={building === b} onClick={() => setBuilding(b)}
-                  className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-sm ${building === b ? "bg-paper text-foreground" : "text-paper/80 hover:bg-paper/10"}`}>
+                <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="small" onClick={() => setBuilding(b)}
+                  className="shrink-0">
                   {b === "all" ? "All buildings" : b}
-                </button>
+                </PillButton>
               ))}
             </div>
-            <button type="button" aria-label="More buildings" tabIndex={stripScroll.right ? 0 : -1}
+            <Button type="button" variant="outline" colorScheme="paper" size="xsmall" aria-label="More buildings" tabIndex={stripScroll.right ? 0 : -1}
               onClick={() => buildingStrip.current?.scrollBy({ left: 240, behavior: "smooth" })}
-              className={`ml-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-paper/25 text-paper/80 transition-opacity ${stripScroll.right ? "opacity-100 hover:border-paper/75" : "pointer-events-none opacity-0"}`}>
+              className={`ml-0.5 size-7 shrink-0 rounded-full ${stripScroll.right ? "opacity-100" : "pointer-events-none opacity-0"}`} style={{padding:0,borderWidth:"1px"}}>
               <ChevronRight className="h-4 w-4" aria-hidden />
-            </button>
+            </Button>
           </div>
           <span className="mx-1 hidden h-6 w-px bg-paper/20 sm:block" />
           <div role="group" aria-label="Features" className="flex flex-wrap gap-1">
             {(["indoor-tub", "outdoor-tub", "fireplace", "gather"] as Feature[]).map((f) => {
               const on = features.includes(f);
               return (
-                <button key={f} type="button" aria-pressed={on} onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
-                  className={`rounded-full border px-3 py-1.5 text-sm ${on ? "border-alpine-linen bg-alpine-linen text-paper" : "border-paper/25 text-paper/80 hover:border-paper/75"}`}>
+                <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="small" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
+                  className="shrink-0">
                   {FEATURE_LABEL[f]}
-                </button>
+                </PillButton>
               );
             })}
           </div>
@@ -208,26 +209,26 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onC
             </select>
             <div role="group" aria-label="View" className="flex rounded-full bg-paper/10 p-0.5">
               {(["spreads", "index"] as const).map((v) => (
-                <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)}
-                  className={`rounded-full px-3 py-1 text-sm capitalize ${view === v ? "bg-paper text-foreground" : "text-paper/80"}`}>
+                <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="small" onClick={() => setView(v)}
+                  className="capitalize">
                   {v === "spreads" ? "Full photos" : "Index"}
-                </button>
+                </PillButton>
               ))}
             </div>
           </div>
         </div>
         <p className="mt-2 px-2 text-sm text-paper/70">
           {list.length} room types{hidden ? ` · ${hidden} excluded by availability or guest eligibility` : ""} ·{" "}
-          <button type="button" onClick={onEditJournal} className="underline underline-offset-4 hover:text-paper">
+          <Button type="button" onClick={onEditJournal} variant="transparent" colorScheme="paper" size="xsmall" className="underline underline-offset-4" style={{padding:0}}>
             {profile ? "Edit my journal" : "Help me choose"}
-          </button>
+          </Button>
         </p>
       </div>
 
       {list.length === 0 && (
         <div className="mx-auto max-w-xl px-5 py-24 text-center">
           <p className="font-heading text-3xl">No rooms fit every filter.</p>
-          <button type="button" className={`${btnGhost} mt-6`} onClick={() => { setFeatures([]); setBuilding("all"); }}>Clear filters</button>
+          <Button type="button" variant="outline" colorScheme="paper" size="small" className="mt-6 rounded-full" onClick={() => { setFeatures([]); setBuilding("all"); }}>Clear filters</Button>
         </div>
       )}
 
@@ -246,7 +247,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onC
         <ul className="mx-auto mt-6 grid max-w-[1600px] gap-x-4 gap-y-8 px-5 sm:grid-cols-2 sm:px-8 lg:grid-cols-3 xl:grid-cols-4">
           {list.map((m) => (
             <li key={m.room.id}>
-              <button type="button" onClick={() => { setView("spreads"); setDetail(m.room.id); window.setTimeout(() => document.getElementById(`tour-${m.room.id}`)?.scrollIntoView({ block: "start" }), 0); }} className="group block w-full text-left">
+              <Button type="button" onClick={() => { setView("spreads"); setDetail(m.room.id); window.setTimeout(() => document.getElementById(`tour-${m.room.id}`)?.scrollIntoView({ block: "start" }), 0); }} variant="transparent" colorScheme="paper" size="xsmall" className="group block w-full text-left" style={{padding:0,display:"block",width:"100%",textAlign:"left",fontWeight:400}}>
                 <img src={m.room.images[0]} alt="" className="aspect-3/2 w-full rounded-lg object-cover transition group-hover:opacity-90" loading="lazy" />
                 <div className="mt-3 flex items-baseline justify-between gap-3">
                   <h3 className="min-w-0 truncate font-heading text-xl">{m.room.name}</h3>
@@ -255,7 +256,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, guests, children, onC
                 <p className="text-sm text-paper/70">
                   {m.room.building} · {m.room.bedType}{profile ? ` · ${profile.mustHaves.filter(feature => m.room.features.includes(feature)).length} features matched` : ""}
                 </p>
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
