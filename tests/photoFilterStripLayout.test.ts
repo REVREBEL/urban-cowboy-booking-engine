@@ -21,8 +21,8 @@ test("Both filter strips expose their own enabled/disabled scroll arrows", () =>
       assert.match(rooms, new RegExp(`aria-label="Scroll ${section} ${direction}"[\\s\\S]*?disabled=\\{!${strip}\\.edges\\.${edge}\\}[\\s\\S]*?onClick=\\{\\(\\) => ${strip}\\.scroll\\(${numeric === "-1" ? "-1" : "1"}\\)\\}`));
     }
   }
-  assert.match(rooms, /<PhotoTourArrow direction="left" size=\{16\} \/>/);
-  assert.match(rooms, /<PhotoTourArrow direction="right" size=\{16\} \/>/);
+  assert.match(rooms, /<PhotoTourArrow direction="left" size=\{16\}(?: chevron)? \/>/);
+  assert.match(rooms, /<PhotoTourArrow direction="right" size=\{16\}(?: chevron)? \/>/);
 });
 
 test("Scroll controls react to resizing, font loading and actual horizontal position", () => {
