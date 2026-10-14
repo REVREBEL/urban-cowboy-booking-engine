@@ -33,7 +33,12 @@ export function StudioController() {
     setRoomLayout(layout);
     const url = new URL(window.location.href);
     url.searchParams.set("roomLayout", layout);
+    // Each engine has its own opening screen. A layout switch is a fresh
+    // journey, not a jump into whichever Card step happened to be active.
+    url.searchParams.delete("photoPath");
+    url.searchParams.delete("step");
     window.history.replaceState({}, "", url);
+    booking.resetAll();
     window.dispatchEvent(new Event("studio-room-layout-change"));
   };
   const [scenario, chooseScenario] = useState<DemoScenario>(getDemoScenario);
