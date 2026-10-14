@@ -6,6 +6,8 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type { ShapedRoom } from "../types/mews";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
+import { photoGalleryForRoom, type PhotoSource } from "../data/photoGalleries";
+import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import type { Feature, MatchProfile, Occasion } from "./data";
 import { Button } from "../components/ui/button";
@@ -32,7 +34,7 @@ const OCCASIONS: { id: Occasion; title: string; note: string; img: string }[] = 
 
 const MUST: Feature[] = ["indoor-tub", "outdoor-tub", "fireplace", "view", "gather", "balcony"];
 
-export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, onDone, onSkip }: { adults: number; children: number; rooms: ShapedRoom[]; imageBaseUrl: string; initial?: MatchProfile | null; onDone: (p: MatchProfile) => void; onSkip: () => void }) {
+export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries, photoSource = "webflow", initial, onDone, onSkip }: { adults: number; children: number; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; photoSource?: PhotoSource; initial?: MatchProfile | null; onDone: (p: MatchProfile) => void; onSkip: () => void }) {
   const [p, setP] = useState<MatchProfile>(
     initial ?? { occasion: children > 0 ? "family" : "romance", adults, children, dog: false, mustHaves: [], quiet: 4, budget: 300 },
   );
@@ -47,7 +49,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
       (children === 0 || room.merchandising?.agePolicy !== "adultsOnly21") &&
       (!p.dog || room.merchandising?.dogPolicy === "allowed"))
     .map(shaped => {
-      const room = toPhotoTourRoom(shaped, imageBaseUrl);
+      const room = toPhotoTourRoom(shaped, imageBaseUrl, photoGalleryForRoom(shaped.roomTypeId, galleries), photoSource);
       const hits = p.mustHaves.filter(feature => room.features.includes(feature));
       const reasons = hits.map(feature => FEATURE_LABEL[feature]);
       if (shaped.rates[0]?.perNightGross != null && shaped.rates[0].perNightGross <= p.budget) {
@@ -55,7 +57,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, initial, o
       }
       return { room, reasons, score: hits.length * 100 + (room.basePrice <= p.budget ? 1 : 0) };
     })
-    .sort((a, b) => b.score - a.score), [rooms, adults, children, p.dog, p.mustHaves, p.budget, imageBaseUrl]);
+    .sort((a, b) => b.score - a.score), [rooms, adults, children, p.dog, p.mustHaves, p.budget, imageBaseUrl, galleries, photoSource]);
   const top = eligible[0];
   const set = <K extends keyof MatchProfile>(k: K, v: MatchProfile[K]) => setP((x) => ({ ...x, [k]: v }));
 
