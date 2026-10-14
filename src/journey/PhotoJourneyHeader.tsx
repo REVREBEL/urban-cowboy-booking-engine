@@ -5,6 +5,7 @@
 import { ChevronLeft } from "lucide-react";
 import { useBooking, type Step } from "../state/booking";
 import { resetPhotoJourney } from "./photoSession";
+import { Button } from "../components/ui/button";
 import "../styles/room-photo-tour.css";
 
 const stages: { label: string; target: Step }[] = [
@@ -49,27 +50,29 @@ export function PhotoJourneyHeader() {
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
         <div className="flex shrink-0 items-center gap-3">
           {index > 0 && (
-            <button type="button" onClick={() => booking.goTo(previous[booking.step])}
+            <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{padding: 0, fontSize: "11px", fontWeight: 400}} onClick={() => booking.goTo(previous[booking.step])}
               className={`${label} flex items-center gap-1 text-paper/80 transition hover:text-paper`}>
               <ChevronLeft className="h-4 w-4" aria-hidden="true" />
               Back
-            </button>
+            </Button>
           )}
-          <button type="button" className={`${label} text-paper/80 hover:text-paper`} onClick={goHome}>
+          <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{padding: 0, fontSize: "11px", fontWeight: 400}} className={label} onClick={goHome}>
             Urban Cowboy · Catskills
-          </button>
+          </Button>
         </div>
         <nav aria-label="Booking progress" className="hidden md:block">
           <ol className="flex items-center gap-5">
             {stages.map((stage, i) => (
               <li key={stage.target}>
-                <button type="button"
+                <Button type="button"
                   disabled={i > index}
+                  variant="transparent" colorScheme="paper" size="xsmall"
+                  style={{padding: 0, fontSize: "11px", fontWeight: i === index ? 700 : 400, opacity: i === index ? 1 : i < index ? 0.75 : 0.35}}
                   onClick={() => i < index && booking.goTo(stage.target)}
                   aria-current={i === index ? "step" : undefined}
                   className={`${label} ${i === index ? "text-paper" : i < index ? "text-paper/70 hover:text-paper" : "text-paper/35"}`}>
                   <span className="tabular-nums">0{i + 1}</span> {stage.label}
-                </button>
+                </Button>
               </li>
             ))}
           </ol>
