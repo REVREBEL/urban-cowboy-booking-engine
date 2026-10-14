@@ -23,6 +23,7 @@ export interface SearchBarExpandedProps {
   buttonSlot?: React.ReactNode;
   showSearchButton?: boolean;
   dropdownSlot?: React.ReactNode;
+  dropdownPlacement?: "above" | "below";
   isLoading?: boolean;
   className?: string;
 }
@@ -139,6 +140,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   buttonSlot,
   showSearchButton = true,
   dropdownSlot,
+  dropdownPlacement = "below",
   isLoading = false,
   className = "",
 }) => {
@@ -196,7 +198,15 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
       </div>
 
       {(dropdownVisible || dropdownSlot) && dropdownSlot && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-3">{dropdownSlot}</div>
+        <div
+          className={
+            dropdownPlacement === "above"
+              ? "absolute bottom-full left-0 right-0 z-50 mb-3"
+              : "absolute left-0 right-0 top-full z-50 mt-3"
+          }
+        >
+          {dropdownSlot}
+        </div>
       )}
     </div>
   );

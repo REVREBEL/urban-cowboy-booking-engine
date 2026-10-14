@@ -129,7 +129,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
           </div>
 
           {/* Divider 1: 308px x 1px, #E2E2E1 */}
-          <div className="w-77 h-0.25 bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
+          <div className="w-77 h-px bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
 
           {/* Location 1: CATSKILLS (Row: 308px x 35px, padding: 8px 0px) */}
           <button
@@ -153,7 +153,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
           </button>
 
           {/* Divider 2: 308px x 1px, #E2E2E1 */}
-          <div className="w-77 h-0.25 bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
+          <div className="w-77 h-px bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
 
           {/* Location 2: NASHVILLE (Row: 308px x 35px, padding: 8px 0px) */}
           <button
@@ -177,7 +177,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
           </button>
 
           {/* Divider 3: 308px x 1px, #E2E2E1 */}
-          <div className="w-77 h-0.25 bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
+          <div className="w-77 h-px bg-alpine-linen-fade self-stretch shrink-0" aria-hidden="true" />
 
           {/* Location 3: DENVER (Row: 308px x 35px, padding: 8px 0px) */}
           <button

@@ -29,6 +29,15 @@
       ],
       "@stories/*": [
         "src/stories/*"
+      ],
+      "@data/*": [
+        "src/data/*"
+      ],
+      "@types/*": [
+        "src/types/*"
+      ],
+      "@icons/*": [
+        "public/assets/icons/*"
       ]
     }
   },

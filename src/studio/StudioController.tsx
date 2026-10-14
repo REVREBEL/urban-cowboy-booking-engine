@@ -68,7 +68,7 @@ export function StudioController() {
     setOpen(false);
   };
   return createPortal(
-    <div className="fixed right-5 top-1/2 z-9999 flex -translate-y-1/2 items-center gap-3 font-sans" data-booking-studio>
+    <div className="fixed right-5 top-1/4 z-9999 flex -translate-y-1/2 items-center gap-3 font-sans" data-booking-studio>
       {open && (
         <section role="dialog" aria-label="Booking Studio controls"
           className="w-[min(350px,calc(100vw-110px))] max-h-[min(70vh,550px)] overflow-y-auto rounded-2xl border border-gray-300 bg-white p-5 text-gray-900 shadow-2xl">

@@ -1,19 +1,17 @@
-
-
-
 /* 
  * Lovable Photo Engine styles from REVREBEL/visual-booking-flow/src/styles.css.
  * Tailwind @theme inline tokens are registered in ../index.css.
  * Isolated palette: the Card booking engine does not inherit Photo colors.
  */
 .photo-journey {
-  --smoke: oklch(0.18 0.02 150);
-  --paper: var(--color-paper);
-  --foreground: oklch(0.24 0.03 150);
-  --alpine-linen: oklch(0.58 0.16 32);
-  --lake-forest-fade: oklch(0.42 0.06 145);
-  --ash: oklch(0.85 0.01 85);
+  --smoke: oklch(23.203% 0.01205 55.648);
+  --paper: oklch(98.288% 0.00104 11.251);
+  --foreground:  oklch(27.726% 0.05667 152.427);
+  --alpine-linen:  oklch(93.112% 0.01107 89.719);
+  --lake-forest-fade: oklch(51.426% 0.03691 157.484);
+  --ash: oklch(83.035% 0.01728 88.003);
 }
+
 
 /* Photo-first room tours: photography remains uncropped in both axes. */
 .j-room-tour { position: relative; scroll-margin-top: 155px; overflow: clip; background: var(--smoke); }

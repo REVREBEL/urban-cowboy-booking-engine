@@ -42,95 +42,95 @@ type Palette = {
 
 export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
   dark: {
-    bg: "var(--cowboy-umber--normal, #4e332d)",
-    text: "var(--alpine-linen--normal, #ebe8e0)",
-    border: "var(--cowboy-umber--normal, #4e332d)",
+    bg: "var(--lake-forest, #0e301a)",
+    text: "var(--paper,  #faf9f9)",
+    border: "var(-lake-forest-300, #3e5948;)",
   },
   light: {
-    bg: "var(--alpine-linen--normal, #ebe8e0)",
-    text: "var(--cowboy-umber--normal, #4e332d)",
-    border: "var(--alpine-linen--normal, #ebe8e0)",
+    bg: "var(--paper, #faf9f9)",
+    text: "var(--lake-forest, #0e301a)",
+    border: "var(--paper, #faf9f9)",
   },
   "alpine-linen": {
-    bg: "var(--alpine-linen--normal, #ebe8e0)",
-    text: "var(--cowboy-umber--normal, #4e332d)",
-    border: "var(--alpine-linen--normal, #ebe8e0)",
+    bg: "var(--color-alpine-linen, #ebe8e0)",
+    text: "var(--color-lake-forest, #0e301a)",
+    border: "var(--color-alpine-linen, #ebe8e0)",
   },
   "cowboy-umber": {
-    bg: "var(--cowboy-umber--normal, #4e332d)",
-    text: "var(--alpine-linen--normal, #ebe8e0)",
-    border: "var(--cowboy-umber--normal, #4e332d)",
+    bg: "var(--cowboy-umber, #4e332d)",
+    text: "var(--alpine-linen, #ebe8e0)",
+    border: "var(--cowboy-umber, #4e332d)",
   },
   smoke: {
-    bg: "var(--smoke--normal, #343833)",
-    text: "var(--paper--normal, #faf9f9)",
-    border: "var(--smoke--normal, #343833)",
+    bg: "var(--smoke, #343833)",
+    text: "var(--paper, #faf9f9)",
+    border: "var(--smoke, #343833)",
   },
   "lake-forest": {
-    bg: "var(--lake-forest--normal, #0e301a)",
-    text: "var(--alpine-linen--normal, #ebe8e0)",
-    border: "var(--lake-forest--normal, #0e301a)",
+    bg: "var(--lake-forest, #0e301a)",
+    text: "var(--alpine-linen, #ebe8e0)",
+    border: "var(--lake-forest-300, #3e5948;)",
   },
   copper: {
-    bg: "var(--copper--normal, #9a5636)",
-    text: "var(--alpine-linen--normal, #ebe8e0)",
-    border: "var(--copper--normal, #9a5636)",
+    bg: "var(--copper, #9a5636)",
+    text: "var(--alpine-linen-200,  #f1efe9)",
+    border: "var(--copper, #9a5636)",
   },
   oxblood: {
-    bg: "var(--oxblood--normal, #69253a)",
-    text: "var(--alpine-linen--normal, #ebe8e0)",
-    border: "var(--oxblood--normal, #69253a)",
+    bg: "var(--oxblood, #69253a)",
+    text: "var(--alpine-linen-200,  #f1efe9)",
+    border: "var(--oxblood, #69253a)",
   },
   "oxidized-teal": {
-    bg: "var(--oxidized-teal--normal, #236b7d)",
-    text: "#ffffff",
-    border: "var(--oxidized-teal--normal, #236b7d)",
+    bg: "var(--oxidized-teal, #236b7d)",
+    text: "var(--paper,  #faf9f9)",
+    border: "var(--oxidized-teal, #236b7d)",
   },
   "bandana-red": {
-    bg: "var(--bandana-red--normal, #d65241)",
-    text: "#ffffff",
-    border: "var(--bandana-red--normal, #d65241)",
+    bg: "var(--bandana-red, #d65241)",
+    text: "var(--paper,  #faf9f9)",
+    border: "var(--bandana-red, #d65241)",
   },
   "whiskey-sour": {
-    bg: "var(--whiskey-sour--normal, #ddc5a4)",
-    text: "var(--cowboy-umber--normal, #4e332d)",
-    border: "var(--whiskey-sour--normal, #ddc5a4)",
+    bg: "var(--whiskey-sour, #ddc5a4)",
+    text: "var(--cowboy-umber, #4e332d)",
+    border: "var(--whiskey-sour, #ddc5a4)",
   },
   "lodge-yellow": {
-    bg: "var(--lodge-yellow--normal, #fddc4e)",
-    text: "var(--cowboy-umber--normal, #4e332d)",
-    border: "var(--lodge-yellow--normal, #fddc4e)",
+    bg: "var(--lodge-yellow, #fddc4e)",
+    text: "var(--lake-forest, #0e301a)",
+    border: "var(--lodge-yellow, #fddc4e)",
   },
   "nude-ember": {
-    bg: "var(--nude-ember--normal, #f2aaa9)",
-    text: "var(--cowboy-umber--normal, #4e332d)",
-    border: "var(--nude-ember--normal, #f2aaa9)",
+    bg: "var(--nude-ember, #f2aaa9)",
+    text: "var(--lake-forest, #0e301a)",
+    border: "var(--nude-ember, #f2aaa9)",
   },
   ash: {
-    bg: "var(--ash--normal, #ccc7bb)",
-    text: "var(--cowboy-umber--normal, #4e332d)",
-    border: "var(--ash--normal, #ccc7bb)",
+    bg: "var(--ash, #ccc7bb)",
+    text: "var(--paper,  #faf9f9)",
+    border: "var(--ash, #ccc7bb)",
   },
   paper: {
-    bg: "var(--paper--normal, #faf9f9)",
-    text: "var(--smoke--normal, #343833)",
-    border: "var(--ash--normal, #ccc7bb)",
+    bg: "var(--paper, #faf9f9)",
+    text: "var(--smoke, #343833)",
+    border: "var(--ash, #343833)",
   },
 };
 
 const colorMap = COLOR_PALETTE;
 
 export const buttonVariants = cva(
-  "group inline-flex box-border select-none items-center justify-center gap-2 font-bold transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--copper--normal) focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "group inline-flex box-border select-none items-center justify-center gap-2 font-bold transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--copper) focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         filled:
-          "bg-(--cowboy-umber--normal) text-(--alpine-linen--normal)",
+          "bg-(--cowboy-umber) text-(--alpine-linen)",
         outline:
-          "border-(--_size---button--border-width) border-(--cowboy-umber--normal) bg-transparent text-(--cowboy-umber--normal)",
+          "border-(--_size---button--border-width) border-(--cowboy-umber) bg-transparent text-(--cowboy-umber)",
         transparent:
-          "border-0 bg-transparent text-(--cowboy-umber--normal)",
+          "border-0 bg-transparent text-(--cowboy-umber)",
       },
       size: {
         xsmall:
@@ -246,6 +246,7 @@ function getSizeStyles(size: ButtonSize): SizeStyle {
           paddingLeft: "var(--_size---button-lg--padding-left, 1.75rem)",
           borderRadius: "var(--_size---button-xl--border-radius, 20px)",
           fontWeight: "var(--_size---button-lg--font-weight, 700)",
+          textTransform: "uppercase",
         },
         borderWidth: "var(--_size---button-lg--border-width, 3.5px)",
         iconSize: 20,
@@ -263,6 +264,7 @@ function getSizeStyles(size: ButtonSize): SizeStyle {
           paddingLeft: "var(--_size---button-lg--padding-left, 1.75rem)",
           borderRadius: "var(--_size---button-lg--border-radius, 18px)",
           fontWeight: "var(--_size---button-lg--font-weight, 700)",
+          textTransform: "uppercase",
         },
         borderWidth: "var(--_size---button-lg--border-width, 3.5px)",
         iconSize: 18,
@@ -280,6 +282,7 @@ function getSizeStyles(size: ButtonSize): SizeStyle {
           paddingLeft: "var(--_size---button--padding-left, 1.15rem)",
           borderRadius: "var(--_size---button-md--border-radius, 16px)",
           fontWeight: "var(--_size---button--font-weight, 700)",
+          textTransform: "uppercase",
         },
         borderWidth: "var(--_size---button--border-width, 3px)",
         iconSize: 16,
@@ -297,6 +300,7 @@ function getSizeStyles(size: ButtonSize): SizeStyle {
           paddingLeft: "var(--_size---button-sm--padding-left, 1rem)",
           borderRadius: "var(--_size---button-sm--border-radius, 12px)",
           fontWeight: "var(--_size---button-sm--font-weight, 700)",
+          textTransform: "uppercase",
         },
         borderWidth: "var(--_size---button-sm--border-width, 3px)",
         iconSize: 12,
@@ -307,10 +311,14 @@ function getSizeStyles(size: ButtonSize): SizeStyle {
         css: {
           fontSize:
             "var(--_size---button-xs--font-size, var(--_typography---text-size--xs, 0.9rem))",
+          paddingTop: "var(--_size---button-xs--padding-top, 0.75rem)",
+          paddingRight: "var(--_size---button-xs--padding-right, 1rem)",
+          paddingBottom: "var(--_size---button-xs--padding-bottom, 0.75rem)",
+          paddingLeft: "var(--_size---button-xs--padding-left, 1rem)",
           lineHeight: baseLineHeight,
-          padding: "0.5rem 0.75rem",
           borderRadius: "var(--_size---button-xs--border-radius, 10px)",
-          fontWeight: "var(--_size---button-sm--font-weight, 700)",
+          fontWeight: "var(--_size---button-xs--font-weight, 400)",
+          textTransform: "uppercase",
         },
         borderWidth: "var(--_size---button-sm--border-width, 3px)",
         iconSize: 12,
@@ -329,6 +337,7 @@ function getSizeStyles(size: ButtonSize): SizeStyle {
           paddingLeft: "var(--_size---button--padding-left, 1.15rem)",
           borderRadius: "var(--_size---button--border-radius, 14px)",
           fontWeight: "var(--_size---button--font-weight, 700)",
+          textTransform: "uppercase",
         },
         borderWidth: "var(--_size---button--border-width, 3px)",
         iconSize: 14,
@@ -368,21 +377,21 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variantStyle: CSSProperties =
       variant === "outline"
         ? {
-            backgroundColor: "transparent",
-            color: palette.border,
-            border: `${borderWidth} solid ${palette.border}`,
-          }
+          backgroundColor: "transparent",
+          color: palette.border,
+          border: `${borderWidth} solid ${palette.border}`,
+        }
         : variant === "transparent"
           ? {
-              backgroundColor: "transparent",
-              color: palette.border,
-              border: "none",
-            }
+            backgroundColor: "transparent",
+            color: palette.border,
+            border: "none",
+          }
           : {
-              backgroundColor: palette.bg,
-              color: palette.text,
-              border: "none",
-            };
+            backgroundColor: palette.bg,
+            color: palette.text,
+            border: "none",
+          };
 
     const iconNode =
       icon ??

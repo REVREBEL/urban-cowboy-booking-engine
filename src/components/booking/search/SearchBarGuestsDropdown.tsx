@@ -164,11 +164,11 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
           <div className="flex flex-col items-start p-0 gap-px w-49 h-10.25 flex-1">
             <p
               id={adultId}
-              className="m-0 flex h-4.25 w-49 items-center font-label text-[14px] uppercase leading-[17px] text-foreground"
+              className="m-0 flex h-4.25 w-49 items-center font-label text-[14px] uppercase leading-4.25 text-foreground"
             >
               Adults
             </p>
-            <p className="font-body text-[12.1px] leading-[23px] text-ash m-0 w-49 h-5.75 flex items-center">
+            <p className="font-body text-[12.1px] leading-5.75 text-ash m-0 w-49 h-5.75 flex items-center">
               Age 13+
             </p>
           </div>
@@ -198,7 +198,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               {/* Count (36px x 30px, Uchen font) */}
               <p
                 aria-live="polite"
-                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-[30px] text-foreground"
+                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5text-foreground"
               >
                 {currentCounts.adults}
               </p>
@@ -220,7 +220,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
         {/* Divider 1 (308px x 1px, #E1E0E0) */}
         <div
-          className="w-77 h-0.25 bg-alpine-linen-fade self-stretch shrink-0"
+          className="w-77 h-px bg-alpine-linen-fade self-stretch shrink-0"
           aria-hidden="true"
         />
 
@@ -230,11 +230,11 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
           <div className="flex flex-col items-start p-0 gap-px w-49 h-10.5 flex-1">
             <p
               id={childrenId}
-              className="m-0 flex h-4.25 w-49 items-center font-label text-[14px] uppercase leading-[17px] text-foreground"
+              className="m-0 flex h-4.25 w-49 items-center font-label text-[14px] uppercase leading-4.25 text-foreground"
             >
               Children
             </p>
-            <p className="font-body text-[12.9px] leading-[24px] text-ash m-0 w-49 h-6 flex items-center">
+            <p className="font-body text-[12.9px] leading-6 text-ash m-0 w-49 h-6 flex items-center">
               Ages 4–12
             </p>
           </div>
@@ -264,7 +264,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               {/* Count (36px x 30px, Uchen font) */}
               <p
                 aria-live="polite"
-                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-[30px] text-foreground"
+                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5text-foreground"
               >
                 {currentCounts.children}
               </p>
@@ -290,7 +290,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
         {/* Divider 2 (308px x 1px, #E1E0E0) */}
         <div
-          className="w-77 h-0.25 bg-alpine-linen-fade self-stretch shrink-0"
+          className="w-77 h-px bg-alpine-linen-fade self-stretch shrink-0"
           aria-hidden="true"
         />
 
@@ -299,11 +299,11 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
           <div className="flex h-10.5 flex-1 flex-col items-start gap-px p-0">
             <p
               id={infantsId}
-              className="m-0 flex h-4.25 items-center font-label text-[14px] uppercase leading-[17px] text-foreground"
+              className="m-0 flex h-4.25 items-center font-label text-[14px] uppercase leading-4.25 text-foreground"
             >
               Infants
             </p>
-            <p className="m-0 flex h-6 items-center font-body text-[12.9px] leading-[24px] text-ash">
+            <p className="m-0 flex h-6 items-center font-body text-[12.9px] leading-6 text-ash">
               Under 4 · in a cot
             </p>
           </div>
@@ -328,7 +328,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
               <p
                 aria-live="polite"
-                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-[30px] text-foreground"
+                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5text-foreground"
               >
                 {currentCounts.infants}
               </p>
@@ -353,7 +353,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
         </div>
 
         <div
-          className="h-0.25 w-full shrink-0 self-stretch bg-alpine-linen-fade"
+          className="h-px w-full shrink-0 self-stretch bg-alpine-linen-fade"
           aria-hidden="true"
         />
 
@@ -364,11 +364,11 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
             <div className="flex flex-col justify-center items-start p-0 w-60.5 h-10.25 self-stretch">
               <p
                 id={accessibleId}
-                className="m-0 flex h-4.25 w-60 items-center font-label text-[14px] uppercase leading-[17px] text-foreground"
+                className="m-0 flex h-4.25 w-60 items-center font-label text-[14px] uppercase leading-4.25 text-foreground"
               >
                 Accessible
               </p>
-              <p className="font-body text-[12.9px] leading-[24px] text-ash m-0 w-60.5 h-6 flex items-center">
+              <p className="font-body text-[12.9px] leading-6 text-ash m-0 w-60.5 h-6 flex items-center">
                 ADA Rooms
               </p>
             </div>
