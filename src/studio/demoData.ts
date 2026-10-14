@@ -12,6 +12,7 @@ export const studioHotel: HotelConfig = {
   RoomCategories: [
     { Id: "demo-alpine", Name: { en: "Alpine Bathing Suite" }, Description: { en: "Iconic indoor soaking tub and forest views." }, ImageIds: [ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE, ROOM_IMAGE_ASSETS.ALPINE_HEADBOARD, ROOM_IMAGE_ASSETS.ALPINE_PENTHOUSE_COPPER_TUB], NormalBedCount: 1, ExtraBedCount: 0, SpaceType: "Suite", Property: "hotel" },
     { Id: "demo-forest", Name: { en: "Forest House Double Queen" }, Description: { en: "Cozy Catskills comfort with two queen beds." }, ImageIds: [ROOM_IMAGE_ASSETS.LODGE_PENTHOUSE_BEDROOM, ROOM_IMAGE_ASSETS.LODGE_PENTHOUSE_LIVING_ROOM], NormalBedCount: 2, ExtraBedCount: 0, SpaceType: "Room", Property: "hotel" },
+    { Id: "demo-opa-cabin", Name: { en: "Opa\'s Cabin 2 Bedroom Suite" }, Description: { en: "Demo only: two bedrooms, a vaulted living room, river-stone hearth, and full kitchen." }, ImageIds: ["https://cdn.prod.website-files.com/6abc810fd801e90511049adb/6ac89730346974fa55ed2a44_Opas%20Cabing%20Living%20Room-2.jpg"], NormalBedCount: 2, ExtraBedCount: 0, SpaceType: "Suite", Property: "hotel" },
     { Id: "demo-cabin", Name: { en: "Private Cabin" }, Description: { en: "Your own secluded mountain hideaway." }, ImageIds: [ROOM_IMAGE_ASSETS.CABIN_BEDŞ, ROOM_IMAGE_ASSETS.CABIN_SITTING_AREA_SOAKING_TUB, ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA], NormalBedCount: 1, ExtraBedCount: 0, SpaceType: "Cabin", Property: "hotel" },
   ],
   Products: [],
@@ -27,8 +28,8 @@ export function studioAvailability(): AvailabilityResponse {
     RateGroups: [{ Id: "demo-group", SettlementType: "Automatic", SettlementAction: "ChargeCreditCard", SettlementTrigger: "Confirmation", SettlementValue: 0.5 }],
     Rates: [{ Id: rateId, Name: { en: nonref ? "Plan Ahead · Non-refundable" : getDemoScenario() === "member" ? "Member Rate" : "Flexible Rate" }, Description: { en: nonref ? "Non-refundable demo rate" : "Free cancellation according to the displayed policy" }, RateGroupId: "demo-group", IsPrivate: false }],
     RoomCategoryAvailabilities: studioHotel.RoomCategories.map((room, index) => {
-      const available = !sold && (getDemoScenario() !== "family" || room.Id !== "demo-alpine") && (getDemoScenario() !== "dog" || room.Id === "demo-cabin");
-      const gross = [975, 675, 825][index];
+      const available = !sold && (getDemoScenario() !== "family" || room.Id !== "demo-alpine") && (getDemoScenario() !== "dog" || (room.Id === "demo-cabin" || room.Id === "demo-opa-cabin"));
+      const gross = [975, 675, 825, 825][index];
       const amount = (n: number) => ({ USD: { Currency: "USD", GrossValue: n, NetValue: Math.round(n / 1.1 * 100) / 100 } });
       return {
         RoomCategoryId: room.Id,

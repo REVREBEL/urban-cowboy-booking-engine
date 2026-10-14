@@ -13,7 +13,7 @@ import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";
 import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
-import { photoGalleryForRoom, type PhotoSource } from "../data/photoGalleries";
+import { photoGalleryForRoom, studioEditorialRoomTypeId, type PhotoSource } from "../data/photoGalleries";
 import type { Feature, MatchProfile } from "./data";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
@@ -70,7 +70,7 @@ function useHorizontalFilterStrip(itemsKey: string) {
 }
 
 
-export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", guests, children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
+export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
   const [building, setBuilding] = useState<string>("all");
   const [features, setFeatures] = useState<Feature[]>([]);
   const [sort, setSort] = useState<Sort>(profile ? "match" : "price-asc");
@@ -111,17 +111,18 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   }, []);
 
   const scored = useMemo(() => rooms.map((source) => {
-    const room = toPhotoTourRoom(source, imageBaseUrl, photoGalleryForRoom(source.roomTypeId, galleries), photoSource, cmsAmenities[source.roomTypeId] ?? []);
+    const room = toPhotoTourRoom(source, imageBaseUrl, photoGalleryForRoom(source.roomTypeId, galleries), photoSource, cmsAmenities[studioEditorialRoomTypeId(source.roomTypeId)] ?? []);
     const excludedBy =
       source.rates.length === 0 ? "Unavailable for these dates" :
-      source.capacity < guests ? `Sleeps ${source.capacity}` :
+      // The shaped capacity is a bed count, not guest occupancy. Mews availability
+      // already validates the requested adults and children for each room type.
       children > 0 && source.merchandising?.agePolicy === "adultsOnly21" ? "Guests 21+ only" :
       profile?.dog && source.merchandising?.dogPolicy !== "allowed" ? "No dogs" :
       null;
     const matched = profile?.mustHaves.filter(feature => room.features.includes(feature)).length ?? 0;
     const underBudget = profile?.budget !== undefined && room.basePrice <= profile.budget ? 1 : 0;
     return { room, source, excludedBy, score: matched * 100 + underBudget };
-  }), [rooms, imageBaseUrl, galleries, cmsAmenities, photoSource, guests, children, profile]);
+  }), [rooms, imageBaseUrl, galleries, cmsAmenities, photoSource, children, profile]);
 
   const filterRooms = (b: string, fs: Feature[], s: Sort) => scored
     .filter((m) => !m.excludedBy)

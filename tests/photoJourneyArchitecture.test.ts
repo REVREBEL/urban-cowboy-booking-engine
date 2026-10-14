@@ -37,7 +37,7 @@ test("Photo room browser preserves original filters, mobile sheet and photo-inde
   assert.match(rooms, /Full photos/);
   assert.match(rooms, /Index/);
   assert.match(rooms, /RoomPhotoTour/);
-  assert.match(rooms, /toPhotoTourRoom\(source, imageBaseUrl, photoGalleryForRoom\(source.roomTypeId, galleries\), photoSource, cmsAmenities\[source.roomTypeId\] \?\? \[\]\)/);
+  assert.match(rooms, /toPhotoTourRoom\(source, imageBaseUrl, photoGalleryForRoom\(source.roomTypeId, galleries\), photoSource, cmsAmenities\[studioEditorialRoomTypeId\(source.roomTypeId\)\] \?\? \[\]\)/);
   assert.doesNotMatch(rooms, /JOURNEY_ROOMS/);
 });
 
@@ -72,7 +72,7 @@ test("Photo rate cards expose reusable detail panels with the policy timeline", 
   assert.match(rates, /aria-haspopup="dialog"/);
   assert.match(rates, /<RateOfferSidePanel/);
   assert.match(rates, /<PolicyDisplay/);
-  assert.match(rates, /orientation="vertical"/);
+  assert.match(rates, /orientation="horizontal"/);
   assert.match(rates, /freeCancelDate && nonRefundableDate/);
   assert.match(rates, /event\.key === "Escape"/);
 });
