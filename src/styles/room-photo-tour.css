@@ -22,7 +22,8 @@
 .j-photo-image > img { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; }
 .j-tour-control { min-width: 44px !important; height: 44px !important; padding: 0 !important; border-radius: 50% !important; color: var(--paper) !important; background: color-mix(in oklab, var(--smoke) 85%, transparent) !important; letter-spacing: 0 !important; }
 .j-tour-control > span { display: grid; place-items: center; }
-.j-tour-control:focus-visible, .j-tour-button:focus-visible { outline: 2px solid var(--paper) !important; outline-offset: 3px !important; }
+.j-tour-arrow { display: block; flex-shrink: 0; object-fit: contain; filter: brightness(0) invert(1); }
+.j-tour-control:focus-visible, .j-tour-actions button:focus-visible { outline: 2px solid var(--paper) !important; outline-offset: 3px !important; }
 .j-photo-prev, .j-photo-next { position: absolute; top: 42%; z-index: 4; }
 .j-photo-prev { left: 20px; } .j-photo-next { right: 20px; }
 .j-photo-pagination { position: absolute; top: 22px; left: 24px; display: flex; align-items: center; gap: 0; z-index: 4; padding: 0 12px 0 4px; border-radius: 30px; background: color-mix(in oklab, var(--smoke) 85%, transparent); }
@@ -39,8 +40,6 @@
 .j-tour-footer { position: absolute; bottom: 0; inset-inline: 0; z-index: 5; display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 64px 32px 26px; background: linear-gradient(transparent, color-mix(in oklab, var(--smoke) 95%, transparent)); pointer-events: none; }
 .j-tour-footer > * { pointer-events: auto; }
 .j-tour-actions { display: flex; flex-wrap: wrap; justify-content: end; align-items: center; gap: 12px; }
-.j-tour-button { font-family: var(--font-eyebrow) !important; font-size: 12px !important; letter-spacing: 0 !important; padding: 12px 18px !important; border: 1px solid var(--paper) !important; border-radius: 30px !important; color: var(--paper) !important; background: color-mix(in oklab, var(--smoke) 65%, transparent) !important; }
-.j-tour-choose { border-color: var(--alpine-linen) !important; background: var(--alpine-linen) !important; }
 .j-tour-details { position: absolute; z-index: 4; bottom: 170px; left: 32px; right: 32px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: end; gap: 24px; opacity: 0; transform: translateY(40px); pointer-events: none; transition: transform 240ms ease, opacity 200ms ease; }
 .j-tour-details.is-open { opacity: 1; transform: translateY(0); }
 .j-tour-details.is-open > * { pointer-events: auto; }
@@ -112,7 +111,6 @@
  .j-roomnav-mobile .j-tour-control { min-width: 36px !important; height: 36px !important; }
  .j-tour-actions { flex-wrap: nowrap; gap: 8px; }
  .j-tour-actions > p { margin-right: auto; }
- .j-tour-button { padding: 8px 12px !important; font-size: 11px !important; }
 }
 @keyframes j-rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) {
