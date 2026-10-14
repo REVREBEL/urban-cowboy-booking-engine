@@ -21,11 +21,9 @@ import { StudioMatchResults } from "./StudioMatchResults";
 import { RoomsListCard, type RoomCardTheme } from "@/components/rooms/RoomsListCard";
 import { BuildingExperienceList } from "@/components/rooms/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
-import { RoomPhotoTour } from "@/journey/RoomPhotoTour";
-import { toPhotoTourRoom } from "@/data/photoTourRooms";
 import type { RoomResultsLayout } from "@/studio/roomLayout";
 import { PhotoJournal } from "@/journey/PhotoJournal";
-import { PhotoJourneyHeader } from "@/journey/PhotoArrival";
+import { PhotoRooms } from "@/journey/PhotoRooms";
 import type { MatchProfile } from "@/journey/data";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
@@ -104,7 +102,6 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
 
   const [data, setData] = useState<AvailabilityResponse | null>(null);
   const photoLayout = roomLayout === "photo";
-  const [tourDetailsId, setTourDetailsId] = useState<string | null>(null);
   const [journalProfile, setJournalProfile] = useState<MatchProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -329,7 +326,6 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
   if (photoLayout && discoveryView === "journal") {
     return (
       <div className="min-h-dvh bg-j-night text-j-paper font-j-body">
-        <PhotoJourneyHeader step="results" />
         <PhotoJournal
           adults={adults}
           children={children}
@@ -410,62 +406,25 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
   }
 
   if (discoveryView === "rooms") {
+    if (photoLayout) {
+      return (
+        <div className="min-h-dvh bg-j-night font-j-body text-j-paper">
+          <PhotoRooms
+            profile={journalProfile}
+            rooms={rooms}
+            imageBaseUrl={imageBaseUrl}
+            guests={adults + children + infants}
+            children={children + infants}
+            onChoose={choose}
+            onEditJournal={() => setDiscoveryView("journal")}
+          />
+        </div>
+      );
+    }
     const studioCriteria = discoveryCriteria;
-
-    const photoRooms = photoLayout && journalProfile
-      ? rooms.filter(room =>
-          room.rates.length > 0 &&
-          room.capacity >= adults + children &&
-          (children === 0 || room.merchandising?.agePolicy !== "adultsOnly21") &&
-          (!journalProfile.dog || room.merchandising?.dogPolicy === "allowed"))
-          .map(room => ({
-            room,
-            hits: journalProfile.mustHaves.filter(feature => {
-              const f = room.merchandising?.features;
-              return feature === "indoor-tub" ? !!f?.indoorTub :
-                feature === "outdoor-tub" ? !!f?.outdoorSoak :
-                feature === "fireplace" ? !!f?.fireplace :
-                feature === "view" ? !!f?.scenicView :
-                feature === "gather" ? !!(f?.separateLivingRoom || f?.fullKitchen) :
-                feature === "balcony" ? !!f?.privateDeck : false;
-            }).length,
-          }))
-          .sort((a, b) => b.hits - a.hits ||
-            Number((a.room.rates[0]?.perNightGross ?? Infinity) > journalProfile.budget) -
-            Number((b.room.rates[0]?.perNightGross ?? Infinity) > journalProfile.budget))
-          .map(({ room }) => room)
-      : rooms.filter(room => room.rates.length > 0);
-
     return (
-      <div className={photoLayout ? "min-h-dvh bg-j-night font-j-body text-j-paper" : "studio-room-experience"}>
-        {photoLayout ? (
-          <>
-          <PhotoJourneyHeader step="results" />
-          {journalProfile && (
-            <div className="mx-auto max-w-[1600px] px-5 py-4 sm:px-8">
-              <button type="button" className="text-sm text-j-paper/70 underline underline-offset-4" onClick={() => setDiscoveryView("journal")}>
-                Edit my Stay Journal
-              </button>
-            </div>
-          )}
-          <div className="j-room-spreads" aria-label="Available room photo tours">
-            {photoRooms.map((room, index, bookableRooms) => (
-              <RoomPhotoTour
-                key={room.roomTypeId}
-                room={toPhotoTourRoom(room, imageBaseUrl)}
-                position={index}
-                count={bookableRooms.length}
-                currency={room.rates[0]?.currency ?? hotel?.DefaultCurrencyCode ?? "USD"}
-                details={tourDetailsId === room.roomTypeId}
-                onDetails={(open) => setTourDetailsId(open ? room.roomTypeId : null)}
-                onChoose={() => choose(room)}
-                onPrevious={index > 0 ? () => document.getElementById(`tour-${bookableRooms[index - 1].roomTypeId}`)?.scrollIntoView({ behavior: "smooth" }) : undefined}
-                onNext={index < bookableRooms.length - 1 ? () => document.getElementById(`tour-${bookableRooms[index + 1].roomTypeId}`)?.scrollIntoView({ behavior: "smooth" }) : undefined}
-              />
-            ))}
-          </div>
-          </>
-        ) : <BuildingExperienceList
+      <div className="studio-room-experience">
+        <BuildingExperienceList
           criteria={studioCriteria}
           rooms={rooms}
           buildings={buildings}
@@ -477,7 +436,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
           onOpenRoomDetails={setOpenRoom}
           onOpenHelpMeChoose={() => setShowMatcherModal(true)}
           onBackToSearch={() => goTo("dates")}
-        />}
+        />
         {openRoom && (
           <RoomDetailModal
             room={toStudioRoom(openRoom, imageBaseUrl)}
