@@ -22,8 +22,9 @@ test("Photo toolbar uses xsmall pills and a label-font sort selector", () => {
   assert.match(rooms, /colorScheme="paper" size="xsmall" onClick=\{\(\) => setBuilding\(b\)\}/);
   assert.match(rooms, /colorScheme="paper" size="xsmall" onClick=\{\(\) => setView\(v\)\}/);
   assert.match(rooms, /colorScheme=\{on \? "alpine-linen" : "paper"\} size="xsmall"/);
-  assert.match(rooms, /<select id="sort"[\s\S]*?fontFamily: "var\(--font-label\)"/);
-  assert.match(rooms, /fontSize: "0\.6875rem", lineHeight: "1\.2", paddingTop: "3px"/);
+  assert.match(rooms, /aria-label="Sort rooms"/);
+  assert.match(rooms, /items-center justify-center gap-2/);
+  assert.match(rooms, /aria-pressed=\{sort === value\}/);
   assert.match(story, /\["xsmall", "small", "default", "large"\]/);
 });
 
