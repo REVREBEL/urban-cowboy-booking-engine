@@ -312,6 +312,7 @@ export function PhotoRateStep() {
               }
               onClose={() => setDetailsRateId(null)}
               height={720}
+              standalone
             />
             <div className="-mt-20 flex justify-center px-8 pb-8">
               <Button
