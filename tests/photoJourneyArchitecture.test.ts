@@ -56,3 +56,12 @@ test("Results does not include retired photo tour branches", () => {
   assert.doesNotMatch(results, /<RoomPhotoTour/);
   assert.doesNotMatch(results, /tourDetailsId/);
 });
+
+test("Photo Journal matches center beside image selections and labels keep a dark gradient", () => {
+  const journal = source("journey/PhotoJournal.tsx");
+  assert.match(journal, /page === 0 \? "self-center" : "self-start"/);
+  assert.match(journal, /colorScheme="paper" size="small"/);
+  assert.match(journal, /linear-gradient\(to top, rgba\(15, 18, 16, 0\.92\)/);
+  assert.match(journal, /pointer-events-none absolute inset-0/);
+  assert.match(journal, /absolute inset-x-0 bottom-0 z-10/);
+});
