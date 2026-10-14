@@ -17,6 +17,7 @@ function verifiedFeatures(room: ShapedRoom): Feature[] {
   const features: Feature[] = [];
   if (flags.indoorTub) features.push("indoor-tub");
   if (flags.outdoorSoak) features.push("outdoor-tub");
+  if (flags.fireplace) features.push("fireplace");
   if (flags.scenicView) features.push("view");
   if (flags.separateLivingRoom || flags.fullKitchen) features.push("gather");
   if (flags.privateDeck) features.push("balcony");
