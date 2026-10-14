@@ -145,12 +145,12 @@ export function PhotoRateStep() {
     : undefined;
 
   return (
-    <section className="min-h-dvh bg-smoke pb-16 text-paper" data-photo-rate-step>
+    <section className="relative isolate flex min-h-dvh flex-col justify-end bg-smoke text-paper" data-photo-rate-step>
       {image && (
-        <figure className="relative w-full">
-          <img src={image} alt={room.name} className="block h-auto w-full" fetchPriority="high" />
-          <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/40 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 mx-auto max-w-[1600px] px-5 pb-6 sm:px-8">
+        <figure className="absolute inset-0 -z-10 overflow-hidden">
+          <img src={image} alt={room.name} className="h-full w-full object-cover" fetchPriority="high" />
+          <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/65 to-smoke/10" />
+          <div className="absolute inset-x-0 top-24 mx-auto max-w-[1600px] px-5 sm:px-8">
             <Button
               type="button"
               onClick={() => booking.goTo("results")}
@@ -168,7 +168,7 @@ export function PhotoRateStep() {
         </figure>
       )}
 
-      <div className="mx-auto grid max-w-[1600px] gap-4 px-5 py-10 sm:px-8 lg:grid-cols-3">
+      <div className="relative z-10 mx-auto grid w-full max-w-[1600px] gap-4 px-5 pb-7 pt-64 sm:px-8 sm:pb-10 sm:pt-48 lg:grid-cols-3 lg:pt-44">
         {room.rates.map((rate, index) => {
           const config = resolveRateCardConfig(configs, rate.rateId);
           const policy = config
