@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
+import { resetPhotoJourney } from "./photoSession";
 
 const HERO = ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE;
 const label = "font-j-label text-[11px] uppercase tracking-[0.22em]";
@@ -26,6 +27,7 @@ export function PhotoArrival() {
     // The journey flag is presentation state and is kept in the Studio URL or
     // production Photo journey; it never overrides pricing or eligibility.
     const url = new URL(window.location.href);
+    resetPhotoJourney();
     url.searchParams.set("photoPath", path);
     window.history.replaceState({}, "", url);
     booking.setSearch({
