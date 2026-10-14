@@ -55,7 +55,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 5 * 60 * 1000;
 const CACHE_TTL_SECONDS = 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:room-type-content:v5";
+const CACHE_KEY_PREFIX = "webflow:room-type-content:v6";
 const BROWSER_CACHE_CONTROL =
   "public, max-age=60, s-maxage=120, stale-while-revalidate=300";
 
