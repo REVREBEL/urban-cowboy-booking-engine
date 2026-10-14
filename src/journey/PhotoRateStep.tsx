@@ -296,7 +296,7 @@ export function PhotoRateStep() {
               policyDisplay={
                 freeCancelDate && nonRefundableDate ? (
                   <PolicyDisplay
-                    orientation="horizontal"
+                        orientation="vertical"
                     size="compact"
                     initialAmount={money(detailsPricing.dueToday, detailsRate.currency)}
                     remainingAmount={money(detailsPricing.remaining, detailsRate.currency)}

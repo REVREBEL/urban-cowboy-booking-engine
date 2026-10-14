@@ -237,7 +237,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         aria-label="Rate policy and deposit details"
       >
         <button type="button" onClick={onClose} aria-label="Close rate details"
-          className="absolute right-4 top-4 z-20 rounded-full p-2"
+          className="absolute right-4 top-4 z-20 rounded-full p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           style={{ color: themeConfig.closeBtnColor }}>
           <X className="h-5 w-5" />
         </button>
@@ -273,7 +273,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           <button
             onClick={onClose}
             type="button"
-            className="hover:scale-110 transition-all p-1 cursor-pointer shrink-0 -mt-1 -mr-1"
+            className="hover:scale-110 transition-all p-1 cursor-pointer shrink-0 -mt-1 -mr-1 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
             style={{ color: themeConfig.closeBtnColor }}
             aria-label="Close rate details"
           >
@@ -528,7 +528,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         <button
           onClick={onClose}
           type="button"
-            className="hover:scale-110 transition-all p-1 cursor-pointer shrink-0"
+            className="hover:scale-110 transition-all p-1 cursor-pointer shrink-0 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current"
           style={{ color: themeConfig.closeBtnColor }}
           aria-label="Close rate details"
         >
