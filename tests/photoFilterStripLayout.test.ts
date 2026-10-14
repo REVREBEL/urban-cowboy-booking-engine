@@ -21,8 +21,8 @@ test("Both filter strips expose their own enabled/disabled scroll arrows", () =>
       assert.match(rooms, new RegExp(`aria-label="Scroll ${section} ${direction}"[\\s\\S]*?disabled=\\{!${strip}\\.edges\\.${edge}\\}[\\s\\S]*?onClick=\\{\\(\\) => ${strip}\\.scroll\\(${numeric === "-1" ? "-1" : "1"}\\)\\}`));
     }
   }
-  assert.match(rooms, /<PhotoTourArrow direction="left" size=\{16\} \/>/);
-  assert.match(rooms, /<PhotoTourArrow direction="right" size=\{16\} \/>/);
+  assert.match(rooms, /<PhotoTourArrow direction="left" size=\{16\}(?: chevron)? \/>/);
+  assert.match(rooms, /<PhotoTourArrow direction="right" size=\{16\}(?: chevron)? \/>/);
 });
 
 test("Scroll controls react to resizing, font loading and actual horizontal position", () => {
@@ -37,7 +37,8 @@ test("Scroll controls react to resizing, font loading and actual horizontal posi
 test("Building and feature filtering, sorting, and mobile filters are retained", () => {
   assert.match(rooms, /setBuilding\(b\)/);
   assert.match(rooms, /setFeatures\(on \? features\.filter/);
-  assert.match(rooms, /<select id="sort"/);
+  assert.match(rooms, /aria-label="Sort rooms"/);
+  assert.match(rooms, /aria-pressed=\{sort === value\}/);
   assert.match(rooms, /sheetOpen/);
   assert.match(rooms, /const measure = \(\) => stage\.style\.setProperty\('--j-room-top'/);
 });
