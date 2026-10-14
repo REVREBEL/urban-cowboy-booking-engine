@@ -3,7 +3,7 @@
  * availability. Preserves sticky building/feature filters, mobile filter
  * sheet, sorting, photo/index toggle, and full-frame RoomPhotoTour.
  */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 import { RoomPhotoTour } from "./RoomPhotoTour";
 import { PhotoTourArrow } from "./PhotoTourArrow";
@@ -23,6 +23,51 @@ const FEATURE_LABEL: Record<Feature, string> = {
   balcony: "Private deck", accessible: "Step-free access",
 };
 type Sort = "match" | "price-asc" | "price-desc" | "size";
+
+/**
+ * Each desktop filter group owns its own scroll position. Measure both the
+ * viewport and its pills so arrows update when the viewport or fonts resize.
+ */
+function useHorizontalFilterStrip(itemsKey: string) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ left: false, right: false });
+
+  const update = useCallback(() => {
+    const element = ref.current;
+    if (!element) return;
+    const next = {
+      left: element.scrollLeft > 2,
+      right: element.scrollWidth - element.clientWidth - element.scrollLeft > 2,
+    };
+    setEdges((previous) =>
+      previous.left === next.left && previous.right === next.right ? previous : next,
+    );
+  }, []);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    for (const child of element.children) observer.observe(child);
+    let active = true;
+    void document.fonts?.ready.then(() => { if (active) update(); });
+    update();
+    return () => { active = false; observer.disconnect(); };
+  }, [itemsKey, update]);
+
+  const scroll = (direction: -1 | 1) => {
+    const element = ref.current;
+    if (!element) return;
+    element.scrollBy({
+      left: direction * Math.max(140, Math.round(element.clientWidth * 0.75)),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    });
+  };
+
+  return { ref, edges, update, scroll };
+}
+
 
 export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSource = "webflow", guests, children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; photoSource?: PhotoSource; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
   const [building, setBuilding] = useState<string>("all");
@@ -81,16 +126,10 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
   const hidden = scored.filter((m) => m.excludedBy).length;
   const hasSizeData = scored.some(m => m.room.squareFeet > 0);
   const buildings = useMemo(() => ["all", ...new Set(scored.map(m => m.room.building))], [scored]);
-  const buildingStrip = useRef<HTMLDivElement>(null);
-  const [stripScroll, setStripScroll] = useState({ left: false, right: false });
-  const updateStrip = () => {
-    const el = buildingStrip.current;
-    if (!el) return;
-    setStripScroll({ left: el.scrollLeft > 4, right: el.scrollLeft + el.clientWidth < el.scrollWidth - 4 });
-  };
-  useEffect(() => { updateStrip(); }, [buildings]);
+  const buildingStrip = useHorizontalFilterStrip(buildings.join("|"));
+  const featureStrip = useHorizontalFilterStrip("feature-options");
   useEffect(() => {
-    buildingStrip.current?.querySelector('[aria-pressed="true"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    buildingStrip.ref.current?.querySelector('[aria-pressed="true"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [building]);
 
   const visitRoom = (index: number) => {
@@ -169,40 +208,59 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, photoSourc
             </div>
           </div>
         )}
-        <div className="hidden flex-wrap items-center gap-2 rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:flex">
-          <div role="group" aria-label="Building" className="relative flex w-full min-w-0 items-center sm:w-auto sm:flex-1">
-            <Button type="button" variant="outline" colorScheme="paper" size="xsmall" aria-label="Earlier buildings" tabIndex={stripScroll.left ? 0 : -1}
-              onClick={() => buildingStrip.current?.scrollBy({ left: -240, behavior: "smooth" })}
-              className={`mr-0.5 size-7 shrink-0 rounded-full ${stripScroll.left ? "opacity-100" : "pointer-events-none opacity-0"}`} style={{padding:0,borderWidth:"1px"}}>
-              <PhotoTourArrow direction="left" size={16} />
-            </Button>
-            <div ref={buildingStrip} onScroll={updateStrip} className="no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
-              {buildings.map((b) => (
-                <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setBuilding(b)}
-                  className="shrink-0">
-                  {b === "all" ? "All buildings" : b}
-                </PillButton>
-              ))}
+        <div className="hidden rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:block">
+          <div className="j-photo-filter-pair">
+            <div role="group" aria-label="Buildings" className="j-photo-filter-segment">
+              <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
+                aria-label="Scroll buildings left" aria-controls="photo-building-options"
+                disabled={!buildingStrip.edges.left} onClick={() => buildingStrip.scroll(-1)}
+                className="j-photo-filter-nav" style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
+                <PhotoTourArrow direction="left" size={16} />
+              </Button>
+              <div id="photo-building-options" ref={buildingStrip.ref} onScroll={buildingStrip.update}
+                className="j-photo-filter-strip no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
+                {buildings.map((b) => (
+                  <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setBuilding(b)}
+                    className="shrink-0">
+                    {b === "all" ? "All buildings" : b}
+                  </PillButton>
+                ))}
+              </div>
+              <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
+                aria-label="Scroll buildings right" aria-controls="photo-building-options"
+                disabled={!buildingStrip.edges.right} onClick={() => buildingStrip.scroll(1)}
+                className="j-photo-filter-nav" style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
+                <PhotoTourArrow direction="right" size={16} />
+              </Button>
             </div>
-            <Button type="button" variant="outline" colorScheme="paper" size="xsmall" aria-label="More buildings" tabIndex={stripScroll.right ? 0 : -1}
-              onClick={() => buildingStrip.current?.scrollBy({ left: 240, behavior: "smooth" })}
-              className={`ml-0.5 size-7 shrink-0 rounded-full ${stripScroll.right ? "opacity-100" : "pointer-events-none opacity-0"}`} style={{padding:0,borderWidth:"1px"}}>
-              <PhotoTourArrow direction="right" size={16} />
-            </Button>
+            <div role="group" aria-label="Features" className="j-photo-filter-segment">
+              <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
+                aria-label="Scroll features left" aria-controls="photo-feature-options"
+                disabled={!featureStrip.edges.left} onClick={() => featureStrip.scroll(-1)}
+                className="j-photo-filter-nav" style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
+                <PhotoTourArrow direction="left" size={16} />
+              </Button>
+              <div id="photo-feature-options" ref={featureStrip.ref} onScroll={featureStrip.update}
+                className="j-photo-filter-strip no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
+                {(["indoor-tub", "outdoor-tub", "fireplace", "gather"] as Feature[]).map((f) => {
+                  const on = features.includes(f);
+                  return (
+                    <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="xsmall" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
+                      className="shrink-0">
+                      {FEATURE_LABEL[f]}
+                    </PillButton>
+                  );
+                })}
+              </div>
+              <Button type="button" variant="outline" colorScheme="paper" size="xsmall"
+                aria-label="Scroll features right" aria-controls="photo-feature-options"
+                disabled={!featureStrip.edges.right} onClick={() => featureStrip.scroll(1)}
+                className="j-photo-filter-nav" style={{ width: 30, height: 30, padding: 0, borderRadius: "50%", borderWidth: "1px" }}>
+                <PhotoTourArrow direction="right" size={16} />
+              </Button>
+            </div>
           </div>
-          <span className="mx-1 hidden h-6 w-px bg-paper/20 sm:block" />
-          <div role="group" aria-label="Features" className="flex flex-wrap gap-1">
-            {(["indoor-tub", "outdoor-tub", "fireplace", "gather"] as Feature[]).map((f) => {
-              const on = features.includes(f);
-              return (
-                <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="xsmall" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
-                  className="shrink-0">
-                  {FEATURE_LABEL[f]}
-                </PillButton>
-              );
-            })}
-          </div>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="mt-2 flex flex-wrap items-center justify-end gap-2 border-t border-paper/15 pt-2">
             <label className="sr-only" htmlFor="sort">Sort</label>
             <select id="sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)}
               className="rounded-full bg-paper/10 font-label uppercase tracking-[0.05em] text-paper"
