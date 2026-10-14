@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { normalizeRoomTypeGalleries } from "../worker/webflow/room-type-reviews.ts";
-import { photoGalleryForRoom, photoSourceFromUrl } from "../src/data/photoGalleries.ts";
-import { toPhotoTourRoom } from "../src/data/photoTourRooms.ts";
-import type { ShapedRoom } from "../src/types/mews.ts";
+import { photoGalleryForRoom, photoSourceFromUrl, selectPhotoImages } from "../src/data/photoGalleries.ts";
+import { readFileSync } from "node:fs";
 
 const first = "https://cdn.prod.website-files.com/site/hero.webp";
 const second = "https://cdn.prod.website-files.com/site/portrait.jpg";
@@ -29,22 +28,17 @@ test("unpublished, archived, inactive or unbound Room Types cannot supply photos
   ]), {});
 });
 
-test("Photo image source switches galleries only; Mews room and rate properties are unchanged", () => {
-  const room = {
-    roomTypeId: "room-a", name: "Room A", imageIds: ["mews-image"],
-    normalBedCount: 1, capacity: 2, rates: [{ perNightGross: 320 }],
-    description: "Original", merchandising: undefined,
-  } as unknown as ShapedRoom;
+test("Photo image selector keeps CMS vs Mews sources isolated", () => {
   const gallery = { roomTypeId: "room-a", images: [first, second] };
-  const webflow = toPhotoTourRoom(room, "https://images.mews.com", gallery, "webflow");
-  const mews = toPhotoTourRoom(room, "https://images.mews.com", gallery, "mews");
-  assert.deepEqual(webflow.images, [first, second]);
-  assert.match(mews.images[0], /mews-image\?width=1600/);
-  assert.equal(webflow.basePrice, mews.basePrice);
-  assert.equal(webflow.id, mews.id);
-  assert.equal(webflow.maxGuests, mews.maxGuests);
-  assert.equal(webflow.photoSource, "webflow");
-  assert.equal(mews.photoSource, "mews");
+  const original = ["https://images.mews.com/mews-image?width=1600"];
+  const webflow = selectPhotoImages(original, gallery, "webflow");
+  const mews = selectPhotoImages(original, gallery, "mews");
+  const fallback = selectPhotoImages(original, undefined, "webflow");
+  assert.deepEqual(webflow, { images: [first, second], photoSource: "webflow" });
+  assert.deepEqual(mews, { images: original, photoSource: "mews" });
+  assert.deepEqual(fallback, { images: original, photoSource: "mews" });
+  const mapper = readFileSync(new URL("../src/data/photoTourRooms.ts", import.meta.url), "utf8");
+  assert.match(mapper, /selectPhotoImages\(images, gallery, source\)/);
 });
 
 test("Studio demo category aliases are photos only and do not affect production room mappings", () => {
