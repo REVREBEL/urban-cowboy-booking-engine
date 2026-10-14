@@ -32,7 +32,7 @@ test("Photo Engine actions use the shared Button or its PillButton composition",
 });
 
 test("native button detector is case-sensitive for JSX components", () => {
-  const nativeButton = /<button\\b/;
+  const nativeButton = /<button\b/;
   assert.match('<button type="button">Click</button>', nativeButton);
   assert.doesNotMatch('<Button type="button">Click</Button>', nativeButton);
   assert.doesNotMatch('<PillButton type="button">Click</PillButton>', nativeButton);
