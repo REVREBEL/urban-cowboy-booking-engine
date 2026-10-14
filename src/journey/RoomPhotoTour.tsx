@@ -6,6 +6,9 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { JourneyRoom } from './data';
 import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
+import { cmsHighlightsForPhoto } from './cmsTour';
+import type { CmsPhotoHotspotMap } from '@/types/photo-hotspot-cms';
+import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
 import { TourIcon } from '@/components/rooms/TourIcon';
 import { FeatureFocus } from '@/components/rooms/FeatureFocus';
 import { PhotoTourArrow } from './PhotoTourArrow';
@@ -18,8 +21,8 @@ const FX_LABEL: Record<string, string> = {
 };
 
 
-export function RoomPhotoTour({ room, position, count, score, details, onDetails, onChoose, onPrevious, onNext, currency = "USD" }: {
-  room: JourneyRoom; position: number; count: number; score?: number;
+export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, details, onDetails, onChoose, onPrevious, onNext, currency = "USD" }: {
+  room: JourneyRoom; cmsHotspots?: CmsPhotoHotspotMap; position: number; count: number; score?: number;
   details: boolean; onDetails: (open: boolean) => void; onChoose: () => void; currency?: string;
   onPrevious?: () => void; onNext?: () => void;
 }) {
@@ -66,9 +69,12 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
   }, [details, onDetails]);
 
   const fx = FX[position];
-  const pins = PHOTO_HIGHLIGHTS[room.images[photo]] ?? [];
+  const pins = room.cmsAmenities
+    ? cmsHighlightsForPhoto(room.images[photo], room.cmsAmenities, cmsHotspots)
+    : PHOTO_HIGHLIGHTS[room.images[photo]] ?? [];
   const selected = pins.find((p) => p.id === activePin) ?? pins[0];
   const amenities = roomAmenities(room);
+  const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
   const goPhoto = (direction: number) => {
     const jump = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -112,10 +118,10 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
                     if (image.naturalHeight) setRatios((old) => ({ ...old, [index]: image.naturalWidth / image.naturalHeight }));
                   }} />
                 <div className={`j-hotspots ${details && photo === index ? 'is-open' : ''}`} inert={!details || photo !== index} aria-hidden={!details || photo !== index}>
-                  {(PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex) => (
+                  {(room.cmsAmenities ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots) : PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex) => (
                     <div key={pin.id} className="j-hotspot-anchor" style={{ left: `${pin.x}%`, top: `${pin.y}%` }}>
                       <div className="j-pin-desktop">
-                        <FeatureFocus count={pinIndex + 1} icon={pin.icon} title={pin.title}
+                        <FeatureFocus count={pinIndex + 1} icon={pin.icon} iconPath={pin.iconPath} title={pin.title}
                           active={activePin === pin.id} onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)} />
                       </div>
                       <Button type="button" variant={(selected?.id ?? null) === pin.id ? "filled" : "outline"} colorScheme={(selected?.id ?? null) === pin.id ? "alpine-linen" : "paper"} size="xsmall" style={{padding: 0, width: "30px", height: "30px", borderRadius: "50%", borderWidth: "1px"}} className="j-pin-mobile" aria-label={pin.title} aria-pressed={(selected?.id ?? null) === pin.id}
@@ -160,7 +166,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
       <aside id={`tour-details-${room.id}`} className={`j-tour-details ${details ? 'is-open' : ''}`} inert={!details} aria-hidden={!details} data-tour-panel>
         <div className="j-tour-feature" id={`tour-highlight-${room.id}`} aria-live="polite">
           {selected && <>
-            <TourIcon name={selected.icon} className="size-14 shrink-0" />
+            <CmsAmenityIcon iconPath={selected.iconPath} fallback={selected.icon} className="size-14 shrink-0" />
             <div><p className="font-headline text-2xl leading-none">{selected.title}</p><p className="mt-1 text-sm leading-relaxed">{selected.note}</p></div>
           </>}
         </div>
@@ -171,7 +177,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
               {pins.map((pin, i) => (
                 <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{padding:"12px",fontWeight:400,textAlign:"left",borderRadius:"10px"}} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => pickPin(pin.id)} className="j-highlight-card">
                   <span className="j-highlight-num">{i + 1}</span>
-                  <TourIcon name={pin.icon} className="size-10 shrink-0" />
+                  <CmsAmenityIcon iconPath={pin.iconPath} fallback={pin.icon} className="size-10 shrink-0" />
                   <span className="min-w-0 text-left"><span className="block font-headline text-base leading-none">{pin.title}</span><span className="mt-0.5 block text-xs leading-snug opacity-75">{pin.note}</span></span>
                 </Button>
               ))}
@@ -182,7 +188,7 @@ export function RoomPhotoTour({ room, position, count, score, details, onDetails
             <Button variant="transparent" colorScheme="lake-forest" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-panel-close" aria-label={`Close details for ${room.name}`} title="Close details" onClick={() => onDetails(false)}><X size={20} /></Button>
           </div>
           <ul className="j-amenity-list">
-            {amenities.map((a) => <li key={a.title}><TourIcon name={a.icon} /><span>{a.title}</span></li>)}
+            {unseenAmenities.map((a) => <li key={a.title}><CmsAmenityIcon iconPath={a.iconPath} fallback={a.icon} className="size-6 shrink-0" /><span>{a.title}</span></li>)}
           </ul>
           {room.isMock && <p className="mt-3 text-xs">Sample room · photography reused</p>}
         </div>
