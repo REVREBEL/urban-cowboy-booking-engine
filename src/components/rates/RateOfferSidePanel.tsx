@@ -1,9 +1,27 @@
-import React from 'react';
+import * as React from 'react';
 import { X } from 'lucide-react';
 import { PolicyDisplay } from './policy_display';
 import { Button, type ButtonColor } from '../ui/button';
+import { PolicyDisplay, type MilestoneDate } from './policy_display';
 
 export type OfferCardTheme = 'ride-easy' | 'outfit' | 'sunup' | 'stay-while' | 'plan-ahead';
+
+export interface RateOfferPolicyDisplay {
+  initialAmount: string;
+  remainingAmount: string;
+  freeCancelDate?: MilestoneDate;
+  nonRefundableDate?: MilestoneDate;
+  textColor?: string;
+  accentColor?: string;
+  initialDepositTooltip?: {
+    title: string;
+    description: string;
+  };
+  remainingBalanceTooltip?: {
+    title: string;
+    description: string;
+  };
+}
 
 export interface RateOfferSidePanelProps {
   variant?: 'default' | 'compact';
@@ -64,7 +82,7 @@ const buttonColorForTheme = (theme: OfferCardTheme): ButtonColor => {
 const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   'ride-easy': {
     panelBg: '#F2F2F2',
-    borderColor: '#343833',
+    borderColor: 'var(--color-smoke)',
     ticketBg: '#FFFFFF',
     ticketBorder: 'rgba(52, 56, 51, 0.12)',
     textPrimary: '#221C18',
@@ -79,7 +97,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'outfit': {
     panelBg: '#0E301A',
-    borderColor: '#F2AAA9',
+    borderColor: 'var(--color-nude-ember)',
     ticketBg: '#153C22',
     ticketBorder: 'rgba(242, 170, 169, 0.25)',
     textPrimary: '#EBE8E0',
@@ -94,7 +112,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'sunup': {
     panelBg: '#EBE8E0',
-    borderColor: '#9A5636',
+    borderColor: 'var(--color-copper)',
     ticketBg: '#FAF8F5',
     ticketBorder: 'rgba(154, 86, 54, 0.25)',
     textPrimary: '#69253A',
@@ -109,7 +127,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'stay-while': {
     panelBg: '#343833',
-    borderColor: '#EBE8E0',
+    borderColor: 'var(--alpine-linen)',
     ticketBg: '#272B26',
     ticketBorder: 'rgba(235, 232, 224, 0.25)',
     textPrimary: '#EBE8E0',
@@ -124,7 +142,7 @@ const THEME_CONFIGS: Record<OfferCardTheme, ThemeStyles> = {
   },
   'plan-ahead': {
     panelBg: '#F2F2F2',
-    borderColor: '#343833',
+    borderColor: 'var(--color-smoke)',
     ticketBg: '#FFFFFF',
     ticketBorder: 'rgba(52, 56, 51, 0.15)',
     textPrimary: '#000000',
@@ -161,6 +179,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   height,
 }) => {
   const isCompact = variant === 'compact';
+  const showTimeline = Boolean(policyDisplay?.freeCancelDate && policyDisplay?.nonRefundableDate);
   const themeConfig = THEME_CONFIGS[theme] || THEME_CONFIGS['ride-easy'];
 
   if (isCompact && policyDisplay) {
@@ -198,7 +217,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
     // ================= COMPACT VARIANT (Active_Open.png) =================
     return (
       <div
-        className="w-[525px] h-[625px] rounded-r-[45px] rounded-l-none p-6 sm:p-7 flex flex-col justify-between shadow-xl relative box-border transition-colors duration-300 shrink-0"
+        className="w-131.25 h-156.25 rounded-r-[45px] rounded-l-none p-6 sm:p-7 flex flex-col justify-between shadow-xl relative box-border transition-colors duration-300 shrink-0"
         style={{
           width: '525px',
           minWidth: '525px',
@@ -221,12 +240,23 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           </button>
         </div>
 
+        {showTimeline && policyDisplay && (
+          <PolicyDisplay
+            {...policyDisplay}
+            orientation="vertical"
+            size="compact"
+            className="mb-2"
+          />
+        )}
+
+        {!showTimeline && (
+          <>
         {/* Embedded Ticket Box with 2 Columns */}
         <div
-          className="rounded-[22px] px-5 shadow-xs mb-3 mx-auto flex items-center justify-center box-border transition-colors duration-300"
+          className="rounded-panel-xs px-5 shadow-xs mb-3 mx-auto flex items-center justify-center box-border transition-colors duration-300"
           style={{
             width: '465px',
-            height: '325px',
+            height: policyDisplay ? '220px' : '325px',
             paddingTop: '20px',
             paddingBottom: '20px',
             maxWidth: '100%',
@@ -235,6 +265,8 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           }}
         >
           <div className="flex flex-row justify-between items-start gap-3 w-full">
+            {!policyDisplay && (
+              <>
             {/* Left Column: Cancellation & Schedule (width: 135px) */}
             <div
               className="space-y-3 shrink-0"
@@ -282,11 +314,15 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
               </div>
             </div>
 
+
+              </>
+            )}
+
             {/* Right Column: Financial Breakdown List (width: 225px, font-size: 18px) */}
             <div
               className="space-y-1.5 shrink-0"
               style={{
-                width: '225px',
+                width: policyDisplay ? '100%' : '225px',
                 fontSize: '18px',
                 fontFamily: themeConfig.fontFamily,
               }}
@@ -408,6 +444,9 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
           </div>
         </div>
 
+          </>
+        )}
+
         {/* Policy Disclaimer */}
         <div
           className="text-xs leading-relaxed text-center sm:text-left mb-3 px-1"
@@ -440,7 +479,7 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
   // ================= NORMAL VARIANT (Normal Active Open.png) =================
   return (
     <div
-      className="w-[528px] h-[800px] rounded-r-[40px] rounded-l-none py-6 pr-6 pl-[72px] sm:py-8 sm:pr-8 sm:pl-[80px] lg:py-10 lg:pr-10 lg:pl-[88px] flex flex-col items-center justify-center gap-8 shadow-xl relative box-border transition-colors duration-300 shrink-0"
+      className="w-132 h-200 rounded-r-[40px] rounded-l-none py-6 pr-6 pl-18 sm:py-8 sm:pr-8 sm:pl-20 lg:py-10 lg:pr-10 lg:pl-22 flex flex-col items-center justify-center gap-8 shadow-xl relative box-border transition-colors duration-300 shrink-0"
       style={{
         width: '528px',
         minWidth: '528px',
@@ -463,6 +502,15 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         </button>
       </div>
 
+      {policyDisplay ? (
+        <PolicyDisplay
+          {...policyDisplay}
+          orientation="horizontal"
+          size="default"
+          className="w-full"
+        />
+      ) : (
+        <>
       {/* Top Section: Cancellation & Schedule */}
       <div className="w-full space-y-4" style={{ fontFamily: themeConfig.fontFamily }}>
         <div>
@@ -507,9 +555,13 @@ export const RateOfferSidePanel: React.FC<RateOfferSidePanelProps> = ({
         </div>
       </div>
 
+
+        </>
+      )}
+
       {/* Embedded Ticket Box (Financial Breakdown Only) */}
       <div
-        className="w-full rounded-[24px] p-6 sm:p-7 shadow-xs transition-colors duration-300"
+        className="w-full rounded-panel-sm p-6 sm:p-7 shadow-xs transition-colors duration-300"
         style={{
           backgroundColor: themeConfig.ticketBg,
           border: `1.5px solid ${themeConfig.ticketBorder}`,

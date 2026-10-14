@@ -1,5 +1,5 @@
 // SearchButton.tsx
-import React from 'react';
+import * as React from 'react';
 
 export type SearchButtonVariant =
   | 'full-circle'
@@ -143,10 +143,10 @@ export const SearchButton = React.forwardRef<
     const isInteractive = !disabled && !isLoading;
 
     const baseClasses =
-      'box-border inline-flex items-center justify-center text-center font-button bg-[#343833] text-[#EBE8E0] transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#343833] focus-visible:ring-offset-2';
+      'box-border inline-flex items-center justify-center text-center font-button bg-smoke text-alpine-linen transition-all duration-150 select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-smoke focus-visible:ring-offset-2';
 
     const stateClasses = isInteractive
-      ? 'cursor-pointer hover:bg-[#272a26] active:bg-[#1a1c19] active:scale-[0.98]'
+      ? 'cursor-pointer hover:bg-lake-forest active:bg-lake-forest active:scale-[0.98]'
       : 'cursor-not-allowed opacity-60';
 
     if (variant === 'icon-circle') {
@@ -158,13 +158,13 @@ export const SearchButton = React.forwardRef<
           onClick={onClick}
           aria-label="Search"
           aria-busy={isLoading}
-          className={`${baseClasses} ${stateClasses} w-[48px] h-[48px] rounded-[9999px] p-0 shrink-0 ${className}`}
+          className={`${baseClasses} ${stateClasses} w-12 h-12 rounded-full p-0 shrink-0 ${className}`}
           {...props}
         >
           {isLoading ? (
             <ButtonSpinner />
           ) : (
-            <div className="w-[16.76px] h-[16.76px] p-[2px] flex items-center justify-center">
+            <div className="w-4.19 h-4.19 p-0.5 flex items-center justify-center">
               <SearchIcon size="icon" />
             </div>
           )}
@@ -181,13 +181,13 @@ export const SearchButton = React.forwardRef<
           onClick={onClick}
           aria-label="Search"
           aria-busy={isLoading}
-          className={`${baseClasses} ${stateClasses} w-[48px] h-[48px] rounded-[5px] p-0 shrink-0 ${className}`}
+          className={`${baseClasses} ${stateClasses} w-12 h-12 rounded-field p-0 shrink-0 ${className}`}
           {...props}
         >
           {isLoading ? (
             <ButtonSpinner />
           ) : (
-            <div className="w-[16.76px] h-[16.76px] p-[2px] flex items-center justify-center">
+            <div className="w-4.19 h-4.19 p-0.5 flex items-center justify-center">
               <SearchIcon size="icon" />
             </div>
           )}
@@ -203,17 +203,17 @@ export const SearchButton = React.forwardRef<
           disabled={!isInteractive}
           onClick={onClick}
           aria-busy={isLoading}
-          className={`${baseClasses} ${stateClasses} w-[115px] h-[56px] rounded-[5px] px-[24px] py-[18px] gap-[8px] shrink-0 ${className}`}
+          className={`${baseClasses} ${stateClasses} w-28.75 h-14 rounded-field px-6 py-4.5 gap-2 shrink-0 ${className}`}
           {...props}
         >
           {isLoading ? (
             <ButtonSpinner />
           ) : (
             <>
-              <span className="flex h-[20px] w-[44px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-[#EBE8E0]">
+              <span className="flex h-5 w-11 items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-alpine-linen">
                 {children || 'Search'}
               </span>
-              <div className="relative w-[15px] h-[11px] shrink-0 flex items-center justify-center">
+              <div className="relative w-3.75 h-2.75 shrink-0 flex items-center justify-center">
                 <SearchIcon size="full" />
               </div>
             </>
@@ -230,17 +230,17 @@ export const SearchButton = React.forwardRef<
         disabled={!isInteractive}
         onClick={onClick}
         aria-busy={isLoading}
-        className={`${baseClasses} ${stateClasses} w-[115px] h-[56px] rounded-[9999px] px-[24px] py-[18px] gap-[8px] shrink-0 ${className}`}
+        className={`${baseClasses} ${stateClasses} w-28.75 h-14 rounded-full px-6 py-4.5 gap-2 shrink-0 ${className}`}
         {...props}
       >
         {isLoading ? (
           <ButtonSpinner />
         ) : (
           <>
-            <span className="flex h-[20px] w-[44px] items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-[#EBE8E0]">
+            <span className="flex h-5 w-11 items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] text-alpine-linen">
               {children || 'Search'}
             </span>
-            <div className="relative w-[15px] h-[11px] shrink-0 flex items-center justify-center">
+            <div className="relative w-3.75 h-2.75 shrink-0 flex items-center justify-center">
               <SearchIcon size="full" />
             </div>
           </>

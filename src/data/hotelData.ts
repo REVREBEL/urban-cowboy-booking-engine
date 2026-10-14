@@ -17,7 +17,7 @@ export const BUILDINGS: Building[] = [
   {
     id: 'alpine',
     number: 'BUILDING 01',
-    name: 'ALPINE',
+    name: 'Alpine',
     tagline: 'Hillside Soaking Suites & Picture Windows',
     description: "Built into the hillside above the Lodge, Alpine is home to ten of The Cowboy's most iconic rooms. Every suite pairs a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside.",
     ethos: 'THIS IS WHERE YOU COME TO SOAK, SLOW DOWN AND DISAPPEAR FOR A WHILE.',
@@ -28,7 +28,7 @@ export const BUILDINGS: Building[] = [
   {
     id: 'walden',
     number: 'BUILDING 02',
-    name: 'WALDEN',
+    name: 'Walden',
     tagline: 'Deep in the Pines with Outdoor Cedar Tubs',
     description: "Walden sits closer to the woods. Its ten cabin-style rooms trade Alpine's lodge-like romance for something quieter and more elemental: private decks, forest views and, in the bathing suites, cedar tubs made for soaking outside.",
     ethos: 'THIS IS WHERE THE COWBOY GETS A LITTLE WILDER. DEEP IN THE PINES →',
@@ -38,13 +38,24 @@ export const BUILDINGS: Building[] = [
   {
     id: 'lodge',
     number: 'BUILDING 03',
-    name: 'THE LODGE',
+    name: 'The Lodge',
     tagline: 'Historic Timber, Stone Hearths & Gathering Spaces',
     description: "The beating heart of Urban Cowboy Catskills. An authentic 1800s timber frame building where the dining parlor, evening whiskey bar, and wood-burning stoves live below, while grand vaulted soaking lofts nestle quietly above.",
     ethos: 'ARRIVE AS STRANGERS. LEAVE AS FRIENDS.',
     badge: 'COMMUNAL HEARTH & EASY DINING ACCESS',
     heroImage: ROOM_IMAGE_ASSETS.LODGE_PENTHOUSE_LIVING_ROOM,
     roomIds: ['lodge-penthouse', 'lodge-three-bedroom', 'lodge-king']
+  },
+  {
+    id: 'cabin',
+    number: 'BUILDING 04',
+    name: 'The Cabin',
+    tagline: 'Quite Literally, Your Cabin In The Woods.',
+    description: "Six hundred square feet. Your own porch. A copper clawfoot tub. A fireplace. Enough space to settle in and briefly consider never going home. The open-plan interior gives you a king bed, rain shower, leather loveseat and dining table, while the porch puts the Catskills just outside your door. Coffee works out there. Cocktails work better.",
+    ethos: 'ARRIVE AS STRANGERS. LEAVE AS FRIENDS.',
+    badge: 'COMMUNAL HEARTH & EASY DINING ACCESS',
+    heroImage: ROOM_IMAGE_ASSETS.CABIN_BEDŞ,
+    roomIds: ['cabin']
   }
 ];
 
@@ -307,6 +318,37 @@ export const ROOMS: RoomType[] = [
       'Copper Clawfoot Soaking Tub',
       'Walk-in Rain Shower',
       'Private Balcony for Two',
+      'Pendleton Robes & Blankets'
+    ],
+    tags: ['Family-friendly', 'Dog-friendly', 'King Bed']
+  },
+    {
+    id: 'cabin',
+    buildingId: 'cabin',
+    buildingName: 'The Cabin',
+    name: 'The Cabin',
+    eyebrow: 'Quite Literally, Your Cabin In The Woods.',
+    tagline: 'Comfortable King room directly above the dining parlor and evening fire',
+    description: "Six hundred square feet. Your own porch. A copper clawfoot tub. A fireplace. Enough space to settle in and briefly consider never going home. The open-plan interior gives you a king bed, rain shower, leather loveseat and dining table, while the porch puts the Catskills just outside your door. Coffee works out there. Cocktails work better.",
+    longDescription: "Completely detached along the forest edge, The Cabin is a 600-square-foot private hideaway with no shared hallway and plenty of room to settle in. The open-plan layout includes a king bed, copper clawfoot soaking tub, walk-in rain shower, gas fireplace, leather loveseat, dining or work table and private covered porch. A twin bunk or lounging nook adds flexibility, while Wright, Pendleton, Printsburgh and the minibar bring the familiar Cowboy details. Despite the standalone setting, the Lodge, sauna, trails, firepits and creekside gathering spaces are still within easy reach. Expect more privacy than a guest room, less space than a full chalet, and the feeling of having a little Catskills cabin to yourselves.",
+    basePrice: 165,
+    squareFeet: 340,
+    bedType: '1 King and 1 Bunkbed',
+    maxGuests: 4,
+    isDogFriendly: true,
+    ageRestricted21: false,
+    soakType: 'clawfoot-window',
+    soakHighlight: 'Private Balcony for Two',
+    images: [
+      ROOM_IMAGE_ASSETS.CABIN_BEDŞ,
+      ROOM_IMAGE_ASSETS.CABIN_SITTING_AREA_SOAKING_TUB,
+      ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA
+    ],
+    features: [
+      'Copper Clawfoot Soaking Tub',
+      'Walk-in Rain Shower',
+      'Bunk Bed',
+      'Sitting Area',
       'Pendleton Robes & Blankets'
     ],
     tags: ['Family-friendly', 'Dog-friendly', 'King Bed']

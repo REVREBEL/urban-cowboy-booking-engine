@@ -28,11 +28,11 @@ export function PreferenceIconButton({ id, label, description, selected, onToggl
       aria-describedby={`preference-${id}-description`}
       title={`${label}: ${description}`}
       onClick={onToggle}
-      className="group flex size-52 items-center border-[0.386px] border-oxblood p-0.5"
+      className="group flex size-52 items-center border-[length:var(--border-width-hairline)] border-oxblood p-0.5"
     >
       <span
         className={cn(
-          "flex flex-1 items-center justify-center self-stretch overflow-hidden border-[0.386px] transition-colors",
+          "flex flex-1 items-center justify-center self-stretch overflow-hidden border-[length:var(--border-width-hairline)] transition-colors",
           selected
             ? "border-oxblood bg-white/70"
             : "border-umber/30 bg-white/25 group-hover:border-umber/50",
@@ -43,7 +43,7 @@ export function PreferenceIconButton({ id, label, description, selected, onToggl
           alt=""
           aria-hidden="true"
           className={cn(
-            "h-[188px] w-[188px] object-contain transition-opacity duration-200",
+            "h-47 w-47 object-contain transition-opacity duration-200",
             selected ? "opacity-100" : "opacity-55 group-hover:opacity-75",
           )}
         />

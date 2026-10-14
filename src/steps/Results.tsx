@@ -18,15 +18,21 @@ import { MatchOrBrowseScreen } from "@/components/booking/discovery/MatchOrBrows
 import { RoomMatcherPage } from "@/components/booking/discovery/RoomMatcherPage";
 import { HelpMeChooseModal } from "@/components/booking/discovery/HelpMeChooseModal";
 import { StudioMatchResults } from "./StudioMatchResults";
-import { RoomsListCard, type RoomCardColor } from "@/components/RoomsListCard";
-import { BuildingExperienceList } from "@/components/BuildingExperienceList";
-import { RoomDetailModal } from "@/components/RoomDetailModal";
+import { RoomsListCard, type RoomCardTheme } from "@/components/rooms/RoomsListCard";
+import { BuildingExperienceList } from "@/components/rooms/BuildingExperienceList";
+import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
+import type { RoomResultsLayout } from "@/studio/roomLayout";
+import { PhotoJournal } from "@/journey/PhotoJournal";
+import { PhotoRooms } from "@/journey/PhotoRooms";
+import type { MatchProfile } from "@/journey/data";
+import { getPhotoProfile, savePhotoProfile, setPhotoPath } from "@/journey/photoSession";
 import type { RoomType as StudioRoomType } from "@/types";
 import type { RecommendationPreferences as DiscoveryPreferences } from "../types/find-your-stay";
 import type {
   RoomTypeCmsDescriptionMap,
   RoomTypeCmsReviewMap,
 } from "../types/room-type-cms";
+import type { BuildingCmsMap } from "../types/building-cms";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 import { roomTypeGroupName } from "@/data/roomTypeGroups";
 import { roomDetailTags } from "@/lib/roomTags";
@@ -68,7 +74,7 @@ function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
   };
 }
 
-export function Results() {
+export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayout }) {
   const {
     hotel,
     hotelError,
@@ -96,23 +102,36 @@ export function Results() {
   } = useBooking();
 
   const [data, setData] = useState<AvailabilityResponse | null>(null);
+  const photoLayout = roomLayout === "photo";
+  const [journalProfile, setJournalProfile] = useState<MatchProfile | null>(getPhotoProfile);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openRoom, setOpenRoom] = useState<ShapedRoom | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   // Accordéons « autres hébergements » (ouverts/fermés par clé d'hébergement).
   const [openProps, setOpenProps] = useState<string[]>([]);
-  const [discoveryView, setDiscoveryView] = useState<"explore" | "matcher" | "matches" | "rooms">(() =>
-    typeof window !== "undefined" && new URLSearchParams(window.location.search).has("interest")
-      ? "matches"
-      : "explore",
-  );
+  const [discoveryView, setDiscoveryView] = useState<"explore" | "matcher" | "matches" | "rooms" | "journal">(() => {
+    const query = new URLSearchParams(window.location.search);
+    if (photoLayout) return query.get("photoPath") === "journal" ? "journal" : "rooms";
+    return query.has("interest") ? "matches" : "explore";
+  });
+  useEffect(() => {
+    if (photoLayout) {
+      setDiscoveryView((current) =>
+        current === "explore" || current === "matcher" || current === "matches"
+          ? new URLSearchParams(window.location.search).get("photoPath") === "journal" ? "journal" : "rooms"
+          : current);
+    } else if (discoveryView === "journal") {
+      setDiscoveryView("explore");
+    }
+  }, [photoLayout, discoveryView]);
   const [quizPreferences, setQuizPreferences] = useState<DiscoveryPreferences | null>(null);
   const [showMatcherModal, setShowMatcherModal] = useState(false);
   const [matchBackView, setMatchBackView] = useState<"matcher" | "rooms">("matcher");
   const [roomTypeReviews, setRoomTypeReviews] = useState<RoomTypeCmsReviewMap>({});
   const [roomTypeDescriptions, setRoomTypeDescriptions] =
     useState<RoomTypeCmsDescriptionMap>({});
+  const [buildings, setBuildings] = useState<BuildingCmsMap>({});
   const toggleProp = (key: string) =>
     setOpenProps((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
 
@@ -156,6 +175,16 @@ export function Results() {
       if (!alive) return;
       setRoomTypeReviews(content.reviews);
       setRoomTypeDescriptions(content.descriptions);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    api.buildings().then((content) => {
+      if (alive) setBuildings(content);
     });
     return () => {
       alive = false;
@@ -295,6 +324,32 @@ export function Results() {
     setDiscoveryView("matches");
   }
 
+  if (photoLayout && discoveryView === "journal") {
+    return (
+      <div className="min-h-dvh bg-smoke text-paper font-body">
+        <PhotoJournal
+          adults={adults}
+          children={children}
+          rooms={rooms}
+          imageBaseUrl={imageBaseUrl}
+          initial={journalProfile}
+          onDone={(profile) => {
+            savePhotoProfile(profile);
+            setJournalProfile(profile);
+            setPhotoPath("rooms");
+            setDiscoveryView("rooms");
+          }}
+          onSkip={() => {
+            savePhotoProfile(null);
+            setJournalProfile(null);
+            setPhotoPath("rooms");
+            setDiscoveryView("rooms");
+          }}
+        />
+      </div>
+    );
+  }
+
   // Date search opens the visual match-or-browse decision first. The imported
   // mockup components are adapters only; live Mews inventory and our canonical
   // matching rules remain the source of truth.
@@ -360,13 +415,45 @@ export function Results() {
   }
 
   if (discoveryView === "rooms") {
+    if (photoLayout) {
+      if (loading) return (
+        <div className="grid min-h-[65dvh] place-items-center bg-smoke px-5 pt-24 text-paper" role="status">
+          <p className="font-heading text-2xl">Finding rooms for your dates…</p>
+        </div>
+      );
+      if (error || hotelError) return (
+        <div className="grid min-h-[65dvh] place-items-center bg-smoke px-5 pt-24 text-paper">
+          <div className="text-center">
+            <h2 className="font-heading text-2xl">We couldn't load available rooms.</h2>
+            <p className="mt-3 text-sm text-paper/70">{error ?? "Please try again."}</p>
+            <button type="button" className="mt-6 rounded-full border border-paper px-5 py-3" onClick={() => setReloadKey(key => key + 1)}>Try again</button>
+          </div>
+        </div>
+      );
+      return (
+        <div className="min-h-dvh bg-smoke font-body text-paper">
+          <PhotoRooms
+            profile={journalProfile}
+            rooms={rooms}
+            imageBaseUrl={imageBaseUrl}
+            guests={adults + children + infants}
+            children={children + infants}
+            onChoose={choose}
+            onEditJournal={() => {
+              setPhotoPath("journal");
+              setDiscoveryView("journal");
+            }}
+          />
+        </div>
+      );
+    }
     const studioCriteria = discoveryCriteria;
-
     return (
       <div className="studio-room-experience">
         <BuildingExperienceList
           criteria={studioCriteria}
           rooms={rooms}
+          buildings={buildings}
           imageBaseUrl={imageBaseUrl}
           onUpdateCriteria={() => goTo("dates")}
           onSelectRoom={(room) => {
@@ -404,12 +491,12 @@ export function Results() {
   return (
     <div className="booking-shell py-8">
       {/* Barre de recherche / résumé */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl2 border border-ink/10 bg-white p-4 shadow-card">
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-ink/80">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl2 border border-smoke/10 bg-white p-4 shadow-card">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-smoke/80">
           <span className="inline-flex items-center gap-1.5">
             <IconCalendar className="h-4 w-4 text-turquoise" />
             {fmtDate(checkIn)} → {fmtDate(checkOut)}
-            <span className="text-ink/45">
+            <span className="text-smoke/45">
               · {t("results.nights", { count: nightsCount })}
             </span>
           </span>
@@ -428,10 +515,10 @@ export function Results() {
       {!recommendationPreferences && (
         <div className="mt-6 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="font-display text-2xl text-ink sm:text-3xl">
+            <h1 className="font-heading text-2xl text-smoke sm:text-3xl">
               {rooms.length > 0 ? t("results.availableCount", { count: rooms.length }) : t("results.ourAccommodations")}
             </h1>
-            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink/55">
+            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-smoke/55">
               <span>{t("results.subtitle")}</span>
             </div>
           </div>
@@ -468,7 +555,7 @@ export function Results() {
               <RoomsListCard
                 room={room}
                 imageBaseUrl={imageBaseUrl}
-                color={(["paper", "copper", "smoke", "forest"] as RoomCardColor[])[index % 4]}
+                theme={(["paper", "copper", "lake-forest"] as RoomCardTheme[])[index % 3]}
                 layout={index % 2 === 0 ? "left" : "right"}
                 onSelectRoom={(selected) => {
                   if (selected.rates.length) choose(selected);
@@ -490,13 +577,13 @@ export function Results() {
       {/* Autres hébergements dispos sur ces dates — accordéons, EN BAS. */}
       {!loading && !hotelError && !error && teasers.length > 0 && (
         <div className="mt-10">
-          <h2 className="font-display text-xl text-ink">{t("results.alsoAvailable")}</h2>
+          <h2 className="font-heading text-xl text-smoke">{t("results.alsoAvailable")}</h2>
           <div className="mt-3 space-y-3">
             {teasers.map((x) => {
               const isOpen = openProps.includes(x.key);
               const propRooms = allRooms.filter((r) => r.property === x.key);
               return (
-                <div key={x.key} className="overflow-hidden rounded-xl2 border border-ink/10 bg-white shadow-card">
+                <div key={x.key} className="overflow-hidden rounded-xl2 border border-smoke/10 bg-white shadow-card">
                   <button
                     type="button"
                     onClick={() => toggleProp(x.key)}
@@ -504,7 +591,7 @@ export function Results() {
                     className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-cream"
                   >
                     <span className="flex flex-wrap items-baseline gap-x-2">
-                      <span className="font-display text-lg text-ink">{x.label}</span>
+                      <span className="font-heading text-lg text-smoke">{x.label}</span>
                       <span className="text-sm font-normal text-teal-deep/60">
                         · {t("results.availableSuffix", { count: x.count })}
                       </span>
@@ -514,7 +601,7 @@ export function Results() {
                     />
                   </button>
                   {isOpen && (
-                    <div className="space-y-4 border-t border-ink/10 bg-cream/40 p-4">
+                    <div className="space-y-4 border-t border-smoke/10 bg-cream/40 p-4">
                       {propRooms.map((room) => (
                         <RoomsListCard
                           key={room.roomTypeId}
@@ -557,7 +644,7 @@ function SkeletonList() {
     <div className="mt-5 space-y-4">
       {[0, 1, 2].map((i) => (
         <div key={i} className="card flex animate-pulse flex-col overflow-hidden sm:flex-row">
-          <div className="aspect-[4/3] w-full bg-sand sm:aspect-auto sm:w-64" />
+          <div className="aspect-4/3 w-full bg-sand sm:aspect-auto sm:w-64" />
           <div className="flex-1 space-y-3 p-5">
             <div className="h-5 w-1/3 rounded bg-sand" />
             <div className="h-3 w-3/4 rounded bg-sand/70" />
@@ -573,7 +660,7 @@ function SkeletonList() {
 function ErrorBox({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
     <div className="mt-6 rounded-xl2 border border-red-200 bg-red-50 p-6 text-center">
-      <p className="font-medium text-red-700">{message}</p>
+      <p className="font-medium text-error">{message}</p>
       <button type="button" onClick={onRetry} className="btn-primary mt-4">
         {t("results.retry")}
       </button>
@@ -583,9 +670,9 @@ function ErrorBox({ message, onRetry }: { message: string; onRetry: () => void }
 
 function EmptyBox({ onModify }: { onModify: () => void }) {
   return (
-    <div className="mt-6 rounded-xl2 border border-ink/10 bg-white p-10 text-center shadow-card">
-      <p className="font-display text-xl text-ink">{t("results.emptyTitle")}</p>
-      <p className="mt-2 text-sm text-ink/60">
+    <div className="mt-6 rounded-xl2 border border-smoke/10 bg-white p-10 text-center shadow-card">
+      <p className="font-heading text-xl text-smoke">{t("results.emptyTitle")}</p>
+      <p className="mt-2 text-sm text-smoke/60">
         {t("results.emptyBody")}
       </p>
       <button type="button" onClick={onModify} className="btn-primary mt-5">
@@ -597,9 +684,9 @@ function EmptyBox({ onModify }: { onModify: () => void }) {
 
 function NoEligibleMatchBox({ onModify }: { onModify: () => void }) {
   return (
-    <div className="mt-6 rounded-xl2 border border-ink/10 bg-white p-10 text-center shadow-card">
-      <p className="font-display text-xl text-ink">{t("results.noEligibleTitle")}</p>
-      <p className="mt-2 text-sm text-ink/60">{t("results.noEligibleBody")}</p>
+    <div className="mt-6 rounded-xl2 border border-smoke/10 bg-white p-10 text-center shadow-card">
+      <p className="font-heading text-xl text-smoke">{t("results.noEligibleTitle")}</p>
+      <p className="mt-2 text-sm text-smoke/60">{t("results.noEligibleBody")}</p>
       <button type="button" onClick={onModify} className="btn-primary mt-5">
         {t("results.editSearch")}
       </button>

@@ -102,7 +102,7 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
       aria-label={`${title}: ${subtitle}${isSelected ? ', selected' : ''}`}
       disabled={isInteractiveDisabled}
       onClick={handleClick}
-      className={`group relative flex flex-col justify-center items-start text-left box-border transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#4E332D]/30 ${
+      className={`group relative flex flex-col justify-center items-start text-left box-border transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-cowboy-umber/30 ${
         disabled
           ? 'opacity-40 cursor-not-allowed'
           : isBusy
@@ -127,10 +127,10 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
     >
       {/* Loading Overlay per SKILL.md */}
       {isBusy && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-[14px]">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 backdrop-blur-[1px] rounded-control">
           <div className="flex items-center gap-2">
             <svg
-              className="animate-spin h-4 w-4 text-[#4E332D]"
+              className="animate-spin h-4 w-4 text-cowboy-umber"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -150,8 +150,8 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
               />
             </svg>
             <span
-              className="text-[10px] font-bold tracking-wider uppercase text-[#4E332D]"
-              style={{ fontFamily: "'Brothers OT', 'League Spartan', sans-serif" }}
+              className="text-[10px] font-bold tracking-wider uppercase text-cowboy-umber"
+              style={{ fontFamily: "'Brothers', 'League Spartan', sans-serif" }}
             >
               UPDATING...
             </span>
@@ -160,11 +160,11 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
       )}
 
       {/* Primary Headline Title */}
-      <div className="w-full flex flex-row items-center h-[24px]">
+      <div className="w-full flex flex-row items-center h-6">
         <span
           className="font-normal uppercase select-none transition-colors duration-200"
           style={{
-            fontFamily: "'Brothers OT', 'League Spartan', sans-serif",
+            fontFamily: "'Brothers', 'League Spartan', sans-serif",
             fontSize: '24px',
             lineHeight: '24px',
             letterSpacing: '1.28px',
@@ -176,7 +176,7 @@ export const FindYourStayTravelPartyButton: React.FC<FindYourStayTravelPartyButt
       </div>
 
       {/* Descriptive Narrative Subtitle */}
-      <div className="w-full flex flex-row items-center h-[16px]">
+      <div className="w-full flex flex-row items-center h-4">
         <span
           className="font-normal select-none transition-colors duration-200"
           style={{
@@ -220,7 +220,7 @@ export const TravelPartyGroup: React.FC<TravelPartyGroupProps> = ({
     <div
       role="radiogroup"
       aria-label="Select your travel party"
-      className={`grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-[516px] select-none ${className}`}
+      className={`grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-129 select-none ${className}`}
     >
       {options.map((option) => (
         <FindYourStayTravelPartyButton

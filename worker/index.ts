@@ -25,7 +25,8 @@ import { runScheduledCalendarRefresh } from "./mews/calendar-engine";
 import { onRequestGet as rateCards } from "./webflow/rate-cards";
 import { onRequestGet as addOns } from "./webflow/add-ons";
 import { onRequestGet as roomTypeReviews } from "./webflow/room-type-reviews";
-import { onRequestGet as locations } from "./webflow/locations";
+import { onRequestGet as locations, onRequestStudioConfig } from "./webflow/locations";
+import { onRequestGet as buildings } from "./webflow/buildings";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
 // waitUntil permet de lancer les webhooks en tâche de fond sans bloquer la réponse.
@@ -57,6 +58,10 @@ const json = (data: unknown, status: number) =>
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname === "/api/studio/config") {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return onRequestStudioConfig({ request, env });
+    }
     if (url.pathname.match(/^\/api\/content\/rate-cards\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return rateCards({ env });
@@ -73,8 +78,20 @@ export default {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return locations({ env, waitUntil: (p) => ctx.waitUntil(p) });
     }
+    if (url.pathname.match(/^\/api\/content\/buildings\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return buildings({ env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
     const match = url.pathname.match(/^\/api\/mews\/([a-z-]+)\/?$/);
     if (match) {
+      // A Studio-originating request must never reach a live Mews handler.
+      const referer = request.headers.get("Referer");
+      if (referer) {
+        try {
+          if (["/booking/studio", "/booking/studio/"].includes(new URL(referer).pathname))
+            return json({ error: "studio_live_api_disabled" }, 403);
+        } catch { /* ignore malformed referer */ }
+      }
       const handler = ROUTES[match[1]]?.[request.method.toUpperCase()];
       if (!handler) return json({ error: "not_found" }, 404);
       return handler({ request, env, waitUntil: (p) => ctx.waitUntil(p) });

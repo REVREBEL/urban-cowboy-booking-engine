@@ -12,6 +12,8 @@ The rate card renderer separates editorial artwork from live booking data.
 - member-only flag
 - desktop/full artwork
 - mobile/compact artwork
+- horizontal artwork
+- border style (none / single / double)
 - button fill style
 - button color
 - overlay text color
@@ -51,6 +53,14 @@ Mobile/compact artwork:
 - 500 × 675
 - aspect ratio is locked by the renderer
 
+Horizontal artwork:
+
+- 1475 × 380
+- the renderer crops from the right before scaling
+- the live transactional overlay moves left while cropping
+- the overlay may not move left of 51% of the original 1475px artboard
+- after that guardrail is reached, the cropped composition scales proportionally
+
 In automatic mode the component responds to its own rendered width using CSS
 container queries. At 420px and below it switches to the compact composition.
 A card rendered at 300px therefore becomes 300 × 405. The overlay swaps to
@@ -89,6 +99,8 @@ The production Offers collection currently exposes these rate-card fields:
 | `mobile-overlay-position` | `mobileOverlayPosition` |
 | `full-card` | `desktopArtworkUrl` |
 | `compact-card` | `mobileArtworkUrl` |
+| `horizontal-card` | `horizontalArtworkUrl` |
+| `border-options` | `borderStyle` |
 | `card-fill` | `buttonStyle` |
 | `button-color` | `buttonColor` |
 | `text-color` | `textColor` |
@@ -104,6 +116,23 @@ The production Offers collection currently exposes these rate-card fields:
 
 These fields now exist in the production Offers collection. Existing items use
 the renderer's safe defaults until an editor chooses explicit values.
+
+## Border style
+
+Webflow `border-options` values map to the renderer as:
+
+- **No Border** → `none`
+- **Solid Line** → `single`
+- **Double Solid Line** → `double`
+
+Borders are rendered by CSS rather than baked into the artwork. The border
+color always uses the same normalized Webflow `text-color` as the live rate
+overlay.
+
+- single line: 5px
+- double line: 3px outer line, 2px gap, 3px inner line
+
+A blank CMS border option safely defaults to no border.
 
 ## Button style
 

@@ -26,8 +26,8 @@ export function StepLayout({
           {backLabel}
         </button>
       )}
-      <h1 className="font-display text-2xl text-ink sm:text-3xl">{title}</h1>
-      {subtitle && <p className="mt-1 text-sm text-ink/55">{subtitle}</p>}
+      <h1 className="font-heading text-2xl text-smoke sm:text-3xl">{title}</h1>
+      {subtitle && <p className="mt-1 text-sm text-smoke/55">{subtitle}</p>}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_21rem]">
         <div className="min-w-0">{children}</div>

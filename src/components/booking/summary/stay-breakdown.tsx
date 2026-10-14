@@ -113,7 +113,7 @@ export function StayBreakdown() {
             </>
           )}
 
-          <div className="mt-1.5 border-t border-ink/10 pt-2.5">
+          <div className="mt-1.5 border-t border-smoke/10 pt-2.5">
             <Row label={t("breakdown.total")} value={money(grandTotal, currency)} strong />
           </div>
         </>
@@ -145,14 +145,14 @@ export function StayBreakdown() {
             />
           ))}
           {taxe > 0 && <Row label={t("breakdown.cityTax")} value={money(taxe, currency)} />}
-          <div className="mt-1.5 border-t border-ink/10 pt-2.5">
+          <div className="mt-1.5 border-t border-smoke/10 pt-2.5">
             <Row label={t("breakdown.total")} value={money(grandTotal, currency)} strong />
           </div>
         </>
       )}
 
       {amountDueNow != null && (
-        <div className="mt-1.5 border-t border-ink/10 pt-2.5">
+        <div className="mt-1.5 border-t border-smoke/10 pt-2.5">
           <Row label={t("breakdown.dueNow")} value={money(amountDueNow, currency)} strong />
           {remainingBalance != null && remainingBalance > 0 && (
             <Row label={t("breakdown.remainingBalance")} value={money(remainingBalance, currency)} />
@@ -177,7 +177,7 @@ function Row({
 }) {
   return (
     <div className="flex items-baseline justify-between gap-4">
-      <dt className={`flex items-center gap-1.5 ${strong ? "font-semibold text-ink" : "text-ink/70"}`}>
+      <dt className={`flex items-center gap-1.5 ${strong ? "font-semibold text-smoke" : "text-smoke/70"}`}>
         {icon && <span className="shrink-0 text-teal-deep">{icon}</span>}
         <span>{label}</span>
       </dt>
@@ -187,7 +187,7 @@ function Row({
             ? "text-lg text-teal-deep"
             : note
               ? "text-xs font-semibold uppercase tracking-wide text-turquoise"
-              : "font-medium text-ink"
+              : "font-medium text-smoke"
         }`}
       >
         {value ?? note}

@@ -90,20 +90,24 @@ export function BookingFooter() {
   );
 
   return (
-    <footer className="mt-20 w-full border-t-4 border-[#343833] bg-[#4E332D] pb-12 pt-14 text-[#EBE8E0]">
+    <footer className="w-full border-t-4 border-foreground bg-background pb-12 pt-14 text-foreground">
       <div className="booking-shell">
-        <div className="flex flex-col items-center justify-between gap-8 border-b border-[#EBE8E0]/15 pb-10 text-center md:flex-row md:text-left">
-          <img
-            src="./assets/brand/logos/urban-cowboy_light.svg"
-            alt="Urban Cowboy"
-            className="mx-auto h-10 w-auto select-none object-contain sm:h-12 md:mx-0"
+        <div className="flex flex-col items-center justify-between gap-8 border-b border-foreground/15 pb-10 text-center md:flex-row md:text-left">
+          <span
+            role="img"
+            aria-label="Urban Cowboy"
+            className="mx-auto block h-18 w-28 bg-current text-foreground sm:h-28 sm:w-44 md:mx-0"
+            style={{
+              WebkitMask: 'url("/assets/brand/logos/urban-cowboy.svg") center / contain no-repeat',
+              mask: 'url("/assets/brand/logos/urban-cowboy.svg") center / contain no-repeat',
+            }}
           />
 
           {location ? (
-            <div className="flex flex-col items-center gap-1 font-woodblock uppercase tracking-widest text-[#EBE8E0]/80 md:items-end">
+            <div className="flex flex-col items-center gap-1 font-label uppercase tracking-widest text-foreground/80 md:items-end">
               <span className="text-xs">{location.fullLocationName}</span>
               {cityState ? (
-                <span className="text-[10px] tracking-[0.18em] text-[#EBE8E0]/55">
+                <span className="text-[10px] tracking-[0.18em] text-foreground/55">
                   {cityState}
                 </span>
               ) : null}
@@ -111,7 +115,7 @@ export function BookingFooter() {
           ) : null}
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-5 pt-8 text-[11px] text-[#EBE8E0]/60 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-5 pt-8 text-[11px] text-foreground/60 sm:flex-row">
           <span>
             © <span className="font-number">{new Date().getFullYear()}</span>{" "}
             {locationName}. All rights reserved.
@@ -130,8 +134,8 @@ export function BookingFooter() {
                 className={
                   "rounded-full border px-2.5 py-1 font-button text-[10px] font-bold transition " +
                   (active === language.code
-                    ? "border-[#EBE8E0] bg-[#EBE8E0] text-[#4E332D]"
-                    : "border-[#EBE8E0]/30 text-[#EBE8E0]/70 hover:border-[#EBE8E0] hover:text-[#EBE8E0]")
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-foreground/30 text-foreground/70 hover:border-foreground hover:text-foreground")
                 }
               >
                 {language.label}
@@ -142,7 +146,7 @@ export function BookingFooter() {
           {legalLinks.length > 0 ? (
             <nav
               aria-label="Legal"
-              className="flex flex-wrap items-center justify-center gap-4 font-woodblock text-[10px] uppercase tracking-wider sm:justify-end"
+              className="flex flex-wrap items-center justify-center gap-4 font-label text-[10px] uppercase tracking-wider sm:justify-end"
             >
               {legalLinks.map((link, index) => (
                 <Fragment key={link.label}>
@@ -151,7 +155,7 @@ export function BookingFooter() {
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="transition hover:text-[#EBE8E0]"
+                    className="transition hover:text-foreground"
                   >
                     {link.label}
                   </a>

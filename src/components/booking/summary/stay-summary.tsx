@@ -50,7 +50,7 @@ export function StaySummary({
   return (
     <aside className="rounded-2xl border border-border bg-card p-6 shadow-sm">
       <p className="font-label text-xs text-muted-foreground">Your stay</p>
-      <p className="mt-2 font-brand text-2xl">{roomName || "Not chosen yet"}</p>
+      <p className="mt-2 font-heading text-2xl">{roomName || "Not chosen yet"}</p>
       {rateName && <p className="text-sm text-muted-foreground">{rateName}</p>}
 
       <dl className="mt-6 space-y-4 text-sm">

@@ -502,3 +502,7 @@ yarn-error.log*
 .agents/skills/webflow-code-component-component-audit/SKILL.md
 .agents/skills/webflow-code-component-convert-component/references/prop-types.md
 .agents/skills/webflow-code-component-convert-component/SKILL.md
+
+*storybook.log
+storybook-static
+/.agents

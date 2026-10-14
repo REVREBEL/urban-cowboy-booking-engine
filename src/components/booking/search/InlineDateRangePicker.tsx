@@ -27,13 +27,39 @@ const fromIso = (value: string) => {
   return { year, month: month - 1, day };
 };
 
+// Module-level caches for expensive Intl instances and month cell calculations
+// to avoid GC pressure and repeated allocations during high-frequency mouseover events.
+const monthNameFmt = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+const rateNumFmtCache = new Map<string, Intl.NumberFormat>();
+
+function defaultFormatRate(rate: DailyRate): string {
+  const currency = rate.currency || "USD";
+  let fmt = rateNumFmtCache.get(currency);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0,
+    });
+    rateNumFmtCache.set(currency, fmt);
+  }
+  return fmt.format(rate.amount);
+}
+
+const monthCellsCache = new Map<string, Array<string | null>>();
 const monthCells = (year: number, month: number): Array<string | null> => {
-  const mondayIndex = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
-  const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-  return [
-    ...Array<string | null>(mondayIndex).fill(null),
-    ...Array.from({ length: dayCount }, (_, index) => toIso(year, month, index + 1)),
-  ];
+  const key = `${year}-${month}`;
+  let cached = monthCellsCache.get(key);
+  if (!cached) {
+    const mondayIndex = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
+    const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    cached = [
+      ...Array<string | null>(mondayIndex).fill(null),
+      ...Array.from({ length: dayCount }, (_, index) => toIso(year, month, index + 1)),
+    ];
+    monthCellsCache.set(key, cached);
+  }
+  return cached;
 };
 
 const shiftMonth = (year: number, month: number, amount: number) => {
@@ -42,9 +68,7 @@ const shiftMonth = (year: number, month: number, amount: number) => {
 };
 
 const monthName = (year: number, month: number) =>
-  new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" }).format(
-    new Date(Date.UTC(year, month, 1)),
-  );
+  monthNameFmt.format(new Date(Date.UTC(year, month, 1)));
 
 export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   checkIn,
@@ -52,12 +76,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   onChange,
   minDate = new Date().toISOString().slice(0, 10),
   dailyRates,
-  formatRate = (rate) =>
-    new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: rate.currency || "USD",
-      maximumFractionDigits: 0,
-    }).format(rate.amount),
+  formatRate = defaultFormatRate,
   onVisibleRangeChange,
 }) => {
   const initial = fromIso(checkIn || minDate);
@@ -97,15 +116,25 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   };
 
   return (
-    <div className="rounded-2xl border border-[#4E332D]/15 bg-white p-4 sm:p-5">
+    <div className="rounded-2xl border border-input-border/15 bg-input-bg p-4 text-foreground sm:p-5">
       <div className="mb-4 flex items-center justify-between">
-        <button type="button" aria-label="Previous month" onClick={() => setView(shiftMonth(view.year, view.month, -1))} className="grid h-9 w-9 place-items-center rounded-full text-[#4E332D] transition hover:bg-[#EBE8E0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9A5636]">
+        <button
+          type="button"
+          aria-label="Previous month"
+          onClick={() => setView(shiftMonth(view.year, view.month, -1))}
+          className="grid h-9 w-9 place-items-center rounded-full text-(--calendar-date-foreground) transition hover:bg-(--calendar-date-hover-bg) hover:text-(--calendar-date-hover-foreground) focus-visible:outline-2 focus-visible:outline-(--calendar-date-focus-ring)"
+        >
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </button>
-        <p className="font-brothers text-sm uppercase tracking-[1.5px] text-[#4E332D]">
+        <p className="font-label text-sm uppercase tracking-[1.5px] text-(--calendar-date-foreground)">
           {nightCount > 0 ? `${nightCount} night${nightCount === 1 ? "" : "s"} selected` : "Select your dates"}
         </p>
-        <button type="button" aria-label="Next month" onClick={() => setView(shiftMonth(view.year, view.month, 1))} className="grid h-9 w-9 place-items-center rounded-full text-[#4E332D] transition hover:bg-[#EBE8E0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9A5636]">
+        <button
+          type="button"
+          aria-label="Next month"
+          onClick={() => setView(shiftMonth(view.year, view.month, 1))}
+          className="grid h-9 w-9 place-items-center rounded-full text-(--calendar-date-foreground) transition hover:bg-(--calendar-date-hover-bg) hover:text-(--calendar-date-hover-foreground) focus-visible:outline-2 focus-visible:outline-(--calendar-date-focus-ring)"
+        >
           <ChevronRight className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
@@ -113,68 +142,114 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
       <div className="grid gap-7 md:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)]">
         {months.map((calendarMonth, monthIndex) => (
           <React.Fragment key={`${calendarMonth.year}-${calendarMonth.month}`}>
-            {monthIndex === 1 && <div className="hidden self-stretch bg-gradient-to-b from-transparent via-[#4E332D]/15 to-transparent md:block" aria-hidden="true" />}
+            {monthIndex === 1 && (
+              <div
+                className="hidden self-stretch bg-linear-to-b from-transparent via-foreground/15 to-transparent md:block"
+                aria-hidden="true"
+              />
+            )}
             <div className={monthIndex === 1 ? "hidden md:block" : ""}>
-              <p className="mb-3 text-center font-uchen text-sm text-[#4E332D]">{monthName(calendarMonth.year, calendarMonth.month)}</p>
-              <div role="grid" aria-label={monthName(calendarMonth.year, calendarMonth.month)} className="grid grid-cols-7 text-center">
+              <p className="mb-3 text-center font-body text-sm text-(--calendar-date-foreground)">
+                {monthName(calendarMonth.year, calendarMonth.month)}
+              </p>
+              <div
+                role="grid"
+                aria-label={monthName(calendarMonth.year, calendarMonth.month)}
+                className="grid grid-cols-7 text-center"
+              >
                 {["M", "T", "W", "T", "F", "S", "S"].map((weekday, index) => (
-                  <span key={`${weekday}-${index}`} role="columnheader" className="pb-2 font-bianco text-[10px] font-bold uppercase text-[#4E332D]/45">{weekday}</span>
+                  <span
+                    key={`${weekday}-${index}`}
+                    role="columnheader"
+                    className="pb-2 font-number text-[10px] font-bold uppercase text-(--calendar-date-muted-foreground)"
+                  >
+                    {weekday}
+                  </span>
                 ))}
-                {monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
-                  if (!date) return <span key={`blank-${index}`} role="gridcell" className={hasDailyRates ? "h-14" : "h-10"} />;
-                  const rate = dailyRates?.[date];
-                  const unavailable = rate?.available === false && !rate.minNights;
-                  const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
-                  const candidateNights = choosingCheckout && checkIn
-                    ? Math.max(
-                        0,
-                        Math.round(
-                          (new Date(`${date}T00:00:00Z`).getTime() -
-                            new Date(`${checkIn}T00:00:00Z`).getTime()) /
-                            86_400_000,
-                        ),
-                      )
-                    : 0;
-                  const minimumStayAdvisory = Boolean(
-                    choosingCheckout &&
-                      selectedMinimumNights &&
-                      candidateNights < selectedMinimumNights,
-                  );
-                  const stayThroughAdvisory = Boolean(
-                    choosingCheckout &&
-                      selectedRate?.invalidStayLengths?.includes(candidateNights),
-                  );
-                  const restrictionAdvisory = minimumStayAdvisory || stayThroughAdvisory;
-                  // A sold night may still be used as the departure date because the guest
-                  // does not occupy the room that night. Cached restrictions are advisory:
-                  // they never disable checkout selection or prevent a live Search.
-                  const disabled = date < minDate || (unavailable && !choosingCheckout);
-                  const start = date === checkIn;
-                  const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
-                  const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
-                  return (
-                    <div key={date} role="gridcell" aria-selected={start || end || inRange} className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-[#9A5636]/10" : ""}`} onMouseEnter={() => !disabled && setHoveredDate(date)} onMouseLeave={() => setHoveredDate(null)}>
-                      <button
-                        type="button"
-                        disabled={disabled}
-                        onClick={() => selectDate(date)}
-                        aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
-                        aria-pressed={start || end}
-                        className="group absolute inset-0 flex w-full flex-col items-center justify-center font-uchen transition focus-visible:outline-none"
+                {(() => {
+                  const checkInTime = checkIn ? new Date(`${checkIn}T00:00:00Z`).getTime() : 0;
+                  return monthCells(calendarMonth.year, calendarMonth.month).map((date, index) => {
+                    if (!date) return <span key={`blank-${index}`} role="gridcell" className={hasDailyRates ? "h-14" : "h-10"} />;
+                    const rate = dailyRates?.[date];
+                    const unavailable = rate?.available === false && !rate.minNights;
+                    const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
+                    const candidateNights = choosingCheckout && checkIn
+                      ? Math.max(
+                          0,
+                          Math.round(
+                            (new Date(`${date}T00:00:00Z`).getTime() - checkInTime) /
+                              86_400_000,
+                          ),
+                        )
+                      : 0;
+                    const minimumStayAdvisory = Boolean(
+                      choosingCheckout &&
+                        selectedMinimumNights &&
+                        candidateNights < selectedMinimumNights,
+                    );
+                    const stayThroughAdvisory = Boolean(
+                      choosingCheckout &&
+                        selectedRate?.invalidStayLengths?.includes(candidateNights),
+                    );
+                    const restrictionAdvisory = minimumStayAdvisory || stayThroughAdvisory;
+                    // A sold night may still be used as the departure date because the guest
+                    // does not occupy the room that night. Cached restrictions are advisory:
+                    // they never disable checkout selection or prevent a live Search.
+                    const disabled = date < minDate || (unavailable && !choosingCheckout);
+                    const start = date === checkIn;
+                    const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
+                    const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
+                    const dayNum = parseInt(date.slice(8), 10);
+                    return (
+                      <div
+                        key={date}
+                        role="gridcell"
+                        aria-selected={start || end || inRange}
+                        className={`relative ${hasDailyRates ? "h-14" : "h-10"} ${inRange ? "bg-(--calendar-date-range-bg)" : ""}`}
+                        onMouseEnter={() => !disabled && setHoveredDate(date)}
+                        onMouseLeave={() => setHoveredDate(null)}
                       >
-                        <span className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-[#9A5636] group-focus-visible:ring-offset-2 ${disabled ? "text-[#4E332D]/20 line-through" : start || end ? `bg-[#4E332D] text-[#FAF9F9] ${start && rate?.minNights ? "ring-2 ring-[#4E332D] ring-offset-2 ring-offset-white" : ""}` : restrictionAdvisory ? "text-[#9A5636] ring-1 ring-[#9A5636]/35" : "text-[#4E332D] group-hover:bg-[#9A5636] group-hover:text-[#FAF9F9]"}`}>
-                          {fromIso(date).day}
-                        </span>
-                        {rate && <span className={`mt-1.5 font-bianco text-[9px] font-bold leading-none ${unavailable ? "text-[#4E332D]/30" : "text-[#4E332D]/65"}`}>{unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}</span>}
+                        <button
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => selectDate(date)}
+                          aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
+                          aria-pressed={start || end}
+                          className="group absolute inset-0 flex w-full flex-col items-center justify-center font-body transition focus-visible:outline-none"
+                        >
+                          <span
+                            className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${
+                              disabled
+                                ? "text-(--calendar-date-disabled-foreground) line-through"
+                                : start || end
+                                  ? `bg-(--calendar-date-selected-bg) text-(--calendar-date-selected-foreground) ${start && rate?.minNights ? "ring-2 ring-(--calendar-date-selected-bg) ring-offset-2 ring-offset-(--calendar-date-ring-offset-bg)" : ""}`
+                                  : restrictionAdvisory
+                                    ? "text-(--calendar-date-restricted-foreground) ring-1 ring-(--calendar-date-restricted-ring)"
+                                    : "text-(--calendar-date-foreground) group-hover:bg-(--calendar-date-hover-bg) group-hover:text-(--calendar-date-hover-foreground)"
+                            }`}
+                          >
+                            {dayNum}
+                          </span>
+                        {rate && (
+                          <span
+                            className={`mt-1.5 font-number text-[9px] font-bold leading-none ${unavailable ? "text-(--calendar-date-rate-unavailable-foreground)" : "text-(--calendar-date-rate-foreground)"}`}
+                          >
+                            {unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}
+                          </span>
+                        )}
                         {rate?.minNights && (
-                          <span role="tooltip" className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-[#292326] px-2 py-1 font-bianco text-[10px] font-normal normal-case tracking-normal text-white opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                          <span
+                            role="tooltip"
+                            className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-(--calendar-tooltip-bg) px-2 py-1 font-number text-[10px] font-normal normal-case tracking-normal text-(--calendar-tooltip-foreground) opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+                          >
                             Min. of {rate.minNights} nights.
                           </span>
                         )}
                       </button>
                     </div>
                   );
-                })}
+                });
+              })()}
               </div>
             </div>
           </React.Fragment>

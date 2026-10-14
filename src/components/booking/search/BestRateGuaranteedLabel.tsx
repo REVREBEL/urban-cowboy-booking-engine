@@ -23,7 +23,7 @@ export interface BestRateGuaranteedLabelProps {
 export const SheriffBadgeIcon: React.FC<{
   color?: string;
   className?: string;
-}> = ({ color = '#4E332D', className = '' }) => (
+}> = ({ color = 'currentColor', className = '' }) => (
   <svg 
     width="15"
     height="15"
@@ -42,11 +42,11 @@ export const SheriffBadgeIcon: React.FC<{
  * Strictly conforms to BestRateGuaranteedLabel.css and BestRateGuaranteedLabel.pdf:
  * - Minimum dimensions: 179px width x 17px height, gap 8px
  * - Icon container: 17px x 17px, icon: 15px x 15px, background #4E332D
- * - Text container: 154px x 16px, 'Brothers OT', 13px / 16px line-height, uppercase, #4E332D
+ * - Text container: 154px x 16px, 'Brothers', 13px / 16px line-height, uppercase, #4E332D
  */
 export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = ({
   text = 'BEST PRICE GUARANTEED',
-  color = '#4E332D',
+  color,
   iconSlot,
   tooltipText = 'Book direct for the lowest rate, complimentary room upgrades when available, and flexible cancellations.',
   className = '',
@@ -62,24 +62,24 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       onFocus={() => setShowTooltip(true)}
       onBlur={() => setShowTooltip(false)}
       tabIndex={0}
-      className={`box-border relative inline-flex w-max min-w-[179px] flex-row items-center justify-center gap-[8px] p-0 h-[17px] select-none cursor-default group focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4E332D] rounded-[2px] ${className}`}
+      className={`group relative box-border inline-flex h-4.25 w-max min-w-44.75 cursor-default select-none flex-row items-center justify-center gap-2 rounded-hairline p-0 text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-foreground ${className}`}
     >
       {/* 1. best-rate-guaranteed-icon (17px x 17px, padding: 1px, gap: 10px) */}
-      <div className="box-border flex flex-row justify-center items-center p-[1px] gap-[10px] w-[17px] h-[17px] shrink-0">
+      <div className="box-border flex flex-row justify-center items-center p-px gap-2.5 w-4.25 h-4.25 shrink-0">
         {iconSlot ? (
           iconSlot
         ) : (
-          <div className="w-[15px] h-[15px] shrink-0 flex items-center justify-center">
+          <div className="flex h-3.75 w-3.75 shrink-0 items-center justify-center text-accent">
             <SheriffBadgeIcon color={color} />
           </div>
         )}
       </div>
 
       {/* 2. Text keeps the original 154px minimum but may grow to fit the full label. */}
-      <div className="flex h-[16px] min-w-[154px] w-max shrink-0 flex-col items-center justify-center p-0">
+      <div className="flex h-4 min-w-38.5 w-max shrink-0 flex-col items-center justify-center p-0">
         <span
-          style={{ color }}
-          className="flex h-[16px] w-max min-w-[154px] items-center whitespace-nowrap font-brothers text-[13px] font-normal uppercase leading-[16px] tracking-[0.5px]"
+          style={color ? { color } : undefined}
+          className="flex h-4 w-max min-w-38.5 items-center whitespace-nowrap font-label text-[13px] font-normal uppercase leading-4 tracking-[0.5px] text-foreground"
         >
           {text}
         </span>
@@ -89,13 +89,13 @@ export const BestRateGuaranteedLabel: React.FC<BestRateGuaranteedLabelProps> = (
       {showTooltip && tooltipText && (
         <div
           role="tooltip"
-          className="absolute bottom-[24px] left-1/2 -translate-x-1/2 z-50 w-[240px] p-2.5 bg-[#FAF9F9] border border-[#4E332D] text-[#4E332D] text-[11px] leading-[15px] font-urbanist rounded shadow-lg pointer-events-none transition-all duration-150 animate-in fade-in zoom-in-95"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 w-60 p-2.5 bg-paper border border-cowboy-umber text-cowboy-umber text-[11px] leading-3.75 font-urbanist rounded shadow-lg pointer-events-none transition-all duration-150 animate-in fade-in zoom-in-95"
         >
-          <div className="font-brothers uppercase font-bold text-[10px] mb-1 tracking-wider text-[#4E332D]">
+          <div className="font-label uppercase font-bold text-[10px] mb-1 tracking-wider text-cowboy-umber">
             Direct Booking Perk
           </div>
           {tooltipText}
-          <div className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-[#FAF9F9] border-b border-r border-[#4E332D] transform rotate-45" />
+          <div className="absolute -bottom-1.25 left-1/2 -translate-x-1/2 w-2 h-2 bg-paper border-b border-r border-cowboy-umber transform rotate-45" />
         </div>
       )}
     </div>

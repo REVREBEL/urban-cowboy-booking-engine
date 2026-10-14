@@ -1,5 +1,6 @@
 import type {
   CancellationPenaltyWindowPeriod,
+  RateCardBorderStyle,
   RateCardButtonStyle,
   RateCardColor,
   RateCardConfig,
@@ -109,6 +110,16 @@ const FONT_PAIR_BY_WEBFLOW_NAME: Readonly<Record<string, RateCardFontPair>> = {
 const rateFontPair = (value: string): RateCardFontPair =>
   FONT_PAIR_BY_WEBFLOW_NAME[slugify(value)] ?? "brothers-bianco";
 
+const BORDER_STYLE_BY_WEBFLOW_NAME: Readonly<Record<string, RateCardBorderStyle>> = {
+  "no-border": "none",
+  "solid-line": "single",
+  "double-solid-line": "double",
+};
+
+const rateCardBorderStyle = (value: string): RateCardBorderStyle =>
+  BORDER_STYLE_BY_WEBFLOW_NAME[slugify(value)] ?? "none";
+
+
 const penaltyPeriod = (value: string): CancellationPenaltyWindowPeriod | null => {
   const normalized = slugify(value);
   if (normalized === "hours") return "hours";
@@ -152,6 +163,7 @@ export function normalizeWebflowRateCard(
   );
   const buttonColorName = optionName("button-color", fields["button-color"], options);
   const textColorName = optionName("text-color", fields["text-color"], options);
+  const borderStyleName = optionName("border-options", fields["border-options"], options);
   const rateFontName = optionName(
     fields["rate-font"] ? "rate-font" : "font-pair",
     fields["rate-font"] ?? fields["font-pair"],
@@ -178,6 +190,7 @@ export function normalizeWebflowRateCard(
     memberOnly: bool(fields["member-only"]),
     desktopArtworkUrl: imageUrl(fields["full-card"] ?? fields["desktop-artwork"]),
     mobileArtworkUrl: imageUrl(fields["compact-card"] ?? fields["mobile-artwork"]),
+    horizontalArtworkUrl: imageUrl(fields["horizontal-card"]),
     desktopOverlayPosition: enumValue<RateCardOverlayPosition>(
       desktopPosition,
       ["high", "normal", "low"],
@@ -191,6 +204,7 @@ export function normalizeWebflowRateCard(
     buttonStyle: enumValue<RateCardButtonStyle>(cardFill, ["filled", "outline"], "filled"),
     buttonColor: enumValue<RateCardColor>(buttonColorName, RATE_CARD_COLORS, "cowboy-umber"),
     textColor: enumValue<RateCardColor>(textColorName, RATE_CARD_COLORS, "cowboy-umber"),
+    borderStyle: rateCardBorderStyle(borderStyleName),
     fontPair: rateFontPair(rateFontName),
     ctaLabel: normalizeRateCardCtaLabel(fields["call-to-action"]),
     cancellationPenaltyWindow: nullableNumber(fields["cancellation-penalty-window"]),

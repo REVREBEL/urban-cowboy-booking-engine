@@ -131,9 +131,9 @@ export function Confirmation() {
   const guestCount = adults + children + infants;
 
   return (
-    <div className="min-h-screen bg-[#FAF9F9]">
+    <div className="min-h-screen bg-paper">
       <div className="mx-auto w-full max-w-xl px-4 py-8 sm:max-w-3xl sm:px-6 sm:py-12 lg:max-w-5xl 2xl:max-w-[1360px] 2xl:px-8 2xl:py-16">
-        <div className="rounded-[28px] border-2 border-[#4E332D] bg-white p-6 text-center shadow-2xl transition-all sm:rounded-[36px] sm:border-4 sm:p-10 lg:p-12 2xl:rounded-[48px] 2xl:p-16">
+        <div className="rounded-panel-lg border-2 border-cowboy-umber bg-white p-6 text-center shadow-2xl transition-all sm:rounded-modal-lg sm:border-4 sm:p-10 lg:p-12 2xl:rounded-modal-2xl 2xl:p-16">
           <StatusBadge
             loading={loading}
             confirmed={confirmed}
@@ -141,7 +141,7 @@ export function Confirmation() {
             failed={failed}
           />
 
-          <span className="mb-1 block font-woodblock text-xs font-bold uppercase tracking-[0.2em] text-[#9A5636] sm:text-sm 2xl:mb-2 2xl:text-base">
+          <span className="mb-1 block font-label text-xs font-bold uppercase tracking-[0.2em] text-copper sm:text-sm 2xl:mb-2 2xl:text-base">
             {confirmed
               ? "Reservation Confirmed & Guaranteed"
               : pending
@@ -151,7 +151,7 @@ export function Confirmation() {
                   : "Verifying Reservation"}
           </span>
 
-          <h1 className="mb-2 font-display text-3xl font-bold uppercase tracking-tight text-[#4E332D] sm:text-4xl lg:text-5xl 2xl:mb-3 2xl:text-6xl">
+          <h1 className="mb-2 font-heading text-3xl font-bold uppercase tracking-tight text-cowboy-umber sm:text-4xl lg:text-5xl 2xl:mb-3 2xl:text-6xl">
             {confirmed
               ? "See You in the Catskills"
               : pending
@@ -161,7 +161,7 @@ export function Confirmation() {
                   : t("confirmation.confirmedTitle")}
           </h1>
 
-          <p className="mb-8 font-editorial text-base italic text-[#6B6259] sm:text-lg 2xl:mb-10 2xl:text-xl">
+          <p className="mb-8 font-body text-base italic text-ash-900 sm:text-lg 2xl:mb-10 2xl:text-xl">
             {confirmed
               ? "Arrive as Strangers. Leave as Friends."
               : pending
@@ -171,17 +171,17 @@ export function Confirmation() {
                   : t("confirmation.arrivalSub")}
           </p>
 
-          <div className="mb-8 space-y-6 rounded-2xl border-2 border-dashed border-[#D1C9BE] bg-[#FAF9F9] p-6 text-left sm:p-8 2xl:mb-12 2xl:space-y-8 2xl:rounded-3xl 2xl:p-10">
-            <div className="flex flex-col items-start justify-between gap-2 border-b border-[#EBE8E0] pb-4 sm:flex-row sm:items-center 2xl:pb-6">
+          <div className="mb-8 space-y-6 rounded-2xl border-2 border-dashed border-alpine-linen bg-paper p-6 text-left sm:p-8 2xl:mb-12 2xl:space-y-8 2xl:rounded-3xl 2xl:p-10">
+            <div className="flex flex-col items-start justify-between gap-2 border-b border-alpine-linen pb-4 sm:flex-row sm:items-center 2xl:pb-6">
               <div>
-                <span className="block font-woodblock text-xs uppercase tracking-wider text-[#73716D] sm:text-sm 2xl:text-base">
+                <span className="block font-label text-xs uppercase tracking-wider text-smoke-fade sm:text-sm 2xl:text-base">
                   Confirmation Code{numbers.length === 1 ? "" : "s"}
                 </span>
-                <span className="font-sans text-xs text-[#8A7E74] 2xl:text-sm">
+                <span className="font-sans text-xs text-cowboy-umber-100 2xl:text-sm">
                   {selectedRate ? `Guaranteed via ${selectedRate.name}` : "Mews reservation"}
                 </span>
               </div>
-              <span className="font-display text-2xl font-bold tracking-widest text-[#4E332D] sm:text-3xl 2xl:text-4xl">
+              <span className="font-heading text-2xl font-bold tracking-widest text-cowboy-umber sm:text-3xl 2xl:text-4xl">
                 {loading
                   ? "VERIFYING"
                   : numbers.length > 0
@@ -202,7 +202,7 @@ export function Confirmation() {
                     ? `${fmtDate(checkIn)} to ${fmtDate(checkOut)}`
                     : "—"}
                 </strong>
-                <span className="font-bold text-[#9A5636]">
+                <span className="font-bold text-copper">
                   {guestCount} Guest{guestCount === 1 ? "" : "s"}
                 </span>
               </FolioSpec>
@@ -226,9 +226,9 @@ export function Confirmation() {
               </FolioSpec>
             </div>
 
-            <div className="flex flex-col items-start justify-between gap-2 border-t border-[#EBE8E0] pt-4 text-base font-bold text-[#4E332D] sm:flex-row sm:items-center sm:text-lg 2xl:pt-6 2xl:text-xl">
+            <div className="flex flex-col items-start justify-between gap-2 border-t border-alpine-linen pt-4 text-base font-bold text-cowboy-umber sm:flex-row sm:items-center sm:text-lg 2xl:pt-6 2xl:text-xl">
               <span>Total Stay Investment</span>
-              <span className="font-display text-2xl sm:text-3xl 2xl:text-4xl">
+              <span className="font-heading text-2xl sm:text-3xl 2xl:text-4xl">
                 {displayTotal}
               </span>
             </div>
@@ -241,9 +241,9 @@ export function Confirmation() {
           ) : null}
 
           {(pending || failed) ? (
-            <div className="mx-auto mb-8 max-w-2xl rounded-2xl border-2 border-[#D1C9BE] bg-[#FAF9F9] p-5 text-left">
-              <p className="flex items-start gap-2 text-sm font-medium text-[#4E332D]">
-                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#9A5636]" aria-hidden="true" />
+            <div className="mx-auto mb-8 max-w-2xl rounded-2xl border-2 border-alpine-linen bg-paper p-5 text-left">
+              <p className="flex items-start gap-2 text-sm font-medium text-cowboy-umber">
+                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-copper" aria-hidden="true" />
                 <span>
                   {pending
                     ? t("confirmation.pendingNote")
@@ -255,7 +255,7 @@ export function Confirmation() {
                   type="button"
                   onClick={resumePayment}
                   disabled={resuming}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#4E332D] px-6 py-3 font-woodblock text-xs uppercase tracking-wider text-white"
+                  className="inline-flex items-center gap-2 rounded-full bg-cowboy-umber px-6 py-3 font-label text-xs uppercase tracking-wider text-white"
                 >
                   {resuming
                     ? t("confirmation.redirecting")
@@ -268,7 +268,7 @@ export function Confirmation() {
                     polls.current = 0;
                     loadStatus();
                   }}
-                  className="rounded-full border-2 border-[#4E332D] px-6 py-3 font-woodblock text-xs uppercase tracking-wider text-[#4E332D]"
+                  className="rounded-full border-2 border-cowboy-umber px-6 py-3 font-label text-xs uppercase tracking-wider text-cowboy-umber"
                 >
                   {t("confirmation.refreshStatus")}
                 </button>
@@ -277,18 +277,18 @@ export function Confirmation() {
           ) : null}
 
           {airportTransfer && confirmed ? (
-            <div className="mx-auto mb-8 max-w-2xl rounded-2xl border-2 border-[#D1C9BE] bg-[#FAF9F9] p-5 text-left">
-              <p className="font-brothers text-base font-bold uppercase tracking-wide text-[#4E332D]">
+            <div className="mx-auto mb-8 max-w-2xl rounded-2xl border-2 border-alpine-linen bg-paper p-5 text-left">
+              <p className="font-label text-base font-bold uppercase tracking-wide text-cowboy-umber">
                 {t("confirmation.shuttleTitle")}
               </p>
-              <p className="mt-1 text-sm text-[#6B6259]">
+              <p className="mt-1 text-sm text-ash-900">
                 {t("confirmation.shuttleBody")}
               </p>
               <a
                 href={SHUTTLE_BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#4E332D] px-6 py-3 font-woodblock text-xs uppercase tracking-wider text-white"
+                className="mt-4 inline-flex items-center gap-2 rounded-full bg-cowboy-umber px-6 py-3 font-label text-xs uppercase tracking-wider text-white"
               >
                 {t("confirmation.shuttleCta")}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -300,7 +300,7 @@ export function Confirmation() {
             <button
               type="button"
               onClick={() => window.print()}
-              className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-[#4E332D] px-6 py-3.5 font-woodblock text-xs uppercase tracking-wider text-[#4E332D] transition-all hover:scale-105 hover:bg-[#EBE8E0] sm:w-auto sm:px-8 sm:text-sm 2xl:py-4 2xl:text-base"
+              className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-cowboy-umber px-6 py-3.5 font-label text-xs uppercase tracking-wider text-cowboy-umber transition-all hover:scale-105 hover:bg-alpine-linen sm:w-auto sm:px-8 sm:text-sm 2xl:py-4 2xl:text-base"
             >
               <Printer className="h-4 w-4 2xl:h-5 2xl:w-5" aria-hidden="true" />
               Print Guest Itinerary
@@ -311,7 +311,7 @@ export function Confirmation() {
                 resetAll();
                 goTo("dates");
               }}
-              className="w-full rounded-full bg-[#4E332D] px-8 py-3.5 font-woodblock text-xs uppercase tracking-widest text-white shadow-md transition-all hover:scale-105 hover:bg-[#343833] sm:w-auto sm:px-10 sm:text-sm 2xl:py-4 2xl:text-base"
+              className="w-full rounded-full bg-cowboy-umber px-8 py-3.5 font-label text-xs uppercase tracking-widest text-white shadow-md transition-all hover:scale-105 hover:bg-smoke sm:w-auto sm:px-10 sm:text-sm 2xl:py-4 2xl:text-base"
             >
               Book Another Stay
             </button>
@@ -338,10 +338,10 @@ function StatusBadge({
       className={[
         "mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full shadow-md sm:h-16 sm:w-16 2xl:mb-6 2xl:h-20 2xl:w-20",
         confirmed
-          ? "bg-[#0E301A] text-[#F2AAA9]"
+          ? "bg-lake-forest text-nude-ember"
           : failed
-            ? "bg-amber-400 text-[#221C18]"
-            : "bg-[#4E332D] text-white",
+            ? "bg-amber-400 text-smoke"
+            : "bg-cowboy-umber text-white",
       ].join(" ")}
     >
       {loading ? (
@@ -363,11 +363,11 @@ function FolioSpec({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-[#D1C9BE]/50 bg-white p-4 2xl:rounded-2xl">
-      <span className="block font-mono text-xs uppercase text-[#73716D] 2xl:text-sm">
+    <div className="rounded-xl border border-alpine-linen/50 bg-white p-4 2xl:rounded-2xl">
+      <span className="block font-mono text-xs uppercase text-smoke-fade 2xl:text-sm">
         {label}
       </span>
-      <div className="mt-0.5 flex flex-col gap-0.5 text-[#221C18] [&>span]:text-xs [&>span]:text-[#73716D] 2xl:[&>span]:text-sm">
+      <div className="mt-0.5 flex flex-col gap-0.5 text-smoke [&>span]:text-xs [&>span]:text-smoke-fade 2xl:[&>span]:text-sm">
         {children}
       </div>
     </div>

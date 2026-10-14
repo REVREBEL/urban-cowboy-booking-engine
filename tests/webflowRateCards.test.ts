@@ -35,6 +35,16 @@ const options = webflowOptionNames({
       },
     },
     {
+      slug: "border-options",
+      validations: {
+        options: [
+          { id: "965dfc1d3732eefb5f19c2dc0cc1c76e", name: "No Border" },
+          { id: "610b31da81d4aa0ecfe0ef5989da94cf", name: "Solid Line" },
+          { id: "f92351c34c65bdb8e297f2cbccd0d7ac", name: "Double Solid Line" },
+        ],
+      },
+    },
+    {
       slug: "rate-font",
       validations: {
         options: [
@@ -103,6 +113,8 @@ test("normalizes the current Webflow Offers fields using real option IDs", () =>
       "sort-order": 4,
       "full-card": { url: "https://cdn.example/full.jpg" },
       "compact-card": { url: "https://cdn.example/compact.jpg" },
+      "horizontal-card": { url: "https://cdn.example/horizontal.jpg" },
+      "border-options": "f92351c34c65bdb8e297f2cbccd0d7ac",
       "button-color": "06fad834bc888d6ccf15c26432c8c6ab",
       "text-color": "7c79e1dcd65dee16f6d56d5a0e1559a0",
       "card-fill": "7988397e27407c562257584fc4666cc6",
@@ -124,11 +136,13 @@ test("normalizes the current Webflow Offers fields using real option IDs", () =>
     memberOnly: false,
     desktopArtworkUrl: "https://cdn.example/full.jpg",
     mobileArtworkUrl: "https://cdn.example/compact.jpg",
+    horizontalArtworkUrl: "https://cdn.example/horizontal.jpg",
     desktopOverlayPosition: "high",
     mobileOverlayPosition: "low",
     buttonStyle: "outline",
     buttonColor: "smoke",
     textColor: "smoke",
+    borderStyle: "double",
     fontPair: "noto-serif-tibetan-lato",
     ctaLabel: "Book Now",
     cancellationPenaltyWindow: 14,
@@ -186,6 +200,8 @@ test("maps current CMS member-only and specialty font options", () => {
   assert.equal(card?.fontPair, "filicudi-special-elite");
   assert.equal(card?.buttonColor, "nude-ember");
   assert.equal(card?.textColor, "paper");
+  assert.equal(card?.borderStyle, "none");
+  assert.equal(card?.horizontalArtworkUrl, null);
 });
 
 test("archived or editor-disabled cards are inactive", () => {

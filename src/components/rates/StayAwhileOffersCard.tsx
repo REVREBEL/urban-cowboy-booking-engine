@@ -107,7 +107,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
         {/* ================= PRIMARY CARD ================= */}
         <div
           className={`relative z-20 shrink-0 box-border ${
-            isCompact ? 'w-[482px]' : 'w-[480px]'
+            isCompact ? 'w-120.5' : 'w-120'
           }`}
         >
           {isCompact ? (
@@ -120,7 +120,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                 maxWidth: '100%',
                 height: '657px',
                 padding: '54px 30px',
-                backgroundColor: '#343833',
+                backgroundColor: 'var(--color-smoke)',
                 border: '4px solid #EBE8E0',
                 borderRadius: '45px',
               }}
@@ -129,7 +129,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
               <div
                 className="w-full text-center font-bold uppercase select-none tracking-[2px]"
                 style={{
-                  color: '#EBE8E0',
+                  color: 'var(--alpine-linen)',
                   fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                   fontSize: '26px',
                   lineHeight: '30px',
@@ -156,7 +156,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
               </div>
 
               {/* Price Display */}
-              <div className="w-full flex flex-col justify-center px-[30px] box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
+              <div className="w-full flex flex-col justify-center px-7.5 box-border select-none mb-2" style={{ containerType: 'inline-size' }}>
                 <div
                   className="w-full text-left font-bold text-white uppercase select-none whitespace-nowrap"
                   style={{
@@ -171,7 +171,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                 <div
                   className="w-full text-right font-normal select-none mt-0.5"
                   style={{
-                    color: '#F2F2F2',
+                    color: 'var(--color-mist)',
                     fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                     fontSize: '17px',
                     lineHeight: '18px',
@@ -187,7 +187,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                 <p
                   className="w-full font-bold text-center m-0 whitespace-normal"
                   style={{
-                    color: '#EBE8E0',
+                    color: 'var(--alpine-linen)',
                     fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                     fontSize: '15px',
                     lineHeight: '22px',
@@ -203,13 +203,13 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className="px-8 py-3.5 rounded-full bg-[#EBE8E0] text-[#343833] font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-white whitespace-nowrap"
+                      className="px-8 py-3.5 rounded-full bg-alpine-linen text-smoke font-button font-normal text-base uppercase tracking-wider transition-all cursor-pointer shadow-md hover:bg-white whitespace-nowrap"
                       style={{ fontFamily: 'var(--font-button)' }}
                     >
                       {ctaLabel}
                     </button>
                     <span
-                      className="text-xs text-[#EBE8E0] text-center"
+                      className="text-xs text-alpine-linen text-center"
                       style={{ fontFamily: "'Noto Serif Tibetan', 'Noto Serif', serif" }}
                     >
                       {cancellationText}
@@ -223,7 +223,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
             <div
               className="relative w-full h-full box-border transition-all duration-300 shadow-lg hover:shadow-xl"
               style={{
-                backgroundColor: '#343833',
+                backgroundColor: 'var(--color-smoke)',
                 borderRadius: '50px',
                 padding: '40px 28px',
               }}
@@ -236,9 +236,9 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
               >
                 <div className="w-full flex flex-col items-center gap-4">
                   <div
-                    className="w-full max-w-[280px] font-bold text-center uppercase select-none leading-none tracking-[2px]"
+                    className="w-full max-w-70 font-bold text-center uppercase select-none leading-none tracking-[2px]"
                     style={{
-                      color: '#EBE8E0',
+                      color: 'var(--alpine-linen)',
                       fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                       fontSize: '26px',
                       transform: 'rotate(0.28deg)',
@@ -260,11 +260,11 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                     {headline}
                   </h2>
 
-                  <div className="w-full max-w-[340px] flex flex-col items-center gap-5 mt-1">
+                  <div className="w-full max-w-85 flex flex-col items-center gap-5 mt-1">
                     <p
                       className="w-full font-bold text-center m-0 whitespace-normal"
                       style={{
-                        color: '#EBE8E0',
+                        color: 'var(--alpine-linen)',
                         fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                         fontSize: '20px',
                         lineHeight: '26px',
@@ -276,16 +276,16 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                     </p>
 
                     <div
-                      className="w-[260px] h-[5px] rounded-full"
+                      className="w-65 h-1.25 rounded-full"
                       style={{
-                        backgroundColor: '#EBE8E0',
+                        backgroundColor: 'var(--alpine-linen)',
                       }}
                     />
                   </div>
                 </div>
 
                 <div className="w-full flex flex-col items-center gap-4">
-                  <div className="w-full flex flex-col justify-center px-[30px] box-border select-none" style={{ containerType: 'inline-size' }}>
+                  <div className="w-full flex flex-col justify-center px-7.5 box-border select-none" style={{ containerType: 'inline-size' }}>
                     <div
                       className="w-full text-left font-bold text-white uppercase select-none whitespace-nowrap"
                       style={{
@@ -300,7 +300,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                     <div
                       className="w-full text-right font-normal select-none mt-0.5"
                       style={{
-                        color: '#F2F2F2',
+                        color: 'var(--color-mist)',
                         fontFamily: "'Bianco Sans', 'Lato', sans-serif",
                         fontSize: '17px',
                         lineHeight: '18px',
@@ -316,14 +316,14 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                       type="button"
                       onClick={handleAction}
                       disabled={disabled || isSubmitting}
-                      className={`group w-full max-w-[380px] min-h-[66px] px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#EBE8E0]/40 active:scale-[0.98] whitespace-nowrap ${
+                      className={`group w-full max-w-95 min-h-16.5 px-6 py-3 rounded-full flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-alpine-linen/40 active:scale-[0.98] whitespace-nowrap ${
                         disabled
-                          ? 'opacity-50 cursor-not-allowed bg-[#EBE8E0]/50 text-[#343833]/50 border-[#EBE8E0]/50'
+                          ? 'opacity-50 cursor-not-allowed bg-alpine-linen/50 text-smoke/50 border-alpine-linen/50'
                           : isExpanded
-                          ? 'bg-[#EBE8E0] text-[#343833]'
+                          ? 'bg-alpine-linen text-smoke'
                           : isSubmitting
-                          ? 'bg-[#EBE8E0] text-[#343833] cursor-wait'
-                          : 'cursor-pointer bg-[#EBE8E0] text-[#343833] hover:bg-transparent hover:text-[#EBE8E0]'
+                          ? 'bg-alpine-linen text-smoke cursor-wait'
+                          : 'cursor-pointer bg-alpine-linen text-smoke hover:bg-transparent hover:text-alpine-linen'
                       }`}
                       style={{
                         border: '3.5px solid #EBE8E0',
@@ -350,7 +350,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
                     <div
                       className="w-full text-center font-normal text-[13px] tracking-[1px] select-none whitespace-nowrap"
                       style={{
-                        color: '#EBE8E0',
+                        color: 'var(--alpine-linen)',
                         fontFamily: "'Noto Serif Tibetan', 'Noto Serif', serif",
                         transform: 'rotate(0.28deg)',
                       }}
@@ -368,7 +368,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
         <div
           className={`relative z-10 overflow-hidden transition-all duration-500 ease-out flex flex-row shrink-0 -ml-12 ${
             isExpanded
-              ? `opacity-100 ${isCompact ? 'w-[557px]' : 'w-[512px]'} translate-x-0 pointer-events-auto`
+              ? `opacity-100 ${isCompact ? 'w-139.25' : 'w-lg'} translate-x-0 pointer-events-auto`
               : 'opacity-0 w-0 max-w-0 -translate-x-6 pointer-events-none'
           }`}
           style={{
@@ -377,7 +377,7 @@ export const OffersCardStayAWhile: React.FC<OffersCardStayAWhileProps> = ({
           }}
         >
           <div
-            className={`h-full ${isCompact ? 'w-[557px]' : 'w-[512px]'} pl-8 pt-0 shrink-0`}
+            className={`h-full ${isCompact ? 'w-139.25' : 'w-lg'} pl-8 pt-0 shrink-0`}
             style={{
               width: isCompact ? '557px' : '512px',
               minWidth: isCompact ? '557px' : '512px',

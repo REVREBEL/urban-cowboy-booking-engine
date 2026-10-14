@@ -1,6 +1,9 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
+// Load Photo Engine styles at entry so Arrive and Journal are styled immediately.
+// Photo custom properties remain scoped under .photo-journey.
+import "./styles/room-photo-tour.css";
 import { initLang } from "./lib/lang";
 import { initUtm } from "./lib/utm";
 

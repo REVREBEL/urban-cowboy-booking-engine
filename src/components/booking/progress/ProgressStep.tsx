@@ -41,28 +41,28 @@ const getStepStyle = (state: ProgressStepState) => {
   switch (state) {
     case 'current':
       return {
-        containerBg: '#9A5636',
+        containerBg: 'var(--chart-1)',
         containerBorder: 'transparent',
-        circleBorder: '#EBE8E0',
-        circleText: '#EBE8E0',
-        labelText: '#EBE8E0',
+        circleBorder: 'var(--chart-3)',
+        circleText: 'var(--chart-3)',
+        labelText: 'var(--chart-3)',
       };
     case 'complete':
       return {
-        containerBg: '#4E332D',
+        containerBg: 'var(--chart-2)',
         containerBorder: 'transparent',
-        circleBorder: '#EBE8E0',
-        circleText: '#EBE8E0',
-        labelText: '#EBE8E0',
+        circleBorder: 'var(--chart-3)',
+        circleText: 'var(--chart-3)',
+        labelText: 'var(--chart-3)',
       };
     case 'default':
     default:
       return {
         containerBg: 'transparent',
-        containerBorder: 'rgba(235, 232, 224, 0.25)',
-        circleBorder: 'rgba(235, 232, 224, 0.4)',
-        circleText: '#767470',
-        labelText: '#767470',
+        containerBorder: 'color-mix(in srgb, var(--chart-3) 25%, transparent)',
+        circleBorder: 'color-mix(in srgb, var(--chart-3) 40%, transparent)',
+        circleText: 'var(--chart-4)',
+        labelText: 'var(--chart-4)',
       };
   }
 };
@@ -77,7 +77,7 @@ const CheckIcon: React.FC<{ size?: number; color?: string }> = ({
     viewBox="0 0 12 12"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="flex-shrink-0"
+    className="shrink-0"
     aria-hidden="true"
   >
     <path
@@ -155,7 +155,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
     >
       {/* Loading Overlay */}
       {isBusy ? (
-        <div className="flex items-center justify-center gap-1 h-[16px]">
+        <div className="flex items-center justify-center gap-1 h-4">
           <svg
             className="animate-spin h-3 w-3 text-current"
             xmlns="http://www.w3.org/2000/svg"
@@ -178,10 +178,10 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
           </svg>
         </div>
       ) : (
-        <div className="flex items-center justify-center gap-1 h-[16px]">
+        <div className="flex items-center justify-center gap-1 h-4">
           {/* Step Number Circle (16px x 16px) */}
           <div
-            className="flex-shrink-0 flex items-center justify-center box-border transition-colors duration-200"
+            className="shrink-0 flex items-center justify-center box-border transition-colors duration-200"
             style={{
               width: '16px',
               height: '16px',

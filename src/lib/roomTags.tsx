@@ -1,5 +1,12 @@
 import type { RoomMerchandising } from "../types/merchandising";
-import type { RoomTag } from "@/components/rooms/room-tags";
+import type { ComponentType, SVGProps } from "react";
+
+/** Room merchandising tag data, independent of the retired drawer UI. */
+export interface RoomTag {
+  key: string;
+  label: string;
+  Icon: ComponentType<SVGProps<SVGSVGElement>>;
+}
 import {
   IconCheck,
   IconFlame,

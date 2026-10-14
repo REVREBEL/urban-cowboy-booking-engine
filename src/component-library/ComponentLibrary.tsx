@@ -20,6 +20,8 @@ import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
 import { ContactBar } from "@/components/booking/chrome/contact-bar";
 
+import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
+import type { RoomType } from "@/types";
 import { DogToggleButton } from "@/components/booking/discovery/DogToggleButton";
 import { MatchBenefitsCard } from "@/components/booking/results/MatchBenefitsCard";
 import { PreferenceIconButton } from "@/components/booking/discovery/PreferenceIconButton";
@@ -83,9 +85,9 @@ const previewWidths: Record<PreviewWidth, string> = {
 };
 
 const surfaceClasses: Record<PreviewSurface, string> = {
-  cream: "bg-[#ebe8e0]",
+  cream: "bg-alpine-linen",
   white: "bg-white",
-  forest: "bg-[#0e301a]",
+  forest: "bg-lake-forest",
   transparent: "bg-transparent",
 };
 
@@ -122,6 +124,8 @@ const renderedPaths = new Set([
   "src/components/ui/tabs.tsx",
 ]);
 
+// Inventory needs file paths only. Use raw-source imports so this catalog does not
+// dynamically import executable modules already loaded by its live previews.
 const componentModules = import.meta.glob([
   "../components/**/*.tsx",
   "../steps/**/*.tsx",
@@ -132,7 +136,7 @@ const componentModules = import.meta.glob([
   "!../components/booking/summary/CheckoutStep.tsx",
   "!../components/booking/summary/ExtrasStep.tsx",
   "!../components/rates/RideEasySoloPage.tsx",
-]);
+], { query: "?raw", import: "default" });
 
 const allComponentPaths = Object.keys(componentModules)
   .map((path) => path.replace("../", "src/"))
@@ -152,12 +156,12 @@ function SectionHeader({
   body: string;
 }) {
   return (
-    <div className="mb-7 border-b border-[#4e332d]/15 pb-5">
-      <p className="font-label text-[10px] uppercase tracking-[0.24em] text-[#9a5636]">
+    <div className="mb-7 border-b border-cowboy-umber/15 pb-5">
+      <p className="font-label text-[10px] uppercase tracking-[0.24em] text-copper">
         {kicker}
       </p>
-      <h2 className="mt-2 font-display text-4xl leading-none text-[#4e332d]">{title}</h2>
-      <p className="mt-3 max-w-3xl text-sm leading-6 text-[#6f625d]">{body}</p>
+      <h2 className="mt-2 font-heading text-4xl leading-none text-cowboy-umber">{title}</h2>
+      <p className="mt-3 max-w-3xl text-sm leading-6 text-ash-900">{body}</p>
     </div>
   );
 }
@@ -178,29 +182,29 @@ function Preview({
   tall?: boolean;
 }) {
   return (
-    <article className="mb-8 overflow-hidden rounded-2xl border border-[#4e332d]/12 bg-white shadow-sm">
-      <header className="flex flex-col gap-3 border-b border-[#4e332d]/10 px-5 py-4 md:flex-row md:items-center md:justify-between">
+    <article className="mb-8 overflow-hidden rounded-2xl border border-cowboy-umber/12 bg-white shadow-sm">
+      <header className="flex flex-col gap-3 border-b border-cowboy-umber/10 px-5 py-4 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="font-label text-sm uppercase tracking-[0.08em] text-[#4e332d]">{title}</h3>
-            <span className="rounded-full bg-[#0e301a]/8 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-[#0e301a]">
+            <h3 className="font-label text-sm uppercase tracking-[0.08em] text-cowboy-umber">{title}</h3>
+            <span className="rounded-full bg-lake-forest/8 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-lake-forest">
               live
             </span>
           </div>
           {description ? (
-            <p className="mt-1 max-w-2xl text-xs leading-5 text-[#767470]">{description}</p>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-ash-900">{description}</p>
           ) : null}
         </div>
         <a
           href={sourceUrl(path)}
           target="_blank"
           rel="noreferrer"
-          className="font-label text-[10px] uppercase tracking-wider text-[#9a5636] underline-offset-4 hover:underline"
+          className="font-label text-[10px] uppercase tracking-wider text-copper underline-offset-4 hover:underline"
         >
           View source
         </a>
       </header>
-      <div className={`overflow-auto ${surfaceClasses[surface]} ${tall ? "max-h-[760px]" : ""}`}>
+      <div className={`overflow-auto ${surfaceClasses[surface]} ${tall ? "max-h-190" : ""}`}>
         <div className="min-w-max p-6 md:p-8">{children}</div>
       </div>
     </article>
@@ -241,20 +245,20 @@ function Toolbar({
   const surfaces: PreviewSurface[] = ["cream", "white", "forest", "transparent"];
 
   return (
-    <div className="sticky top-0 z-40 border-b border-[#4e332d]/10 bg-[#faf9f9]/95 px-4 py-3 backdrop-blur md:px-6">
-      <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-3">
+    <div className="sticky top-0 z-40 border-b border-cowboy-umber/10 bg-paper/95 px-4 py-3 backdrop-blur md:px-6">
+      <div className="mx-auto flex max-w-375 flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="font-label text-xs uppercase tracking-[0.18em] text-[#4e332d]">Component Library</p>
-          <p className="text-[11px] text-[#767470]">Canonical components only · development surface</p>
+          <p className="font-label text-xs uppercase tracking-[0.18em] text-cowboy-umber">Component Library</p>
+          <p className="text-[11px] text-ash-900">Canonical components only · development surface</p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-1 rounded-full border border-[#4e332d]/15 bg-white p-1">
+          <div className="flex items-center gap-1 rounded-full border border-cowboy-umber/15 bg-white p-1">
             {widths.map((item) => (
               <button
                 key={item}
                 type="button"
                 onClick={() => onWidth(item)}
-                className={`rounded-full px-3 py-1.5 text-[10px] uppercase tracking-wide transition ${width === item ? "bg-[#4e332d] text-[#faf9f9]" : "text-[#4e332d] hover:bg-[#ebe8e0]"}`}
+                className={`rounded-full px-3 py-1.5 text-[10px] uppercase tracking-wide transition ${width === item ? "bg-cowboy-umber text-paper" : "text-cowboy-umber hover:bg-alpine-linen"}`}
               >
                 {item}
               </button>
@@ -263,7 +267,7 @@ function Toolbar({
           <select
             value={surface}
             onChange={(event) => onSurface(event.target.value as PreviewSurface)}
-            className="h-8 rounded-full border border-[#4e332d]/15 bg-white px-3 text-[10px] uppercase tracking-wide text-[#4e332d]"
+            className="h-8 rounded-full border border-cowboy-umber/15 bg-white px-3 text-[10px] uppercase tracking-wide text-cowboy-umber"
             aria-label="Preview background"
           >
             {surfaces.map((item) => (
@@ -317,7 +321,7 @@ function ChromeSection({ width }: { width: PreviewWidth }) {
         description="Rendered in preview mode so the floating contact control stays inside this component card."
       >
         <WidthFrame width={width}>
-          <div className="relative min-h-72 overflow-hidden rounded-xl border border-[#4e332d]/10 bg-[#ebe8e0]">
+          <div className="relative min-h-72 overflow-hidden rounded-xl border border-cowboy-umber/10 bg-alpine-linen">
             <ContactBar preview />
           </div>
         </WidthFrame>
@@ -474,7 +478,7 @@ function FindProgressSection({ width, surface }: { width: PreviewWidth; surface:
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex flex-wrap items-center justify-center gap-3 bg-[#343833] p-6">
+          <div className="flex flex-wrap items-center justify-center gap-3 bg-smoke p-6">
             <ProgressStep step={1} label="Stay" state="complete" showCheckOnComplete />
             <ProgressStep step={2} label="Room" state="current" />
             <ProgressStep step={3} label="Details" state="default" />
@@ -548,6 +552,31 @@ function FindFlowsSection({ width }: { width: PreviewWidth }) {
   );
 }
 
+const demoModalRoom: RoomType = {
+  id: "alpine-bathing-suite",
+  buildingId: "alpine",
+  buildingName: "Alpine Haus",
+  name: "Alpine Bathing Suite",
+  eyebrow: "Building 01 · First Floor",
+  tagline: "The Iconic Indoor Soak",
+  description: "Freestanding clawfoot tub facing a picture window, radiant heated floors, and forest views.",
+  longDescription: "Built into the hillside above the Lodge, Alpine is home to ten of the Cowboy’s most iconic rooms. Every suite pairs a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside.",
+  basePrice: 425,
+  squareFeet: 430,
+  bedType: "King Bed",
+  maxGuests: 2,
+  isDogFriendly: false,
+  ageRestricted21: true,
+  soakType: "clawfoot-window",
+  soakHighlight: "Freestanding copper clawfoot tub in front of a forest picture window",
+  images: [
+    "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200",
+    "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200",
+  ],
+  features: ["Clawfoot Soaking Tub", "Radiant Heated Floors", "Cast Iron Wood Stove", "Letter Writing Desk"],
+  tags: ["indoor-soak", "picture-window", "21-plus"],
+};
+
 function BookingSection({ width, surface }: { width: PreviewWidth; surface: PreviewSurface }) {
   const [dog, setDog] = useState(false);
   const [selectedPreference, setSelectedPreference] = useState<PreferenceId | null>(null);
@@ -559,6 +588,31 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
         title="Booking Components"
         body="Retained booking components promoted from the evaluation branch into the canonical feature tree."
       />
+
+      <Preview
+        title="RoomDetailModal"
+        path="src/components/rooms/RoomDetailModal.tsx"
+        surface="cream"
+        tall
+      >
+        <WidthFrame width={width}>
+          <div className="relative min-h-[750px] w-full">
+            <RoomDetailModal
+              room={demoModalRoom}
+              criteria={{
+                property: "Urban Cowboy Catskills",
+                checkIn: "2026-10-14",
+                checkOut: "2026-10-17",
+                nights: 3,
+                guests: 2,
+                rooms: 1,
+              }}
+              onClose={() => undefined}
+              onProceedToRates={() => undefined}
+            />
+          </div>
+        </WidthFrame>
+      </Preview>
 
       <Preview
         title="DogToggleButton"
@@ -605,7 +659,7 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
           path="src/components/booking/results/MatchBenefitsCard.tsx"
           surface="cream"
         >
-          <div className="w-[448px]">
+          <div className="w-md">
             <MatchBenefitsCard
               room={demoMatchRoom}
               reasons={[
@@ -621,7 +675,7 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
           path="src/components/booking/summary/stay-summary.tsx"
           surface={surface}
         >
-          <div className="w-[420px]">
+          <div className="w-105">
             <StaySummary {...demoStaySummary} />
           </div>
         </Preview>
@@ -697,14 +751,14 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
         description="Semantic typography variables used across the booking engine."
       >
         <WidthFrame width={width}>
-          <div className="grid max-w-3xl gap-5 text-[#4e332d]">
+          <div className="grid max-w-3xl gap-5 text-cowboy-umber">
             <div>
               <p className="font-eyebrow text-xs uppercase tracking-[0.18em]">Eyebrow · Bianco Sans</p>
-              <h2 className="mt-1 font-display text-4xl">Heading · DesertRain</h2>
+              <h2 className="mt-1 font-heading text-4xl">Heading · DesertRain</h2>
             </div>
             <p className="text-base">Body · Uchen Regular. Built for the quieter reading moments between decisions.</p>
-            <p className="font-label text-sm uppercase">Label · Brothers OT</p>
-            <Button variant="outline" color="dark">Button · Brothers OT</Button>
+            <p className="font-label text-sm uppercase">Label · Brothers</p>
+            <Button variant="outline" color="dark">Button · Brothers</Button>
             <p className="font-number text-2xl">$425.00 · Oct 14–17 · 2 Guests</p>
             <blockquote className="text-3xl">Blockquote · Cedarville</blockquote>
           </div>
@@ -738,14 +792,14 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
         <WidthFrame width={width}>
           <div className="grid max-w-xl gap-5">
             <Input placeholder="Promo code" />
-            <label className="flex items-center gap-3 text-sm text-[#4e332d]">
+            <label className="flex items-center gap-3 text-sm text-cowboy-umber">
               <Checkbox
                 checked={checked}
                 onCheckedChange={(value) => setChecked(value === true)}
               />
               Accessible room
             </label>
-            <label className="flex items-center gap-3 text-sm text-[#4e332d]">
+            <label className="flex items-center gap-3 text-sm text-cowboy-umber">
               <Switch checked={switched} onCheckedChange={setSwitched} />
               Show dog-friendly rooms only
             </label>
@@ -826,7 +880,7 @@ function InventorySection() {
         body="Generated automatically from src/components and src/steps. A Live badge means the component also has a visual preview above."
       />
 
-      <div className="mb-5 grid gap-4 rounded-2xl border border-[#4e332d]/10 bg-white p-5 md:grid-cols-[1fr_auto] md:items-center">
+      <div className="mb-5 grid gap-4 rounded-2xl border border-cowboy-umber/10 bg-white p-5 md:grid-cols-[1fr_auto] md:items-center">
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
@@ -834,10 +888,10 @@ function InventorySection() {
           className="max-w-xl"
         />
         <div className="flex gap-2 text-[10px] uppercase tracking-wider">
-          <span className="rounded-full bg-[#4e332d] px-3 py-1.5 text-[#faf9f9]">
+          <span className="rounded-full bg-cowboy-umber px-3 py-1.5 text-paper">
             {allComponentPaths.length} files
           </span>
-          <span className="rounded-full bg-[#9a5636] px-3 py-1.5 text-white">
+          <span className="rounded-full bg-copper px-3 py-1.5 text-white">
             {renderedCount} live previews
           </span>
         </div>
@@ -847,10 +901,10 @@ function InventorySection() {
         {Object.entries(groups)
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([group, paths]) => (
-            <div key={group} className="rounded-2xl border border-[#4e332d]/10 bg-white p-5">
+            <div key={group} className="rounded-2xl border border-cowboy-umber/10 bg-white p-5">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-label text-xs uppercase tracking-[0.12em] text-[#4e332d]">{group}</h3>
-                <span className="text-xs text-[#767470]">{paths.length}</span>
+                <h3 className="font-label text-xs uppercase tracking-[0.12em] text-cowboy-umber">{group}</h3>
+                <span className="text-xs text-ash-900">{paths.length}</span>
               </div>
               <div className="space-y-1.5">
                 {paths.map((path) => (
@@ -859,11 +913,11 @@ function InventorySection() {
                     href={sourceUrl(path)}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex items-center justify-between gap-3 rounded-lg border border-transparent px-3 py-2 hover:border-[#4e332d]/10 hover:bg-[#ebe8e0]/50"
+                    className="group flex items-center justify-between gap-3 rounded-lg border border-transparent px-3 py-2 hover:border-cowboy-umber/10 hover:bg-alpine-linen/50"
                   >
-                    <code className="min-w-0 truncate text-[11px] text-[#5f514c]">{path.replace("src/", "")}</code>
+                    <code className="min-w-0 truncate text-[11px] text-cowboy-umber">{path.replace("src/", "")}</code>
                     <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider ${renderedPaths.has(path) ? "bg-[#0e301a] text-white" : "bg-[#ebe8e0] text-[#767470]"}`}
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider ${renderedPaths.has(path) ? "bg-lake-forest text-white" : "bg-alpine-linen text-ash-900"}`}
                     >
                       {renderedPaths.has(path) ? "Live" : "Inventory"}
                     </span>
@@ -882,25 +936,25 @@ export default function ComponentLibrary() {
   const [surface, setSurface] = useState<PreviewSurface>("cream");
 
   return (
-    <div className="min-h-screen bg-[#f4f1ea] text-[#4e332d]">
+    <div className="min-h-screen bg-alpine-linen-fade text-cowboy-umber">
       <Toolbar width={width} onWidth={setWidth} surface={surface} onSurface={setSurface} />
 
-      <div className="mx-auto grid max-w-[1500px] gap-8 px-4 py-8 md:px-6 lg:grid-cols-[230px_minmax(0,1fr)]">
+      <div className="mx-auto grid max-w-375 gap-8 px-4 py-8 md:px-6 lg:grid-cols-[230px_minmax(0,1fr)]">
         <aside className="hidden lg:block">
-          <div className="sticky top-24 rounded-2xl border border-[#4e332d]/10 bg-white p-4">
-            <div className="mb-4 border-b border-[#4e332d]/10 pb-4">
-              <p className="font-display text-2xl text-[#4e332d]">Urban Cowboy</p>
-              <p className="mt-1 text-xs text-[#767470]">Booking Engine · Component Library</p>
+          <div className="sticky top-24 rounded-2xl border border-cowboy-umber/10 bg-white p-4">
+            <div className="mb-4 border-b border-cowboy-umber/10 pb-4">
+              <p className="font-heading text-2xl text-cowboy-umber">Urban Cowboy</p>
+              <p className="mt-1 text-xs text-ash-900">Booking Engine · Component Library</p>
             </div>
             <nav aria-label="Component sections" className="space-y-1">
               {sections.map((section) => (
                 <a
                   key={section.id}
                   href={`#${section.id}`}
-                  className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-[#5f514c] transition hover:bg-[#ebe8e0] hover:text-[#4e332d]"
+                  className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-cowboy-umber transition hover:bg-alpine-linen hover:text-cowboy-umber"
                 >
                   <span>{section.label}</span>
-                  <span className="text-[#9a5636]">→</span>
+                  <span className="text-copper">→</span>
                 </a>
               ))}
             </nav>
@@ -908,12 +962,12 @@ export default function ComponentLibrary() {
         </aside>
 
         <main className="min-w-0">
-          <div className="mb-10 rounded-3xl bg-[#4e332d] px-6 py-10 text-[#ebe8e0] md:px-10">
-            <p className="font-label text-[10px] uppercase tracking-[0.25em] text-[#f2aaa9]">Design Workshop</p>
-            <h1 className="mt-3 max-w-4xl font-display text-5xl leading-[0.95] md:text-7xl">
+          <div className="mb-10 rounded-3xl bg-cowboy-umber px-6 py-10 text-alpine-linen md:px-10">
+            <p className="font-label text-[10px] uppercase tracking-[0.25em] text-nude-ember">Design Workshop</p>
+            <h1 className="mt-3 max-w-4xl font-heading text-5xl leading-[0.95] md:text-7xl">
               The component library, without the duplicate-component circus.
             </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-6 text-[#ebe8e0]/70">
+            <p className="mt-5 max-w-2xl text-sm leading-6 text-alpine-linen/70">
               Every preview imports the real canonical source file. Use the viewport and background controls to stress-test the UI while you work through the revised booking experience.
             </p>
           </div>

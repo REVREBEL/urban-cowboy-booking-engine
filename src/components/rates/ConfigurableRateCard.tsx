@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import type {
   RateCardArtworkMode,
   RateCardConfig,
+  RateCardLayout,
   RateCardLiveContent,
   RateCardOverlayPosition,
 } from "@/types/rate-card";
@@ -13,6 +14,7 @@ import { PolicyDisplay } from "./policy_display";
 export interface ConfigurableRateCardProps {
   config: RateCardConfig;
   live: RateCardLiveContent;
+  layout?: RateCardLayout;
   artworkMode?: RateCardArtworkMode;
   layout?: "vertical" | "horizontal";
   onBook: () => void;
@@ -35,7 +37,19 @@ const MOBILE_POSITION_TOP: Record<RateCardOverlayPosition, string> = {
   low: "44%",
 };
 
-export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
+type SharedProps = Omit<ConfigurableRateCardProps, "layout">;
+
+function actionLabel(
+  config: RateCardConfig,
+  live: RateCardLiveContent,
+  isExpanded: boolean,
+  confirmLabel: string,
+) {
+  const base = normalizeRateCardCtaLabel(config.ctaLabel ?? live.ctaLabel);
+  return isExpanded ? confirmLabel : base;
+}
+
+function VerticalRateCard({
   config,
   live,
   artworkMode = "auto",
@@ -46,7 +60,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
   confirmLabel = "CONFIRM BOOKING",
   disabled = false,
   className = "",
-}) => {
+}: SharedProps) {
   const [desktopFailed, setDesktopFailed] = useState(false);
   const [mobileFailed, setMobileFailed] = useState(false);
 
@@ -74,9 +88,7 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
     ],
   );
 
-  const baseCtaLabel = normalizeRateCardCtaLabel(config.ctaLabel ?? live.ctaLabel);
-  const ctaLabel = isExpanded ? confirmLabel : baseCtaLabel;
-
+  const ctaLabel = actionLabel(config, live, isExpanded, confirmLabel);
   const handleAction = () => {
     if (!isExpanded && onExpand) {
       onExpand();
@@ -89,25 +101,21 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
     <article
       className={`rate-card-shell ${className}`}
       data-rate-card={config.id}
+      data-rate-card-layout="vertical"
       data-artwork-mode={artworkMode}
       data-layout={layout}
       data-text-color={config.textColor}
       data-button-color={config.buttonColor}
       data-font-pair={config.fontPair}
+      data-border-style={config.borderStyle}
       data-desktop-overlay-position={config.desktopOverlayPosition}
       data-mobile-overlay-position={config.mobileOverlayPosition}
       data-artwork-fallback={fallbackIsVisible ? "true" : "false"}
       style={style}
       aria-labelledby={`rate-card-${config.id}-title`}
     >
-      <div className="rate-card-frame">
-        <div
-          className={
-            fallbackIsVisible
-              ? "rate-card-semantic rate-card-semantic--visible"
-              : "sr-only"
-          }
-        >
+      <div className="rate-card-frame rate-card-border-surface" data-border-style={config.borderStyle}>
+        <div className={fallbackIsVisible ? "rate-card-semantic rate-card-semantic--visible" : "sr-only"}>
           {config.eyebrow && <p>{config.eyebrow}</p>}
           <h3 id={`rate-card-${config.id}-title`}>{config.headline}</h3>
           <p>{config.description}</p>
@@ -183,6 +191,138 @@ export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
         </div>
       </div>
     </article>
+  );
+}
+
+function HorizontalRateCard({
+  config,
+  live,
+  onBook,
+  isExpanded = false,
+  onExpand,
+  confirmLabel = "CONFIRM BOOKING",
+  disabled = false,
+  className = "",
+}: SharedProps) {
+  const [artworkFailed, setArtworkFailed] = useState(false);
+  const { ref, layout } = useHorizontalOfferLayout<HTMLElement>();
+
+  const artwork = artworkFailed ? null : config.horizontalArtworkUrl;
+  const fallbackIsVisible = !artwork;
+  const textColor = RATE_CARD_COLORS[config.textColor].hex;
+  const accentColor = RATE_CARD_COLORS[config.accentColor ?? "bandana-red"].hex;
+
+  const style = useMemo(
+    () =>
+      ({
+        "--rate-fg": textColor,
+        "--rate-border-color": textColor,
+        "--rate-accent": accentColor,
+        "--horizontal-offer-height": `${layout.renderedHeight}px`,
+      }) as React.CSSProperties,
+    [layout.renderedHeight, textColor, accentColor],
+  );
+
+  const ctaLabel = actionLabel(config, live, isExpanded, confirmLabel);
+  const handleAction = () => {
+    if (!isExpanded && onExpand) {
+      onExpand();
+      return;
+    }
+    onBook();
+  };
+
+  return (
+    <article
+      ref={ref}
+      className={`horizontal-rate-card-shell rate-card-border-surface ${className}`}
+      data-rate-card={config.id}
+      data-rate-card-layout="horizontal"
+      data-text-color={config.textColor}
+      data-button-color={config.buttonColor}
+      data-font-pair={config.fontPair}
+      data-border-style={config.borderStyle}
+      data-artwork-fallback={fallbackIsVisible ? "true" : "false"}
+      style={style}
+      aria-labelledby={`horizontal-rate-card-${config.id}-title`}
+    >
+      <div
+        className="horizontal-rate-card-viewport"
+        style={{
+          width: `${layout.logicalViewportWidth}px`,
+          height: `${HORIZONTAL_OFFER_BASE_HEIGHT}px`,
+          transform: `scale(${layout.scale})`,
+        }}
+      >
+        <div
+          className="horizontal-rate-card-artboard"
+          style={{
+            width: `${HORIZONTAL_OFFER_BASE_WIDTH}px`,
+            height: `${HORIZONTAL_OFFER_BASE_HEIGHT}px`,
+          }}
+        >
+          <div className={fallbackIsVisible ? "horizontal-rate-card-semantic horizontal-rate-card-semantic--visible" : "sr-only"}>
+            {config.eyebrow && <p>{config.eyebrow}</p>}
+            <h3 id={`horizontal-rate-card-${config.id}-title`}>{config.headline}</h3>
+            <p>{config.description}</p>
+            {config.supportingText && <p>{config.supportingText}</p>}
+          </div>
+
+          {artwork && (
+            <img
+              src={artwork}
+              alt=""
+              aria-hidden="true"
+              className="horizontal-rate-card-artwork"
+              onError={() => setArtworkFailed(true)}
+            />
+          )}
+
+          <div
+            className="horizontal-rate-card-overlay"
+            style={{ transform: `translateX(-${layout.overlayShift}px)` }}
+          >
+            <div className="horizontal-rate-card-price-block">
+              <div className="horizontal-rate-card-price">
+                {live.price} <span>{live.priceUnit ?? "Nightly"}</span>
+              </div>
+              <div className="horizontal-rate-card-tax">{live.taxLabel}</div>
+            </div>
+
+            <div className="horizontal-rate-card-action">
+              <Button
+                type="button"
+                variant={config.buttonStyle}
+                color={config.buttonColor}
+                size="default"
+                className="horizontal-rate-card-cta"
+                style={config.buttonStyle === "outline" ? { color: textColor } : undefined}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleAction();
+                }}
+                disabled={disabled}
+                aria-label={`${ctaLabel}: ${config.headline}, ${live.price} ${live.priceUnit ?? "nightly"}`}
+              >
+                {ctaLabel}
+              </Button>
+              <p className="horizontal-rate-card-policy">{live.cancellationText}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export const ConfigurableRateCard: React.FC<ConfigurableRateCardProps> = ({
+  layout = "vertical",
+  ...props
+}) => {
+  return layout === "horizontal" ? (
+    <HorizontalRateCard {...props} />
+  ) : (
+    <VerticalRateCard {...props} />
   );
 };
 

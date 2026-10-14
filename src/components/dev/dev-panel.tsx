@@ -9,12 +9,12 @@ function useApiLog(): ApiLogEntry[] {
 // ── Collapsible JSON Tree (expand/collapse objects & arrays) ──────────────────
 function Primitive({ value }: { value: unknown }) {
   if (value === null) return <span className="text-pink-300">null</span>;
-  if (value === undefined) return <span className="text-cream/40">undefined</span>;
+  if (value === undefined) return <span className="text-foreground/40">undefined</span>;
   const t = typeof value;
   if (t === "string") return <span className="text-emerald-300 break-all">"{value as string}"</span>;
   if (t === "number") return <span className="text-sky-300">{String(value)}</span>;
   if (t === "boolean") return <span className="text-amber-300">{String(value)}</span>;
-  return <span className="text-cream/70">{String(value)}</span>;
+  return <span className="text-foreground/70">{String(value)}</span>;
 }
 
 function JsonNode({ name, value, depth }: { name?: string; value: unknown; depth: number }) {
@@ -23,9 +23,9 @@ function JsonNode({ name, value, depth }: { name?: string; value: unknown; depth
 
   if (!isObj) {
     return (
-      <div className="break-words">
+      <div className="wrap-break-word">
         {name !== undefined && <span className="text-turquoise-vivid">{name}</span>}
-        {name !== undefined && <span className="text-cream/40">: </span>}
+        {name !== undefined && <span className="text-foreground/40">: </span>}
         <Primitive value={value} />
       </div>
     );
@@ -42,13 +42,13 @@ function JsonNode({ name, value, depth }: { name?: string; value: unknown; depth
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-start gap-1 text-left transition hover:text-cream"
+        className="flex w-full items-start gap-1 text-left transition hover:text-foreground"
       >
-        <IconChevron className={`mt-[3px] h-3 w-3 shrink-0 text-cream/40 transition-transform ${open ? "rotate-90" : ""}`} />
+        <IconChevron className={`mt-0.75 h-3 w-3 shrink-0 text-foreground/40 transition-transform ${open ? "rotate-90" : ""}`} />
         <span>
           {name !== undefined && <span className="text-turquoise-vivid">{name}</span>}
-          {name !== undefined && <span className="text-cream/40">: </span>}
-          <span className="text-cream/45">{summary}</span>
+          {name !== undefined && <span className="text-foreground/40">: </span>}
+          <span className="text-foreground/45">{summary}</span>
         </span>
       </button>
       {open && (
@@ -57,7 +57,7 @@ function JsonNode({ name, value, depth }: { name?: string; value: unknown; depth
             <JsonNode key={k} name={k} value={v} depth={depth + 1} />
           ))}
           {entries.length > 200 && (
-            <div className="text-[10px] text-cream/30">… {entries.length - 200} more items</div>
+            <div className="text-[10px] text-foreground/30">… {entries.length - 200} more items</div>
           )}
         </div>
       )}
@@ -66,7 +66,7 @@ function JsonNode({ name, value, depth }: { name?: string; value: unknown; depth
 }
 
 const JsonTree = ({ value }: { value: unknown }) => (
-  <div className="overflow-x-auto rounded-lg bg-black/40 p-2.5 font-mono text-[11px] leading-relaxed text-cream/80">
+  <div className="overflow-x-auto rounded-lg bg-black/40 p-2.5 font-mono text-[11px] leading-relaxed text-foreground/80">
     <JsonNode value={value} depth={0} />
   </div>
 );
@@ -144,7 +144,7 @@ export function DevPanel() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-4 left-4 z-[60] inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 font-mono text-xs font-semibold text-cream shadow-float transition hover:bg-teal-deep"
+        className="fixed bottom-4 left-4 z-60 inline-flex items-center gap-2 rounded-full bg-background px-4 py-2.5 font-mono text-xs font-semibold text-foreground shadow-float transition hover:bg-teal-deep"
         aria-expanded={open}
         aria-label="API call log"
       >
@@ -154,13 +154,13 @@ export function DevPanel() {
         </span>
         {"</>"} API
         {entries.length > 0 && (
-          <span className="rounded-full bg-turquoise-vivid px-1.5 text-[10px] text-ink">{entries.length}</span>
+          <span className="rounded-full bg-turquoise-vivid px-1.5 text-[10px] text-foreground">{entries.length}</span>
         )}
       </button>
 
       {open && (
         <section
-          className="fixed bottom-16 left-4 z-[60] flex max-h-[74vh] w-[min(460px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink text-cream shadow-float"
+          className="fixed bottom-16 left-4 z-60 flex max-h-[74vh] w-[min(460px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-white/10 bg-background text-foreground shadow-float"
           aria-label="Mews API call log"
         >
           <header className="flex items-center justify-between border-b border-white/10 px-4 py-3">
@@ -177,7 +177,7 @@ export function DevPanel() {
                 <button
                   type="button"
                   onClick={() => apiLog.clear()}
-                  className="rounded-md px-2 py-1 font-mono text-[11px] text-cream/60 hover:bg-white/10 hover:text-cream"
+                  className="rounded-md px-2 py-1 font-mono text-[11px] text-foreground/60 hover:bg-white/10 hover:text-foreground"
                 >
                   clear
                 </button>
@@ -186,7 +186,7 @@ export function DevPanel() {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close"
-                className="grid h-7 w-7 place-items-center rounded-md text-cream/60 hover:bg-white/10 hover:text-cream"
+                className="grid h-7 w-7 place-items-center rounded-md text-foreground/60 hover:bg-white/10 hover:text-foreground"
               >
                 <IconClose className="h-4 w-4" />
               </button>
@@ -197,7 +197,7 @@ export function DevPanel() {
             {view === "calls" ? <CallsView entries={entries} expanded={expanded} setExpanded={setExpanded} /> : <SourcesView />}
           </div>
 
-          <footer className="border-t border-white/10 px-4 py-2 text-center text-[10px] text-cream/35">
+          <footer className="border-t border-white/10 px-4 py-2 text-center text-[10px] text-foreground/35">
             Mews calls pass through the Worker — Client & IDs remain server-side.
           </footer>
         </section>
@@ -212,7 +212,7 @@ function Tab({ active, onClick, children }: { active: boolean; onClick: () => vo
       type="button"
       onClick={onClick}
       className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
-        active ? "bg-white/10 text-cream" : "text-cream/50 hover:text-cream"
+        active ? "bg-white/10 text-foreground" : "text-foreground/50 hover:text-foreground"
       }`}
     >
       {children}
@@ -231,7 +231,7 @@ function CallsView({
 }) {
   if (entries.length === 0) {
     return (
-      <p className="px-4 py-8 text-center text-sm text-cream/40">
+      <p className="px-4 py-8 text-center text-sm text-foreground/40">
         No calls yet.
         <br />
         Run a search to see Mews calls appear here.
@@ -252,20 +252,20 @@ function CallsView({
             >
               <StatusDot e={e} />
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-medium text-cream">{meta.label}</span>
-                <span className="block truncate font-mono text-[11px] text-cream/45">
+                <span className="block truncate text-[13px] font-medium text-foreground">{meta.label}</span>
+                <span className="block truncate font-mono text-[11px] text-foreground/45">
                   {e.method} /{e.path}
                 </span>
               </span>
-              <span className="shrink-0 text-right font-mono text-[11px] text-cream/50">
+              <span className="shrink-0 text-right font-mono text-[11px] text-foreground/50">
                 {e.pending ? "…" : `${e.status ?? "ERR"}`}
-                {e.durationMs != null && <span className="block text-cream/35">{e.durationMs}ms</span>}
+                {e.durationMs != null && <span className="block text-foreground/35">{e.durationMs}ms</span>}
               </span>
             </button>
             {isOpen && (
               <div className="space-y-3 bg-black/20 px-4 py-3">
                 <Field title="Why this call?">
-                  <p className="text-[12px] leading-relaxed text-cream/75">{meta.why}</p>
+                  <p className="text-[12px] leading-relaxed text-foreground/75">{meta.why}</p>
                 </Field>
                 {e.request != null && (
                   <Field title="Request (sent to proxy)">
@@ -316,9 +316,9 @@ const MOCK: string[] = [
 function SourcesView() {
   return (
     <div className="space-y-4 px-4 py-3 text-[12px] leading-relaxed">
-      <p className="text-cream/60">
-        Simple rule: <strong className="text-cream">everything in the 'Calls' tab is real</strong>{" "}
-        (live Mews responses). The rest of the interface listed below is <strong className="text-cream">hardcoded</strong>{" "}
+      <p className="text-foreground/60">
+        Simple rule: <strong className="text-foreground">everything in the 'Calls' tab is real</strong>{" "}
+        (live Mews responses). The rest of the interface listed below is <strong className="text-foreground">hardcoded</strong>{" "}
         (conversion demo, to be connected in prod).
       </p>
 
@@ -328,7 +328,7 @@ function SourcesView() {
         </p>
         <ul className="space-y-1">
           {LIVE.map((t) => (
-            <li key={t} className="flex gap-2 text-cream/75">
+            <li key={t} className="flex gap-2 text-foreground/75">
               <span className="text-emerald-400">✓</span>
               <span>{t}</span>
             </li>
@@ -342,15 +342,15 @@ function SourcesView() {
         </p>
         <ul className="space-y-1">
           {MOCK.map((t) => (
-            <li key={t} className="flex gap-2 text-cream/75">
+            <li key={t} className="flex gap-2 text-foreground/75">
               <span className="text-amber-400">⚠</span>
               <span>{t}</span>
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-[11px] text-cream/40">
-          Remaining demo conversion signals are centralized in <code className="text-cream/60">src/components/conversion.tsx</code> (+ amenities in{" "}
-          <code className="text-cream/60">RoomDetailDrawer</code>). Room-detail review quotes now come from published Webflow CMS content.
+        <p className="mt-2 text-[11px] text-foreground/40">
+          Remaining demo conversion signals are centralized in <code className="text-foreground/60">src/components/conversion.tsx</code> (+ amenities in{" "}
+          <code className="text-foreground/60">RoomDetailDrawer</code>). Room-detail review quotes now come from published Webflow CMS content.
         </p>
       </div>
     </div>

@@ -73,7 +73,7 @@ const ClearIcon: React.FC<{ color?: string; className?: string }> = ({
  * - Outer Box: 275px width, 151px height, 24px padding
  * - Background: #FAF9F9, Border: 2px solid #343833, Radius: 0px
  * - Inner container: 223px x 99px, padding 8px 0px, gap 8px
- * - Label: 'Brothers OT', 14px / 17px, uppercase, #343833
+ * - Label: 'Brothers', 14px / 17px, uppercase, #343833
  * - Input line: border-bottom 1px solid #4E332D, 'Uchen' 16px / 30px
  */
 export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
@@ -177,23 +177,23 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
     <div
       role="dialog"
       aria-label="Promo code entry"
-      className={`box-border relative flex flex-col items-start p-[24px] w-[275px] max-w-[2089px] h-[151px] max-h-[520px] bg-[#FAF9F9] border-2 border-[#343833] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] rounded-none select-none overflow-hidden ${className}`}
+      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input-bg p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] ${className}`}
     >
       {/* Container: 223px x 99px, padding: 8px 0px, gap: 8px */}
-      <div className="flex flex-col items-start py-[8px] px-0 gap-[8px] w-[223px] h-[99px] self-stretch">
-        {/* Label: 223px x 17px, font-brothers */}
-        <div className="flex flex-col items-start p-0 w-[223px] h-[17px] self-stretch">
+      <div className="flex flex-col items-start py-2 px-0 gap-2 w-55.75 h-24.75 self-stretch">
+        {/* Label: 223px x 17px, font-label */}
+        <div className="flex flex-col items-start p-0 w-55.75 h-4.25 self-stretch">
           <label
             htmlFor={inputId}
-            className="w-[223px] h-[17px] font-brothers text-[14px] leading-[17px] uppercase text-[#343833] flex items-center cursor-pointer tracking-wider"
+            className="flex h-4.25 w-55.75 cursor-pointer items-center font-label text-[14px] uppercase leading-[17px] tracking-wider text-foreground"
           >
             PROMO
           </label>
         </div>
 
         {/* Input Container: 223px x 58px */}
-        <div className="relative w-[223px] h-[58px] flex flex-col justify-end">
-          <div className="box-border flex flex-row items-center w-full h-[50px] border-b border-[#4E332D] bg-[#FAF9F9] transition-colors focus-within:border-b-2 focus-within:border-[#343833]">
+        <div className="relative w-55.75 h-14.5 flex flex-col justify-end">
+          <div className="box-border flex h-12.5 w-full flex-row items-center border-b border-input-border bg-input-bg transition-colors focus-within:border-b-2 focus-within:border-input-border">
             {/* Promo / Group Code Input Field */}
             <input
               ref={inputRef}
@@ -205,14 +205,14 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
               disabled={isVerifying}
               placeholder="Promo/Group Code"
               aria-invalid={statusFeedback ? !statusFeedback.isValid : undefined}
-              className="w-full h-[36px] bg-transparent font-uchen text-[16px] leading-[30px] text-[#4E332D] placeholder:text-[#4E332D] placeholder:opacity-100 border-none outline-none p-0 pr-2"
+              className="h-9 w-full border-none bg-transparent p-0 pr-2 font-body text-[16px] leading-[30px] text-foreground outline-none placeholder:text-foreground placeholder:opacity-100"
             />
 
             {/* Trailing action / status indicator */}
             <div className="flex items-center gap-1 shrink-0">
               {isVerifying && (
                 <div
-                  className="w-4 h-4 border-2 border-[#4E332D] border-t-transparent rounded-full animate-spin"
+                  className="w-4 h-4 border-2 border-cowboy-umber border-t-transparent rounded-full animate-spin"
                   aria-label="Verifying code"
                 />
               )}
@@ -222,7 +222,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
                   type="button"
                   onClick={handleClear}
                   aria-label="Clear promo code input"
-                  className="p-1 text-[#4E332D] hover:opacity-70 transition-opacity focus:outline-none"
+                  className="p-1 text-foreground transition-opacity hover:opacity-70 focus:outline-none"
                 >
                   <ClearIcon />
                 </button>
@@ -235,14 +235,14 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
           </div>
 
           {/* Validation Feedback Line */}
-          <div className="h-[16px] mt-1 flex items-center">
+          <div className="h-4 mt-1 flex items-center">
             {statusFeedback?.errorMessage && (
-              <span className="text-[11px] font-urbanist font-medium text-[#B91C1C]">
+              <span className="text-[11px] font-urbanist font-medium text-bandana-red">
                 {statusFeedback.errorMessage}
               </span>
             )}
             {statusFeedback?.discountDescription && (
-              <span className="text-[11px] font-urbanist font-semibold text-[#15803D]">
+              <span className="text-[11px] font-urbanist font-semibold text-lake-forest-100">
                 {statusFeedback.discountDescription}
               </span>
             )}

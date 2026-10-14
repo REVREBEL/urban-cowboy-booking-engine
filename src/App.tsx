@@ -1,4 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { isStudioRoute } from "./studio/runtime";
+import { StudioController } from "./studio/StudioController";
+import { currentStudioLayout, setStudioDefaultLayout, type RoomResultsLayout } from "./studio/roomLayout";
+import { api } from "./lib/api";
+import { PhotoArrival } from "./journey/PhotoArrival";
+import { PhotoJourneyHeader } from "./journey/PhotoJourneyHeader";
+import { PhotoRateStep } from "./journey/PhotoRateStep";
+import { PhotoReviewGuest } from "./journey/PhotoReviewGuest";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
@@ -13,6 +21,7 @@ import { Upgrade } from "./steps/Upgrade";
 import { Extras } from "./steps/Extras";
 import { Payment } from "./steps/Payment";
 import { Confirmation } from "./steps/Confirmation";
+
 import { t } from "./i18n";
 
 const SHOW_API_DEBUGGER =
@@ -28,10 +37,9 @@ const PROGRESS_NUMBER: Record<Step, number> = {
   payment: 5,
   confirmation: 6,
 };
-
-const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
+const STEP_COMPONENTS: Record<Step, () => React.JSX.Element | null> = {
   dates: Dates,
-  results: Results,
+  results: () => <Results />,
   rates: Rates,
   guest: Guest,
   upgrade: Upgrade,
@@ -40,9 +48,11 @@ const STEP_COMPONENTS: Record<Step, () => JSX.Element | null> = {
   confirmation: Confirmation,
 };
 
-function Shell() {
+function Shell({ layout }: { layout: RoomResultsLayout }) {
   const { step, hotelError, reloadHotel, resetAll, goTo, hydrating } = useBooking();
   const StepView = STEP_COMPONENTS[step];
+  // The Photo experience owns its chrome and step bar for the full journey.
+  const photoJourney = layout === "photo";
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -54,8 +64,9 @@ function Shell() {
   }, []);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-cream">
-      <BookingHeader
+    <div className={photoJourney ? "photo-journey flex min-h-dvh flex-col bg-smoke font-body text-paper" : "flex min-h-dvh flex-col bg-background px-4 sm:px-6 lg:px-8"}>
+      {photoJourney && <PhotoJourneyHeader />}
+      {!photoJourney && <BookingHeader
         step={step}
         onNavigate={goTo}
         onHome={() => {
@@ -63,7 +74,7 @@ function Shell() {
           goTo("dates");
         }}
         canNavigate={(target) => PROGRESS_NUMBER[target] < PROGRESS_NUMBER[step]}
-      />
+      />}
 
       {hotelError && (
         <Banner
@@ -76,12 +87,21 @@ function Shell() {
       )}
 
       <main className="flex-1">
-        {hydrating ? <HydrateLoader /> : <StepView />}
+        {hydrating ? <HydrateLoader /> :
+          photoJourney && step === "dates" ? <PhotoArrival /> :
+          step === "results" ? <Results roomLayout={layout} /> :
+          photoJourney && step === "rates" ? <PhotoRateStep /> :
+          photoJourney && step === "extras" ? <Extras photoMode /> :
+          photoJourney && step === "guest" ? <PhotoReviewGuest /> :
+          photoJourney && (step === "payment" || step === "upgrade") ?
+            <div className="min-h-dvh bg-paper pt-20 text-smoke"><StepView /></div> :
+          <StepView />}
       </main>
 
-      <BookingFooter />
-      <ContactBar />
-      {SHOW_API_DEBUGGER && <DevPanel />}
+      {!photoJourney && <BookingFooter />}
+      {!photoJourney && <ContactBar />}
+      {SHOW_API_DEBUGGER && !isStudioRoute() && <DevPanel />}
+      {isStudioRoute() && <StudioController />}
     </div>
   );
 }
@@ -92,16 +112,43 @@ function HydrateLoader() {
     <div className="grid min-h-[60vh] place-items-center px-5">
       <div className="flex flex-col items-center gap-4 text-center">
         <span className="h-9 w-9 animate-spin rounded-full border-2 border-turquoise/25 border-t-turquoise" />
-        <p className="text-sm text-ink/60">{t("common.restoring")}</p>
+        <p className="text-sm text-smoke/60">{t("common.restoring")}</p>
       </div>
     </div>
   );
 }
 
 export default function App() {
-  return (
-    <BookingProvider>
-      <Shell />
-    </BookingProvider>
-  );
+  const studio = isStudioRoute();
+  const [allowed, setAllowed] = useState<boolean | null>(studio ? null : true);
+  const [layout, setLayout] = useState<RoomResultsLayout | null>(null);
+  useEffect(() => {
+    if (!studio) {
+      let active = true;
+      void api.locations().then((locations) => {
+        if (active) setLayout(locations.hotel?.productionLayout === "photo" ? "photo" : "card");
+      }).catch(() => { if (active) setLayout("card"); });
+      return () => { active = false; };
+    }
+    const controller = new AbortController();
+    fetch("/api/studio/config?property=hotel", { cache: "no-store", signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        const preferred = data?.demoLayout === "photo" ? "photo" : "card";
+        setStudioDefaultLayout(preferred);
+        setLayout(currentStudioLayout());
+        setAllowed(data?.enabled === true);
+      })
+      .catch(() => setAllowed(false));
+    return () => controller.abort();
+  }, [studio]);
+  useEffect(() => {
+    if (!studio) return;
+    const update = () => setLayout(currentStudioLayout());
+    window.addEventListener("studio-room-layout-change", update);
+    return () => window.removeEventListener("studio-room-layout-change", update);
+  }, [studio]);
+  if (allowed === null || layout === null) return <div className="grid min-h-screen place-items-center">Loading booking configuration…</div>;
+  if (!allowed) return <main className="grid min-h-screen place-items-center p-8"><p>Booking Studio is disabled for this location.</p></main>;
+  return <BookingProvider><Shell layout={layout} /></BookingProvider>;
 }

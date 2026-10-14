@@ -25,7 +25,7 @@ export function LodgeSignboard({
 }: LodgeSignboardProps) {
   return (
     <div
-      className={`relative isolate aspect-[4/5] w-full overflow-hidden bg-[#3D2A22] shadow-2xl sm:aspect-[16/9] ${className}`}
+      className={`relative isolate aspect-[4/5] w-full overflow-hidden bg-cowboy-umber shadow-2xl sm:aspect-[16/9] ${className}`}
     >
       <img
         src={backgroundImage}
@@ -36,7 +36,7 @@ export function LodgeSignboard({
 
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/15"
+        className="absolute inset-0 bg-linear-to-r from-black/20 via-transparent to-black/15"
       />
 
       <img

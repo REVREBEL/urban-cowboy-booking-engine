@@ -23,6 +23,9 @@ test("normalizes footer content from the published Locations CMS item", () => {
   assert.deepEqual(location, {
     id: "catskills-item",
     fullLocationName: "Urban Cowboy Lodge & Resort",
+    productionLayout: "card",
+    demoLayout: "card",
+    enableDemoEngine: false,
     city: "Big Indian",
     state: "NY",
     privacyPolicyUrl: "https://example.com/privacy",
@@ -112,4 +115,23 @@ test("draft, archived, or unbound CMS locations are not exposed", () => {
   );
 
   assert.deepEqual(locations, {});
+});
+
+test("Locations layout option IDs map independently for production and demo", () => {
+  const make = (production: unknown, demo: unknown) => normalizeLocationItem({
+    id: "catskills-item",
+    isArchived: false,
+    isDraft: false,
+    fieldData: {
+      "full-location-name": "Urban Cowboy Lodge & Resort",
+      "production-layout": production,
+      "demo-layout": demo,
+    },
+  });
+  assert.equal(make("f4859a16a8556038b0f026679aaa6a02", "b5074dbc31924c6f9feb79f1a6bdfd2c")?.productionLayout, "photo");
+  assert.equal(make("f4859a16a8556038b0f026679aaa6a02", "b5074dbc31924c6f9feb79f1a6bdfd2c")?.demoLayout, "card");
+  assert.equal(make("97075d405111e533c78daa0afa48bef5", "2142905a00c88401810632b026107cf2")?.productionLayout, "card");
+  assert.equal(make("97075d405111e533c78daa0afa48bef5", "2142905a00c88401810632b026107cf2")?.demoLayout, "photo");
+  assert.equal(make(null, null)?.productionLayout, "card");
+  assert.equal(make("Photo Layout", "Photo Layout")?.demoLayout, "card");
 });
