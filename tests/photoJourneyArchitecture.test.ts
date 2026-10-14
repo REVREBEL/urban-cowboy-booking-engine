@@ -46,3 +46,13 @@ test("Studio switches between independent starts instead of retaining the previo
   assert.match(controller, /url\.searchParams\.delete\("photoPath"\)/);
   assert.match(controller, /booking\.resetAll\(\)/);
 });
+
+test("Results does not include retired photo tour branches", () => {
+  const results = source("steps/Results.tsx");
+  assert.match(results, /<PhotoRooms/);
+  assert.match(results, /<BuildingExperienceList/);
+  assert.doesNotMatch(results, /<PhotoJourneyHeader/);
+  assert.doesNotMatch(results, /photoRooms\.map\(/);
+  assert.doesNotMatch(results, /<RoomPhotoTour/);
+  assert.doesNotMatch(results, /tourDetailsId/);
+});
