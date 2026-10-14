@@ -8,6 +8,7 @@ const QUICK_DATE_RANGES = [
 ] as const;
 
 interface DateSearchDropdownProps {
+  variant?: "confirm" | "external-actions";
   checkIn: string;
   checkOut: string;
   dailyRates: Record<string, DailyRate>;
@@ -17,6 +18,7 @@ interface DateSearchDropdownProps {
 }
 
 export function DateSearchDropdown({
+  variant = "confirm",
   checkIn,
   checkOut,
   dailyRates,
@@ -72,17 +74,19 @@ export function DateSearchDropdown({
           </div>
         </div>
 
-        <Button
-          type="button"
-          disabled={!hasCompleteRange}
-          onClick={onClose}
-          variant="filled"
-          colorScheme="cowboy-umber"
-          size="small"
-          className="self-end rounded-full uppercase tracking-[1.5px] sm:shrink-0"
-        >
-          Confirm dates
-        </Button>
+        {variant === "confirm" && (
+          <Button
+            type="button"
+            disabled={!hasCompleteRange}
+            onClick={onClose}
+            variant="filled"
+            colorScheme="cowboy-umber"
+            size="small"
+            className="self-end rounded-full uppercase tracking-[1.5px] sm:shrink-0"
+          >
+            Confirm dates
+          </Button>
+        )}
       </div>
     </div>
   );
