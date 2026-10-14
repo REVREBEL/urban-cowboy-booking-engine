@@ -8,6 +8,7 @@ import { isStudioRoute } from "../studio/runtime.ts";
 const STUDIO_GALLERY_IDS: Record<string, string> = {
   "demo-alpine": "9cbb022a-742f-4abe-9586-b10600706caf", // Alpine Bathing Suite
   "demo-forest": "38cebace-6f26-47fd-b7e0-b1f1012d30a6", // Forest House King, gallery representative
+  "demo-opa-cabin": "a2230bdd-1770-41b6-8932-b202001df350", // Opa\'s Cabin 2 Bedroom Suite
   "demo-cabin": "e90c2a72-1cf8-4246-84d7-b10600706caf", // The Cabin
 };
 
