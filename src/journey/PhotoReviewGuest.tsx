@@ -9,16 +9,16 @@ import { useBooking } from "../state/booking";
 import { EMAIL_RE, money } from "../lib/format";
 import { getLang } from "../lib/lang";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
+import { Button } from "../components/ui/button";
 
 const PhoneInput = lazy(() => import("../components/forms/phone-input").then(module => ({ default: module.PhoneInput })));
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const btnPrimary = "inline-flex items-center justify-center gap-2 rounded-full bg-button-secondary-bg px-6 py-3 font-label text-xs uppercase tracking-[0.2em] text-bg-button-secondary-foreground transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper";
 function Row({ title, value, onEdit }: { title: string; value: string; onEdit: () => void }) {
   return (
     <div className="grid grid-cols-[72px_minmax(0,1fr)_auto] gap-3 py-3 text-sm">
       <dt className="text-foreground/70">{title}</dt>
       <dd className="min-w-0">{value}</dd>
-      <button type="button" onClick={onEdit} className="text-xs underline underline-offset-4">Edit</button>
+      <Button type="button" onClick={onEdit} variant="transparent" colorScheme="lake-forest" size="xsmall" className="underline underline-offset-4" style={{padding:0}}>Edit</Button>
     </div>
   );
 }
@@ -98,7 +98,7 @@ export function PhotoReviewGuest() {
             <span className="font-heading text-3xl">{money(total, booking.currency)}</span>
           </div>
         </div>
-        <button type="button" onClick={() => booking.goTo("extras")} className="mt-3 text-sm underline underline-offset-4">Edit extras</button>
+        <Button type="button" onClick={() => booking.goTo("extras")} variant="transparent" colorScheme="lake-forest" size="xsmall" className="mt-3 underline underline-offset-4" style={{padding:0}}>Edit extras</Button>
         <form onSubmit={submit} className="mt-9 space-y-5" noValidate>
           <h3 className="font-heading text-2xl">Who should we expect?</h3>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -136,9 +136,9 @@ export function PhotoReviewGuest() {
             <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
             Next, review payment and reservation conditions before confirming.
           </p>
-          <button type="submit" className={`${btnPrimary} w-full py-4`}>
+          <Button type="submit" variant="filled" colorScheme="alpine-linen" size="small" className="w-full rounded-full uppercase tracking-[0.2em]">
             Continue to payment review <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </button>
+          </Button>
         </form>
       </div>
     </section>
