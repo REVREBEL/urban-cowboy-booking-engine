@@ -4,14 +4,12 @@ import type {
   RateCardLayout,
   RateCardLiveContent,
 } from "@/types/rate-card";
-import { RATE_CARD_COLORS } from "@/lib/rateCardPresentation";
 import { ConfigurableRateCard } from "./ConfigurableRateCard";
 import { PolicyDisplay, type MilestoneDate } from "./policy_display";
 import {
   RateOfferSidePanel,
   type OfferCardTheme,
 } from "./RateOfferSidePanel";
-import type { MilestoneDate } from "./policy_display";
 
 export interface ConfigurableRateOfferPricing {
   nightly: number | string;
@@ -28,7 +26,6 @@ export interface ConfigurableRateOfferProps {
   theme: OfferCardTheme;
   layout?: RateCardLayout;
   variant?: "default" | "compact";
-  layout?: "vertical" | "horizontal";
   isExpanded: boolean;
   onToggleExpand: () => void;
   onConfirmBooking: () => void;
@@ -40,49 +37,12 @@ export interface ConfigurableRateOfferProps {
   disabled?: boolean;
 }
 
-function formatAmount(value: number | string) {
-  if (typeof value === "number") {
-    return `$${value.toFixed(2)}`;
-  }
-
-  const text = String(value);
-  return text.startsWith("$") ? text : `$${text}`;
-}
-
-function milestoneDate(
-  checkIn: string,
-  window: number | null | undefined,
-  period: "hours" | "days" | null | undefined,
-): MilestoneDate | undefined {
-  if (!window || !period) return undefined;
-  if (period === "hours" && window % 24 !== 0) return undefined;
-
-  const [year, month, day] = checkIn.split("-").map(Number);
-  if (!year || !month || !day) return undefined;
-
-  const daysPrior = period === "days" ? window : window / 24;
-  const cutoff = new Date(Date.UTC(year, month - 1, day, 12));
-  cutoff.setUTCDate(cutoff.getUTCDate() - daysPrior);
-
-  return {
-    daysPrior: daysPrior < 10 ? String(daysPrior).padStart(2, "0") : daysPrior,
-    day: String(cutoff.getUTCDate()).padStart(2, "0"),
-    month: new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      timeZone: "UTC",
-    })
-      .format(cutoff)
-      .toUpperCase(),
-  };
-}
-
 export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   config,
   live,
   theme,
   layout = "vertical",
   variant = "default",
-  layout = "vertical",
   isExpanded,
   onToggleExpand,
   onConfirmBooking,
@@ -116,30 +76,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   const freeCancelDate = milestone(config.cancellationPenaltyWindow, config.cancellationPenaltyWindowPeriod);
   const nonRefundableDate = milestone(config.cancellationFullForfeitWindow, config.cancellationFullForfeitWindowPeriod);
 
-  const policyDisplay = {
-    initialAmount: formatAmount(pricing.dueToday),
-    remainingAmount: formatAmount(pricing.remaining),
-    freeCancelDate: milestoneDate(
-      checkIn,
-      config.cancellationPenaltyWindow,
-      config.cancellationPenaltyWindowPeriod,
-    ),
-    nonRefundableDate: milestoneDate(
-      checkIn,
-      config.cancellationFullForfeitWindow,
-      config.cancellationFullForfeitWindowPeriod,
-    ),
-    textColor: RATE_CARD_COLORS[config.textColor].hex,
-    accentColor: RATE_CARD_COLORS[config.accentColor ?? "bandana-red"].hex,
-    initialDepositTooltip: {
-      title: "INITIAL DEPOSIT",
-      description: depositNote,
-    },
-    remainingBalanceTooltip: {
-      title: "REMAINING BALANCE",
-      description: remainingNote,
-    },
-  };
+
 
   return (
     <div className={`flex flex-row ${isCompact ? "items-stretch" : "items-center"}`}>
