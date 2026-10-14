@@ -24,6 +24,7 @@ import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
 import type { RoomResultsLayout } from "@/studio/roomLayout";
 import { PhotoJournal } from "@/journey/PhotoJournal";
 import { PhotoRooms } from "@/journey/PhotoRooms";
+import { photoSourceFromUrl, savePhotoGalleries } from "@/data/photoGalleries";
 import type { MatchProfile } from "@/journey/data";
 import { getPhotoProfile, savePhotoProfile, setPhotoPath } from "@/journey/photoSession";
 import type { RoomType as StudioRoomType } from "@/types";
@@ -31,6 +32,7 @@ import type { RecommendationPreferences as DiscoveryPreferences } from "../types
 import type {
   RoomTypeCmsDescriptionMap,
   RoomTypeCmsReviewMap,
+  RoomTypeCmsGalleryMap,
 } from "../types/room-type-cms";
 import type { BuildingCmsMap } from "../types/building-cms";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
@@ -129,6 +131,9 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
   const [showMatcherModal, setShowMatcherModal] = useState(false);
   const [matchBackView, setMatchBackView] = useState<"matcher" | "rooms">("matcher");
   const [roomTypeReviews, setRoomTypeReviews] = useState<RoomTypeCmsReviewMap>({});
+  const [roomTypeGalleries, setRoomTypeGalleries] = useState<RoomTypeCmsGalleryMap>({});
+  const [roomCmsLoaded, setRoomCmsLoaded] = useState(false);
+  const photoSource = photoSourceFromUrl();
   const [roomTypeDescriptions, setRoomTypeDescriptions] =
     useState<RoomTypeCmsDescriptionMap>({});
   const [buildings, setBuildings] = useState<BuildingCmsMap>({});
@@ -175,7 +180,10 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
       if (!alive) return;
       setRoomTypeReviews(content.reviews);
       setRoomTypeDescriptions(content.descriptions);
-    });
+      setRoomTypeGalleries(content.galleries);
+      savePhotoGalleries(content.galleries);
+      setRoomCmsLoaded(true);
+    }).catch(() => { if (alive) setRoomCmsLoaded(true); });
     return () => {
       alive = false;
     };
@@ -416,7 +424,9 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
 
   if (discoveryView === "rooms") {
     if (photoLayout) {
-      if (loading) return (
+      // Wait for CMS gallery selection before mounting photo <img> elements.
+      // Otherwise Mews and Webflow assets both download during a single test.
+      if (loading || (photoSource === "webflow" && !roomCmsLoaded)) return (
         <div className="grid min-h-[65dvh] place-items-center bg-smoke px-5 pt-24 text-paper" role="status">
           <p className="font-heading text-2xl">Finding rooms for your dates…</p>
         </div>
@@ -436,6 +446,8 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
             profile={journalProfile}
             rooms={rooms}
             imageBaseUrl={imageBaseUrl}
+            galleries={roomTypeGalleries}
+            photoSource={photoSource}
             guests={adults + children + infants}
             children={children + infants}
             onChoose={choose}
