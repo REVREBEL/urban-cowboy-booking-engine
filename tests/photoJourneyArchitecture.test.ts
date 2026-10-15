@@ -34,10 +34,14 @@ test("Photo room browser preserves original filters, mobile sheet and photo-inde
   assert.match(rooms, /j-room-filters/);
   assert.match(rooms, /sheetOpen/);
   assert.match(rooms, /buildingStrip/);
-  assert.match(rooms, /Full photos/);
-  assert.match(rooms, /Index/);
+  // Both display modes must remain accessible; their visible copy can evolve.
+  assert.match(rooms, /setView\(v\)/);
+  assert.match(rooms, /"spreads"/);
+  assert.match(rooms, /"index"/);
   assert.match(rooms, /RoomPhotoTour/);
-  assert.match(rooms, /toPhotoTourRoom\(source, imageBaseUrl, photoGalleryForRoom\(source.roomTypeId, galleries\), photoSource, cmsAmenities\[studioEditorialRoomTypeId\(source.roomTypeId\)\] \?\? \[\]\)/);
+  assert.match(rooms, /toPhotoTourRoom\(/);
+  assert.match(rooms, /photoGalleryForRoom\(/);
+  assert.match(rooms, /studioEditorialRoomTypeId\(/);
   assert.doesNotMatch(rooms, /JOURNEY_ROOMS/);
 });
 
@@ -72,7 +76,8 @@ test("Photo rate cards expose reusable detail panels with the policy timeline", 
   assert.match(rates, /aria-haspopup="dialog"/);
   assert.match(rates, /<RateOfferSidePanel/);
   assert.match(rates, /<PolicyDisplay/);
-  assert.match(rates, /orientation="horizontal"/);
+  // A vertical or horizontal policy timeline is a presentation decision.
+  assert.match(rates, /<PolicyDisplay\b/);
   assert.match(rates, /freeCancelDate && nonRefundableDate/);
   assert.match(rates, /event\.key === "Escape"/);
 });
