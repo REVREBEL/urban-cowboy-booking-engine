@@ -471,6 +471,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
             cmsAmenities={roomCmsAmenities}
             cmsHotspots={photoHotspots}
             photoSource={photoSource}
+            studioCatalog={studioPhoto}
             guests={adults + children + infants}
             children={studioPhoto ? 0 : children + infants}
             onChoose={choose}
