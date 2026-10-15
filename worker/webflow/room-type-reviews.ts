@@ -45,6 +45,8 @@ interface CachedReviewPayload {
   galleries: RoomTypeCmsGalleryMap;
   amenities: RoomTypeCmsAmenityMap;
   hotspots: CmsPhotoHotspotMap;
+  hotspotSourceCount?: number;
+  hotspotFetchError?: string | null;
 }
 
 const WEBFLOW_API = "https://api.webflow.com/v2";
@@ -53,7 +55,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 5 * 60 * 1000;
 const CACHE_TTL_SECONDS = 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:room-type-content:v5";
+const CACHE_KEY_PREFIX = "webflow:room-type-content:v6";
 const BROWSER_CACHE_CONTROL =
   "public, max-age=60, s-maxage=120, stale-while-revalidate=300";
 
@@ -223,6 +225,11 @@ async function fetchPublishedReviews(
         `/collections/${encodeURIComponent(id)}/items/live?limit=100`)
         .catch((): WebflowItemsResponse => ({ items: [] }))
     : Promise.resolve({ items: [] } as WebflowItemsResponse);
+  // Fetch live hotspot edits from the Webflow API rather than the CDN, which
+  // can lag after publishing. Never turn an API failure into a cached empty map.
+  const hotspotRequest = hotspotsId
+    ? webflowGet<WebflowItemsResponse>(env, WEBFLOW_API, `/collections/${encodeURIComponent(hotspotsId)}/items/live?limit=100`)
+    : Promise.resolve({ items: [] } as WebflowItemsResponse);
   const [items, collection, amenityItems, hotspotItems] = await Promise.all([
     // Published room content is the required payload and uses Webflow's Content
     // Delivery API/CDN.
@@ -239,7 +246,7 @@ async function fetchPublishedReviews(
       `/collections/${encoded}`,
     ).catch((): WebflowCollectionResponse => ({ fields: [] })),
     optionalLive(amenitiesId),
-    optionalLive(hotspotsId),
+    hotspotRequest,
   ]);
   const amenities = normalizePublishedAmenities(amenityItems.items ?? []);
 
@@ -253,6 +260,8 @@ async function fetchPublishedReviews(
     galleries: normalizeRoomTypeGalleries(items.items ?? []),
     amenities: normalizeRoomAmenityMap(items.items ?? [], amenities),
     hotspots: normalizePhotoHotspots(hotspotItems.items ?? [], amenities),
+    hotspotSourceCount: hotspotItems.items?.length ?? 0,
+    hotspotFetchError: null,
   };
 }
 
@@ -328,6 +337,7 @@ function response(payload: CachedReviewPayload, stale: boolean): Response {
       galleries: payload.galleries,
       amenities: payload.amenities,
       hotspots: payload.hotspots,
+      hotspotSourceCount: payload.hotspotSourceCount ?? null,
       generatedAt: new Date(payload.fetchedAt).toISOString(),
       stale,
     },
