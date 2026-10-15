@@ -72,7 +72,7 @@ test("both pill types use individually adjustable top and bottom padding", () =>
 });
 
 test("Pill stories cover all Button palette colors, variants and toggles", () => {
-  const story = read("stories/components/Pill.stories.tsx");
+  const story = read("stories/components/ui/Pill.stories.tsx");
   const storybook = readFileSync(new URL("../.storybook/main.ts", import.meta.url), "utf8");
   assert.match(storybook, /src\/stories\/components\/\*\*\/\*\.stories/);
   assert.match(story, /Object\.keys\(COLOR_PALETTE\)/);

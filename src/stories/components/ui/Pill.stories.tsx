@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Pill, PillButton } from "@/components/ui/pill";
-import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "@/components//ui/button";
+import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "@/components/ui/button";
 
 const colors = Object.keys(COLOR_PALETTE) as ButtonColor[];
 const styles: ButtonStyle[] = ["filled", "outline", "transparent"];
@@ -22,7 +22,7 @@ const meta = {
     colorScheme: { control: "select", options: colors },
     color: { control: "select", options: colors },
     variant: { control: "inline-radio", options: styles },
-    size: { control: "inline-radio", options: ["small", "default", "large"] },
+    size: { control: "inline-radio", options: ["xsmall", "small", "default", "large"] },
   },
   args: {
     children: "Dogs allowed",
@@ -58,7 +58,7 @@ export const AllColors: Story = {
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
-      {(["small", "default", "large"] as const).map(size => (
+      {(["xsmall", "small", "default", "large"] as const).map(size => (
         <Pill key={size} colorScheme="copper" size={size}>{size}</Pill>
       ))}
     </div>

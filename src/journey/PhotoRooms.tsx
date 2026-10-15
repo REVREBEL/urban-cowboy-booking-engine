@@ -70,11 +70,11 @@ function useHorizontalFilterStrip(itemsKey: string) {
 }
 
 
-export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
+export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", studioCatalog = false, children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; studioCatalog?: boolean; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
   const [building, setBuilding] = useState<string>("all");
   const [features, setFeatures] = useState<Feature[]>([]);
   const [sort, setSort] = useState<Sort>("price-asc");
-  const [view, setView] = useState<"spreads" | "index">("spreads");
+  const [view, setView] = useState<"spreads" | "index">(studioCatalog ? "index" : "spreads");
   const [detail, setDetail] = useState<string | null>(null);
   const roomStage = useRef<HTMLElement>(null);
   const filterOverlay = useRef<HTMLDivElement>(null);
