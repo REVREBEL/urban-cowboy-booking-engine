@@ -24,6 +24,8 @@ import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
 import type { RoomResultsLayout } from "@/studio/roomLayout";
 import { PhotoJournal } from "@/journey/PhotoJournal";
 import { PhotoRooms } from "@/journey/PhotoRooms";
+import { studioPhotoRoomCatalog } from "@/data/photoTourRooms";
+import { isStudioRoute } from "@/studio/runtime";
 import { photoSourceFromUrl, savePhotoGalleries } from "@/data/photoGalleries";
 import type { MatchProfile } from "@/journey/data";
 import { getPhotoProfile, savePhotoProfile, setPhotoPath } from "@/journey/photoSession";
@@ -106,6 +108,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
 
   const [data, setData] = useState<AvailabilityResponse | null>(null);
   const photoLayout = roomLayout === "photo";
+  const studioPhoto = photoLayout && isStudioRoute();
   const [journalProfile, setJournalProfile] = useState<MatchProfile | null>(getPhotoProfile);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -152,6 +155,12 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
   // le filtre est appliqué à l'affichage, ce qui permet de compter les hébergements
   // NON cochés dispos et de les proposer en teaser (bascule instantanée, sans refetch).
   useEffect(() => {
+    if (studioPhoto) {
+      setData(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     if (!hotel) {
       if (hotelError) setLoading(false);
       return;
@@ -175,7 +184,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
     return () => {
       alive = false;
     };
-  }, [checkIn, checkOut, adults, children, infants, voucherCode, hotel, hotelError, reloadKey]);
+  }, [checkIn, checkOut, adults, children, infants, voucherCode, hotel, hotelError, reloadKey, studioPhoto]);
 
   useEffect(() => {
     let alive = true;
@@ -207,9 +216,9 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
   // Toutes les chambres dispos (tous hébergements), enrichies avec la couche
   // merchandising Urban Cowboy au moment du shaping.
   const allRooms = useMemo(() => {
-    if (!data) return [];
+    if (!studioPhoto && !data) return [];
 
-    return buildRooms(data, hotel).map((room) => {
+    return (studioPhoto ? studioPhotoRoomCatalog() : buildRooms(data!, hotel)).map((room) => {
       const cms = roomTypeDescriptions[room.roomTypeId];
       if (!cms) return room;
 
@@ -221,7 +230,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
         cmsLongDescription: cms.longDescription,
       };
     });
-  }, [data, hotel, roomTypeDescriptions]);
+  }, [data, hotel, roomTypeDescriptions, studioPhoto]);
 
   const recommendationSearch = window.location.search;
   const urlRecommendationPreferences = useMemo(
@@ -239,18 +248,18 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
   // rankRecommendedRooms otherwise preserves the normal Mews/price order.
   const eligibleAllRooms = useMemo(
     () =>
-      rankRecommendedRooms(allRooms, recommendationPreferences, {
+      studioPhoto ? allRooms : rankRecommendedRooms(allRooms, recommendationPreferences, {
         children,
         infants,
         dogRequested,
       }),
-    [allRooms, recommendationPreferences, children, infants, dogRequested],
+    [allRooms, recommendationPreferences, children, infants, dogRequested, studioPhoto],
   );
 
   // Filtre d'affichage : hébergements cochés (une chambre sans property reste visible).
   const rooms = useMemo(
-    () => eligibleAllRooms.filter((r) => !r.property || properties.includes(r.property)),
-    [eligibleAllRooms, properties],
+    () => studioPhoto ? eligibleAllRooms : eligibleAllRooms.filter((r) => !r.property || properties.includes(r.property)),
+    [eligibleAllRooms, properties, studioPhoto],
   );
 
   // Mews exposes lodging Room Types as RoomCategoryId values. Surface any category
@@ -443,7 +452,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
           <p className="font-heading text-2xl">Finding rooms for your dates…</p>
         </div>
       );
-      if (error || hotelError) return (
+      if (error || (!studioPhoto && hotelError)) return (
         <div className="grid min-h-[65dvh] place-items-center bg-smoke px-5 pt-24 text-paper">
           <div className="text-center">
             <h2 className="font-heading text-2xl">We couldn't load available rooms.</h2>
@@ -455,7 +464,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
       return (
         <div className="min-h-dvh bg-smoke font-body text-paper">
           <PhotoRooms
-            profile={journalProfile}
+            profile={studioPhoto ? null : journalProfile}
             rooms={rooms}
             imageBaseUrl={imageBaseUrl}
             galleries={roomTypeGalleries}
@@ -463,7 +472,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
             cmsHotspots={photoHotspots}
             photoSource={photoSource}
             guests={adults + children + infants}
-            children={children + infants}
+            children={studioPhoto ? 0 : children + infants}
             onChoose={choose}
             onEditJournal={() => {
               setPhotoPath("journal");

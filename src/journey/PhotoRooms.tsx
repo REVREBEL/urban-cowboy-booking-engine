@@ -91,8 +91,10 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
 
   // Navigation can be interrupted by a normal wheel/touch gesture.
   useEffect(() => {
+    window.addEventListener("wheel", cancelRoomScroll, { passive: true });
     window.addEventListener("touchstart", cancelRoomScroll, { passive: true });
     return () => {
+      window.removeEventListener("wheel", cancelRoomScroll);
       window.removeEventListener("touchstart", cancelRoomScroll);
       cancelRoomScroll();
     };
@@ -183,11 +185,9 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     const duration = 1250;
     const animate = (time: number) => {
       const progress = Math.min(1, (time - startedAt) / duration);
-      // Smooth fifth-order ease: gentle launch and long soft arrival.
-      const eased = progress < 0.5
-        ? 16 * Math.pow(progress, 5)
-        : 1 - Math.pow(-2 * progress + 2, 5) / 2;
-      window.scrollTo({ top: start + (end - start) * eased, behavior: "instant" });
+      // Keep a constant cadence so the room travels straight through the full
+      // duration instead of accelerating abruptly through the middle.
+      window.scrollTo({ top: start + (end - start) * progress, behavior: "instant" });
       if (progress < 1) {
         roomScrollFrame.current = window.requestAnimationFrame(animate);
       } else {

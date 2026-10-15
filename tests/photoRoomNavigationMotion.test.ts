@@ -5,14 +5,13 @@ import { readFileSync } from "node:fs";
 const source = (file: string) =>
   readFileSync(new URL(`../src/${file}`, import.meta.url), "utf8");
 
-test("Room arrows animate vertical transitions with easing and respect fixed toolbar offsets", () => {
+test("Room arrows animate vertical transitions at an even cadence and respect fixed toolbar offsets", () => {
   const rooms = source("journey/PhotoRooms.tsx");
   assert.match(rooms, /const visitRoom = \(index: number\) => \{/);
   assert.match(rooms, /getComputedStyle\(section\)\.scrollMarginTop/);
   assert.match(rooms, /const duration = 1250/);
-  assert.match(rooms, /const eased = progress < 0\.5/);
   assert.match(rooms, /requestAnimationFrame\(animate\)/);
-  assert.match(rooms, /window\.scrollTo\(\{ top: start \+ \(end - start\) \* eased, behavior: "instant" \}\)/);
+  assert.match(rooms, /window\.scrollTo\(\{ top: start \+ \(end - start\) \* progress, behavior: "instant" \}\)/);
   assert.match(rooms, /onPrevious=\{i > 0 \? \(\) => visitRoom\(i - 1\) : undefined\}/);
   assert.match(rooms, /onNext=\{i < list\.length - 1 \? \(\) => visitRoom\(i \+ 1\) : undefined\}/);
 });
