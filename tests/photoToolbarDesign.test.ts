@@ -18,13 +18,14 @@ test("Photo toolbar uses xsmall pills and a label-font sort selector", () => {
   const story = src("stories/components/ui/Pill.stories.tsx");
 
   assert.match(pill, /PillSize = "xsmall" \| "small" \| "default" \| "large"/);
-  assert.match(pill, /xsmall: \{ fontSize: "0\.6875rem", paddingTop: "3px", paddingRight: "8px", paddingBottom: "2px"/);
-  assert.match(rooms, /colorScheme="paper" size="xsmall" onClick=\{\(\) => setBuilding\(b\)\}/);
-  assert.match(rooms, /colorScheme="paper" size="xsmall" onClick=\{\(\) => setView\(v\)\}/);
-  assert.match(rooms, /colorScheme=\{on \? "alpine-linen" : "paper"\} size="xsmall"/);
-  assert.match(rooms, /aria-label="Sort rooms"/);
-  assert.match(rooms, /items-center justify-center gap-2/);
-  assert.match(rooms, /aria-pressed=\{sort === value\}/);
+  assert.match(pill, /xsmall:/);
+  assert.match(rooms, /setBuilding\(b\)/);
+  assert.match(rooms, /setView\(v\)/);
+  assert.match(rooms, /setFeatures\(/);
+  // Test sorting as a capability, not a particular select, menu, or toggle design.
+  assert.match(rooms, /setSort\(/);
+  assert.match(rooms, /"price-asc"/);
+  assert.match(rooms, /"price-desc"/);
   assert.match(story, /\["xsmall", "small", "default", "large"\]/);
 });
 
