@@ -39,7 +39,7 @@ test("native button detector is case-sensitive for JSX components", () => {
 });
 
 test("Pill shares the Button palette and interactive PillButton delegates to Button", () => {
-  const pill = read("components/ui/pill.tsx");
+  const pill = read("components/ui/Pill.tsx");
   const button = read("components/ui/Button.tsx");
   assert.match(pill, /COLOR_PALETTE/);
   assert.match(pill, /type ButtonColor/);
@@ -53,7 +53,7 @@ test("Pill shares the Button palette and interactive PillButton delegates to But
 
 
 test("both pill types use individually adjustable top and bottom padding", () => {
-  const source = read("components/ui/pill.tsx");
+  const source = read("components/ui/Pill.tsx");
   const expected = [
     { size: "small", top: 5, bottom: 4 },
     { size: "default", top: 8, bottom: 6 },
