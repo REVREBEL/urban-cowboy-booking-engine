@@ -12,5 +12,8 @@ export function CmsAmenityIcon({ iconPath, fallback, className = "size-10" }: {
   const [failedPath, setFailedPath] = useState<string | null>(null);
   const url = cmsIconUrl(iconPath);
   if (!url || failedPath === url) return <TourIcon name={fallback} className={className} />;
-  return <img src={url} alt="" aria-hidden="true" className={`j-cms-icon ${className}`} onError={() => setFailedPath(url)} />;
+  return <img src={url} alt="" aria-hidden="true" className={`j-cms-icon ${className}`} onError={() => {
+    console.error("[CmsAmenityIcon] Failed to load CMS amenity icon", { url, fallback });
+    setFailedPath(url);
+  }} />;
 }
