@@ -89,12 +89,12 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     document.documentElement.classList.remove("j-room-scroll-animating");
   }, []);
 
-  // Navigation can be interrupted by a normal wheel/touch gesture.
+  // Touch gestures interrupt guided navigation. Wheel gestures are handled by
+  // the room navigator below; cancelling on every wheel event makes a trackpad
+  // cancel its own transition before the 1300ms navigation lock expires.
   useEffect(() => {
-    window.addEventListener("wheel", cancelRoomScroll, { passive: true });
     window.addEventListener("touchstart", cancelRoomScroll, { passive: true });
     return () => {
-      window.removeEventListener("wheel", cancelRoomScroll);
       window.removeEventListener("touchstart", cancelRoomScroll);
       cancelRoomScroll();
     };

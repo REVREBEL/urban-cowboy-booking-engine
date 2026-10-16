@@ -23,8 +23,10 @@ test("Navigation respects reduced-motion and interrupts scrolling when the guest
   assert.match(rooms, /matchMedia\("\(prefers-reduced-motion: reduce\)"\)/);
   assert.match(rooms, /section\.scrollIntoView\(\{ behavior: "instant", block: "start" \}\)/);
   assert.match(rooms, /window\.cancelAnimationFrame\(roomScrollFrame\.current\)/);
-  // Wheel interaction can be native or routed through a guided scroll handler.
-  assert.match(rooms, /(?:addEventListener\("wheel"|onWheel)/);
+  // Wheel input is routed through one guided handler. A separate cancellation
+  // listener would cancel trackpad-driven transitions on the next wheel event.
+  assert.match(rooms, /const onWheel = \(event: WheelEvent\) =>/);
+  assert.doesNotMatch(rooms, /addEventListener\("wheel", cancelRoomScroll/);
   assert.match(rooms, /window\.addEventListener\("touchstart", cancelRoomScroll/);
   // Embla duration is a tuning parameter, not a functional contract.
   assert.match(tour, /useEmblaCarousel\(/);
