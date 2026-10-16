@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
+import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export type PillSize = "xsmall" | "small" | "default" | "large";
@@ -11,7 +11,10 @@ export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: PillSize;
 }
 
-/* Color Scheme Class Mapping */
+/* Re-export palette for tests and external consumers */
+export { COLOR_PALETTE };
+
+/* Color Scheme Class Mapping derived from design system tokens */
 const COLOR_CLASSES: Record<ButtonColor, { bg: string; text: string; border: string }> = {
   dark: { bg: "bg-lake-forest", text: "text-paper", border: "border-lake-forest" },
   light: { bg: "bg-paper", text: "text-lake-forest", border: "border-paper" },
@@ -26,6 +29,7 @@ const COLOR_CLASSES: Record<ButtonColor, { bg: string; text: string; border: str
   "whiskey-sour": { bg: "bg-whiskey-sour", text: "text-cowboy-umber", border: "border-whiskey-sour" },
   "lodge-yellow": { bg: "bg-lodge-yellow", text: "text-lake-forest", border: "border-lodge-yellow" },
   "nude-ember": { bg: "bg-nude-ember", text: "text-lake-forest", border: "border-nude-ember" },
+  ash: { bg: "bg-ash", text: "text-paper", border: "border-ash" },
   paper: { bg: "bg-paper", text: "text-smoke", border: "border-ash" },
 };
 
