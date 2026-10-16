@@ -20,14 +20,14 @@ export function FocusAmenity({ count, icon, iconPath, title, active, onSelect, c
   return (
     <Button type="button" variant="transparent" colorScheme="lake-forest" size="xsmall"
       style={{ padding: 0, backgroundColor: "transparent", borderRadius: 0, display: "block" }}
-      className={`group/focus-amenity relative !pointer-events-auto !block !w-[96px] !h-[76px] !overflow-visible !border-0 !bg-transparent !p-0 !rounded-none !min-w-0 transition-[width,height] duration-200 data-[state=Active]:!w-[154px] data-[state=Active]:!h-32 max-sm:!w-[72px] max-sm:!h-14 max-sm:data-[state=Active]:!w-[117px] max-sm:data-[state=Active]:!h-24 ${className}`}
+         className={`group/focus-amenity relative pointer-events-auto! block! w-24! h-19! overflow-visible border-0! bg-transparent! p-0! rounded-none min-w-0! transition-[width,height] duration-200 data-[state=Active]:w-38.5! data-[state=Active]:h-32! max-sm:w-18! max-sm:h-14! max-sm:data-[state=Active]:w-29.25! max-sm:data-[state=Active]:h-24! ${className}`}
       data-state={state} aria-pressed={active} aria-label={`${String(count).padStart(2, "0")} ${title}`}
       title={title} onClick={onSelect}>
-      <span aria-hidden="true" className="absolute left-0 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-[3px]">
+      <span aria-hidden="true" className="absolute left-0 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-0.75">
         <FocusAmenityCount count={count} state={state}
-          className={active ? "!size-10 !text-xl max-sm:!size-8 max-sm:!text-base" : ""} />
+          className={active ? "size-10! text-xl! max-sm:size-8! max-sm:text-base!" : ""} />
         <FocusAmenityAction state={state}
-          className={active ? "!size-10 max-sm:!size-8" : ""} />
+          className={active ? "size-10! max-sm:size-8!" : ""} />
       </span>
       <AmenityIcons icon={icon} iconPath={iconPath} />
     </Button>
