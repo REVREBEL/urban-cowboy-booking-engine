@@ -50,16 +50,18 @@ const durationDays = (value: unknown): number | undefined => {
 function appliesToDate(rule: MewsRestriction, date: string): boolean {
   const conditions = rule.Conditions;
   if (!conditions) return false;
-  // Mews timestamps may omit milliseconds while our timezone conversion includes
-  // ".000Z". Compare instants, not lexicographically different ISO formats.
-  const midnight = Date.parse(propertyDateUtc(date));
+  // A partial-day closure must still appear on the affected property-local
+  // calendar date. Use half-open intervals [start, end), with the next LOCAL
+  // midnight (rather than +24h) to account for daylight-saving changes.
+  const dayStart = Date.parse(propertyDateUtc(date));
+  const dayEnd = Date.parse(propertyDateUtc(dateAfter(date, 1)));
   if (typeof conditions.StartUtc === "string") {
     const start = Date.parse(conditions.StartUtc);
-    if (!Number.isFinite(start) || midnight < start) return false;
+    if (!Number.isFinite(start) || start >= dayEnd) return false;
   }
   if (typeof conditions.EndUtc === "string") {
     const end = Date.parse(conditions.EndUtc);
-    if (!Number.isFinite(end) || midnight >= end) return false;
+    if (!Number.isFinite(end) || end <= dayStart) return false;
   }
   if (Array.isArray(conditions.Days) && conditions.Days.length) {
     const weekday = WEEKDAYS[new Date(`${date}T12:00:00Z`).getUTCDay()];
@@ -87,7 +89,7 @@ export function mapApplicableRestrictions(
       const exceptions = item.Exceptions ?? {};
       const hasOtherExceptions = [
         "MinAdvance", "MaxAdvance", "MinPrice", "MaxPrice",
-        "MaxReservationCount",
+        "MinReservationCount", "MaxReservationCount",
       ].some((field) => exceptions[field] != null);
       const minLength = durationDays(exceptions.MinLength);
       const maxLength = durationDays(exceptions.MaxLength);
