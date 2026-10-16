@@ -10,7 +10,7 @@ import { EMAIL_RE, money } from "../lib/format";
 import { getLang } from "../lib/lang";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import { photoGalleryForRoom } from "../data/photoGalleries";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button";
 
 const PhoneInput = lazy(() => import("../components/forms/phone-input").then(module => ({ default: module.PhoneInput })));
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
@@ -75,7 +75,7 @@ export function PhotoReviewGuest() {
       <div className="min-h-dvh bg-paper px-5 pb-16 pt-24 text-foreground sm:px-8">
         <p className={`${label} text-alpine-linen`}>05 — Your stay</p>
         <h2 className="mt-3 font-heading text-4xl leading-none">Review & guest details</h2>
-        <dl className="mt-6 divide-y divide-ash">
+        <dl className="mt-6 divide-y divide-alpine-linen">
           <Row title="Dates" value={dateText} onEdit={() => booking.goTo("dates")} />
           <Row title="Guests" value={String(booking.adults + booking.children + booking.infants)} onEdit={() => booking.goTo("dates")} />
           <Row title="Room" value={room.name} onEdit={() => booking.goTo("results")} />
@@ -94,7 +94,7 @@ export function PhotoReviewGuest() {
           {booking.totalTax != null && (
             <div className="flex justify-between gap-3 text-foreground/70"><span>Tax included in total</span><span>{money(booking.totalTax, booking.currency)}</span></div>
           )}
-          <div className="flex items-baseline justify-between gap-4 border-t border-ash pt-3">
+          <div className="flex items-baseline justify-between gap-4 border-t border-alpine-linen pt-3">
             <span className="font-bold">{booking.quote ? "Total" : "Estimated total"}</span>
             <span className="font-heading text-3xl">{money(total, booking.currency)}</span>
           </div>

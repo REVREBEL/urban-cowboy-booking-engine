@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { InlineDateRangePicker, type DailyRate } from "./InlineDateRangePicker";
 
 const QUICK_DATE_RANGES = [

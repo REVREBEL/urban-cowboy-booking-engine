@@ -24,7 +24,7 @@ function MatchRoomResult({
 
   return (
     <article
-      className={`rounded-2xl border bg-white p-6 shadow-sm ${top ? "border-copper" : "border-ash"}`}
+      className={`rounded-2xl border bg-white p-6 shadow-sm ${top ? "border-copper" : "border-alpine-linen"}`}
     >
       <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div className="min-w-0">
@@ -43,7 +43,7 @@ function MatchRoomResult({
             {result.room.name}
           </h2>
           <p
-            className="mt-2 max-w-xl text-sm leading-relaxed text-ash-900"
+            className="mt-2 max-w-xl text-sm leading-relaxed text-alpine-linen-900"
             style={{ fontFamily: "var(--font-body)" }}
           >
             {copy?.top_match_reason || result.room.description}
@@ -98,7 +98,7 @@ export default function MatchResults({
           <button
             type="button"
             onClick={onBack}
-            className="mb-8 text-xs uppercase tracking-widest text-ash-900 transition-colors hover:text-cowboy-umber"
+            className="mb-8 text-xs uppercase tracking-widest text-alpine-linen-900 transition-colors hover:text-cowboy-umber"
             style={{ fontFamily: "var(--font-label)" }}
           >
             ← Back
@@ -121,7 +121,7 @@ export default function MatchResults({
         <button
           type="button"
           onClick={onBack}
-          className="mb-8 text-xs uppercase tracking-widest text-ash-900 transition-colors hover:text-cowboy-umber"
+          className="mb-8 text-xs uppercase tracking-widest text-alpine-linen-900 transition-colors hover:text-cowboy-umber"
           style={{ fontFamily: "var(--font-label)" }}
         >
           ← Back
@@ -153,9 +153,9 @@ export default function MatchResults({
           ))}
         </div>
 
-        <div className="mt-10 border-t border-ash pt-4 text-center">
+        <div className="mt-10 border-t border-alpine-linen pt-4 text-center">
           <p
-            className="mb-3 text-sm text-ash-900"
+            className="mb-3 text-sm text-alpine-linen-900"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Not seeing what you&apos;re after?

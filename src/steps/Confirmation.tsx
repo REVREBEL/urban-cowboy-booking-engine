@@ -161,7 +161,7 @@ export function Confirmation() {
                   : t("confirmation.confirmedTitle")}
           </h1>
 
-          <p className="mb-8 font-body text-base italic text-ash-900 sm:text-lg 2xl:mb-10 2xl:text-xl">
+          <p className="mb-8 font-body text-base italic text-alpine-linen-900 sm:text-lg 2xl:mb-10 2xl:text-xl">
             {confirmed
               ? "Arrive as Strangers. Leave as Friends."
               : pending
@@ -281,7 +281,7 @@ export function Confirmation() {
               <p className="font-label text-base font-bold uppercase tracking-wide text-cowboy-umber">
                 {t("confirmation.shuttleTitle")}
               </p>
-              <p className="mt-1 text-sm text-ash-900">
+              <p className="mt-1 text-sm text-alpine-linen-900">
                 {t("confirmation.shuttleBody")}
               </p>
               <a

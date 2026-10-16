@@ -5,7 +5,7 @@ import type { AddonSchedulePreference } from "./addon-types";
 import { addOnKind } from "./addon-smart-logic";
 import { AddonCard } from "./AddonCard";
 import { AddonCustomizerModal } from "./AddonCustomizerModal";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { money } from "@/lib/format";
 import { t } from "@/i18n";
 
@@ -144,7 +144,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
           <h1 className="font-heading text-3xl uppercase tracking-tight text-smoke sm:text-4xl lg:text-5xl">
             Add-ons & Personal Touches
           </h1>
-          <p className="mt-2 max-w-2xl font-body text-sm text-ash-900 sm:text-base">
+          <p className="mt-2 max-w-2xl font-body text-sm text-alpine-linen-900 sm:text-base">
             From fresh Catskill bouquets waiting in your room to celebration cakes and fireside s&apos;mores, schedule every detail and add custom notes for our front desk.
           </p>
         </div>
@@ -205,7 +205,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
               </span>
               <span>{t("extras.transferTitle")}</span>
             </span>
-            <span className="mt-1 block font-body text-sm leading-relaxed text-ash-900">
+            <span className="mt-1 block font-body text-sm leading-relaxed text-alpine-linen-900">
               {t("extras.transferDesc")}
             </span>
           </span>

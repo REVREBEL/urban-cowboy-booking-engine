@@ -2,7 +2,7 @@ import * as React from "react";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { ButtonProps, buttonVariants } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/Button";
 
 const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
   <nav
@@ -17,12 +17,12 @@ Pagination.displayName = "Pagination";
 const PaginationContent = React.forwardRef<HTMLUListElement, React.ComponentProps<"ul">>(
   ({ className, ...props }, ref) => (
     <ul ref={ref} className={cn("flex flex-row items-center gap-1", className)} {...props} />
-  ),
+  )
 );
 PaginationContent.displayName = "PaginationContent";
 
 const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<"li">>(
-  ({ className, ...props }, ref) => <li ref={ref} className={cn("", className)} {...props} />,
+  ({ className, ...props }, ref) => <li ref={ref} className={cn("", className)} {...props} />
 );
 PaginationItem.displayName = "PaginationItem";
 
@@ -32,18 +32,17 @@ type PaginationLinkProps = {
   React.ComponentProps<"a">;
 
 const PaginationLink = ({ className, isActive, size = "small", ...props }: PaginationLinkProps) => (
-  <a
-    aria-current={isActive ? "page" : undefined}
-    className={cn(
-      buttonVariants({
-        variant: isActive ? "outline" : "transparent",
-        size,
-      }),
-      !isActive && "!px-0",
-      className,
-    )}
-    {...props}
-  />
+  <Button
+    asChild
+    variant={isActive ? "outline" : "transparent"}
+    size={size}
+    className={cn(!isActive && "!px-0", className)}
+  >
+    <a
+      aria-current={isActive ? "page" : undefined}
+      {...props}
+    />
+  </Button>
 );
 PaginationLink.displayName = "PaginationLink";
 

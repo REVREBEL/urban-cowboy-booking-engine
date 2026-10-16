@@ -6,7 +6,7 @@ import { studioAvailability, studioHotel } from "./demoData";
 import { getDemoScenario, setDemoScenario, type DemoScenario } from "./runtime";
 import { currentStudioLayout, type RoomResultsLayout } from "./roomLayout";
 import { resetPhotoJourney } from "../journey/photoSession";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button";
 
 const steps: { id: Step; label: string }[] = [
   { id: "dates", label: "Search" }, { id: "results", label: "Rooms / Find Your Stay" },

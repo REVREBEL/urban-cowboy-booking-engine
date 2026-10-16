@@ -43,6 +43,8 @@ const meta: Meta<typeof ConfigurableRateCard> = {
   },
   argTypes: {
     layout: { control: 'radio', options: ['vertical', 'horizontal'] },
+    isExpanded: { control: 'boolean' },
+    disabled: { control: 'boolean' },
     onBook: { action: 'onBook' },
     onExpand: { action: 'onExpand' },
   },
@@ -52,4 +54,36 @@ export default meta;
 type Story = StoryObj<typeof ConfigurableRateCard>;
 
 export const Vertical: Story = {};
-export const Horizontal: Story = { args: { layout: 'horizontal' } };
+
+export const Horizontal: Story = {
+  args: {
+    layout: 'horizontal',
+  },
+};
+
+export const SingleBorder: Story = {
+  args: {
+    config: {
+      ...meta.args!.config!,
+      borderStyle: 'single',
+    },
+  },
+};
+
+export const DoubleBorder: Story = {
+  args: {
+    config: {
+      ...meta.args!.config!,
+      borderStyle: 'double',
+    },
+  },
+};
+
+export const OutlineButton: Story = {
+  args: {
+    config: {
+      ...meta.args!.config!,
+      buttonStyle: 'outline',
+    },
+  },
+};

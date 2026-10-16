@@ -161,7 +161,7 @@ export default function PropertyPropertyLabelShowcase() {
         >
           PROPERTY PROPERTY LABEL
         </h1>
-        <p className="text-sm text-ash-900">
+        <p className="text-sm text-alpine-linen-900">
           Full brand property title badges for Urban Cowboy Catskills, Nashville, and Denver.
         </p>
       </div>
@@ -169,7 +169,7 @@ export default function PropertyPropertyLabelShowcase() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
         {/* Spec Frame */}
         <div className="bg-white p-6 rounded-xl border border-alpine-linen-fade shadow-sm flex flex-col items-center">
-          <span className="text-xs font-semibold text-ash-900 uppercase tracking-wider mb-4">
+          <span className="text-xs font-semibold text-alpine-linen-900 uppercase tracking-wider mb-4">
             SPEC CONTAINER (235px × 90px)
           </span>
           <div className="border border-dashed border-cowboy-umber-100 p-3 rounded-field bg-paper">
@@ -179,7 +179,7 @@ export default function PropertyPropertyLabelShowcase() {
 
         {/* Interactive Selector */}
         <div className="bg-white p-6 rounded-xl border border-alpine-linen-fade shadow-sm flex flex-col items-center">
-          <span className="text-xs font-semibold text-ash-900 uppercase tracking-wider mb-4">
+          <span className="text-xs font-semibold text-alpine-linen-900 uppercase tracking-wider mb-4">
             INTERACTIVE PROPERTY SELECTOR
           </span>
           <div className="border border-cowboy-umber/20 p-3 rounded-field bg-alpine-linen/40 mb-4">
