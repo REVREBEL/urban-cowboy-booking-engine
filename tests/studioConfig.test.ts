@@ -151,3 +151,46 @@ test("unpublished edits cannot enable Studio when the live switch is missing", (
     false,
   );
 });
+
+test("published feature fields recover without trusting newer staged edits", () => {
+  const published = "2026-10-14T06:13:23.572Z";
+  const live = {
+    id: itemId,
+    lastPublished: published,
+    lastUpdated: published,
+    isDraft: false,
+    fieldData: {
+      "enable-demo-engine": true,
+      "production-layout": "f4859a16a8556038b0f026679aaa6a02",
+      "demo-layout": "2142905a00c88401810632b026107cf2",
+      "full-location-name": "Urban Cowboy Lodge & Resort",
+    },
+  };
+  const staged = {
+    ...live,
+    fieldData: {
+      ...live.fieldData,
+      "enable-feature-section": true,
+      "feature-headline-1": "Disappear for a While",
+      "feature-paragraph-1": "Trade pavement for mountain air.",
+      "feature-icon-1": { url: "https://example.com/hammock.svg" },
+    },
+  };
+  const fields = [
+    "enable-feature-section", "feature-headline-1", "feature-paragraph-1", "feature-icon-1",
+  ];
+  const recovered = mergeVerifiedPublishedFields(live, staged, fields);
+  assert.equal(recovered.fieldData?.["enable-feature-section"], true);
+  assert.deepEqual(recovered.fieldData?.["feature-icon-1"], { url: "https://example.com/hammock.svg" });
+
+  const unpublished = mergeVerifiedPublishedFields(live, {
+    ...staged,
+    lastUpdated: "2026-10-14T06:14:23.572Z",
+  }, fields);
+  assert.equal(unpublished.fieldData?.["enable-feature-section"], undefined);
+
+  const explicitOff = mergeVerifiedPublishedFields({
+    ...live, fieldData: { ...live.fieldData, "enable-feature-section": false },
+  }, staged, fields);
+  assert.equal(explicitOff.fieldData?.["enable-feature-section"], false);
+});
