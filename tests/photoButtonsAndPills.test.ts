@@ -98,7 +98,7 @@ test("control palette utilities use runtime foundation variables and filled cont
     }
   }
   const filled = css.split("@utility control-filled {")[1]?.split("}")[0] ?? "";
-  assert.match(filled, /border-width:\s*1px/);
+  assert.match(filled, /border-width:\s*2px/);
   assert.match(filled, /border-style:\s*solid/);
 });
 
