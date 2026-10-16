@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, COLOR_PALETTE, CONTROL_COLOR_CLASSES, CONTROL_BORDER_CLASSES, TEXT_CASE_CLASSES, type TextCase, CONTROL_BORDER_CLASSES, type ControlBorderColor, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
+import { Button, COLOR_PALETTE, CONTROL_COLOR_CLASSES, CONTROL_BORDER_CLASSES, TEXT_CASE_CLASSES, type TextCase, type ControlBorderColor, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export type PillSize = "xsmall" | "small" | "default" | "large";
