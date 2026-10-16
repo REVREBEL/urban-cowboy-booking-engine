@@ -39,12 +39,12 @@
   font-weight: 400;
   border-radius: var(--radius-btn);
   border-width: 2px;
-  line-height: 100%;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 0.85rem;
   padding-bottom: 0.75rem;
   padding-inline: 0.85rem;
-  line-height: 1;
-  letter-spacing: 0.05em;
 }
 
 
@@ -53,7 +53,10 @@
   font-size: var(--text-xxs, 0.625rem);
   font-weight: 400;
   border-radius: var(--radius-btn-xs);
-  line-height: 100%;
+  border-width: 2px;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 0.75rem;
   padding-bottom: 0.5rem;
   padding-inline: 0.75rem;
@@ -65,7 +68,9 @@
   font-weight: 400;
   border-radius: var(--radius-btn-sm);
   border-width: 2px;
-  line-height: 100%;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 0.85rem;
   padding-bottom: 0.7rem;
   padding-inline: 0.85rem;
@@ -76,7 +81,10 @@
   font-size: var(--text-base);
   font-weight: 400;
   border-radius: var(--radius-btn-md);
-  line-height: 100%;
+  border-width: 2px;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 1rem;
   padding-bottom: 0.8rem;
   padding-inline: 1rem;
@@ -88,7 +96,9 @@
   font-weight: 400;
   border-radius: var(--radius-btn-lg);
   border-width: var(--border-btn-lg);
-  line-height: 100%;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 0.95rem;
   padding-bottom: 0.65rem;
   padding-inline: 0.95rem;
@@ -98,9 +108,11 @@
   font-family: var(--font-button);
   font-size: var(--text-lg);
   font-weight: 400;
-  line-height: 100%;
-  border-width: var(--border-btn-lg);
   border-radius: var(--radius-btn-xl);
+  border-width: var(--border-btn-lg);
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 1.05rem;
   padding-bottom: 0.75rem;
   padding-inline: 1.05rem;
@@ -137,91 +149,103 @@
 
 /* Shared Button and Pill presentation: one source for variant tones and sizes. */
 @utility control-color-dark {
-  --control-bg: var(--color-lake-forest);
-  --control-fg: var(--color-paper);
-  --control-border: var(--color-lake-forest-fade);
+  --bg: var(--color-lake-forest);
+  --fg: var(--color-paper);
+  --border: var(--color-lake-forest-fade);
 }
 @utility control-color-light {
-  --control-bg: var(--color-paper);
-  --control-fg: var(--color-lake-forest);
-  --control-border: var(--color-paper);
+  --bg: var(--color-paper);
+  --fg: var(--color-lake-forest);
+  --border: var(--color-paper);
 }
 @utility control-color-alpine-linen {
-  --control-bg: var(--color-alpine-linen);
-  --control-fg: var(--color-lake-forest);
-  --control-border: var(--color-alpine-linen-fade);
+  --bg: var(--color-alpine-linen);
+  --fg: var(--color-lake-forest);
+  --border: var(--color-alpine-linen-fade);
 }
 @utility control-color-cowboy-umber {
-  --control-bg: var(--color-cowboy-umber);
-  --control-fg: var(--color-alpine-linen);
-  --control-border: var(--color-cowboy-umber-fade);
+  --bg: var(--color-cowboy-umber);
+  --fg: var(--color-alpine-linen);
+  --border: var(--color-cowboy-umber-fade);
 }
 @utility control-color-smoke {
-  --control-bg: var(--color-smoke);
-  --control-fg: var(--color-paper);
-  --control-border: var(--color-smoke-fade);
+  --bg: var(--color-smoke);
+  --fg: var(--color-paper);
+  --border: var(--color-smoke-fade);
 }
 @utility control-color-lake-forest {
-  --control-bg: var(--color-lake-forest);
-  --control-fg: var(--color-alpine-linen);
-  --control-border: var(--color-lake-forest-fade);
+  --bg: var(--color-lake-forest);
+  --fg: var(--color-alpine-linen);
+  --border: var(--color-lake-forest-fade);
 }
 @utility control-color-copper {
-  --control-bg: var(--color-copper);
-  --control-fg: var(--color-alpine-linen-200);
-  --control-border: var(--color-copper-fade);
+  --bg: var(--color-copper);
+  --fg: var(--color-alpine-linen-200);
+  --border: var(--color-copper-fade);
 }
 @utility control-color-oxblood {
-  --control-bg: var(--color-oxblood);
-  --control-fg: var(--color-alpine-linen-200);
-  --control-border: var(--color-oxblood-fade);
+  --bg: var(--color-oxblood);
+  --fg: var(--color-alpine-linen-200);
+  --border: var(--color-oxblood-fade);
 }
 @utility control-color-oxidized-teal {
-  --control-bg: var(--color-oxidized-teal);
-  --control-fg: var(--color-paper);
-  --control-border: var(--color-oxidized-teal-fade);
+  --bg: var(--color-oxidized-teal);
+  --fg: var(--color-paper);
+  --border: var(--color-oxidized-teal-fade);
 }
 @utility control-color-bandana-red {
-  --control-bg: var(--color-bandana-red);
-  --control-fg: var(--color-paper);
-  --control-border: var(--color-bandana-red-fade);
+  --bg: var(--color-bandana-red);
+  --fg: var(--color-paper);
+  --border: var(--color-bandana-red-fade);
 }
 @utility control-color-whiskey-sour {
-  --control-bg: var(--color-whiskey-sour);
-  --control-fg: var(--color-cowboy-umber);
-  --control-border: var(--color-whiskey-sour-fade);
+  --bg: var(--color-whiskey-sour);
+  --fg: var(--color-cowboy-umber);
+  --border: var(--color-whiskey-sour-fade);
 }
 @utility control-color-lodge-yellow {
-  --control-bg: var(--color-lodge-yellow);
-  --control-fg: var(--color-lake-forest);
-  --control-border: var(--color-lodge-yellow-fade);
+  --bg: var(--color-lodge-yellow);
+  --fg: var(--color-lake-forest);
+  --border: var(--color-lodge-yellow-fade);
 }
 @utility control-color-nude-ember {
-  --control-bg: var(--color-nude-ember);
-  --control-fg: var(--color-lake-forest);
-  --control-border: var(--color-nude-ember-fade);
+  --bg: var(--color-nude-ember);
+  --fg: var(--color-lake-forest);
+  --border: var(--color-nude-ember-fade);
 }
 @utility control-color-paper {
-  --control-bg: var(--color-paper);
-  --control-fg: var(--color-smoke);
-  --control-border: var(--color-smoke-fade);
+  --bg: var(--color-paper);
+  --fg: var(--color-smoke);
+  --border: var(--color-smoke-fade);
 }
 @utility control-filled {
-  background-color: var(--control-bg);
-  color: var(--control-fg);
-  border-color: var(--control-border);
+  background-color: var(--bg);
+  color: var(--fg);
+  border-color: var(--border);
+  &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 90%, var(--fg)); }
+  &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
+  &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 82%, var(--fg)); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 @utility control-outline {
   background-color: transparent;
-  color: var(--control-bg);
+  color: var(--bg);
   border-style: solid;
-  border-color: var(--control-border);
+  border-color: var(--border);
+  &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 12%, transparent); }
+  &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
+  &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 20%, transparent); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 @utility control-transparent {
   background-color: transparent;
-  color: var(--control-bg);
+  color: var(--bg);
   border-color: transparent;
   border-style: none;
+  &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 10%, transparent); }
+  &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
+  &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 18%, transparent); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 @utility pill-xs {
   font-size: .6875rem;
@@ -243,8 +267,14 @@
 /* Non-interactive pill outlines retain the label/foreground tone. */
 @utility control-pill-outline {
   background-color: transparent;
-  color: var(--control-fg);
+  color: var(--fg);
   border-width: 1px;
   border-style: solid;
-  border-color: var(--control-border);
+  border-color: var(--border);
+}
+
+/* Noninteractive pills retain their original outline ink; focus styles apply when focusable. */
+@utility control-pill-interaction {
+  &:hover { background-color: color-mix(in srgb, var(--bg) 12%, transparent); }
+  &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
 }
