@@ -18,7 +18,7 @@ export function FocusAmenity({ count, icon, iconPath, title, active, onSelect, c
   const state = active ? "Active" : "Default";
   return (
     <Button type="button" variant="transparent" colorScheme="lake-forest" size="xsmall"
-      className={["focus-amenity", className].filter(Boolean).join(" ")}
+      className={["focus-amenity", "group/focus-amenity", "relative", "pointer-events-auto", "overflow-visible", className].filter(Boolean).join(" ")}
       data-state={state} aria-pressed={active} aria-label={`${String(count).padStart(2, "0")} ${title}`}
       title={title} onClick={onSelect}>
       <span className="focus-amenity-controls">
