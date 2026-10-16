@@ -1,6 +1,7 @@
+// src/stories/components/rooms/FocusAmenity.tsx
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { FocusAmenity } from "@/components/rooms/FocusAmenity";
-import "@/styles/focus-amenity.css";
 
 const meta = {
   title: "Components/Rooms/FocusAmenity",
