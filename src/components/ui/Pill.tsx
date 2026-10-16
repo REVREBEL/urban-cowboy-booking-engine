@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, COLOR_PALETTE, CONTROL_COLOR_CLASSES, TEXT_CASE_CLASSES, type TextCase, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
+import { Button, COLOR_PALETTE, CONTROL_COLOR_CLASSES, CONTROL_BORDER_CLASSES, TEXT_CASE_CLASSES, type TextCase, CONTROL_BORDER_CLASSES, type ControlBorderColor, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export type PillSize = "xsmall" | "small" | "default" | "large";
@@ -7,7 +7,8 @@ export type PillSize = "xsmall" | "small" | "default" | "large";
 export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: ButtonStyle;
   colorScheme?: ButtonColor;
-  color?: ButtonColor;
+  borderColor?: ControlBorderColor;
+  clickable?: boolean;
   size?: PillSize;
   textCase?: TextCase;
 }
@@ -25,7 +26,8 @@ const PILL_SIZE_CLASSES: Record<PillSize, string> = {
 export function Pill({
   variant = "filled",
   colorScheme,
-  color,
+  borderColor = "faded",
+  clickable = false,
   size = "default",
   textCase,
   className,
@@ -33,7 +35,7 @@ export function Pill({
   children,
   ...props
 }: PillProps) {
-  const resolvedColor = colorScheme ?? color ?? "dark";
+  const resolvedColor = colorScheme ?? "dark";
 
 
   const colorClasses = `${CONTROL_COLOR_CLASSES[resolvedColor]} ${variant === "outline" ? "control-pill-outline" : variant === "transparent" ? "control-transparent" : "control-filled"}`;
@@ -43,11 +45,14 @@ export function Pill({
       className={cn(
         "inline-flex max-w-full items-center justify-center gap-1.5 whitespace-nowrap align-middle font-label leading-none rounded-full box-border",
         colorClasses,
+        CONTROL_BORDER_CLASSES[borderColor],
+        !clickable && "control-not-clickable",
         PILL_SIZE_CLASSES[size],
         textCase && TEXT_CASE_CLASSES[textCase],
         className
       )}
       style={style}
+      data-clickable={clickable}
       {...props}
     >
       {children}
@@ -62,12 +67,14 @@ export interface PillButtonProps extends Omit<React.ComponentProps<typeof Button
 
 /** Interactive pill with the shared Button's focus, disabled and color behavior. */
 export const PillButton = React.forwardRef<HTMLButtonElement, PillButtonProps>(
-  ({ variant = "outline", colorScheme, color, size = "default", textCase = "uppercase", pressed, className, style, children, ...props }, ref) => (
+  ({ variant = "outline", colorScheme, borderColor = "faded", clickable = true, size = "default", textCase = "uppercase", pressed, className, style, children, ...props }, ref) => (
     <Button
       {...props}
       ref={ref}
       variant={variant}
-      colorScheme={colorScheme ?? color ?? "dark"}
+      colorScheme={colorScheme ?? "dark"}
+      borderColor={borderColor}
+      clickable={clickable}
       size="xsmall"
       textCase={textCase}
       aria-pressed={pressed ?? props["aria-pressed"]}
