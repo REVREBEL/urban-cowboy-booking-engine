@@ -6,8 +6,9 @@ import {
   type Env,
   type Property,
 } from "./_lib.ts";
+import { fetchServiceRestrictionGuidance, type RestrictionAdvisory } from "./service-restrictions.ts";
 
-export const CALENDAR_STORAGE_VERSION = "v4";
+export const CALENDAR_STORAGE_VERSION = "v5";
 export const MAX_INFERRED_LOS = 3;
 export const CANONICAL_CALENDAR_OCCUPANCY = {
   adults: 2,
@@ -28,6 +29,8 @@ export interface CalendarDay {
   currency: string;
   available: boolean;
   minNights?: number;
+  /** Category/rate-scoped service restrictions: advisory only, never a booking gate. */
+  restrictions?: RestrictionAdvisory[];
   /**
    * Stay lengths which were explicitly tested and found invalid while a longer
    * stay from the same arrival was bookable. This captures stay-through/LOS
@@ -279,6 +282,7 @@ function publicCalendarDay(day: StoredCalendarDay): CalendarDay {
     currency: day.currency,
     available: day.available,
     ...(day.minNights ? { minNights: day.minNights } : {}),
+    ...(day.restrictions?.length ? { restrictions: day.restrictions } : {}),
     ...(day.invalidStayLengths?.length
       ? { invalidStayLengths: [...day.invalidStayLengths] }
       : {}),
@@ -663,13 +667,20 @@ export async function refreshCalendarRange(
   if (!property) return;
   const currency = request.currency ?? "USD";
 
-  const resolved = await resolveRange(
-    env,
-    property,
-    currency,
-    request.startDate,
-    request.endDate,
-  );
+  // Service availability supplies the category/rate-scoped restriction rules;
+  // hotels/getAvailability continues to supply bookable rates and prices.
+  // A service API failure must never erase the usable price snapshot.
+  const [resolved, serviceRestrictions] = await Promise.all([
+    resolveRange(env, property, currency, request.startDate, request.endDate),
+    fetchServiceRestrictionGuidance(
+      env, property, request.startDate, request.endDate,
+    ).catch(() => null),
+  ]);
+  if (serviceRestrictions) {
+    for (const [date, day] of Object.entries(resolved)) {
+      if (serviceRestrictions[date]?.length) day.restrictions = serviceRestrictions[date];
+    }
+  }
   await mergeRangeIntoMonths(env, property, currency, resolved);
 }
 
