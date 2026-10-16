@@ -271,10 +271,8 @@
   border-width: 1px;
   border-style: solid;
   border-color: var(--border);
-}
-
-/* Noninteractive pills retain their original outline ink; focus styles apply when focusable. */
-@utility control-pill-interaction {
-  &:hover { background-color: color-mix(in srgb, var(--bg) 12%, transparent); }
+  &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 12%, transparent); }
   &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
+  &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 20%, transparent); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
