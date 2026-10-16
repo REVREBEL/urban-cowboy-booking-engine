@@ -23,6 +23,13 @@ const meta: Meta<typeof AddonCustomizerModal> = {
   title: 'Components/Booking/Extras/AddonCustomizerModal',
   component: AddonCustomizerModal,
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div className="min-h-[900px]">
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     isOpen: true,
     addon: mockProduct,

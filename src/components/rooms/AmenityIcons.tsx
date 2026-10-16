@@ -7,13 +7,22 @@ export interface AmenityIconsProps {
   className?: string;
 }
 
-/** Figma icon medallion using the existing Webflow SVG resolver and fallback. */
+/**
+ * Constant-diameter medallion with exactly two rings OUTSIDE the disc.
+ * No inset ring, border or separate rectangular frame. The icon remains
+ * CMS-driven; the local TourIcon is only the final asset fallback.
+ */
 export function AmenityIcons({ icon, iconPath, className = "" }: AmenityIconsProps) {
   return (
-    <span aria-hidden="true"
-      className={`absolute right-0 top-0 grid size-[76px] place-items-center overflow-hidden rounded-full border-[3px] border-double border-lake-forest bg-alpine-linen shadow-[inset_0_0_0_3px_var(--color-alpine-linen),inset_0_0_0_5px_var(--color-lake-forest),0_8px_22px_#0003] transition-all duration-200 group-hover/focus-amenity:border-lake-forest-fade group-data-[state=Active]/focus-amenity:size-32 group-data-[state=Active]/focus-amenity:bg-paper max-sm:size-14 max-sm:group-data-[state=Active]/focus-amenity:size-24 ${className}`}>
-      <CmsAmenityIcon iconPath={iconPath} fallback={icon}
-        className="!size-[56%] !max-w-[56%] !max-h-[56%] !object-contain !transform-none !mix-blend-normal" />
+    <span
+      aria-hidden="true"
+      className={`absolute right-0 top-0 grid size-32 place-items-center rounded-full bg-primary shadow-[0_0_0_2px_var(--lake-forest-fade),0_0_0_5px_var(--paper),0_0_0_7px_var(--lake-forest-fade)] transition-[background-color,box-shadow] duration-200 group-hover/focus-amenity:bg-accent-foreground group-data-[state=Active]/focus-amenity:bg-primary group-focus-visible/focus-amenity:shadow-[0_0_0_3px_var(--lake-forest),0_0_0_7px_var(--paper),0_0_0_10px_var(--lake-forest)] max-sm:size-24 ${className}`}
+    >
+      <CmsAmenityIcon
+        iconPath={iconPath}
+        fallback={icon}
+        className="size-[75%] max-h-[75%] max-w-[75%] pl-1 object-contain mix-blend-normal"
+      />
     </span>
   );
 }

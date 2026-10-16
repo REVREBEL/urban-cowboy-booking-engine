@@ -4,6 +4,7 @@ import { chargingLabel } from "@/lib/shaping";
 import { productLineTotal } from "@/state/booking";
 import type { MerchandisedAddOn } from "@/types/add-on-cms";
 import { Photo } from "@/components/media/photo";
+import { Button } from "@/components/ui/Button";
 import type { AddonSchedulePreference } from "./addon-types";
 import { addOnPreferenceSummary } from "./addon-smart-logic";
 
@@ -55,7 +56,7 @@ export function AddonCard({
             gradient="from-creole via-creole-soft to-turquoise-vivid"
           />
           <div className="absolute right-7 top-7 bg-white px-3 py-1.5 shadow-sm">
-            <span className="whitespace-nowrap text-2xl font-bold tracking-tight text-smoke">
+            <span className="font-number whitespace-nowrap text-2xl font-bold tracking-tight text-smoke">
               {money(product.price, product.currency)}
             </span>
           </div>
@@ -69,7 +70,7 @@ export function AddonCard({
             {product.description}
           </p>
           {(mode || lineTotal !== product.price) && (
-            <p className="mt-1 text-[11px] text-smoke-fade">
+            <p className="font-number mt-1 text-[11px] text-smoke-fade">
               {mode}
               {mode && lineTotal !== product.price ? " · " : ""}
               {lineTotal !== product.price ? `${money(lineTotal, product.currency)} stay total` : ""}
@@ -90,15 +91,15 @@ export function AddonCard({
         )}
 
         {!selected && !locked ? (
-          <button type="button" onClick={add} className="h-12 w-37.75 rounded-full bg-cowboy-umber px-5 pt-0.5 font-button text-sm uppercase tracking-[0.05em] text-white transition hover:brightness-110 active:scale-[0.98]">
+          <Button type="button" onClick={add} colorScheme="cowboy-umber" className="h-12 w-37.75 rounded-full">
             Add to stay
-          </button>
+          </Button>
         ) : locked ? (
-          <span className="inline-flex h-12 min-w-37.75 items-center justify-center gap-2 rounded-full bg-lake-forest px-5 font-button text-sm uppercase tracking-[0.05em] text-white">
+          <span className="inline-flex h-12 min-w-37.75 items-center justify-center gap-2 rounded-full bg-lake-forest px-5 font-button text-sm uppercase tracking-wider text-white">
             <Check className="h-4 w-4 text-nude-ember" /> Included
           </span>
         ) : (
-          <button type="button" onClick={onToggle} className="inline-flex h-12 min-w-37.75 items-center justify-center gap-2 rounded-full bg-lake-forest px-4 font-button text-sm uppercase tracking-[0.05em] text-white transition hover:brightness-110" aria-label={`Remove ${product.name} from stay`}>
+          <button type="button" onClick={onToggle} className="inline-flex h-12 min-w-37.75 items-center justify-center gap-2 rounded-full bg-lake-forest px-4 font-button text-sm uppercase tracking-wider text-white transition hover:brightness-110" aria-label={`Remove ${product.name} from stay`}>
             <Minus className="h-4 w-4" /> Added
           </button>
         )}

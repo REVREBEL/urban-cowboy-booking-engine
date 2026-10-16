@@ -269,7 +269,7 @@ const mockRooms: ShapedRoom[] = [
 
 
 const meta: Meta<typeof BuildingExperienceList> = {
-  title: 'Components/BuildingExperienceList',
+  title: 'Components/Rooms/BuildingExperienceList',
   component: BuildingExperienceList,
   parameters: {
     layout: 'fullscreen',

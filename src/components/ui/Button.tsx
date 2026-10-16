@@ -113,25 +113,25 @@ export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
   },
 };
 
-const COLOR_CLASSES: Record<ButtonColor, { bg: string; text: string; border: string }> = {
-  dark: { bg: "bg-lake-forest", text: "text-paper", border: "border-lake-forest-fade" },
-  light: { bg: "bg-paper", text: "text-lake-forest", border: "border-paper" },
-  "alpine-linen": { bg: "bg-alpine-linen", text: "text-lake-forest", border: "border-alpine-linen-fade" },
-  "cowboy-umber": { bg: "bg-cowboy-umber", text: "text-alpine-linen", border: "border-cowboy-umber-fade" },
-  smoke: { bg: "bg-smoke", text: "text-paper", border: "border-smoke-fade" },
-  "lake-forest": { bg: "bg-lake-forest", text: "text-alpine-linen", border: "border-lake-forest-fade" },
-  copper: { bg: "bg-copper", text: "text-alpine-linen-200", border: "border-copper-fade" },
-  oxblood: { bg: "bg-oxblood", text: "text-alpine-linen-200", border: "border-oxblood-fade" },
-  "oxidized-teal": { bg: "bg-oxidized-teal", text: "text-paper", border: "border-oxidized-teal-fade" },
-  "bandana-red": { bg: "bg-bandana-red", text: "text-paper", border: "border-bandana-red-fade" },
-  "whiskey-sour": { bg: "bg-whiskey-sour", text: "text-cowboy-umber", border: "border-whiskey-sour-fade" },
-  "lodge-yellow": { bg: "bg-lodge-yellow", text: "text-lake-forest", border: "border-lodge-yellow-fade" },
-  "nude-ember": { bg: "bg-nude-ember", text: "text-lake-forest", border: "border-nude-ember-fade" },
-  paper: { bg: "bg-paper", text: "text-smoke", border: "border-smoke-fade" },
+const COLOR_CLASSES: Record<ButtonColor, { bg: string; text: string; tone: string; border: string }> = {
+  dark: { bg: "bg-lake-forest", text: "text-paper", tone: "text-lake-forest", border: "border-lake-forest-fade" },
+  light: { bg: "bg-paper", text: "text-lake-forest", tone: "text-paper", border: "border-paper" },
+  "alpine-linen": { bg: "bg-alpine-linen", text: "text-lake-forest", tone: "text-alpine-linen", border: "border-alpine-linen-fade" },
+  "cowboy-umber": { bg: "bg-cowboy-umber", text: "text-alpine-linen", tone: "text-cowboy-umber", border: "border-cowboy-umber-fade" },
+  smoke: { bg: "bg-smoke", text: "text-paper", tone: "text-smoke", border: "border-smoke-fade" },
+  "lake-forest": { bg: "bg-lake-forest", text: "text-alpine-linen", tone: "text-lake-forest", border: "border-lake-forest-fade" },
+  copper: { bg: "bg-copper", text: "text-alpine-linen-200", tone: "text-copper", border: "border-copper-fade" },
+  oxblood: { bg: "bg-oxblood", text: "text-alpine-linen-200", tone: "text-oxblood", border: "border-oxblood-fade" },
+  "oxidized-teal": { bg: "bg-oxidized-teal", text: "text-paper", tone: "text-oxidized-teal", border: "border-oxidized-teal-fade" },
+  "bandana-red": { bg: "bg-bandana-red", text: "text-paper", tone: "text-bandana-red", border: "border-bandana-red-fade" },
+  "whiskey-sour": { bg: "bg-whiskey-sour", text: "text-cowboy-umber", tone: "text-whiskey-sour", border: "border-whiskey-sour-fade" },
+  "lodge-yellow": { bg: "bg-lodge-yellow", text: "text-lake-forest", tone: "text-lodge-yellow", border: "border-lodge-yellow-fade" },
+  "nude-ember": { bg: "bg-nude-ember", text: "text-lake-forest", tone: "text-nude-ember", border: "border-nude-ember-fade" },
+  paper: { bg: "bg-paper", text: "text-smoke", tone: "text-paper", border: "border-smoke-fade" },
 };
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 select-none uppercase font-bold tracking-wider transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 select-none uppercase tracking-wider transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -180,6 +180,8 @@ export const Spinner: React.FC<{ size?: number; color?: string }> = ({
 export const ChevronRight: React.FC<{ color?: string; size?: number }> = ({
   color = "currentColor",
   size = 14,
+
+
 }) => (
   <svg
     width={size}
@@ -187,7 +189,7 @@ export const ChevronRight: React.FC<{ color?: string; size?: number }> = ({
     viewBox="0 0 10 14"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="inline-block transition-transform duration-150 group-hover:translate-x-0.5"
+    className="relative -top-[2px] inline-block transition-transform duration-150 group-hover:translate-x-0.5"
     aria-hidden="true"
   >
     <path
@@ -247,9 +249,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const colorClasses =
       variant === "outline"
-        ? `bg-transparent ${palette.border} text-current`
+        ? `bg-transparent ${palette.border} ${palette.tone}`
         : variant === "transparent"
-        ? `bg-transparent border-none text-current`
+        ? `bg-transparent border-none ${palette.tone}`
         : `${palette.bg} ${palette.text} ${palette.border}`;
 
     const iconSize =
@@ -292,7 +294,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span className="inline-flex items-center justify-center">{iconNode}</span>
         ) : null}
 
-        <span>{children}</span>
+        <span className={iconPosition === "left" && iconNode && !isLoading ? "pr-1" : undefined}>{children}</span>
 
         {!isLoading && iconPosition === "right" && iconNode ? (
           <span className="inline-flex items-center justify-center">{iconNode}</span>

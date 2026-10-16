@@ -1,10 +1,8 @@
-import { Button } from "@/components/ui/Button";
 import type { TourIcon } from "@/journey/tour";
 import { FocusAmenityCount } from "./FocusAmenityCount";
 import { FocusAmenityAction } from "./FocusAmenityAction";
-import { CmsAmenityIcon } from "./CmsAmenityIcon";
+import { AmenityIcons } from "./AmenityIcons";
 
-/** Single accessible hotspot. Visual pieces follow the Figma FocusAmenity system. */
 export interface FocusAmenityProps {
   count: number;
   icon: TourIcon;
@@ -14,19 +12,33 @@ export interface FocusAmenityProps {
   onSelect: () => void;
   className?: string;
 }
-export function FocusAmenity({ count, icon, iconPath, title, active, onSelect, className = "" }: FocusAmenityProps) {
+
+/**
+ * Fixed-size, CMS-backed photo amenity control.
+ * Native button avoids the shared Button's rectangular focus ring, hover
+ * opacity and pressed scale. Keyboard focus is shown on the circular icon.
+ */
+export function FocusAmenity({
+  count, icon, iconPath, title, active, onSelect, className = "",
+}: FocusAmenityProps) {
   const state = active ? "Active" : "Default";
   return (
-    <Button type="button" variant="transparent" colorScheme="lake-forest" size="xsmall"
-      className={["focus-amenity", "group/focus-amenity", "relative", "pointer-events-auto", "overflow-visible", className].filter(Boolean).join(" ")}
-      data-state={state} aria-pressed={active} aria-label={`${String(count).padStart(2, "0")} ${title}`}
-      title={title} onClick={onSelect}>
-      <span className="focus-amenity-controls">
-        <FocusAmenityCount count={count} state={state}/>
-        <FocusAmenityAction state={state}/>
+    <button
+      type="button"
+      onClick={onSelect}
+      data-state={state}
+      aria-pressed={active}
+      aria-label={`${String(count).padStart(2, "0")} ${title}`}
+      title={title}
+      className={`group/focus-amenity relative inline-block h-32 w-38.5 shrink-0 appearance-none overflow-visible border-0 bg-transparent p-0 text-left align-middle shadow-none outline-none select-none cursor-pointer pointer-events-auto focus-visible:outline-none max-sm:h-24 max-sm:w-29.25 ${className}`}
+    >
+      <span aria-hidden="true" className="absolute left-0 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-0.75">
+        <FocusAmenityCount count={count} state={state} />
+        <FocusAmenityAction state={state} />
       </span>
-      <CmsAmenityIcon fallback={icon} iconPath={iconPath}/>
-    </Button>
+      <AmenityIcons icon={icon} iconPath={iconPath} />
+    </button>
   );
 }
+
 export default FocusAmenity;
