@@ -1,3 +1,5 @@
+//src/components/rooms/FocusAmenityAction.tsx
+
 import type { FocusState } from "./FocusAmenityCount";
 
 export interface FocusAmenityActionProps {

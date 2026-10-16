@@ -1,3 +1,5 @@
+//src/components/rooms/FocusAmenityAction.tsx
+
 import type { TourIcon as TourIconName } from '@/journey/tour';
 import { CmsAmenityIcon } from './CmsAmenityIcon';
 import { Button } from '@/components/ui/Button';

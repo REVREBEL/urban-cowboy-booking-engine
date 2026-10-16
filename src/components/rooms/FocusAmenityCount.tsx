@@ -1,3 +1,5 @@
+//src/components/rooms/FocusAmenityCount.tsx
+
 export type FocusState = "Default" | "Hover" | "Active";
 
 export interface FocusAmenityCountProps {
