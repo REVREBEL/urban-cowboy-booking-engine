@@ -1,9 +1,25 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Pill, PillButton } from "@/components/ui/pill";
-import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
+import { Pill, PillButton } from "@/components/ui/Pill";
+import { Button, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
 
-const colors = Object.keys(COLOR_PALETTE) as ButtonColor[];
+const colors: ButtonColor[] = [
+  "dark",
+  "light",
+  "alpine-linen",
+  "cowboy-umber",
+  "smoke",
+  "lake-forest",
+  "copper",
+  "oxblood",
+  "oxidized-teal",
+  "bandana-red",
+  "whiskey-sour",
+  "lodge-yellow",
+  "nude-ember",
+  "paper",
+];
+
 const styles: ButtonStyle[] = ["filled", "outline", "transparent"];
 
 const meta = {
@@ -116,7 +132,7 @@ export const ComparedWithButtons: Story = {
   render: () => (
     <div className="space-y-4">
       {colors.map((color) => (
-        <div key={color} className="flex flex-wrap items-center gap-4 border-b border-smoke/30 py-3">
+        <div key={color} className="flex flex-wrap items-center gap-4 border-b border-ash/30 py-3">
           <span className="w-32 text-sm">{color}</span>
           <Button colorScheme={color} variant="filled" size="xsmall">
             Button
