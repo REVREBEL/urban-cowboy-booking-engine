@@ -305,7 +305,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                 className="j-photo-filter-strip no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
                 {buildings.map((b) => (
                   <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setBuilding(b)}
-                    className="shrink-0">
+                    className="h-4.5 shrink-0 px-2.5! pt-1! pb-0! font-normal!">
                     {b === "all" ? "All buildings" : b}
                   </PillButton>
                 ))}
@@ -330,7 +330,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                   const on = features.includes(f);
                   return (
                     <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="xsmall" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
-                      className="shrink-0">
+                      className="h-6 shrink-0 px-3! pt-1! pb-0! font-normal!">
                       {FEATURE_LABEL[f]}
                     </PillButton>
                   );
@@ -354,10 +354,10 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                 {sort === "price-desc" ? "Price: high to low" : "Price: low to high"}
               </span>
             </Button>
-            <div role="group" aria-label="View" className="flex rounded-full bg-paper/10 p-0.5">
+            <div role="group" aria-label="View" className="flex h-7.5 items-center rounded-full bg-paper/10 p-0.5">
               {(["spreads", "index"] as const).map((v) => (
                 <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setView(v)}
-                  className="capitalize">
+                  className="h-7 px-2.5! pt-1! pb-0! font-normal! capitalize">
                   {v === "spreads" ? "Photo View" : "Multi Room View"}
                 </PillButton>
               ))}

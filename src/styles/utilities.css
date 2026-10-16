@@ -145,12 +145,12 @@
 @utility control-color-dark {
   --bg: var(--lake-forest);
   --fg: var(--paper);
-  --border: var(--lake-forest-fade);
+  --border: var(--lake-forest);
 }
 @utility control-color-light {
   --bg: var(--paper);
   --fg: var(--lake-forest);
-  --border: var(--lake-forest-300);
+  --border: var(--paper);
 };
 
 @utility control-color-alpine-linen {
@@ -247,19 +247,19 @@
 }
 @utility pill-xs {
   font-size: .6875rem;
-  padding: 3px 8px 2px;
+  padding: 4px 8px 2px;
 }
 @utility pill-sm {
   font-size: .75rem;
-  padding: 5px 10px 4px;
+  padding: 6px 10px 4px;
 }
 @utility pill-default {
   font-size: .875rem;
-  padding: 8px 14px 6px;
+  padding: 10px 14px 6px;
 }
 @utility pill-lg {
   font-size: 1rem;
-  padding: 10px 16px 8px;
+  padding: 11px 16px 8px;
 }
 
 /* Non-interactive pill outlines retain the label/foreground tone. */

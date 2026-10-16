@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type WheelEvent as ReactWheelEvent } from 'react';
 import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
 import { X } from 'lucide-react';
@@ -26,13 +26,14 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   onPrevious?: () => void; onNext?: () => void;
 }) {
   const section = useRef<HTMLElement>(null);
-  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, align: "center", containScroll: false, duration: 52, watchDrag: (api, event) => {
+  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, align: "center", containScroll: false, duration: 52, dragThreshold: 2, watchDrag: (api, event) => {
     const target = event.target;
     return !(target instanceof Element && target.closest('button, a, [data-tour-panel]'));
   } });
   const [photo, setPhoto] = useState(0);
   const [ratios, setRatios] = useState<Record<number, number>>({});
   const [activePin, setActivePin] = useState<string | null>(null);
+  const lastPhotoWheel = useRef(0);
   const detailsRef = useRef(details);
   const dismissRef = useRef(onDetails);
   detailsRef.current = details;
@@ -80,6 +81,18 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     if (direction > 0) carousel?.scrollNext(jump);
     else carousel?.scrollPrev(jump);
   };
+  const handlePhotoWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (room.images.length < 2 || event.ctrlKey) return;
+    // Keep vertical mouse-wheel gestures available for room navigation. Only a
+    // deliberate horizontal trackpad gesture should move between photographs.
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY) || Math.abs(event.deltaX) < 4) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const now = performance.now();
+    if (now - lastPhotoWheel.current < 500) return;
+    lastPhotoWheel.current = now;
+    goPhoto(event.deltaX > 0 ? 1 : -1);
+  };
   const highlightRow = useRef<HTMLDivElement>(null);
   const pickPin = (id: string) => {
     setActivePin(id);
@@ -123,7 +136,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
           event.preventDefault(); (event.key === 'ArrowDown' ? onNext : onPrevious)?.();
         }
       }}>
-      <div ref={viewport} className="j-photo-viewport" role="region" aria-roledescription="carousel" aria-label={`${room.name} photographs`} tabIndex={0}>
+      <div ref={viewport} className="j-photo-viewport" role="region" aria-roledescription="carousel" aria-label={`${room.name} photographs`} tabIndex={0} onWheel={handlePhotoWheel}>
         <div className="j-photo-track">
           {room.images.map((src, index) => (
             <div className="j-photo-slide" key={`${src}-${index}`} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${room.images.length}`} aria-hidden={photo !== index} inert={photo !== index} style={{ '--photo-ratio': ratios[index] ?? 1.5 } as CSSProperties}>
@@ -212,14 +225,14 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
       <footer className="j-tour-footer" data-tour-panel>
         {roomNav('j-roomnav-mobile')}
         <div className="j-tour-info min-w-0">
-          <p className="truncate text-xs uppercase text--paper/75">{room.building} · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · <span className="font-number">{position + 1}/{count}</span></span></p>
+          <p className="truncate text-xs text--paper/75"><span className="capitalize">{room.building.toLocaleLowerCase()}</span> · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · <span className="font-number">{position + 1}/{count}</span></span></p>
           <h2 className="mt-1 truncate font-headline text-xl leading-none sm:text-4xl sm:whitespace-normal">{room.name}</h2>
           <p className="mt-1 hidden text-sm text--paper/80 lg:block">{room.tagline}</p>
         </div>
         <div className="j-tour-actions">
-          <p className="shrink-0 tabular-nums"><span className="text-xs text--paper/75">from </span><span className="font-number text-xl sm:text-3xl">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text--paper/75"> /night</span></p>
-          <Button variant="outline" colorScheme="alpine-linen" size="small" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)}>{details ? 'Hide details' : 'Details'}</Button>
-          <Button variant="filled" colorScheme="alpine-linen" size="small" onClick={onChoose}>Choose room</Button>
+          <p className="shrink-0 tabular-nums"><span className="text-xs text--paper/75">from </span><span className="font-number text-xl sm:text-[39px]">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text--paper/75"> /night</span></p>
+          <Button variant="outline" colorScheme="alpine-linen" size="small" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)} className="sm:px-[22px]!">{details ? 'Hide details' : 'Details'}</Button>
+          <Button variant="filled" colorScheme="alpine-linen" size="small" onClick={onChoose} className="sm:px-[22px]!">Choose room</Button>
           <div className="j-roomnav-desktop flex items-center gap-1">
             <span className="mr-1 font-number text-xs tabular-nums text--paper/75">{position + 1}/{count}</span>
             {roomNav('flex items-center gap-1')}

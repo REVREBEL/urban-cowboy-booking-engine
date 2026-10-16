@@ -30,6 +30,10 @@ test("Navigation respects reduced-motion and interrupts scrolling when the guest
   assert.match(rooms, /window\.addEventListener\("touchstart", cancelRoomScroll/);
   // Embla duration is a tuning parameter, not a functional contract.
   assert.match(tour, /useEmblaCarousel\(/);
+  assert.match(tour, /dragThreshold: 2/);
+  assert.match(tour, /onWheel=\{handlePhotoWheel\}/);
+  assert.match(tour, /Math\.abs\(event\.deltaX\) <= Math\.abs\(event\.deltaY\)/);
+  assert.match(tour, /event\.stopPropagation\(\)/);
   assert.match(tour, /carousel\?\.scrollNext\(jump\)/);
   assert.match(tour, /carousel\?\.scrollPrev\(jump\)/);
   assert.match(tour, /carousel\?\.scrollTo\(index, window\.matchMedia/);
