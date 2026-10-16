@@ -251,7 +251,7 @@ export const RateOfferCard: React.FC<RateOfferCardProps> = ({
         {/* Ride Easy Sheriff Badge & Guarantee Badge */}
         {theme === "ride-easy" && (
           <div className="flex items-center justify-between w-full mt-4 px-2 text-(--offer-fg)">
-            <span className="font-offer-eyebrow font-bold text-xs uppercase tracking-wider text-left max-w-[260px]">
+            <span className="font-offer-eyebrow font-bold text-xs uppercase tracking-wider text-left max-w-65">
               {guaranteeText}
             </span>
             <SheriffBadgeIcon size={32} />
@@ -349,7 +349,7 @@ export const RateOfferCard: React.FC<RateOfferCardProps> = ({
         <div
           className={cn(
             "relative z-20 shrink-0 box-border text-(--offer-fg) bg-(--offer-bg)",
-            isCompact ? "w-[482px] max-w-full h-[657px] p-[54px_30px] rounded-[45px]" : "w-[480px] min-h-[820px] rounded-[50px]"
+            isCompact ? "w-120.5 max-w-full h-164.25 p-[54px_30px] rounded-[45px]" : "w-120 min-h-205 rounded-[50px]"
           )}
         >
           {theme === "ride-easy" ? (
