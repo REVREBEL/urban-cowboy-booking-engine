@@ -177,7 +177,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
     <div
       role="dialog"
       aria-label="Promo code entry"
-      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input-bg p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] ${className}`}
+      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] ${className}`}
     >
       {/* Container: 223px x 99px, padding: 8px 0px, gap: 8px */}
       <div className="flex flex-col items-start py-2 px-0 gap-2 w-55.75 h-24.75 self-stretch">
@@ -193,7 +193,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
 
         {/* Input Container: 223px x 58px */}
         <div className="relative w-55.75 h-14.5 flex flex-col justify-end">
-          <div className="box-border flex h-12.5 w-full flex-row items-center border-b border-input-border bg-input-bg transition-colors focus-within:border-b-2 focus-within:border-input-border">
+          <div className="box-border flex h-12.5 w-full flex-row items-center border-b border-input-border bg-input transition-colors focus-within:border-b-2 focus-within:border-input-border">
             {/* Promo / Group Code Input Field */}
             <input
               ref={inputRef}

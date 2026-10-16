@@ -138,7 +138,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   };
 
   return (
-    <div className="rounded-2xl border border-input-border/15 bg-input-bg p-4 text-foreground sm:p-5">
+    <div className="rounded-2xl border border-input-border/15 bg-input p-4 text-foreground sm:p-5">
       <div className="mb-4 flex items-center justify-between">
         <button
           type="button"
