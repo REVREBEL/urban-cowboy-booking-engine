@@ -150,8 +150,9 @@
 @utility control-color-light {
   --bg: var(--paper);
   --fg: var(--lake-forest);
-  --border: var(--paper);
-}
+  --border: var(--lake-forest-300);
+};
+
 @utility control-color-alpine-linen {
   --bg: var(--alpine-linen);
   --fg: var(--lake-forest);
@@ -213,7 +214,7 @@
   --border: var(--smoke-fade);
 }
 @utility control-filled {
-  border-width: 1px;
+  border-width: 2px;
   border-style: solid;
   background-color: var(--bg);
   color: var(--fg);
@@ -227,7 +228,8 @@
   background-color: transparent;
   color: var(--bg);
   border-style: solid;
-  border-color: var(--border);
+  border-width: 2px;
+  border-color: var(--bg);
   &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 12%, transparent); }
   &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
   &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 20%, transparent); }
@@ -263,10 +265,10 @@
 /* Non-interactive pill outlines retain the label/foreground tone. */
 @utility control-pill-outline {
   background-color: transparent;
-  color: var(--fg);
-  border-width: 1px;
+  color: var(--bg);
+  border-width: 2px;
   border-style: solid;
-  border-color: var(--border);
+  border-color: var(--bg);
   &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 12%, transparent); }
   &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
   &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 20%, transparent); }
