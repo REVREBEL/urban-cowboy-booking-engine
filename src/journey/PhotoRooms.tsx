@@ -8,13 +8,13 @@ import { SlidersHorizontal, X } from "lucide-react";
 import { RoomPhotoTour } from "./RoomPhotoTour";
 import { PhotoTourArrow } from "./PhotoTourArrow";
 import { Button } from "../components/ui/Button";
-import { Pill, PillButton } from "../components/ui/Pill";
+import { Pill, PillButton } from "@/components/ui/Pill";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";
 import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
-import { photoGalleryForRoom, studioEditorialRoomTypeId, type PhotoSource } from "../data/photoGalleries";
-import type { Feature, MatchProfile } from "./data";
+import { photoGalleryForRoom, studioEditorialRoomTypeId, type PhotoSource } from "@/data/photoGalleries";
+import type { Feature, MatchProfile } from "@/data";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
 const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
