@@ -56,7 +56,7 @@ export default function FindYourStay({
           <button
             type="button"
             onClick={onChangeSearch}
-            className="text-xs uppercase tracking-widest text-ash underline underline-offset-2 transition-colors hover:text-white"
+            className="text-xs uppercase tracking-widest text-alpine-linen underline underline-offset-2 transition-colors hover:text-white"
             style={{ fontFamily: "var(--font-label)" }}
           >
             Change
@@ -73,7 +73,7 @@ export default function FindYourStay({
         <h1 className="mb-4 text-4xl leading-none text-cowboy-umber md:text-6xl" style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}>
           How Would You Like<br className="hidden md:block" /> to Find Your Stay?
         </h1>
-        <p className="max-w-xl text-base text-ash-900" style={{ fontFamily: "var(--font-body)" }}>
+        <p className="max-w-xl text-base text-alpine-linen-900" style={{ fontFamily: "var(--font-body)" }}>
           Answer a few questions and we&apos;ll match you to the right room, or browse everything available.
         </p>
       </div>
@@ -96,7 +96,7 @@ export default function FindYourStay({
               </p>
             </div>
             <div className="mt-6 flex items-center gap-2">
-              <span className="text-xs uppercase tracking-widest text-copper transition-colors group-hover:text-ash" style={{ fontFamily: "var(--font-label)" }}>Get Matched</span>
+              <span className="text-xs uppercase tracking-widest text-copper transition-colors group-hover:text-alpine-linen" style={{ fontFamily: "var(--font-label)" }}>Get Matched</span>
               <img src="/assets/icon-arrow.svg" alt="" aria-hidden="true" className="h-3 opacity-60 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function FindYourStay({
         <button
           type="button"
           onClick={onBrowseAll}
-          className="group relative overflow-hidden rounded-2xl border-2 border-ash bg-alpine-linen text-left text-cowboy-umber transition-all hover:border-cowboy-umber hover:shadow-xl"
+          className="group relative overflow-hidden rounded-2xl border-2 border-alpine-linen bg-alpine-linen text-left text-cowboy-umber transition-all hover:border-cowboy-umber hover:shadow-xl"
         >
           <div className="absolute inset-0 opacity-5">
             <img src="/assets/steam-bath-icon.svg" alt="" aria-hidden="true" className="absolute bottom-0 right-0 h-full object-cover" />
@@ -114,7 +114,7 @@ export default function FindYourStay({
             <div>
               <p className="mb-3 text-xs uppercase tracking-widest text-copper" style={{ fontFamily: "var(--font-label)" }}>Browse All</p>
               <h2 className="mb-3 text-3xl leading-tight md:text-4xl" style={{ fontFamily: "var(--font-heading)", fontWeight: 700 }}>Show All Rooms</h2>
-              <p className="max-w-xs text-sm leading-relaxed text-ash-900" style={{ fontFamily: "var(--font-body)" }}>
+              <p className="max-w-xs text-sm leading-relaxed text-alpine-linen-900" style={{ fontFamily: "var(--font-body)" }}>
                 {availableCount === undefined
                   ? "Browse every available room experience."
                   : `Browse all ${availableCount} available room experiences.`}

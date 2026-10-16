@@ -3,7 +3,7 @@
  * This chrome belongs to the whole Photo experience, never to the Card engine.
  */
 import { useBooking, type Step } from "../state/booking";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button";
 import { PhotoTourArrow } from "./PhotoTourArrow";
 import "../styles/room-photo-tour.css";
 

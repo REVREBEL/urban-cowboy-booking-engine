@@ -13,8 +13,8 @@ import { toPhotoTourRoom } from "@/data/photoTourRooms";
 import { photoGalleryForRoom } from "@/data/photoGalleries";
 import { money } from "../lib/format";
 import type { ShapedRate } from "../types/mews";
-import { Button } from "@/components/ui/button";
-import { PolicyDisplay, type MilestoneDate } from "@/components/rates/policy_display";
+import { Button } from "@/components/ui/Button";
+import { PolicyDisplay, type MilestoneDate } from "@/components/rates/PolicyDisplay";
 import {
   RateOfferSidePanel,
   type OfferCardTheme,
@@ -41,7 +41,7 @@ const offerThemeForRate = (rate: ShapedRate): OfferCardTheme => {
 const milestoneDate = (
   checkIn: string,
   amount: number | null | undefined,
-  unit: "days" | "hours" | null | undefined,
+  unit: "days" | "hours" | null | undefined
 ): MilestoneDate | undefined => {
   if (amount == null || !unit || amount < 0) return undefined;
   const days = unit === "days" ? amount : amount / 24;
@@ -90,8 +90,12 @@ export function PhotoRateStep() {
 
   useEffect(() => {
     let active = true;
-    void api.rateCards().then(cards => { if (active) setConfigs(cards); });
-    return () => { active = false; };
+    void api.rateCards().then((cards) => {
+      if (active) setConfigs(cards);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -133,24 +137,32 @@ export function PhotoRateStep() {
     ? milestoneDate(
         booking.checkIn,
         detailsConfig.cancellationPenaltyWindow,
-        detailsConfig.cancellationPenaltyWindowPeriod,
+        detailsConfig.cancellationPenaltyWindowPeriod
       )
     : undefined;
   const nonRefundableDate = detailsConfig
     ? milestoneDate(
         booking.checkIn,
         detailsConfig.cancellationFullForfeitWindow,
-        detailsConfig.cancellationFullForfeitWindowPeriod,
+        detailsConfig.cancellationFullForfeitWindowPeriod
       )
     : undefined;
 
   return (
-    <section className="relative isolate flex min-h-dvh flex-col justify-end bg-smoke text-paper" data-photo-rate-step>
+    <section
+      className="relative isolate flex flex-col justify-end min-h-dvh text-paper bg-smoke"
+      data-photo-rate-step
+    >
       {image && (
-        <figure className="absolute inset-0 -z-10 overflow-hidden">
-          <img src={image} alt={room.name} className="h-full w-full object-cover" fetchPriority="high" />
+        <figure className="absolute inset-0 overflow-hidden -z-10">
+          <img
+            src={image}
+            alt={room.name}
+            className="object-cover h-full w-full"
+            fetchPriority="high"
+          />
           <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/65 to-smoke/10" />
-          <div className="absolute inset-x-0 top-24 mx-auto max-w-[1600px] px-5 sm:px-8">
+          <div className="absolute inset-x-0 top-24 max-w-[1600px] mx-auto px-5 sm:px-8">
             <Button
               type="button"
               onClick={() => booking.goTo("results")}
@@ -163,12 +175,14 @@ export function PhotoRateStep() {
               ← Change room
             </Button>
             <p className={`${label} mt-4 text-alpine-linen`}>03 — How would you like to stay?</p>
-            <h1 className="mt-2 font-heading text-4xl leading-none sm:text-6xl">{room.name}</h1>
+            <h1 className="mt-2 font-heading text-4xl sm:text-6xl leading-none">
+              {room.name}
+            </h1>
           </div>
         </figure>
       )}
 
-      <div className="relative z-10 mx-auto grid w-full max-w-[1600px] gap-4 px-5 pb-7 pt-64 sm:px-8 sm:pb-10 sm:pt-48 lg:grid-cols-3 lg:pt-44">
+      <div className="relative z-10 grid lg:grid-cols-3 w-full max-w-[1600px] mx-auto px-5 sm:px-8 pb-7 sm:pb-10 pt-64 sm:pt-48 lg:pt-44 gap-4">
         {room.rates.map((rate, index) => {
           const config = resolveRateCardConfig(configs, rate.rateId);
           const policy = config
@@ -189,25 +203,25 @@ export function PhotoRateStep() {
                 {config?.headline || rate.name}
               </h2>
               {(config?.description || rate.description) && (
-                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+                <p className="mt-2 whitespace-pre-line text-sm text-foreground/80 leading-relaxed">
                   {config?.description || rate.description}
                 </p>
               )}
 
-              <div className="mt-auto border-t border-ash pt-4 tabular-nums">
+              <div className="mt-auto pt-4 tabular-nums border-t border-alpine-linen">
                 {rate.perNightGross != null && (
-                  <div className="flex justify-between gap-2 text-sm">
+                  <div className="flex justify-between text-sm gap-2">
                     <span>{money(rate.perNightGross, rate.currency)} × {booking.nightsCount} nights</span>
                     <span>{rate.totalGross == null ? "—" : money(rate.totalGross, rate.currency)}</span>
                   </div>
                 )}
                 {rate.totalTax != null && (
-                  <div className="mt-1 flex justify-between gap-2 text-sm text-foreground/70">
+                  <div className="flex justify-between mt-1 text-sm text-foreground/70 gap-2">
                     <span>Tax included in the displayed total</span>
                     <span>{money(rate.totalTax, rate.currency)}</span>
                   </div>
                 )}
-                <div className="mt-3 flex items-baseline justify-between gap-3">
+                <div className="flex items-baseline justify-between mt-3 gap-3">
                   <span className="font-bold">Total</span>
                   <span className="font-heading text-3xl">
                     {money(rate.totalGross, rate.currency)}
@@ -215,11 +229,11 @@ export function PhotoRateStep() {
                 </div>
               </div>
 
-              <p className="mt-4 rounded-lg bg-ash/75 px-3 py-2 text-sm text-foreground/85">
+              <p className="mt-4 px-3 py-2 text-sm text-foreground/85 bg-alpine-linen/75 rounded-lg">
                 <strong>Cancellation:</strong> {policy}
               </p>
 
-              <div className="mt-4 grid grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] gap-2">
+              <div className="grid grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] mt-4 gap-2">
                 <Button
                   type="button"
                   onClick={() => setDetailsRateId(rate.rateId)}
@@ -250,7 +264,7 @@ export function PhotoRateStep() {
       </div>
 
       {room.rates.length === 0 && (
-        <div className="mx-auto max-w-xl px-5 py-14 text-center">
+        <div className="max-w-xl mx-auto px-5 py-14 text-center">
           <p className="font-heading text-2xl leading-none">
             No rates available for this room on these dates.
           </p>
@@ -270,7 +284,7 @@ export function PhotoRateStep() {
 
       {detailsRate && detailsPricing && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-smoke/75 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 bg-smoke/75 backdrop-blur-sm"
           role="presentation"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setDetailsRateId(null);
@@ -280,7 +294,7 @@ export function PhotoRateStep() {
             role="dialog"
             aria-modal="true"
             aria-label={`${detailsConfig?.headline || detailsRate.name} rate details`}
-            className="flex max-h-[calc(100dvh-2rem)] w-full max-w-[1050px] flex-col overflow-hidden rounded-[28px] shadow-2xl sm:max-h-[calc(100dvh-4rem)]"
+            className="flex flex-col overflow-hidden max-h-[calc(100dvh-2rem)] max-w-262.5 sm:max-h-[calc(100dvh-4rem)] w-full rounded-[28px] shadow-2xl"
           >
             <RateOfferSidePanel
               variant="default"
@@ -296,14 +310,14 @@ export function PhotoRateStep() {
               policyDisplay={
                 freeCancelDate && nonRefundableDate ? (
                   <PolicyDisplay
-                        orientation="vertical"
+                    orientation="vertical"
                     size="compact"
                     initialAmount={money(detailsPricing.dueToday, detailsRate.currency)}
                     remainingAmount={money(detailsPricing.remaining, detailsRate.currency)}
                     freeCancelDate={freeCancelDate}
                     nonRefundableDate={nonRefundableDate}
-                    textColor="var(--cowboy-umber--normal, #4e332d)"
-                    accentColor="var(--copper--normal, #9a5636)"
+                    textColor="var(--cowboy-umber, #4e332d)"
+                    accentColor="var(--copper, #9a5636)"
                     className="mx-auto shadow-none"
                   />
                 ) : (

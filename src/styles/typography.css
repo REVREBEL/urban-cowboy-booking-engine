@@ -1,0 +1,404 @@
+
+/* DESERT RAIN */
+
+@font-face {
+font-family: "DesertRain";
+src: url("/fonts/DesertRain/DesertRain-Regular.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+
+@font-face {
+font-family: "DesertRain";
+src: url("/fonts/DesertRain/DesertRain-SemiBold.woff2") format("woff2");
+font-weight: 600;
+font-style: normal;
+font-display: swap;
+}
+
+@font-face {
+font-family: "DesertRain";
+src: url("/fonts/DesertRain/DesertRain-Bold.woff2") format("woff2");
+font-weight: 700;
+font-style: normal;
+font-display: swap;
+}
+
+/* BROTHERS */
+
+@font-face {
+  font-family: "Brothers";
+  src: url("/fonts/Brothers/Brothers-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Regular.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+
+@font-face {
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Bold.woff2") format("woff2");
+font-weight: 700;
+font-style: normal;
+font-display: swap;
+}
+
+@font-face {
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Italic.woff2") format("woff2");
+font-weight: 400;
+font-style: italic;
+font-display: swap;
+}
+
+
+
+/* UCHEN */
+
+@font-face {
+font-family: "Uchen";
+src: url("/fonts/Uchen/Uchen-Regular.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+
+@font-face {
+  font-family: "Uchen";
+  src: url("/fonts/Uchen/Uchen-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Uchen";
+  src: url("/fonts/Uchen/Uchen-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* BIANCO SANS */
+
+@font-face {
+font-family: "Bianco Sans";
+src: url("/fonts/Bianco%20Sans/Bianco%20Sans%20Regular.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+
+@font-face {
+font-family: "Bianco Sans";
+src: url("/fonts/Bianco%20Sans/Bianco%20Sans%20Bold.woff2") format("woff2");
+font-weight: 700;
+font-style: normal;
+font-display: swap;
+}
+
+/* CEDARVILLE */
+
+@font-face {
+font-family: "Cedarville";
+src: url("/fonts/Cedarville/Cedarville-Cursive.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+
+
+
+/* ==========================================================
+   ADDITIONAL FONT FACES
+   ========================================================== */
+
+
+/* ARVO */
+
+@font-face {
+  font-family: "Arvo";
+  src: url("/fonts/Arvo/Arvo-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Arvo";
+  src: url("/fonts/Arvo/Arvo-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* COUSTARD */
+
+@font-face {
+  font-family: "Coustard";
+  src: url("/fonts/Coustard/Coustard-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Coustard";
+  src: url("/fonts/Coustard/Coustard-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* DM SANS: Variable font, 100–900 */
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/fonts/DMSans/DMSans-VariableFont_opsz,wght.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* FILICUDI */
+
+@font-face {
+  font-family: "Filicudi";
+  src: url("/fonts/Filicudi/FilicudiSolid-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* FINEDAY: Individual stylistic variants */
+
+@font-face {
+  font-family: "Fineday Style One";
+  src: url("/fonts/Fineday/Fineday-StyleOne.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fineday Style One Non-Connect";
+  src: url("/fonts/Fineday/Fineday-StyleOnenon-connect.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fineday Style Two";
+  src: url("/fonts/Fineday/Fineday-StyleTwo.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fineday Style Two Non-Connect";
+  src: url("/fonts/Fineday/Fineday-StyleTwonon-connect.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* LATO */
+
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/Lato/Lato-Thin.woff2") format("woff2");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/Lato/Lato-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/Lato/Lato-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/Lato/Lato-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/Lato/Lato-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* LEAGUE GOTHIC: Normal and width variants */
+
+@font-face {
+  font-family: "League Gothic";
+  src: url("/fonts/LeagueGothic/LeagueGothic-Regular-VariableFont_wdth.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "League Gothic Condensed";
+  src: url("/fonts/LeagueGothic/LeagueGothic_Condensed-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "League Gothic SemiCondensed";
+  src: url("/fonts/LeagueGothic/LeagueGothic_SemiCondensed-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* LEAGUE SPARTAN: Variable font, 100–900 */
+
+@font-face {
+  font-family: "League Spartan";
+  src: url("/fonts/LeagueSpartan/LeagueSpartan-VariableFont_wght.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* MOTTER CORPUS */
+
+@font-face {
+  font-family: "Motter Corpus";
+  src: url("/fonts/Motter%20Corpus/Motter%20Corpus%20Std-SemiCondensed-WOFF2.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* NOTO SERIF TIBETAN: Variable font, 100–900 */
+
+@font-face {
+  font-family: "Noto Serif Tibetan";
+  src: url("/fonts/NotoSerifTibetan/NotoSerifTibetan-VariableFont_wght.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* QUATTROCENTO SANS */
+
+@font-face {
+  font-family: "Quattrocento Sans";
+  src: url("/fonts/QuattrocentoSans/QuattrocentoSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Quattrocento Sans";
+  src: url("/fonts/QuattrocentoSans/QuattrocentoSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* RUNDECK */
+
+@font-face {
+  font-family: "Rundeck";
+  src: url("/fonts/Rundeck/Rundeck-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SpecialElite */
+
+@font-face {
+  font-family: "Special Elite";
+  src: url("/fonts/SpecialElite/SpecialElite-Regular.ttf") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* TEQUILA BLANCO SQUAT */
+
+@font-face {
+  font-family: "Tequila Blanco Squat";
+  src: url("/fonts/Tequila%20Blanco%20Squat/Tequila%20Blanco%20Squat%20Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+
+:root {
+  --text-size-xxs: clamp(0.75rem, 0.72rem + 0.12vw, 0.95rem);
+  --text-size-xs: clamp(0.85rem, 0.82rem + 0.12vw, 0.95rem);
+  --text-size-sm: clamp(0.95rem, 0.92rem + 0.12vw, 1.05rem);
+  --text-size-base: clamp(1.05rem, 1rem + 0.12vw, 1.15rem);
+  --text-size-md: clamp(1.15rem, 1.1rem + 0.12vw, 1.25rem);
+  --text-size-lg: clamp(1.25rem, 1.2rem + 0.12vw, 1.35rem);
+  --text-size-xl: clamp(1.45rem, 1.4rem + 0.12vw, 1.55rem);
+}
+
+@theme inline {
+  --text-xxs: var(--text-size-xxs);
+  --text-xs: var(--text-size-xs);
+  --text-sm: var(--text-size-sm);
+  --text-base: var(--text-size-base);
+  --text-md: var(--text-size-md);
+  --text-lg: var(--text-size-lg);
+  --text-xl: var(--text-size-xl);
+}
+
+
+@theme {
+
+  /* Typography Families */
+
+--font-body: "Uchen", Georgia, serif;
+--font-headline: "DesertRain", Georgia, serif;
+--font-heading: "DesertRain", Georgia, serif;
+--font-subheading: "Brothers", "League Spartan", sans-serif;
+--font-button: "Brothers", "Brothers", "Brothers", "Rockwell", "Clarendon", Georgia, serif;
+--font-label: "Brothers", "League Spartan", sans-serif;
+--font-eyebrow: "Bianco Sans", "League Spartan", sans-serif;
+--font-number: "Bianco Sans", "League Spartan", sans-serif;
+--font-blockquote: "Cedarville", cursive;
+--font-emoji: "Noto Emoji", sans-serif;
+--font-accent: "Tequila Blanco Squat", sans-serif;
+
+}

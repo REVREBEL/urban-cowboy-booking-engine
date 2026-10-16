@@ -1,0 +1,172 @@
+/* src/styles/index.css */
+
+@import "tailwindcss";
+@import "./theme.css";
+@import "./colors.css";
+@import "./typography.css";
+@import "./utilities.css";
+@import "./keyframes.css";
+
+@import "./RoomListCard.css";
+@import "./RateCard.css";
+
+@layer base {
+  .all-unset { all: unset; }
+}
+
+
+/* ============================================================================
+   2. TAILWIND THEME
+   Palette aliases and semantic roles, with no duplicate semantic :root layer.
+   ========================================================================= */
+@theme inline {
+
+  /* Semantic colors */
+
+  --color-foreground: var(--lake-forest);
+  --color-background: var(--paper);
+
+  --color-primary: var(--paper);
+  --color-primary-foreground: var(--lake-forest);
+
+  --color-secondary: var(--lake-forest);
+  --color-secondary-foreground: var(--alpine-linen);
+
+  --color-accent: var(--lake-forest-fade);
+  --color-accent-foreground: var(--alpine-linen-fade);
+
+  --color-emphasis: var(--copper);
+  --color-emphasis-foreground: var(--alpine-linen);
+
+  --color-error: var(--bandana-red);
+  --color-error-foreground: var(--alpine-linen-muted); 
+
+  --color-popover: var(--paper);
+  --color-popover-foreground: var(--cowboy-umber);
+
+  --color-card: var(--paper);
+  --color-card-foreground: var(--card-foreground);
+  
+  --color-muted: var(--alpine-linen-muted);
+  --color-muted-foreground: var(--lake-forest-muted);
+
+  --color-input: var(--paper);
+  --color-input-border: var(--lake-forest);
+
+  --color-chart-1: var(--copper);
+  --color-chart-2: var(--cowboy-umber);
+  --color-chart-3: var(--alpine-linen);
+  --color-chart-4: var(--smoke-fade);
+  --color-chart-5: var(--lake-forest);
+
+  --color-ring: var(--lake-forest);
+
+  --color-sidebar: var(--lake-forest);
+  --color-sidebar-foreground: var(--paper-muted);
+
+  --color-sidebar-primary: var(--paper-muted);
+  --color-sidebar-primary-foreground: var(--lake-forest);
+
+  --color-sidebar-accent: var(--smoke);
+  --color-sidebar-accent-foreground: var(--paper);
+
+  --color-sidebar-border: var(--paper);
+  --color-sidebar-ring: var(--paper);
+
+  --card: var(--paper);
+  --card-foreground: var(--smoke);
+  --shadow-card: 0 4px 20px -2px var(--paper-700);
+
+  --color-destructive: var(--bandana-red);
+  --color-destructive-foreground: var(--paper);
+
+  --color-border: var(--lake-forest);
+
+}
+ 
+
+:root {
+  /* Semantic colors */
+
+
+  --foreground: var(--lake-forest);
+  --background: var(--paper);
+
+  --primary: var(--paper);
+  --primary-foreground: var(--lake-forest);
+
+  --secondary: var(--lake-forest);
+  --secondary-foreground: var(--alpine-linen);
+
+  --accent: var(--lake-forest-fade);
+  --accent-foreground: var(--alpine-linen-fade);
+
+  --emphasis: var(--copper);
+  --emphasis-foreground: var(--alpine-linen);
+
+  --error: var(--bandana-red);
+  --error-foreground: var(--alpine-linen-muted); 
+
+  --popover: var(--paper);
+  --popover-foreground: var(--cowboy-umber);
+
+  --card: var(--paper);
+  --card-foreground: var(--card-foreground);
+  
+  --muted: var(--alpine-linen-muted);
+  --muted-foreground: var(--lake-forest-muted);
+
+  --input: var(--paper);
+  --input-border: var(--lake-forest);
+
+  --chart-1: var(--copper);
+  --chart-2: var(--cowboy-umber);
+  --chart-3: var(--alpine-linen);
+  --chart-4: var(--smoke-fade);
+  --chart-5: var(--lake-forest);
+
+  --ring: var(--lake-forest);
+
+  --sidebar: var(--lake-forest);
+  --sidebar-foreground: var(--paper-muted);
+
+  --sidebar-primary: var(--paper-muted);
+  --sidebar-primary-foreground: var(--lake-forest);
+
+  --sidebar-accent: var(--smoke);
+  --sidebar-accent-foreground: var(--paper);
+
+  --sidebar-border: var(--paper);
+  --sidebar-ring: var(--paper);
+
+  --card: var(--paper);
+  --card-foreground: var(--smoke);
+  --shadow-card: 0 4px 20px -2px var(--paper-700);
+
+  --destructive: var(--bandana-red);
+  --destructive-foreground: var(--paper);
+
+  --border: var(--lake-forest);
+
+
+
+  /* Calendar date status colors. */
+  --calendar-date-foreground: var(--color-primary-foreground);
+  --calendar-date-muted-foreground: color-mix(in srgb, var(--color-primary-foreground) 45%, transparent);
+  --calendar-date-disabled-foreground: color-mix(in srgb, var(--color-primary-foreground) 20%, transparent);
+  --calendar-date-selected-bg: var(--button-primary-bg);
+  --calendar-date-selected-foreground: var(--button-primary-foreground);
+  --calendar-date-range-bg: color-mix(in srgb, var(--color-emphasis) 10%, transparent);
+  --calendar-date-restricted-foreground: var(--color-emphasis);
+  --calendar-date-restricted-ring: color-mix(in srgb, var(--color-emphasis) 35%, transparent);
+  --calendar-date-hover-bg: var(--color-emphasis);
+  --calendar-date-hover-foreground: var(--button-primary-foreground);
+  --calendar-date-rate-foreground: color-mix(in srgb, var(--primary-foreground) 65%, transparent);
+  --calendar-date-rate-unavailable-foreground: color-mix(in srgb, var(--primary-foreground) 30%, transparent);
+  --calendar-date-focus-ring: var(--color-emphasis);
+  --calendar-date-ring-offset-bg: var(--color-primary);
+  --calendar-tooltip-bg: var(--primary-foreground);
+  --calendar-tooltip-foreground: var(--color-primary);
+}
+
+

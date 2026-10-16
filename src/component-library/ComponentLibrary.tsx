@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -156,12 +156,32 @@ function SectionHeader({
   body: string;
 }) {
   return (
-    <div className="mb-7 border-b border-cowboy-umber/15 pb-5">
-      <p className="font-label text-[10px] uppercase tracking-[0.24em] text-copper">
+    <div
+      className="
+        mb-7 pb-5
+        border-b border-cowboy-umber/15
+      "
+    >
+      <p
+        className="
+          font-label text-[10px] text-copper uppercase tracking-[0.24em]
+        "
+      >
         {kicker}
       </p>
-      <h2 className="mt-2 font-heading text-4xl leading-none text-cowboy-umber">{title}</h2>
-      <p className="mt-3 max-w-3xl text-sm leading-6 text-ash-900">{body}</p>
+      <h2
+        className="
+          mt-2
+          font-heading text-4xl text-cowboy-umber leading-none
+        "
+      >{title}</h2>
+      <p
+        className="
+          max-w-3xl
+          mt-3
+          text-sm text--alpine-linen-900 leading-6
+        "
+      >{body}</p>
     </div>
   );
 }
@@ -182,30 +202,76 @@ function Preview({
   tall?: boolean;
 }) {
   return (
-    <article className="mb-8 overflow-hidden rounded-2xl border border-cowboy-umber/12 bg-white shadow-sm">
-      <header className="flex flex-col gap-3 border-b border-cowboy-umber/10 px-5 py-4 md:flex-row md:items-center md:justify-between">
+    <article
+      className="
+        overflow-hidden
+        mb-8
+        bg-white
+        rounded-2xl border border-cowboy-umber/12
+        shadow-sm
+      "
+    >
+      <header
+        className="
+          flex flex-col md:flex-row md:items-center md:justify-between
+          px-5 py-4
+          border-b border-cowboy-umber/10
+          gap-3
+        "
+      >
         <div>
-          <div className="flex items-center gap-2">
-            <h3 className="font-label text-sm uppercase tracking-[0.08em] text-cowboy-umber">{title}</h3>
-            <span className="rounded-full bg-lake-forest/8 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-lake-forest">
+          <div
+            className="
+              flex items-center
+              gap-2
+            "
+          >
+            <h3
+              className="
+                font-label text-sm text-cowboy-umber uppercase tracking-[0.08em]
+              "
+            >{title}</h3>
+            <span
+              className="
+                px-2 py-0.5
+                text-[9px] text-lake-forest font-semibold uppercase
+                tracking-wider
+                bg-lake-forest/8
+                rounded-full
+              "
+            >
               live
             </span>
           </div>
           {description ? (
-            <p className="mt-1 max-w-2xl text-xs leading-5 text-ash-900">{description}</p>
+            <p
+              className="
+                max-w-2xl
+                mt-1
+                text-xs text--alpine-linen-900 leading-5
+              "
+            >{description}</p>
           ) : null}
         </div>
         <a
           href={sourceUrl(path)}
           target="_blank"
           rel="noreferrer"
-          className="font-label text-[10px] uppercase tracking-wider text-copper underline-offset-4 hover:underline"
+          className="
+            font-label text-[10px] text-copper uppercase tracking-wider
+            underline-offset-4 hover:underline
+          "
         >
           View source
         </a>
       </header>
       <div className={`overflow-auto ${surfaceClasses[surface]} ${tall ? "max-h-190" : ""}`}>
-        <div className="min-w-max p-6 md:p-8">{children}</div>
+        <div
+          className="
+            min-w-max
+            p-6 md:p-8
+          "
+        >{children}</div>
       </div>
     </article>
   );
@@ -245,14 +311,50 @@ function Toolbar({
   const surfaces: PreviewSurface[] = ["cream", "white", "forest", "transparent"];
 
   return (
-    <div className="sticky top-0 z-40 border-b border-cowboy-umber/10 bg-paper/95 px-4 py-3 backdrop-blur md:px-6">
-      <div className="mx-auto flex max-w-375 flex-wrap items-center justify-between gap-3">
+    <div
+      className="
+        sticky top-0 z-40
+        px-4 md:px-6 py-3
+        bg-paper/95
+        border-b border-cowboy-umber/10
+        backdrop-blur
+      "
+    >
+      <div
+        className="
+          flex flex-wrap items-center justify-between
+          max-w-375
+          mx-auto
+          gap-3
+        "
+      >
         <div>
-          <p className="font-label text-xs uppercase tracking-[0.18em] text-cowboy-umber">Component Library</p>
-          <p className="text-[11px] text-ash-900">Canonical components only · development surface</p>
+          <p
+            className="
+              font-label text-xs text-cowboy-umber uppercase tracking-[0.18em]
+            "
+          >Component Library</p>
+          <p
+            className="
+              text-[11px] text--alpine-linen-900
+            "
+          >Canonical components only · development surface</p>
         </div>
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-1 rounded-full border border-cowboy-umber/15 bg-white p-1">
+        <div
+          className="
+            flex flex-wrap items-center
+            gap-4
+          "
+        >
+          <div
+            className="
+              flex items-center
+              p-1
+              bg-white
+              rounded-full border border-cowboy-umber/15
+              gap-1
+            "
+          >
             {widths.map((item) => (
               <button
                 key={item}
@@ -282,7 +384,12 @@ function Toolbar({
 
 function ChromeSection({ width }: { width: PreviewWidth }) {
   return (
-    <section id="chrome" className="scroll-mt-24">
+    <section
+      id="chrome"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Booking"
         title="Chrome"
@@ -321,7 +428,14 @@ function ChromeSection({ width }: { width: PreviewWidth }) {
         description="Rendered in preview mode so the floating contact control stays inside this component card."
       >
         <WidthFrame width={width}>
-          <div className="relative min-h-72 overflow-hidden rounded-xl border border-cowboy-umber/10 bg-alpine-linen">
+          <div
+            className="
+              relative overflow-hidden
+              min-h-72
+              bg-alpine-linen
+              rounded-xl border border-cowboy-umber/10
+            "
+          >
             <ContactBar preview />
           </div>
         </WidthFrame>
@@ -335,7 +449,12 @@ function FindControlsSection({ width, surface }: { width: PreviewWidth; surface:
   const [party, setParty] = useState<string | null>("partner");
 
   return (
-    <section id="find-controls" className="scroll-mt-24">
+    <section
+      id="find-controls"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Find Your Stay"
         title="Controls"
@@ -348,7 +467,12 @@ function FindControlsSection({ width, surface }: { width: PreviewWidth; surface:
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex min-h-24 items-center justify-center">
+          <div
+            className="
+              flex items-center justify-center
+              min-h-24
+            "
+          >
             <BestRateGuaranteedLabel />
           </div>
         </WidthFrame>
@@ -360,7 +484,12 @@ function FindControlsSection({ width, surface }: { width: PreviewWidth; surface:
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex min-h-44 items-center justify-center">
+          <div
+            className="
+              flex items-center justify-center
+              min-h-44
+            "
+          >
             <PropertyLocationGroup
               selectedLocation={location}
               onSelect={(next) => setLocation(String(next))}
@@ -375,7 +504,12 @@ function FindControlsSection({ width, surface }: { width: PreviewWidth; surface:
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex justify-center py-4">
+          <div
+            className="
+              flex justify-center
+              py-4
+            "
+          >
             <TravelPartyGroup value={party} onChange={setParty} />
           </div>
         </WidthFrame>
@@ -386,7 +520,12 @@ function FindControlsSection({ width, surface }: { width: PreviewWidth; surface:
 
 function FindSearchSection({ width, surface }: { width: PreviewWidth; surface: PreviewSurface }) {
   return (
-    <section id="find-search" className="scroll-mt-24">
+    <section
+      id="find-search"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Find Your Stay"
         title="Search"
@@ -399,7 +538,12 @@ function FindSearchSection({ width, surface }: { width: PreviewWidth; surface: P
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <div
+            className="
+              flex flex-wrap items-center justify-center
+              gap-4
+            "
+          >
             <SearchButton variant="full-circle">Search</SearchButton>
             <SearchButton variant="icon-circle" />
             <SearchButton variant="full-square">Search</SearchButton>
@@ -434,7 +578,12 @@ function FindSearchSection({ width, surface }: { width: PreviewWidth; surface: P
         </WidthFrame>
       </Preview>
 
-      <div className="grid gap-8 xl:grid-cols-3">
+      <div
+        className="
+          grid xl:grid-cols-3
+          gap-8
+        "
+      >
         <Preview
           title="Guests Dropdown"
           path="src/components/booking/search/SearchBarGuestsDropdown.tsx"
@@ -465,7 +614,12 @@ function FindProgressSection({ width, surface }: { width: PreviewWidth; surface:
   const [step, setStep] = useState(2);
 
   return (
-    <section id="find-progress" className="scroll-mt-24">
+    <section
+      id="find-progress"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Find Your Stay"
         title="Progress"
@@ -478,7 +632,14 @@ function FindProgressSection({ width, surface }: { width: PreviewWidth; surface:
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex flex-wrap items-center justify-center gap-3 bg-smoke p-6">
+          <div
+            className="
+              flex flex-wrap items-center justify-center
+              p-6
+              bg-smoke
+              gap-3
+            "
+          >
             <ProgressStep step={1} label="Stay" state="complete" showCheckOnComplete />
             <ProgressStep step={2} label="Room" state="current" />
             <ProgressStep step={3} label="Details" state="default" />
@@ -492,7 +653,12 @@ function FindProgressSection({ width, surface }: { width: PreviewWidth; surface:
         surface="forest"
       >
         <WidthFrame width={width}>
-          <div className="overflow-auto p-4">
+          <div
+            className="
+              overflow-auto
+              p-4
+            "
+          >
             <ProgressBar
               currentStep={step}
               showCheckOnComplete
@@ -507,7 +673,12 @@ function FindProgressSection({ width, surface }: { width: PreviewWidth; surface:
 
 function FindFlowsSection({ width }: { width: PreviewWidth }) {
   return (
-    <section id="find-flows" className="scroll-mt-24">
+    <section
+      id="find-flows"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Find Your Stay"
         title="Flows"
@@ -570,8 +741,8 @@ const demoModalRoom: RoomType = {
   soakType: "clawfoot-window",
   soakHighlight: "Freestanding copper clawfoot tub in front of a forest picture window",
   images: [
-    "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200",
-    "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200",
+    "https://images.unspl-alpine-linen.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200",
+    "https://images.unspl-alpine-linen.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200",
   ],
   features: ["Clawfoot Soaking Tub", "Radiant Heated Floors", "Cast Iron Wood Stove", "Letter Writing Desk"],
   tags: ["indoor-soak", "picture-window", "21-plus"],
@@ -582,7 +753,12 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
   const [selectedPreference, setSelectedPreference] = useState<PreferenceId | null>(null);
 
   return (
-    <section id="booking" className="scroll-mt-24">
+    <section
+      id="booking"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Booking"
         title="Booking Components"
@@ -596,7 +772,12 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
         tall
       >
         <WidthFrame width={width}>
-          <div className="relative min-h-[750px] w-full">
+          <div
+            className="
+              relative
+              min-h-187.5 w-full
+            "
+          >
             <RoomDetailModal
               room={demoModalRoom}
               criteria={{
@@ -620,7 +801,12 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex min-h-52 items-center justify-center">
+          <div
+            className="
+              flex items-center justify-center
+              min-h-52
+            "
+          >
             <DogToggleButton selected={dog} onToggle={() => setDog((value) => !value)} />
           </div>
         </WidthFrame>
@@ -632,8 +818,18 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex min-h-64 items-center justify-center">
-            <div className="flex flex-wrap justify-center gap-3">
+          <div
+            className="
+              flex items-center justify-center
+              min-h-64
+            "
+          >
+            <div
+              className="
+                flex flex-wrap justify-center
+                gap-3
+              "
+            >
               {FIND_YOUR_STAY_PREFERENCES.map((item) => (
                 <PreferenceIconButton
                   key={item.id}
@@ -653,13 +849,22 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
         </WidthFrame>
       </Preview>
 
-      <div className="grid gap-8 xl:grid-cols-2">
+      <div
+        className="
+          grid xl:grid-cols-2
+          gap-8
+        "
+      >
         <Preview
           title="MatchBenefitsCard"
           path="src/components/booking/results/MatchBenefitsCard.tsx"
           surface="cream"
         >
-          <div className="w-md">
+          <div
+            className="
+              w-md
+            "
+          >
             <MatchBenefitsCard
               room={demoMatchRoom}
               reasons={[
@@ -675,7 +880,11 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
           path="src/components/booking/summary/stay-summary.tsx"
           surface={surface}
         >
-          <div className="w-105">
+          <div
+            className="
+              w-105
+            "
+          >
             <StaySummary {...demoStaySummary} />
           </div>
         </Preview>
@@ -686,14 +895,24 @@ function BookingSection({ width, surface }: { width: PreviewWidth; surface: Prev
 
 function FeedbackSection({ width, surface }: { width: PreviewWidth; surface: PreviewSurface }) {
   return (
-    <section id="feedback" className="scroll-mt-24">
+    <section
+      id="feedback"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Shared"
         title="Feedback States"
         body="Empty, error, and loading states used by the booking experience."
       />
 
-      <div className="grid gap-8 xl:grid-cols-3">
+      <div
+        className="
+          grid xl:grid-cols-3
+          gap-8
+        "
+      >
         <Preview
           title="EmptyState"
           path="src/components/feedback/empty-state.tsx"
@@ -737,7 +956,12 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
   const [switched, setSwitched] = useState(false);
 
   return (
-    <section id="ui" className="scroll-mt-24">
+    <section
+      id="ui"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Shared"
         title="UI Primitives"
@@ -746,21 +970,53 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
 
       <Preview
         title="Typography"
-        path="src/index.css"
+        path="src/styles/index.css"
         surface={surface}
         description="Semantic typography variables used across the booking engine."
       >
         <WidthFrame width={width}>
-          <div className="grid max-w-3xl gap-5 text-cowboy-umber">
+          <div
+            className="
+              grid
+              max-w-3xl
+              text-cowboy-umber
+              gap-5
+            "
+          >
             <div>
-              <p className="font-eyebrow text-xs uppercase tracking-[0.18em]">Eyebrow · Bianco Sans</p>
-              <h2 className="mt-1 font-heading text-4xl">Heading · DesertRain</h2>
+              <p
+                className="
+                  font-eyebrow text-xs uppercase tracking-[0.18em]
+                "
+              >Eyebrow · Bianco Sans</p>
+              <h2
+                className="
+                  mt-1
+                  font-heading text-4xl
+                "
+              >Heading · DesertRain</h2>
             </div>
-            <p className="text-base">Body · Uchen Regular. Built for the quieter reading moments between decisions.</p>
-            <p className="font-label text-sm uppercase">Label · Brothers</p>
+            <p
+              className="
+                text-base
+              "
+            >Body · Uchen Regular. Built for the quieter reading moments between decisions.</p>
+            <p
+              className="
+                font-label text-sm uppercase
+              "
+            >Label · Brothers</p>
             <Button variant="outline" color="dark">Button · Brothers</Button>
-            <p className="font-number text-2xl">$425.00 · Oct 14–17 · 2 Guests</p>
-            <blockquote className="text-3xl">Blockquote · Cedarville</blockquote>
+            <p
+              className="
+                font-number text-2xl
+              "
+            >$425.00 · Oct 14–17 · 2 Guests</p>
+            <blockquote
+              className="
+                text-3xl
+              "
+            >Blockquote · Cedarville</blockquote>
           </div>
         </WidthFrame>
       </Preview>
@@ -771,7 +1027,12 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="flex flex-wrap items-center gap-3">
+          <div
+            className="
+              flex flex-wrap items-center
+              gap-3
+            "
+          >
             <Button variant="filled" color="dark">Dark Filled</Button>
             <Button variant="outline" color="dark">Dark Outline</Button>
             <Button variant="transparent" color="dark">Dark Transparent</Button>
@@ -790,16 +1051,34 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
         surface={surface}
       >
         <WidthFrame width={width}>
-          <div className="grid max-w-xl gap-5">
+          <div
+            className="
+              grid
+              max-w-xl
+              gap-5
+            "
+          >
             <Input placeholder="Promo code" />
-            <label className="flex items-center gap-3 text-sm text-cowboy-umber">
+            <label
+              className="
+                flex items-center
+                text-sm text-cowboy-umber
+                gap-3
+              "
+            >
               <Checkbox
                 checked={checked}
                 onCheckedChange={(value) => setChecked(value === true)}
               />
               Accessible room
             </label>
-            <label className="flex items-center gap-3 text-sm text-cowboy-umber">
+            <label
+              className="
+                flex items-center
+                text-sm text-cowboy-umber
+                gap-3
+              "
+            >
               <Switch checked={switched} onCheckedChange={setSwitched} />
               Show dog-friendly rooms only
             </label>
@@ -813,7 +1092,11 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
         surface={surface}
       >
         <WidthFrame width={width}>
-          <Card className="max-w-xl">
+          <Card
+            className="
+              max-w-xl
+            "
+          >
             <CardHeader>
               <CardTitle>Walden King</CardTitle>
               <CardDescription>Bathing outside among the trees.</CardDescription>
@@ -824,10 +1107,22 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
                   <TabsTrigger value="details">Details</TabsTrigger>
                   <TabsTrigger value="rates">Rates</TabsTrigger>
                 </TabsList>
-                <TabsContent value="details" className="pt-3 text-sm text-muted-foreground">
+                <TabsContent
+                  value="details"
+                  className="
+                    pt-3
+                    text-sm text-muted-foreground
+                  "
+                >
                   Private cedar soaking tub, forest deck, king bed.
                 </TabsContent>
-                <TabsContent value="rates" className="pt-3 text-sm text-muted-foreground">
+                <TabsContent
+                  value="rates"
+                  className="
+                    pt-3
+                    text-sm text-muted-foreground
+                  "
+                >
                   Flexible and advance-purchase rate examples.
                 </TabsContent>
               </Tabs>
@@ -873,51 +1168,126 @@ function InventorySection() {
   const renderedCount = allComponentPaths.filter((path) => renderedPaths.has(path)).length;
 
   return (
-    <section id="inventory" className="scroll-mt-24">
+    <section
+      id="inventory"
+      className="
+        scroll-mt-24
+      "
+    >
       <SectionHeader
         kicker="Canonical Tree"
         title="Full Component Inventory"
         body="Generated automatically from src/components and src/steps. A Live badge means the component also has a visual preview above."
       />
 
-      <div className="mb-5 grid gap-4 rounded-2xl border border-cowboy-umber/10 bg-white p-5 md:grid-cols-[1fr_auto] md:items-center">
+      <div
+        className="
+          grid md:grid-cols-[1fr_auto] md:items-center
+          mb-5 p-5
+          bg-white
+          rounded-2xl border border-cowboy-umber/10
+          gap-4
+        "
+      >
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Filter by component or path…"
           className="max-w-xl"
         />
-        <div className="flex gap-2 text-[10px] uppercase tracking-wider">
-          <span className="rounded-full bg-cowboy-umber px-3 py-1.5 text-paper">
+        <div
+          className="
+            flex
+            text-[10px] uppercase tracking-wider
+            gap-2
+          "
+        >
+          <span
+            className="
+              px-3 py-1.5
+              text-paper
+              bg-cowboy-umber
+              rounded-full
+            "
+          >
             {allComponentPaths.length} files
           </span>
-          <span className="rounded-full bg-copper px-3 py-1.5 text-white">
+          <span
+            className="
+              px-3 py-1.5
+              text-white
+              bg-copper
+              rounded-full
+            "
+          >
             {renderedCount} live previews
           </span>
         </div>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-2">
+      <div
+        className="
+          grid xl:grid-cols-2
+          gap-5
+        "
+      >
         {Object.entries(groups)
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([group, paths]) => (
-            <div key={group} className="rounded-2xl border border-cowboy-umber/10 bg-white p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-label text-xs uppercase tracking-[0.12em] text-cowboy-umber">{group}</h3>
-                <span className="text-xs text-ash-900">{paths.length}</span>
+            <div
+              key={group}
+              className="
+                p-5
+                bg-white
+                rounded-2xl border border-cowboy-umber/10
+              "
+            >
+              <div
+                className="
+                  flex items-center justify-between
+                  mb-4
+                "
+              >
+                <h3
+                  className="
+                    font-label text-xs text-cowboy-umber uppercase
+                    tracking-[0.12em]
+                  "
+                >{group}</h3>
+                <span
+                  className="
+                    text-xs text--alpine-linen-900
+                  "
+                >{paths.length}</span>
               </div>
-              <div className="space-y-1.5">
+              <div
+                className="
+                  space-y-1.5
+                "
+              >
                 {paths.map((path) => (
                   <a
                     key={path}
                     href={sourceUrl(path)}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex items-center justify-between gap-3 rounded-lg border border-transparent px-3 py-2 hover:border-cowboy-umber/10 hover:bg-alpine-linen/50"
+                    className="
+                      flex items-center justify-between
+                      px-3 py-2
+                      hover:bg-alpine-linen/50
+                      rounded-lg
+                      border border-transparent hover:border-cowboy-umber/10
+                      group gap-3
+                    "
                   >
-                    <code className="min-w-0 truncate text-[11px] text-cowboy-umber">{path.replace("src/", "")}</code>
+                    <code
+                      className="
+                        min-w-0
+                        truncate text-[11px] text-cowboy-umber
+                      "
+                    >{path.replace("src/", "")}</code>
                     <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider ${renderedPaths.has(path) ? "bg-lake-forest text-white" : "bg-alpine-linen text-ash-900"}`}
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider ${renderedPaths.has(path) ? "bg-lake-forest text-white" : "bg-alpine-linen text--alpine-linen-900"}`}
                     >
                       {renderedPaths.has(path) ? "Live" : "Inventory"}
                     </span>
@@ -936,38 +1306,120 @@ export default function ComponentLibrary() {
   const [surface, setSurface] = useState<PreviewSurface>("cream");
 
   return (
-    <div className="min-h-screen bg-alpine-linen-fade text-cowboy-umber">
+    <div
+      className="
+        min-h-screen
+        text-cowboy-umber
+        bg-alpine-linen-fade
+      "
+    >
       <Toolbar width={width} onWidth={setWidth} surface={surface} onSurface={setSurface} />
 
-      <div className="mx-auto grid max-w-375 gap-8 px-4 py-8 md:px-6 lg:grid-cols-[230px_minmax(0,1fr)]">
-        <aside className="hidden lg:block">
-          <div className="sticky top-24 rounded-2xl border border-cowboy-umber/10 bg-white p-4">
-            <div className="mb-4 border-b border-cowboy-umber/10 pb-4">
-              <p className="font-heading text-2xl text-cowboy-umber">Urban Cowboy</p>
-              <p className="mt-1 text-xs text-ash-900">Booking Engine · Component Library</p>
+      <div
+        className="
+          grid lg:grid-cols-[230px_minmax(0,1fr)]
+          max-w-375
+          mx-auto px-4 md:px-6 py-8
+          gap-8
+        "
+      >
+        <aside
+          className="
+            hidden lg:block
+          "
+        >
+          <div
+            className="
+              sticky top-24
+              p-4
+              bg-white
+              rounded-2xl border border-cowboy-umber/10
+            "
+          >
+            <div
+              className="
+                mb-4 pb-4
+                border-b border-cowboy-umber/10
+              "
+            >
+              <p
+                className="
+                  font-heading text-2xl text-cowboy-umber
+                "
+              >Urban Cowboy</p>
+              <p
+                className="
+                  mt-1
+                  text-xs text--alpine-linen-900
+                "
+              >Booking Engine · Component Library</p>
             </div>
-            <nav aria-label="Component sections" className="space-y-1">
+            <nav
+              aria-label="Component sections"
+              className="
+                space-y-1
+              "
+            >
               {sections.map((section) => (
                 <a
                   key={section.id}
                   href={`#${section.id}`}
-                  className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-cowboy-umber transition hover:bg-alpine-linen hover:text-cowboy-umber"
+                  className="
+                    flex items-center justify-between
+                    px-3 py-2
+                    text-xs text-cowboy-umber hover:text-cowboy-umber
+                    hover:bg-alpine-linen
+                    rounded-lg
+                    transition
+                  "
                 >
                   <span>{section.label}</span>
-                  <span className="text-copper">→</span>
+                  <span
+                    className="
+                      text-copper
+                    "
+                  >→</span>
                 </a>
               ))}
             </nav>
           </div>
         </aside>
 
-        <main className="min-w-0">
-          <div className="mb-10 rounded-3xl bg-cowboy-umber px-6 py-10 text-alpine-linen md:px-10">
-            <p className="font-label text-[10px] uppercase tracking-[0.25em] text-nude-ember">Design Workshop</p>
-            <h1 className="mt-3 max-w-4xl font-heading text-5xl leading-[0.95] md:text-7xl">
+        <main
+          className="
+            min-w-0
+          "
+        >
+          <div
+            className="
+              mb-10 px-6 md:px-10 py-10
+              text-alpine-linen
+              bg-cowboy-umber
+              rounded-3xl
+            "
+          >
+            <p
+              className="
+                font-label text-[10px] text-nude-ember uppercase
+                tracking-[0.25em]
+              "
+            >Design Workshop</p>
+            <h1
+              className="
+                max-w-4xl
+                mt-3
+                font-heading text-5xl md:text-7xl leading-[0.95]
+              "
+            >
               The component library, without the duplicate-component circus.
             </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-6 text-alpine-linen/70">
+            <p
+              className="
+                max-w-2xl
+                mt-5
+                text-sm text-alpine-linen/70 leading-6
+              "
+            >
               Every preview imports the real canonical source file. Use the viewport and background controls to stress-test the UI while you work through the revised booking experience.
             </p>
           </div>

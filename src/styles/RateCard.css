@@ -1,0 +1,388 @@
+@import "tailwindcss";
+@import "./typography.css";
+
+/* ==========================================================================
+   Rate Card Shell & Layout Variants
+   ========================================================================== */
+
+@utility rate-card-shell {
+  --rate-fg: var(--cowboy-umber);
+  --rate-border-color: var(--rate-fg);
+  --rate-card-radius: 50px;
+  
+  width: min(500px, calc(100vw - 32px));
+  flex: 0 0 auto;
+  container-type: inline-size;
+  color: var(--rate-fg);
+
+
+/* ------------------------------------------------------------------------
+    Horizontal Layout Variant Overrides
+    ------------------------------------------------------------------------ */
+
+  &[data-layout="horizontal"] {
+    --rate-card-radius: 0px;
+    width: min(100%, 980px);
+    position: relative;
+    isolation: isolate;
+
+    /* Frame Aspect Ratio & Radius */
+    & .rate-card-frame {
+      aspect-ratio: 980 / 490;
+      border-radius: 24px;
+
+      @media (max-width: 640px) {
+        aspect-ratio: 500 / 675;
+        border-radius: 22px;
+      }
+    }
+
+    /* Semantic Visible Text Container */
+    & .rate-card-semantic--visible {
+      width: 48%;
+
+      @media (max-width: 640px) {
+        width: 100%;
+        padding-bottom: 45%;
+      }
+    }
+
+    /* Price Block Positioning */
+    & .rate-card-price-block {
+      top: auto;
+      bottom: 36%;
+      left: 52%;
+      right: 5%;
+
+      @media (max-width: 640px) {
+        top: 56%;
+        bottom: auto;
+        left: 9%;
+        right: 9%;
+      }
+    }
+
+    /* Fluid Typography for Horizontal Pricing */
+    & .rate-card-price,
+    & .rate-card-price span {
+      font-size: clamp(24px, 4cqw, 38px);
+    }
+
+    & .rate-card-tax {
+      font-size: clamp(14px, 2cqw, 20px);
+    }
+
+    /* CTA & Action Block Positioning */
+    & .rate-card-action {
+      left: 52%;
+      right: 5%;
+      bottom: 7%;
+
+      @media (max-width: 640px) {
+        left: 8%;
+        right: 8%;
+        bottom: 5%;
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   Rate Card Frame & Sub-components
+   ========================================================================== */
+
+@utility rate-card-frame {
+  --rate-button-bg: var(--cowboy-umber);
+  --rate-button-fg: #faf9f9;
+  --rate-primary-font: var(--font-button);
+  --rate-secondary-font: var(--font-number);
+
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  aspect-ratio: 500 / 1038;
+  overflow: hidden;
+  border-radius: var(--rate-card-radius);
+  background: var(--paper);
+}
+
+@utility rate-card-border-surface {
+  position: relative;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    box-sizing: border-box;
+    z-index: 20;
+    border-color: var(--rate-border-color, var(--rate-fg));
+    border-style: solid;
+  }
+
+  &[data-border-style="none"]::before,
+  &[data-border-style="none"]::after {
+    display: none;
+  }
+
+  &[data-border-style="single"]::before {
+    inset: 0;
+    border-width: 5px;
+    border-radius: inherit;
+  }
+
+  &[data-border-style="single"]::after {
+    display: none;
+  }
+
+  &[data-border-style="double"]::before {
+    inset: 0;
+    border-width: 3px;
+    border-radius: inherit;
+  }
+
+  &[data-border-style="double"]::after {
+    inset: 5px;
+    border-width: 3px;
+    border-radius: max(0px, calc(var(--rate-card-radius, 0) - 5px));
+  }
+}
+
+@utility rate-card-artwork {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+}
+
+@utility rate-card-overlay {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  color: var(--rate-fg);
+}
+
+@utility rate-card-price-block {
+  position: absolute;
+  top: var(--rate-overlay-desktop-top, 54%);
+  right: 80px;
+  left: 80px;
+}
+
+@utility rate-card-price {
+  width: 100%;
+  color: var(--rate-fg);
+  text-align: left;
+  font-family: var(--rate-primary-font, var(--font-button));
+  font-size: 45px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+@utility rate-card-tax {
+  margin-top: 0.3em;
+  width: 100%;
+  color: var(--rate-fg);
+  text-align: right;
+  font-family: var(--rate-secondary-font, var(--font-number));
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+@utility rate-card-action {
+  position: absolute;
+  right: 30px;
+  bottom: 80px;
+  left: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(8px, 2.4cqw, 12px);
+  color: var(--rate-fg);
+}
+
+@utility rate-card-policy {
+  margin: 0;
+  width: 100%;
+  color: var(--rate-fg);
+  text-align: center;
+  font-family: var(--rate-secondary-font, var(--font-number));
+  font-size: clamp(9px, 2.2cqw, 11px);
+  line-height: 1.25;
+}
+
+@utility offer-card-compact {
+  width: 482px;
+  max-width: 100%;
+  height: 657px;
+  padding: 54px 30px;
+  background-color: var(--offer-bg);
+  border: 4px solid var(--offer-border);
+  border-radius: 45px;
+  color: var(--offer-fg);
+}
+
+@utility offer-card-normal {
+  min-height: 820px;
+  padding: 40px 28px;
+  background-color: var(--offer-bg);
+  border: 4px solid var(--offer-border);
+  border-radius: 50px;
+  color: var(--offer-fg);
+}
+
+@utility font-offer-headline {
+  font-family: var(--font-offer-headline);
+}
+
+@utility font-offer-eyebrow {
+  font-family: var(--font-offer-eyebrow);
+}
+
+@utility font-offer-body {
+  font-family: var(--font-offer-body);
+}
+
+
+@layer components {
+  /* --- 1. Ride Easy Theme --- */
+  [data-offer-theme="ride-easy"] {
+    --offer-bg: #ffffff;
+    --offer-border: var(--smoke);
+    --offer-fg: var(--smoke);
+    --rate-fg: var(--smoke);
+    --offer-eyebrow-color: var(--bandana-red);
+    --offer-accent: var(--smoke);
+    --offer-callout-bg: transparent;
+    --offer-callout-fg: transparent;
+    --offer-input-bg: var(--paper);
+    --offer-input-fg: var(--smoke);
+    --offer-error-fg: var(--bandana-red);
+
+    --panel-bg: #f2f2f2;
+    --panel-border: var(--smoke);
+    --ticket-bg: #ffffff;
+    --ticket-border: rgba(52, 56, 51, 0.12);
+    --text-primary: #221c18;
+    --text-secondary: #73716d;
+    --close-btn: var(--smoke);
+
+    --font-offer-headline: "Noto Serif Tibetan", "Noto Serif", serif;
+    --font-offer-body: "Quattrocento", Georgia, serif;
+    --font-offer-eyebrow: "Lato", sans-serif;
+  }
+
+  /* --- 2. Plan Ahead Theme --- */
+  [data-offer-theme="plan-ahead"] {
+    --offer-bg: var(--mist);
+    --offer-border: var(--smoke);
+    --offer-fg: var(--black);
+    --rate-fg: var(--black);
+    --offer-eyebrow-color: var(--smoke);
+    --offer-accent: var(--smoke);
+    --offer-callout-bg: transparent;
+    --offer-callout-fg: transparent;
+    --offer-input-bg: #ffffff;
+    --offer-input-fg: var(--smoke);
+    --offer-error-fg: var(--oxblood);
+
+    --panel-bg: #f2f2f2;
+    --panel-border: var(--smoke);
+    --ticket-bg: #ffffff;
+    --ticket-border: rgba(52, 56, 51, 0.15);
+    --text-primary: #000000;
+    --text-secondary: #73716d;
+    --close-btn: var(--smoke);
+
+    --font-offer-headline: "League Spartan", "Arial Black", sans-serif;
+    --font-offer-body: "Arvo", Georgia, serif;
+    --font-offer-eyebrow: "League Spartan", sans-serif;
+  }
+
+  /* --- 3. Stay Awhile Theme --- */
+  [data-offer-theme="stay-while"] {
+    --offer-bg: var(--smoke);
+    --offer-border: var(--alpine-linen);
+    --offer-fg: var(--alpine-linen);
+    --rate-fg: var(--alpine-linen);
+    --offer-eyebrow-color: var(--alpine-linen);
+    --offer-accent: var(--alpine-linen);
+    --offer-callout-bg: transparent;
+    --offer-callout-fg: transparent;
+    --offer-input-bg: var(--alpine-linen);
+    --offer-input-fg: var(--smoke);
+    --offer-error-fg: var(--whiskey-sour);
+
+    --panel-bg: #343833;
+    --panel-border: var(--alpine-linen);
+    --ticket-bg: #272b26;
+    --ticket-border: rgba(235, 232, 224, 0.25);
+    --text-primary: var(--alpine-linen);
+    --text-secondary: rgba(235, 232, 224, 0.72);
+    --close-btn: var(--alpine-linen);
+
+    --font-offer-headline: "Quattrocento", serif;
+    --font-offer-body: "Bianco Sans", "Lato", sans-serif;
+    --font-offer-eyebrow: "Bianco Sans", "Lato", sans-serif;
+  }
+
+  /* --- 4. Sunup Theme --- */
+  [data-offer-theme="sunup"] {
+    --offer-bg: var(--alpine-linen);
+    --offer-border: var(--copper);
+    --offer-fg: var(--copper);
+    --rate-fg: var(--copper);
+    --offer-eyebrow-color: var(--oxblood);
+    --offer-accent: var(--copper);
+    --offer-callout-bg: transparent;
+    --offer-callout-fg: transparent;
+    --offer-input-bg: #ffffff;
+    --offer-input-fg: var(--copper);
+    --offer-error-fg: var(--oxblood);
+
+    --panel-bg: var(--alpine-linen);
+    --panel-border: var(--copper);
+    --ticket-bg: #faf8f5;
+    --ticket-border: rgba(154, 86, 54, 0.25);
+    --text-primary: var(--oxblood);
+    --text-secondary: var(--copper);
+    --close-btn: var(--copper);
+
+    --font-offer-headline: "Rundeck", "League Spartan", sans-serif;
+    --font-offer-body: "Noto Serif Tibetan", "Noto Serif", serif;
+    --font-offer-eyebrow: "Noto Serif Tibetan", "Noto Serif", serif;
+  }
+
+  /* --- 5. Outfit Theme --- */
+  [data-offer-theme="outfit"] {
+    --offer-bg: var(--lake-forest);
+    --offer-border: var(--nude-ember);
+    --offer-fg: var(--nude-ember);
+    --rate-fg: var(--nude-ember);
+    --offer-eyebrow-color: var(--nude-ember);
+    --offer-accent: var(--nude-ember);
+    --offer-callout-bg: var(--nude-ember);
+    --offer-callout-fg: var(--lake-forest);
+    --offer-input-bg: var(--alpine-linen);
+    --offer-input-fg: var(--lake-forest);
+    --offer-error-fg: var(--rose-200);
+
+    --panel-bg: var(--lake-forest);
+    --panel-border: var(--nude-ember);
+    --ticket-bg: #153c22;
+    --ticket-border: rgba(242, 170, 169, 0.25);
+    --text-primary: var(--alpine-linen);
+    --text-secondary: rgba(235, 232, 224, 0.75);
+    --close-btn: var(--nude-ember);
+
+    --font-offer-headline: "League Gothic", "Impact", sans-serif;
+    --font-offer-body: "DM Sans", sans-serif;
+    --font-offer-eyebrow: "Fineday-StyleOne", "Instrument Serif", serif;
+  }
+}

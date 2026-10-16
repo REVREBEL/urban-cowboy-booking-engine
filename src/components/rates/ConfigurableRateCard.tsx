@@ -6,15 +6,15 @@ import type {
   RateCardLiveContent,
   RateCardOverlayPosition,
 } from "@/types/rate-card";
-import { RATE_CARD_COLORS } from "@/lib/rateCardPresentation";
 import { normalizeRateCardCtaLabel } from "@/lib/rateCardCta";
-import { Button } from "@/components/ui/button";
-import { PolicyDisplay } from "./policy_display";
+import { Button, type ButtonColor } from "@/components/ui/Button";
+import { PolicyDisplay } from "./PolicyDisplay";
 import {
   useHorizontalOfferLayout,
   HORIZONTAL_OFFER_BASE_HEIGHT,
   HORIZONTAL_OFFER_BASE_WIDTH,
 } from "./useHorizontalOfferLayout";
+import { cn } from "@/lib/utils";
 
 export interface ConfigurableRateCardProps {
   config: RateCardConfig;
@@ -47,7 +47,7 @@ function actionLabel(
   config: RateCardConfig,
   live: RateCardLiveContent,
   isExpanded: boolean,
-  confirmLabel: string,
+  confirmLabel: string
 ) {
   const base = normalizeRateCardCtaLabel(config.ctaLabel ?? live.ctaLabel);
   return isExpanded ? confirmLabel : base;
@@ -69,8 +69,6 @@ function VerticalRateCard({
 
   const desktopArtwork = desktopFailed ? null : config.desktopArtworkUrl;
   const mobileArtwork = mobileFailed ? null : config.mobileArtworkUrl;
-  const textColor = RATE_CARD_COLORS[config.textColor].hex;
-  const accentColor = RATE_CARD_COLORS[config.buttonColor].hex;
 
   const hasAnyArtwork = Boolean(desktopArtwork || mobileArtwork);
   const fallbackIsVisible = !hasAnyArtwork;
@@ -80,15 +78,16 @@ function VerticalRateCard({
       ({
         "--rate-overlay-desktop-top": DESKTOP_POSITION_TOP[config.desktopOverlayPosition],
         "--rate-overlay-mobile-top": MOBILE_POSITION_TOP[config.mobileOverlayPosition],
-        "--rate-fg": textColor,
-        "--rate-accent": accentColor,
+        "--rate-fg": `var(--color-${config.textColor})`,
+        "--rate-border-color": `var(--color-${config.textColor})`,
+        "--rate-accent": `var(--color-${config.buttonColor})`,
       }) as React.CSSProperties,
     [
       config.desktopOverlayPosition,
       config.mobileOverlayPosition,
-      textColor,
-      accentColor,
-    ],
+      config.textColor,
+      config.buttonColor,
+    ]
   );
 
   const ctaLabel = actionLabel(config, live, isExpanded, confirmLabel);
@@ -102,7 +101,7 @@ function VerticalRateCard({
 
   return (
     <article
-      className={`rate-card-shell ${className}`}
+      className={cn("rate-card-shell", className)}
       data-rate-card={config.id}
       data-rate-card-layout="vertical"
       data-artwork-mode={artworkMode}
@@ -117,12 +116,32 @@ function VerticalRateCard({
       style={style}
       aria-labelledby={`rate-card-${config.id}-title`}
     >
-      <div className="rate-card-frame rate-card-border-surface" data-border-style={config.borderStyle}>
-        <div className={fallbackIsVisible ? "rate-card-semantic rate-card-semantic--visible" : "sr-only"}>
-          {config.eyebrow && <p>{config.eyebrow}</p>}
-          <h3 id={`rate-card-${config.id}-title`}>{config.headline}</h3>
-          <p>{config.description}</p>
-          {config.supportingText && <p>{config.supportingText}</p>}
+      <div
+        className="rate-card-frame rate-card-border-surface"
+        data-border-style={config.borderStyle}
+      >
+        <div
+          className={
+            fallbackIsVisible
+              ? "rate-card-semantic rate-card-semantic--visible p-8"
+              : "sr-only"
+          }
+        >
+          {config.eyebrow && (
+            <p className="font-button text-xs uppercase">{config.eyebrow}</p>
+          )}
+          <h3
+            id={`rate-card-${config.id}-title`}
+            className="font-button font-bold text-2xl uppercase"
+          >
+            {config.headline}
+          </h3>
+          <p className="font-sans text-sm">{config.description}</p>
+          {config.supportingText && (
+            <p className="font-sans text-xs opacity-80">
+              {config.supportingText}
+            </p>
+          )}
         </div>
 
         {desktopArtwork && (
@@ -130,7 +149,7 @@ function VerticalRateCard({
             src={desktopArtwork}
             alt=""
             aria-hidden="true"
-            className="rate-card-artwork rate-card-artwork--desktop"
+            className="hidden sm:block rate-card-artwork"
             onError={() => setDesktopFailed(true)}
           />
         )}
@@ -140,7 +159,7 @@ function VerticalRateCard({
             src={mobileArtwork}
             alt=""
             aria-hidden="true"
-            className="rate-card-artwork rate-card-artwork--mobile"
+            className="block sm:hidden rate-card-artwork"
             onError={() => setMobileFailed(true)}
           />
         )}
@@ -150,7 +169,7 @@ function VerticalRateCard({
             src={mobileArtwork}
             alt=""
             aria-hidden="true"
-            className="rate-card-artwork rate-card-artwork--desktop rate-card-artwork--fallback"
+            className="rate-card-artwork"
           />
         )}
 
@@ -159,7 +178,7 @@ function VerticalRateCard({
             src={desktopArtwork}
             alt=""
             aria-hidden="true"
-            className="rate-card-artwork rate-card-artwork--mobile rate-card-artwork--fallback"
+            className="rate-card-artwork"
           />
         )}
 
@@ -174,11 +193,10 @@ function VerticalRateCard({
           <div className="rate-card-action">
             <Button
               type="button"
-              variant={config.buttonStyle}
-              color={config.buttonColor}
-              size="default"
-              className="rate-card-cta max-w-full"
-              style={config.buttonStyle === "outline" ? { color: textColor } : undefined}
+              variant={config.buttonStyle as "filled" | "outline" | "transparent"}
+              colorScheme={config.buttonColor as ButtonColor}
+              size="medium"
+              className="w-full max-w-75 h-14.5 px-9"
               onClick={(event) => {
                 event.stopPropagation();
                 handleAction();
@@ -189,7 +207,10 @@ function VerticalRateCard({
               {ctaLabel}
             </Button>
 
-            <PolicyDisplay className="rate-card-policy" text={live.cancellationText} />
+            <PolicyDisplay
+              className="rate-card-policy"
+              text={live.cancellationText}
+            />
           </div>
         </div>
       </div>
@@ -212,18 +233,16 @@ function HorizontalRateCard({
 
   const artwork = artworkFailed ? null : config.horizontalArtworkUrl;
   const fallbackIsVisible = !artwork;
-  const textColor = RATE_CARD_COLORS[config.textColor].hex;
-  const accentColor = RATE_CARD_COLORS[config.accentColor ?? "bandana-red"].hex;
 
   const style = useMemo(
     () =>
       ({
-        "--rate-fg": textColor,
-        "--rate-border-color": textColor,
-        "--rate-accent": accentColor,
+        "--rate-fg": `var(--color-${config.textColor})`,
+        "--rate-border-color": `var(--color-${config.textColor})`,
+        "--rate-accent": `var(--color-${config.accentColor ?? "bandana-red"})`,
         "--horizontal-offer-height": `${layout.renderedHeight}px`,
       }) as React.CSSProperties,
-    [layout.renderedHeight, textColor, accentColor],
+    [layout.renderedHeight, config.textColor, config.accentColor]
   );
 
   const ctaLabel = actionLabel(config, live, isExpanded, confirmLabel);
@@ -238,9 +257,10 @@ function HorizontalRateCard({
   return (
     <article
       ref={ref}
-      className={`horizontal-rate-card-shell rate-card-border-surface ${className}`}
+      className={cn("rate-card-shell rate-card-border-surface", className)}
       data-rate-card={config.id}
       data-rate-card-layout="horizontal"
+      data-layout="horizontal"
       data-text-color={config.textColor}
       data-button-color={config.buttonColor}
       data-font-pair={config.fontPair}
@@ -264,9 +284,17 @@ function HorizontalRateCard({
             height: `${HORIZONTAL_OFFER_BASE_HEIGHT}px`,
           }}
         >
-          <div className={fallbackIsVisible ? "horizontal-rate-card-semantic horizontal-rate-card-semantic--visible" : "sr-only"}>
+          <div
+            className={
+              fallbackIsVisible
+                ? "horizontal-rate-card-semantic horizontal-rate-card-semantic--visible"
+                : "sr-only"
+            }
+          >
             {config.eyebrow && <p>{config.eyebrow}</p>}
-            <h3 id={`horizontal-rate-card-${config.id}-title`}>{config.headline}</h3>
+            <h3 id={`horizontal-rate-card-${config.id}-title`}>
+              {config.headline}
+            </h3>
             <p>{config.description}</p>
             {config.supportingText && <p>{config.supportingText}</p>}
           </div>
@@ -276,7 +304,7 @@ function HorizontalRateCard({
               src={artwork}
               alt=""
               aria-hidden="true"
-              className="horizontal-rate-card-artwork"
+              className="rate-card-artwork"
               onError={() => setArtworkFailed(true)}
             />
           )}
@@ -285,21 +313,22 @@ function HorizontalRateCard({
             className="horizontal-rate-card-overlay"
             style={{ transform: `translateX(-${layout.overlayShift}px)` }}
           >
-            <div className="horizontal-rate-card-price-block">
-              <div className="horizontal-rate-card-price">
+            <div className="text-center rate-card-price-block top-13! right-9! left-9!">
+              <div className="leading-[0.95] whitespace-nowrap rate-card-price text-[56px]!">
                 {live.price} <span>{live.priceUnit ?? "Nightly"}</span>
               </div>
-              <div className="horizontal-rate-card-tax">{live.taxLabel}</div>
+              <div className="mt-2.5 font-bold leading-tight rate-card-tax text-[23px]!">
+                {live.taxLabel}
+              </div>
             </div>
 
-            <div className="horizontal-rate-card-action">
+            <div className="rate-card-action bottom-9! right-8.5! left-8.5! gap-6">
               <Button
                 type="button"
-                variant={config.buttonStyle}
-                color={config.buttonColor}
-                size="default"
-                className="horizontal-rate-card-cta"
-                style={config.buttonStyle === "outline" ? { color: textColor } : undefined}
+                variant={config.buttonStyle as "filled" | "outline" | "transparent"}
+                colorScheme={config.buttonColor as ButtonColor}
+                size="large"
+                className="w-full max-w-78.75 h-20 px-8 text-[27px]"
                 onClick={(event) => {
                   event.stopPropagation();
                   handleAction();
@@ -309,7 +338,9 @@ function HorizontalRateCard({
               >
                 {ctaLabel}
               </Button>
-              <p className="horizontal-rate-card-policy">{live.cancellationText}</p>
+              <p className="font-bold leading-tight rate-card-policy text-[18px]!">
+                {live.cancellationText}
+              </p>
             </div>
           </div>
         </div>

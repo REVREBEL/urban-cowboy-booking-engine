@@ -1,0 +1,383 @@
+/* ============================================================================
+   1. FOUNDATION PALETTE
+   Raw brand shades belong here. Numeric shades map one-to-one into Tailwind.
+   ========================================================================= */
+
+:root {
+
+  --mist-500: oklch(96.115% 0.00011 271.152);
+
+  /* Paper*/
+  --paper-50: oklch(100% 0.00 271.152);
+  --paper-100: oklch(99.7% 0.00 271.152);
+  --paper-200: oklch(99.4% 0.00 271.152);
+  --paper-300: oklch(98.8% 0.00 11.205);
+  --paper-400: oklch(98.5% 0.00 11.228);
+  --paper-500: oklch(98.2% 0.00 11.251);
+  --paper-600: oklch(94.6% 0.00 11.528);
+  --paper-700: oklch(90.7% 0.00 11.828);
+  --paper-800: oklch(87.0% 0.00 12.104); 
+  --paper-900: oklch(83.0% 0.00 12.403);
+  --paper-950: oklch(79.2% 0.00 12.678);
+
+  --paper-muted: var(--paper-50);
+  --paper-fade:  var(--paper-200);
+  --paper:  var(--paper-500);
+
+  /* Alpine Linen*/
+  --alpine-linen-50: oklch(95.529% 0.00689 88.611);
+  --alpine-linen-100: oklch(94.9% 0.00817 91.496);
+  --alpine-linen-200: oklch(94.073% 0.00854 84.498);
+  --alpine-linen-300: oklch(93.744% 0.00979 87.44);
+  --alpine-linen-400: oklch(93.441% 0.0098 87.44);
+  --alpine-linen-500: oklch(93.112% 0.01107 89.719);
+  --alpine-linen-600: oklch(86.11% 0.01001 87.449);
+  --alpine-linen-700: oklch(82.385% 0.01012 87.454);
+  --alpine-linen-800: oklch(78.852% 0.00991 93.626);
+  --alpine-linen-900: oklch(75.071% 0.00868 91.519);
+  --alpine-linen-950: oklch(71.325% 0.00788 80.616);
+
+  --alpine-linen-muted: var(--alpine-linen-50);
+  --alpine-linen-fade:  var(--alpine-linen-200);
+  --alpine-linen:  var(--alpine-linen-500);
+
+  /* Nude Ember */
+  --nude-ember-50: oklch(90.3% 0.0404 19.82);
+  --nude-ember-100: oklch(88.19% 0.0488 19.69);
+  --nude-ember-200: oklch(86.4% 0.0574 19.66);
+  --nude-ember-300: oklch(84.42% 0.0673 19.72);
+  --nude-ember-400: oklch(82.57% 0.075 19.82);
+  --nude-ember-500: oklch(80.63% 0.0853 20.0);
+  --nude-ember-600: oklch(74.58% 0.0785 20.09);
+  --nude-ember-700: oklch(68.39% 0.0716 20.19);
+  --nude-ember-800: oklch(61.96% 0.0632 20.32);
+  --nude-ember-900: oklch(55.46% 0.0559 20.51);
+  --nude-ember-950: oklch(48.8% 0.0482 18.95);
+
+  --nude-ember-muted: var(--nude-ember-50);
+  --nude-ember-fade:  var(--nude-ember-200);
+  --nude-ember:  var(--nude-ember-500);
+
+  --bandana-red-50: oklch(79.486% 0.07949 27.636);
+  --bandana-red-100: oklch(75.299% 0.09705 27.439);
+  --bandana-red-200: oklch(71.509% 0.11518 28.159);
+  --bandana-red-300: oklch(67.869% 0.13347 28.896);
+  --bandana-red-400: oklch(64.284% 0.15255 29.2);
+  --bandana-red-500: oklch(61.112% 0.16959 30.026);
+  --bandana-red-600: oklch(56.693% 0.15586 29.856);
+  --bandana-red-700: oklch(52.011% 0.1409 30.129);
+  --bandana-red-800: oklch(47.267% 0.12753 29.398);
+  --bandana-red-900: oklch(42.358% 0.11172 29.689);
+  --bandana-red-950: oklch(37.5% 0.09632 29.305);
+
+  --bandana-red-muted: var(--bandana-red-50);
+  --bandana-red-fade:  var(--bandana-red-200);
+  --bandana-red:  var(--bandana-red-500);
+
+  /* Oxblood */
+  --oxblood-50: oklch(37.2% 0.0993 4.1);
+  --oxblood-100: oklch(63.03% 0.0538 357.94);
+  --oxblood-200: oklch(56.52% 0.0649 359.03);
+  --oxblood-300: oklch(50.15% 0.075 1.01);
+  --oxblood-400: oklch(43.62% 0.0877 1.58);
+  --oxblood-500: oklch(37.2% 0.0993 4.1);
+  --oxblood-600: oklch(34.72% 0.0922 4.19);
+  --oxblood-700: oklch(32.17% 0.082 4.44);
+  --oxblood-800: oklch(29.63% 0.0748 3.29);
+  --oxblood-900: oklch(26.82% 0.0658 2.72);
+  --oxblood-950: oklch(24.3% 0.0559 3.66);
+
+  --oxblood-muted: var(--oxblood-50);
+  --oxblood-fade:  var(--oxblood-200);
+  --oxblood:  var(--cowboy-umber-500);
+
+  /* Oxidized Teal */
+  --oxidized-teal-50: oklch(74.96% 0.041 214.65);
+  --oxidized-teal-100: oklch(69.79% 0.049 215.25);
+  --oxidized-teal-200: oklch(64.58% 0.0568 215.86);
+  --oxidized-teal-300: oklch(59.59% 0.0643 215.03);
+  --oxidized-teal-400: oklch(54.36% 0.0704 216.17);
+  --oxidized-teal-500: oklch(49.17% 0.0748 217.82);
+  --oxidized-teal-600: oklch(45.64% 0.0689 218.9);
+  --oxidized-teal-700: oklch(42.23% 0.0629 216.92);
+  --oxidized-teal-800: oklch(38.55% 0.0567 218.19);
+  --oxidized-teal-900: oklch(34.7% 0.0502 217.73);
+  --oxidized-teal-950: oklch(31.12% 0.0436 217.01);
+
+  --oxidized-teal-muted: var(--oxidized-teal-50);
+  --oxidized-teal-fade:  var(--oxidized-teal-200);
+  --oxidized-teal:  var(--oxidized-teal-500);
+
+  --lake-forest-50: oklch(66.287% 0.02518 157.442);
+  --lake-forest-100: oklch(58.922% 0.03132 158.234);
+  --lake-forest-200: oklch(51.426% 0.03691 157.484);
+  --lake-forest-300: oklch(43.692% 0.04288 156.575);
+  --lake-forest-400: oklch(35.974% 0.05097 154.703);
+  --lake-forest-500: oklch(27.726% 0.05667 152.427);
+  --lake-forest-600: oklch(25.984% 0.05193 152.019);
+  --lake-forest-700: oklch(24.195% 0.04646 153.471);
+  --lake-forest-800: oklch(22.733% 0.04333 152.355);
+  --lake-forest-900: oklch(20.876% 0.03769 154.41);
+  --lake-forest-950: oklch(19.003% 0.03243 154.093);
+
+  --lake-forest-muted: var(--lake-forest-50);
+  --lake-forest-fade:  var(--lake-forest-200);
+  --lake-forest:  var(--lake-forest-500);
+
+  /* Lodge Yellow */
+  --lodge-yellow-50: oklch(94.57% 0.091 96.98);
+  --lodge-yellow-100: oklch(93.48% 0.1072 96.52);
+  --lodge-yellow-200: oklch(92.62% 0.1232 96.73);
+  --lodge-yellow-300: oklch(91.5% 0.1367 96.68);
+  --lodge-yellow-400: oklch(90.73% 0.1485 96.52);
+  --lodge-yellow-500: oklch(89.78% 0.1586 95.79);
+  --lodge-yellow-600: oklch(82.97% 0.1461 95.69);
+  --lodge-yellow-700: oklch(75.93% 0.1333 96.09);
+  --lodge-yellow-800: oklch(68.83% 0.1195 95.91);
+  --lodge-yellow-900: oklch(61.53% 0.106 95.78);
+  --lodge-yellow-950: oklch(54.01% 0.0921 95.6);
+
+  --lodge-yellow-muted: var(--lodge-yellow-50);
+  --lodge-yellow-fade:  var(--lodge-yellow-200);
+  --lodge-yellow:  var(--lodge-yellow-500);
+
+  --whiskey-sour-50: oklch(91.803% 0.025 75.206);
+  --whiskey-sour-100: oklch(90.124% 0.03135 75.156);
+  --whiskey-sour-200: oklch(88.385% 0.03603 75.486);
+  --whiskey-sour-300: oklch(86.926% 0.0418 76.678);
+  --whiskey-sour-400: oklch(85.181% 0.0465 76.75);
+  --whiskey-sour-500: oklch(83.522% 0.0518 75.687);
+  --whiskey-sour-600: oklch(77.172% 0.04703 74.596);
+  --whiskey-sour-700: oklch(70.871% 0.04375 76.539);
+  --whiskey-sour-800: oklch(64.24% 0.03876 75.287);
+  --whiskey-sour-900: oklch(57.407% 0.03481 74.901);
+  --whiskey-sour-950: oklch(50.615% 0.03002 76.487);
+
+  --whiskey-sour-muted: var(--whiskey-sour-50);
+  --whiskey-sour-fade:  var(--whiskey-sour-200);
+  --whiskey-sour:  var(--whiskey-sour-500);
+
+  /* Copper */
+  --copper-50: oklch(76.71% 0.0458 46.64);
+  --copper-100: oklch(71.79% 0.0558 47.92);
+  --copper-200: oklch(66.98% 0.0666 47.2);
+  --copper-300: oklch(62.16% 0.0778 46.56);
+  --copper-400: oklch(57.36% 0.0894 45.9);
+  --copper-500: oklch(52.61% 0.1011 45.09);
+  --copper-600: oklch(48.82% 0.0933 44.32);
+  --copper-700: oklch(44.98% 0.0839 45.65);
+  --copper-800: oklch(41.04% 0.0757 44.72);
+  --copper-900: oklch(37.03% 0.0658 46.59);
+  --copper-950: oklch(32.87% 0.0571 45.42);
+
+  --copper-muted: var(--copper-50);
+  --copper-fade:  var(--copper-200);
+  --copper:  var(--copper-500);
+
+  /* Cowboy Umber */
+  --cowboy-umber-50: oklch(69.42% 0.0172 32.03);
+  --cowboy-umber-100: oklch(62.99% 0.0204 34.3);
+  --cowboy-umber-200: oklch(56.19% 0.0248 31.86);
+  --cowboy-umber-300: oklch(49.41% 0.0288 33.63);
+  --cowboy-umber-400: oklch(42.33% 0.0356 31.45);
+  --cowboy-umber-500: oklch(35.13% 0.0409 33.02);
+  --cowboy-umber-600: oklch(32.84% 0.0368 32.17);
+  --cowboy-umber-700: oklch(30.48% 0.033 33.88);
+  --cowboy-umber-800: oklch(28.22% 0.0307 35.32);
+  --cowboy-umber-900: oklch(25.8% 0.0263 34.53);
+  --cowboy-umber-950: oklch(23.32% 0.0217 33.36);
+
+  --cowboy-umber-muted: var(--cowboy-umber-50);
+  --cowboy-umber-fade:  var(--cowboy-umber-200);
+  --cowboy-umber:  var(--cowboy-umber-500);
+
+  /* Smoke */
+  --smoke-50: oklch(69.02% 0.0049 134.86);
+  --smoke-100: oklch(62.33% 0.0057 145.51);
+  --smoke-200: oklch(55.51% 0.0071 137.78);
+  --smoke-300: oklch(48.51% 0.0073 137.79);
+  --smoke-400: oklch(41.12% 0.0097 139.44);
+  --smoke-500: oklch(33.51% 0.0102 139.44);
+  --smoke-600: oklch(31.27% 0.0082 137.81);
+  --smoke-700: oklch(29.27% 0.0083 137.81);
+  --smoke-800: oklch(26.86% 0.007 145.38);
+  --smoke-900: oklch(24.77% 0.0071 145.36);
+  --smoke-950: oklch(22.35% 0.0049 145.41);
+
+  --smoke-muted: var(--smoke-50);
+  --smoke-fade:  var(--smoke-200);
+  --smoke:  var(--smoke-500);
+}
+
+/* ============================================================================
+   2. TAILWIND THEME
+   Palette aliases and semantic roles, with no duplicate semantic :root layer.
+   ========================================================================= */
+
+@theme inline {
+
+  --color-*: initial;
+
+  --color-mist: var(--mist-500);
+ 
+   /* paper */
+  --color-paper-muted: var(--paper-600);
+  --color-paper-100: var(--paper-600);
+  --color-paper-fade: var(--paper-600);
+  --color-paper-300: var(--paper-600);
+  --color-paper-400: var(--paper-600);
+  --color-paper: var(--paper-500);
+  --color-paper-600: var(--paper-600);
+  --color-paper-700: var(--paper-700);
+  --color-paper-800: var(--paper-800);
+  --color-paper-900: var(--paper-900);
+  --color-paper-950: var(--paper-950);
+
+  /* alpine-linen */
+  --color-alpine-linen-muted:  var(--alpine-linen-50);
+  --color-alpine-linen-100: var(--alpine-linen-100);
+  --color-alpine-linen-fade: var(--alpine-linen-200);
+  --color-alpine-linen-300: var(--alpine-linen-400);
+  --color-alpine-linen-400: var(--alpine-linen-400);
+  --color-alpine-linen: var(--alpine-linen-500);
+  --color-alpine-linen-600: var(--alpine-linen-600);
+  --color-alpine-linen-700: var(--alpine-linen-700);
+  --color-alpine-linen-800: var(--alpine-linen-800);;
+  --color-alpine-linen-900: var(--alpine-linen-900);
+  --color-alpine-linen-950: var(--alpine-linen-950);
+
+  /* nude-ember */
+  --color-nude-ember-muted: var(--nude-ember-50);
+  --color-nude-ember-100: var(--nude-ember-100);
+  --color-nude-ember-fade: var(--nude-ember-200);
+  --color-nude-ember-300: var(--nude-ember-300);
+  --color-nude-ember-400: var(--nude-ember-400);
+  --color-nude-ember: var(--nude-ember-500);
+  --color-nude-ember-600: var(--nude-ember-600);
+  --color-nude-ember-700: var(--nude-ember-700);
+  --color-nude-ember-800: var(--nude-ember-800);
+  --color-nude-ember-900: var(--nude-ember-900);
+  --color-nude-ember-950: var(--nude-ember-950);
+  --color-nude-ember-fade: var(--color-nude-ember-200);
+
+  /* bandana-red */
+  --color-banadana-red-muted:  var(--bandana-red-50);
+  --color-banadana-red-100: var(--bandana-red-100);
+  --color-banadana-red-fade: var(--bandana-red-200);
+  --color-banadana-red-300: var(--bandana-red-400);
+  --color-banadana-red-400: var(--bandana-red-400);
+  --color-banadana-red: var(--bandana-red-500);
+  --color-banadana-red-600: var(--bandana-red-600);
+  --color-banadana-red-700: var(--bandana-red-700);
+  --color-banadana-red-800: var(--bandana-red-800);;
+  --color-banadana-red-900: var(--bandana-red-900);
+  --color-banadana-red-950: var(--bandana-red-950);
+
+  /* oxblood */
+  --color-oxblood-muted: var(--oxblood-50);
+  --color-oxblood-100: var(--oxblood-100);
+  --color-oxblood-fade: var(--oxblood-200);
+  --color-oxblood-300: var(--oxblood-300);
+  --color-oxblood-400: var(--oxblood-400);
+  --color-oxblood: var(--oxblood-500);
+  --color-oxblood-600: var(--oxblood-600);
+  --color-oxblood-700: var(--oxblood-700);
+  --color-oxblood-800: var(--oxblood-800);
+  --color-oxblood-900: var(--oxblood-900);
+  --color-oxblood-950: var(--oxblood-950);
+
+  /* oxidized-teal */
+  --color-oxidized-teal-muted: var(--oxidized-teal-50);
+  --color-oxidized-teal-100: var(--oxidized-teal-100);
+  --color-oxidized-teal-fade: var(--oxidized-teal-200);
+  --color-oxidized-teal-300: var(--oxidized-teal-300);
+  --color-oxidized-teal-400: var(--oxidized-teal-400);
+  --color-oxidized-teal: var(--oxidized-teal-500);
+  --color-oxidized-teal-600: var(--oxidized-teal-600);
+  --color-oxidized-teal-700: var(--oxidized-teal-700);
+  --color-oxidized-teal-800: var(--oxidized-teal-800);
+  --color-oxidized-teal-900: var(--oxidized-teal-900);
+  --color-oxidized-teal-950: var(--oxidized-teal-950);
+
+  /* lake-forest */
+  --color-lake-forest-muted:  var(--lake-forest-50);
+  --color-lake-forest-100: var(--lake-forest-100);
+  --color-lake-forest-fade: var(--lake-forest-200);
+  --color-lake-forest-300: var(--lake-forest-400);
+  --color-lake-forest-400: var(--lake-forest-400);
+  --color-lake-forest: var(--lake-forest-500);
+  --color-lake-forest-600: var(--lake-forest-600);
+  --color-lake-forest-700: var(--lake-forest-700);
+  --color-lake-forest-800: var(--lake-forest-800);;
+  --color-lake-forest-900: var(--lake-forest-900);
+  --color-lake-forest-950: var(--lake-forest-950);
+
+  /* lodge-yellow */
+  --color-lodge-yellow-muted: var(--lodge-yellow-50);
+  --color-lodge-yellow-100: var(--lodge-yellow-100);
+  --color-lodge-yellow-fade: var(--lodge-yellow-200);
+  --color-lodge-yellow-300: var(--lodge-yellow-300);
+  --color-lodge-yellow-400: var(--lodge-yellow-400);
+  --color-lodge-yellow: var(--lodge-yellow-500);
+  --color-lodge-yellow-600: var(--lodge-yellow-600);
+  --color-lodge-yellow-700: var(--lodge-yellow-700);
+  --color-lodge-yellow-800: var(--lodge-yellow-800);
+  --color-lodge-yellow-900: var(--lodge-yellow-900);
+  --color-lodge-yellow-950: var(--lodge-yellow-950);
+  --color-lodge-yellow-fade: var(--color-lodge-yellow-200);
+
+  /* whiskey-sour */
+  --color-whiskey-sour-muted: var(--whiskey-sour-50);
+  --color-whiskey-sour-100: var(--whiskey-sour-100);
+  --color-whiskey-sour-fade: var(--whiskey-sour-200);
+  --color-whiskey-sour-300: var(--whiskey-sour-300);
+  --color-whiskey-sour-400: var(--whiskey-sour-400);
+  --color-whiskey-sour: var(--whiskey-sour-500);
+  --color-whiskey-sour-600: var(--whiskey-sour-600);
+  --color-whiskey-sour-700: var(--whiskey-sour-700);
+  --color-whiskey-sour-800: var(--whiskey-sour-800);
+  --color-whiskey-sour-900: var(--whiskey-sour-900);
+  --color-whiskey-sour-950: var(--whiskey-sour-950);
+
+  /* copper */
+  --color-copper-muted: var(--copper-50);
+  --color-copper-100: var(--copper-100);
+  --color-copper-fade: var(--copper-200);
+  --color-copper-300: var(--copper-300);
+  --color-copper-400: var(--copper-400);
+  --color-copper: var(--copper-500);
+  --color-copper-600: var(--copper-600);
+  --color-copper-700: var(--copper-700);
+  --color-copper-800: var(--copper-800);
+  --color-copper-900: var(--copper-900);
+  --color-copper-950: var(--copper-950);
+
+    /* cowboy-umber */
+  --color-cowboy-umber-muted: var(--cowboy-umber-50);
+  --color-cowboy-umber-100: var(--cowboy-umber-100);
+  --color-cowboy-umber-fade: var(--color-cowboy-umber-200);
+  --color-cowboy-umber-300: var(--cowboy-umber-300);
+  --color-cowboy-umber-400: var(--cowboy-umber-400);
+  --color-cowboy-umber: var(--cowboy-umber-500);
+  --color-cowboy-umber-600: var(--cowboy-umber-600);
+  --color-cowboy-umber-700: var(--cowboy-umber-700);
+  --color-cowboy-umber-800: var(--cowboy-umber-800);
+  --color-cowboy-umber-900: var(--cowboy-umber-900);
+  --color-cowboy-umber-950: var(--cowboy-umber-950);
+
+  /* smoke */
+    --color-smoke-muted: var(--smoke-50);
+    --color-smoke-100: var(--smoke-100);
+    --color-smoke-fade: var(--smoke-200);
+    --color-smoke-300: var(--smoke-300);
+    --color-smoke-400: var(--smoke-400);
+    --color-smoke: var(--smoke-500);
+    --color-smoke-600: var(--smoke-600);
+    --color-smoke-700: var(--smoke-700);
+    --color-smoke-800: var(--smoke-800);
+    --color-smoke-900: var(--smoke-900);
+    --color-smoke-950: var(--smoke-950);
+
+}
+
+

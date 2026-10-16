@@ -153,7 +153,7 @@ export function Guest() {
             />
           </Field>
 
-          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-alpine-linen bg-white p-4 text-sm text-ash-900 shadow-2xs sm:p-5">
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-alpine-linen bg-white p-4 text-sm text-alpine-linen-900 shadow-2xs sm:p-5">
             <input
               type="checkbox"
               className="mt-0.5 h-5 w-5 shrink-0 accent-accent"
@@ -166,7 +166,7 @@ export function Guest() {
           </label>
 
           <div className="border-t-2 border-alpine-linen pt-4 2xl:pt-6">
-            <div className="mb-5 flex items-start gap-3 text-xs text-ash-900 sm:items-center sm:text-sm 2xl:mb-6 2xl:text-base">
+            <div className="mb-5 flex items-start gap-3 text-xs text-alpine-linen-900 sm:items-center sm:text-sm 2xl:mb-6 2xl:text-base">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-lake-forest sm:mt-0 2xl:h-6 2xl:w-6" aria-hidden="true" />
               <span>
                 Your guest details stay with this booking session as you finish your curated add-ons and reservation guarantee.

@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import {
   COLOR_PALETTE,
   type ButtonColor,
-} from "@/components/ui/button";
+} from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export type BannerProps = {

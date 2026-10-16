@@ -18,7 +18,7 @@ export default function EmptyState({
       >
         {heading}
       </h3>
-      <p className="text-sm text-ash-900 max-w-xs" style={{ fontFamily: 'var(--font-body)' }}>
+      <p className="text-sm text-alpine-linen-900 max-w-xs" style={{ fontFamily: 'var(--font-body)' }}>
         {body}
       </p>
       {action && (

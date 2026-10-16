@@ -1,6 +1,6 @@
 import type { TourIcon as TourIconName } from '@/journey/tour';
 import { CmsAmenityIcon } from './CmsAmenityIcon';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 /** Photo hotspot uses bundled Cowboy amenity SVGs, never Lovable-hosted images. */
 export function FeatureFocus({ count, icon, iconPath, title, active, onSelect }: {
