@@ -4,7 +4,7 @@ import { RoomType, SearchCriteria } from '@/types';
 import type { RoomTypeCmsReview } from '@/types/room-type-cms';
 import { AmenityWoodcutIcon } from '@/components/icons/AmenityWoodcutIcon';
 import { GuestReviewQuoteCard } from './GuestReviewQuoteCard';
-import { X, Bath, ArrowRight } from 'lucide-react';
+import { X, Bath, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 function formatReviewDate(value: string | null | undefined): string | null {
   if (!value) return null;
@@ -45,11 +45,15 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
+      } else if (e.key === "ArrowLeft" && room && room.images.length > 1) {
+        setActiveImageIndex((prev) => (prev - 1 + room.images.length) % room.images.length);
+      } else if (e.key === "ArrowRight" && room && room.images.length > 1) {
+        setActiveImageIndex((prev) => (prev + 1) % room.images.length);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  }, [onClose, room]);
 
   const activeReview: RoomTypeCmsReview | null = review ?? null;
   const reviewDate = formatReviewDate(activeReview?.reviewDate);
@@ -148,6 +152,26 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 alt={`${room.name} photo ${activeImageIndex + 1}`}
                 className="w-full h-full object-cover"
               />
+              {room.images.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setActiveImageIndex((prev) => (prev - 1 + room.images.length) % room.images.length)}
+                    aria-label={`Previous photo of ${room.name}`}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 grid h-10 w-10 place-items-center rounded-full bg-smoke/80 text-white hover:bg-smoke focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-none transition-colors cursor-pointer"
+                  >
+                    <ChevronLeft className="w-6 h-6" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveImageIndex((prev) => (prev + 1) % room.images.length)}
+                    aria-label={`Next photo of ${room.name}`}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 grid h-10 w-10 place-items-center rounded-full bg-smoke/80 text-white hover:bg-smoke focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-none transition-colors cursor-pointer"
+                  >
+                    <ChevronRight className="w-6 h-6" aria-hidden="true" />
+                  </button>
+                </>
+              )}
               <div className="absolute bottom-4 left-4 bg-smoke/90 text-white px-3.5 py-1 rounded-full text-xs font-label uppercase tracking-wider border border-white/20">
                 Photo {activeImageIndex + 1} of {room.images.length}
               </div>

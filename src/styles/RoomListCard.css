@@ -167,7 +167,7 @@
     --card-text: var(--lake-forest);
     --card-accent: var(--lake-forest-300);
     --card-pill: var(--lake-forest-300);
-    
+
     --card-placeholder-text: color-mix(in srgb, var(--cowboy-umber) 45%, transparent);
     --card-badge-bg: color-mix(in srgb, var(--lake-forest) 90%, transparent);
     --card-badge-text: var(--paper);

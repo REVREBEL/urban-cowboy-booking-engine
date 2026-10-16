@@ -39,14 +39,14 @@
   --color-emphasis-foreground: var(--alpine-linen);
 
   --color-error: var(--bandana-red);
-  --color-error-foreground: var(--alpine-linen-muted); 
+  --color-error-foreground: var(--alpine-linen-muted);
 
   --color-popover: var(--paper);
   --color-popover-foreground: var(--cowboy-umber);
 
   --color-card: var(--paper);
   --color-card-foreground: var(--card-foreground);
-  
+
   --color-muted: var(--alpine-linen-muted);
   --color-muted-foreground: var(--lake-forest-muted);
 
@@ -83,7 +83,7 @@
   --color-border: var(--lake-forest);
 
 }
- 
+
 
 :root {
   /* Semantic colors */
@@ -105,14 +105,14 @@
   --emphasis-foreground: var(--alpine-linen);
 
   --error: var(--bandana-red);
-  --error-foreground: var(--alpine-linen-muted); 
+  --error-foreground: var(--alpine-linen-muted);
 
   --popover: var(--paper);
   --popover-foreground: var(--cowboy-umber);
 
   --card: var(--paper);
   --card-foreground: var(--card-foreground);
-  
+
   --muted: var(--alpine-linen-muted);
   --muted-foreground: var(--lake-forest-muted);
 
@@ -168,5 +168,3 @@
   --calendar-tooltip-bg: var(--primary-foreground);
   --calendar-tooltip-foreground: var(--color-primary);
 }
-
-

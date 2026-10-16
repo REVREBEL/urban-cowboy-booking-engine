@@ -40,7 +40,7 @@ test("native button detector is case-sensitive for JSX components", () => {
 
 test("Pill shares the Button palette and interactive PillButton delegates to Button", () => {
   const pill = read("components/ui/pill.tsx");
-  const button = read("components/ui/button.tsx");
+  const button = read("components/ui/Button.tsx");
   assert.match(pill, /COLOR_PALETTE/);
   assert.match(pill, /type ButtonColor/);
   assert.match(pill, /type ButtonStyle/);

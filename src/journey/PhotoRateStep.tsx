@@ -42,6 +42,7 @@ const milestoneDate = (
   checkIn: string,
   amount: number | null | undefined,
   unit: "days" | "hours" | null | undefined
+  unit: "days" | "hours" | null | undefined
 ): MilestoneDate | undefined => {
   if (amount == null || !unit || amount < 0) return undefined;
   const days = unit === "days" ? amount : amount / 24;
@@ -90,6 +91,12 @@ export function PhotoRateStep() {
 
   useEffect(() => {
     let active = true;
+    void api.rateCards().then((cards) => {
+      if (active) setConfigs(cards);
+    });
+    return () => {
+      active = false;
+    };
     void api.rateCards().then((cards) => {
       if (active) setConfigs(cards);
     });
