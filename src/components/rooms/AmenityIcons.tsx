@@ -21,7 +21,7 @@ export function AmenityIcons({ icon, iconPath, className = "" }: AmenityIconsPro
       <CmsAmenityIcon
         iconPath={iconPath}
         fallback={icon}
-        className="size-[56%] max-h-[56%] max-w-[56%] object-contain mix-blend-normal"
+        className="size-[75%] max-h-[75%] max-w-[75%] pl-1 object-contain mix-blend-normal"
       />
     </span>
   );

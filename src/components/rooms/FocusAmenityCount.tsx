@@ -19,7 +19,7 @@ export function FocusAmenityCount({ count, state = "Default", className = "" }: 
     <span
       aria-hidden="true"
       data-state={state}
-      className={`grid size-10 shrink-0 place-items-center border-2 font-number text-xl leading-none tabular-nums transition-colors duration-200 max-sm:size-8 max-sm:text-base ${styles[state]} ${className}`}
+      className={`grid size-10 shrink-0 place-items-center pb-1.5 pr-0.5 border-2 font-accent text-6xl leading-2 tabular-nums transition-colors duration-200 max-sm:size-8 max-sm:text-base ${styles[state]} ${className}`}
     >
       {String(count).padStart(2, "0")}
     </span>
