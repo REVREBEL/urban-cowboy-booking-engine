@@ -30,214 +30,7 @@
 }
 
 
-@utility pill-dark { 
-  background-color: var(--lake-forest);
-  color: var(--paper);
-  border-color: var(--lake-forest);
-
-  &:hover {
-    border-color: var(--lake-forest-fade);
-    box-shadow: 0 0 0 3px var(--lake-forest-muted);
-  }
-  
-  &:focus {
-    color: var(--lake-forest-fade);
-  }
-}
-
- @utility light: { 
-  background-color: var(--paper);
-  color: var(--lake-forest);
-  border-color: var(--paper);
-
-  &:hover {
-    border-color: var(--paper-700);
-    box-shadow: 0 0 0 3px var(--paper-600);
-  }
-  
-  &:focus {
-    color: var(--paper-600);
-  }
-}
-
-@utility "alpine-linen": { 
-  background-color: var(--alpine-linen);
-  color: var(--lake-forest);
-  border-color: var(--alpine-linen);
-
-  &:hover {
-    border-color: var(--alpine-linen-fade);
-    box-shadow: 0 0 0 3px var(--alpine-linen-muted);
-  }
-  
-  &:focus {
-    color: var(--alpine-linen-muted);
-  }
-}
-
- @utility "cowboy-umber": { 
-  background-color: var(--cowboy-umber);
-  color: var(--alpine-linen-muted);
-  border-color: var(--cowboy-umber);
-
-  &:hover {
-    border-color: var(--cowboy-umber-fade);
-    box-shadow: 0 0 0 3px var(--cowboy-umber-muted);
-  }
-  
-  &:focus {
-    color: var(--cowboy-umber-muted);
-  }
-}
-
- @utility smoke: { 
-  background-color: var(--smoke);
-  color: var(--alpine-linen-muted);
-  border-color: var(--smoke);
-
-  &:hover {
-    border-color: var(--smoke-fade);
-    box-shadow: 0 0 0 3px var(--smoke-muted);
-  }
-  
-  &:focus {
-    color: var(--smoke-muted);
-  }
-}
-
-@utility  "lake-forest": { 
-  background-color: var(--lake-forest);
-  color: var(--paper);
-  border-color: var(--lake-forest);
-
-  &:hover {
-    border-color: color-mix(in srgb, var(--lake-forest) 70%, white 30%);
-    box-shadow: 0 0 0 3px var(--lake-forest-muted);
-  }
-  
-  &:focus {
-    color: var(--lake-forest-muted);
-}
-
- @utility copper:
-  background-color: var(--copper);
-  color: var(--alpine-linen-muted);
-  border-color: var(--copper);
-
-  &:hover {
-    border-color: var(--copper-fade);
-    box-shadow: 0 0 0 3px var(--copper-muted);
-  }
-  
-  &:focus {
-    color: var(--copper-muted);
-  }
-}
-
- @utility oxblood: {
-  background-color: var(--oxblood);
-  color:var(--alpine-linen);
-  border-color: var(--oxblood);
-
-  &:hover {
-    border-color: var(--oxblood-fade);
-    box-shadow: 0 0 0 3px var(--oxblood-muted);
-  }
-  
-  &:focus {
-    color: var(--oxblood-muted);
-  }
-}
- @utility "oxidized-teal": { 
-   background-color: var(--oxidized-teal);
-  color: var(--alpine-linen-muted);
-  border-color: var(--oxidized-teal);
-
-  &:hover {
-    border-color: var(--oxidized-teal-fade);
-    box-shadow: 0 0 0 3px var(--oxidized-teal-muted);
-  }
-  
-  &:focus {
-    color: var(--oxidized-teal-muted);
-  }
-}
-
-  @utility "bandana-red": { 
-  background-color: var(--bandana-red);
-  color: var(--alpine-linen-muted);
-  border-color: var(--bandana-red);
-
-  &:hover {
-    border-color: var(--bandana-red-fade);
-    box-shadow: 0 0 0 3px var(--bandana-red-muted);
-  }
-  
-  &:focus {
-    color: var(--bandana-red-muted);
-  }
-}
-
- @utility "whiskey-sour": { 
-  background-color: var(--whiskey-sour);
-  color: var(--cowboy-umber-700);
-  border-color: var(--whiskey-sour);
-
-  &:hover {
-    border-color: color-mix(in srgb, var(--whiskey-sour-200) 70%, white 30%);
-    box-shadow: 0 0 0 3px var(--whiskey-sour-50);
-  }
-  
-  &:focus {
-    color: var(--whiskey-sour-50);
-  }
-}
-
-  @utility "lodge-yellow": { 
-  background-color: var(--lodge-yellow);
-  color: var(--cowboy-umber-700);
-  border-color: var(--lodge-yellow);
-
-  &:hover {
-    border-color: var(--lodge-yellow-200);
-    box-shadow: 0 0 0 3px var(--lodge-yellow-50);
-  }
-  
-  &:focus {
-    color: var(--lodge-yellow-50);
-  }
-}
-
- @utility "nude-ember": { 
-  background-color: var(--nude-ember);
-  color: var(--lake-forest-300);
-  border-color: var(--nude-ember);
-
-  &:hover {
-    border-color: var(--nude-ember-fade);
-    box-shadow: 0 0 0 3px var(--nude-ember-muted);
-  }
-  
-  &:focus {
-    color: var(--nude-ember-muted);
-  }
-}
-
- @utility paper: { 
-  background-color: var(--paper);
-  color: var(--lake-forest-300);
-  border-color: var(--paper);
-
-  &:hover {
-    border-color: var(--paper-700);
-    box-shadow: 0 0 0 3px var(--paper-600);
-  }
-  
-  &:focus {
-    color: var(--paper-600);
-  }
-}
-
+/* Palette color combinations are implemented below as control-color-* utilities. */
 
 @utility btn {
   font-family: var(--font-button);
@@ -245,12 +38,12 @@
   font-weight: 400;
   border-radius: var(--radius-btn);
   border-width: 2px;
-  line-height: 100%;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 0.85rem;
   padding-bottom: 0.75rem;
   padding-inline: 0.85rem;
-  line-height: 1;
-  letter-spacing: 0.05em;
 }
 
 @utility btn-xs {
@@ -258,7 +51,10 @@
   font-size: var(--text-xxs, 0.625rem);
   font-weight: 400;
   border-radius: var(--radius-btn-xs);
-  line-height: 100%;
+  border-width: 2px;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 0.75rem;
   padding-bottom: 0.5rem;
   padding-inline: 0.75rem;
@@ -270,7 +66,9 @@
   font-weight: 400;
   border-radius: var(--radius-btn-sm);
   border-width: 2px;
-  line-height: 100%;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 0.85rem;
   padding-bottom: 0.7rem;
   padding-inline: 0.85rem;
@@ -281,7 +79,10 @@
   font-size: var(--text-base);
   font-weight: 400;
   border-radius: var(--radius-btn-md);
-  line-height: 100%;
+  border-width: 2px;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 1rem;
   padding-bottom: 0.8rem;
   padding-inline: 1rem;
@@ -293,7 +94,9 @@
   font-weight: 400;
   border-radius: var(--radius-btn-lg);
   border-width: var(--border-btn-lg);
-  line-height: 100%;
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 0.95rem;
   padding-bottom: 0.65rem;
   padding-inline: 0.95rem;
@@ -303,9 +106,11 @@
   font-family: var(--font-button);
   font-size: var(--text-lg);
   font-weight: 400;
-  line-height: 100%;
-  border-width: var(--border-btn-lg);
   border-radius: var(--radius-btn-xl);
+  border-width: var(--border-btn-lg);
+  border-style: solid;
+  line-height: 1;
+  letter-spacing: 0.05em;
   padding-top: 1.05rem;
   padding-bottom: 0.75rem;
   padding-inline: 1.05rem;
@@ -336,51 +141,134 @@
   }
 }
 
-@utility pill {
-    border-radius: var(--radius-btn);
-    border-width: 2px;
-    font-family: var(--font-button);
-    font-weight: 400;
-    font-size: "0.875rem";
-    line-height: 100%;
-    letter-spacing: 0.05em;
-    padding-top: "8px";
-    padding-bottom: "6px";
-    padding-inline: "14px";
+/* Shared Button and Pill presentation: one source for variant tones and sizes. */
+@utility control-color-dark {
+  --bg: var(--lake-forest);
+  --fg: var(--paper);
+  --border: var(--lake-forest-fade);
 }
-
+@utility control-color-light {
+  --bg: var(--paper);
+  --fg: var(--lake-forest);
+  --border: var(--paper);
+}
+@utility control-color-alpine-linen {
+  --bg: var(--alpine-linen);
+  --fg: var(--lake-forest);
+  --border: var(--alpine-linen-fade);
+}
+@utility control-color-cowboy-umber {
+  --bg: var(--cowboy-umber);
+  --fg: var(--alpine-linen);
+  --border: var(--cowboy-umber-fade);
+}
+@utility control-color-smoke {
+  --bg: var(--smoke);
+  --fg: var(--paper);
+  --border: var(--smoke-fade);
+}
+@utility control-color-lake-forest {
+  --bg: var(--lake-forest);
+  --fg: var(--alpine-linen);
+  --border: var(--lake-forest-fade);
+}
+@utility control-color-copper {
+  --bg: var(--copper);
+  --fg: var(--alpine-linen-200);
+  --border: var(--copper-fade);
+}
+@utility control-color-oxblood {
+  --bg: var(--oxblood);
+  --fg: var(--alpine-linen-200);
+  --border: var(--oxblood-fade);
+}
+@utility control-color-oxidized-teal {
+  --bg: var(--oxidized-teal);
+  --fg: var(--paper);
+  --border: var(--oxidized-teal-fade);
+}
+@utility control-color-bandana-red {
+  --bg: var(--bandana-red);
+  --fg: var(--paper);
+  --border: var(--bandana-red-fade);
+}
+@utility control-color-whiskey-sour {
+  --bg: var(--whiskey-sour);
+  --fg: var(--cowboy-umber);
+  --border: var(--whiskey-sour-fade);
+}
+@utility control-color-lodge-yellow {
+  --bg: var(--lodge-yellow);
+  --fg: var(--lake-forest);
+  --border: var(--lodge-yellow-fade);
+}
+@utility control-color-nude-ember {
+  --bg: var(--nude-ember);
+  --fg: var(--lake-forest);
+  --border: var(--nude-ember-fade);
+}
+@utility control-color-paper {
+  --bg: var(--paper);
+  --fg: var(--smoke);
+  --border: var(--smoke-fade);
+}
+@utility control-filled {
+  border-width: 1px;
+  border-style: solid;
+  background-color: var(--bg);
+  color: var(--fg);
+  border-color: var(--border);
+  &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 90%, var(--fg)); }
+  &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
+  &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 82%, var(--fg)); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+@utility control-outline {
+  background-color: transparent;
+  color: var(--bg);
+  border-style: solid;
+  border-color: var(--border);
+  &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 12%, transparent); }
+  &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
+  &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 20%, transparent); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+@utility control-transparent {
+  background-color: transparent;
+  color: var(--bg);
+  border-color: transparent;
+  border-style: none;
+  &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 10%, transparent); }
+  &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
+  &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 18%, transparent); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+@utility pill-xs {
+  font-size: .6875rem;
+  padding: 3px 8px 2px;
+}
 @utility pill-sm {
-    border-radius: var(--radius-btn-xs);
-    border-width: 2px;
-    font-family: var(--font-button);
-    font-weight: 400;
-    font-size: "0.75rem";
-    line-height: 100%;
-    padding-top: "5px";
-    padding-bottom: "4px";
-    padding-inline: "10px"
+  font-size: .75rem;
+  padding: 5px 10px 4px;
 }
-
-@utility pill-md {
-    border-radius: var(--radius-btn-xs);
-    border-width: 2px;
-    font-family: var(--font-button);
-    font-weight: 400;
-    font-size: "0.75rem";
-    line-height: 100%;
-    padding-top: "5px";
-    padding-bottom: "4px";
-    padding-inline: "10px" 
+@utility pill-default {
+  font-size: .875rem;
+  padding: 8px 14px 6px;
 }
-
 @utility pill-lg {
-  border-radius: var(--radius-btn-md);
-  border-width: 2px;  
-  font-family: var(--font-button);
-  font-weight: 400;
-  font-size: "1rem";
-  line-height: 100%;
-  padding-top: "10px";
-  padding-bottom: "8px";
-  padding-inline: "16px";
+  font-size: 1rem;
+  padding: 10px 16px 8px;
+}
+
+/* Non-interactive pill outlines retain the label/foreground tone. */
+@utility control-pill-outline {
+  background-color: transparent;
+  color: var(--fg);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--border);
+  &:hover:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 12%, transparent); }
+  &:focus-visible { outline: 2px solid var(--border); outline-offset: 3px; }
+  &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 20%, transparent); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
