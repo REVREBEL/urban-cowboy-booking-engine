@@ -28,6 +28,7 @@ const meta = {
   component: RoomPhotoTour,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },
+  args: { room, position: 0, count: 1, details: false, onDetails: () => {}, onChoose: () => {} },
   render: () => <Preview />,
 } satisfies Meta<typeof RoomPhotoTour>;
 export default meta;
