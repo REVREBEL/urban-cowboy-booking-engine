@@ -154,37 +154,6 @@
  .j-tour-details, .j-hotspots, .j-photo-peek { transition: none; animation: none !important; }
 }
 
-/* Feature Focus hotspot marker (Figma: Feature Focus Component) */
-:root {
-  --ff-paper: hsl(0 9% 98%);
-  --ff-forest: hsl(141 55% 12%);
-  --ff-forest-200: hsl(143 12% 38%);
-  --ff-linen: hsl(44 22% 90%);
-  --ff-linen-50: hsl(48 20% 95%);
-}
-.j-focus { --ff-size: 76px; --ff-sq: 30px; --ff-edge: var(--ff-forest); --ff-sq-bg: var(--ff-forest); --ff-sq-fg: var(--ff-linen); --ff-disc: var(--ff-linen);
-  position: relative; display: block; width: calc(var(--ff-size) + var(--ff-sq) * 0.6); height: var(--ff-size); pointer-events: auto; cursor: pointer;
-  background: none; border: 0; padding: 0; transition: width 260ms cubic-bezier(.32,.72,0,1), height 260ms cubic-bezier(.32,.72,0,1); }
-.j-focus:hover { --ff-edge: var(--ff-forest-200); --ff-sq-bg: var(--ff-forest-200); --ff-disc: var(--ff-linen-50); }
-.j-focus.is-active { --ff-size: 128px; --ff-sq: 40px; --ff-edge: var(--ff-forest-200); --ff-sq-bg: var(--ff-linen); --ff-sq-fg: var(--ff-forest-200); --ff-disc: var(--ff-paper); z-index: 2; }
-.j-focus:focus-visible { outline: 2px solid var(--ff-linen); outline-offset: 4px; border-radius: 50%; }
-.j-focus-medallion { position: absolute; right: 0; top: 0; width: var(--ff-size); height: var(--ff-size); border-radius: 50%; overflow: hidden;
-  background: var(--ff-disc); box-shadow: 0 0 0 1px var(--ff-edge), inset 0 0 0 calc(var(--ff-size) * .012) var(--ff-disc), inset 0 0 0 calc(var(--ff-size) * .022) var(--ff-edge), inset 0 0 0 calc(var(--ff-size) * .032) var(--ff-disc), inset 0 0 0 calc(var(--ff-size) * .042) var(--ff-edge), 0 10px 30px rgb(0 0 0 / .25);
-  transition: inherit; }
-.j-focus-medallion img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.6); mix-blend-mode: multiply; }
-.j-focus-actions { position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: calc(var(--ff-sq) * .11); }
-.j-focus-square { width: var(--ff-sq); height: var(--ff-sq); display: grid; place-items: center; background: var(--ff-sq-bg); color: var(--ff-sq-fg);
-  box-shadow: inset 0 0 0 calc(var(--ff-sq) * .1) var(--ff-sq-bg), inset 0 0 0 calc(var(--ff-sq) * .12) var(--ff-sq-fg); transition: background 200ms ease, width 260ms, height 260ms; }
-.j-focus-count { font-family: var(--font-heading); font-size: calc(var(--ff-sq) * .5); line-height: 1; font-variant-numeric: tabular-nums; }
-.j-focus-square img { width: 42%; height: 42%; object-fit: contain; }
-.j-focus:not(.is-active) .j-focus-square img { filter: brightness(1.1); }
-.j-focus-medallion { display: grid; place-items: center; }
-.j-focus-medallion img.j-cms-icon { width: 56%; height: 56%; object-fit: contain; transform: none; mix-blend-mode: normal; }
-.j-cms-icon { display: block; flex-shrink: 0; object-fit: contain; }
-
-@media (max-width: 639px) { .j-focus { --ff-size: 56px; --ff-sq: 24px; } .j-focus.is-active { --ff-size: 96px; --ff-sq: 32px; } }
-@media (prefers-reduced-motion: reduce) { .j-focus, .j-focus-medallion, .j-focus-square { transition: none; } }
-
 /* Building chip strip scrolls horizontally instead of wrapping — arrow chips handle paging. */
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
