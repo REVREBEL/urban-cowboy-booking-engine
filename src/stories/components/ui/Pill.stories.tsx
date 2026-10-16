@@ -23,12 +23,14 @@ const meta = {
     color: { control: "select", options: colors },
     variant: { control: "inline-radio", options: styles },
     size: { control: "inline-radio", options: ["xsmall", "small", "default", "large"] },
+    textCase: { control: "inline-radio", options: ["uppercase", "title", "lowercase"], name: "Text Case" },
   },
   args: {
     children: "Dogs allowed",
     colorScheme: "lake-forest",
     variant: "filled",
     size: "default",
+    textCase: "title",
   },
 } satisfies Meta<typeof Pill>;
 
@@ -58,6 +60,16 @@ export const AllColors: Story = {
             ))}
           </div>
         </section>
+      ))}
+    </div>
+  ),
+};
+
+export const TextCases: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      {(["uppercase", "title", "lowercase"] as const).map((textCase) => (
+        <Pill key={textCase} textCase={textCase} colorScheme="lake-forest">dogs allowed on property</Pill>
       ))}
     </div>
   ),
