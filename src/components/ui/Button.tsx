@@ -113,6 +113,29 @@ export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
   },
 };
 
+export const CONTROL_COLOR_CLASSES: Record<ButtonColor, string> = {
+  "dark": "control-color-dark",
+  "light": "control-color-light",
+  "alpine-linen": "control-color-alpine-linen",
+  "cowboy-umber": "control-color-cowboy-umber",
+  "smoke": "control-color-smoke",
+  "lake-forest": "control-color-lake-forest",
+  "copper": "control-color-copper",
+  "oxblood": "control-color-oxblood",
+  "oxidized-teal": "control-color-oxidized-teal",
+  "bandana-red": "control-color-bandana-red",
+  "whiskey-sour": "control-color-whiskey-sour",
+  "lodge-yellow": "control-color-lodge-yellow",
+  "nude-ember": "control-color-nude-ember",
+  "paper": "control-color-paper",
+};
+
+const CONTROL_VARIANT_CLASSES: Record<ButtonStyle, string> = {
+  filled: "control-filled",
+  outline: "control-outline",
+  transparent: "control-transparent",
+};
+
 export const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 select-none uppercase tracking-wider transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
@@ -229,7 +252,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const isDisabledOrLoading = disabled || isLoading;
     const Comp = asChild ? Slot : "button";
 
-    const colorClasses = `control-color-${resolvedColor} control-${variant}`;
+    const colorClasses = `${CONTROL_COLOR_CLASSES[resolvedColor]} ${CONTROL_VARIANT_CLASSES[variant]}`;
 
     const iconSize =
       size === "xlarge"
