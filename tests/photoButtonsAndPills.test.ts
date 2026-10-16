@@ -14,7 +14,6 @@ const photoComponents = [
   "journey/PhotoRateStep.tsx",
   "journey/PhotoExtrasStep.tsx",
   "journey/PhotoReviewGuest.tsx",
-  "components/rooms/FeatureFocus.tsx",
 ];
 
 test("Photo Engine actions use the shared Button or its PillButton composition", () => {
@@ -29,6 +28,23 @@ test("Photo Engine actions use the shared Button or its PillButton composition",
     assert.ok(count >= closing, `Extra Button close in ${file}`);
     assert.ok(count <= closing + selfClosing + 1, `Possible unmatched Button in ${file}`);
   }
+});
+
+test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () => {
+  const tour = read("journey/RoomPhotoTour.tsx");
+  const focus = read("components/rooms/FocusAmenity.tsx");
+  const stylesheet = read("styles/room-photo-tour.css");
+
+  assert.match(tour, /import \{ FocusAmenity \} from ['"]@\/components\/rooms\/FocusAmenity['"]/);
+  assert.match(tour, /<FocusAmenity count=\{pinIndex \+ 1\}/);
+  assert.match(tour, /iconPath=\{pin\.iconPath\}/);
+  assert.match(tour, /active=\{activePin === pin\.id\}/);
+  assert.doesNotMatch(tour, /FeatureFocus|<FeatureFocus/);
+  assert.match(focus, /<button\b/);
+  assert.match(focus, /<AmenityIcons\b/);
+  assert.match(focus, /aria-pressed=\{active\}/);
+  assert.doesNotMatch(stylesheet, /\.j-focus(?:[\s.{:#]|$)|--ff-size/);
+  assert.match(stylesheet, /\.j-cms-icon/);
 });
 
 test("native button detector is case-sensitive for JSX components", () => {
@@ -82,7 +98,7 @@ test("control palette utilities use runtime foundation variables and filled cont
     }
   }
   const filled = css.split("@utility control-filled {")[1]?.split("}")[0] ?? "";
-  assert.match(filled, /border-width:\s*1px/);
+  assert.match(filled, /border-width:\s*2px/);
   assert.match(filled, /border-style:\s*solid/);
 });
 
