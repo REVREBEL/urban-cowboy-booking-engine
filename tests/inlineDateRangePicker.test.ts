@@ -29,3 +29,16 @@ test("selected dates contrast with the paper calendar surface", () => {
   assert.match(styles, /--calendar-date-selected-bg: var\(--button-primary-foreground\);/);
   assert.match(styles, /--calendar-date-selected-foreground: var\(--button-primary\);/);
 });
+
+test("scoped service restrictions are visibly indicated on touch calendars", () => {
+  const picker = readFileSync(
+    new URL("../src/components/booking/search/InlineDateRangePicker.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(picker, /hasVisibleServiceRestrictions/);
+  assert.match(picker, /serviceNote && !disabled/);
+  assert.match(picker, /Marked dates may have check-in, check-out, or stay restrictions/);
+  assert.match(picker, /Search verifies your exact stay/);
+  // Restriction information must never add a date-selection gate.
+  assert.match(picker, /const disabled = date < minDate;/);
+});
