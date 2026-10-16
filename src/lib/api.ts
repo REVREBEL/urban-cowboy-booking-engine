@@ -120,7 +120,7 @@ const loadLocations = (): Promise<BookingLocationCmsMap> => {
       locations: BookingLocationCmsMap;
       generatedAt?: string | null;
       stale?: boolean;
-    }>("locations", {
+    }>("locations?cmsVersion=6", {
       label: "Location CMS content",
       why: "Loads the published Webflow Location record bound to each configured Mews property so booking chrome and photo-arrival editorial content can share one cached location payload.",
     })
