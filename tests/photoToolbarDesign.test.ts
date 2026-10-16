@@ -14,7 +14,7 @@ test("Photo Journey header excludes the added hotel-name action", () => {
 
 test("Photo toolbar uses xsmall pills and a label-font sort selector", () => {
   const rooms = src("journey/PhotoRooms.tsx");
-  const pill = src("components/ui/pill.tsx");
+  const pill = src("components/ui/Pill.tsx");
   const story = src("stories/components/ui/Pill.stories.tsx");
 
   assert.match(pill, /PillSize = "xsmall" \| "small" \| "default" \| "large"/);
