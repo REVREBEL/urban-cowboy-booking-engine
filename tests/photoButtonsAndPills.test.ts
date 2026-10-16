@@ -14,7 +14,7 @@ const photoComponents = [
   "journey/PhotoRateStep.tsx",
   "journey/PhotoExtrasStep.tsx",
   "journey/PhotoReviewGuest.tsx",
-  "components/rooms/FeatureFocus.tsx",
+  "components/rooms/FocusAmenity.tsx",
 ];
 
 test("Photo Engine actions use the shared Button or its PillButton composition", () => {
