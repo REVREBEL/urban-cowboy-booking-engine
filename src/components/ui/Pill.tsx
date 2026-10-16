@@ -27,7 +27,7 @@ export function Pill({
   colorScheme,
   color,
   size = "default",
-  textCase = "title",
+  textCase,
   className,
   style,
   children,
@@ -44,7 +44,7 @@ export function Pill({
         "inline-flex max-w-full items-center justify-center gap-1.5 whitespace-nowrap align-middle font-label leading-none rounded-full box-border",
         colorClasses,
         PILL_SIZE_CLASSES[size],
-        TEXT_CASE_CLASSES[textCase],
+        textCase && TEXT_CASE_CLASSES[textCase],
         className
       )}
       style={style}
