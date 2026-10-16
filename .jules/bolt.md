@@ -5,3 +5,7 @@
 ## 2025-05-19 - Precomputed Month Cell Metadata in Date Range Pickers
 **Learning:** High-frequency mouse hover events in the inline calendar picker caused re-renders that parsed ISO strings into `Date` objects (`new Date(date)`) and ran `parseInt()` string slicing for up to 84 grid cells on every frame. Precomputing structured `{ date, time, dayNum }` objects in `monthCellsCache` eliminates Date allocations and string parsing overhead during hover interactions.
 **Action:** When caching calendar month grids, store pre-parsed UTC timestamps (`time`) and numeric day labels (`dayNum`) alongside ISO date strings.
+
+## 2025-05-20 - O(1) ISO Date String Range Comparisons for Night Coverage Checks
+**Learning:** Checking whether a stay covers a specific calendar night (e.g. mandatory holiday events) previously instantiated `Date` objects and iterated up to 400 times with `.setDate(+1)`. Because ISO date strings (`YYYY-MM-DD`) sort lexicographically, target night coverage across candidate stay years can be checked in $O(1)$ string comparisons with zero loop allocations.
+**Action:** Avoid allocating `Date` objects in loops when evaluating date boundaries; leverage lexicographical ISO 8601 string comparisons (`targetIso >= checkIn && targetIso < checkOut`).

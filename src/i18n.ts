@@ -5,7 +5,7 @@
 // Valeurs : soit une chaîne, soit une fonction (params) => string pour l'interpolation
 // et les pluriels. Le dictionnaire est typé → `t("clé.inconnue")` échoue au build.
 
-import { getLang } from "./lib/lang";
+import { getLang } from "./lib/lang.ts";
 
 type Entry = string | ((p: Record<string, unknown>) => string);
 
