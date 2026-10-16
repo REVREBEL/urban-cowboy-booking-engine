@@ -279,7 +279,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                             role="tooltip"
                             className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-(--calendar-tooltip-bg) px-2 py-1 font-number text-[10px] font-normal normal-case tracking-normal text-(--calendar-tooltip-foreground) opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
                           >
-                            {rate.minNights ? `Min. of ${rate.minNights} nights. ` : ""}{serviceNote}
+                            {rate?.minNights ? `Min. of ${rate.minNights} nights. ` : ""}{serviceNote}
                           </span>
                         )}
                       </button>
