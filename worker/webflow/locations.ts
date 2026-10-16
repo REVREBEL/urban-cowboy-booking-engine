@@ -1,6 +1,7 @@
 import type {
   BookingLocationCms,
   BookingLocationCmsMap,
+  BookingLocationFeatureCms,
 } from "../../src/types/location-cms.ts";
 import { json, propertiesForEnv, type Env } from "../mews/_lib.ts";
 
@@ -31,7 +32,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 // Published location settings should propagate quickly, including layout choices.
 const CACHE_FRESH_MS = 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:booking-locations:v4";
+const CACHE_KEY_PREFIX = "webflow:booking-locations:v5";
 
 const memoryCache = new Map<string, CachedLocationPayload>();
 
@@ -41,6 +42,23 @@ const text = (value: unknown): string =>
 const safeUrl = (value: unknown): string | null => {
   const candidate = text(value);
   return /^https?:\/\//i.test(candidate) ? candidate : null;
+};
+
+const imageUrl = (value: unknown): string | null => {
+  if (typeof value === "string") return safeUrl(value);
+  if (!value || typeof value !== "object") return null;
+  return safeUrl((value as { url?: unknown }).url);
+};
+
+const featureStory = (
+  fields: Record<string, unknown>,
+  index: 1 | 2 | 3,
+): BookingLocationFeatureCms | null => {
+  const headline = text(fields[`feature-headline-${index}`]);
+  const paragraph = text(fields[`feature-paragraph-${index}`]);
+  const iconUrl = imageUrl(fields[`feature-icon-${index}`]);
+  if (!headline && !paragraph && !iconUrl) return null;
+  return { iconUrl, headline, paragraph };
 };
 
 const cacheKey = (
@@ -153,12 +171,18 @@ export function normalizeLocationItem(
 
   if (!id || !fullLocationName) return null;
 
+  const features = ([1, 2, 3] as const)
+    .map((index) => featureStory(fields, index))
+    .filter((feature): feature is BookingLocationFeatureCms => feature !== null);
+
   return {
     id,
     fullLocationName,
     productionLayout: fields["production-layout"] === "f4859a16a8556038b0f026679aaa6a02" ? "photo" : "card",
     demoLayout: fields["demo-layout"] === "2142905a00c88401810632b026107cf2" ? "photo" : "card",
     enableDemoEngine: fields["enable-demo-engine"] === true,
+    featureSectionEnabled: fields["enable-feature-section"] === true,
+    features,
     city: text(fields.city) || null,
     state: text(fields.state) || null,
     privacyPolicyUrl: safeUrl(fields["privacy-policy"]),
