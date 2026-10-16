@@ -2,7 +2,7 @@
  * Photo-first arrival screen, ported from visual-booking-flow/src/routes/journey.tsx.
  * Only the editorial UI is imported; stay criteria use the canonical BookingProvider.
  */
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import { resetPhotoJourney } from "./photoSession";
@@ -17,7 +17,13 @@ import { api } from "../lib/api";
 
 const HERO = ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE;
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const PILLARS = [
+type ArrivalStory = {
+  title: string;
+  text: string;
+  icon: string | null;
+};
+
+const FALLBACK_PILLARS: readonly ArrivalStory[] = [
   {
     title: "Disappear for a While",
     text: "Trade pavement for mountain air and the kind of quiet that makes you forget what day it is.",
@@ -33,7 +39,7 @@ const PILLARS = [
     text: "Dinner, drinks, fireside nights and whatever happens next. Cowboy is made for gathering.",
     icon: "/assets/icons/icons-simple/campfire.svg",
   },
-] as const;
+];
 
 const displayDate = (value: string | null) => {
   if (!value) return "Add dates";
@@ -56,7 +62,35 @@ export function PhotoArrival() {
   const [promoCode, setPromoCode] = useState(booking.voucherCode);
   const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
   const [dailyRates, setDailyRates] = useState<Record<string, DailyRate>>({});
+  const [stories, setStories] = useState<readonly ArrivalStory[] | null>(null);
   const nights = checkIn && checkOut ? Math.max(0, Math.round((Date.parse(checkOut) - Date.parse(checkIn)) / 86400000)) : 0;
+
+  useEffect(() => {
+    let active = true;
+    void api.locations().then((locations) => {
+      if (!active) return;
+      const locationContent = locations.hotel;
+      if (!locationContent) {
+        setStories(FALLBACK_PILLARS);
+        return;
+      }
+      if (!locationContent.featureSectionEnabled) {
+        setStories([]);
+        return;
+      }
+      const cmsStories = locationContent.features
+        .filter((feature) => feature.headline || feature.paragraph)
+        .map((feature) => ({
+          title: feature.headline,
+          text: feature.paragraph,
+          icon: feature.iconUrl,
+        }));
+      setStories(cmsStories.length ? cmsStories : FALLBACK_PILLARS);
+    }).catch(() => {
+      if (active) setStories(FALLBACK_PILLARS);
+    });
+    return () => { active = false; };
+  }, []);
 
   const loadCalendar = useCallback(async (startDate: string, endDate: string) => {
     try {
@@ -105,6 +139,7 @@ export function PhotoArrival() {
         onMatch={() => proceed("journal")}
         onBrowse={() => proceed("rooms")}
         nights={nights}
+        stories={stories}
       />
     </div>
   );
@@ -151,6 +186,7 @@ function Arrive(props: {
   onMatch: () => void;
   onBrowse: () => void;
   nights: number;
+  stories: readonly ArrivalStory[] | null;
 }) {
   const ready = props.nights > 0;
   const childCount = props.children + props.infants;
@@ -272,22 +308,26 @@ function Arrive(props: {
             </div>
           </div>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-3 md:gap-10">
-            {PILLARS.map((pillar) => (
-              <article key={pillar.title} className="text-paper">
-                <span
-                  aria-hidden="true"
-                  className="mb-3 block size-11 bg-current"
-                  style={{
-                    WebkitMask: `url("${pillar.icon}") center / contain no-repeat`,
-                    mask: `url("${pillar.icon}") center / contain no-repeat`,
-                  }}
-                />
-                <h2 className={`${label} font-bold leading-none text-paper`}>{pillar.title}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-paper/75">{pillar.text}</p>
-              </article>
-            ))}
-          </div>
+          {props.stories && props.stories.length > 0 && (
+            <div className="mt-8 grid gap-6 md:grid-cols-3 md:gap-10">
+              {props.stories.map((story, index) => (
+                <article key={`${story.title}-${index}`} className="text-paper">
+                  {story.icon && (
+                    <span
+                      aria-hidden="true"
+                      className="mb-3 block size-11 bg-current"
+                      style={{
+                        WebkitMask: `url("${story.icon}") center / contain no-repeat`,
+                        mask: `url("${story.icon}") center / contain no-repeat`,
+                      }}
+                    />
+                  )}
+                  {story.title && <h2 className={`${label} font-bold leading-none text-paper`}>{story.title}</h2>}
+                  {story.text && <p className="mt-2 text-sm leading-relaxed text-paper/75">{story.text}</p>}
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
