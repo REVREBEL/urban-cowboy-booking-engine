@@ -141,9 +141,9 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        filled: "border-transparent",
-        outline: "bg-transparent border-solid",
-        transparent: "bg-transparent border-none",
+        filled: "",
+        outline: "",
+        transparent: "",
       },
       size: {
         xsmall: "btn-xs",
