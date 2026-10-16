@@ -7,7 +7,7 @@ Demonstrates cancellation policies, payment milestones, and interactive tooltips
 */
 
 const meta: Meta<typeof PolicyDisplay> = {
-  title: 'Components/PolicyDisplay',
+  title: 'Components/Rates/PolicyDisplay',
   component: PolicyDisplay,
   parameters: {
     layout: 'centered',

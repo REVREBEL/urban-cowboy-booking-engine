@@ -1,3 +1,15 @@
+
+
+:root {
+  --button-primary: oklch(98.2% 0.00 11.251);
+  --button-primary-foreground: oklch(27.726% 0.05667 152.427);
+  --color-button-primary-hover:oklch(58.922% 0.03132 158.234);
+
+  --button-secondary:  oklch(93.112% 0.01107 89.719);
+  --button-secondary-foreground: oklch(27.726% 0.05667 152.427);
+  --button-secondary-hover:  oklch(94.9% 0.00817 91.496);
+}
+
 @theme {
 
   /* Button Radii and Borders */
@@ -10,15 +22,15 @@
   --border-btn-lg: 2.25px;
 
   /* Button Colors */
-  --color-button-primary: var(--button-primary-bg);
-  --color-button-primary-foreground: var(--button-primary-foreground);
-  --color-button-primary-hover: var(--lake-forest-100);
+  --color-button-primary: oklch(98.2% 0.00 11.251);
+  --color-button-primary-foreground: oklch(27.726% 0.05667 152.427);
+  --color-button-primary-hover: oklch(58.922% 0.03132 158.234);
 
-  --color-button-secondary: var(--alpine-linen);
-  --color-button-secondary-foreground: var(--lake-forest);
-  --color-button-secondary-hover: var(--alpine-linen-200);
-
+  --color-button-secondary: oklch(93.112% 0.01107 89.719);
+  --color-button-secondary-foreground: oklch(27.726% 0.05667 152.427);
+  --color-button-secondary-hover: oklch(94.9% 0.00817 91.496);
 }
+
 
 
 @utility btn {

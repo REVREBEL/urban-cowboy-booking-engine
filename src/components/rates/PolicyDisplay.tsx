@@ -99,8 +99,12 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
     description:
       "This is the remaining amount due for your stay. It will be charged automatically to your payment method on the applicable due date.",
   },
-  textColor = "var(--foreground)",
-  accentColor = "var(--color-bandana-red)",
+  
+  cardBackgroundColor = "var(--card)",
+  badgeTextColor = "var(--primary)",
+  textColor = "var(--primary-foreground)",
+  accentColor = "var(--accent)",
+  emphasisColor="var(--emphasis",
   size = "default",
   className = "",
 }) => {
@@ -113,8 +117,11 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
   const style = useMemo(
     () =>
       ({
+        '--card-bg': cardBackgroundColor,
+        '--badge-fg': badgeTextColor,
         '--rate-fg': textColor,
         '--rate-accent': accentColor,
+        '--rate-emphasis':  emphasisColor,
       }) as React.CSSProperties,
     [textColor, accentColor]
   );
@@ -149,10 +156,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
       style={style}
       className={`relative w-full ${
         isVertical ? 'max-w-90' : 'max-w-151.25'
-      } rounded-lg bg-[#F4F4F5] p-6 sm:p-8 font-sans select-none text-(--rate-fg) shadow-sm ${className}`}
+      } rounded-lg bg-muted p-6 sm:p-8 font-sans select-none text-(--rate-fg) shadow-sm ${className}`}
     >
       {/* Policy Heading */}
-      <h2 className="text-left text-[15px] font-bold tracking-wider uppercase mb-8 text-(--rate-fg)">
+      <h2 className="font-label text-left text-[18px] font-bold tracking-wider uppercase mb-8 text-(--rate-fg)">
         {title}
       </h2>
 
@@ -164,18 +171,18 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             {/* Milestone 1: Due Today */}
             <div className="flex flex-col items-center text-center">
               <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm">
-                <span className="text-[24px] font-bold leading-none tracking-tight text-(--rate-fg)">
+                <span className="font-number text-[24px] font-bold leading-none tracking-tight text-(--rate-fg)">
                   DUE
                 </span>
-                <span className="text-[14px] font-extrabold leading-tight tracking-wider uppercase mt-1 text-(--rate-fg)">
+                <span className="font-number text-[14px] font-extrabold leading-tight tracking-wider uppercase mt-1 text-(--rate-fg)">
                   TODAY
                 </span>
               </div>
               <div className="mt-2.5 text-center">
-                <p className="text-[13px] font-bold leading-4.25 uppercase text-(--rate-fg)">
+                <p className="font-number text-[13px] font-bold leading-4.25 uppercase text-(--rate-fg)">
                   AFTER
                 </p>
-                <p className="text-[13px] font-bold leading-4.25 uppercase text-(--rate-fg)">
+                <p className="font-number text-[13px] font-bold leading-4.25 uppercase text-(--rate-fg)">
                   CONFIRMING
                 </p>
               </div>
@@ -185,31 +192,31 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             <div className="flex flex-col items-center text-center">
               <div className="relative">
                 {/* Offset circular badge */}
-                <div className="absolute -left-6 -top-2 z-10 w-13 h-13 rounded-full bg-(--rate-fg) text-white flex flex-col items-center justify-center shadow">
-                  <span className="text-[22px] font-bold leading-none">
+                <div className="absolute -left-6 -top-2 z-10 w-13 h-13 rounded-full bg-(--rate-accent) text-(--badge-fg) flex flex-col items-center justify-center shadow">
+                  <span className="font-number text-[22px] font-bold leading-none">
                     {freeCancelDate?.daysPrior}
                   </span>
-                  <span className="text-[9px] font-black leading-none tracking-wider uppercase mt-0.5">
+                  <span className="font-number text-[9px] font-black leading-none tracking-wider uppercase mt-0.5">
                     DAYS
                   </span>
                 </div>
 
                 {/* Calendar Tile */}
                 <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm pl-2">
-                  <span className="text-[34px] font-bold leading-none tracking-tight text-(--rate-fg)">
+                  <span className="font-number text-[34px] font-bold leading-none tracking-tight text-(--rate-fg)">
                     {freeCancelDate?.day}
                   </span>
-                  <span className="text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-fg)">
+                  <span className="font-number text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-fg)">
                     {freeCancelDate?.month}
                   </span>
                 </div>
               </div>
 
               <div className="mt-2.5 text-center">
-                <p className="text-[13px] font-bold leading-4.25 uppercase text-(--rate-fg)">
+                <p className="font-number text-[13px] font-bold leading-4.25 uppercase text-(--rate-fg)">
                   FREE CANCEL
                 </p>
-                <p className="text-[12px] font-normal leading-4.25 text-(--rate-fg)">
+                <p className="font-number text-[12px] font-normal leading-4.25 text-(--rate-fg)">
                   100% Refundable
                 </p>
               </div>
@@ -219,31 +226,31 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             <div className="flex flex-col items-center text-center">
               <div className="relative">
                 {/* Offset circular badge */}
-                <div className="absolute -left-6 -top-2 z-10 w-13 h-13 rounded-full bg-(--rate-accent) text-white flex flex-col items-center justify-center shadow">
-                  <span className="text-[22px] font-bold leading-none">
+                <div className="absolute -left-6 -top-2 z-10 w-13 h-13 rounded-full bg-(--rate-emphasis) text-(--badge-fg) flex flex-col items-center justify-center shadow">
+                  <span className="font-number text-[22px] font-bold leading-none">
                     {nonRefundableDate?.daysPrior}
                   </span>
-                  <span className="text-[9px] font-black leading-none tracking-wider uppercase mt-0.5">
+                  <span className="font-number text-[9px] font-black leading-none tracking-wider uppercase mt-0.5">
                     DAYS
                   </span>
                 </div>
 
                 {/* Calendar Tile */}
                 <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm pl-2">
-                  <span className="text-[34px] font-bold leading-none tracking-tight text-(--rate-accent)">
+                  <span className="font-number text-[34px] font-bold leading-none tracking-tight text-(--rate-emphasis)">
                     {nonRefundableDate?.day}
                   </span>
-                  <span className="text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-accent)">
+                  <span className="font-number text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-emphasis)">
                     {nonRefundableDate?.month}
                   </span>
                 </div>
               </div>
 
               <div className="mt-2.5 text-center">
-                <p className="text-[13px] font-bold leading-4.25 uppercase text-(--rate-accent)">
+                <p className="font-numbertext-[13px] font-bold leading-4.25 uppercase text-(--rate-emphasis)">
                   NON-REFUNDABLE
                 </p>
-                <p className="text-[12px] font-normal leading-4.25 text-(--rate-accent)">
+                <p className="font-number text-[12px] font-normal leading-4.25 text-(--rate-emphasis)">
                   Stay Locked
                 </p>
               </div>
@@ -258,7 +265,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             {/* Initial Deposit Due (Top) */}
             <div className="relative flex flex-col items-center text-center">
               <div className="flex items-center justify-center gap-1.5">
-                <span className="text-[20px] font-bold tracking-tight text-(--rate-fg)">
+                <span className="font-number text-[20px] font-bold tracking-tight text-(--rate-fg)">
                   {initialAmount}
                 </span>
                 {showTooltips && (
@@ -268,17 +275,17 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                     onClick={() => toggleTooltip('initial')}
                     onMouseEnter={() => setActiveTooltip('initial')}
                     onMouseLeave={() => setActiveTooltip(null)}
-                    className="inline-flex items-center justify-center text-(--rate-fg) hover:opacity-80 transition-opacity focus:outline-none rounded-full"
+                    className="font-number inline-flex items-center justify-center text-(--rate-fg) hover:opacity-80 transition-opacity focus:outline-none rounded-full"
                   >
                     <InfoIcon className="w-4.5 h-4.5" />
                   </button>
                 )}
               </div>
               <div className="mt-1 text-center">
-                <p className="text-[13px] font-bold leading-tight text-(--rate-fg)">
+                <p className="font-number text-[13px] font-bold leading-tight text-(--rate-fg)">
                   Initial
                 </p>
-                <p className="text-[13px] font-bold leading-tight text-(--rate-fg)">
+                <p className="font-number text-[13px] font-bold leading-tight text-(--rate-fg)">
                   Deposit Due
                 </p>
               </div>
@@ -286,10 +293,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
               {/* Tooltip Popover */}
               {activeTooltip === 'initial' && (
                 <div className="absolute right-0 top-full mt-2 z-30 w-56 p-3 bg-white rounded-md shadow-xl border border-gray-200 text-left">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-(--rate-fg)">
+                  <h4 className="font-number text-[11px] font-bold uppercase tracking-wider text-(--rate-fg)">
                     {initialDepositTooltip.title}
                   </h4>
-                  <p className="text-[10.5px] text-gray-700 leading-relaxed mt-1 font-serif">
+                  <p className="text-[10.5px] text-gray-700 leading-relaxed mt-1 font-body">
                     {initialDepositTooltip.description}
                   </p>
                 </div>
@@ -299,7 +306,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             {/* Remaining Deposit Due (Bottom) */}
             <div className="relative flex flex-col items-center text-center">
               <div className="flex items-center justify-center gap-1.5">
-                <span className="text-[20px] font-bold tracking-tight text-(--rate-accent)">
+                <span className="text-[20px] font-bold tracking-tight text-(--rate-emphasis)">
                   {remainingAmount}
                 </span>
                 {showTooltips && (
@@ -309,17 +316,17 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                     onClick={() => toggleTooltip('remaining')}
                     onMouseEnter={() => setActiveTooltip('remaining')}
                     onMouseLeave={() => setActiveTooltip(null)}
-                    className="inline-flex items-center justify-center text-(--rate-accent) hover:opacity-80 transition-opacity focus:outline-none rounded-full"
+                    className="inline-flex items-center justify-center text-(--rate-emphasis) hover:opacity-80 transition-opacity focus:outline-none rounded-full"
                   >
                     <InfoIcon className="w-4.5 h-4.5" />
                   </button>
                 )}
               </div>
               <div className="mt-1 text-center">
-                <p className="text-[13px] font-bold leading-tight text-(--rate-accent)">
+                <p className="font-number text-[13px] font-bold leading-tight text-(--rate-emphasis)">
                   Remaining
                 </p>
-                <p className="text-[13px] font-bold leading-tight text-(--rate-accent)">
+                <p className="font-number text-[13px] font-bold leading-tight text-(--rate-emphasis)">
                   Deposit Due
                 </p>
               </div>
@@ -327,10 +334,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
               {/* Tooltip Popover */}
               {activeTooltip === 'remaining' && (
                 <div className="absolute right-0 bottom-full mb-2 z-30 w-56 p-3 bg-white rounded-md shadow-xl border border-gray-200 text-left">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-(--rate-fg)">
+                  <h4 className="font-body text-[11px] font-bold uppercase tracking-wider text-(--rate-fg)">
                     {remainingBalanceTooltip.title}
                   </h4>
-                  <p className="text-[10.5px] text-gray-700 leading-relaxed mt-1 font-serif">
+                  <p className="text-[10.5px] text-gray-700 leading-relaxed mt-1 font-body">
                     {remainingBalanceTooltip.description}
                   </p>
                 </div>
@@ -346,18 +353,18 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             {/* Milestone 1: Due Today */}
             <div className="flex flex-col items-center">
               <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm">
-                <span className="text-[24px] font-bold leading-none tracking-tight text-(--rate-fg)">
+                <span className="font-number text-[24px] font-bold leading-none tracking-tight text-(--rate-fg)">
                   DUE
                 </span>
-                <span className="text-[14px] font-extrabold leading-tight tracking-wider uppercase mt-1 text-(--rate-fg)">
+                <span className="font-number text-[14px] font-extrabold leading-tight tracking-wider uppercase mt-1 text-(--rate-fg)">
                   TODAY
                 </span>
               </div>
               <div className="mt-3 text-center">
-                <p className="text-[14px] sm:text-[15px] font-bold leading-4.5 uppercase text-(--rate-fg)">
+                <p className="font-number text-[14px] sm:text-[15px] font-bold leading-4.5 uppercase text-(--rate-fg)">
                   AFTER
                 </p>
-                <p className="text-[14px] sm:text-[15px] font-bold leading-4.5 uppercase text-(--rate-fg)">
+                <p className="font-number text-[14px] sm:text-[15px] font-bold leading-4.5 uppercase text-(--rate-fg)">
                   CONFIRMING
                 </p>
               </div>
@@ -366,30 +373,30 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             {/* Milestone 2: Free Cancel */}
             <div className="flex flex-col items-center">
               <div className="relative">
-                <div className="absolute -left-7 -top-2 z-10 w-14 h-14 rounded-full bg-(--rate-fg) text-white flex flex-col items-center justify-center shadow">
-                  <span className="text-[24px] font-bold leading-none">
+                <div className="absolute -left-7 -top-2 z-10 w-14 h-14 rounded-full bg-(--rate-fg) text-(--badge-fg) flex flex-col items-center justify-center shadow">
+                  <span className="font-number text-[24px] font-bold leading-none">
                     {freeCancelDate?.daysPrior}
                   </span>
-                  <span className="text-[10px] font-black leading-none tracking-wider uppercase mt-0.5">
+                  <span className="font-number text-[10px] font-black leading-none tracking-wider uppercase mt-0.5">
                     DAYS
                   </span>
                 </div>
 
                 <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm pl-2">
-                  <span className="text-[34px] font-bold leading-none tracking-tight text-(--rate-fg)">
+                  <span className="font-number text-[34px] font-bold leading-none tracking-tight text-(--rate-fg)">
                     {freeCancelDate?.day}
                   </span>
-                  <span className="text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-fg)">
+                  <span className="font-number text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-fg)">
                     {freeCancelDate?.month}
                   </span>
                 </div>
               </div>
 
               <div className="mt-3 text-center">
-                <p className="text-[14px] sm:text-[15px] font-bold leading-4.5 uppercase text-(--rate-fg)">
+                <p className="font-number text-[14px] sm:text-[15px] font-bold leading-4.5 uppercase text-(--rate-fg)">
                   FREE CANCEL
                 </p>
-                <p className="text-[13px] sm:text-[14px] font-normal leading-4.5 text-(--rate-fg)">
+                <p className="font-number text-[13px] sm:text-[14px] font-normal leading-4.5 text-(--rate-fg)">
                   100% Refundable
                 </p>
               </div>
@@ -398,30 +405,30 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             {/* Milestone 3: Non-Refundable */}
             <div className="flex flex-col items-center">
               <div className="relative">
-                <div className="absolute -left-7 -top-2 z-10 w-14 h-14 rounded-full bg-(--rate-accent) text-white flex flex-col items-center justify-center shadow">
-                  <span className="text-[24px] font-bold leading-none">
+                <div className="absolute -left-7 -top-2 z-10 w-14 h-14 rounded-full font-number bg-(--rate-emphasis) text-(--badge-fg) flex flex-col items-center justify-center shadow">
+                  <span className="font-number text-[24px] font-bold leading-none">
                     {nonRefundableDate?.daysPrior}
                   </span>
-                  <span className="text-[10px] font-black leading-none tracking-wider uppercase mt-0.5">
+                  <span className="text-[10px] font-emphasis leading-none tracking-wider uppercase mt-0.5">
                     DAYS
                   </span>
                 </div>
 
                 <div className="w-23.5 h-22.5 bg-white rounded-md flex flex-col items-center justify-center shadow-sm pl-2">
-                  <span className="text-[34px] font-bold leading-none tracking-tight text-(--rate-accent)">
+                  <span className="font-number text-[34px] font-bold leading-none tracking-tight text-(--rate-emphasis)">
                     {nonRefundableDate?.day}
                   </span>
-                  <span className="text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-accent)">
+                  <span className="font-number text-[22px] font-extrabold leading-none uppercase mt-1 text-(--rate-emphasis)">
                     {nonRefundableDate?.month}
                   </span>
                 </div>
               </div>
 
               <div className="mt-3 text-center">
-                <p className="text-[14px] sm:text-[15px] font-bold leading-4.5 uppercase text-(--rate-accent)">
+                <p className="font-number text-[14px] sm:text-[15px] font-bold leading-4.5 uppercase text-(--rate-emphasis)">
                   NON-REFUNDABLE
                 </p>
-                <p className="text-[13px] sm:text-[14px] font-normal leading-4.5 text-(--rate-accent)">
+                <p className="font-number text-[13px] sm:text-[14px] font-normal leading-4.5 text-(--rate-emphasis)">
                   Stay Locked
                 </p>
               </div>
@@ -446,7 +453,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                     onClick={() => toggleTooltip('initial')}
                     onMouseEnter={() => setActiveTooltip('initial')}
                     onMouseLeave={() => setActiveTooltip(null)}
-                    className="inline-flex items-center justify-center text-(--rate-fg) hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-(--rate-fg)/30 rounded-full"
+                    className="inline-flex items-center justify-center text-(--rate-fg) hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-(--rate-fg)/30 rounded-full font-number"
                   >
                     <InfoIcon className="w-5 h-5" />
                   </button>
@@ -454,10 +461,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
               </div>
 
               <div className="mt-1.5 text-center">
-                <p className="text-[13px] font-bold leading-tight text-(--rate-fg)">
+                <p className="font-number text-[13px] font-bold leading-tight text-(--rate-fg)">
                   Initial
                 </p>
-                <p className="text-[13px] font-bold leading-tight text-(--rate-fg)">
+                <p className="font-number text-[13px] font-bold leading-tight text-(--rate-fg)">
                   Deposit Due
                 </p>
               </div>
@@ -469,10 +476,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                       <InfoIcon className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="text-[12px] font-bold uppercase tracking-wider text-(--rate-fg)">
+                      <h4 className="font-body text-[12px] font-bold uppercase tracking-wider text-(--rate-fg)">
                         {initialDepositTooltip.title}
                       </h4>
-                      <p className="text-[11px] text-gray-700 leading-relaxed mt-1 font-serif">
+                      <p className="font-body text-[11px] text-gray-700 leading-relaxed mt-1 ">
                         {initialDepositTooltip.description}
                       </p>
                     </div>
@@ -489,7 +496,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
             {/* Remaining Deposit Due */}
             <div className="relative flex flex-col items-center text-center min-w-32.5">
               <div className="flex items-center justify-center gap-1.5">
-                <span className="text-[20px] font-bold tracking-tight text-(--rate-accent)">
+                <span className="text-[20px] font-bold tracking-tight text-(--rate-emphasis)">
                   {remainingAmount}
                 </span>
                 {showTooltips && (
@@ -499,7 +506,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                     onClick={() => toggleTooltip('remaining')}
                     onMouseEnter={() => setActiveTooltip('remaining')}
                     onMouseLeave={() => setActiveTooltip(null)}
-                    className="inline-flex items-center justify-center text-(--rate-accent) hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-(--rate-accent)/30 rounded-full"
+                    className="inline-flex items-center justify-center text-(--rate-emphasis) hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-(--rate-accent)/30 rounded-full"
                   >
                     <InfoIcon className="w-5 h-5" />
                   </button>
@@ -507,10 +514,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
               </div>
 
               <div className="mt-1.5 text-center">
-                <p className="text-[13px] font-bold leading-tight text-(--rate-accent)">
+                <p className="font-number text-[13px] font-bold leading-tight text-(--rate-emphasis)">
                   Remaining
                 </p>
-                <p className="text-[13px] font-bold leading-tight text-(--rate-accent)">
+                <p className="font-number text-[13px] font-bold leading-tight text-(--rate-emphasis)">
                   Deposit Due
                 </p>
               </div>
@@ -522,10 +529,10 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
                       <InfoIcon className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="text-[12px] font-bold uppercase tracking-wider text-(--rate-fg)">
+                      <h4 className="font-body text-[12px] font-bold uppercase tracking-wider text-(--rate-fg)">
                         {remainingBalanceTooltip.title}
                       </h4>
-                      <p className="text-[11px] text-gray-700 leading-relaxed mt-1 font-serif">
+                      <p className="font-body text-[11px] text-gray-700 leading-relaxed mt-1">
                         {remainingBalanceTooltip.description}
                       </p>
                     </div>

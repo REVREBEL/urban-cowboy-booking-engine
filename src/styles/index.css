@@ -44,7 +44,7 @@
   --color-popover: var(--paper);
   --color-popover-foreground: var(--cowboy-umber);
 
-  --color-card: var(--paper);
+  --color-card: var(--paper-muted);
   --color-card-foreground: var(--card-foreground);
 
   --color-muted: var(--alpine-linen-muted);
@@ -73,7 +73,7 @@
   --color-sidebar-border: var(--paper);
   --color-sidebar-ring: var(--paper);
 
-  --card: var(--paper);
+  --card: var(--paper-muted);
   --card-foreground: var(--smoke);
   --shadow-card: 0 4px 20px -2px var(--paper-700);
 
@@ -107,10 +107,10 @@
   --error: var(--bandana-red);
   --error-foreground: var(--alpine-linen-muted);
 
-  --popover: var(--paper);
+  --popover: var(--color-paper-fade);
   --popover-foreground: var(--cowboy-umber);
 
-  --card: var(--paper);
+  --card: var(--color-paper-fade);
   --card-foreground: var(--card-foreground);
 
   --muted: var(--alpine-linen-muted);

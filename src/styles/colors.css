@@ -20,8 +20,8 @@
   --paper-900: oklch(83.0% 0.00 12.403);
   --paper-950: oklch(79.2% 0.00 12.678);
 
-  --paper-muted: var(--paper-50);
-  --paper-fade:  var(--paper-200);
+  --paper-muted: var(--paper-100);
+  --paper-fade:  var(--paper-300);
   --paper:  var(--paper-500);
 
   /* Alpine Linen*/
