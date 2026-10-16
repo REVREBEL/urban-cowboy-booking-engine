@@ -202,3 +202,6 @@
   .j-price-sort-toggle { transition: none !important; }
   .j-price-sort-toggle-label { animation: none; }
 }
+
+/* CMS amenity images also render outside the photo markers. Preserve aspect ratio. */
+.j-cms-icon { display: block; flex-shrink: 0; object-fit: contain; }
