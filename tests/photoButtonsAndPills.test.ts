@@ -71,6 +71,21 @@ test("Pill and PillButton use shared size utilities with independent vertical pa
   assert.doesNotMatch(source, /PILL_SIZES/);
 });
 
+test("control palette utilities use runtime foundation variables and filled controls have borders", () => {
+  const css = read("styles/utilities.css");
+  const colors = css.split("@utility control-color-").slice(1);
+  assert.equal(colors.length, 14, "All fourteen control palettes remain present");
+  for (const block of colors) {
+    const body = block.slice(block.indexOf("{") + 1, block.indexOf("}"));
+    for (const token of ["--bg", "--fg", "--border"]) {
+      assert.match(body, new RegExp(token + ": var\\(--(?!color-)[a-z0-9-]+\\);"), token + " must reference a runtime foundation variable");
+    }
+  }
+  const filled = css.split("@utility control-filled {")[1]?.split("}")[0] ?? "";
+  assert.match(filled, /border-width:\s*1px/);
+  assert.match(filled, /border-style:\s*solid/);
+});
+
 test("Pill stories cover all Button palette colors, variants and toggles", () => {
   const story = read("stories/components/ui/Pill.stories.tsx");
   const storybook = readFileSync(new URL("../.storybook/main.ts", import.meta.url), "utf8");
