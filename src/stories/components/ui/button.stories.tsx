@@ -19,8 +19,8 @@ const meta = {
     },
   },
   argTypes: {
-    colorScheme: { control: "select", options: colors },
-    color: { control: false, description: "Legacy alias; use colorScheme in Storybook to avoid conflicting color controls." },
+    colorScheme: { control: false, description: "Alternative API alias. The showcase uses the color control." },
+    color: { control: "select", options: colors },
     variant: { control: "inline-radio", options: styles },
     size: { control: "select", options: sizes },
     hasIcon: { control: "boolean" },
@@ -31,7 +31,7 @@ const meta = {
   },
   args: {
     children: "Book Your Stay",
-    colorScheme: "lake-forest",
+    color: "lake-forest",
     variant: "filled",
     size: "default",
     hasIcon: false,
@@ -133,8 +133,8 @@ export const States: Story = {
   ),
 };
 
-export const Outline: Story = { args: { variant: "outline", colorScheme: "copper" } };
-export const Transparent: Story = { args: { variant: "transparent", colorScheme: "lake-forest" } };
+export const Outline: Story = { args: { variant: "outline", color: "copper" } };
+export const Transparent: Story = { args: { variant: "transparent", color: "lake-forest" } };
 export const WithIcon: Story = { args: { hasIcon: true, children: "Explore Suites" } };
 export const Loading: Story = { args: { isLoading: true, children: "Checking Availability..." } };
 export const Disabled: Story = { args: { disabled: true, children: "Sold Out" } };
