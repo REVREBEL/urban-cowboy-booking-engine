@@ -350,76 +350,78 @@
 
 /* Shared Button and Pill presentation: one source for variant tones and sizes. */
 @utility control-color-dark {
-  --bg: var(--color-lake-forest);
-  --fg: var(--color-paper);
-  --border: var(--color-lake-forest-fade);
+  --bg: var(--lake-forest);
+  --fg: var(--paper);
+  --border: var(--lake-forest-fade);
 }
 @utility control-color-light {
-  --bg: var(--color-paper);
-  --fg: var(--color-lake-forest);
-  --border: var(--color-paper);
+  --bg: var(--paper);
+  --fg: var(--lake-forest);
+  --border: var(--paper);
 }
 @utility control-color-alpine-linen {
-  --bg: var(--color-alpine-linen);
-  --fg: var(--color-lake-forest);
-  --border: var(--color-alpine-linen-fade);
+  --bg: var(--alpine-linen);
+  --fg: var(--lake-forest);
+  --border: var(--alpine-linen-fade);
 }
 @utility control-color-cowboy-umber {
-  --bg: var(--color-cowboy-umber);
-  --fg: var(--color-alpine-linen);
-  --border: var(--color-cowboy-umber-fade);
+  --bg: var(--cowboy-umber);
+  --fg: var(--alpine-linen);
+  --border: var(--cowboy-umber-fade);
 }
 @utility control-color-smoke {
-  --bg: var(--color-smoke);
-  --fg: var(--color-paper);
-  --border: var(--color-smoke-fade);
+  --bg: var(--smoke);
+  --fg: var(--paper);
+  --border: var(--smoke-fade);
 }
 @utility control-color-lake-forest {
-  --bg: var(--color-lake-forest);
-  --fg: var(--color-alpine-linen);
-  --border: var(--color-lake-forest-fade);
+  --bg: var(--lake-forest);
+  --fg: var(--alpine-linen);
+  --border: var(--lake-forest-fade);
 }
 @utility control-color-copper {
-  --bg: var(--color-copper);
-  --fg: var(--color-alpine-linen-200);
-  --border: var(--color-copper-fade);
+  --bg: var(--copper);
+  --fg: var(--alpine-linen-200);
+  --border: var(--copper-fade);
 }
 @utility control-color-oxblood {
-  --bg: var(--color-oxblood);
-  --fg: var(--color-alpine-linen-200);
-  --border: var(--color-oxblood-fade);
+  --bg: var(--oxblood);
+  --fg: var(--alpine-linen-200);
+  --border: var(--oxblood-fade);
 }
 @utility control-color-oxidized-teal {
-  --bg: var(--color-oxidized-teal);
-  --fg: var(--color-paper);
-  --border: var(--color-oxidized-teal-fade);
+  --bg: var(--oxidized-teal);
+  --fg: var(--paper);
+  --border: var(--oxidized-teal-fade);
 }
 @utility control-color-bandana-red {
-  --bg: var(--color-bandana-red);
-  --fg: var(--color-paper);
-  --border: var(--color-bandana-red-fade);
+  --bg: var(--bandana-red);
+  --fg: var(--paper);
+  --border: var(--bandana-red-fade);
 }
 @utility control-color-whiskey-sour {
-  --bg: var(--color-whiskey-sour);
-  --fg: var(--color-cowboy-umber);
-  --border: var(--color-whiskey-sour-fade);
+  --bg: var(--whiskey-sour);
+  --fg: var(--cowboy-umber);
+  --border: var(--whiskey-sour-fade);
 }
 @utility control-color-lodge-yellow {
-  --bg: var(--color-lodge-yellow);
-  --fg: var(--color-lake-forest);
-  --border: var(--color-lodge-yellow-fade);
+  --bg: var(--lodge-yellow);
+  --fg: var(--lake-forest);
+  --border: var(--lodge-yellow-fade);
 }
 @utility control-color-nude-ember {
-  --bg: var(--color-nude-ember);
-  --fg: var(--color-lake-forest);
-  --border: var(--color-nude-ember-fade);
+  --bg: var(--nude-ember);
+  --fg: var(--lake-forest);
+  --border: var(--nude-ember-fade);
 }
 @utility control-color-paper {
-  --bg: var(--color-paper);
-  --fg: var(--color-smoke);
-  --border: var(--color-smoke-fade);
+  --bg: var(--paper);
+  --fg: var(--smoke);
+  --border: var(--smoke-fade);
 }
 @utility control-filled {
+  border-width: 1px;
+  border-style: solid;
   background-color: var(--bg);
   color: var(--fg);
   border-color: var(--border);
