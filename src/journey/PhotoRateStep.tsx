@@ -300,7 +300,7 @@ export function PhotoRateStep() {
             role="dialog"
             aria-modal="true"
             aria-label={`${detailsConfig?.headline || detailsRate.name} rate details`}
-            className="flex flex-col overflow-hidden max-h-[calc(100dvh-2rem)] max-w-262.5 sm:max-h-[calc(100dvh-4rem)] w-full rounded-[28px] shadow-2xl"
+            className="flex flex-col overflow-hidden max-h-[calc(100dvh-2rem)] max-w-262.5 sm:max-h-[calc(100dvh-4rem)] w-full rounded-panel-lg shadow-2xl"
           >
             <RateOfferSidePanel
               variant="default"

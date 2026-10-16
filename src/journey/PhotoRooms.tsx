@@ -8,7 +8,7 @@ import { SlidersHorizontal, X } from "lucide-react";
 import { RoomPhotoTour } from "./RoomPhotoTour";
 import { PhotoTourArrow } from "./PhotoTourArrow";
 import { Button } from "../components/ui/Button";
-import { Pill, PillButton } from "@/components/ui/Pill";
+import { Pill, PillButton } from "@/components/ui/pill";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";
 import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
