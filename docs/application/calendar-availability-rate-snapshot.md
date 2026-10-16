@@ -2,7 +2,7 @@
 
 ## The Brief
 
-The booking calendar needs to show useful rate, sold-out, and minimum-stay guidance immediately, but the Mews Booking Engine API does not provide a single interval endpoint that returns a complete daily calendar with all rate and restriction behavior.
+The booking calendar needs to show useful rate, sold-out, and minimum-stay guidance immediately. Mews `services/getAvailability` provides an interval of category-level availability and `ApplicableRestrictions`, but not the exact public room/rate pricing needed for a complete calendar. That pricing still comes from `hotels/getAvailability` for a particular stay.
 
 The original implementation solved that by calling `hotels/getAvailability` once for every arrival date. When a one-night search returned no price and did not explain the restriction, it fired both a two-night and a three-night request in parallel to infer whether the date had a minimum length of stay.
 
@@ -76,6 +76,30 @@ This prevents the cache from fragmenting into separate copies for every possible
 Changing the guest selector from two adults to two adults plus one child therefore does not force the calendar to rebuild.
 
 The exact guest mix is still sent to the normal live availability request after Search.
+
+---
+
+## Mews Service Restriction Advisories (v5)
+
+Urban Cowboy's production `services/getAvailability` response verified that Mews can expose **category-level availability** and **ApplicableRestrictions** for a date interval. The service is discovered server-side using `configuration/get`: match the configuration's `ServiceId` to an active `Services[].Id` with the same `EnterpriseId`. Do **not** hardcode a sample service ID or use the Connector API's unrelated service-discovery credentials. The API uses the existing Worker `MEWS_CLIENT` secret.
+
+The Worker reads service restrictions separately from pricing, in bounded 14-day windows. `src/types/calendar-restrictions.ts` defines the public advisory shape. The normalizer in `worker/mews/service-restrictions.ts` preserves restriction **type** and **category/rate scope**. It understands:
+
+| Condition type | What it restricts | Calendar interpretation |
+| --- | --- | --- |
+| `ClosedToArrival` | A check-in during the relevant interval/weekdays | Advisory for arrival dates |
+| `ClosedToDeparture` | A check-out during the relevant interval/weekdays | Advisory for checkout dates |
+| `ClosedToStay` | Nights intersecting the restricted interval/weekdays | Advisory for stay-through dates |
+
+Dates are evaluated in the property's `America/New_York` calendar timezone, not by naïvely interpreting UTC dates as hotel dates. The current deployment is a single Catskills hotel.
+
+A Mews restriction's `Exceptions.MinLength` or `Exceptions.MaxLength` is **not a positive restriction that automatically closes the hotel**. It can exempt a booking from a closure when the conditions are satisfied. For example, a category-scoped Friday/Saturday `ClosedToStay` with `MinLength: "P0M2DT0H0M0S"` expresses a two-day minimum-length exception to that closure. The actual outcome still depends on the specific room category, rate, stay dates and any other exceptions. Month-based lengths cannot safely be reduced to a fixed number of nights and are left uninterpreted.
+
+The `CalendarDay.restrictions` field includes `categoryId`, `exactRateId`, `baseRateId`, `rateGroupId`, closure `type`, and parseable length exceptions. An absent category or rate is recorded as `null` rather than pretending it applies only to the first category. Unknown rule types are not mapped. These advisories **do not** set the generic `available` flag, `minNights`, or `invalidStayLengths`, because they have different scopes and semantics.
+
+The date picker can indicate that arrival, departure, or stay restrictions may apply to **some** categories/rates. A cached date always remains selectable. The authoritative `hotels/getAvailability` request after **Search** verifies the guest's actual stay, occupancy, room and rate. A failed service-restriction fetch does not erase usable price guidance or transform an unknown restriction state into "no restrictions."
+
+This change bumps the stored calendar snapshot and browser cache to `v5`; prior v4 snapshots lack these advisories. The service availability counts are **not** substituted for public pricing or taken as proof that particular rates are bookable.
 
 ---
 
