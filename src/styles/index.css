@@ -1,4 +1,5 @@
-/* Tailwind CSS v4 entrypoint. One import includes theme, preflight, and utilities. */
+/* src/styles/index.css */
+
 @import "tailwindcss";
 @import "./theme.css";
 @import "./colors.css";
@@ -32,7 +33,7 @@
   --color-secondary-foreground: var(--alpine-linen);
 
   --color-accent: var(--lake-forest-fade);
-  --color-accent-foreground: var(--paper);
+  --color-accent-foreground: var(--alpine-linen-fade);
 
   --color-emphasis: var(--copper);
   --color-emphasis-foreground: var(--alpine-linen);
@@ -98,7 +99,7 @@
   --secondary-foreground: var(--alpine-linen);
 
   --accent: var(--lake-forest-fade);
-  --accent-foreground: var(--paper);
+  --accent-foreground: var(--alpine-linen-fade);
 
   --emphasis: var(--copper);
   --emphasis-foreground: var(--alpine-linen);
