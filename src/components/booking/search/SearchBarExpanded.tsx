@@ -60,18 +60,18 @@ export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, Expanded
         onClick={onClick}
         aria-label="Search accommodations"
         aria-busy={isLoading}
-        className={`grid h-12 w-12 shrink-0 place-items-center bg-lake-forest text-center font-button text-button-primary-foreground transition md:flex md:h-14 md:w-29 md:items-center md:justify-center md:gap-2 ${rounded} ${
+        className={`grid h-12 w-12 shrink-0 place-items-center bg-button-primary-foreground text-center font-button text-button-primary transition md:flex md:h-14 md:w-29 md:items-center md:justify-center md:gap-2 ${rounded} ${
           isInteractive
             ? "cursor-pointer hover:bg-smoke active:scale-[0.98]"
             : "cursor-not-allowed opacity-60"
-        } focus:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${className}`}
+        } focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${className}`}
         {...props}
       >
         {isLoading ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-paper/35 border-t-[#FAF9F9]" aria-hidden="true" />
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-paper/35 border-t-primary" aria-hidden="true" />
         ) : (
           <>
-            <span className="hidden h-5 items-center justify-center text-center font-button text-[14px] font-semibold leading-[20px] md:inline-flex">
+            <span className="hidden h-5 items-center justify-center text-center font-button text-[14px] font-semibold leading-5 md:inline-flex">
               {children || "Search"}
             </span>
             <span
@@ -113,12 +113,12 @@ function SearchSection({ label, value, section, activeSection, onClick, classNam
       type="button"
       aria-expanded={active}
       onClick={() => onClick(section)}
-      className={`group relative flex min-h-16 min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-foreground transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent md:min-h-14.5 ${className}`}
+      className={`group relative flex min-h-16 min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-primary-foregroundforeground transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent md:min-h-14.5 ${className}`}
     >
-      <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-foreground/60">
+      <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-primary-foreground/60">
         {label}
       </span>
-      <span className="mt-0.5 block max-w-full truncate font-body text-[14px] font-normal leading-5 normal-case text-foreground">
+      <span className="mt-0.5 block max-w-full truncate font-body text-[14px] font-normal leading-5 normal-case text-primary-foreground">
         {value}
       </span>
       <span
@@ -196,18 +196,18 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
       <div
         role="search"
         aria-label="Expanded accommodation search bar"
-        className={`grid w-full grid-cols-1 overflow-hidden border-2 border-input-border bg-input-bg p-2 text-foreground shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${rounded} ${showSearchButton ? "md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)_auto]" : "md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)]"} md:items-center md:overflow-visible md:p-1.5 md:pl-4`}
+        className={`grid w-full grid-cols-1 overflow-hidden border-2 border-input-foreground bg-input p-2 text-input-foreground shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${rounded} ${showSearchButton ? "md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)_auto]" : "md:grid-cols-[minmax(150px,1fr)_minmax(280px,1.65fr)_minmax(125px,.72fr)_minmax(125px,.72fr)]"} md:items-center md:overflow-visible md:p-1.5 md:pl-4`}
       >
-        <div className="border-b border-input-border/10 md:border-b-0 md:border-r">
+        <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
           <SearchSection label="Property" value={<span>{properCase(currentValues.property)}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
-        <div className="border-b border-input-border/10 md:border-b-0 md:border-r">
+        <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
           <SearchSection label="When" value={<span>{dateValue}</span>} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
-        <div className="border-b border-input-border/10 md:border-b-0 md:border-r">
+        <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
           <SearchSection label="Guests" value={<span>{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
-        <div className="border-b border-input-border/10 md:border-b-0 md:border-r">
+        <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
           <SearchSection label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         {showSearchButton && (
