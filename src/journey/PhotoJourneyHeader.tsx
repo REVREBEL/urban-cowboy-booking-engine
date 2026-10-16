@@ -60,7 +60,7 @@ export function PhotoJourneyHeader() {
                 <Button type="button"
                   disabled={i > index}
                   variant="transparent" colorScheme="paper" size="xsmall"
-                  style={{padding: 0, fontSize: "11px", fontWeight: i === index ? 700 : 400, opacity: i === index ? 1 : i < index ? 0.75 : 0.35}}
+                  style={{padding: 0, fontSize: "11px", fontWeight: i === index ? 700 : 400, opacity: i === index ? 1 : i < index ? 0.75 : 0.55}}
                   onClick={() => i < index && booking.goTo(stage.target)}
                   aria-current={i === index ? "step" : undefined}
                   className={`${label} ${i === index ? "text-paper" : i < index ? "text-paper/70 hover:text-paper" : "text-paper/35"}`}>

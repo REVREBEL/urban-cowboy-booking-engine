@@ -73,8 +73,11 @@ export interface PolicyDisplayProps {
     title: string;
     description: string;
   };
+  cardBackgroundColor?: string;
+  badgeTextColor?: string;
   textColor?: string;
   accentColor?: string;
+  emphasisColor?: string;
   size?: "default" | "compact";
   className?: string;
 }
@@ -99,12 +102,12 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
     description:
       "This is the remaining amount due for your stay. It will be charged automatically to your payment method on the applicable due date.",
   },
-  
+
   cardBackgroundColor = "var(--card)",
   badgeTextColor = "var(--primary)",
   textColor = "var(--primary-foreground)",
   accentColor = "var(--accent)",
-  emphasisColor="var(--emphasis",
+  emphasisColor = "var(--emphasis",
   size = "default",
   className = "",
 }) => {
@@ -121,7 +124,7 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
         '--badge-fg': badgeTextColor,
         '--rate-fg': textColor,
         '--rate-accent': accentColor,
-        '--rate-emphasis':  emphasisColor,
+        '--rate-emphasis': emphasisColor,
       }) as React.CSSProperties,
     [textColor, accentColor]
   );
@@ -154,9 +157,8 @@ export const PolicyDisplay: React.FC<PolicyDisplayProps> = ({
     <div
       ref={containerRef}
       style={style}
-      className={`relative w-full ${
-        isVertical ? 'max-w-90' : 'max-w-151.25'
-      } rounded-lg bg-muted p-6 sm:p-8 font-sans select-none text-(--rate-fg) shadow-sm ${className}`}
+      className={`relative w-full ${isVertical ? 'max-w-90' : 'max-w-151.25'
+        } rounded-lg bg-muted p-6 sm:p-8 font-sans select-none text-(--rate-fg) shadow-sm ${className}`}
     >
       {/* Policy Heading */}
       <h2 className="font-label text-left text-[18px] font-bold tracking-wider uppercase mb-8 text-(--rate-fg)">
