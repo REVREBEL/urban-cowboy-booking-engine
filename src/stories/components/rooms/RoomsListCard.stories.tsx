@@ -3,19 +3,7 @@ import { RoomsListCard } from '@/components/rooms/RoomsListCard';
 import type { ShapedRoom, ShapedRate } from '@/types/mews';
 import type { RoomMerchandising } from '@/types/merchandising';
 
-import {
-  ROOM_IMAGE_ASSETS,
-  ROOM_IMAGE_PLACEHOLDERS,
-  getRoomImagesByRoomId,
-  getBuildingPlaceholderHero
-} from '@/data/roomImagePlaceholders';
-
-export {
-  ROOM_IMAGE_ASSETS,
-  ROOM_IMAGE_PLACEHOLDERS,
-  getRoomImagesByRoomId,
-  getBuildingPlaceholderHero
-};
+import { ROOM_IMAGE_ASSETS } from '@/data/roomImagePlaceholders';
 
 
 const mockRate: ShapedRate = {
