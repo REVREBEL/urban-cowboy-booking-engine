@@ -5,18 +5,7 @@ import { mewsJson, propertyDateUtc, type Env, type Property } from "./_lib.ts";
  * Restrictions are scoped to a category/rate, not necessarily the whole hotel.
  * They never prevent a guest from selecting dates or replace a live search.
  */
-export type RestrictionType = "ClosedToArrival" | "ClosedToDeparture" | "ClosedToStay";
-
-export interface RestrictionAdvisory {
-  type: RestrictionType;
-  categoryId: string | null;
-  exactRateId: string | null;
-  baseRateId: string | null;
-  rateGroupId: string | null;
-  exceptionMinNights?: number;
-  exceptionMaxNights?: number;
-  hasOtherExceptions: boolean;
-}
+import type { RestrictionAdvisory, RestrictionType } from "../../src/types/calendar-restrictions.ts";
 
 interface MewsRestriction {
   Conditions?: {
