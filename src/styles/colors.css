@@ -219,6 +219,7 @@
   --color-*: initial;
 
   --color-mist: var(--mist-500);
+
  
    /* paper */
   --color-paper-muted: var(--paper-600);

@@ -17,4 +17,3 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 export const Hover: Story = { args: { state: "Hover" } };
 export const Active: Story = { args: { state: "Active" } };
-

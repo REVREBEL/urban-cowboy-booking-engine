@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import type { TourIcon } from "@/journey/tour";
 import { FocusAmenityCount } from "./FocusAmenityCount";
 import { FocusAmenityAction } from "./FocusAmenityAction";
-import { AmenityIcons } from "./AmenityIcons";
+import { CmsAmenityIcon } from "./CmsAmenityIcon";
 
 /** Single accessible hotspot. Visual pieces follow the Figma FocusAmenity system. */
 export interface FocusAmenityProps {
@@ -25,7 +25,7 @@ export function FocusAmenity({ count, icon, iconPath, title, active, onSelect, c
         <FocusAmenityCount count={count} state={state}/>
         <FocusAmenityAction state={state}/>
       </span>
-      <AmenityIcons icon={icon} iconPath={iconPath}/>
+      <CmsAmenityIcon fallback={icon} iconPath={iconPath}/>
     </Button>
   );
 }

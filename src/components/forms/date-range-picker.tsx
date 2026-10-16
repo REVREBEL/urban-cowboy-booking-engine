@@ -8,17 +8,52 @@ const WEEKDAYS_FR = ["lun", "mar", "mer", "jeu", "ven", "sam", "dim"];
 const WEEKDAYS_EN = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 const pad = (n: number) => String(n).padStart(2, "0");
 const iso = (y: number, m: number, d: number) => `${y}-${pad(m + 1)}-${pad(d)}`;
-const monthLabel = (y: number, m: number) =>
-  new Intl.DateTimeFormat(LOCALE[getLang()], { month: "long", year: "numeric", timeZone: "UTC" }).format(
-    new Date(Date.UTC(y, m, 1)),
-  );
 
-function monthCells(y: number, m: number): (string | null)[] {
-  const startWeekday = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7;
-  const count = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
-  const cells: (string | null)[] = Array(startWeekday).fill(null);
-  for (let d = 1; d <= count; d++) cells.push(iso(y, m, d));
-  return cells;
+// Module-level caches for expensive Intl instances, formatted month labels, and month cells
+// to avoid GC pressure and repeated allocations during high-frequency hover re-renders.
+const monthFmtCache = new Map<string, Intl.DateTimeFormat>();
+const monthLabelCache = new Map<string, string>();
+
+function monthLabel(y: number, m: number): string {
+  const lang = getLang();
+  const cacheKey = `${lang}-${y}-${m}`;
+  let cachedLabel = monthLabelCache.get(cacheKey);
+  if (!cachedLabel) {
+    let fmt = monthFmtCache.get(lang);
+    if (!fmt) {
+      fmt = new Intl.DateTimeFormat(LOCALE[lang] || "en-US", {
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      });
+      monthFmtCache.set(lang, fmt);
+    }
+    cachedLabel = fmt.format(new Date(Date.UTC(y, m, 1)));
+    monthLabelCache.set(cacheKey, cachedLabel);
+  }
+  return cachedLabel;
+}
+
+export interface DatePickerMonthCell {
+  date: string;
+  dayNum: number;
+}
+
+const monthCellsCache = new Map<string, Array<DatePickerMonthCell | null>>();
+
+function monthCells(y: number, m: number): Array<DatePickerMonthCell | null> {
+  const cacheKey = `${y}-${m}`;
+  let cached = monthCellsCache.get(cacheKey);
+  if (!cached) {
+    const startWeekday = (new Date(Date.UTC(y, m, 1)).getUTCDay() + 6) % 7;
+    const count = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    cached = Array<DatePickerMonthCell | null>(startWeekday).fill(null);
+    for (let d = 1; d <= count; d++) {
+      cached.push({ date: iso(y, m, d), dayNum: d });
+    }
+    monthCellsCache.set(cacheKey, cached);
+  }
+  return cached;
 }
 
 function dateParts(day: string) {
@@ -254,8 +289,9 @@ export function DateRangePicker({
                       {w.charAt(0)}
                     </span>
                   ))}
-                  {monthCells(mv.y, mv.m).map((day, i) => {
-                    if (!day) return <span key={`b${i}`} role="gridcell" className="h-10" />;
+                  {monthCells(mv.y, mv.m).map((cell, i) => {
+                    if (!cell) return <span key={`b${i}`} role="gridcell" className="h-10" />;
+                    const { date: day, dayNum } = cell;
                     const disabled = day < minDate;
                     const isStart = !!checkIn && day === checkIn;
                     const isEnd = !!previewEnd && day === previewEnd && day !== checkIn;
@@ -301,7 +337,7 @@ export function DateRangePicker({
                                 : "text-(--foreground) hover:bg-(--foreground)/10"
                           }`}
                         >
-                          {parseInt(day.slice(8), 10)}
+                          {dayNum}
                         </button>
                       </div>
                     );
