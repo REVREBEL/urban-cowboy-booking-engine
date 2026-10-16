@@ -1,5 +1,3 @@
-
-
 :root {
   --button-primary: oklch(98.2% 0.00 11.251);
   --button-primary-foreground: oklch(27.726% 0.05667 152.427);
@@ -32,6 +30,214 @@
 }
 
 
+@utility pill-dark { 
+  background-color: var(--lake-forest);
+  color: var(--paper);
+  border-color: var(--lake-forest);
+
+  &:hover {
+    border-color: var(--lake-forest-fade);
+    box-shadow: 0 0 0 3px var(--lake-forest-muted);
+  }
+  
+  &:focus {
+    color: var(--lake-forest-fade);
+  }
+}
+
+ @utility light: { 
+  background-color: var(--paper);
+  color: var(--lake-forest);
+  border-color: var(--paper);
+
+  &:hover {
+    border-color: var(--paper-700);
+    box-shadow: 0 0 0 3px var(--paper-600);
+  }
+  
+  &:focus {
+    color: var(--paper-600);
+  }
+}
+
+@utility "alpine-linen": { 
+  background-color: var(--alpine-linen);
+  color: var(--lake-forest);
+  border-color: var(--alpine-linen);
+
+  &:hover {
+    border-color: var(--alpine-linen-fade);
+    box-shadow: 0 0 0 3px var(--alpine-linen-muted);
+  }
+  
+  &:focus {
+    color: var(--alpine-linen-muted);
+  }
+}
+
+ @utility "cowboy-umber": { 
+  background-color: var(--cowboy-umber);
+  color: var(--alpine-linen-muted);
+  border-color: var(--cowboy-umber);
+
+  &:hover {
+    border-color: var(--cowboy-umber-fade);
+    box-shadow: 0 0 0 3px var(--cowboy-umber-muted);
+  }
+  
+  &:focus {
+    color: var(--cowboy-umber-muted);
+  }
+}
+
+ @utility smoke: { 
+  background-color: var(--smoke);
+  color: var(--alpine-linen-muted);
+  border-color: var(--smoke);
+
+  &:hover {
+    border-color: var(--smoke-fade);
+    box-shadow: 0 0 0 3px var(--smoke-muted);
+  }
+  
+  &:focus {
+    color: var(--smoke-muted);
+  }
+}
+
+@utility  "lake-forest": { 
+  background-color: var(--lake-forest);
+  color: var(--paper);
+  border-color: var(--lake-forest);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--lake-forest) 70%, white 30%);
+    box-shadow: 0 0 0 3px var(--lake-forest-muted);
+  }
+  
+  &:focus {
+    color: var(--lake-forest-muted);
+}
+
+ @utility copper:
+  background-color: var(--copper);
+  color: var(--alpine-linen-muted);
+  border-color: var(--copper);
+
+  &:hover {
+    border-color: var(--copper-fade);
+    box-shadow: 0 0 0 3px var(--copper-muted);
+  }
+  
+  &:focus {
+    color: var(--copper-muted);
+  }
+}
+
+ @utility oxblood: {
+  background-color: var(--oxblood);
+  color:var(--alpine-linen);
+  border-color: var(--oxblood);
+
+  &:hover {
+    border-color: var(--oxblood-fade);
+    box-shadow: 0 0 0 3px var(--oxblood-muted);
+  }
+  
+  &:focus {
+    color: var(--oxblood-muted);
+  }
+}
+ @utility "oxidized-teal": { 
+   background-color: var(--oxidized-teal);
+  color: var(--alpine-linen-muted);
+  border-color: var(--oxidized-teal);
+
+  &:hover {
+    border-color: var(--oxidized-teal-fade);
+    box-shadow: 0 0 0 3px var(--oxidized-teal-muted);
+  }
+  
+  &:focus {
+    color: var(--oxidized-teal-muted);
+  }
+}
+
+  @utility "bandana-red": { 
+  background-color: var(--bandana-red);
+  color: var(--alpine-linen-muted);
+  border-color: var(--bandana-red);
+
+  &:hover {
+    border-color: var(--bandana-red-fade);
+    box-shadow: 0 0 0 3px var(--bandana-red-muted);
+  }
+  
+  &:focus {
+    color: var(--bandana-red-muted);
+  }
+}
+
+ @utility "whiskey-sour": { 
+  background-color: var(--whiskey-sour);
+  color: var(--cowboy-umber-700);
+  border-color: var(--whiskey-sour);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--whiskey-sour-200) 70%, white 30%);
+    box-shadow: 0 0 0 3px var(--whiskey-sour-50);
+  }
+  
+  &:focus {
+    color: var(--whiskey-sour-50);
+  }
+}
+
+  @utility "lodge-yellow": { 
+  background-color: var(--lodge-yellow);
+  color: var(--cowboy-umber-700);
+  border-color: var(--lodge-yellow);
+
+  &:hover {
+    border-color: var(--lodge-yellow-200);
+    box-shadow: 0 0 0 3px var(--lodge-yellow-50);
+  }
+  
+  &:focus {
+    color: var(--lodge-yellow-50);
+  }
+}
+
+ @utility "nude-ember": { 
+  background-color: var(--nude-ember);
+  color: var(--lake-forest-300);
+  border-color: var(--nude-ember);
+
+  &:hover {
+    border-color: var(--nude-ember-fade);
+    box-shadow: 0 0 0 3px var(--nude-ember-muted);
+  }
+  
+  &:focus {
+    color: var(--nude-ember-muted);
+  }
+}
+
+ @utility paper: { 
+  background-color: var(--paper);
+  color: var(--lake-forest-300);
+  border-color: var(--paper);
+
+  &:hover {
+    border-color: var(--paper-700);
+    box-shadow: 0 0 0 3px var(--paper-600);
+  }
+  
+  &:focus {
+    color: var(--paper-600);
+  }
+}
+
 
 @utility btn {
   font-family: var(--font-button);
@@ -46,7 +252,6 @@
   padding-bottom: 0.75rem;
   padding-inline: 0.85rem;
 }
-
 
 @utility btn-xs {
   font-family: var(--font-button);
@@ -117,10 +322,6 @@
   padding-bottom: 0.75rem;
   padding-inline: 1.05rem;
 }
-
-
-
-
 
 @utility checkout-field {
   width: 100%;
