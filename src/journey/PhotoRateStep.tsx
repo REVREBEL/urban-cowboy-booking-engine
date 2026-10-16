@@ -208,7 +208,7 @@ export function PhotoRateStep() {
                 </p>
               )}
 
-              <div className="mt-auto pt-4 tabular-nums border-t border-ash">
+              <div className="mt-auto pt-4 tabular-nums border-t border-alpine-linen">
                 {rate.perNightGross != null && (
                   <div className="flex justify-between text-sm gap-2">
                     <span>{money(rate.perNightGross, rate.currency)} × {booking.nightsCount} nights</span>
@@ -229,7 +229,7 @@ export function PhotoRateStep() {
                 </div>
               </div>
 
-              <p className="mt-4 px-3 py-2 text-sm text-foreground/85 bg-ash/75 rounded-lg">
+              <p className="mt-4 px-3 py-2 text-sm text-foreground/85 bg-alpine-linen/75 rounded-lg">
                 <strong>Cancellation:</strong> {policy}
               </p>
 

@@ -270,7 +270,7 @@ const ProgressSlashSeparator: React.FC<{ className?: string }> = ({
       fontFamily: "var(--font-body)",
       fontSize: '11px',
       lineHeight: '16px',
-      color: 'var(--color-ash)',
+      color: 'var(--color-alpine-linen)',
     }}
   >
     /

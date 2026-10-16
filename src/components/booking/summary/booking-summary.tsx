@@ -108,7 +108,7 @@ export function BookingSummary() {
         </div>
 
         {(checkIn || party) ? (
-          <div className="grid gap-2 pt-1 text-xs text-ash-900 sm:grid-cols-2 sm:text-sm">
+          <div className="grid gap-2 pt-1 text-xs text-alpine-linen-900 sm:grid-cols-2 sm:text-sm">
             {checkIn && checkOut ? (
               <div className="flex items-start gap-2">
                 <Calendar className="mt-0.5 h-4 w-4 shrink-0 text-copper" aria-hidden="true" />
@@ -239,7 +239,7 @@ function Line({
         compact ? "text-xs sm:text-sm" : "",
       ].join(" ")}
     >
-      <span className="min-w-0 text-ash-900">{label}</span>
+      <span className="min-w-0 text-alpine-linen-900">{label}</span>
       <span className="shrink-0 font-number font-bold text-smoke">{value}</span>
     </div>
   );

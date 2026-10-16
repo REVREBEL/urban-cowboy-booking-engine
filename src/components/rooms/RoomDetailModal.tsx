@@ -363,7 +363,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
         {/* Modal Sticky Footer CTA */}
         <div className="p-5 sm:p-6 bg-alpine-linen border-t-2 border-cowboy-umber/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-xs text-ash-900 font-sans">
+          <div className="text-xs text-alpine-linen-900 font-sans">
             <span>Stay dates: </span>
             <span className="font-bold text-cowboy-umber">{criteria.checkIn} to {criteria.checkOut}</span> ({criteria.nights} nights)
           </div>

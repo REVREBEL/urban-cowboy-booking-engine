@@ -50,7 +50,7 @@ export function CheckoutStep({
               {title}
             </h1>
             {subtitle ? (
-              <div className="mt-1.5 font-body text-sm leading-relaxed text-ash-900 sm:text-base 2xl:text-lg">
+              <div className="mt-1.5 font-body text-sm leading-relaxed text-alpine-linen-900 sm:text-base 2xl:text-lg">
                 {subtitle}
               </div>
             ) : null}

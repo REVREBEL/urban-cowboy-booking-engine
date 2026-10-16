@@ -128,7 +128,7 @@ export function RoomMatcherPage({
                 Tell Us About the
                 <br className="hidden sm:block" /> Traveler(s) for This Trip
               </h1>
-              <p className="mx-auto max-w-2xl font-sans text-sm leading-6 text-ash-900 sm:text-base">
+              <p className="mx-auto max-w-2xl font-sans text-sm leading-6 text-alpine-linen-900 sm:text-base">
                 Whether you&apos;re sneaking away for quiet solitude, celebrating romance, or gathering friends,
                 we&apos;ll guide you to the suites built for your company.
               </p>
@@ -173,7 +173,7 @@ export function RoomMatcherPage({
                       </span>
                     </div>
 
-                    <span className="mt-3 block font-sans text-xs leading-relaxed text-ash-900">
+                    <span className="mt-3 block font-sans text-xs leading-relaxed text-alpine-linen-900">
                       {item.subtitle}
                     </span>
                   </button>
@@ -203,7 +203,7 @@ export function RoomMatcherPage({
                     <h2 className="font-label text-base font-bold uppercase tracking-wide text-smoke sm:text-lg">
                       Traveling With Your Pup?
                     </h2>
-                    <p className="mt-1 max-w-2xl font-sans text-xs leading-5 text-ash-900 sm:text-sm">
+                    <p className="mt-1 max-w-2xl font-sans text-xs leading-5 text-alpine-linen-900 sm:text-sm">
                       We&apos;ll keep your matches strictly to suites where four-legged adventurers are welcome to join.
                     </p>
                   </div>
@@ -285,7 +285,7 @@ export function RoomMatcherPage({
               <h1 className="font-heading text-3xl font-light uppercase leading-tight tracking-wide text-smoke sm:text-5xl">
                 The Focus for This Escape Is:
               </h1>
-              <p className="font-sans text-sm text-ash-900 sm:text-base">
+              <p className="font-sans text-sm text-alpine-linen-900 sm:text-base">
                 Choose up to two, and we&apos;ll point you toward the rooms that fit your kind of escape.
               </p>
               <div className="inline-flex items-center rounded-full bg-alpine-linen/70 px-3.5 py-1 font-mono text-xs text-cowboy-umber">

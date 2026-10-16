@@ -158,7 +158,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
               </li>
             ))}
           </ol>
-          <p className="mt-4 border-t border-ash pt-3 text-xs text-foreground/70">Only bookable rooms that fit the verified guest and dog policies appear above.</p>
+          <p className="mt-4 border-t border-alpine-linen pt-3 text-xs text-foreground/70">Only bookable rooms that fit the verified guest and dog policies appear above.</p>
         </aside>
       </div>
     </section>

@@ -179,7 +179,7 @@ function SectionHeader({
         className="
           max-w-3xl
           mt-3
-          text-sm text-ash-900 leading-6
+          text-sm text--alpine-linen-900 leading-6
         "
       >{body}</p>
     </div>
@@ -248,7 +248,7 @@ function Preview({
               className="
                 max-w-2xl
                 mt-1
-                text-xs text-ash-900 leading-5
+                text-xs text--alpine-linen-900 leading-5
               "
             >{description}</p>
           ) : null}
@@ -336,7 +336,7 @@ function Toolbar({
           >Component Library</p>
           <p
             className="
-              text-[11px] text-ash-900
+              text-[11px] text--alpine-linen-900
             "
           >Canonical components only · development surface</p>
         </div>
@@ -741,8 +741,8 @@ const demoModalRoom: RoomType = {
   soakType: "clawfoot-window",
   soakHighlight: "Freestanding copper clawfoot tub in front of a forest picture window",
   images: [
-    "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200",
-    "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200",
+    "https://images.unspl-alpine-linen.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200",
+    "https://images.unspl-alpine-linen.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200",
   ],
   features: ["Clawfoot Soaking Tub", "Radiant Heated Floors", "Cast Iron Wood Stove", "Letter Writing Desk"],
   tags: ["indoor-soak", "picture-window", "21-plus"],
@@ -1256,7 +1256,7 @@ function InventorySection() {
                 >{group}</h3>
                 <span
                   className="
-                    text-xs text-ash-900
+                    text-xs text--alpine-linen-900
                   "
                 >{paths.length}</span>
               </div>
@@ -1287,7 +1287,7 @@ function InventorySection() {
                       "
                     >{path.replace("src/", "")}</code>
                     <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider ${renderedPaths.has(path) ? "bg-lake-forest text-white" : "bg-alpine-linen text-ash-900"}`}
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[8px] font-semibold uppercase tracking-wider ${renderedPaths.has(path) ? "bg-lake-forest text-white" : "bg-alpine-linen text--alpine-linen-900"}`}
                     >
                       {renderedPaths.has(path) ? "Live" : "Inventory"}
                     </span>
@@ -1350,7 +1350,7 @@ export default function ComponentLibrary() {
               <p
                 className="
                   mt-1
-                  text-xs text-ash-900
+                  text-xs text--alpine-linen-900
                 "
               >Booking Engine · Component Library</p>
             </div>
