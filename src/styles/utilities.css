@@ -1,5 +1,5 @@
 @theme {
-
+  
   /* Button Radii and Borders */
   --radius-btn-xs: 10px;
   --radius-btn-sm: 12px;
@@ -22,7 +22,7 @@
 
 
 @utility btn {
-  font-family: var(--font-button);
+  font-family: var(--font-button); 
   font-size: var(--text-sm);
   font-weight: 400;
   border-radius: var(--radius-btn);
@@ -104,3 +104,4 @@
     color: rgb(107 98 89 / 0.55);
   }
 }
+
