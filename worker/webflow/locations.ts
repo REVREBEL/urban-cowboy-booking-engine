@@ -1,6 +1,7 @@
 import type {
   BookingLocationCms,
   BookingLocationCmsMap,
+  BookingLocationFeatureCms,
 } from "../../src/types/location-cms.ts";
 import { json, propertiesForEnv, type Env } from "../mews/_lib.ts";
 
@@ -31,7 +32,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 // Published location settings should propagate quickly, including layout choices.
 const CACHE_FRESH_MS = 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:booking-locations:v4";
+const CACHE_KEY_PREFIX = "webflow:booking-locations:v6";
 
 const memoryCache = new Map<string, CachedLocationPayload>();
 
@@ -41,6 +42,23 @@ const text = (value: unknown): string =>
 const safeUrl = (value: unknown): string | null => {
   const candidate = text(value);
   return /^https?:\/\//i.test(candidate) ? candidate : null;
+};
+
+const imageUrl = (value: unknown): string | null => {
+  if (typeof value === "string") return safeUrl(value);
+  if (!value || typeof value !== "object") return null;
+  return safeUrl((value as { url?: unknown }).url);
+};
+
+const featureStory = (
+  fields: Record<string, unknown>,
+  index: 1 | 2 | 3,
+): BookingLocationFeatureCms | null => {
+  const headline = text(fields[`feature-headline-${index}`]);
+  const paragraph = text(fields[`feature-paragraph-${index}`]);
+  const iconUrl = imageUrl(fields[`feature-icon-${index}`]);
+  if (!headline && !paragraph && !iconUrl) return null;
+  return { iconUrl, headline, paragraph };
 };
 
 const cacheKey = (
@@ -80,6 +98,21 @@ const LOCATION_SETTING_FIELDS = [
   "demo-layout",
 ] as const;
 
+const FEATURE_FIELDS = [
+  "enable-feature-section",
+  "feature-icon-1",
+  "feature-headline-1",
+  "feature-paragraph-1",
+  "feature-icon-2",
+  "feature-headline-2",
+  "feature-paragraph-2",
+  "feature-icon-3",
+  "feature-headline-3",
+  "feature-paragraph-3",
+] as const;
+
+const CONTENT_FIELDS = [...LOCATION_SETTING_FIELDS, ...FEATURE_FIELDS] as const;
+
 /**
  * A live item can omit newer CMS schema fields even after the item was published.
  * Only fill missing live fields from staged data when the *same publication*
@@ -88,6 +121,7 @@ const LOCATION_SETTING_FIELDS = [
 export function mergeVerifiedPublishedFields(
   live: WebflowCollectionItem,
   staged: WebflowCollectionItem,
+  fieldNames: readonly string[] = LOCATION_SETTING_FIELDS,
 ): WebflowCollectionItem {
   const livePublished = text(live.lastPublished);
   const stagedPublished = text(staged.lastPublished);
@@ -112,7 +146,7 @@ export function mergeVerifiedPublishedFields(
   ) return live;
 
   const fields = { ...live.fieldData };
-  for (const key of LOCATION_SETTING_FIELDS) {
+  for (const key of fieldNames) {
     if (fields[key] === undefined && staged.fieldData?.[key] !== undefined) {
       fields[key] = staged.fieldData[key];
     }
@@ -124,6 +158,7 @@ async function fetchPublishedLocationItem(
   env: Env,
   collection: string,
   itemId: string,
+  fieldNames: readonly string[] = LOCATION_SETTING_FIELDS,
 ): Promise<WebflowCollectionItem> {
   const basePath = `/collections/${encodeURIComponent(collection)}/items/${encodeURIComponent(itemId)}`;
   const live = await webflowGet<WebflowCollectionItem>(env, `${basePath}/live`, WEBFLOW_DATA_API);
@@ -131,11 +166,11 @@ async function fetchPublishedLocationItem(
     live.id !== itemId ||
     live.isDraft === true ||
     live.isArchived === true ||
-    !LOCATION_SETTING_FIELDS.some(key => live.fieldData?.[key] === undefined)
+    !fieldNames.some(key => live.fieldData?.[key] === undefined)
   ) return live;
   try {
     const staged = await webflowGet<WebflowCollectionItem>(env, basePath, WEBFLOW_DATA_API);
-    return mergeVerifiedPublishedFields(live, staged);
+    return mergeVerifiedPublishedFields(live, staged, fieldNames);
   } catch {
     // Missing staged data never overrides or enables the live setting.
     return live;
@@ -153,12 +188,18 @@ export function normalizeLocationItem(
 
   if (!id || !fullLocationName) return null;
 
+  const features = ([1, 2, 3] as const)
+    .map((index) => featureStory(fields, index))
+    .filter((feature): feature is BookingLocationFeatureCms => feature !== null);
+
   return {
     id,
     fullLocationName,
     productionLayout: fields["production-layout"] === "f4859a16a8556038b0f026679aaa6a02" ? "photo" : "card",
     demoLayout: fields["demo-layout"] === "2142905a00c88401810632b026107cf2" ? "photo" : "card",
     enableDemoEngine: fields["enable-demo-engine"] === true,
+    featureSectionEnabled: fields["enable-feature-section"] === true,
+    features,
     city: text(fields.city) || null,
     state: text(fields.state) || null,
     privacyPolicyUrl: safeUrl(fields["privacy-policy"]),
@@ -204,12 +245,12 @@ async function fetchPublishedLocations(
     if (
       !itemId ||
       !bindings.some(binding => binding.locationCmsItemId === itemId) ||
-      !LOCATION_SETTING_FIELDS.some(key => item.fieldData?.[key] === undefined)
+      !CONTENT_FIELDS.some(key => item.fieldData?.[key] === undefined)
     ) return item;
     try {
-      const verified = await fetchPublishedLocationItem(env, collectionId, itemId);
+      const verified = await fetchPublishedLocationItem(env, collectionId, itemId, CONTENT_FIELDS);
       const fields = { ...item.fieldData };
-      for (const key of LOCATION_SETTING_FIELDS) {
+      for (const key of CONTENT_FIELDS) {
         if (fields[key] === undefined && verified.fieldData?.[key] !== undefined) {
           fields[key] = verified.fieldData[key];
         }

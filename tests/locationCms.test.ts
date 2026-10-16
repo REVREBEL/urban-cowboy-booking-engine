@@ -26,12 +26,47 @@ test("normalizes footer content from the published Locations CMS item", () => {
     productionLayout: "card",
     demoLayout: "card",
     enableDemoEngine: false,
+    featureSectionEnabled: false,
+    features: [],
     city: "Big Indian",
     state: "NY",
     privacyPolicyUrl: "https://example.com/privacy",
     termsConditionsUrl: "https://example.com/terms",
     accessibilityUrl: "https://example.com/accessibility",
   });
+});
+
+
+test("normalizes PhotoArrival feature stories and Webflow image URLs", () => {
+  const location = normalizeLocationItem({
+    id: "catskills-item",
+    isArchived: false,
+    isDraft: false,
+    fieldData: {
+      "full-location-name": "Urban Cowboy Lodge & Resort",
+      "enable-feature-section": true,
+      "feature-icon-1": { url: "https://cdn.example.com/hammock.svg" },
+      "feature-headline-1": "Disappear for a While",
+      "feature-paragraph-1": "Trade pavement for mountain air.",
+      "feature-icon-2": { url: "https://cdn.example.com/sauna.svg" },
+      "feature-headline-2": "Soak It All In",
+      "feature-paragraph-2": "Slow the whole operation down.",
+    },
+  });
+
+  assert.equal(location?.featureSectionEnabled, true);
+  assert.deepEqual(location?.features, [
+    {
+      iconUrl: "https://cdn.example.com/hammock.svg",
+      headline: "Disappear for a While",
+      paragraph: "Trade pavement for mountain air.",
+    },
+    {
+      iconUrl: "https://cdn.example.com/sauna.svg",
+      headline: "Soak It All In",
+      paragraph: "Slow the whole operation down.",
+    },
+  ]);
 });
 
 test("blank legal URLs normalize to null so footer labels can be hidden", () => {
