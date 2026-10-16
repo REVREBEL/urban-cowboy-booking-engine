@@ -258,7 +258,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                           className="group absolute inset-0 flex w-full flex-col items-center justify-center font-number transition focus-visible:outline-none"
                         >
                           <span
-                            className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${
+                            className={`relative grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${
                               disabled
                                 ? "text-(--calendar-date-disabled-foreground) line-through"
                                 : start || end
