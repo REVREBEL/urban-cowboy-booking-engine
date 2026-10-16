@@ -2,5 +2,8 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "npmrc": "legacy-peer-deps=true",
+  "npmrcMerge": true,
+  "skipArtifactsUpdate": false
 }
