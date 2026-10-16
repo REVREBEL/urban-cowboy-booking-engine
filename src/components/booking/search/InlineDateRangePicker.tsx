@@ -132,6 +132,11 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   const [view, setView] = useState({ year: initial.year, month: initial.month });
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const months = [view, shiftMonth(view.year, view.month, 1)];
+  const hasVisibleServiceRestrictions = Object.entries(dailyRates ?? {}).some(
+    ([date, rate]) =>
+      Boolean(rate.restrictions?.length) &&
+      months.some(({ year, month }) => date.startsWith(`${year}-${pad(month + 1)}-`)),
+  );
   useEffect(() => {
     if (!onVisibleRangeChange) return;
     const startDate = toIso(view.year, view.month, 1);
@@ -266,6 +271,12 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                             }`}
                           >
                             {dayNum}
+                            {serviceNote && !disabled && (
+                              <span
+                                aria-hidden="true"
+                                className="absolute right-0 top-0 size-2 rounded-full bg-(--calendar-date-restricted-foreground) ring-1 ring-(--calendar-date-ring-offset-bg)"
+                              />
+                            )}
                           </span>
                         {rate && (
                           <span
@@ -292,6 +303,16 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
           </React.Fragment>
         ))}
       </div>
+      {hasVisibleServiceRestrictions && (
+        <p className="mt-3 flex items-start gap-2 font-body text-xs leading-relaxed text-(--calendar-date-foreground)">
+          <span
+            aria-hidden="true"
+            className="mt-1 inline-block size-2 shrink-0 rounded-full bg-(--calendar-date-restricted-foreground)"
+          />
+          Marked dates may have check-in, check-out, or stay restrictions for some rooms or rates.
+          Search verifies your exact stay.
+        </p>
+      )}
     </div>
   );
 };
