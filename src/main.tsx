@@ -6,6 +6,7 @@ import "./styles/index.css";
 // Photo custom properties remain scoped under .photo-journey.
 
 import "./styles/room-photo-tour.css";
+import "./styles/focus-amenity.css";
 import { initLang } from "./lib/lang";
 import { initUtm } from "./lib/utm";
 
