@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./typography.css";
 
 /* ==========================================================================
    Rate Card Shell & Layout Variants
@@ -216,9 +217,6 @@
   line-height: 1.25;
 }
 
-
-
-
 @utility offer-card-compact {
   width: 482px;
   max-width: 100%;
@@ -275,7 +273,7 @@
     --text-secondary: #73716d;
     --close-btn: var(--smoke);
 
-    --font-offer-heading: "Noto Serif Tibetan", "Noto Serif", serif;
+    --font-offer-headline: "Noto Serif Tibetan", "Noto Serif", serif;
     --font-offer-body: "Quattrocento", Georgia, serif;
     --font-offer-eyebrow: "Lato", sans-serif;
   }
@@ -302,7 +300,7 @@
     --text-secondary: #73716d;
     --close-btn: var(--smoke);
 
-    --font-offer-heading: "League Spartan", "Arial Black", sans-serif;
+    --font-offer-headline: "League Spartan", "Arial Black", sans-serif;
     --font-offer-body: "Arvo", Georgia, serif;
     --font-offer-eyebrow: "League Spartan", sans-serif;
   }
@@ -329,7 +327,7 @@
     --text-secondary: rgba(235, 232, 224, 0.72);
     --close-btn: var(--alpine-linen);
 
-    --font-offer-heading: "Quattrocento", serif;
+    --font-offer-headline: "Quattrocento", serif;
     --font-offer-body: "Bianco Sans", "Lato", sans-serif;
     --font-offer-eyebrow: "Bianco Sans", "Lato", sans-serif;
   }
@@ -356,7 +354,7 @@
     --text-secondary: var(--copper);
     --close-btn: var(--copper);
 
-    --font-offer-heading: "Rundeck", "League Spartan", sans-serif;
+    --font-offer-headline: "Rundeck", "League Spartan", sans-serif;
     --font-offer-body: "Noto Serif Tibetan", "Noto Serif", serif;
     --font-offer-eyebrow: "Noto Serif Tibetan", "Noto Serif", serif;
   }
@@ -383,7 +381,7 @@
     --text-secondary: rgba(235, 232, 224, 0.75);
     --close-btn: var(--nude-ember);
 
-    --font-offer-heading: "League Gothic", "Impact", sans-serif;
+    --font-offer-headline: "League Gothic", "Impact", sans-serif;
     --font-offer-body: "DM Sans", sans-serif;
     --font-offer-eyebrow: "Fineday-StyleOne", "Instrument Serif", serif;
   }

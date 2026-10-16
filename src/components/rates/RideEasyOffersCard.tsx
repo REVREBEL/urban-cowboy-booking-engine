@@ -4,7 +4,7 @@ import { RateOfferSidePanel } from './RateOfferSidePanel';
 // Sheriff Badge Icon (6-point Western Star with circular tips matching fi-sheriff-badge.svg)
 const SheriffBadgeIcon: React.FC<{ className?: string; color?: string; size?: number }> = ({
   className = '',
-  color = '#D65241',
+  color = 'var(--bandana-red)',
   size = 32,
 }) => {
   return (
@@ -206,7 +206,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                       fontSize: '100px',
                       lineHeight: '100px',
                       letterSpacing: '-2.5px',
-                      color: 'var(--color-smoke)',
+                      color: 'var(--smoke)',
                       display: 'flex',
                       alignItems: 'center',
                     }}
@@ -351,7 +351,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   <div
                     className="w-full uppercase font-bold tracking-[1.5px] leading-tight select-none"
                     style={{
-                      color: 'var(--color-bandana-red)',
+                      color: 'var(--bandana-red)',
                       fontFamily: "'Lato', sans-serif",
                       fontSize: '25px',
                     }}
@@ -363,7 +363,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   <div
                     className="font-bold tracking-[-2px] uppercase whitespace-pre-line leading-[0.85]"
                     style={{
-                      color: 'var(--color-smoke)',
+                      color: 'var(--smoke)',
                       fontFamily: "'Noto Serif', serif",
                       fontSize: 'clamp(64px, 12vw, 90px)',
                     }}
@@ -400,26 +400,26 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                   </div>
                 </div>
 
-                {/* 4. Cowboy Best Rate Guarantee Row with Sheriff Badge */}
-                <div className="w-full flex items-center justify-between">
-                  <span
-                    className="font-bold uppercase tracking-[1.5px] text-smoke leading-tight text-left text-balance"
-                    style={{
-                      fontFamily: "'Lato', sans-serif",
-                      fontSize: '22px',
-                    }}
-                  >
-                    {guaranteeText}
-                  </span>
-                  <div className="shrink-0 ml-3">
-                    <SheriffBadgeIcon size={34} color="#D65241" />
-                  </div>
+              {/* 4. Cowboy Best Rate Guarantee Row with Sheriff Badge */}
+              <div className="w-full flex items-center justify-center gap-3">
+                <div
+                  className="font-bold uppercase tracking-[1.5px] text-smoke leading-tight text-center max-w-60"
+                  style={{
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: '22px',
+                  }}
+                >
+                  {guaranteeText}
                 </div>
+                <div className="shrink-0">
+                  <SheriffBadgeIcon size={34} color="var(--bandana-red)" />
+                </div>
+              </div>
 
                 {/* 5. Price Row */}
-                <div className="w-full flex flex-col justify-center px-7.5 box-border select-none" style={{ containerType: 'inline-size' }}>
+                <div className="w-full flex flex-col justify-center px-10.5 box-border select-none" style={{ containerType: 'inline-size' }}>
                   <div
-                    className="w-full text-smoke font-bold tracking-[0.5px] leading-tight text-left whitespace-nowrap"
+                    className="w-full text-smoke font-bold tracking-[0.5px] leading-tight text-center whitespace-nowrap pr-6"
                     style={{
                       fontFamily: "'Quattrocento', Georgia, serif",
                       fontSize: 'clamp(28px, 9cqw, 40px)',
@@ -428,7 +428,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     {price} {priceUnit}
                   </div>
                   <div
-                    className="w-full text-right text-smoke font-normal tracking-[0.5px] mt-1 text-sm opacity-90"
+                      className="w-full text-center text-smoke font-normal tracking-[0.5px] mt-1 text-sm opacity-90 pl-6"
                     style={{ fontFamily: "'Lato', sans-serif" }}
                   >
                     {taxDisclaimer}
@@ -441,7 +441,7 @@ export const OffersCard: React.FC<OffersCardProps> = ({
                     type="button"
                     onClick={handleAction}
                     disabled={disabled || isSubmitting}
-                    className="w-full max-w-105 py-4 px-6 rounded-full bg-smoke hover:bg-smoke text-white font-button font-normal text-sm sm:text-base uppercase tracking-[0.1em] shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
+                    className="w-full max-w-105 py-4 px-6 rounded-full bg-smoke hover:bg-smoke text-white font-button font-normal text-sm sm:text-base uppercase tracking-widest shadow-md hover:shadow-lg active:scale-95 transition-all cursor-pointer flex items-center justify-center whitespace-nowrap"
                   >
                     {isSubmitting ? 'Confirming...' : isExpanded ? confirmLabel : ctaLabel}
                   </button>
