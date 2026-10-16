@@ -25,7 +25,7 @@ export function FocusAmenity({ count, icon, iconPath, title, active, onSelect, c
         <FocusAmenityCount count={count} state={state}/>
         <FocusAmenityAction state={state}/>
       </span>
-      <CmsAmenityIcon fallback={icon} iconPath={iconPath} />
+      <CmsAmenityIcon fallback={icon} iconPath={iconPath}/>
     </Button>
   );
 }

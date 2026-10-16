@@ -210,7 +210,7 @@ export function PhotoRateStep() {
                 {config?.headline || rate.name}
               </h2>
               {(config?.description || rate.description) && (
-                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground/80">
+                <p className="mt-2 whitespace-pre-line text-sm text-foreground/80 leading-relaxed">
                   {config?.description || rate.description}
                 </p>
               )}
