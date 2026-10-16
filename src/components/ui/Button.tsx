@@ -180,6 +180,8 @@ export const Spinner: React.FC<{ size?: number; color?: string }> = ({
 export const ChevronRight: React.FC<{ color?: string; size?: number }> = ({
   color = "currentColor",
   size = 14,
+
+
 }) => (
   <svg
     width={size}
@@ -187,7 +189,7 @@ export const ChevronRight: React.FC<{ color?: string; size?: number }> = ({
     viewBox="0 0 10 14"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="inline-block transition-transform duration-150 group-hover:translate-x-0.5"
+    className="inline-flex items-center justify-center transition-transform duration-150 group-hover:translate-x-0.5"
     aria-hidden="true"
   >
     <path
