@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
+import { Button, COLOR_PALETTE, CONTROL_COLOR_CLASSES, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export type PillSize = "xsmall" | "small" | "default" | "large";
@@ -34,7 +34,7 @@ export function Pill({
   const resolvedColor = colorScheme ?? color ?? "dark";
 
 
-  const colorClasses = `control-color-${resolvedColor} ${variant === "outline" ? "control-pill-outline" : `control-${variant}`}`;
+  const colorClasses = `${CONTROL_COLOR_CLASSES[resolvedColor]} ${variant === "outline" ? "control-pill-outline" : variant === "transparent" ? "control-transparent" : "control-filled"}`;
 
   return (
     <span
