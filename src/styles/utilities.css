@@ -239,3 +239,12 @@
   font-size: 1rem;
   padding: 10px 16px 8px;
 }
+
+/* Non-interactive pill outlines retain the label/foreground tone. */
+@utility control-pill-outline {
+  background-color: transparent;
+  color: var(--control-fg);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--control-border);
+}
