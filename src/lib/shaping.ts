@@ -16,11 +16,11 @@ import type {
   ShapedRate,
   ShapedRoom,
 } from "../types/mews";
-import { loc } from "./format";
-import { getLang } from "./lang";
-import { resolveRoomMerchandising } from "./roomMerchandising";
-import { isSystemFeeProductId, knownAddOnKey, knownRateGroupKey } from "./catskillsMewsIds";
-import { t } from "../i18n";
+import { loc } from "./format.ts";
+import { getLang } from "./lang.ts";
+import { resolveRoomMerchandising } from "./roomMerchandising.ts";
+import { isSystemFeeProductId, knownAddOnKey, knownRateGroupKey } from "./catskillsMewsIds.ts";
+import { t } from "../i18n.ts";
 
 type MoneyParts = {
   currency: string;
@@ -351,15 +351,29 @@ const REVEILLON_SYLVESTRE = /r[ée]veillon.*sylvestre/i;
 export const isReveillonProduct = (p: ShapedProduct): boolean =>
   REVEILLON_NOEL.test(p.name) || REVEILLON_SYLVESTRE.test(p.name);
 
+const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+
 // La nuit du (mois/jour) est-elle passée sur place ? Vrai si cette date fait partie des
 // nuits du séjour [checkIn, checkOut) — c.-à-d. qu'on est présent CE soir-là.
+// Optimized: replaces a day-by-day Date allocation loop (up to 400 iterations) with O(1)
+// ISO string range checks across candidate stay years.
 export function stayCoversNight(checkIn: string, checkOut: string, month: number, day: number): boolean {
   if (!/^\d{4}-\d{2}-\d{2}/.test(checkIn) || !/^\d{4}-\d{2}-\d{2}/.test(checkOut)) return false;
-  const end = new Date(`${checkOut}T00:00:00`);
-  const d = new Date(`${checkIn}T00:00:00`);
-  for (let i = 0; i < 400 && d < end; i++) {
-    if (d.getMonth() + 1 === month && d.getDate() === day) return true;
-    d.setDate(d.getDate() + 1);
+  if (checkIn >= checkOut) return false;
+
+  const startYear = parseInt(checkIn.slice(0, 4), 10);
+  const endYear = parseInt(checkOut.slice(0, 4), 10);
+  const targetMD = `${pad2(month)}-${pad2(day)}`;
+
+  for (let y = startYear; y <= endYear; y++) {
+    // Validate target date exists in year y (e.g. handles Feb 29 in non-leap years)
+    const testDate = new Date(Date.UTC(y, month - 1, day));
+    if (testDate.getUTCMonth() + 1 !== month) continue;
+
+    const targetIso = `${y}-${targetMD}`;
+    if (targetIso >= checkIn && targetIso < checkOut) {
+      return true;
+    }
   }
   return false;
 }
