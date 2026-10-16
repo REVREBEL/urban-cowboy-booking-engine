@@ -154,8 +154,8 @@
   --calendar-date-foreground: var(--color-primary-foreground);
   --calendar-date-muted-foreground: color-mix(in srgb, var(--color-primary-foreground) 45%, transparent);
   --calendar-date-disabled-foreground: color-mix(in srgb, var(--color-primary-foreground) 20%, transparent);
-  --calendar-date-selected-bg: var(--button-primary);
-  --calendar-date-selected-foreground: var(--button-primary-foreground);
+  --calendar-date-selected-bg: var(--button-primary-foreground);
+  --calendar-date-selected-foreground: var(--button-primary);
   --calendar-date-range-bg: color-mix(in srgb, var(--color-emphasis) 10%, transparent);
   --calendar-date-restricted-foreground: var(--color-emphasis);
   --calendar-date-restricted-ring: color-mix(in srgb, var(--color-emphasis) 35%, transparent);

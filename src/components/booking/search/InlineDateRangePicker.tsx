@@ -212,10 +212,10 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                         selectedRate?.invalidStayLengths?.includes(candidateNights),
                     );
                     const restrictionAdvisory = minimumStayAdvisory || stayThroughAdvisory;
-                    // A sold night may still be used as the departure date because the guest
-                    // does not occupy the room that night. Cached restrictions are advisory:
-                    // they never disable checkout selection or prevent a live Search.
-                    const disabled = date < minDate || (unavailable && !choosingCheckout);
+                    // The shared calendar is only a cached two-adult snapshot. Keep its sold
+                    // state visible as guidance, but leave every future date selectable so the
+                    // guest can build a range and let live Search validate exact occupancy.
+                    const disabled = date < minDate;
                     const start = date === checkIn;
                     const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
                     const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
@@ -242,6 +242,8 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                                 ? "text-(--calendar-date-disabled-foreground) line-through"
                                 : start || end
                                   ? `bg-(--calendar-date-selected-bg) text-(--calendar-date-selected-foreground) ${start && rate?.minNights ? "ring-2 ring-(--calendar-date-selected-bg) ring-offset-2 ring-offset-(--calendar-date-ring-offset-bg)" : ""}`
+                                  : unavailable
+                                    ? "text-(--calendar-date-disabled-foreground) line-through"
                                   : restrictionAdvisory
                                     ? "text-(--calendar-date-restricted-foreground) ring-1 ring-(--calendar-date-restricted-ring)"
                                     : "text-(--calendar-date-foreground) group-hover:bg-(--calendar-date-hover-bg) group-hover:text-(--calendar-date-hover-foreground)"
