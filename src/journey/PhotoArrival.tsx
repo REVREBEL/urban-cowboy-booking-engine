@@ -163,7 +163,7 @@ function FullFrame({ src, alt, priority }: { src: string; alt: string; priority?
 
 /* ---------------- 01 Arrive ---------------- */
 
-function Arrive(props: {
+export function Arrive(props: {
   checkIn: string | null;
   checkOut: string | null;
   setRange: (a: string | null, b: string | null) => void;
