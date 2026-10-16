@@ -332,7 +332,7 @@ const mockWaldenSunriseRoom: ShapedRoom = {
 
 
 const meta: Meta<typeof RoomsListCard> = {
-  title: 'Components/RoomsListCard',
+  title: 'Components/Rooms/RoomsListCard',
   component: RoomsListCard,
   args: {
     room: mockAlpineRoom,

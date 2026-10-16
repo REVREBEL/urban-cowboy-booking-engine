@@ -9,7 +9,8 @@ import {
   normalizeAddOnPreference,
   WINE_PREFERENCES,
 } from './addon-smart-logic';
-import { X, Check, Clock, Heart, Gift, Wine, Dog, Sparkles, ArrowRight } from 'lucide-react';
+import { X, Check, Clock, Heart, Gift, Wine, Dog, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface AddonCustomizerModalProps {
   isOpen: boolean;
@@ -597,22 +598,25 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button
+            <Button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-initial px-5 sm:px-6 2xl:px-8 py-3 2xl:py-4 rounded-full border-2 border-cowboy-umber/30 text-cowboy-umber hover:bg-white text-xs sm:text-sm 2xl:text-base font-label uppercase tracking-wider transition-colors cursor-pointer"
+              variant="outline"
+              colorScheme="cowboy-umber"
+              className="flex-1 sm:flex-initial"
             >
               Cancel
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
               onClick={handleConfirm}
-              className="flex-1 sm:flex-initial bg-cowboy-umber hover:bg-smoke text-white px-7 sm:px-8 2xl:px-12 py-3 sm:py-3.5 2xl:py-4.5 rounded-full text-xs sm:text-sm 2xl:text-base font-label uppercase tracking-widest transition-all cursor-pointer shadow-md active:scale-95 flex items-center justify-center gap-2 group"
+              colorScheme="cowboy-umber"
+              hasIcon
+              className="flex-1 sm:flex-initial"
             >
-              <span>Confirm & Add to Stay</span>
-              <ArrowRight className="w-4 h-4 2xl:w-5 2xl:h-5 group-hover:translate-x-0.5 transition-transform" />
-            </button>
+              Confirm & Add to Stay
+            </Button>
           </div>
         </div>
 

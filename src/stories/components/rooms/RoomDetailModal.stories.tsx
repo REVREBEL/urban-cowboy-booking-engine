@@ -47,7 +47,7 @@ const mockReview: RoomTypeCmsReview = {
 };
 
 const meta: Meta<typeof RoomDetailModal> = {
-  title: 'Components/RoomDetailModal',
+  title: 'Components/Rooms/RoomDetailModal',
   component: RoomDetailModal,
   parameters: {
     layout: 'fullscreen',

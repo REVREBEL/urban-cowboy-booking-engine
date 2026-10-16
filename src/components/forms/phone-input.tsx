@@ -148,7 +148,7 @@ export function PhoneInput({
           }}
           aria-label={t("phone.countryCode")}
           title={regionName(country_.code)}
-          className="absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent text-transparent outline-none"
+          className="font-emoji absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent text-transparent outline-none"
         >
           {COUNTRIES.map((c) => (
             <option key={c.code} value={c.code} className="font-emoji emoji-text text-(--color-input)">
