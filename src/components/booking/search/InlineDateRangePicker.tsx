@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { RestrictionAdvisory, RestrictionType } from "@/types/calendar-restrictions";
 
 export interface DailyRate {
   amount: number;
@@ -7,6 +8,7 @@ export interface DailyRate {
   available?: boolean;
   minNights?: number;
   invalidStayLengths?: number[];
+  restrictions?: RestrictionAdvisory[];
 }
 
 interface InlineDateRangePickerProps {
@@ -17,6 +19,19 @@ interface InlineDateRangePickerProps {
   dailyRates?: Record<string, DailyRate>;
   formatRate?: (rate: DailyRate) => string;
   onVisibleRangeChange?: (startDate: string, endDate: string) => void;
+}
+
+const RESTRICTION_LABELS: Record<RestrictionType, string> = {
+  ClosedToArrival: "Check-in restrictions",
+  ClosedToDeparture: "Check-out restrictions",
+  ClosedToStay: "Stay restrictions",
+};
+
+/** Category/rate-specific hints; always use Search for an authoritative answer. */
+function restrictionNote(rate: DailyRate | undefined): string {
+  if (!rate?.restrictions?.length) return "";
+  const kinds = [...new Set(rate.restrictions.map((item) => RESTRICTION_LABELS[item.type]))];
+  return `${kinds.join(", ")} may affect some room types or rates; Search checks your exact stay.`;
 }
 
 const pad = (value: number) => String(value).padStart(2, "0");
@@ -195,6 +210,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                     const { date, time, dayNum } = cell;
                     const rate = dailyRates?.[date];
                     const unavailable = rate?.available === false && !rate.minNights;
+                    const serviceNote = restrictionNote(rate);
                     const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
                     const candidateNights = choosingCheckout && checkIn
                       ? Math.max(
@@ -232,7 +248,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                           type="button"
                           disabled={disabled}
                           onClick={() => selectDate(date)}
-                          aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
+                          aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "availability not confirmed" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}${serviceNote ? `, ${serviceNote}` : ""}`}
                           aria-pressed={start || end}
                           className="group absolute inset-0 flex w-full flex-col items-center justify-center font-number transition focus-visible:outline-none"
                         >
@@ -255,15 +271,15 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                           <span
                             className={`mt-1.5 font-number text-[9px] font-bold leading-none ${unavailable ? "text-(--calendar-date-rate-unavailable-foreground)" : "text-(--calendar-date-rate-foreground)"}`}
                           >
-                            {unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}
+                            {unavailable ? (serviceNote ? "Check" : "Sold") : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}
                           </span>
                         )}
-                        {rate?.minNights && (
+                        {(rate?.minNights || serviceNote) && (
                           <span
                             role="tooltip"
                             className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-(--calendar-tooltip-bg) px-2 py-1 font-number text-[10px] font-normal normal-case tracking-normal text-(--calendar-tooltip-foreground) opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
                           >
-                            Min. of {rate.minNights} nights.
+                            {rate.minNights ? `Min. of ${rate.minNights} nights. ` : ""}{serviceNote}
                           </span>
                         )}
                       </button>
