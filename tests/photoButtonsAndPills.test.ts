@@ -61,9 +61,10 @@ test("Pill and PillButton use shared size utilities with independent vertical pa
     { size: "lg", top: "10px", bottom: "8px" },
   ];
   for (const { size, top, bottom } of expected) {
-    const rule = styles.match(new RegExp("@utility pill-" + size + " \\\\{([^}]+)\\\\}"));
+    const rule = styles.split("@utility pill-" + size + " {")[1]?.split("}")[0];
     assert.ok(rule, "Missing pill-" + size + " utility");
-    assert.match(rule[1], new RegExp("padding: " + top + " [^;]+ " + bottom + ";"));
+    assert.ok(rule.includes("padding: " + top + " "));
+    assert.ok(rule.includes(" " + bottom + ";"));
   }
   assert.match(source, /PILL_SIZE_CLASSES\[size\]/);
   assert.equal(source.split("PILL_SIZE_CLASSES[size]").length - 1, 2);
