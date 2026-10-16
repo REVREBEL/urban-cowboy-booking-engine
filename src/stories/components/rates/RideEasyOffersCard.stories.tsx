@@ -32,11 +32,9 @@ const meta = {
       </div>
     ),
   ],
-  args: {
-    variant: "default",
-    price: "$425",
-  },
+  args: { variant: 'default', price: '$340' },
 } satisfies Meta<typeof OffersCard>;
+
 
 export default meta;
 type Story = StoryObj<typeof meta>;
