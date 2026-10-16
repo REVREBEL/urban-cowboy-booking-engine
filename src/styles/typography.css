@@ -1,0 +1,110 @@
+
+@font-face {
+font-family: "DesertRain";
+src: url("/fonts/DesertRain/DesertRain-Regular.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "DesertRain";
+src: url("/fonts/DesertRain/DesertRain-SemiBold.woff2") format("woff2");
+font-weight: 600;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "DesertRain";
+src: url("/fonts/DesertRain/DesertRain-Bold.woff2") format("woff2");
+font-weight: 700;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Regular.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Bold.woff2") format("woff2");
+font-weight: 700;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Brothers";
+src: url("/fonts/Brothers/Brothers-Italic.woff2") format("woff2");
+font-weight: 400;
+font-style: italic;
+font-display: swap;
+}
+@font-face {
+font-family: "Uchen";
+src: url("/fonts/Uchen/Uchen-Regular.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Bianco Sans";
+src: url("/fonts/Bianco%20Sans/Bianco%20Sans%20Regular.ttf") format("truetype");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Bianco Sans";
+src: url("/fonts/Bianco%20Sans/Bianco%20Sans%20Bold.ttf") format("truetype");
+font-weight: 700;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Cedarville";
+src: url("/fonts/Cedarville/Cedarville-Cursive.woff2") format("woff2");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+
+
+:root {
+  --text-size-xxs: clamp(0.75rem, 0.72rem + 0.12vw, 0.95rem);
+  --text-size-xs: clamp(0.85rem, 0.82rem + 0.12vw, 0.95rem);
+  --text-size-sm: clamp(0.95rem, 0.92rem + 0.12vw, 1.05rem);
+  --text-size-base: clamp(1.05rem, 1rem + 0.12vw, 1.15rem);
+  --text-size-md: clamp(1.15rem, 1.1rem + 0.12vw, 1.25rem);
+  --text-size-lg: clamp(1.25rem, 1.2rem + 0.12vw, 1.35rem);
+  --text-size-xl: clamp(1.45rem, 1.4rem + 0.12vw, 1.55rem);
+}
+
+@theme inline {
+  --text-xxs: var(--text-size-xxs);
+  --text-xs: var(--text-size-xs);
+  --text-sm: var(--text-size-sm);
+  --text-base: var(--text-size-base);
+  --text-md: var(--text-size-md);
+  --text-lg: var(--text-size-lg);
+  --text-xl: var(--text-size-xl);
+}
+
+
+@theme {
+
+  /* Typography Families */
+
+--font-body: "Uchen", Georgia, serif;
+--font-headline: "DesertRain", Georgia, serif;
+--font-heading: "DesertRain", Georgia, serif;
+--font-subheading: "Brothers", "League Spartan", sans-serif;
+--font-button: "Brothers", "Brothers", "Brothers", "Rockwell", "Clarendon", Georgia, serif;
+--font-label: "Brothers", "League Spartan", sans-serif;
+--font-eyebrow: "Bianco Sans", "League Spartan", sans-serif;
+--font-number: "Bianco Sans", "League Spartan", sans-serif;
+--font-blockquote: "Cedarville", cursive;
+--font-emoji: "Noto Emoji", sans-serif;
+
+}

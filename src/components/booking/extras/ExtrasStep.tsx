@@ -5,7 +5,7 @@ import type { AddonSchedulePreference } from "./addon-types";
 import { addOnKind } from "./addon-smart-logic";
 import { AddonCard } from "./AddonCard";
 import { AddonCustomizerModal } from "./AddonCustomizerModal";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { money } from "@/lib/format";
 import { t } from "@/i18n";
 

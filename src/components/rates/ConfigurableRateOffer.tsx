@@ -1,3 +1,5 @@
+//src/components/rates/ConfigurableRateOffer.tsx
+
 import * as React from "react";
 import type {
   RateCardConfig,
@@ -5,7 +7,7 @@ import type {
   RateCardLiveContent,
 } from "@/types/rate-card";
 import { ConfigurableRateCard } from "./ConfigurableRateCard";
-import { PolicyDisplay, type MilestoneDate } from "./policy_display";
+import { PolicyDisplay, type MilestoneDate } from "@/components/rates/PolicyDisplay";
 import {
   RateOfferSidePanel,
   type OfferCardTheme,
@@ -80,7 +82,12 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
 
   return (
     <div className={`flex flex-row ${isCompact ? "items-stretch" : "items-center"}`}>
-      <div className="relative z-20 shrink-0">
+      <div
+        className="
+          relative z-20
+          shrink-0
+        "
+      >
         <ConfigurableRateCard
           config={config}
           live={live}
@@ -125,8 +132,8 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
                   initialAmount={amountDisplay(pricing.dueToday)}
                   remainingAmount={amountDisplay(pricing.remaining)}
                   freeCancelDate={freeCancelDate} nonRefundableDate={nonRefundableDate}
-                  textColor="var(--cowboy-umber--normal, #4e332d)"
-                  accentColor="var(--copper--normal, #9a5636)" />
+                  textColor="var(--cowboy-umber, #4e332d)"
+                  accentColor="var(--copper, #9a5636)" />
               : <PolicyDisplay text={fullPolicyText} />}
             onClose={onToggleExpand}
             onConfirm={onConfirmBooking}

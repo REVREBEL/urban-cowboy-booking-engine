@@ -10,7 +10,7 @@ import { EMAIL_RE, money } from "../lib/format";
 import { getLang } from "../lib/lang";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import { photoGalleryForRoom } from "../data/photoGalleries";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button";
 
 const PhoneInput = lazy(() => import("../components/forms/phone-input").then(module => ({ default: module.PhoneInput })));
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";

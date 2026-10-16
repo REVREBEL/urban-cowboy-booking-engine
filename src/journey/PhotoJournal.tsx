@@ -10,8 +10,8 @@ import { photoGalleryForRoom, type PhotoSource } from "../data/photoGalleries";
 import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import type { Feature, MatchProfile, Occasion } from "./data";
-import { Button } from "../components/ui/button";
-import { PillButton } from "../components/ui/pill";
+import { Button } from "../components/ui/Button";
+import { PillButton } from "../components/ui/Pill";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
 const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
