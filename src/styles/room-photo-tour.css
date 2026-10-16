@@ -9,8 +9,12 @@
   --color-smoke: oklch(23.203% 0.01205 55.648);
   --color-paper: oklch(98.288% 0.00104 11.251);
   --color-primary-foreground:  oklch(27.726% 0.05667 152.427);
+  --color-smoke: oklch(23.203% 0.01205 55.648);
+  --color-paper: oklch(98.288% 0.00104 11.251);
+  --color-primary-foreground:  oklch(27.726% 0.05667 152.427);
   --alpine-linen:  oklch(93.112% 0.01107 89.719);
   --lake-forest-fade: oklch(51.426% 0.03691 157.484);
+  --alpine-linen-fade: oklch(83.035% 0.01728 88.003);
   --alpine-linen-fade: oklch(83.035% 0.01728 88.003);
 }
 
@@ -48,7 +52,7 @@
 .j-journey-back > span { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 .j-journey-back-icon { display: grid; width: 30px; height: 30px; flex: none; place-items: center; border: 1px solid currentColor; border-radius: 50%; }
 .j-tour-control:focus-visible, .j-tour-actions button:focus-visible { outline: 2px solid var(--color-paper) !important; outline-offset: 3px !important; }
-.j-photo-prev, .j-photo-next { position: absolute; top: 42%; z-index: 4; color: var(--alpine-linen) !important; background: color-mix(in srgb, var(--color-lake-forest) 30%, transparent) !important; }
+.j-photo-prev, .j-photo-next { position: absolute; top: 42%; z-index: 4; color: var(-alpine-linen) !important; background: color-mix(in srgb, var(--color-lake-forest) 30%, transparent) !important; }
 .j-photo-prev { left: 20px; } .j-photo-next { right: 20px; }
 .j-photo-pagination { position: absolute; top: 22px; left: 24px; display: flex; align-items: center; gap: 0; z-index: 4; padding: 0 12px 0 4px; border-radius: 30px; background: color-mix(in oklab, var(--color-smoke) 85%, transparent); }
 .j-photo-dot { background: transparent !important; }

@@ -62,7 +62,7 @@ export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
   smoke: {
     bg: "var(--smoke, #343833)",
     text: "var(--paper, #faf9f9)",
-    border: "var(--smoke, #343833)",
+    border: "var(--smoke-fade, #343833)",
   },
   "lake-forest": {
     bg: "var(--lake-forest, #0e301a)",
@@ -107,25 +107,25 @@ export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
   paper: {
     bg: "var(--paper, #faf9f9)",
     text: "var(--smoke, #343833)",
-    border: "var(--ash-fade, #343833)",
+    border: "var(--smoke-fade, #343833)",
   },
 };
 
 const COLOR_CLASSES: Record<ButtonColor, { bg: string; text: string; border: string }> = {
-  dark: { bg: "bg-lake-forest", text: "text-paper", border: "border-lake-forest" },
+  dark: { bg: "bg-lake-forest", text: "text-paper", border: "border-lake-forest-fade" },
   light: { bg: "bg-paper", text: "text-lake-forest", border: "border-paper" },
-  "alpine-linen": { bg: "bg-alpine-linen", text: "text-lake-forest", border: "border-alpine-linen" },
-  "cowboy-umber": { bg: "bg-cowboy-umber", text: "text-alpine-linen", border: "border-cowboy-umber" },
-  smoke: { bg: "bg-smoke", text: "text-paper", border: "border-smoke" },
-  "lake-forest": { bg: "bg-lake-forest", text: "text-alpine-linen", border: "border-lake-forest" },
-  copper: { bg: "bg-copper", text: "text-alpine-linen-200", border: "border-copper" },
-  oxblood: { bg: "bg-oxblood", text: "text-alpine-linen-200", border: "border-oxblood" },
-  "oxidized-teal": { bg: "bg-oxidized-teal", text: "text-paper", border: "border-oxidized-teal" },
-  "bandana-red": { bg: "bg-bandana-red", text: "text-paper", border: "border-bandana-red" },
-  "whiskey-sour": { bg: "bg-whiskey-sour", text: "text-cowboy-umber", border: "border-whiskey-sour" },
-  "lodge-yellow": { bg: "bg-lodge-yellow", text: "text-lake-forest", border: "border-lodge-yellow" },
-  "nude-ember": { bg: "bg-nude-ember", text: "text-lake-forest", border: "border-nude-ember" },
-  paper: { bg: "bg-paper", text: "text-smoke", border: "border-ash" },
+  "alpine-linen": { bg: "bg-alpine-linen", text: "text-lake-forest", border: "border-alpine-linen-fade" },
+  "cowboy-umber": { bg: "bg-cowboy-umber", text: "text-alpine-linen", border: "border-cowboy-umber-fade" },
+  smoke: { bg: "bg-smoke", text: "text-paper", border: "border-smoke-fade" },
+  "lake-forest": { bg: "bg-lake-forest", text: "text-alpine-linen", border: "border-lake-forest-fade" },
+  copper: { bg: "bg-copper", text: "text-alpine-linen-200", border: "border-copper-fade" },
+  oxblood: { bg: "bg-oxblood", text: "text-alpine-linen-200", border: "border-oxblood-fade" },
+  "oxidized-teal": { bg: "bg-oxidized-teal", text: "text-paper", border: "border-oxidized-teal-fade" },
+  "bandana-red": { bg: "bg-bandana-red", text: "text-paper", border: "border-bandana-red-fade" },
+  "whiskey-sour": { bg: "bg-whiskey-sour", text: "text-cowboy-umber", border: "border-whiskey-sour-fade" },
+  "lodge-yellow": { bg: "bg-lodge-yellow", text: "text-lake-forest", border: "border-lodge-yellow-fade" },
+  "nude-ember": { bg: "bg-nude-ember", text: "text-lake-forest", border: "border-nude-ember-fade" },
+  paper: { bg: "bg-paper", text: "text-smoke", border: "border-smoke-fade" },
 };
 
 export const buttonVariants = cva(
