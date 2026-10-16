@@ -52,23 +52,22 @@ test("Pill shares the Button palette and interactive PillButton delegates to But
 });
 
 
-test("both pill types use individually adjustable top and bottom padding", () => {
+test("Pill and PillButton use shared size utilities with independent vertical padding", () => {
   const source = read("components/ui/Pill.tsx");
+  const styles = read("styles/utilities.css");
   const expected = [
-    { size: "small", top: 5, bottom: 4 },
-    { size: "default", top: 8, bottom: 6 },
-    { size: "large", top: 10, bottom: 8 },
+    { size: "sm", top: "5px", bottom: "4px" },
+    { size: "default", top: "8px", bottom: "6px" },
+    { size: "lg", top: "10px", bottom: "8px" },
   ];
   for (const { size, top, bottom } of expected) {
-    const line = source.split("\n").find(value => value.trim().startsWith(size + ": { fontSize:"));
-    assert.ok(line, "Missing Pill size " + size);
-    assert.ok(line.includes('paddingTop: "' + top + 'px"'));
-    assert.ok(line.includes('paddingBottom: "' + bottom + 'px"'));
-    assert.ok(!line.includes("padding:"), "Padding must have independent sides");
-    assert.ok(top > bottom && top - bottom <= 2, "Top needs 1–2px more than bottom");
+    const rule = styles.match(new RegExp("@utility pill-" + size + " \\\\{([^}]+)\\\\}"));
+    assert.ok(rule, "Missing pill-" + size + " utility");
+    assert.match(rule[1], new RegExp("padding: " + top + " [^;]+ " + bottom + ";"));
   }
-  assert.equal(source.split("...PILL_SIZES[size]").length - 1, 2,
-    "Pill and PillButton must share the same dimensions");
+  assert.match(source, /PILL_SIZE_CLASSES\[size\]/);
+  assert.equal(source.split("PILL_SIZE_CLASSES[size]").length - 1, 2);
+  assert.doesNotMatch(source, /PILL_SIZES/);
 });
 
 test("Pill stories cover all Button palette colors, variants and toggles", () => {
