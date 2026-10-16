@@ -134,3 +134,108 @@
     color: rgb(107 98 89 / 0.55);
   }
 }
+
+/* Shared Button and Pill presentation: one source for variant tones and sizes. */
+@utility control-color-dark {
+  --control-bg: var(--color-lake-forest);
+  --control-fg: var(--color-paper);
+  --control-border: var(--color-lake-forest-fade);
+}
+@utility control-color-light {
+  --control-bg: var(--color-paper);
+  --control-fg: var(--color-lake-forest);
+  --control-border: var(--color-paper);
+}
+@utility control-color-alpine-linen {
+  --control-bg: var(--color-alpine-linen);
+  --control-fg: var(--color-lake-forest);
+  --control-border: var(--color-alpine-linen-fade);
+}
+@utility control-color-cowboy-umber {
+  --control-bg: var(--color-cowboy-umber);
+  --control-fg: var(--color-alpine-linen);
+  --control-border: var(--color-cowboy-umber-fade);
+}
+@utility control-color-smoke {
+  --control-bg: var(--color-smoke);
+  --control-fg: var(--color-paper);
+  --control-border: var(--color-smoke-fade);
+}
+@utility control-color-lake-forest {
+  --control-bg: var(--color-lake-forest);
+  --control-fg: var(--color-alpine-linen);
+  --control-border: var(--color-lake-forest-fade);
+}
+@utility control-color-copper {
+  --control-bg: var(--color-copper);
+  --control-fg: var(--color-alpine-linen-200);
+  --control-border: var(--color-copper-fade);
+}
+@utility control-color-oxblood {
+  --control-bg: var(--color-oxblood);
+  --control-fg: var(--color-alpine-linen-200);
+  --control-border: var(--color-oxblood-fade);
+}
+@utility control-color-oxidized-teal {
+  --control-bg: var(--color-oxidized-teal);
+  --control-fg: var(--color-paper);
+  --control-border: var(--color-oxidized-teal-fade);
+}
+@utility control-color-bandana-red {
+  --control-bg: var(--color-bandana-red);
+  --control-fg: var(--color-paper);
+  --control-border: var(--color-bandana-red-fade);
+}
+@utility control-color-whiskey-sour {
+  --control-bg: var(--color-whiskey-sour);
+  --control-fg: var(--color-cowboy-umber);
+  --control-border: var(--color-whiskey-sour-fade);
+}
+@utility control-color-lodge-yellow {
+  --control-bg: var(--color-lodge-yellow);
+  --control-fg: var(--color-lake-forest);
+  --control-border: var(--color-lodge-yellow-fade);
+}
+@utility control-color-nude-ember {
+  --control-bg: var(--color-nude-ember);
+  --control-fg: var(--color-lake-forest);
+  --control-border: var(--color-nude-ember-fade);
+}
+@utility control-color-paper {
+  --control-bg: var(--color-paper);
+  --control-fg: var(--color-smoke);
+  --control-border: var(--color-smoke-fade);
+}
+@utility control-filled {
+  background-color: var(--control-bg);
+  color: var(--control-fg);
+  border-color: var(--control-border);
+}
+@utility control-outline {
+  background-color: transparent;
+  color: var(--control-bg);
+  border-style: solid;
+  border-color: var(--control-border);
+}
+@utility control-transparent {
+  background-color: transparent;
+  color: var(--control-bg);
+  border-color: transparent;
+  border-style: none;
+}
+@utility pill-xs {
+  font-size: .6875rem;
+  padding: 3px 8px 2px;
+}
+@utility pill-sm {
+  font-size: .75rem;
+  padding: 5px 10px 4px;
+}
+@utility pill-default {
+  font-size: .875rem;
+  padding: 8px 14px 6px;
+}
+@utility pill-lg {
+  font-size: 1rem;
+  padding: 10px 16px 8px;
+}
