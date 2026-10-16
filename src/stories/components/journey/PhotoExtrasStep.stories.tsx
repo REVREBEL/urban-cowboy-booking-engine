@@ -15,7 +15,10 @@ const sauna: MerchandisedAddOn = {
 
 type Props = React.ComponentProps<typeof PhotoExtrasStep>;
 
-function InteractiveExtras({ initialSelected = [], ...props }: Props & { initialSelected?: string[] }) {
+// Storybook controls/args must be serializable. Recreate the Set inside the preview.
+type StoryProps = Omit<Props, "lockedProductIds"> & { lockedProductIds?: string[] };
+
+function InteractiveExtras({ initialSelected = [], lockedProductIds = [], ...props }: StoryProps & { initialSelected?: string[] }) {
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>(initialSelected);
   const [selectedDisplayByProduct, setSelectedDisplayByProduct] = useState<Record<string, string>>({});
   const [preferences, setPreferences] = useState<Record<string, AddonSchedulePreference>>({});
@@ -36,6 +39,7 @@ function InteractiveExtras({ initialSelected = [], ...props }: Props & { initial
     .reduce((sum, product) => sum + product.price * (product.chargingMode === "perPerson" ? props.guestsCount : 1), 0);
 
   return <PhotoExtrasStep {...props}
+    lockedProductIds={new Set(lockedProductIds)}
     selectedProductIds={selectedProductIds}
     selectedDisplayByProduct={selectedDisplayByProduct}
     preferences={preferences}
@@ -47,18 +51,17 @@ function InteractiveExtras({ initialSelected = [], ...props }: Props & { initial
 
 const meta = {
   title: "Journey/Extras",
-  component: PhotoExtrasStep,
+  component: InteractiveExtras,
   tags: ["autodocs"],
   parameters: { layout: "fullscreen" },
   args: {
     products: [sauna], selectedProductIds: [], selectedDisplayByProduct: {},
-    lockedProductIds: new Set<string>(), preferences: {}, imageBaseUrl: "",
+    lockedProductIds: [], preferences: {}, imageBaseUrl: "",
     currency: "USD", total: 750, roomName: "Alpine Bathing Suite",
     checkIn: "2026-11-12", checkOut: "2026-11-15", nights: 3, guestsCount: 2,
     onToggle: () => {}, onSavePreference: () => {}, onNext: () => {}, onBack: () => {},
   },
-  render: (args) => <InteractiveExtras {...args} />,
-} satisfies Meta<typeof PhotoExtrasStep>;
+} satisfies Meta<typeof InteractiveExtras>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Available: Story = {};
