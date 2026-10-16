@@ -29,7 +29,7 @@ export function DateSearchDropdown({
   const hasCompleteRange = Boolean(checkIn && checkOut && checkOut > checkIn);
 
   return (
-    <div className="w-full rounded-3xl border-2 border-input-border bg-input-bg p-4 text-foreground shadow-2xl sm:p-6">
+    <div className="w-full rounded-3xl border-2 border-input-border bg-input p-4 text-foreground shadow-2xl sm:p-6">
       <div className="mb-4 flex items-center justify-between border-b border-input-border/20 pb-3 text-left">
         <span className="font-number text-sm font-bold uppercase tracking-[2px] text-foreground">
           Select dates of stay

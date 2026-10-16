@@ -105,7 +105,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
       aria-labelledby={headerId}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className={`relative box-border flex h-64.75 w-90.5 select-none flex-col items-start gap-2.5 rounded-none border-2 border-input-border bg-input-bg p-6.25 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] outline-none ${className}`}
+      className={`relative box-border flex h-64.75 w-90.5 select-none flex-col items-start gap-2.5 rounded-none border-2 border-input-border bg-input p-6.25 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] outline-none ${className}`}
     >
       {/* Frame: 308px x 205px, gap: 5px */}
       <div className="flex flex-col items-start p-0 gap-1.25 w-77 h-51.25 self-stretch flex-1">

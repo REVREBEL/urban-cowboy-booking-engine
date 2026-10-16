@@ -113,7 +113,7 @@ function SearchSection({ label, value, section, activeSection, onClick, classNam
       type="button"
       aria-expanded={active}
       onClick={() => onClick(section)}
-      className={`group relative flex min-h-16 min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-primary-foregroundforeground transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent md:min-h-14.5 ${className}`}
+      className={`group relative flex min-h-16 min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-primary-foreground transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent md:min-h-14.5 ${className}`}
     >
       <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-primary-foreground/60">
         {label}
