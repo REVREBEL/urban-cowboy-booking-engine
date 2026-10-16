@@ -274,3 +274,8 @@
   &:active:not(:disabled) { background-color: color-mix(in srgb, var(--bg) 20%, transparent); }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
 }
+
+/* Shared text-case utilities for Button, Pill, and PillButton. */
+@utility text-case-uppercase { text-transform: uppercase; }
+@utility text-case-title { text-transform: capitalize; }
+@utility text-case-lowercase { text-transform: lowercase; }

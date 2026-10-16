@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, COLOR_PALETTE, CONTROL_COLOR_CLASSES, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
+import { Button, COLOR_PALETTE, CONTROL_COLOR_CLASSES, TEXT_CASE_CLASSES, type TextCase, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export type PillSize = "xsmall" | "small" | "default" | "large";
@@ -9,6 +9,7 @@ export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   colorScheme?: ButtonColor;
   color?: ButtonColor;
   size?: PillSize;
+  textCase?: TextCase;
 }
 
 /* Re-export palette for tests and external consumers */
@@ -26,6 +27,7 @@ export function Pill({
   colorScheme,
   color,
   size = "default",
+  textCase,
   className,
   style,
   children,
@@ -42,6 +44,7 @@ export function Pill({
         "inline-flex max-w-full items-center justify-center gap-1.5 whitespace-nowrap align-middle font-label leading-none rounded-full box-border",
         colorClasses,
         PILL_SIZE_CLASSES[size],
+        textCase && TEXT_CASE_CLASSES[textCase],
         className
       )}
       style={style}
@@ -59,13 +62,14 @@ export interface PillButtonProps extends Omit<React.ComponentProps<typeof Button
 
 /** Interactive pill with the shared Button's focus, disabled and color behavior. */
 export const PillButton = React.forwardRef<HTMLButtonElement, PillButtonProps>(
-  ({ variant = "outline", colorScheme, color, size = "default", pressed, className, style, children, ...props }, ref) => (
+  ({ variant = "outline", colorScheme, color, size = "default", textCase = "uppercase", pressed, className, style, children, ...props }, ref) => (
     <Button
       {...props}
       ref={ref}
       variant={variant}
       colorScheme={colorScheme ?? color ?? "dark"}
       size="xsmall"
+      textCase={textCase}
       aria-pressed={pressed ?? props["aria-pressed"]}
       className={cn("max-w-full whitespace-nowrap font-label rounded-full font-medium leading-none", PILL_SIZE_CLASSES[size], className)}
       style={{ borderWidth: variant === "outline" ? "1px" : undefined, ...style }}

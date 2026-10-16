@@ -9,6 +9,12 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 export type ButtonStyle = "filled" | "outline" | "transparent";
+export type TextCase = "uppercase" | "title" | "lowercase";
+export const TEXT_CASE_CLASSES: Record<TextCase, string> = {
+  uppercase: "text-case-uppercase",
+  title: "text-case-title",
+  lowercase: "text-case-lowercase",
+};
 
 export type ButtonColor =
   | "dark"
@@ -137,7 +143,7 @@ const CONTROL_VARIANT_CLASSES: Record<ButtonStyle, string> = {
 };
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 select-none uppercase tracking-wider transition-all duration-200 ease-in-out disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 select-none tracking-wider transition-all duration-200 ease-in-out disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -214,6 +220,7 @@ export interface ButtonProps
   colorScheme?: ButtonColor;
   color?: ButtonColor;
   size?: ButtonSize;
+  textCase?: TextCase;
   hasIcon?: boolean;
   icon?: ReactNode;
   iconPosition?: "left" | "right";
@@ -232,6 +239,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       colorScheme,
       color,
       size = "default",
+      textCase = "uppercase",
       hasIcon = false,
       icon,
       iconPosition = "right",
@@ -277,6 +285,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           buttonVariants({ variant, size }),
           colorClasses,
+          TEXT_CASE_CLASSES[textCase],
           isDisabledOrLoading
             ? "transform-none cursor-not-allowed"
             : "active:scale-[0.98]",
