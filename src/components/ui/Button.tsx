@@ -189,7 +189,7 @@ export const ChevronRight: React.FC<{ color?: string; size?: number }> = ({
     viewBox="0 0 10 14"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    className="inline-flex items-center justify-center transition-transform duration-150 group-hover:translate-x-0.5"
+    className="relative -top-[2px] inline-block transition-transform duration-150 group-hover:translate-x-0.5"
     aria-hidden="true"
   >
     <path
@@ -294,7 +294,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span className="inline-flex items-center justify-center">{iconNode}</span>
         ) : null}
 
-        <span>{children}</span>
+        <span className={iconPosition === "left" && iconNode && !isLoading ? "pr-1" : undefined}>{children}</span>
 
         {!isLoading && iconPosition === "right" && iconNode ? (
           <span className="inline-flex items-center justify-center">{iconNode}</span>
