@@ -6,7 +6,8 @@ import {
   type Env,
   type Property,
 } from "./_lib.ts";
-import { fetchServiceRestrictionGuidance, type RestrictionAdvisory } from "./service-restrictions.ts";
+import { fetchServiceRestrictionGuidance } from "./service-restrictions.ts";
+import type { RestrictionAdvisory } from "../../src/types/calendar-restrictions.ts";
 
 export const CALENDAR_STORAGE_VERSION = "v5";
 export const MAX_INFERRED_LOS = 3;
