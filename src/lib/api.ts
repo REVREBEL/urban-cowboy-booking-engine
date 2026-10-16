@@ -112,6 +112,24 @@ async function contentCall<T>(path: string, meta: Meta): Promise<T> {
   }
 }
 
+let locationsPromise: Promise<BookingLocationCmsMap> | null = null;
+
+const loadLocations = (): Promise<BookingLocationCmsMap> => {
+  if (!locationsPromise) {
+    locationsPromise = contentCall<{
+      locations: BookingLocationCmsMap;
+      generatedAt?: string | null;
+      stale?: boolean;
+    }>("locations", {
+      label: "Location CMS content",
+      why: "Loads the published Webflow Location record bound to each configured Mews property so booking chrome and photo-arrival editorial content can share one cached location payload.",
+    })
+      .then((response) => response.locations)
+      .catch((): BookingLocationCmsMap => ({}));
+  }
+  return locationsPromise;
+};
+
 const post = <T>(path: string, body: unknown, meta: Omit<Meta, "request">) =>
   call<T>(
     path,
@@ -225,17 +243,7 @@ export const api = {
       .then((response) => response.reviews)
       .catch((): RoomTypeCmsReviewMap => ({})),
 
-  locations: () =>
-    contentCall<{
-      locations: BookingLocationCmsMap;
-      generatedAt?: string | null;
-      stale?: boolean;
-    }>("locations", {
-      label: "Location CMS content",
-      why: "Loads the published Webflow Location record bound to each configured Mews property so booking chrome can display the correct location name, city/state, and legal links without hardcoded property copy.",
-    })
-      .then((response) => response.locations)
-      .catch((): BookingLocationCmsMap => ({})),
+  locations: loadLocations,
 
   buildings: () =>
     contentCall<{
