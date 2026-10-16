@@ -9,7 +9,7 @@ import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
 import { cmsHighlightsForPhoto } from './cmsTour';
 import type { CmsPhotoHotspotMap } from '@/types/photo-hotspot-cms';
 import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
-import { FeatureFocus } from '@/components/rooms/FeatureFocus';
+import { FocusAmenity } from '@/components/rooms/FocusAmenity';
 import { PhotoTourArrow } from './PhotoTourArrow';
 
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
@@ -149,7 +149,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                   {(room.cmsAmenities ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots) : PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex) => (
                     <div key={pin.id} className="j-hotspot-anchor" style={{ left: `${pin.x}%`, top: `${pin.y}%` }}>
                       <div className="j-pin-desktop">
-                        <FeatureFocus count={pinIndex + 1} icon={pin.icon} iconPath={pin.iconPath} title={pin.title}
+                        <FocusAmenity count={pinIndex + 1} icon={pin.icon} iconPath={pin.iconPath} title={pin.title}
                           active={activePin === pin.id} onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)} />
                       </div>
                       <Button type="button" variant={(selected?.id ?? null) === pin.id ? "filled" : "outline"} colorScheme={(selected?.id ?? null) === pin.id ? "alpine-linen" : "paper"} size="xsmall" style={{padding: 0, width: "30px", height: "30px", borderRadius: "50%", borderWidth: "1px"}} className="j-pin-mobile" aria-label={pin.title} aria-pressed={(selected?.id ?? null) === pin.id}
