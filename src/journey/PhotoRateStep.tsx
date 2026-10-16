@@ -42,7 +42,6 @@ const milestoneDate = (
   checkIn: string,
   amount: number | null | undefined,
   unit: "days" | "hours" | null | undefined
-  unit: "days" | "hours" | null | undefined
 ): MilestoneDate | undefined => {
   if (amount == null || !unit || amount < 0) return undefined;
   const days = unit === "days" ? amount : amount / 24;
