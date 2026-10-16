@@ -50,9 +50,17 @@ const durationDays = (value: unknown): number | undefined => {
 function appliesToDate(rule: MewsRestriction, date: string): boolean {
   const conditions = rule.Conditions;
   if (!conditions) return false;
-  const midnight = propertyDateUtc(date);
-  if (typeof conditions.StartUtc === "string" && midnight < conditions.StartUtc) return false;
-  if (typeof conditions.EndUtc === "string" && midnight >= conditions.EndUtc) return false;
+  // Mews timestamps may omit milliseconds while our timezone conversion includes
+  // ".000Z". Compare instants, not lexicographically different ISO formats.
+  const midnight = Date.parse(propertyDateUtc(date));
+  if (typeof conditions.StartUtc === "string") {
+    const start = Date.parse(conditions.StartUtc);
+    if (!Number.isFinite(start) || midnight < start) return false;
+  }
+  if (typeof conditions.EndUtc === "string") {
+    const end = Date.parse(conditions.EndUtc);
+    if (!Number.isFinite(end) || midnight >= end) return false;
+  }
   if (Array.isArray(conditions.Days) && conditions.Days.length) {
     const weekday = WEEKDAYS[new Date(`${date}T12:00:00Z`).getUTCDay()];
     if (!conditions.Days.includes(weekday)) return false;
