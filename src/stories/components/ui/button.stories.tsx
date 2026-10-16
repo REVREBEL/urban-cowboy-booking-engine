@@ -23,6 +23,7 @@ const meta = {
     color: { control: "select", options: colors },
     variant: { control: "inline-radio", options: styles },
     size: { control: "select", options: sizes },
+    textCase: { control: "inline-radio", options: ["uppercase", "title", "lowercase"], name: "Text Case" },
     hasIcon: { control: "boolean" },
     iconPosition: { control: "inline-radio", options: ["left", "right"] },
     isLoading: { control: "boolean" },
@@ -34,6 +35,7 @@ const meta = {
     color: "lake-forest",
     variant: "filled",
     size: "default",
+    textCase: "uppercase",
     hasIcon: false,
     iconPosition: "right",
     isLoading: false,
@@ -69,6 +71,16 @@ export const AllColors: Story = {
             ))}
           </div>
         </section>
+      ))}
+    </div>
+  ),
+};
+
+export const TextCases: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      {(["uppercase", "title", "lowercase"] as const).map((textCase) => (
+        <Button key={textCase} textCase={textCase} colorScheme="lake-forest">find your next stay</Button>
       ))}
     </div>
   ),
