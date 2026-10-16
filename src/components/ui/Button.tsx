@@ -137,7 +137,7 @@ const CONTROL_VARIANT_CLASSES: Record<ButtonStyle, string> = {
 };
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 select-none uppercase tracking-wider transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 select-none uppercase tracking-wider transition-all duration-200 ease-in-out disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -279,7 +279,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           colorClasses,
           isDisabledOrLoading
             ? "transform-none cursor-not-allowed"
-            : "hover:opacity-90 active:scale-[0.98]",
+            : "active:scale-[0.98]",
           className
         )}
         style={style}
