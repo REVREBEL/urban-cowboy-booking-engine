@@ -32,7 +32,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 // Published location settings should propagate quickly, including layout choices.
 const CACHE_FRESH_MS = 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:booking-locations:v5";
+const CACHE_KEY_PREFIX = "webflow:booking-locations:v6";
 
 const memoryCache = new Map<string, CachedLocationPayload>();
 
@@ -96,6 +96,16 @@ const LOCATION_SETTING_FIELDS = [
   "enable-demo-engine",
   "production-layout",
   "demo-layout",
+  "enable-feature-section",
+  "feature-icon-1",
+  "feature-headline-1",
+  "feature-paragraph-1",
+  "feature-icon-2",
+  "feature-headline-2",
+  "feature-paragraph-2",
+  "feature-icon-3",
+  "feature-headline-3",
+  "feature-paragraph-3",
 ] as const;
 
 /**
