@@ -3,7 +3,11 @@ import { PhotoJournal } from "@/journey/PhotoJournal";
 import { studioPhotoRoomCatalog } from "@/data/photoTourRooms";
 
 // These are simulated Studio room types, never live Mews inventory.
-const rooms = studioPhotoRoomCatalog();
+const rooms = studioPhotoRoomCatalog().map((room) => (
+  room.roomTypeId === "demo-forest" || room.roomTypeId === "demo-opa-cabin"
+    ? { ...room, capacity: 4 }
+    : room
+));
 
 const meta = {
   title: "Journey/Stay Journal",
