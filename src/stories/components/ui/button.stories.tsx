@@ -20,7 +20,7 @@ const meta = {
   },
   argTypes: {
     colorScheme: { control: "select", options: colors },
-    color: { control: "select", options: colors },
+    color: { control: false, description: "Legacy alias; use colorScheme in Storybook to avoid conflicting color controls." },
     variant: { control: "inline-radio", options: styles },
     size: { control: "select", options: sizes },
     hasIcon: { control: "boolean" },
