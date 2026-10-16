@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Pill, PillButton } from "@/components/ui/pill";
-import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "@/components/ui/button";
+import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
 
 const colors = Object.keys(COLOR_PALETTE) as ButtonColor[];
 const styles: ButtonStyle[] = ["filled", "outline", "transparent"];
@@ -40,14 +40,22 @@ export const Playground: Story = {};
 export const AllColors: Story = {
   render: () => (
     <div className="space-y-7">
-      {styles.map(variant => (
+      {styles.map((variant) => (
         <section key={variant}>
           <h3 className="mb-3 font-label text-sm uppercase tracking-wider">{variant}</h3>
           <div className="flex flex-wrap items-center gap-3 rounded-xl bg-paper p-4">
-            {colors.map(color => <Pill key={color} colorScheme={color} variant={variant}>{color}</Pill>)}
+            {colors.map((color) => (
+              <Pill key={color} colorScheme={color} variant={variant}>
+                {color}
+              </Pill>
+            ))}
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-3 rounded-xl bg-smoke p-4">
-            {colors.map(color => <Pill key={color} colorScheme={color} variant={variant}>{color}</Pill>)}
+            {colors.map((color) => (
+              <Pill key={color} colorScheme={color} variant={variant}>
+                {color}
+              </Pill>
+            ))}
           </div>
         </section>
       ))}
@@ -58,8 +66,10 @@ export const AllColors: Story = {
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
-      {(["xsmall", "small", "default", "large"] as const).map(size => (
-        <Pill key={size} colorScheme="copper" size={size}>{size}</Pill>
+      {(["xsmall", "small", "default", "large"] as const).map((size) => (
+        <Pill key={size} colorScheme="copper" size={size}>
+          {size}
+        </Pill>
       ))}
     </div>
   ),
@@ -71,7 +81,7 @@ function InteractiveExamples() {
     <div className="space-y-4 rounded-xl bg-smoke p-6">
       <p className="text-sm text-paper">Select your interests</p>
       <div className="flex flex-wrap gap-2">
-        {["Outdoor soak", "Scenic views", "Fireplace", "Dog friendly"].map(feature => {
+        {["Outdoor soak", "Scenic views", "Fireplace", "Dog friendly"].map((feature) => {
           const selected = features.includes(feature);
           return (
             <PillButton
@@ -80,16 +90,20 @@ function InteractiveExamples() {
               pressed={selected}
               variant={selected ? "filled" : "outline"}
               colorScheme={selected ? "alpine-linen" : "paper"}
-              onClick={() => setFeatures(items =>
-                selected ? items.filter(item => item !== feature) : [...items, feature]
-              )}
+              onClick={() =>
+                setFeatures((items) =>
+                  selected ? items.filter((item) => item !== feature) : [...items, feature]
+                )
+              }
             >
               {feature}
             </PillButton>
           );
         })}
       </div>
-      <PillButton colorScheme="paper" variant="outline" disabled>Unavailable</PillButton>
+      <PillButton colorScheme="paper" variant="outline" disabled>
+        Unavailable
+      </PillButton>
       <p className="text-xs text-paper/80">Selected: {features.join(", ") || "none"}</p>
     </div>
   );
@@ -101,13 +115,21 @@ export const Selectable: Story = { render: () => <InteractiveExamples /> };
 export const ComparedWithButtons: Story = {
   render: () => (
     <div className="space-y-4">
-      {colors.map(color => (
-        <div key={color} className="flex flex-wrap items-center gap-4 border-b border-ash/30 py-3">
+      {colors.map((color) => (
+        <div key={color} className="flex flex-wrap items-center gap-4 border-b border-smoke/30 py-3">
           <span className="w-32 text-sm">{color}</span>
-          <Button colorScheme={color} variant="filled" size="xsmall">Button</Button>
-          <Pill colorScheme={color} variant="filled">Pill</Pill>
-          <Button colorScheme={color} variant="outline" size="xsmall">Button outline</Button>
-          <Pill colorScheme={color} variant="outline">Pill outline</Pill>
+          <Button colorScheme={color} variant="filled" size="xsmall">
+            Button
+          </Button>
+          <Pill colorScheme={color} variant="filled">
+            Pill
+          </Pill>
+          <Button colorScheme={color} variant="outline" size="xsmall">
+            Button outline
+          </Button>
+          <Pill colorScheme={color} variant="outline">
+            Pill outline
+          </Pill>
         </div>
       ))}
     </div>

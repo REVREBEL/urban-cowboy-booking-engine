@@ -4,7 +4,7 @@
  */
 import { useState } from "react";
 import { ChevronLeft } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button";
 import { AddonCustomizerModal } from "../components/booking/extras/AddonCustomizerModal";
 import { AddonCard } from "../components/booking/extras/AddonCard";
 import { money } from "../lib/format";

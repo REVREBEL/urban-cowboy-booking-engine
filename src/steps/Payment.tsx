@@ -186,7 +186,7 @@ export function Payment() {
                     ? t("payment.methodOnlineTitle")
                     : t("payment.methodArrivalTitle")}
                 </h2>
-                <p className="mt-1 font-body text-sm leading-6 text-ash-900 sm:text-base">
+                <p className="mt-1 font-body text-sm leading-6 text-alpine-linen-900 sm:text-base">
                   {onSession
                     ? t("payment.methodOnlineDesc")
                     : t("payment.methodArrivalDesc")}
@@ -195,7 +195,7 @@ export function Payment() {
             </div>
           </div>
 
-          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-alpine-linen bg-white p-5 text-sm leading-6 text-ash-900 shadow-2xs">
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-alpine-linen bg-white p-5 text-sm leading-6 text-alpine-linen-900 shadow-2xs">
             <input
               type="checkbox"
               className="mt-1 h-5 w-5 shrink-0 accent-[#9A5636]"
@@ -258,7 +258,7 @@ export function Payment() {
 
           <div className="border-t-2 border-alpine-linen pt-4 2xl:pt-6">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3 2xl:mb-6">
-              <div className="flex items-center gap-3 text-xs text-ash-900 sm:text-sm">
+              <div className="flex items-center gap-3 text-xs text-alpine-linen-900 sm:text-sm">
                 <Check className="h-5 w-5 text-lake-forest" aria-hidden="true" />
                 <span>{t("payment.reassurance")}</span>
               </div>

@@ -1,6 +1,6 @@
 // PolicyDisplay.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import PolicyDisplay from '@/components/rates/policy_display';
+import PolicyDisplay from '@/components/rates/PolicyDisplay';
 /**
 Storybook meta configuration for PolicyDisplay.
 Demonstrates cancellation policies, payment milestones, and interactive tooltips.

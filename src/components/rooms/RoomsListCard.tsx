@@ -4,20 +4,28 @@ import type { ShapedRoom } from "@/types/mews";
 import { imgUrl, money } from "@/lib/format";
 import { buildRoomCardPills } from "@/lib/roomCardPills";
 import { imageContrastColor } from "@/lib/imageContrast";
-
-
 import { CaretLeft, CaretRight } from "@/components/icons/generated/ui";
+import { Button, type ButtonColor } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 export type RoomCardTheme = "paper" | "copper" | "lake-forest";
-/** @deprecated Use RoomCardTheme. Retained temporarily for downstream compatibility. */
 export type RoomCardColor = RoomCardTheme;
 export type RoomCardLayout = "left" | "right";
+
+/* Maps card theme to button colorScheme props */
+const CARD_THEME_BUTTON_MAP: Record<
+  RoomCardTheme,
+  { primary: ButtonColor; secondary: ButtonColor }
+> = {
+  paper: { primary: "lake-forest", secondary: "lake-forest" },
+  copper: { primary: "smoke", secondary: "smoke" },
+  "lake-forest": { primary: "alpine-linen", secondary: "alpine-linen" },
+};
 
 export interface RoomsListCardProps {
   room: ShapedRoom;
   imageBaseUrl: string;
   theme?: RoomCardTheme;
-  /** @deprecated Use theme. */
   color?: RoomCardTheme;
   layout?: RoomCardLayout;
   onSelectRoom?: (room: ShapedRoom) => void;
@@ -25,7 +33,6 @@ export interface RoomsListCardProps {
   customImage?: string;
   isTopMatch?: boolean;
 
-  // Dedicated slots retained from the approved card contract.
   headerSlot?: React.ReactNode;
   mediaSlot?: React.ReactNode;
   bodySlot?: React.ReactNode;
@@ -57,12 +64,15 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   className = "",
 }) => {
   const resolvedTheme: RoomCardTheme = theme ?? color ?? "paper";
+  const buttonColors = CARD_THEME_BUTTON_MAP[resolvedTheme];
+
   const imageUrls = useMemo(() => {
     const mewsImages = room.imageIds
       .map((imageId) => imgUrl(imageBaseUrl, imageId, 1200))
       .filter((image): image is string => Boolean(image));
     return [...new Set(customImage ? [customImage, ...mewsImages] : mewsImages)];
   }, [customImage, imageBaseUrl, room.imageIds]);
+
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [overlayColors, setOverlayColors] = useState({
@@ -93,11 +103,13 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     observer.observe(image);
     return () => observer.disconnect();
   }, [imageUrl, updateOverlayContrast]);
+
   const hasGallery = imageUrls.length > 1;
   const showPreviousImage = () =>
     setActiveImageIndex((index) => (index - 1 + imageUrls.length) % imageUrls.length);
   const showNextImage = () =>
     setActiveImageIndex((index) => (index + 1) % imageUrls.length);
+
   const pills = buildRoomCardPills(room).slice(0, 6);
   const tagline = room.merchandising?.cardTagline ?? null;
   const cardDescription =
@@ -108,104 +120,201 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
   const nightlyRate = firstRate?.perNightGross ?? room.fromGross ?? null;
   const currency = firstRate?.currency ?? "USD";
 
-  // If complete custom children are provided, render within the approved card envelope.
   if (children) {
     return (
       <div
         data-room-card={room.roomTypeId}
         data-room-card-version="approved-v4"
         data-card-theme={resolvedTheme}
-        className={`room-list-card relative w-full rounded-card border-2 p-5 shadow-sm transition-all duration-200 sm:p-6 ${className}`}
+        className={cn(
+          "room-list-card relative w-full rounded-card border-2 p-5 shadow-xs transition-all duration-200 sm:p-6",
+          className
+        )}
       >
         {children}
       </div>
     );
   }
 
-  // Original approved media proportions and treatment.
   const mediaElement = mediaSlot ?? (
-    <div className="flex min-h-65 w-full shrink-0 flex-col self-stretch sm:min-h-75 lg:min-h-84 lg:w-[46%] xl:w-[48%]">
-      <div className="group relative h-full w-full flex-1 overflow-hidden rounded-card-media bg-(--media-placeholder)">
-        {imageUrl ? (
-          <img
-            ref={imageRef}
-            src={imageUrl}
-            alt={room.name}
-            onLoad={(event) => updateOverlayContrast(event.currentTarget)}
-            className="absolute inset-0 block h-full w-full select-none object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 grid place-items-center font-label text-[10px] font-bold uppercase tracking-widest text-cowboy-umber/45">
-            Room imagery unavailable
-          </div>
-        )}
-        {isTopMatch && (
-          <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-lake-forest/90 px-3 py-1 font-label text-[10px] font-bold uppercase tracking-widest text-paper shadow-sm backdrop-blur-sm">
-            <Sparkles className="h-3 w-3 text-nude-ember" />
-            <span>Top Pick</span>
-          </div>
-        )}
-        {hasGallery && (
-          <>
-            <button
-              type="button"
-              onClick={showPreviousImage}
-              aria-label={`Previous photo of ${room.name}`}
-              className="absolute left-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nude-ember"
-            >
-              <CaretLeft
-                className="h-9 w-9 drop-shadow-sm"
-                style={{ color: overlayColors.previous }}
-                aria-hidden="true"
-              />
-            </button>
-            <button
-              type="button"
-              onClick={showNextImage}
-              aria-label={`Next photo of ${room.name}`}
-              className="absolute right-2 top-1/2 z-10 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full opacity-70 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nude-ember"
-            >
-              <CaretRight
-                className="h-9 w-9 drop-shadow-sm"
-                style={{ color: overlayColors.next }}
-                aria-hidden="true"
-              />
-            </button>
-            <span
-              className="absolute bottom-3 right-3 z-10 px-2.5 py-1 font-label text-[9px] font-bold uppercase tracking-wider drop-shadow-sm transition-colors"
-              style={{ color: overlayColors.counter }}
-            >
-              {activeImageIndex + 1} / {imageUrls.length}
-            </span>
-          </>
-        )}
+    <div
+      className="
+        flex flex-col self-stretch
+        min-h-65 sm:min-h-75 lg:min-h-84 w-full lg:w-[46%] xl:w-[48%]
+        shrink-0
+      "
+    >
+      <div
+        className="
+          relative flex-1 overflow-hidden
+          h-full w-full
+          bg-smoke/10
+          rounded-card-media
+          group
+        "
+      >
+        {/* Your media / image content goes here */}
       </div>
     </div>
   );
+  {
+    imageUrl ? (
+      <img
+        ref={imageRef}
+        src={imageUrl}
+        alt={room.name}
+        onLoad={(event) => updateOverlayContrast(event.currentTarget)}
+        className="absolute inset-0 block h-full w-full select-none object-cover"
+      />
+    ) : (
+      <div
+        className="
+          absolute inset-0 grid
+          font-button font-bold text-[10px] uppercase tracking-widest
+          room-list-card__placeholder place-items-center
+        "
+      >
+        Room imagery unavailable
+      </div>
+    )
+  }
+
+  {
+    isTopMatch && (
+      <div
+        className="
+          absolute left-3 top-3 z-10 flex items-center
+          px-3 py-1
+          font-button font-bold text-[10px] uppercase tracking-widest
+          rounded-full
+          shadow-xs backdrop-blur-xs
+          room-list-card__badge gap-1.5
+        "
+      >
+        <Sparkles
+          className="
+            h-3 w-3
+          "
+          /
+        >
+        <span>Top Pick</span>
+      </div>
+    )
+  }
+
+  {
+    hasGallery && (
+      <>
+        <button
+          type="button"
+          onClick={showPreviousImage}
+          aria-label={`Previous photo of ${room.name}`}
+          className="
+            absolute left-2 top-1/2 z-10 grid
+            h-11 w-11
+            rounded-full
+            opacity-70 hover:opacity-100 transition-opacity
+            cursor-pointer
+            -translate-y-1/2 place-items-center
+            focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--card-focus-ring)
+          "
+        >
+          <CaretLeft
+            className="
+              h-9 w-9
+              drop-shadow-xs
+            "
+            style={{ color: overlayColors.previous }}
+            aria-hidden="true"
+          /
+          >
+        </button>
+        <button
+          type="button"
+          onClick={showNextImage}
+          aria-label={`Next photo of ${room.name}`}
+          className="
+            absolute right-2 top-1/2 z-10 grid
+            h-11 w-11
+            rounded-full
+            opacity-70 hover:opacity-100 transition-opacity
+            cursor-pointer
+            -translate-y-1/2 place-items-center
+            focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--card-focus-ring)
+          "
+        >
+          <CaretRight
+            className="
+              h-9 w-9
+              drop-shadow-xs
+            "
+            style={{ color: overlayColors.next }}
+            aria-hidden="true"
+          /
+          >
+        </button>
+        <span
+          className="
+            absolute bottom-3 right-3 z-10
+            px-2.5 py-1
+            font-button font-bold text-[9px] uppercase tracking-wider
+            transition-colors
+            drop-shadow-xs
+          "
+          style={{ color: overlayColors.counter }}
+        >
+          {activeImageIndex + 1} / {imageUrls.length}
+        </span>
+      </>
+    )
+  }
 
   return (
     <div
       data-room-card={room.roomTypeId}
       data-room-card-version="approved-v4"
       data-card-theme={resolvedTheme}
-      className={`room-list-card flex w-full flex-col items-stretch gap-6 rounded-card border-2 p-5 shadow-sm transition-all duration-200 hover:shadow-md sm:p-6 lg:gap-8 ${
-        layout === "right" ? "lg:flex-row-reverse" : "lg:flex-row"
-      } ${className}`}
+      className={cn(
+        "room-list-card flex w-full flex-col items-stretch gap-6 rounded-card border-2 p-5 shadow-xs transition-all duration-200 hover:shadow-md sm:p-6 lg:gap-8",
+        layout === "right" ? "lg:flex-row-reverse" : "lg:flex-row",
+        className
+      )}
     >
       {mediaElement}
 
-      <div className="flex min-w-0 flex-1 flex-col justify-between self-stretch py-0.5">
+      <div
+        className="
+          flex flex-1 flex-col justify-between self-stretch
+          min-w-0
+          py-0.5
+        "
+      >
         <div>
           {headerSlot ?? (
-            <div className="mb-2.5 flex flex-col gap-1.5">
+            <div
+              className="
+                flex flex-col
+                mb-2.5
+                gap-1.5
+              "
+            >
               <h3
-                className="room-list-card__title text-balance font-label text-2xl font-bold uppercase leading-tight tracking-[0.72px] sm:text-3xl md:text-[34px] md:leading-[105%]"
+                className="
+                  text-balance text-2xl sm:text-3xl md:text-[34px]
+                  font-button font-bold uppercase
+                  leading-tight md:leading-[105%] tracking-[0.72px]
+                  room-list-card__title
+                "
               >
                 {room.name}
               </h3>
               {tagline && (
                 <p
-                  className="room-list-card__tagline font-label text-xs font-bold uppercase tracking-[2.5px] sm:text-[13px]"
+                  className="
+                    font-button font-bold text-xs sm:text-[13px] uppercase
+                    tracking-[2.5px]
+                    room-list-card__tagline
+                  "
                 >
                   {tagline}
                 </p>
@@ -216,23 +325,35 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           {bodySlot ??
             (cardDescription ? (
               <p
-                className="room-list-card__description mb-4 line-clamp-3 font-body text-xs leading-5.5 sm:text-sm sm:leading-5.75 md:line-clamp-4"
+                className="
+                  mb-4
+                  line-clamp-3 md:line-clamp-4 font-sans text-xs sm:text-sm
+                  leading-relaxed sm:leading-relaxed
+                  room-list-card__description
+                "
               >
                 {cardDescription}
               </p>
             ) : null)}
 
           {badgesSlot ?? (
-            <div className="mb-4 flex flex-wrap items-center gap-2 py-1">
+            <div
+              className="
+                flex flex-wrap items-center
+                mb-4 py-1
+                gap-2
+              "
+            >
               {pills.map((pill) => (
                 <div
                   key={pill.key}
                   data-pill-source={pill.source}
-                  className={`room-list-card__pill rounded-control-sm border font-label text-[10px] font-bold uppercase leading-none tracking-[1px] ${
+                  className={cn(
+                    "room-list-card__pill rounded-full border font-button text-[10px] font-bold uppercase leading-none tracking-[1px]",
                     pill.emphasis === "highlight"
                       ? "room-list-card__highlight"
                       : "room-list-card__amenity"
-                  }`}
+                  )}
                 >
                   {pill.label}
                 </div>
@@ -241,41 +362,71 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
           )}
         </div>
 
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-current/15 pt-3">
+        <div
+          className="
+            flex flex-wrap items-center justify-between
+            mt-auto pt-3
+            border-t border-current/15
+            gap-3
+          "
+        >
           {actionsSlot ?? (
-            <div className="flex items-center justify-start gap-3">
+            <div
+              className="
+                flex items-center justify-start
+                gap-3
+              "
+            >
               {onSelectRoom && (
-                <button
-                  type="button"
+                <Button
+                  variant="filled"
+                  colorScheme={buttonColors.primary}
+                  size="small"
                   onClick={() => onSelectRoom(room)}
-                  className="room-list-card__action room-list-card__primary inline-flex min-h-8 items-center justify-center rounded-card-media px-5 py-2 font-label text-[11px] font-bold uppercase leading-none tracking-[1.1px] shadow-sm transition-transform active:scale-95"
                 >
                   Select Room
-                </button>
+                </Button>
               )}
               {onOpenRoomDetails && (
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  colorScheme={buttonColors.secondary}
+                  size="small"
                   onClick={() => onOpenRoomDetails(room)}
-                  className="room-list-card__action room-list-card__secondary inline-flex min-h-8 items-center justify-start rounded-card-media border px-5 py-2 text-left font-label text-[11px] font-bold uppercase leading-none tracking-[1.1px] transition-colors"
                 >
                   View Details
-                </button>
+                </Button>
               )}
             </div>
           )}
 
           {priceSlot ?? (
-            <div className="text-right">
+            <div
+              className="
+                text-right
+              "
+            >
               {nightlyRate != null ? (
                 <span
-                  className="room-list-card__price font-label text-lg font-normal sm:text-xl md:text-2xl"
+                  className="
+                    font-button font-normal text-lg sm:text-xl md:text-2xl
+                    room-list-card__price
+                  "
                 >
                   from {money(nightlyRate, currency)}
-                  <span className="text-xs">/night</span>
+                  <span
+                    className="
+                      text-xs
+                    "
+                  >/night</span>
                 </span>
               ) : (
-                <span className="room-list-card__price font-label text-sm">Check rate</span>
+                <span
+                  className="
+                    font-button text-sm
+                    room-list-card__price
+                  "
+                >Check rate</span>
               )}
             </div>
           )}
@@ -284,3 +435,6 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
     </div>
   );
 };
+
+export const RoomListCard = RoomsListCard;
+export default RoomsListCard;

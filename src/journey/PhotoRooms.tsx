@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 import { RoomPhotoTour } from "./RoomPhotoTour";
 import { PhotoTourArrow } from "./PhotoTourArrow";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button";
 import { Pill, PillButton } from "../components/ui/pill";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";

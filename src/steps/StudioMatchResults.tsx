@@ -59,13 +59,13 @@ export function StudioMatchResults({
     return (
       <section className="min-h-screen bg-alpine-linen py-12">
         <div className="booking-shell max-w-3xl text-center">
-          <button type="button" onClick={onBack} className="mb-8 font-number text-xs font-bold uppercase tracking-widest text-ash-900">
+          <button type="button" onClick={onBack} className="mb-8 font-number text-xs font-bold uppercase tracking-widest text-alpine-linen-900">
             ← Back
           </button>
           <h1 className="font-heading text-5xl font-bold uppercase text-cowboy-umber">
             No Exact Match This Time
           </h1>
-          <p className="mx-auto mt-4 max-w-xl font-body text-sm text-ash-900">
+          <p className="mx-auto mt-4 max-w-xl font-body text-sm text-alpine-linen-900">
             Your current party and eligibility filters removed the available rooms. Browse all eligible rooms or change your answers.
           </p>
           <button type="button" onClick={onBrowseAll} className="mt-7 rounded-full bg-cowboy-umber px-7 py-3 font-number text-xs font-bold uppercase tracking-widest text-alpine-linen">
@@ -148,7 +148,7 @@ export function StudioMatchResults({
           <h1 className="font-heading text-3xl font-light uppercase leading-[1.05] tracking-wide text-smoke sm:text-5xl">
             Your Handpicked Catskill Matches
           </h1>
-          <p className="font-sans text-sm leading-6 text-ash-900 sm:text-base">
+          <p className="font-sans text-sm leading-6 text-alpine-linen-900 sm:text-base">
             Based on your party of {partyLabel(preferences)}
             {preferences.dog ? " (with your dog companion)" : ""} and your escape focus on{" "}
             <strong className="text-cowboy-umber">{choiceLabels(preferences)}</strong>.
@@ -198,7 +198,7 @@ export function StudioMatchResults({
                   Two More Strong Matches
                 </h2>
               </div>
-              <p className="max-w-md font-body text-sm text-ash-900">
+              <p className="max-w-md font-body text-sm text-alpine-linen-900">
                 Different strengths, same live availability. These were the next highest-ranked room types for your answers.
               </p>
             </div>
@@ -304,7 +304,7 @@ export function StudioMatchResults({
             <h2 id="save-matches-title" className="mt-2 pr-10 font-heading text-4xl font-bold uppercase leading-none text-cowboy-umber">
               Send Them to Your Inbox
             </h2>
-            <p className="mt-4 font-body text-sm leading-6 text-ash-900">
+            <p className="mt-4 font-body text-sm leading-6 text-alpine-linen-900">
               Save your top match and alternates with your booking session so they&apos;re easy to pick back up later.
             </p>
 

@@ -1,19 +1,25 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
-import "./index.css";
+import "./styles/index.css";
+
 // Load Photo Engine styles at entry so Arrive and Journal are styled immediately.
 // Photo custom properties remain scoped under .photo-journey.
+
 import "./styles/room-photo-tour.css";
 import { initLang } from "./lib/lang";
 import { initUtm } from "./lib/utm";
 
-// Langue résolue AVANT le rendu et tout appel réseau (?lang= > localStorage > en) :
-// figée pour ce chargement, elle pilote t(), les formats Intl et la langue Mews.
+
+// Language resolved BEFORE rendering and any network calls (?lang= > localStorage > en):
+// frozen for this load, it drives t(), Intl formats, and the Mews language.
+
 initLang();
-// UTM capturés AVANT que l'URL ne soit réécrite (sinon perdus) → joints au suivi n8n.
+
+// UTMs captured BEFORE the URL is rewritten (otherwise lost) → attached to n8n tracking.
 initUtm();
 
-// NB : pas de <StrictMode> — en dev il double-invoque les effets (donc chaque appel
-// Mews apparaîtrait 2× dans le Dev Panel). On le retire pour un journal d'appels fidèle
-// au comportement de production (un appel = une ligne).
+// Note: no <StrictMode> — in dev it double-invokes effects (so each
+// Mews call would appear 2x in the Dev Panel). Removed for a call log faithful
+// to production behavior (one call = one line).
+
 ReactDOM.createRoot(document.getElementById("root")!).render(<App />);

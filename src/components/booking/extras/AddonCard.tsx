@@ -65,7 +65,7 @@ export function AddonCard({
           <h3 className="truncate font-label text-[28px] font-normal uppercase leading-none tracking-[-0.45px] text-smoke" title={product.name}>
             {product.name}
           </h3>
-          <p className="mt-3 line-clamp-3 min-h-12.75 font-body text-sm leading-4.25 tracking-[-0.15px] text-ash-900">
+          <p className="mt-3 line-clamp-3 min-h-12.75 font-body text-sm leading-4.25 tracking-[-0.15px] text-alpine-linen-900">
             {product.description}
           </p>
           {(mode || lineTotal !== product.price) && (

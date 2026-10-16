@@ -235,7 +235,7 @@ function transform(source, filePath) {
   next = replaceInlineStyleColors(next);
   next = replaceKnownClasses(next);
 
-  // src/index.css is the token source. Never rewrite its literal token values
+  // src/styles/index.css is the token source. Never rewrite its literal token values
   // into self-references. Other CSS files may safely consume the variables.
   if (filePath !== TOKEN_SOURCE && filePath.endsWith(".css")) {
     next = replaceCssColors(next);

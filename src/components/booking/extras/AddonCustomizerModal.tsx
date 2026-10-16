@@ -162,7 +162,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                 >
                   {addon.name}
                 </h3>
-                <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-ash-900 mt-2.5 2xl:mt-4 leading-relaxed">
+                <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-alpine-linen-900 mt-2.5 2xl:mt-4 leading-relaxed">
                   {addon.description}
                 </p>
               </div>
@@ -242,7 +242,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                   <h4 className="font-heading text-xl sm:text-2xl lg:text-3xl 2xl:text-4xl text-smoke tracking-tight">
                     Will these fresh blooms be waiting for you, or is this a gift?
                   </h4>
-                  <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-ash-900 mt-2 leading-relaxed">
+                  <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-alpine-linen-900 mt-2 leading-relaxed">
                     We arrange local seasonal botanical bouquets daily in our floral studio.
                   </p>
                 </div>
@@ -273,7 +273,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                           </span>
                         )}
                       </div>
-                      <p className="font-body text-xs sm:text-sm 2xl:text-base text-ash-900 leading-relaxed mt-2">
+                      <p className="font-body text-xs sm:text-sm 2xl:text-base text-alpine-linen-900 leading-relaxed mt-2">
                         Arranged in a glass vase and waiting in your room prior to 4:00 PM check-in, so you can enjoy fresh flowers throughout your entire stay.
                       </p>
                     </div>
@@ -310,7 +310,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                           </span>
                         )}
                       </div>
-                      <p className="font-body text-xs sm:text-sm 2xl:text-base text-ash-900 leading-relaxed mt-2">
+                      <p className="font-body text-xs sm:text-sm 2xl:text-base text-alpine-linen-900 leading-relaxed mt-2">
                         Hand-delivered with a personalized letterpress card at your chosen moment during the stay.
                       </p>
                     </div>
@@ -333,7 +333,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                       ? `Requested Delivery Time on ${arrivalDateInfo.fullDateLabel}?`
                       : `Which day of your stay should we schedule this?`}
                   </h4>
-                  <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-ash-900 mt-2 leading-relaxed">
+                  <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-alpine-linen-900 mt-2 leading-relaxed">
                     {isOneNightStay
                       ? `Since you are staying one night, we’ll prepare and deliver your provisions on your arrival evening.`
                       : `Select the evening or moment that fits your plans best.`}
@@ -362,7 +362,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                           <span className="block font-bold text-base sm:text-lg 2xl:text-xl mt-1 font-sans">
                             {dateObj.dayName}
                           </span>
-                          <span className={`block text-xs sm:text-sm 2xl:text-base mt-0.5 ${isSelected ? 'text-alpine-linen/90' : 'text-ash-900'}`}>
+                          <span className={`block text-xs sm:text-sm 2xl:text-base mt-0.5 ${isSelected ? 'text-alpine-linen/90' : 'text-alpine-linen-900'}`}>
                             {dateObj.fullDateLabel}
                           </span>
                         </button>
@@ -390,7 +390,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                           className={`px-4 sm:px-5 py-3.5 sm:py-4 2xl:px-6 2xl:py-5 rounded-2xl 2xl:rounded-3xl border-2 text-left text-xs sm:text-sm lg:text-base 2xl:text-lg font-sans transition-all cursor-pointer flex items-center justify-between ${
                             isSelected
                               ? 'border-cowboy-umber bg-alpine-linen font-bold text-smoke shadow-2xs'
-                              : 'border-cowboy-umber/15 bg-white text-ash-900 hover:border-cowboy-umber/35 hover:bg-paper'
+                              : 'border-cowboy-umber/15 bg-white text-alpine-linen-900 hover:border-cowboy-umber/35 hover:bg-paper'
                           }`}
                         >
                           <span>{timeOption}</span>
@@ -423,7 +423,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                 <label className="block font-label text-base sm:text-lg 2xl:text-xl uppercase text-cowboy-umber">
                   Piped Cake Inscription (Optional)
                 </label>
-                <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-ash-900">
+                <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-alpine-linen-900">
                   What would you like our local Catskills baker to pipe in icing on the cake?
                 </p>
                 <input
@@ -444,7 +444,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                   <Wine className="w-5 h-5 2xl:w-6 2xl:h-6 text-copper" />
                   <span>Choose Your Wine Varietal</span>
                 </label>
-                <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-ash-900">
+                <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-alpine-linen-900">
                   Select your preferred style, curated by the Cowboy Sommelier:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 2xl:gap-4 pt-1">
@@ -473,7 +473,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                   <Dog className="w-5 h-5 2xl:w-6 2xl:h-6 text-copper" />
                   <span>Tell Us About Your Dog</span>
                 </label>
-                <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-ash-900">
+                <p className="font-body text-xs sm:text-sm lg:text-base 2xl:text-lg text-alpine-linen-900">
                   We'll have a plush Cowboy dog bed, ceramic water bowl, and house-made treats ready for your companion.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 2xl:gap-6">

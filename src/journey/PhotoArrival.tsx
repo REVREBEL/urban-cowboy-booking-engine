@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import { resetPhotoJourney } from "./photoSession";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button";
 import { SearchBarExpanded, type ActiveDropdownSection } from "../components/booking/search/SearchBarExpanded";
 import { SearchBarGuestDropdown } from "../components/booking/search/SearchBarGuestsDropdown";
 import { SearchBarLocationDropdown } from "../components/booking/search/SearchBarLocationDropdown";

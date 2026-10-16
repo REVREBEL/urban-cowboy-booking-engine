@@ -1,21 +1,36 @@
 import * as React from "react";
-import {
-  Button,
-  COLOR_PALETTE,
-  type ButtonColor,
-  type ButtonStyle,
-} from "./button";
+import { Button, COLOR_PALETTE, type ButtonColor, type ButtonStyle } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 export type PillSize = "xsmall" | "small" | "default" | "large";
 
 export interface PillProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: ButtonStyle;
-  /** Identical to the Button component's colorScheme values. */
   colorScheme?: ButtonColor;
   color?: ButtonColor;
   size?: PillSize;
 }
+
+/* Re-export palette for tests and external consumers */
+export { COLOR_PALETTE };
+
+/* Color Scheme Class Mapping derived from design system tokens */
+const COLOR_CLASSES: Record<ButtonColor, { bg: string; text: string; border: string }> = {
+  dark: { bg: "bg-lake-forest", text: "text-paper", border: "border-lake-forest-fade" },
+  light: { bg: "bg-paper", text: "text-lake-forest", border: "border-paper" },
+  "alpine-linen": { bg: "bg-alpine-linen", text: "text-lake-forest", border: "border-alpine-linen-fade" },
+  "cowboy-umber": { bg: "bg-cowboy-umber", text: "text-alpine-linen", border: "border-cowboy-umber-fade" },
+  smoke: { bg: "bg-smoke", text: "text-paper", border: "border-smoke-fade" },
+  "lake-forest": { bg: "bg-lake-forest", text: "text-alpine-linen", border: "border-lake-forest-fade" },
+  copper: { bg: "bg-copper", text: "text-alpine-linen-200", border: "border-copper-fade" },
+  oxblood: { bg: "bg-oxblood", text: "text-alpine-linen-200", border: "border-oxblood-fade" },
+  "oxidized-teal": { bg: "bg-oxidized-teal", text: "text-paper", border: "border-oxidized-teal-fade" },
+  "bandana-red": { bg: "bg-bandana-red", text: "text-paper", border: "border-bandana-red-fade" },
+  "whiskey-sour": { bg: "bg-whiskey-sour", text: "text-cowboy-umber", border: "border-whiskey-sour-fade" },
+  "lodge-yellow": { bg: "bg-lodge-yellow", text: "text-lake-forest", border: "border-lodge-yellow-fade" },
+  "nude-ember": { bg: "bg-nude-ember", text: "text-lake-forest", border: "border-nude-ember-fade" },
+  paper: { bg: "bg-paper", text: "text-smoke", border: "border-smoke-fade" },
+};
 
 // The label font has an uneven visual baseline. The extra 1–2px on top
 // optically centers the text without offsetting it with transforms.
@@ -37,22 +52,25 @@ export function Pill({
   children,
   ...props
 }: PillProps) {
-  const palette = COLOR_PALETTE[colorScheme ?? color ?? "dark"];
-  const paletteStyle: React.CSSProperties =
+  const resolvedColor = colorScheme ?? color ?? "dark";
+  const palette = COLOR_CLASSES[resolvedColor] ?? COLOR_CLASSES.dark;
+
+  const colorClasses =
     variant === "filled"
-      ? { backgroundColor: palette.bg, color: palette.text, border: "1px solid " + palette.border }
+      ? `${palette.bg} ${palette.text} border ${palette.border}`
       : variant === "outline"
-        ? { backgroundColor: "transparent", color: palette.border, border: "1px solid " + palette.border }
-        : { backgroundColor: "transparent", color: palette.border, border: "1px solid transparent" };
+        ? `bg-transparent ${palette.text} border ${palette.border}`
+        : `bg-transparent ${palette.text} border-transparent`;
 
   return (
     <span
-      className={cn("inline-flex max-w-full items-center justify-center gap-1.5 whitespace-nowrap align-middle font-label leading-none", className)}
+      className={cn(
+        "inline-flex max-w-full items-center justify-center gap-1.5 whitespace-nowrap align-middle font-label leading-none rounded-full box-border",
+        colorClasses,
+        className
+      )}
       style={{
-        borderRadius: "9999px",
-        boxSizing: "border-box",
         ...PILL_SIZES[size],
-        ...paletteStyle,
         ...style,
       }}
       {...props}
@@ -77,18 +95,15 @@ export const PillButton = React.forwardRef<HTMLButtonElement, PillButtonProps>(
       colorScheme={colorScheme ?? color ?? "dark"}
       size="xsmall"
       aria-pressed={pressed ?? props["aria-pressed"]}
-      className={cn("max-w-full whitespace-nowrap font-label", className)}
+      className={cn("max-w-full whitespace-nowrap font-label rounded-full font-medium leading-none", className)}
       style={{
-        borderRadius: "9999px",
         borderWidth: variant === "outline" ? "1px" : undefined,
-        fontWeight: "500",
-        lineHeight: "1",
         ...PILL_SIZES[size],
         ...style,
       }}
     >
       {children}
     </Button>
-  ),
+  )
 );
 PillButton.displayName = "PillButton";

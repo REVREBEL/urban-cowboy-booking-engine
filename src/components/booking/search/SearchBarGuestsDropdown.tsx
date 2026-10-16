@@ -168,7 +168,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
             >
               Adults
             </p>
-            <p className="font-body text-[12.1px] leading-5.75 text-ash m-0 w-49 h-5.75 flex items-center">
+            <p className="font-body text-[12.1px] leading-5.75 text-alpine-linen m-0 w-49 h-5.75 flex items-center">
               Age 13+
             </p>
           </div>
@@ -234,7 +234,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
             >
               Children
             </p>
-            <p className="font-body text-[12.9px] leading-6 text-ash m-0 w-49 h-6 flex items-center">
+            <p className="font-body text-[12.9px] leading-6 text-alpine-linen m-0 w-49 h-6 flex items-center">
               Ages 4–12
             </p>
           </div>
@@ -303,7 +303,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
             >
               Infants
             </p>
-            <p className="m-0 flex h-6 items-center font-body text-[12.9px] leading-6 text-ash">
+            <p className="m-0 flex h-6 items-center font-body text-[12.9px] leading-6 text-alpine-linen">
               Under 4 · in a cot
             </p>
           </div>
@@ -368,7 +368,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               >
                 Accessible
               </p>
-              <p className="font-body text-[12.9px] leading-6 text-ash m-0 w-60.5 h-6 flex items-center">
+              <p className="font-body text-[12.9px] leading-6 text-alpine-linen m-0 w-60.5 h-6 flex items-center">
                 ADA Rooms
               </p>
             </div>

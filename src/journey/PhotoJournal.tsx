@@ -10,7 +10,7 @@ import { photoGalleryForRoom, type PhotoSource } from "../data/photoGalleries";
 import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import type { Feature, MatchProfile, Occasion } from "./data";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/Button";
 import { PillButton } from "../components/ui/pill";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
@@ -158,7 +158,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
               </li>
             ))}
           </ol>
-          <p className="mt-4 border-t border-ash pt-3 text-xs text-foreground/70">Only bookable rooms that fit the verified guest and dog policies appear above.</p>
+          <p className="mt-4 border-t border-alpine-linen pt-3 text-xs text-foreground/70">Only bookable rooms that fit the verified guest and dog policies appear above.</p>
         </aside>
       </div>
     </section>
