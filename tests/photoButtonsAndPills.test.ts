@@ -111,3 +111,23 @@ test("Pill stories cover all Button palette colors, variants and toggles", () =>
     assert.ok(story.includes(`export const ${name}`), `Story ${name} missing`);
   }
 });
+
+test("Button and Pill share a single color prop and border/clickable styling", () => {
+  const button = read("components/ui/Button.tsx");
+  const pill = read("components/ui/Pill.tsx");
+  const css = read("styles/utilities.css");
+  for (const source of [button, pill]) {
+    assert.match(source, /colorScheme\?: ButtonColor/);
+    assert.doesNotMatch(source, /^\s*color\?: ButtonColor;/m);
+    assert.match(source, /borderColor\?: ControlBorderColor/);
+    assert.match(source, /clickable\?: boolean/);
+    assert.match(source, /CONTROL_BORDER_CLASSES\[borderColor\]/);
+  }
+  for (const [name, token] of [["background", "bg"], ["foreground", "fg"], ["faded", "border"]]) {
+    assert.ok(css.includes("@utility control-border-" + name + " { --selected-control-border: var(--" + token + "); }"));
+  }
+  assert.ok(css.includes('not([data-clickable="false"])'));
+  assert.match(button, /data-clickable=\{clickable\}/);
+  assert.match(pill, /data-clickable=\{clickable\}/);
+});
+

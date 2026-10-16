@@ -9,6 +9,12 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 export type ButtonStyle = "filled" | "outline" | "transparent";
+export type ControlBorderColor = "background" | "foreground" | "faded";
+export const CONTROL_BORDER_CLASSES: Record<ControlBorderColor, string> = {
+  background: "control-border-background",
+  foreground: "control-border-foreground",
+  faded: "control-border-faded",
+};
 export type TextCase = "uppercase" | "title" | "lowercase";
 export const TEXT_CASE_CLASSES: Record<TextCase, string> = {
   uppercase: "text-case-uppercase",
@@ -218,7 +224,8 @@ export interface ButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "color"> {
   variant?: ButtonStyle;
   colorScheme?: ButtonColor;
-  color?: ButtonColor;
+  borderColor?: ControlBorderColor;
+  clickable?: boolean;
   size?: ButtonSize;
   textCase?: TextCase;
   hasIcon?: boolean;
@@ -237,7 +244,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       variant = "filled",
       colorScheme,
-      color,
+      borderColor = "faded",
+      clickable = true,
       size = "default",
       textCase = "uppercase",
       hasIcon = false,
@@ -256,11 +264,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const resolvedColor = colorScheme ?? color ?? "dark";
+    const resolvedColor = colorScheme ?? "dark";
     const isDisabledOrLoading = disabled || isLoading;
     const Comp = asChild ? Slot : "button";
 
-    const colorClasses = `${CONTROL_COLOR_CLASSES[resolvedColor]} ${CONTROL_VARIANT_CLASSES[variant]}`;
+    const colorClasses = `${CONTROL_COLOR_CLASSES[resolvedColor]} ${CONTROL_BORDER_CLASSES[borderColor]} ${CONTROL_VARIANT_CLASSES[variant]}`;
 
     const iconSize =
       size === "xlarge"
@@ -285,13 +293,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           buttonVariants({ variant, size }),
           colorClasses,
+          !clickable && "control-not-clickable",
           TEXT_CASE_CLASSES[textCase],
           isDisabledOrLoading
             ? "transform-none cursor-not-allowed"
-            : "active:scale-[0.98]",
+            : clickable ? "active:scale-[0.98]" : "cursor-default",
           className
         )}
         style={style}
+        data-clickable={clickable}
         data-button-name={buttonName}
         data-button-page={buttonPage}
         data-button-content={buttonContent}

@@ -19,8 +19,9 @@ const meta = {
     },
   },
   argTypes: {
-    colorScheme: { control: false, description: "Alternative API alias. The showcase uses the color control." },
-    color: { control: "select", options: colors },
+    colorScheme: { control: "select", options: colors },
+    borderColor: { control: "inline-radio", options: ["background", "foreground", "faded"], name: "Border Color" },
+    clickable: { control: "boolean" },
     variant: { control: "inline-radio", options: styles },
     size: { control: "select", options: sizes },
     textCase: { control: "inline-radio", options: ["uppercase", "title", "lowercase"], name: "Text Case" },
@@ -32,7 +33,9 @@ const meta = {
   },
   args: {
     children: "Book Your Stay",
-    color: "lake-forest",
+    colorScheme: "lake-forest",
+    borderColor: "faded",
+    clickable: true,
     variant: "filled",
     size: "default",
     textCase: "uppercase",
@@ -86,6 +89,12 @@ export const TextCases: Story = {
   ),
 };
 
+export const BorderColors: Story = {
+  render: () => <div className="flex flex-wrap items-center gap-3">{(["background", "foreground", "faded"] as const).map((borderColor) => <Button key={borderColor} colorScheme="copper" borderColor={borderColor} variant="outline">{borderColor}</Button>)}</div>,
+};
+export const Clickable: Story = {
+  render: () => <div className="flex flex-wrap items-center gap-3"><Button colorScheme="copper" clickable>Interactive</Button><Button colorScheme="copper" clickable={false}>Static styling</Button></div>,
+};
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">
@@ -145,8 +154,8 @@ export const States: Story = {
   ),
 };
 
-export const Outline: Story = { args: { variant: "outline", color: "copper" } };
-export const Transparent: Story = { args: { variant: "transparent", color: "lake-forest" } };
+export const Outline: Story = { args: { variant: "outline", colorScheme: "copper" } };
+export const Transparent: Story = { args: { variant: "transparent", colorScheme: "lake-forest" } };
 export const WithIcon: Story = { args: { hasIcon: true, children: "Explore Suites" } };
 export const Loading: Story = { args: { isLoading: true, children: "Checking Availability..." } };
 export const Disabled: Story = { args: { disabled: true, children: "Sold Out" } };
