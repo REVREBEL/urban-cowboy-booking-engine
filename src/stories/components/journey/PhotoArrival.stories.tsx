@@ -57,30 +57,36 @@ const editorialStories: ArrivalProps["stories"] = [
 
 const meta = {
   title: "Journey/Arrive",
-  component: Arrive,
+  component: Preview,
   tags: ["autodocs"],
-  parameters: { layout: "fullscreen" },
-  args: {
-    checkIn: null, checkOut: null, setRange: () => {},
-    adults: 2, children: 0, infants: 0,
-    setAdults: () => {}, setChildren: () => {}, setInfants: () => {},
-    accessible: false, setAccessible: () => {},
-    location: "CATSKILLS", setLocation: () => {},
-    promoCode: "", setPromoCode: () => {},
-    activeSection: null, setActiveSection: () => {},
-    dailyRates: {}, loadCalendar: async () => {},
-    onMatch: () => {}, onBrowse: () => {},
-    nights: 0, stories: editorialStories,
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component: "Interactive preview of the Arrive presentation component. State and callbacks are managed locally, without Mews API calls or non-serializable story arguments.",
+      },
+    },
   },
-  render: () => <Preview stories={editorialStories} />,
-} satisfies Meta<typeof Arrive>;
+  argTypes: {
+    openCalendar: { control: "boolean" },
+    initialCheckIn: { control: "text" },
+    initialCheckOut: { control: "text" },
+    stories: { control: "object" },
+  },
+  args: {
+    openCalendar: false,
+    initialCheckIn: null,
+    initialCheckOut: null,
+    stories: editorialStories,
+  },
+} satisfies Meta<typeof Preview>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Arrival: Story = {};
-export const CalendarOpen: Story = { render: () => <Preview openCalendar stories={editorialStories} /> };
+export const CalendarOpen: Story = { args: { openCalendar: true } };
 export const DatesSelected: Story = {
-  render: () => <Preview initialCheckIn="2026-11-12" initialCheckOut="2026-11-15" stories={editorialStories} />,
+  args: { initialCheckIn: "2026-11-12", initialCheckOut: "2026-11-15" },
 };
-export const FeaturesHidden: Story = { render: () => <Preview stories={[]} /> };
+export const FeaturesHidden: Story = { args: { stories: [] } };
