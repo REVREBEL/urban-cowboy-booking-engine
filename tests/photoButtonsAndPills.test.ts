@@ -72,9 +72,9 @@ test("Pill and PillButton use shared size utilities with independent vertical pa
   const source = read("components/ui/Pill.tsx");
   const styles = read("styles/utilities.css");
   const expected = [
-    { size: "sm", top: "5px", bottom: "4px" },
-    { size: "default", top: "8px", bottom: "6px" },
-    { size: "lg", top: "10px", bottom: "8px" },
+    { size: "sm", top: "6px", bottom: "4px" },
+    { size: "default", top: "10px", bottom: "6px" },
+    { size: "lg", top: "11px", bottom: "8px" },
   ];
   for (const { size, top, bottom } of expected) {
     const rule = styles.split("@utility pill-" + size + " {")[1]?.split("}")[0];
