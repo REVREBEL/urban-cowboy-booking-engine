@@ -205,7 +205,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
               disabled={isVerifying}
               placeholder="Promo/Group Code"
               aria-invalid={statusFeedback ? !statusFeedback.isValid : undefined}
-              className="h-9 w-full border-none bg-transparent p-0 pr-2 font-body text-[16px] leading-7.5text-foreground outline-none placeholder:text-foreground placeholder:opacity-100"
+              className="h-9 w-full border-none bg-transparent p-0 pr-2 font-body text-[16px] leading-7.5 text-foreground outline-none placeholder:text-foreground placeholder:opacity-100"
             />
 
             {/* Trailing action / status indicator */}

@@ -251,15 +251,15 @@
 }
 @utility pill-sm {
   font-size: .75rem;
-  padding: 6px 10px 4px;
+  padding: 5px 10px 4px;
 }
 @utility pill-default {
   font-size: .875rem;
-  padding: 10px 14px 6px;
+  padding: 8px 14px 6px;
 }
 @utility pill-lg {
   font-size: 1rem;
-  padding: 11px 16px 8px;
+  padding: 10px 16px 8px;
 }
 
 /* Non-interactive pill outlines retain the label/foreground tone. */
