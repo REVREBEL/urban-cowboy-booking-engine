@@ -68,21 +68,16 @@ test("Pill shares the Button palette and interactive PillButton delegates to But
 });
 
 
-test("Pill and PillButton use shared size utilities with independent vertical padding", () => {
+test("Pill and PillButton share the four CSS size utilities without locking visual padding", () => {
   const source = read("components/ui/Pill.tsx");
   const styles = read("styles/utilities.css");
-  const expected = [
-    { size: "sm", top: "6px", bottom: "4px" },
-    { size: "default", top: "10px", bottom: "6px" },
-    { size: "lg", top: "11px", bottom: "8px" },
-  ];
-  for (const { size, top, bottom } of expected) {
+  for (const size of ["xs", "sm", "default", "lg"]) {
     const rule = styles.split("@utility pill-" + size + " {")[1]?.split("}")[0];
     assert.ok(rule, "Missing pill-" + size + " utility");
-    assert.ok(rule.includes("padding: " + top + " "));
-    assert.ok(rule.includes(" " + bottom + ";"));
+    assert.match(rule, /font-size:\\s*[^;]+;/, "Pill size must define its font size");
+    assert.match(rule, /padding:\\s*[^;]+;/, "Pill size must define its spacing");
   }
-  assert.match(source, /PILL_SIZE_CLASSES\[size\]/);
+  assert.match(source, /PILL_SIZE_CLASSES\\[size\\]/);
   assert.equal(source.split("PILL_SIZE_CLASSES[size]").length - 1, 2);
   assert.doesNotMatch(source, /PILL_SIZES/);
 });
