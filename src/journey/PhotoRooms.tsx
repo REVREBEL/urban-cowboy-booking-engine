@@ -77,6 +77,13 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   const [view, setView] = useState<"spreads" | "index">(studioCatalog ? "index" : "spreads");
   const [detail, setDetail] = useState<string | null>(null);
   const roomStage = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!detail) return;
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => { document.documentElement.style.overflow = previousOverflow; };
+  }, [detail]);
   const filterOverlay = useRef<HTMLDivElement>(null);
   const roomScrollFrame = useRef<number | null>(null);
   const lastWheelNavigation = useRef(0);
@@ -226,7 +233,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   }, [view, list]);
 
   return (
-    <section ref={roomStage} className="j-room-stage pb-24">
+    <section ref={roomStage} className={`j-room-stage pb-24 ${detail ? "is-details-open" : ""}`}>
       {/* Floating filter overlay */}
       <div ref={filterOverlay} className="j-room-filters sticky top-16 z-30 mx-auto max-w-[1600px] px-3 pt-2 sm:px-6">
         <div className="flex items-center gap-2 rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:hidden">
@@ -292,7 +299,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
             </div>
           </div>
         )}
-        <div className="j-photo-filter-desktop hidden rounded-2xl bg-smoke/85 py-2 backdrop-blur-md sm:block">
+        <div className={`j-photo-filter-desktop hidden rounded-2xl bg-smoke/85 py-2 backdrop-blur-md transition-opacity sm:block ${detail ? "pointer-events-none opacity-0" : ""}`}>
           <div className="j-photo-filter-pair">
             <div role="group" aria-label="Buildings" className="j-photo-filter-segment">
               <Button type="button" variant="transparent" colorScheme="paper" size="xsmall"
@@ -364,7 +371,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
             </div>
           </div>
         </div>
-        <p className="mt-2 px-2 text-sm text-paper/70">
+        <p className={`mt-2 px-2 text-sm text-paper/70 transition-opacity ${detail ? "pointer-events-none opacity-0" : ""}`}>
           {list.length} room types{hidden ? ` · ${hidden} excluded by availability or guest eligibility` : ""} ·{" "}
           <Button type="button" onClick={onEditJournal} variant="transparent" colorScheme="paper" size="xsmall" className="underline underline-offset-4" style={{padding:0}}>
             {profile ? "Edit my journal" : "Help me choose"}
