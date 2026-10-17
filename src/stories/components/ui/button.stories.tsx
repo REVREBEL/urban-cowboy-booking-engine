@@ -90,7 +90,7 @@ export const TextCases: Story = {
 };
 
 export const BorderColors: Story = {
-  render: () => <div className="flex flex-wrap items-center gap-3">{(["background", "foreground", "faded"] as const).map((borderColor) => <Button key={borderColor} colorScheme="copper" borderColor={borderColor} variant="outline">{borderColor}</Button>)}</div>,
+  render: () => <div className="flex flex-wrap items-center gap-3">{(["background", "foreground", "faded"] as const).map((borderColor) => <Button key={borderColor} colorScheme="copper" borderColor={borderColor} variant="filled">{borderColor}</Button>)}</div>,
 };
 export const Clickable: Story = {
   render: () => <div className="flex flex-wrap items-center gap-3"><Button colorScheme="copper" clickable>Interactive</Button><Button colorScheme="copper" clickable={false}>Static styling</Button></div>,
