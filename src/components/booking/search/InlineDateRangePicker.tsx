@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { RestrictionAdvisory, RestrictionType } from "@/types/calendar-restrictions";
 
@@ -132,11 +132,27 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   const [view, setView] = useState({ year: initial.year, month: initial.month });
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const months = [view, shiftMonth(view.year, view.month, 1)];
-  const hasVisibleServiceRestrictions = Object.entries(dailyRates ?? {}).some(
-    ([date, rate]) =>
-      Boolean(rate.restrictions?.length) &&
-      months.some(({ year, month }) => date.startsWith(`${year}-${pad(month + 1)}-`)),
-  );
+
+  // Performance optimization: memoize restriction checks across visible months.
+  // Hover events (`setHoveredDate`) trigger high-frequency re-renders during mouse movement.
+  // Pre-computing prefix strings and short-circuiting direct key checks avoids ~1,100
+  // array/string allocations per hover frame when `dailyRates` contains 365+ entries.
+  const hasVisibleServiceRestrictions = useMemo(() => {
+    if (!dailyRates) return false;
+    const prefix1 = `${view.year}-${pad(view.month + 1)}-`;
+    const m2 = shiftMonth(view.year, view.month, 1);
+    const prefix2 = `${m2.year}-${pad(m2.month + 1)}-`;
+
+    for (const date in dailyRates) {
+      if (
+        (date.startsWith(prefix1) || date.startsWith(prefix2)) &&
+        dailyRates[date]?.restrictions?.length
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }, [dailyRates, view.year, view.month]);
   useEffect(() => {
     if (!onVisibleRangeChange) return;
     const startDate = toIso(view.year, view.month, 1);
