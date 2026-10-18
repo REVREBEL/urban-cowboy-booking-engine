@@ -9,3 +9,7 @@
 ## 2025-05-20 - O(1) ISO Date String Range Comparisons for Night Coverage Checks
 **Learning:** Checking whether a stay covers a specific calendar night (e.g. mandatory holiday events) previously instantiated `Date` objects and iterated up to 400 times with `.setDate(+1)`. Because ISO date strings (`YYYY-MM-DD`) sort lexicographically, target night coverage across candidate stay years can be checked in $O(1)$ string comparisons with zero loop allocations.
 **Action:** Avoid allocating `Date` objects in loops when evaluating date boundaries; leverage lexicographical ISO 8601 string comparisons (`targetIso >= checkIn && targetIso < checkOut`).
+
+## 2025-10-17 - Memoizing Calendar Service Restriction Checks on Date Cell Hover
+**Learning:** High-frequency mouse cursor movements in the date picker trigger component re-renders via `hoveredDate` state changes. Unmemoized full-year restriction checks (`Object.entries(dailyRates)`) created ~1,100 tuple arrays and template string allocations per frame. Memoizing the restriction check on `[dailyRates, view.year, view.month]` and pre-computing visible month prefixes eliminates garbage collection pressure during date hover interactions.
+**Action:** When component re-renders are triggered by mouseover or hover state updates, ensure secondary collection scans (like full-year rate or restriction dictionaries) are memoized on view parameters.
