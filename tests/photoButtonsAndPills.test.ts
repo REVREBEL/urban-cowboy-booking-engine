@@ -74,10 +74,10 @@ test("Pill and PillButton share the four CSS size utilities without locking visu
   for (const size of ["xs", "sm", "default", "lg"]) {
     const rule = styles.split("@utility pill-" + size + " {")[1]?.split("}")[0];
     assert.ok(rule, "Missing pill-" + size + " utility");
-    assert.match(rule, /font-size:\\s*[^;]+;/, "Pill size must define its font size");
-    assert.match(rule, /padding:\\s*[^;]+;/, "Pill size must define its spacing");
+    assert.match(rule, /font-size:\s*[^;]+;/, "Pill size must define its font size");
+    assert.match(rule, /padding:\s*[^;]+;/, "Pill size must define its spacing");
   }
-  assert.match(source, /PILL_SIZE_CLASSES\\[size\\]/);
+  assert.match(source, /PILL_SIZE_CLASSES\[size\]/);
   assert.equal(source.split("PILL_SIZE_CLASSES[size]").length - 1, 2);
   assert.doesNotMatch(source, /PILL_SIZES/);
 });
