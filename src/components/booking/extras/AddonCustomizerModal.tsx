@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { MerchandisedAddOn } from '@/types/add-on-cms';
 import { fmtDate, imgUrl, money } from '@/lib/format';
 import type { AddonSchedulePreference, AddonStayCriteria } from './addon-types';
@@ -64,6 +64,11 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
   );
   const [dietaryNote, setDietaryNote] = useState(smartPreference.dietaryNote ?? '');
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   useEffect(() => {
     if (!isOpen) return;
     setDeliveryType(smartPreference.deliveryType ?? 'scheduled-day');
@@ -77,6 +82,53 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
     setItemCustomization(smartPreference.itemCustomization ?? '');
     setDietaryNote(smartPreference.dietaryNote ?? '');
   }, [isOpen, smartPreference, arrivalDateInfo.isoDate]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+
+    const focusable = () =>
+      Array.from(
+        dialogRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      ).filter((element) => element.getClientRects().length > 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        onCloseRef.current();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const elements = focusable();
+      if (!elements.length) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !dialogRef.current?.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !dialogRef.current?.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -108,7 +160,9 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 lg:p-8 2xl:p-12 animate-in fade-in duration-200">
       <div 
-        className="bg-paper border-2 border-cowboy-umber rounded-panel-sm sm:rounded-modal 2xl:rounded-modal-xl w-full max-w-lg sm:max-w-2xl lg:max-w-275 2xl:max-w-380 shadow-2xl overflow-hidden flex flex-col my-auto relative transition-all duration-300"
+        ref={dialogRef}
+        tabIndex={-1}
+        className="bg-paper border-2 border-cowboy-umber rounded-panel-sm sm:rounded-modal 2xl:rounded-modal-xl w-full max-w-lg sm:max-w-2xl lg:max-w-275 2xl:max-w-380 shadow-2xl overflow-hidden flex flex-col my-auto relative transition-all duration-300 focus:outline-none"
         style={{ maxHeight: '92vh' }}
         role="dialog"
         aria-modal="true"
@@ -124,9 +178,10 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
 
           <button
             type="button"
+            ref={closeButtonRef}
             onClick={onClose}
-            className="w-9 h-9 sm:w-10 sm:h-10 2xl:w-12 2xl:h-12 rounded-full bg-white/80 hover:bg-white text-cowboy-umber flex items-center justify-center transition-all cursor-pointer border border-cowboy-umber/20 shadow-2xs hover:scale-105"
-            aria-label="Close dialogue"
+            className="w-9 h-9 sm:w-10 sm:h-10 2xl:w-12 2xl:h-12 rounded-full bg-white/80 hover:bg-white text-cowboy-umber flex items-center justify-center transition-all cursor-pointer border border-cowboy-umber/20 shadow-2xs hover:scale-105 focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-none"
+            aria-label="Close dialog"
           >
             <X className="w-5 h-5 2xl:w-6 2xl:h-6 stroke-[2.5]" />
           </button>
