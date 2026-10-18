@@ -91,7 +91,13 @@ export function AddonCard({
         )}
 
         {!selected && !locked ? (
-          <Button type="button" onClick={add} colorScheme="cowboy-umber" className="h-12 w-37.75 rounded-full">
+          <Button
+            type="button"
+            onClick={add}
+            colorScheme="cowboy-umber"
+            className="h-12 w-37.75 rounded-full"
+            aria-label={`Add ${product.name} to stay`}
+          >
             Add to stay
           </Button>
         ) : locked ? (
