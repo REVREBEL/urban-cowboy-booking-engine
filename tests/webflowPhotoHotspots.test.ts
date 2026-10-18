@@ -76,3 +76,27 @@ test("Drafts, inactive records and invalid coordinates are never published to th
     { ...pinItem, id: "no-position", fieldData: { ...pinItem.fieldData, "y-percent": null } },
   ], amenities), {});
 });
+
+test("Room Type amenity order is optional, room-specific and cannot add or duplicate amenities", () => {
+  const amenityItems = ["a", "b", "c", "d"].map((id) => ({
+    id, isDraft: false, fieldData: { name: "Amenity " + id, active: true },
+  }));
+  const amenities = normalizePublishedAmenities(amenityItems);
+  const room = (id: string, order?: string) => ({
+    id, isDraft: false,
+    fieldData: {
+      "mews-room-type-id": id,
+      "features-amenities": ["a", "b", "c", "c"],
+      "amenity-display-order": order,
+    },
+  });
+  const result = normalizeRoomAmenityMap([
+    room("default"),
+    room("custom", "c, missing, a, c"),
+    room("other", "b, a"),
+  ], amenities);
+  assert.deepEqual(result.default.map((item) => item.id), ["a", "b", "c"]);
+  assert.deepEqual(result.custom.map((item) => item.id), ["c", "a", "b"]);
+  assert.deepEqual(result.other.map((item) => item.id), ["b", "a", "c"]);
+  assert.ok(!result.custom.some((item) => item.id === "d" || item.id === "missing"));
+});

@@ -50,9 +50,19 @@ export function normalizeRoomAmenityMap(
     const fields = item.fieldData ?? {};
     const roomTypeId = text(fields["mews-room-type-id"]);
     if (!roomTypeId) continue;
-    result[roomTypeId] = refs(fields["features-amenities"])
+    // Room membership always comes from the multi-reference field. Ordering is
+    // optional and cannot introduce amenities not assigned to this room type.
+    const assignedIds = [...new Set(refs(fields["features-amenities"]))];
+    const requestedOrder = text(fields["amenity-display-order"])
+      .split(",").map((id) => id.trim()).filter(Boolean);
+    const position = new Map<string, number>();
+    for (const id of requestedOrder) {
+      if (!position.has(id)) position.set(id, position.size);
+    }
+    result[roomTypeId] = assignedIds
       .map((id) => amenities.get(id))
-      .filter((amenity): amenity is CmsRoomAmenity => Boolean(amenity));
+      .filter((amenity): amenity is CmsRoomAmenity => Boolean(amenity))
+      .sort((a, b) => (position.get(a.id) ?? Infinity) - (position.get(b.id) ?? Infinity));
   }
   return result;
 }
