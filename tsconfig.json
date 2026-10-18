@@ -23,23 +23,20 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "*": [
-        "./*"
-      ],
       "@/*": [
-        "src/*"
+        "./src/*"
       ],
       "@stories/*": [
-        "src/stories/*"
+        "./src/stories/*"
       ],
       "@data/*": [
-        "src/data/*"
+        "./src/data/*"
       ],
       "@types/*": [
-        "src/types/*"
+        "./src/types/*"
       ],
       "@icons/*": [
-        "public/assets/icons/*"
+        "./public/assets/icons/*"
       ]
     }
   },
