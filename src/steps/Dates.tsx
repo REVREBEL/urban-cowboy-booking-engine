@@ -11,7 +11,7 @@ import type { DailyRate } from "@/components/booking/search/InlineDateRangePicke
 
 const CALENDAR_CACHE_FRESH_MS = 2 * 60 * 1000;
 const CALENDAR_CACHE_STALE_MS = 24 * 60 * 60 * 1000;
-const CALENDAR_STORAGE_VERSION = "v4";
+const CALENDAR_STORAGE_VERSION = "v5";
 type CachedCalendar = { fetchedAt: number; dates: Record<string, DailyRate> };
 const calendarCache = new Map<string, CachedCalendar>();
 const calendarRequests = new Map<string, Promise<Record<string, DailyRate>>>();

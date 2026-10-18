@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { RestrictionAdvisory, RestrictionType } from "@/types/calendar-restrictions";
 
 export interface DailyRate {
   amount: number;
@@ -7,6 +8,7 @@ export interface DailyRate {
   available?: boolean;
   minNights?: number;
   invalidStayLengths?: number[];
+  restrictions?: RestrictionAdvisory[];
 }
 
 interface InlineDateRangePickerProps {
@@ -17,6 +19,19 @@ interface InlineDateRangePickerProps {
   dailyRates?: Record<string, DailyRate>;
   formatRate?: (rate: DailyRate) => string;
   onVisibleRangeChange?: (startDate: string, endDate: string) => void;
+}
+
+const RESTRICTION_LABELS: Record<RestrictionType, string> = {
+  ClosedToArrival: "Check-in restrictions",
+  ClosedToDeparture: "Check-out restrictions",
+  ClosedToStay: "Stay restrictions",
+};
+
+/** Category/rate-specific hints; always use Search for an authoritative answer. */
+function restrictionNote(rate: DailyRate | undefined): string {
+  if (!rate?.restrictions?.length) return "";
+  const kinds = [...new Set(rate.restrictions.map((item) => RESTRICTION_LABELS[item.type]))];
+  return `${kinds.join(", ")} may affect some room types or rates; Search checks your exact stay.`;
 }
 
 const pad = (value: number) => String(value).padStart(2, "0");
@@ -117,6 +132,27 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
   const [view, setView] = useState({ year: initial.year, month: initial.month });
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const months = [view, shiftMonth(view.year, view.month, 1)];
+
+  // Performance optimization: memoize restriction checks across visible months.
+  // Hover events (`setHoveredDate`) trigger high-frequency re-renders during mouse movement.
+  // Pre-computing prefix strings and short-circuiting direct key checks avoids ~1,100
+  // array/string allocations per hover frame when `dailyRates` contains 365+ entries.
+  const hasVisibleServiceRestrictions = useMemo(() => {
+    if (!dailyRates) return false;
+    const prefix1 = `${view.year}-${pad(view.month + 1)}-`;
+    const m2 = shiftMonth(view.year, view.month, 1);
+    const prefix2 = `${m2.year}-${pad(m2.month + 1)}-`;
+
+    for (const date in dailyRates) {
+      if (
+        (date.startsWith(prefix1) || date.startsWith(prefix2)) &&
+        dailyRates[date]?.restrictions?.length
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }, [dailyRates, view.year, view.month]);
   useEffect(() => {
     if (!onVisibleRangeChange) return;
     const startDate = toIso(view.year, view.month, 1);
@@ -195,6 +231,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                     const { date, time, dayNum } = cell;
                     const rate = dailyRates?.[date];
                     const unavailable = rate?.available === false && !rate.minNights;
+                    const serviceNote = restrictionNote(rate);
                     const choosingCheckout = Boolean(checkIn && !checkOut && date > checkIn);
                     const candidateNights = choosingCheckout && checkIn
                       ? Math.max(
@@ -212,10 +249,10 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                         selectedRate?.invalidStayLengths?.includes(candidateNights),
                     );
                     const restrictionAdvisory = minimumStayAdvisory || stayThroughAdvisory;
-                    // A sold night may still be used as the departure date because the guest
-                    // does not occupy the room that night. Cached restrictions are advisory:
-                    // they never disable checkout selection or prevent a live Search.
-                    const disabled = date < minDate || (unavailable && !choosingCheckout);
+                    // The shared calendar is only a cached two-adult snapshot. Keep its sold
+                    // state visible as guidance, but leave every future date selectable so the
+                    // guest can build a range and let live Search validate exact occupancy.
+                    const disabled = date < minDate;
                     const start = date === checkIn;
                     const end = Boolean(previewEnd && date === previewEnd && date !== checkIn);
                     const inRange = Boolean(checkIn && previewEnd && date > checkIn && date < previewEnd);
@@ -232,36 +269,44 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
                           type="button"
                           disabled={disabled}
                           onClick={() => selectDate(date)}
-                          aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "unavailable" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}`}
+                          aria-label={`${date}${restrictionAdvisory ? ", cached calendar restriction may affect this stay; Search will verify live availability" : rate ? `, ${unavailable ? "availability not confirmed" : rate.minNights ? `minimum ${rate.minNights} nights` : formatRate(rate)}` : ""}${serviceNote ? `, ${serviceNote}` : ""}`}
                           aria-pressed={start || end}
                           className="group absolute inset-0 flex w-full flex-col items-center justify-center font-number transition focus-visible:outline-none"
                         >
                           <span
-                            className={`grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${
+                            className={`relative grid h-8 w-8 place-items-center rounded-full text-sm transition group-focus-visible:ring-2 group-focus-visible:ring-(--calendar-date-focus-ring) group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-(--calendar-date-ring-offset-bg) ${
                               disabled
                                 ? "text-(--calendar-date-disabled-foreground) line-through"
                                 : start || end
                                   ? `bg-(--calendar-date-selected-bg) text-(--calendar-date-selected-foreground) ${start && rate?.minNights ? "ring-2 ring-(--calendar-date-selected-bg) ring-offset-2 ring-offset-(--calendar-date-ring-offset-bg)" : ""}`
+                                  : unavailable
+                                    ? "text-(--calendar-date-disabled-foreground) line-through"
                                   : restrictionAdvisory
                                     ? "text-(--calendar-date-restricted-foreground) ring-1 ring-(--calendar-date-restricted-ring)"
                                     : "text-(--calendar-date-foreground) group-hover:bg-(--calendar-date-hover-bg) group-hover:text-(--calendar-date-hover-foreground)"
                             }`}
                           >
                             {dayNum}
+                            {serviceNote && !disabled && (
+                              <span
+                                aria-hidden="true"
+                                className="absolute right-0 top-0 size-2 rounded-full bg-(--calendar-date-restricted-foreground) ring-1 ring-(--calendar-date-ring-offset-bg)"
+                              />
+                            )}
                           </span>
                         {rate && (
                           <span
                             className={`mt-1.5 font-number text-[9px] font-bold leading-none ${unavailable ? "text-(--calendar-date-rate-unavailable-foreground)" : "text-(--calendar-date-rate-foreground)"}`}
                           >
-                            {unavailable ? "Sold" : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}
+                            {unavailable ? (serviceNote ? "Check" : "Sold") : rate.minNights ? `Min ${rate.minNights}nt` : formatRate(rate)}
                           </span>
                         )}
-                        {rate?.minNights && (
+                        {(rate?.minNights || serviceNote) && (
                           <span
                             role="tooltip"
                             className="pointer-events-none absolute -top-7 z-20 whitespace-nowrap rounded bg-(--calendar-tooltip-bg) px-2 py-1 font-number text-[10px] font-normal normal-case tracking-normal text-(--calendar-tooltip-foreground) opacity-0 shadow-md transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
                           >
-                            Min. of {rate.minNights} nights.
+                            {rate?.minNights ? `Min. of ${rate.minNights} nights. ` : ""}{serviceNote}
                           </span>
                         )}
                       </button>
@@ -274,6 +319,16 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
           </React.Fragment>
         ))}
       </div>
+      {hasVisibleServiceRestrictions && (
+        <p className="mt-3 flex items-start gap-2 font-body text-xs leading-relaxed text-(--calendar-date-foreground)">
+          <span
+            aria-hidden="true"
+            className="mt-1 inline-block size-2 shrink-0 rounded-full bg-(--calendar-date-restricted-foreground)"
+          />
+          Marked dates may have check-in, check-out, or stay restrictions for some rooms or rates.
+          Search verifies your exact stay.
+        </p>
+      )}
     </div>
   );
 };

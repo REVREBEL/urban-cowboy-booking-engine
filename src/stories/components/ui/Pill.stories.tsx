@@ -20,15 +20,20 @@ const meta = {
   },
   argTypes: {
     colorScheme: { control: "select", options: colors },
-    color: { control: "select", options: colors },
+    borderColor: { control: "inline-radio", options: ["background", "foreground", "faded"], name: "Border Color" },
+    clickable: { control: "boolean" },
     variant: { control: "inline-radio", options: styles },
     size: { control: "inline-radio", options: ["xsmall", "small", "default", "large"] },
+    textCase: { control: "inline-radio", options: ["uppercase", "title", "lowercase"], name: "Text Case" },
   },
   args: {
     children: "Dogs allowed",
     colorScheme: "lake-forest",
+    borderColor: "faded",
+    clickable: false,
     variant: "filled",
     size: "default",
+    textCase: "title",
   },
 } satisfies Meta<typeof Pill>;
 
@@ -63,6 +68,22 @@ export const AllColors: Story = {
   ),
 };
 
+export const TextCases: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3">
+      {(["uppercase", "title", "lowercase"] as const).map((textCase) => (
+        <Pill key={textCase} textCase={textCase} colorScheme="lake-forest">dogs allowed on property</Pill>
+      ))}
+    </div>
+  ),
+};
+
+export const BorderColors: Story = {
+  render: () => <div className="flex flex-wrap items-center gap-3">{(["background", "foreground", "faded"] as const).map((borderColor) => <Pill key={borderColor} colorScheme="copper" borderColor={borderColor} variant="filled">{borderColor}</Pill>)}</div>,
+};
+export const Clickable: Story = {
+  render: () => <div className="flex flex-wrap items-center gap-3"><Pill colorScheme="copper" clickable>Hover styling</Pill><Pill colorScheme="copper" clickable={false}>Static styling</Pill><PillButton colorScheme="copper" clickable={false}>PillButton without hover</PillButton></div>,
+};
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-3">

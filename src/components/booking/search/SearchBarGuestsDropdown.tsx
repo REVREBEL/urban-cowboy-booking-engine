@@ -198,7 +198,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               {/* Count (36px x 30px, Uchen font) */}
               <p
                 aria-live="polite"
-                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5text-foreground"
+                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5 text-foreground"
               >
                 {currentCounts.adults}
               </p>
@@ -264,7 +264,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
               {/* Count (36px x 30px, Uchen font) */}
               <p
                 aria-live="polite"
-                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5text-foreground"
+                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5 text-foreground"
               >
                 {currentCounts.children}
               </p>
@@ -328,7 +328,7 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
 
               <p
                 aria-live="polite"
-                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5text-foreground"
+                className="m-0 flex h-7.5 w-9 items-center justify-center text-center font-number text-[16px] leading-7.5 text-foreground"
               >
                 {currentCounts.infants}
               </p>

@@ -46,7 +46,7 @@ export function PhotoJourneyHeader() {
             <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{padding: 0, fontSize: "11px", fontWeight: 400}} onClick={() => booking.goTo(previous[booking.step])}
               className={`${label} j-journey-back flex items-center gap-2 text-paper/80 transition hover:text-paper`}>
               <span className="j-journey-back-icon" aria-hidden="true">
-                <PhotoTourArrow direction="left" size={16} />
+                <PhotoTourArrow direction="left" size={20} />
               </span>
               Back
             </Button>
@@ -70,7 +70,7 @@ export function PhotoJourneyHeader() {
             ))}
           </ol>
         </nav>
-        <p className={`${label} shrink-0 text-paper/80 tabular-nums`}>
+        <p className="shrink-0 font-body text-sm text-paper/80 tabular-nums">
           {booking.nightsCount > 0
             ? `${booking.nightsCount} night${booking.nightsCount !== 1 ? "s" : ""} · ${booking.adults + booking.children} guest${booking.adults + booking.children !== 1 ? "s" : ""}`
             : "Photo journey"}

@@ -118,12 +118,10 @@ font-display: swap;
 
 @font-face {
   font-family: 'Noto Emoji';
+  src: url('/fonts/Noto%20Emoji/Noto%20Emjoi%20Variable.woff2') format('woff2');
   font-weight: 400 700; 
   font-style: normal;
   font-display: swap;
-  src: url('/fonts/Noto%20Emoji/Noto%20Emoji%20Variable.woff2') format('woff2'),
-       url('/fonts/Noto%20Emoji/Noto%20Emoji%20Variable.woff') format('woff'),
-       url('/fonts/Noto%20Emoji/Noto%20Emoji%20Variable.ttf') format('truetype');
 }
 
 /* ==========================================================

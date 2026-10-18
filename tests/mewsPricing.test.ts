@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { stayCoversNight } from "../src/lib/shaping.ts";
 import {
   currencyAmount,
   normalizeAmount,
@@ -154,4 +155,28 @@ test("rejects a final quote that lacks a usable total", () => {
   );
 
   assert.equal(result, null);
+});
+
+test("stayCoversNight correctly evaluates night coverage and edge cases", () => {
+  // Single night stay
+  assert.equal(stayCoversNight("2025-12-24", "2025-12-25", 12, 24), true);
+  assert.equal(stayCoversNight("2025-12-24", "2025-12-25", 12, 25), false);
+
+  // Multi-night stay
+  assert.equal(stayCoversNight("2025-12-20", "2025-12-26", 12, 24), true);
+  assert.equal(stayCoversNight("2025-12-20", "2025-12-26", 12, 25), true);
+  assert.equal(stayCoversNight("2025-12-20", "2025-12-26", 12, 31), false);
+
+  // Cross-year stay
+  assert.equal(stayCoversNight("2025-12-30", "2026-01-02", 12, 31), true);
+  assert.equal(stayCoversNight("2025-12-30", "2026-01-02", 1, 1), true);
+  assert.equal(stayCoversNight("2025-12-30", "2026-01-02", 1, 2), false);
+
+  // Leap year Feb 29
+  assert.equal(stayCoversNight("2025-02-28", "2025-03-02", 2, 29), false);
+  assert.equal(stayCoversNight("2024-02-28", "2024-03-02", 2, 29), true);
+
+  // Invalid or reverse date boundaries
+  assert.equal(stayCoversNight("invalid", "2025-12-25", 12, 24), false);
+  assert.equal(stayCoversNight("2025-12-25", "2025-12-24", 12, 24), false);
 });

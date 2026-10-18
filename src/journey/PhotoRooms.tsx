@@ -77,6 +77,13 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   const [view, setView] = useState<"spreads" | "index">(studioCatalog ? "index" : "spreads");
   const [detail, setDetail] = useState<string | null>(null);
   const roomStage = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!detail) return;
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => { document.documentElement.style.overflow = previousOverflow; };
+  }, [detail]);
   const filterOverlay = useRef<HTMLDivElement>(null);
   const roomScrollFrame = useRef<number | null>(null);
   const lastWheelNavigation = useRef(0);
@@ -89,12 +96,12 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     document.documentElement.classList.remove("j-room-scroll-animating");
   }, []);
 
-  // Navigation can be interrupted by a normal wheel/touch gesture.
+  // Touch gestures interrupt guided navigation. Wheel gestures are handled by
+  // the room navigator below; cancelling on every wheel event makes a trackpad
+  // cancel its own transition before the 1300ms navigation lock expires.
   useEffect(() => {
-    window.addEventListener("wheel", cancelRoomScroll, { passive: true });
     window.addEventListener("touchstart", cancelRoomScroll, { passive: true });
     return () => {
-      window.removeEventListener("wheel", cancelRoomScroll);
       window.removeEventListener("touchstart", cancelRoomScroll);
       cancelRoomScroll();
     };
@@ -226,7 +233,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   }, [view, list]);
 
   return (
-    <section ref={roomStage} className="j-room-stage pb-24">
+    <section ref={roomStage} className={`j-room-stage pb-24 ${detail ? "is-details-open" : ""}`}>
       {/* Floating filter overlay */}
       <div ref={filterOverlay} className="j-room-filters sticky top-16 z-30 mx-auto max-w-[1600px] px-3 pt-2 sm:px-6">
         <div className="flex items-center gap-2 rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:hidden">
@@ -292,7 +299,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
             </div>
           </div>
         )}
-        <div className="j-photo-filter-desktop hidden rounded-2xl bg-smoke/85 py-2 backdrop-blur-md sm:block">
+        <div className={`j-photo-filter-desktop hidden rounded-2xl bg-smoke/85 py-2 backdrop-blur-md transition-opacity sm:block ${detail ? "pointer-events-none opacity-0" : ""}`}>
           <div className="j-photo-filter-pair">
             <div role="group" aria-label="Buildings" className="j-photo-filter-segment">
               <Button type="button" variant="transparent" colorScheme="paper" size="xsmall"
@@ -305,7 +312,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                 className="j-photo-filter-strip no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
                 {buildings.map((b) => (
                   <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setBuilding(b)}
-                    className="shrink-0">
+                    className="h-4.5 shrink-0 px-2.5! pt-1! pb-0! font-normal!">
                     {b === "all" ? "All buildings" : b}
                   </PillButton>
                 ))}
@@ -330,7 +337,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                   const on = features.includes(f);
                   return (
                     <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="xsmall" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
-                      className="shrink-0">
+                      className="h-6 shrink-0 px-3! pt-1! pb-0! font-normal!">
                       {FEATURE_LABEL[f]}
                     </PillButton>
                   );
@@ -354,17 +361,17 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                 {sort === "price-desc" ? "Price: high to low" : "Price: low to high"}
               </span>
             </Button>
-            <div role="group" aria-label="View" className="flex rounded-full bg-paper/10 p-0.5">
+            <div role="group" aria-label="View" className="flex h-7.5 items-center rounded-full bg-paper/10 p-0.5">
               {(["spreads", "index"] as const).map((v) => (
                 <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setView(v)}
-                  className="capitalize">
+                  className="h-7 px-2.5! pt-1! pb-0! font-normal! capitalize">
                   {v === "spreads" ? "Photo View" : "Multi Room View"}
                 </PillButton>
               ))}
             </div>
           </div>
         </div>
-        <p className="mt-2 px-2 text-sm text-paper/70">
+        <p className={`mt-2 px-2 text-sm text-paper/70 transition-opacity ${detail ? "pointer-events-none opacity-0" : ""}`}>
           {list.length} room types{hidden ? ` · ${hidden} excluded by availability or guest eligibility` : ""} ·{" "}
           <Button type="button" onClick={onEditJournal} variant="transparent" colorScheme="paper" size="xsmall" className="underline underline-offset-4" style={{padding:0}}>
             {profile ? "Edit my journal" : "Help me choose"}

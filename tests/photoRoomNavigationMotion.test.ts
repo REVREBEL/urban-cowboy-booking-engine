@@ -23,11 +23,23 @@ test("Navigation respects reduced-motion and interrupts scrolling when the guest
   assert.match(rooms, /matchMedia\("\(prefers-reduced-motion: reduce\)"\)/);
   assert.match(rooms, /section\.scrollIntoView\(\{ behavior: "instant", block: "start" \}\)/);
   assert.match(rooms, /window\.cancelAnimationFrame\(roomScrollFrame\.current\)/);
-  // Wheel interaction can be native or routed through a guided scroll handler.
-  assert.match(rooms, /(?:addEventListener\("wheel"|onWheel)/);
+  // Wheel input is routed through one guided handler. A separate cancellation
+  // listener would cancel trackpad-driven transitions on the next wheel event.
+  assert.match(rooms, /const onWheel = \(event: WheelEvent\) =>/);
+  assert.doesNotMatch(rooms, /addEventListener\("wheel", cancelRoomScroll/);
   assert.match(rooms, /window\.addEventListener\("touchstart", cancelRoomScroll/);
   // Embla duration is a tuning parameter, not a functional contract.
   assert.match(tour, /useEmblaCarousel\(/);
+  assert.match(tour, /dragThreshold: 8/);
+  assert.match(tour, /onWheel=\{handlePhotoWheel\}/);
+  assert.match(tour, /Math\.abs\(event\.deltaX\) <= Math\.abs\(event\.deltaY\)/);
+  assert.match(tour, /if \(photoWheelLocked\.current\) return/);
+  assert.match(tour, /if \(details\) \{/);
+  assert.match(tour, /handleCycleAmenity/);
+  assert.match(tour, /className="j-hotspot-card-layer"/);
+  assert.match(tour, /Return to Rooms/);
+  assert.match(rooms, /document\.documentElement\.style\.overflow = "hidden"/);
+  assert.match(tour, /event\.stopPropagation\(\)/);
   assert.match(tour, /carousel\?\.scrollNext\(jump\)/);
   assert.match(tour, /carousel\?\.scrollPrev\(jump\)/);
   assert.match(tour, /carousel\?\.scrollTo\(index, window\.matchMedia/);

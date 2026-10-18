@@ -9,6 +9,18 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 export type ButtonStyle = "filled" | "outline" | "transparent";
+export type ControlBorderColor = "background" | "foreground" | "faded";
+export const CONTROL_BORDER_CLASSES: Record<ControlBorderColor, string> = {
+  background: "control-border-background",
+  foreground: "control-border-foreground",
+  faded: "control-border-faded",
+};
+export type TextCase = "uppercase" | "title" | "lowercase";
+export const TEXT_CASE_CLASSES: Record<TextCase, string> = {
+  uppercase: "text-case-uppercase",
+  title: "text-case-title",
+  lowercase: "text-case-lowercase",
+};
 
 export type ButtonColor =
   | "dark"
@@ -113,31 +125,37 @@ export const COLOR_PALETTE: Record<ButtonColor, Palette> = {
   },
 };
 
-const COLOR_CLASSES: Record<ButtonColor, { bg: string; text: string; tone: string; border: string }> = {
-  dark: { bg: "bg-lake-forest", text: "text-paper", tone: "text-lake-forest", border: "border-lake-forest-fade" },
-  light: { bg: "bg-paper", text: "text-lake-forest", tone: "text-paper", border: "border-paper" },
-  "alpine-linen": { bg: "bg-alpine-linen", text: "text-lake-forest", tone: "text-alpine-linen", border: "border-alpine-linen-fade" },
-  "cowboy-umber": { bg: "bg-cowboy-umber", text: "text-alpine-linen", tone: "text-cowboy-umber", border: "border-cowboy-umber-fade" },
-  smoke: { bg: "bg-smoke", text: "text-paper", tone: "text-smoke", border: "border-smoke-fade" },
-  "lake-forest": { bg: "bg-lake-forest", text: "text-alpine-linen", tone: "text-lake-forest", border: "border-lake-forest-fade" },
-  copper: { bg: "bg-copper", text: "text-alpine-linen-200", tone: "text-copper", border: "border-copper-fade" },
-  oxblood: { bg: "bg-oxblood", text: "text-alpine-linen-200", tone: "text-oxblood", border: "border-oxblood-fade" },
-  "oxidized-teal": { bg: "bg-oxidized-teal", text: "text-paper", tone: "text-oxidized-teal", border: "border-oxidized-teal-fade" },
-  "bandana-red": { bg: "bg-bandana-red", text: "text-paper", tone: "text-bandana-red", border: "border-bandana-red-fade" },
-  "whiskey-sour": { bg: "bg-whiskey-sour", text: "text-cowboy-umber", tone: "text-whiskey-sour", border: "border-whiskey-sour-fade" },
-  "lodge-yellow": { bg: "bg-lodge-yellow", text: "text-lake-forest", tone: "text-lodge-yellow", border: "border-lodge-yellow-fade" },
-  "nude-ember": { bg: "bg-nude-ember", text: "text-lake-forest", tone: "text-nude-ember", border: "border-nude-ember-fade" },
-  paper: { bg: "bg-paper", text: "text-smoke", tone: "text-paper", border: "border-smoke-fade" },
+export const CONTROL_COLOR_CLASSES: Record<ButtonColor, string> = {
+  "dark": "control-color-dark",
+  "light": "control-color-light",
+  "alpine-linen": "control-color-alpine-linen",
+  "cowboy-umber": "control-color-cowboy-umber",
+  "smoke": "control-color-smoke",
+  "lake-forest": "control-color-lake-forest",
+  "copper": "control-color-copper",
+  "oxblood": "control-color-oxblood",
+  "oxidized-teal": "control-color-oxidized-teal",
+  "bandana-red": "control-color-bandana-red",
+  "whiskey-sour": "control-color-whiskey-sour",
+  "lodge-yellow": "control-color-lodge-yellow",
+  "nude-ember": "control-color-nude-ember",
+  "paper": "control-color-paper",
+};
+
+const CONTROL_VARIANT_CLASSES: Record<ButtonStyle, string> = {
+  filled: "control-filled",
+  outline: "control-outline",
+  transparent: "control-transparent",
 };
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 select-none uppercase tracking-wider transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 select-none tracking-wider transition-all duration-200 ease-in-out disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        filled: "border-transparent",
-        outline: "bg-transparent border-solid",
-        transparent: "bg-transparent border-none",
+        filled: "",
+        outline: "",
+        transparent: "",
       },
       size: {
         xsmall: "btn-xs",
@@ -206,8 +224,10 @@ export interface ButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "color"> {
   variant?: ButtonStyle;
   colorScheme?: ButtonColor;
-  color?: ButtonColor;
+  borderColor?: ControlBorderColor;
+  clickable?: boolean;
   size?: ButtonSize;
+  textCase?: TextCase;
   hasIcon?: boolean;
   icon?: ReactNode;
   iconPosition?: "left" | "right";
@@ -224,8 +244,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       variant = "filled",
       colorScheme,
-      color,
+      borderColor = "faded",
+      clickable = true,
       size = "default",
+      textCase = "uppercase",
       hasIcon = false,
       icon,
       iconPosition = "right",
@@ -242,17 +264,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const resolvedColor = colorScheme ?? color ?? "dark";
-    const palette = COLOR_CLASSES[resolvedColor] ?? COLOR_CLASSES.dark;
+    const resolvedColor = colorScheme ?? "dark";
     const isDisabledOrLoading = disabled || isLoading;
     const Comp = asChild ? Slot : "button";
 
-    const colorClasses =
-      variant === "outline"
-        ? `bg-transparent ${palette.border} ${palette.tone}`
-        : variant === "transparent"
-        ? `bg-transparent border-none ${palette.tone}`
-        : `${palette.bg} ${palette.text} ${palette.border}`;
+    const colorClasses = `${CONTROL_COLOR_CLASSES[resolvedColor]} ${CONTROL_BORDER_CLASSES[borderColor]} ${CONTROL_VARIANT_CLASSES[variant]}`;
 
     const iconSize =
       size === "xlarge"
@@ -277,12 +293,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           buttonVariants({ variant, size }),
           colorClasses,
+          !clickable && "control-not-clickable",
+          TEXT_CASE_CLASSES[textCase],
           isDisabledOrLoading
             ? "transform-none cursor-not-allowed"
-            : "hover:opacity-90 active:scale-[0.98]",
+            : clickable ? "active:scale-[0.98]" : "cursor-default",
           className
         )}
         style={style}
+        data-clickable={clickable}
         data-button-name={buttonName}
         data-button-page={buttonPage}
         data-button-content={buttonContent}

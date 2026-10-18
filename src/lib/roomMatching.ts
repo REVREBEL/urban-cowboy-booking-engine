@@ -34,14 +34,17 @@ export function interestScore(
   return 0;
 }
 
+// Optimized: replaces array allocations (.filter().map().reduce()) during room ranking
+// with direct property lookups on the 1-2 requested interests.
 function priorityScore(
   merchandising: RoomMerchandising,
   interests: [MatchInterest, MatchInterest?],
 ): number {
-  const values = interests
-    .filter((interest): interest is MatchInterest => !!interest)
-    .map((interest) => merchandising.interestPriority[interest] ?? 99);
-  return values.reduce((sum, value) => sum + value, 0);
+  let sum = merchandising.interestPriority[interests[0]] ?? 99;
+  if (interests[1]) {
+    sum += merchandising.interestPriority[interests[1]] ?? 99;
+  }
+  return sum;
 }
 
 export function isRoomRecommendationEligible(

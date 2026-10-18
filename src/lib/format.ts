@@ -1,5 +1,5 @@
 import type { Localized } from "../types/mews";
-import { getLang, LOCALE } from "./lang";
+import { getLang, LOCALE } from "./lang.ts";
 
 // Locale Intl courante (fr-FR | en-US). La langue est fixe par chargement de page.
 const locale = () => LOCALE[getLang()];

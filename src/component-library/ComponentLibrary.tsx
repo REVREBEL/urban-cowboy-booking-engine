@@ -1006,7 +1006,7 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
                 font-label text-sm uppercase
               "
             >Label · Brothers</p>
-            <Button variant="outline" color="dark">Button · Brothers</Button>
+            <Button variant="outline" colorScheme="dark">Button · Brothers</Button>
             <p
               className="
                 font-number text-2xl
@@ -1033,11 +1033,11 @@ function UiSection({ width, surface }: { width: PreviewWidth; surface: PreviewSu
               gap-3
             "
           >
-            <Button variant="filled" color="dark">Dark Filled</Button>
-            <Button variant="outline" color="dark">Dark Outline</Button>
-            <Button variant="transparent" color="dark">Dark Transparent</Button>
-            <Button variant="filled" color="light">Light Filled</Button>
-            <Button variant="filled" color="bandana-red">Bandana Red</Button>
+            <Button variant="filled" colorScheme="dark">Dark Filled</Button>
+            <Button variant="outline" colorScheme="dark">Dark Outline</Button>
+            <Button variant="transparent" colorScheme="dark">Dark Transparent</Button>
+            <Button variant="filled" colorScheme="light">Light Filled</Button>
+            <Button variant="filled" colorScheme="bandana-red">Bandana Red</Button>
             <Badge>Top Match</Badge>
             <Badge variant="outline">21+</Badge>
             <Badge variant="secondary">Dog Friendly</Badge>

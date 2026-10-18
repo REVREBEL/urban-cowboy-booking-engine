@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type WheelEvent as ReactWheelEvent } from 'react';
 import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
 import { X } from 'lucide-react';
@@ -9,7 +9,7 @@ import { PHOTO_HIGHLIGHTS, roomAmenities } from './tour';
 import { cmsHighlightsForPhoto } from './cmsTour';
 import type { CmsPhotoHotspotMap } from '@/types/photo-hotspot-cms';
 import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
-import { FeatureFocus } from '@/components/rooms/FeatureFocus';
+import { FocusAmenity } from '@/components/rooms/FocusAmenity';
 import { PhotoTourArrow } from './PhotoTourArrow';
 
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
@@ -26,13 +26,15 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   onPrevious?: () => void; onNext?: () => void;
 }) {
   const section = useRef<HTMLElement>(null);
-  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, align: "center", containScroll: false, duration: 52, watchDrag: (api, event) => {
+  const [viewport, carousel] = useEmblaCarousel({ loop: room.images.length > 1, align: "center", containScroll: false, duration: 52, dragThreshold: 8, watchDrag: (api, event) => {
     const target = event.target;
-    return !(target instanceof Element && target.closest('button, a, [data-tour-panel]'));
+    return !details && !(target instanceof Element && target.closest('button, a, [data-tour-panel]'));
   } });
   const [photo, setPhoto] = useState(0);
   const [ratios, setRatios] = useState<Record<number, number>>({});
   const [activePin, setActivePin] = useState<string | null>(null);
+  const photoWheelLocked = useRef(false);
+  const photoWheelUnlock = useRef<number | null>(null);
   const detailsRef = useRef(details);
   const dismissRef = useRef(onDetails);
   detailsRef.current = details;
@@ -48,6 +50,10 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     carousel.on('select', sync);
     return () => { carousel.off('select', sync); };
   }, [carousel, sync]);
+
+  useEffect(() => () => {
+    if (photoWheelUnlock.current !== null) window.clearTimeout(photoWheelUnlock.current);
+  }, []);
 
   useEffect(() => {
     const el = section.current;
@@ -71,7 +77,8 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   const pins = room.cmsAmenities
     ? cmsHighlightsForPhoto(room.images[photo], room.cmsAmenities, cmsHotspots)
     : PHOTO_HIGHLIGHTS[room.images[photo]] ?? [];
-  const selected = pins.find((p) => p.id === activePin) ?? pins[0];
+  const selected = pins.find((p) => p.id === activePin);
+  const selectedIndex = selected ? pins.findIndex((pin) => pin.id === selected.id) : -1;
   const amenities = roomAmenities(room);
   const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
@@ -80,10 +87,37 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     if (direction > 0) carousel?.scrollNext(jump);
     else carousel?.scrollPrev(jump);
   };
+  const handlePhotoWheel = (event: ReactWheelEvent<HTMLDivElement>) => {
+    if (details) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    if (room.images.length < 2 || event.ctrlKey) return;
+    // Keep vertical mouse-wheel gestures available for room navigation. Only a
+    // deliberate horizontal trackpad gesture should move between photographs.
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY) || Math.abs(event.deltaX) < 12) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (photoWheelUnlock.current !== null) window.clearTimeout(photoWheelUnlock.current);
+    photoWheelUnlock.current = window.setTimeout(() => {
+      photoWheelLocked.current = false;
+      photoWheelUnlock.current = null;
+    }, 240);
+    if (photoWheelLocked.current) return;
+    photoWheelLocked.current = true;
+    goPhoto(event.deltaX > 0 ? 1 : -1);
+  };
   const highlightRow = useRef<HTMLDivElement>(null);
   const pickPin = (id: string) => {
     setActivePin(id);
     highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  };
+  const handleCycleAmenity = (direction: number) => {
+    if (pins.length === 0) return;
+    const currentIndex = Math.max(0, pins.findIndex((pin) => pin.id === activePin));
+    const nextIndex = (currentIndex + direction + pins.length) % pins.length;
+    setActivePin(pins[nextIndex].id);
   };
   // Swiping the mobile editorial cards keeps its numbered photo dot in sync.
   const syncMobileHighlight = () => {
@@ -113,9 +147,10 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   );
 
   return (
-    <article ref={section} id={`tour-${room.id}`} className={`j-room-tour ${fx ?? ''}`} aria-label={room.name} data-photo-source={room.photoSource ?? "unknown"}
+    <article ref={section} id={`tour-${room.id}`} className={`j-room-tour ${details ? "is-details-open" : ""} ${fx ?? ''}`} aria-label={room.name} data-photo-source={room.photoSource ?? "unknown"}
       onKeyDown={(event) => {
         if ((event.target as HTMLElement).matches('select, input, textarea')) return;
+        if (details) return;
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
           event.preventDefault(); goPhoto(event.key === 'ArrowRight' ? 1 : -1);
         }
@@ -123,7 +158,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
           event.preventDefault(); (event.key === 'ArrowDown' ? onNext : onPrevious)?.();
         }
       }}>
-      <div ref={viewport} className="j-photo-viewport" role="region" aria-roledescription="carousel" aria-label={`${room.name} photographs`} tabIndex={0}>
+      <div ref={viewport} className="j-photo-viewport" role="region" aria-roledescription="carousel" aria-label={`${room.name} photographs`} tabIndex={0} onWheel={handlePhotoWheel}>
         <div className="j-photo-track">
           {room.images.map((src, index) => (
             <div className="j-photo-slide" key={`${src}-${index}`} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${room.images.length}`} aria-hidden={photo !== index} inert={photo !== index} style={{ '--photo-ratio': ratios[index] ?? 1.5 } as CSSProperties}>
@@ -139,6 +174,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
               })}
               <div className="j-photo-image">
                 <img src={src} alt={`${room.name} — photo ${index + 1}`} draggable={false}
+                  style={{ filter: details && photo === index ? "brightness(.42) saturate(.8)" : undefined, transition: "filter 240ms ease" }}
                   loading={position === 0 && index === 0 ? 'eager' : 'lazy'}
                   fetchPriority={position === 0 && index === 0 ? 'high' : 'low'} decoding="async"
                   onLoad={(event) => {
@@ -149,14 +185,35 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                   {(room.cmsAmenities ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots) : PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex) => (
                     <div key={pin.id} className="j-hotspot-anchor" style={{ left: `${pin.x}%`, top: `${pin.y}%` }}>
                       <div className="j-pin-desktop">
-                        <FeatureFocus count={pinIndex + 1} icon={pin.icon} iconPath={pin.iconPath} title={pin.title}
-                          active={activePin === pin.id} onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)} />
+                        <FocusAmenity count={pinIndex + 1} icon={pin.icon} iconPath={pin.iconPath} title={pin.title}
+                          active={activePin === pin.id} onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)}
+                          className={activePin && activePin !== pin.id ? "is-muted" : ""} />
                       </div>
                       <Button type="button" variant={(selected?.id ?? null) === pin.id ? "filled" : "outline"} colorScheme={(selected?.id ?? null) === pin.id ? "alpine-linen" : "paper"} size="xsmall" style={{padding: 0, width: "30px", height: "30px", borderRadius: "50%", borderWidth: "1px"}} className="j-pin-mobile" aria-label={pin.title} aria-pressed={(selected?.id ?? null) === pin.id}
                         onClick={() => pickPin(pin.id)}>{pinIndex + 1}</Button>
                     </div>
                   ))}
                 </div>
+                {details && photo === index && selected && <div
+                  className="j-hotspot-card-layer"
+                  style={{ left: `${selected.x}%`, top: `${selected.y}%` }}
+                >
+                  <div
+                    className={`j-hotspot-card ${selected.x > 50 ? "is-left" : "is-right"}`}
+                    data-tour-panel
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={(event) => event.stopPropagation()}
+                    aria-live="polite"
+                  >
+                    <p className="text-balance pb-[5px] font-headline text-2xl font-bold leading-none">{selected.title}</p>
+                    <p className="mt-2 text-pretty text-[14.42px] leading-relaxed text-[#566E5F]">{selected.longNote ?? selected.note}</p>
+                    {pins.length > 1 && <div className="j-feature-cycle" aria-label="Amenity navigation">
+                      <Button variant="transparent" colorScheme="lake-forest" size="xsmall" aria-label="Previous amenity" onClick={() => handleCycleAmenity(-1)}><PhotoTourArrow direction="left" size={20} chevron /></Button>
+                      <span className="font-number text-xs tabular-nums">{selectedIndex + 1}/{pins.length}</span>
+                      <Button variant="transparent" colorScheme="lake-forest" size="xsmall" aria-label="Next amenity" onClick={() => handleCycleAmenity(1)}><PhotoTourArrow direction="right" size={20} chevron /></Button>
+                    </div>}
+                  </div>
+                </div>}
               </div>
             </div>
           ))}
@@ -167,11 +224,11 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
 
 
       {room.images.length > 1 && <>
-        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><PhotoTourArrow direction="left" size={24} chevron /></Button>
-        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><PhotoTourArrow direction="right" size={24} chevron /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%",opacity:details?0:1,pointerEvents:details?"none":undefined}} className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><PhotoTourArrow direction="left" size={24} chevron /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%",opacity:details?0:1,pointerEvents:details?"none":undefined}} className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><PhotoTourArrow direction="right" size={24} chevron /></Button>
       </>}
 
-      <div className="j-photo-pagination" aria-label="Photo selection">
+      <div className="j-photo-pagination" aria-label="Photo selection" style={{opacity:details?0:1,pointerEvents:details?"none":undefined}}>
         {room.images.map((_, index) => <Button key={index} variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control j-photo-dot"
           title={`Photo ${index + 1}`} aria-label={`Show photo ${index + 1} of ${room.name}`} aria-pressed={photo === index}
           onClick={() => carousel?.scrollTo(index, window.matchMedia("(prefers-reduced-motion: reduce)").matches)}><span /></Button>)}
@@ -179,12 +236,6 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
       </div>
 
       <aside id={`tour-details-${room.id}`} className={`j-tour-details ${details ? 'is-open' : ''}`} inert={!details} aria-hidden={!details} data-tour-panel>
-        <div className="j-tour-feature" id={`tour-highlight-${room.id}`} aria-live="polite">
-          {selected && <>
-            <CmsAmenityIcon iconPath={selected.iconPath} fallback={selected.icon} className="size-14 shrink-0" />
-            <div><p className="font-headline text-2xl leading-none">{selected.title}</p><p className="mt-1 text-sm leading-relaxed">{selected.longNote ?? selected.note}</p></div>
-          </>}
-        </div>
         <div className="j-tour-amenities">
           {pins.length > 0 && <>
             <p className="j-mobile-only text-[11px] uppercase tracking-[0.2em] opacity-60">In this photo · tap a number or swipe</p>
@@ -212,15 +263,15 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
       <footer className="j-tour-footer" data-tour-panel>
         {roomNav('j-roomnav-mobile')}
         <div className="j-tour-info min-w-0">
-          <p className="truncate text-xs uppercase text--paper/75">{room.building} · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · <span className="font-number">{position + 1}/{count}</span></span></p>
+          <p className="truncate text-xs text--paper/75"><span className="capitalize">{room.building.toLocaleLowerCase()}</span> · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · <span className="font-number">{position + 1}/{count}</span></span></p>
           <h2 className="mt-1 truncate font-headline text-xl leading-none sm:text-4xl sm:whitespace-normal">{room.name}</h2>
-          <p className="mt-1 hidden text-sm text--paper/80 lg:block">{room.tagline}</p>
+          <p className="mt-1 hidden text-sm text--paper/80 lg:block" style={{opacity:details?0:1}}>{room.tagline}</p>
         </div>
         <div className="j-tour-actions">
-          <p className="shrink-0 tabular-nums"><span className="text-xs text--paper/75">from </span><span className="font-number text-xl sm:text-3xl">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text--paper/75"> /night</span></p>
-          <Button variant="outline" colorScheme="alpine-linen" size="small" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)}>{details ? 'Hide details' : 'Details'}</Button>
-          <Button variant="filled" colorScheme="alpine-linen" size="small" onClick={onChoose}>Choose room</Button>
-          <div className="j-roomnav-desktop flex items-center gap-1">
+          <p className="shrink-0 tabular-nums" style={{opacity:details?0:1}}><span className="text-xs text--paper/75">from </span><span className="font-number text-xl sm:text-[39px]">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text--paper/75"> /night</span></p>
+          <Button variant="outline" colorScheme="alpine-linen" size="small" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)} className="j-details-toggle sm:px-[22px]!">{details ? 'Return to Rooms' : 'Details'}</Button>
+          <Button variant="filled" colorScheme="alpine-linen" size="small" onClick={onChoose} className="sm:px-[22px]!" style={{opacity:details?0:1,pointerEvents:details?"none":undefined}}>Choose room</Button>
+          <div className="j-roomnav-desktop flex items-center gap-1" style={{opacity:details?0:1,pointerEvents:details?"none":undefined}}>
             <span className="mr-1 font-number text-xs tabular-nums text--paper/75">{position + 1}/{count}</span>
             {roomNav('flex items-center gap-1')}
           </div>

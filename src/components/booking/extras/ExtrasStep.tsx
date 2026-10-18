@@ -284,7 +284,7 @@ export const ExtrasStep: React.FC<ExtrasStepProps> = ({
           type="button"
           onClick={onProceedToPay}
           variant="filled"
-          color="copper"
+          colorScheme="copper"
           size="large"
           hasIcon
           className="w-full sm:w-auto"

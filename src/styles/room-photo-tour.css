@@ -1,4 +1,5 @@
 @import "./colors.css";
+@import"./typography.css";
 
 /* 
  * Lovable Photo Engine styles from REVREBEL/visual-booking-flow/src/styles.css.
@@ -61,16 +62,28 @@
 .j-hotspots { position: absolute; inset: 0; opacity: 0; transition: opacity 200ms ease; pointer-events: none; }
 .j-hotspots.is-open { opacity: 1; }
 .j-hotspot-anchor { position: absolute; transform: translate(-50%, -50%); }
+.j-room-tour.is-details-open .j-hotspot-anchor::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 50%; width: 230px; height: 230px; border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); background: radial-gradient(circle, color-mix(in srgb, var(--paper) 38%, transparent) 0%, color-mix(in srgb, var(--paper) 18%, transparent) 34%, transparent 72%); }
+.j-room-tour.is-details-open .j-photo-image > img,
+.j-room-tour.is-details-open .j-photo-neighbor img { filter: brightness(.42) saturate(.8); transition: filter 240ms ease; }
+.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child { opacity: 1; background: var(--color-primary-foreground); box-shadow: 0 0 0 2px var(--lake-forest-fade), 0 0 0 5px var(--paper), 0 0 0 7px var(--lake-forest-fade); }
+.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child img,
+.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child svg { filter: brightness(0) invert(1); }
+.j-hotspot-card-layer { position: absolute; z-index: 20; width: 0; height: 0; pointer-events: none; }
+.j-hotspot-card { position: absolute; top: 0; width: min(360px, 30vw); min-width: 280px; padding: 30px 26px; border-radius: 6px; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 16px 48px color-mix(in srgb, var(--color-smoke) 34%, transparent); pointer-events: auto; transform: translateY(-50%); }
+.j-hotspot-card.is-right { left: 92px; }
+.j-hotspot-card.is-left { right: 92px; }
 .j-hotspot { pointer-events: auto; border: 1px solid var(--color-paper) !important; background: color-mix(in oklab, var(--color-smoke) 65%, transparent) !important; }
 .j-hotspot[aria-pressed="true"] { background: var(--color-paper) !important; color: var(--color-primary-foreground) !important; }
 .j-pin-core { font-family: var(--font-body); font-size: 13px; }
 .j-pin-label { position: absolute; top: 48px; left: 50%; transform: translateX(-50%); width: max-content; max-width: 180px; padding: 6px 10px; border-radius: 4px; background: color-mix(in oklab, var(--color-smoke) 90%, transparent); color: var(--color-paper); font-size: 12px; text-align: center; }
 .j-tour-footer { position: absolute; bottom: 0; inset-inline: 0; z-index: 5; display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 64px 32px 26px; background: linear-gradient(transparent, color-mix(in oklab, var(--color-smoke) 95%, transparent)); pointer-events: none; }
 .j-tour-footer > * { pointer-events: auto; }
-.j-tour-actions { display: flex; flex-wrap: wrap; justify-content: end; align-items: center; gap: 12px; }
+.j-tour-actions { display: flex; flex-wrap: wrap; justify-content: end; align-items: center; gap: 17px; }
 .j-tour-details { position: absolute; z-index: 4; bottom: 170px; left: 32px; right: 32px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: end; gap: 24px; opacity: 0; transform: translateY(40px); pointer-events: none; transition: transform 240ms ease, opacity 200ms ease; }
 .j-tour-details.is-open { opacity: 1; transform: translateY(0); }
 .j-tour-details.is-open > * { pointer-events: auto; }
+.j-feature-cycle { position: absolute; left: 50%; top: calc(100% + 10px); display: flex; align-items: center; gap: 6px; color: var(--color-paper); transform: translateX(-50%); }
+.j-feature-cycle button { min-width: 34px !important; width: 34px; height: 34px; padding: 0 !important; border: 0 !important; border-radius: 50%; color: var(--color-paper) !important; background: color-mix(in srgb, var(--color-smoke) 55%, transparent) !important; }
 
 .j-journey-header { background: linear-gradient(to bottom, var(--color-smoke), color-mix(in oklab, var(--color-smoke) 80%, transparent), color-mix(in oklab, var(--color-smoke) 0%, transparent)); }
 .j-room-stage { --j-room-top: 160px; }
@@ -86,6 +99,17 @@
   .j-photo-viewport { flex: 1; min-height: 0; display: block; }
   .j-photo-image { width: min(100%, calc((100dvh - var(--j-room-top)) * var(--photo-ratio))); height: 100%; aspect-ratio: auto; margin-inline: auto; }
   .j-tour-footer { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .j-room-stage.is-details-open .j-photo-filter-desktop,
+  .j-room-stage.is-details-open .j-room-filters > p { opacity: 0; pointer-events: none; transition: opacity 200ms ease; }
+  .j-room-tour.is-details-open .j-photo-prev,
+  .j-room-tour.is-details-open .j-photo-next,
+  .j-room-tour.is-details-open .j-photo-pagination,
+  .j-room-tour.is-details-open .j-tour-info > p:last-child,
+  .j-room-tour.is-details-open .j-tour-actions > p,
+  .j-room-tour.is-details-open .j-tour-actions > button:not(.j-details-toggle),
+  .j-room-tour.is-details-open .j-roomnav-desktop { opacity: 0; pointer-events: none; transition: opacity 200ms ease; }
+  .j-room-tour.is-details-open .j-tour-amenities { display: none; }
+  .j-room-tour.is-details-open .j-tour-details { display: none; }
 }
 
 /* Adjacent photographs cover leftover horizontal space while the active image stays uncropped.
@@ -158,36 +182,8 @@
  .j-tour-details, .j-hotspots, .j-photo-peek { transition: none; animation: none !important; }
 }
 
-/* Feature Focus hotspot marker (Figma: Feature Focus Component) */
-:root {
-  --ff-paper: hsl(0 9% 98%);
-  --ff-forest: hsl(141 55% 12%);
-  --ff-forest-200: hsl(143 12% 38%);
-  --ff-linen: hsl(44 22% 90%);
-  --ff-linen-50: hsl(48 20% 95%);
-}
-.j-focus { --ff-size: 76px; --ff-sq: 30px; --ff-edge: var(--ff-forest); --ff-sq-bg: var(--ff-forest); --ff-sq-fg: var(--ff-linen); --ff-disc: var(--ff-linen);
-  position: relative; display: block; width: calc(var(--ff-size) + var(--ff-sq) * 0.6); height: var(--ff-size); pointer-events: auto; cursor: pointer;
-  background: none; border: 0; padding: 0; transition: width 260ms cubic-bezier(.32,.72,0,1), height 260ms cubic-bezier(.32,.72,0,1); }
-.j-focus:hover { --ff-edge: var(--ff-forest-200); --ff-sq-bg: var(--ff-forest-200); --ff-disc: var(--ff-linen-50); }
-.j-focus.is-active { --ff-size: 128px; --ff-sq: 40px; --ff-edge: var(--ff-forest-200); --ff-sq-bg: var(--ff-linen); --ff-sq-fg: var(--ff-forest-200); --ff-disc: var(--ff-paper); z-index: 2; }
-.j-focus:focus-visible { outline: 2px solid var(--ff-linen); outline-offset: 4px; border-radius: 50%; }
-.j-focus-medallion { position: absolute; right: 0; top: 0; width: var(--ff-size); height: var(--ff-size); border-radius: 50%; overflow: hidden;
-  background: var(--ff-disc); box-shadow: 0 0 0 1px var(--ff-edge), inset 0 0 0 calc(var(--ff-size) * .012) var(--ff-disc), inset 0 0 0 calc(var(--ff-size) * .022) var(--ff-edge), inset 0 0 0 calc(var(--ff-size) * .032) var(--ff-disc), inset 0 0 0 calc(var(--ff-size) * .042) var(--ff-edge), 0 10px 30px rgb(0 0 0 / .25);
-  transition: inherit; }
-.j-focus-medallion img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.6); mix-blend-mode: multiply; }
-.j-focus-actions { position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: calc(var(--ff-sq) * .11); }
-.j-focus-square { width: var(--ff-sq); height: var(--ff-sq); display: grid; place-items: center; background: var(--ff-sq-bg); color: var(--ff-sq-fg);
-  box-shadow: inset 0 0 0 calc(var(--ff-sq) * .1) var(--ff-sq-bg), inset 0 0 0 calc(var(--ff-sq) * .12) var(--ff-sq-fg); transition: background 200ms ease, width 260ms, height 260ms; }
-.j-focus-count { font-family: var(--font-heading); font-size: calc(var(--ff-sq) * .5); line-height: 1; font-variant-numeric: tabular-nums; }
-.j-focus-square img { width: 42%; height: 42%; object-fit: contain; }
-.j-focus:not(.is-active) .j-focus-square img { filter: brightness(1.1); }
-.j-focus-medallion { display: grid; place-items: center; }
-.j-focus-medallion img.j-cms-icon { width: 56%; height: 56%; object-fit: contain; transform: none; mix-blend-mode: normal; }
+/* Shared, CMS-backed amenity icon inside the new Tailwind v4 FocusAmenity. */
 .j-cms-icon { display: block; flex-shrink: 0; object-fit: contain; }
-
-@media (max-width: 639px) { .j-focus { --ff-size: 56px; --ff-sq: 24px; } .j-focus.is-active { --ff-size: 96px; --ff-sq: 32px; } }
-@media (prefers-reduced-motion: reduce) { .j-focus, .j-focus-medallion, .j-focus-square { transition: none; } }
 
 /* Building chip strip scrolls horizontally instead of wrapping — arrow chips handle paging. */
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }

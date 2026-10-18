@@ -3,19 +3,7 @@ import { RoomsListCard } from '@/components/rooms/RoomsListCard';
 import type { ShapedRoom, ShapedRate } from '@/types/mews';
 import type { RoomMerchandising } from '@/types/merchandising';
 
-import {
-  ROOM_IMAGE_ASSETS,
-  ROOM_IMAGE_PLACEHOLDERS,
-  getRoomImagesByRoomId,
-  getBuildingPlaceholderHero
-} from '@/data/roomImagePlaceholders';
-
-export {
-  ROOM_IMAGE_ASSETS,
-  ROOM_IMAGE_PLACEHOLDERS,
-  getRoomImagesByRoomId,
-  getBuildingPlaceholderHero
-};
+import { ROOM_IMAGE_ASSETS } from '@/data/roomImagePlaceholders';
 
 
 const mockRate: ShapedRate = {
@@ -187,7 +175,7 @@ const mockAlpineRoom: ShapedRoom = {
   description: "Tucked beneath the eaves at the top of Alpine, these are the building's biggest and most playful suites—dormered ceilings, exposed beams, unexpected angles and a balcony made for two. There's a copper clawfoot tub, naturally. And a fireplace for everything that comes after.",
   cmsShortDescription: "Tucked beneath the eaves at the top of Alpine, these are the building's biggest and most playful suites—dormered ceilings, exposed beams, unexpected angles and a balcony made for two. There's a copper clawfoot tub, naturally. And a fireplace for everything that comes after.",
   cmsLongDescription: "Perched on the hillside directly behind the Main Lodge, the Alpine Bathing Suites are the classic indoor-soak version of Cowboy. Each adults-only room pairs a king bed with a freestanding clawfoot tub set beside a picture window, a cast-iron wood stove and a private deck with rocking chairs. Heated bathroom floors and a walk-in shower make cold mountain mornings easier, while Wright mattresses, Pendleton layers, Printsburgh wallpaper and a stocked minibar bring the rest of the room together. Expect the Lodge to be close, the hillside to feel quiet and the tub to become part of the day's itinerary.",
-  imageIds: ['img-1', 'img-2'],
+  imageIds: [ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE, ROOM_IMAGE_ASSETS.ALPINE_HEADBOARD],
   normalBedCount: 1,
   extraBedCount: 0,
   roomClass: 'Suite',
@@ -287,7 +275,7 @@ const mockWaldenDenRoom: ShapedRoom = {
   description: "Tucked beneath the eaves at the top of Alpine, these are the building's biggest and most playful suites—dormered ceilings, exposed beams, unexpected angles and a balcony made for two. There's a copper clawfoot tub, naturally. And a fireplace for everything that comes after.",
   cmsShortDescription: "Tucked beneath the eaves at the top of Alpine, these are the building's biggest and most playful suites—dormered ceilings, exposed beams, unexpected angles and a balcony made for two. There's a copper clawfoot tub, naturally. And a fireplace for everything that comes after.",
   cmsLongDescription: "Perched on the hillside directly behind the Main Lodge, the Alpine Bathing Suites are the classic indoor-soak version of Cowboy. Each adults-only room pairs a king bed with a freestanding clawfoot tub set beside a picture window, a cast-iron wood stove and a private deck with rocking chairs. Heated bathroom floors and a walk-in shower make cold mountain mornings easier, while Wright mattresses, Pendleton layers, Printsburgh wallpaper and a stocked minibar bring the rest of the room together. Expect the Lodge to be close, the hillside to feel quiet and the tub to become part of the day's itinerary.",
-  imageIds: ['img-1', 'img-2'],
+  imageIds: [ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE, ROOM_IMAGE_ASSETS.ALPINE_HEADBOARD],
   normalBedCount: 1,
   extraBedCount: 0,
   roomClass: 'Suite',
