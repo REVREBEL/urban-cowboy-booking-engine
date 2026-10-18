@@ -205,9 +205,8 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                     onClick={(event) => event.stopPropagation()}
                     aria-live="polite"
                   >
-                    <Button variant="transparent" colorScheme="lake-forest" size="xsmall" className="j-feature-close" aria-label="Close amenity details" onClick={() => setActivePin(null)}><X size={18} /></Button>
-                    <p className="font-headline text-2xl leading-none">{selected.title}</p>
-                    <p className="mt-2 text-sm leading-relaxed">{selected.longNote ?? selected.note}</p>
+                    <p className="text-balance pb-[5px] font-headline text-2xl font-bold leading-none">{selected.title}</p>
+                    <p className="mt-2 text-pretty text-[14.42px] leading-relaxed text-[#566E5F]">{selected.longNote ?? selected.note}</p>
                     {pins.length > 1 && <div className="j-feature-cycle" aria-label="Amenity navigation">
                       <Button variant="transparent" colorScheme="lake-forest" size="xsmall" aria-label="Previous amenity" onClick={() => handleCycleAmenity(-1)}><PhotoTourArrow direction="left" size={20} chevron /></Button>
                       <span className="font-number text-xs tabular-nums">{selectedIndex + 1}/{pins.length}</span>
