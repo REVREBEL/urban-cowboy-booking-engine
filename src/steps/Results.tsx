@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useBooking } from "../state/booking";
 import { api, errorMessage } from "../lib/api";
 import { fmtDate, imgUrl } from "../lib/format";
@@ -22,8 +22,6 @@ import { RoomsListCard, type RoomCardTheme } from "@/components/rooms/RoomsListC
 import { BuildingExperienceList } from "@/components/rooms/BuildingExperienceList";
 import { RoomDetailModal } from "@/components/rooms/RoomDetailModal";
 import type { RoomResultsLayout } from "@/studio/roomLayout";
-import { PhotoJournal } from "@/journey/PhotoJournal";
-import { PhotoRooms } from "@/journey/PhotoRooms";
 import { studioPhotoRoomCatalog } from "@/data/photoTourRooms";
 import { isStudioRoute } from "@/studio/runtime";
 import { photoSourceFromUrl, savePhotoGalleries } from "@/data/photoGalleries";
@@ -41,6 +39,9 @@ import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-h
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 import { roomTypeGroupName } from "@/data/roomTypeGroups";
 import { roomDetailTags } from "@/lib/roomTags";
+
+const PhotoJournal = lazy(() => import("@/journey/PhotoJournal").then((module) => ({ default: module.PhotoJournal })));
+const PhotoRooms = lazy(() => import("@/journey/PhotoRooms").then((module) => ({ default: module.PhotoRooms })));
 
 function toStudioRoom(room: ShapedRoom, imageBaseUrl: string): StudioRoomType {
   const merchandising = room.merchandising;
@@ -354,7 +355,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
     );
     return (
       <div className="min-h-dvh bg-smoke text-paper font-body">
-        <PhotoJournal
+        <Suspense fallback={<div className="grid min-h-[65dvh] place-items-center" role="status">Preparing your Stay Journal…</div>}><PhotoJournal
           adults={adults}
           children={children}
           rooms={rooms}
@@ -374,7 +375,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
             setPhotoPath("rooms");
             setDiscoveryView("rooms");
           }}
-        />
+        /></Suspense>
       </div>
     );
   }
@@ -463,7 +464,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
       );
       return (
         <div className="min-h-dvh bg-smoke font-body text-paper">
-          <PhotoRooms
+          <Suspense fallback={<div className="grid min-h-[65dvh] place-items-center" role="status">Preparing rooms…</div>}><PhotoRooms
             profile={studioPhoto ? null : journalProfile}
             rooms={rooms}
             imageBaseUrl={imageBaseUrl}
@@ -479,7 +480,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
               setPhotoPath("journal");
               setDiscoveryView("journal");
             }}
-          />
+          /></Suspense>
         </div>
       );
     }

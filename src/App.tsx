@@ -1,28 +1,29 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { isStudioRoute } from "./studio/runtime";
-import { StudioController } from "./studio/StudioController";
 import { currentStudioLayout, setStudioDefaultLayout, type RoomResultsLayout } from "./studio/roomLayout";
 import { api } from "./lib/api";
-import { PhotoArrival } from "./journey/PhotoArrival";
-import { PhotoJourneyHeader } from "./journey/PhotoJourneyHeader";
-import { PhotoRateStep } from "./journey/PhotoRateStep";
-import { PhotoReviewGuest } from "./journey/PhotoReviewGuest";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
-import { DevPanel } from "@/components/dev/dev-panel";
 import { Banner } from "@/components/ui/banner";
 import { ContactBar } from "@/components/booking/chrome/contact-bar";
-import { Dates } from "./steps/Dates";
-import { Results } from "./steps/Results";
-import { Rates } from "./steps/Rates";
-import { Guest } from "./steps/Guest";
-import { Upgrade } from "./steps/Upgrade";
-import { Extras } from "./steps/Extras";
-import { Payment } from "./steps/Payment";
-import { Confirmation } from "./steps/Confirmation";
 
 import { t } from "./i18n";
+
+const StudioController = lazy(() => import("./studio/StudioController").then((module) => ({ default: module.StudioController })));
+const PhotoArrival = lazy(() => import("./journey/PhotoArrival").then((module) => ({ default: module.PhotoArrival })));
+const PhotoJourneyHeader = lazy(() => import("./journey/PhotoJourneyHeader").then((module) => ({ default: module.PhotoJourneyHeader })));
+const PhotoRateStep = lazy(() => import("./journey/PhotoRateStep").then((module) => ({ default: module.PhotoRateStep })));
+const PhotoReviewGuest = lazy(() => import("./journey/PhotoReviewGuest").then((module) => ({ default: module.PhotoReviewGuest })));
+const DevPanel = lazy(() => import("./components/dev/dev-panel").then((module) => ({ default: module.DevPanel })));
+const Dates = lazy(() => import("./steps/Dates").then((module) => ({ default: module.Dates })));
+const Results = lazy(() => import("./steps/Results").then((module) => ({ default: module.Results })));
+const Rates = lazy(() => import("./steps/Rates").then((module) => ({ default: module.Rates })));
+const Guest = lazy(() => import("./steps/Guest").then((module) => ({ default: module.Guest })));
+const Upgrade = lazy(() => import("./steps/Upgrade").then((module) => ({ default: module.Upgrade })));
+const Extras = lazy(() => import("./steps/Extras").then((module) => ({ default: module.Extras })));
+const Payment = lazy(() => import("./steps/Payment").then((module) => ({ default: module.Payment })));
+const Confirmation = lazy(() => import("./steps/Confirmation").then((module) => ({ default: module.Confirmation })));
 
 const SHOW_API_DEBUGGER =
   import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
@@ -37,9 +38,9 @@ const PROGRESS_NUMBER: Record<Step, number> = {
   payment: 5,
   confirmation: 6,
 };
-const STEP_COMPONENTS: Record<Step, () => React.JSX.Element | null> = {
+const STEP_COMPONENTS: Record<Step, React.ComponentType> = {
   dates: Dates,
-  results: () => <Results />,
+  results: Results,
   rates: Rates,
   guest: Guest,
   upgrade: Upgrade,
@@ -65,7 +66,7 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
 
   return (
     <div className={photoJourney ? "photo-journey flex min-h-dvh flex-col bg-smoke font-body text-paper" : "flex min-h-dvh flex-col bg-background px-4 sm:px-6 lg:px-8"}>
-      {photoJourney && <PhotoJourneyHeader />}
+      {photoJourney && <Suspense fallback={null}><PhotoJourneyHeader /></Suspense>}
       {!photoJourney && <BookingHeader
         step={step}
         onNavigate={goTo}
@@ -87,6 +88,7 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
       )}
 
       <main className="flex-1">
+        <Suspense fallback={<HydrateLoader />}>
         {hydrating ? <HydrateLoader /> :
           photoJourney && step === "dates" ? <PhotoArrival /> :
           step === "results" ? <Results roomLayout={layout} /> :
@@ -96,12 +98,13 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
           photoJourney && (step === "payment" || step === "upgrade") ?
             <div className="min-h-dvh bg-paper pt-20 text-smoke"><StepView /></div> :
           <StepView />}
+        </Suspense>
       </main>
 
       {!photoJourney && <BookingFooter />}
       {!photoJourney && <ContactBar />}
-      {SHOW_API_DEBUGGER && !isStudioRoute() && <DevPanel />}
-      {isStudioRoute() && <StudioController />}
+      {SHOW_API_DEBUGGER && !isStudioRoute() && <Suspense fallback={null}><DevPanel /></Suspense>}
+      {isStudioRoute() && <Suspense fallback={null}><StudioController /></Suspense>}
     </div>
   );
 }

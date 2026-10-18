@@ -7,7 +7,8 @@ const source = (name: string) => readFileSync(new URL(`../src/${name}`, import.m
 test("Photo chooses its own entire journey, not just an alternate card results component", () => {
   const app = source("App.tsx");
   assert.match(app, /const photoJourney = layout === "photo"/);
-  assert.match(app, /photoJourney && <PhotoJourneyHeader\s*\/>/);
+  assert.match(app, /photoJourney && <Suspense fallback=\{null\}><PhotoJourneyHeader\s*\/><\/Suspense>/);
+  assert.match(app, /const PhotoJourneyHeader = lazy\(/);
   assert.match(app, /photoJourney && step === "dates" \? <PhotoArrival/);
   assert.match(app, /photoJourney && step === "rates" \? <PhotoRateStep/);
   assert.match(app, /photoJourney && step === "extras" \? <Extras photoMode/);
