@@ -161,10 +161,10 @@
   --calendar-date-restricted-ring: color-mix(in srgb, var(--color-emphasis) 35%, transparent);
   --calendar-date-hover-bg: var(--color-emphasis);
   --calendar-date-hover-foreground: var(--button-primary-foreground);
-  --calendar-date-rate-foreground: color-mix(in srgb, var(--primary-foreground) 65%, transparent);
-  --calendar-date-rate-unavailable-foreground: color-mix(in srgb, var(--primary-foreground) 30%, transparent);
+  --calendar-date-rate-foreground: color-mix(in srgb, var(--color-primary-foreground) 65%, transparent);
+  --calendar-date-rate-unavailable-foreground: color-mix(in srgb, var(--color-primary-foreground) 30%, transparent);
   --calendar-date-focus-ring: var(--color-emphasis);
   --calendar-date-ring-offset-bg: var(--color-primary);
-  --calendar-tooltip-bg: var(--primary-foreground);
+  --calendar-tooltip-bg: var(--color-primary-foreground);
   --calendar-tooltip-foreground: var(--color-primary);
 }

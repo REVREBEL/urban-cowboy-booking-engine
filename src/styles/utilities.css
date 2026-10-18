@@ -39,10 +39,10 @@
   border-radius: var(--radius-btn);
   border-width: 2px;
   border-style: solid;
-  line-height: 1;
+  line-height: 100%;
   letter-spacing: 0.05em;
-  padding-top: 0.85rem;
-  padding-bottom: 0.75rem;
+  padding-top: 0.80rem;
+  padding-bottom: 0.50rem;
   padding-inline: 0.85rem;
 }
 
@@ -70,7 +70,7 @@
   line-height: 1;
   letter-spacing: 0.05em;
   padding-top: 0.85rem;
-  padding-bottom: 0.7rem;
+  padding-bottom: 0.65rem;
   padding-inline: 0.85rem;
 }
 
@@ -285,3 +285,25 @@
 @utility control-border-foreground { --selected-control-border: var(--fg); }
 @utility control-border-faded { --selected-control-border: var(--border); }
 @utility control-not-clickable { cursor: default; }
+
+
+
+@utility primary {
+  --bg: var(--primary-foreground);
+  --card: var(--primary);
+  --card-fg: var(--primary-foreground);
+  --badge: var(--primary-foreground);
+}
+
+@utility secondary {
+  --bg: var(--cowboy-umber);
+  --fg: var(--alpine-linen);
+  --border: var(--cowboy-umber-fade);
+}
+
+
+@utility primary {
+  --bg: var(--cowboy-umber);
+  --fg: var(--alpine-linen);
+  --border: var(--cowboy-umber-fade);
+}
