@@ -69,7 +69,7 @@
 .j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child img,
 .j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child svg { filter: brightness(0) invert(1); }
 .j-hotspot-card-layer { position: absolute; z-index: 20; width: 0; height: 0; pointer-events: none; }
-.j-hotspot-card { position: absolute; top: 0; width: min(360px, 30vw); min-width: 280px; padding: 22px 24px 24px; border-radius: 6px; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 16px 48px color-mix(in srgb, var(--color-smoke) 34%, transparent); pointer-events: auto; transform: translateY(-50%); }
+.j-hotspot-card { position: absolute; top: 0; width: min(360px, 30vw); min-width: 280px; padding: 30px 26px; border-radius: 6px; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 16px 48px color-mix(in srgb, var(--color-smoke) 34%, transparent); pointer-events: auto; transform: translateY(-50%); }
 .j-hotspot-card.is-right { left: 92px; }
 .j-hotspot-card.is-left { right: 92px; }
 .j-hotspot { pointer-events: auto; border: 1px solid var(--color-paper) !important; background: color-mix(in oklab, var(--color-smoke) 65%, transparent) !important; }
@@ -82,7 +82,6 @@
 .j-tour-details { position: absolute; z-index: 4; bottom: 170px; left: 32px; right: 32px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; align-items: end; gap: 24px; opacity: 0; transform: translateY(40px); pointer-events: none; transition: transform 240ms ease, opacity 200ms ease; }
 .j-tour-details.is-open { opacity: 1; transform: translateY(0); }
 .j-tour-details.is-open > * { pointer-events: auto; }
-.j-feature-close { position: absolute; top: 8px; right: 8px; padding: 0 !important; }
 .j-feature-cycle { position: absolute; left: 50%; top: calc(100% + 10px); display: flex; align-items: center; gap: 6px; color: var(--color-paper); transform: translateX(-50%); }
 .j-feature-cycle button { min-width: 34px !important; width: 34px; height: 34px; padding: 0 !important; border: 0 !important; border-radius: 50%; color: var(--color-paper) !important; background: color-mix(in srgb, var(--color-smoke) 55%, transparent) !important; }
 
