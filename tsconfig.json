@@ -22,22 +22,21 @@
     "noUnusedLocals": true,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ],
       "@stories/*": [
-        "src/stories/*"
+        "./src/stories/*"
       ],
       "@data/*": [
-        "src/data/*"
+        "./src/data/*"
       ],
       "@types/*": [
-        "src/types/*"
+        "./src/types/*"
       ],
       "@icons/*": [
-        "public/assets/icons/*"
+        "./public/assets/icons/*"
       ]
     }
   },
