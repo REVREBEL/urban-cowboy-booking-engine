@@ -17,6 +17,12 @@ const config: StorybookConfig = {
     "@storybook/addon-mcp",
   ],
   framework: "@storybook/react-vite",
+  async viteFinal(config) {
+    // Match the application build: Tailwind v4 directives are processed by
+    // @tailwindcss/vite before esbuild performs final CSS minification.
+    config.build = { ...config.build, cssMinify: "esbuild" };
+    return config;
+  },
 };
 
 export default config;

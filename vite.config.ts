@@ -25,6 +25,9 @@ export default defineConfig(({
     }
   },
   build: {
+    // Tailwind v4 custom at-rules can reach Vite 8 Lightning CSS minification.
+    // Keep Tailwind compilation in @tailwindcss/vite and use esbuild for final CSS minification.
+    cssMinify: "esbuild",
     outDir: "dist",
     sourcemap: false,
     ...(!isSsrBuild && {

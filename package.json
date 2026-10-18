@@ -97,6 +97,7 @@
     "@vitest/browser-playwright": "latest",
     "@vitest/coverage-v8": "latest",
     "concurrently": "^10.0.6",
+    "esbuild": "^0.28.2",
     "detect-port": "^2.1.0",
     "playwright": "latest",
     "postcss": "^8.5.29",
