@@ -77,10 +77,17 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   const pins = room.cmsAmenities
     ? cmsHighlightsForPhoto(room.images[photo], room.cmsAmenities, cmsHotspots)
     : PHOTO_HIGHLIGHTS[room.images[photo]] ?? [];
-  const selected = pins.find((p) => p.id === activePin);
-  const selectedIndex = selected ? pins.findIndex((pin) => pin.id === selected.id) : -1;
   const amenities = roomAmenities(room);
   const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
+  const sideAmenityKey = (amenity: (typeof unseenAmenities)[number]) => `amenity:${amenity.id ?? amenity.title}`;
+  const amenityChoices = [
+    ...pins.map((amenity) => ({ key: amenity.id, amenity, source: "photo" as const })),
+    ...unseenAmenities.map((amenity) => ({ key: sideAmenityKey(amenity), amenity, source: "side" as const })),
+  ];
+  const selectedChoice = amenityChoices.find((choice) => choice.key === activePin);
+  const selected = selectedChoice?.amenity;
+  const selectedPin = selectedChoice?.source === "photo" ? selectedChoice.amenity : undefined;
+  const selectedIndex = selectedChoice ? amenityChoices.indexOf(selectedChoice) : -1;
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
   const goPhoto = (direction: number) => {
     const jump = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -114,10 +121,10 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   };
   const handleCycleAmenity = (direction: number) => {
-    if (pins.length === 0) return;
-    const currentIndex = Math.max(0, pins.findIndex((pin) => pin.id === activePin));
-    const nextIndex = (currentIndex + direction + pins.length) % pins.length;
-    setActivePin(pins[nextIndex].id);
+    if (amenityChoices.length === 0) return;
+    const currentIndex = Math.max(0, amenityChoices.findIndex((choice) => choice.key === activePin));
+    const nextIndex = (currentIndex + direction + amenityChoices.length) % amenityChoices.length;
+    setActivePin(amenityChoices[nextIndex].key);
   };
   // Swiping the mobile editorial cards keeps its numbered photo dot in sync.
   const syncMobileHighlight = () => {
@@ -143,6 +150,24 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     <div className={cls}>
       <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><PhotoTourArrow direction="up" size={18} /></Button>
       <Button variant="transparent" colorScheme="paper" size="xsmall" style={{padding:0,borderRadius:"50%"}} className="j-tour-control" disabled={!onNext} aria-label={`Next room from ${room.name}`} title="Next room" onClick={onNext}><PhotoTourArrow direction="down" size={18} /></Button>
+    </div>
+  );
+
+  const amenityCard = (className = "") => selected && (
+    <div
+      className={`j-hotspot-card ${className}`}
+      data-tour-panel
+      onPointerDown={(event) => event.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
+      aria-live="polite"
+    >
+      <p className="text-balance pb-[5px] font-headline text-2xl font-bold leading-none">{selected.title}</p>
+      <p className="mt-2 text-pretty text-[14.42px] leading-relaxed text-[#566E5F]">{selected.longNote ?? selected.note ?? selected.title}</p>
+      {amenityChoices.length > 1 && <div className="j-feature-cycle" aria-label="Amenity navigation">
+        <Button variant="transparent" colorScheme="lake-forest" size="xsmall" aria-label="Previous amenity" onClick={() => handleCycleAmenity(-1)}><PhotoTourArrow direction="left" size={20} chevron /></Button>
+        <span className="font-number text-xs tabular-nums">{selectedIndex + 1}/{amenityChoices.length}</span>
+        <Button variant="transparent" colorScheme="lake-forest" size="xsmall" aria-label="Next amenity" onClick={() => handleCycleAmenity(1)}><PhotoTourArrow direction="right" size={20} chevron /></Button>
+      </div>}
     </div>
   );
 
@@ -189,29 +214,42 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                           active={activePin === pin.id} onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)}
                           className={activePin && activePin !== pin.id ? "is-muted" : ""} />
                       </div>
-                      <Button type="button" variant={(selected?.id ?? null) === pin.id ? "filled" : "outline"} colorScheme={(selected?.id ?? null) === pin.id ? "alpine-linen" : "paper"} size="xsmall" style={{padding: 0, width: "30px", height: "30px", borderRadius: "50%", borderWidth: "1px"}} className="j-pin-mobile" aria-label={pin.title} aria-pressed={(selected?.id ?? null) === pin.id}
+                      <Button type="button" variant={activePin === pin.id ? "filled" : "outline"} colorScheme={activePin === pin.id ? "alpine-linen" : "paper"} size="xsmall" style={{padding: 0, width: "30px", height: "30px", borderRadius: "50%", borderWidth: "1px"}} className="j-pin-mobile" aria-label={pin.title} aria-pressed={activePin === pin.id}
                         onClick={() => pickPin(pin.id)}>{pinIndex + 1}</Button>
                     </div>
                   ))}
                 </div>
-                {details && photo === index && selected && <div
+                {details && photo === index && selectedPin && <div
                   className="j-hotspot-card-layer"
-                  style={{ left: `${selected.x}%`, top: `${selected.y}%` }}
+                  style={{ left: `${selectedPin.x}%`, top: `${selectedPin.y}%` }}
                 >
-                  <div
-                    className={`j-hotspot-card ${selected.x > 50 ? "is-left" : "is-right"}`}
-                    data-tour-panel
-                    onPointerDown={(event) => event.stopPropagation()}
-                    onClick={(event) => event.stopPropagation()}
-                    aria-live="polite"
-                  >
-                    <p className="text-balance pb-[5px] font-headline text-2xl font-bold leading-none">{selected.title}</p>
-                    <p className="mt-2 text-pretty text-[14.42px] leading-relaxed text-[#566E5F]">{selected.longNote ?? selected.note}</p>
-                    {pins.length > 1 && <div className="j-feature-cycle" aria-label="Amenity navigation">
-                      <Button variant="transparent" colorScheme="lake-forest" size="xsmall" aria-label="Previous amenity" onClick={() => handleCycleAmenity(-1)}><PhotoTourArrow direction="left" size={20} chevron /></Button>
-                      <span className="font-number text-xs tabular-nums">{selectedIndex + 1}/{pins.length}</span>
-                      <Button variant="transparent" colorScheme="lake-forest" size="xsmall" aria-label="Next amenity" onClick={() => handleCycleAmenity(1)}><PhotoTourArrow direction="right" size={20} chevron /></Button>
-                    </div>}
+                  {amenityCard(selectedPin.x > 50 ? "is-left" : "is-right")}
+                </div>}
+                {details && photo === index && unseenAmenities.length > 0 && <div className="j-other-amenities" data-tour-panel>
+                  <p className="j-other-amenities-label">Other Amenities<br />&amp; Features</p>
+                  <div className="j-other-amenities-rail" role="group" aria-label="Other amenities and features">
+                    {unseenAmenities.map((amenity) => {
+                      const amenityKey = sideAmenityKey(amenity);
+                      const active = activePin === amenityKey;
+                      return (
+                        <div key={amenityKey} className="j-other-amenity-item">
+                          <Button
+                            type="button"
+                            variant="transparent"
+                            colorScheme="lake-forest"
+                            size="xsmall"
+                            className="j-other-amenity-button"
+                            aria-label={amenity.title}
+                            aria-pressed={active}
+                            title={amenity.title}
+                            onClick={() => setActivePin(active ? null : amenityKey)}
+                          >
+                            <CmsAmenityIcon iconPath={amenity.iconPath} fallback={amenity.icon} className="size-9" />
+                          </Button>
+                          {active && amenityCard("j-other-amenity-card")}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>}
               </div>
