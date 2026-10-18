@@ -13,6 +13,7 @@ const meta = {
   },
 } satisfies Meta<typeof PhotoRooms>;
 export default meta;
+
 type Story = StoryObj<typeof meta>;
 export const Index: Story = {};
 export const PhotoSpreads: Story = { args: { studioCatalog: false } };
