@@ -9,9 +9,9 @@ export interface FocusAmenityCountProps {
 // Tailwind v4 state variants; Hover can be previewed independently and also
 // appears on actual pointer hover through the parent named group.
 const styles: Record<FocusState, string> = {
-  Default: "bg-primary-foreground text-primary border-primary-foreground group-hover/focus-amenity:bg-accent group-hover/focus-amenity:text-accent-foreground group-hover/focus-amenity:border-accent",
-  Hover: "bg-accent text-accent-foreground border-accent",
-  Active: "bg-primary text-accent border-primary",
+  Default: "bg-secondary text-secondary-foreground border-secondary-foreground group-hover/focus-amenity:bg-accent group-hover/focus-amenity:text-accent-foreground group-hover/focus-amenity:border-accent",
+  Hover: "bg-accent-foreground text-accent border-accent-foreground",
+  Active: "bg-accent text-accent-foreground border-accent-foreground"
 };
 
 export function FocusAmenityCount({ count, state = "Default", className = "" }: FocusAmenityCountProps) {
