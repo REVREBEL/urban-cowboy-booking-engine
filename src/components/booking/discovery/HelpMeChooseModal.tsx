@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useId, useRef } from "react";
 import { Compass, X } from "lucide-react";
 import type {
   MatchInterest,
@@ -24,6 +24,12 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
   onSubmit,
   initialPreferences,
 }) => {
+  const titleId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   const [step, setStep] = useState<0 | 1>(0);
   const [party, setParty] = useState<PartyType | null>(
     initialPreferences?.party ?? null,
@@ -36,6 +42,60 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
         ) as MatchInterest[])
       : [],
   );
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    const focusable = () => Array.from(
+      dialogRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ) ?? [],
+    ).filter((element) => element.getClientRects().length > 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        onCloseRef.current();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const elements = focusable();
+      if (!elements.length) {
+        event.preventDefault();
+        dialogRef.current?.focus();
+        return;
+      }
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !dialogRef.current?.contains(document.activeElement))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !dialogRef.current?.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const keepFocusInside = (event: FocusEvent) => {
+      if (event.target instanceof Node && !dialogRef.current?.contains(event.target)) {
+        closeButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("focusin", keepFocusInside);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("focusin", keepFocusInside);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -60,21 +120,29 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6">
+    <div
+      ref={dialogRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6"
+    >
       <div className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border-2 border-cowboy-umber bg-paper shadow-2xl">
         <div className="flex items-center justify-between border-b border-alpine-linen bg-alpine-linen px-6 py-4">
           <div className="flex items-center gap-2.5">
             <Compass className="h-5 w-5 text-copper" />
-            <h2 className="font-number text-sm font-bold uppercase tracking-[2px] text-cowboy-umber">
+            <h2 id={titleId} className="font-number text-sm font-bold uppercase tracking-[2px] text-cowboy-umber">
               Cowboy Stay Matcher
             </h2>
           </div>
 
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={onClose}
             aria-label="Close stay matcher"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-cowboy-umber transition-colors hover:bg-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-cowboy-umber transition-colors hover:bg-white focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-none"
           >
             <X className="h-5 w-5" />
           </button>
