@@ -67,15 +67,15 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
           </span>
         </button>
       ) : (
-        <div className="flex h-[min(581px,80dvh)] min-h-0 items-end gap-6">
-          <div className="relative flex h-full w-[164px] shrink-0 items-end">
-            <div className="flex h-full min-h-0 w-[149px] flex-col rounded-[40px] bg-primary p-[2px] shadow-[0_0_12px_rgba(242,242,242,.75)]">
-              <div className="flex min-h-0 flex-1 flex-col rounded-[39px] border-[1.5px] border-accent bg-secondary-foreground p-[2px]">
-                <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain rounded-[35px] border-[1.5px] border-accent bg-secondary-foreground px-2 pb-5 pt-10">
+        <div className="flex max-h-[80dvh] min-h-0 items-center gap-6">
+          <div className="relative flex max-h-[80dvh] w-[164px] shrink-0 items-center">
+            <div className="flex max-h-[80dvh] min-h-0 w-[149px] flex-col rounded-[40px] bg-primary p-[2px] shadow-[0_0_12px_rgba(242,242,242,.75)]">
+              <div className="flex min-h-0 flex-col rounded-[39px] border-[1.5px] border-accent bg-secondary-foreground p-[2px]">
+                <div className="flex min-h-0 flex-col gap-2 overflow-y-auto overscroll-contain rounded-[35px] border-[1.5px] border-accent bg-secondary-foreground px-2 pb-4 pt-8">
                   {amenities.map((item) => (
                     <button key={item.id} type="button" aria-pressed={selected?.id === item.id} aria-label={item.title}
                       onClick={() => setSelectedId(item.id)}
-                      className="group grid min-h-[112px] w-full shrink-0 place-items-center border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="group grid h-[112px] w-full shrink-0 place-items-center border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
                       <AmenityTileArtwork item={item} active={selected?.id === item.id} />
                     </button>
@@ -85,7 +85,7 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
             </div>
             <button type="button" aria-label="Close amenities" onClick={() => toggle(false)}
               className="absolute left-[52px] -top-3 z-10 grid size-[45px] place-items-center bg-accent text-primary focus-visible:outline-2">
-              <FocusAmenityAction state="Active" className="size-[35px] border-0 bg-transparent text-primary" />
+              <FocusAmenityAction state="Hover" className="size-[45px] border-0" />
             </button>
             <div className="absolute left-[142px] top-1/2 flex -translate-y-1/2 flex-col gap-3">
               <button type="button" aria-label="Previous amenity" onClick={() => cycle(-1)} className="grid size-9 place-items-center focus-visible:outline-2">
