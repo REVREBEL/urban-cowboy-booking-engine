@@ -90,7 +90,6 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     icon: amenity.icon,
   }));
   const selected = pins.find((pin) => pin.id === activePin);
-  const selectedIndex = selected ? pins.indexOf(selected) : -1;
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
   const goPhoto = (direction: number) => {
     const jump = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -122,12 +121,6 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   const pickPin = (id: string) => {
     setActivePin(id);
     highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  };
-  const handleCycleAmenity = (direction: number) => {
-    if (pins.length === 0) return;
-    const currentIndex = Math.max(0, pins.findIndex((pin) => pin.id === activePin));
-    const nextIndex = (currentIndex + direction + pins.length) % pins.length;
-    setActivePin(pins[nextIndex].id);
   };
   // Swiping the mobile editorial cards keeps its numbered photo dot in sync.
   const syncMobileHighlight = () => {
@@ -198,15 +191,12 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                       <div className="j-pin-desktop">
                         <FocusAmenity
                           count={pinIndex + 1}
-                          totalCount={allPins.length}
                           icon={pin.icon}
                           iconPath={pin.iconPath}
                           title={pin.title}
                           description={pin.longNote ?? pin.note ?? pin.title}
                           active={activePin === pin.id}
                           onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)}
-                          onPreviousAmenity={() => handleCycleAmenity(-1)}
-                          onNextAmenity={() => handleCycleAmenity(1)}
                           className={activePin && activePin !== pin.id ? "is-muted" : ""}
                         />
                       </div>
