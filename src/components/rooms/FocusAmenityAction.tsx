@@ -3,6 +3,7 @@ import type { FocusState } from "./FocusAmenityCount";
 export interface FocusAmenityActionProps {
   state?: FocusState;
   className?: string;
+  tone?: "standard" | "faded";
 }
 
 // Match the Count's three CMS hotspot states. Named group selectors are
@@ -13,14 +14,14 @@ const styles: Record<FocusState, string> = {
   Active: "bg-primary text-accent border-primary",
 };
 
-export function FocusAmenityAction({ state = "Default", className = "" }: FocusAmenityActionProps) {
+export function FocusAmenityAction({ state = "Default", tone = "standard", className = "" }: FocusAmenityActionProps) {
   return (
     <span
       aria-hidden="true"
       data-state={state}
-      className={`relative grid size-10 shrink-0 place-items-center overflow-hidden transition-colors duration-200 max-sm:size-8 ${styles[state]} ${className}`}
+      className={`relative grid size-10 shrink-0 place-items-center overflow-hidden transition-colors duration-200 max-sm:size-8 ${tone === "faded" ? "bg-accent text-secondary" : styles[state]} ${className}`}
     >
-      <img src="/assets/icons/ui/sqaure_single_line.svg" alt="" className="absolute inset-0 size-full object-contain" />
+      <img src="/assets/icons/ui/sqaure_single_line.svg" alt="" className={`pointer-events-none absolute inset-0 size-full scale-[1.11] object-fill ${tone === "faded" ? "mix-blend-screen" : ""}`} />
       <span
         aria-hidden="true"
         className={`relative block size-1/2 bg-current transition-transform duration-200 ${state === "Active" ? "rotate-45" : ""}`}
