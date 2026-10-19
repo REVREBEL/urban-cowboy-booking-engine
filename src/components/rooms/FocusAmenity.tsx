@@ -8,6 +8,7 @@ export type FocusAmenityState = "Default" | "Hover" | "Active" | "Inactive" | "D
 
 export interface FocusAmenityProps {
   count?: number | string;
+  totalCount?: number;
   icon: TourIcon;
   iconPath?: string | null;
   title: string;
@@ -15,6 +16,8 @@ export interface FocusAmenityProps {
   state?: FocusAmenityState;
   active?: boolean;
   onSelect?: () => void;
+  onPreviousAmenity?: () => void;
+  onNextAmenity?: () => void;
   className?: string;
   tone?: "standard" | "faded";
 }
