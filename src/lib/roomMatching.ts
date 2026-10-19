@@ -106,24 +106,40 @@ export function rankRecommendedRooms(
 
   if (!preferences) return eligible;
 
-  return eligible
-    .map((room, index) => ({
-      room,
-      index,
-      score: recommendationScore(room, preferences),
-      priority: room.merchandising
-        ? priorityScore(room.merchandising, preferences.interests)
-        : 999,
-    }))
-    .sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      if (a.priority !== b.priority) return a.priority - b.priority;
+  const count = eligible.length;
+  if (count <= 1) return eligible;
 
-      const aPrice = a.room.fromGross ?? Number.POSITIVE_INFINITY;
-      const bPrice = b.room.fromGross ?? Number.POSITIVE_INFINITY;
-      if (aPrice !== bPrice) return aPrice - bPrice;
+  // Performance optimization: pre-compute scores, priorities, and prices into parallel
+  // typed arrays to eliminate temporary wrapper object allocations ({ room, index, score, priority })
+  // and secondary array passes (.map(({ room }) => room)) on every room ranking pass.
+  const scores = new Float64Array(count);
+  const priorities = new Int32Array(count);
+  const prices = new Float64Array(count);
+  const indices = new Int32Array(count);
 
-      return a.index - b.index;
-    })
-    .map(({ room }) => room);
+  for (let i = 0; i < count; i++) {
+    const room = eligible[i];
+    scores[i] = recommendationScore(room, preferences);
+    priorities[i] = room.merchandising
+      ? priorityScore(room.merchandising, preferences.interests)
+      : 999;
+    prices[i] = room.fromGross ?? Number.POSITIVE_INFINITY;
+    indices[i] = i;
+  }
+
+  // Sort array of indices based on precomputed metrics in primitive typed arrays
+  const sortedIndices = Array.from(indices);
+  sortedIndices.sort((iA, iB) => {
+    if (scores[iA] !== scores[iB]) return scores[iB] - scores[iA];
+    if (priorities[iA] !== priorities[iB]) return priorities[iA] - priorities[iB];
+    if (prices[iA] !== prices[iB]) return prices[iA] - prices[iB];
+
+    return iA - iB;
+  });
+
+  const result = new Array<ShapedRoom>(count);
+  for (let i = 0; i < count; i++) {
+    result[i] = eligible[sortedIndices[i]];
+  }
+  return result;
 }
