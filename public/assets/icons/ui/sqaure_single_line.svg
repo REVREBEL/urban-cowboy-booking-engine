@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 655 655">
+<svg id="Single_Line_Square" data-name="Single Line Square" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 655 655">
   <defs>
     <style>
-      .cls-1 {
-        fill: #fff;
+      .sqaure-body {
+        fill: var(--svg-primary, currentColor);
+      }
+      .inset-line {
+        fill: var(--svg-secondary, #f1f2f2);
       }
     </style>
   </defs>
-  <polygon points="590.75 583.33 64.25 583.33 64.25 71.67 64.07 71.67 64.07 71.33 64.07 71.33 64.07 71.67 63.71 71.67 63.71 71.33 63.71 71.33 63.71 583.67 590.57 583.67 590.57 583.67 590.93 583.67 590.93 71.67 590.75 71.67 590.75 583.33"/>
   <g>
-    <g>
-      <path d="M0,0v655h655V0H0ZM63.71,583.67V71.33h0v.33h.36v512h-.36ZM590.93,583.67H64.43V71.67h-.18v-.33h526.5v.33h.18v512Z"/>
-      <polygon points="75.54 82.67 75.18 82.67 75.18 572.33 579.82 572.33 579.82 82.67 75.89 82.67 75.54 82.67"/>
-    </g>
-    <path class="cls-1" d="M64.34,72.87h0v512h526.5V72.87H64.34ZM74.73,573.54V83.87h504.64v489.67H74.73Z"/>
+    <polygon id="Primary" points="75.09 82.5 74.73 82.5 74.37 82.5 74.37 572.17 579.02 572.17 579.02 82.5 75.09 82.5 75.09 82.5"/>
+    <path id="Primary-Inner" data-name="Primary" class="sqaure-body" d="M-.27,0v655h655V0H-.27ZM590.48,71.83v511.67H63.98V71.5h526.5v.33Z"/>
   </g>
+  <path id="Secondary" class="inset-line" d="M63.98,71.5h0v512h526.5V71.5H63.98ZM579.02,572.17H74.37V82.5h504.64v489.67Z"/>
 </svg>
