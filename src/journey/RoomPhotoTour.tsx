@@ -90,7 +90,6 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     icon: amenity.icon,
   }));
   const selected = pins.find((pin) => pin.id === activePin);
-  const selectedIndex = selected ? pins.indexOf(selected) : -1;
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
   const goPhoto = (direction: number) => {
     const jump = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

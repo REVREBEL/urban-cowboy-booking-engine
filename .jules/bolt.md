@@ -13,3 +13,7 @@
 ## 2025-10-17 - Memoizing Calendar Service Restriction Checks on Date Cell Hover
 **Learning:** High-frequency mouse cursor movements in the date picker trigger component re-renders via `hoveredDate` state changes. Unmemoized full-year restriction checks (`Object.entries(dailyRates)`) created ~1,100 tuple arrays and template string allocations per frame. Memoizing the restriction check on `[dailyRates, view.year, view.month]` and pre-computing visible month prefixes eliminates garbage collection pressure during date hover interactions.
 **Action:** When component re-renders are triggered by mouseover or hover state updates, ensure secondary collection scans (like full-year rate or restriction dictionaries) are memoized on view parameters.
+
+## 2025-10-18 - Typed Index-Array Sorting for Multi-Metric Room Recommendation
+**Learning:** Room recommendation ranking mapped rooms into temporary wrapper objects `{ room, index, score, priority }`, sorted them, and mapped back to extract `room`. Precomputing ranking metrics into parallel primitive typed arrays (`Float64Array` and `Int32Array`) and sorting index references eliminates intermediate wrapper object allocations and secondary array passes during room search operations.
+**Action:** When sorting complex domain objects by multiple computed numerical metrics, evaluate metrics into parallel typed arrays and sort index references to avoid intermediate object wrapper garbage collection.
