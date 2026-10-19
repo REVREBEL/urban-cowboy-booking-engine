@@ -18,6 +18,25 @@ export interface SideFocusAmenityBarProps {
   className?: string;
 }
 
+/** Image loading is checked separately because CSS masks do not emit load errors. */
+function AmenityTileArtwork({ item, active }: { item: SideFocusAmenityItem; active: boolean }) {
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const url = cmsIconUrl(item.iconPath);
+  if (!url || failedUrl === url) {
+    return <CmsAmenityIcon iconPath={null} fallback={item.icon} className="size-[100px] object-contain" />;
+  }
+  return (
+    <span className="relative block h-[100px] w-[108px]">
+      <img src={url} alt="" aria-hidden="true" className="pointer-events-none absolute size-px opacity-0" onError={() => setFailedUrl(url)} />
+      <span
+        aria-hidden="true"
+        className={`block size-full bg-current transition-colors ${active ? "text-accent" : "text-secondary group-hover:text-accent"}`}
+        style={{ maskImage: `url("${url}")`, WebkitMaskImage: `url("${url}")`, maskSize: "contain", WebkitMaskSize: "contain", maskPosition: "center", WebkitMaskPosition: "center", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat" } as CSSProperties}
+      />
+    </span>
+  );
+}
+
 /** Receives the ordered amenities not marked on the currently visible photo. */
 export function SideFocusAmenityBar({ amenities, open, onOpenChange, className = "" }: SideFocusAmenityBarProps) {
   const [localOpen, setLocalOpen] = useState(false);
@@ -58,15 +77,7 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
                       onClick={() => setSelectedId(item.id)}
                       className="group grid min-h-[112px] w-full shrink-0 place-items-center border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
-                      {cmsIconUrl(item.iconPath) ? (
-                        <span
-                          aria-hidden="true"
-                          className={`block h-[100px] w-[108px] bg-current transition-colors ${selected?.id === item.id ? "text-accent" : "text-secondary group-hover:text-accent"}`}
-                          style={{ maskImage: `url("${cmsIconUrl(item.iconPath)}")`, WebkitMaskImage: `url("${cmsIconUrl(item.iconPath)}")`, maskSize: "contain", WebkitMaskSize: "contain", maskPosition: "center", WebkitMaskPosition: "center", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat" } as CSSProperties}
-                        />
-                      ) : (
-                        <CmsAmenityIcon iconPath={item.iconPath} fallback={item.icon} className="size-[100px] object-contain" />
-                      )}
+                      <AmenityTileArtwork item={item} active={selected?.id === item.id} />
                     </button>
                   ))}
                 </div>
