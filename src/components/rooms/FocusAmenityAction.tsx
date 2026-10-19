@@ -19,9 +19,27 @@ export function FocusAmenityAction({ state = "Default", tone = "standard", class
     <span
       aria-hidden="true"
       data-state={state}
-      className={`relative grid size-10 shrink-0 place-items-center overflow-hidden transition-colors duration-200 max-sm:size-8 ${tone === "faded" ? "bg-accent text-accent-foreground" : styles[state]} ${className}`}
+      className={`relative grid size-10 shrink-0 place-items-center overflow-hidden transition-colors duration-200 max-sm:size-8 [--focus-action-inset:var(--color-secondary-foreground)] [--focus-action-body:var(--color-secondary)] group-hover/focus-amenity:[--focus-action-body:var(--color-accent)] group-hover/focus-amenity:[--focus-action-inset:var(--color-accent-foreground)] ${tone === "faded" ? "bg-accent text-accent-foreground [--focus-action-body:var(--color-accent)] [--focus-action-inset:var(--color-accent-foreground)]" : styles[state]} ${state === "Hover" ? "[--focus-action-body:var(--color-accent-foreground)] [--focus-action-inset:var(--color-accent)]" : state === "Active" ? "[--focus-action-body:var(--color-accent)] [--focus-action-inset:var(--color-accent-foreground)]" : ""} ${className}`}
     >
-      <img src="/assets/icons/ui/sqaure_single_line.svg" alt="" className={`pointer-events-none absolute inset-0 size-full scale-[1.11] object-fill ${tone === "faded" ? "mix-blend-screen" : ""}`} />
+      <svg
+        aria-hidden="true"
+        focusable="false"
+        viewBox="0 0 655 655"
+        preserveAspectRatio="none"
+        className="pointer-events-none absolute inset-0 size-full"
+        style={{
+          // Resolve to the current state's CSS background and foreground.
+          // These aliases inherit group hover changes without JS event state.
+          ["--svg-primary" as string]: "var(--focus-action-body)",
+          ["--svg-secondary" as string]: "var(--focus-action-inset)",
+        }}
+      >
+        <g fill="var(--svg-primary)">
+          <polygon points="75.09 82.5 74.73 82.5 74.37 82.5 74.37 572.17 579.02 572.17 579.02 82.5 75.09 82.5 75.09 82.5" />
+          <path d="M-.27,0v655h655V0H-.27ZM590.48,71.83v511.67H63.98V71.5h526.5v.33Z" />
+        </g>
+        <path fill="var(--svg-secondary)" d="M63.98,71.5h0v512h526.5V71.5H63.98ZM579.02,572.17H74.37V82.5h504.64v489.67Z" />
+      </svg>
       <span
         aria-hidden="true"
         className={`relative block size-1/2 bg-current transition-transform duration-200 ${state === "Active" ? "rotate-45" : ""}`}
