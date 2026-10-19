@@ -41,15 +41,27 @@ test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () =
   assert.match(tour, /active=\{activePin === pin\.id\}/);
   assert.match(tour, /const unseenAmenities = amenities\.filter/);
   assert.match(tour, /import \{ SideFocusAmenityBar \} from ['"]@\/components\/rooms\/SideFocusAmenityBar['"]/);
-  assert.match(tour, /<SideFocusAmenityBar amenities=\{sideAmenities\}/);
+  assert.match(tour, /createPortal\(\s*<SideFocusAmenityBar amenities=\{sideAmenities\}/);
   assert.match(tour, /description: amenity\.longNote \?\? amenity\.note/);
   assert.doesNotMatch(tour, /j-other-amenities/);
   assert.doesNotMatch(tour, /FeatureFocus|<FeatureFocus/);
   assert.match(focus, /<button\b/);
   assert.match(focus, /<AmenityIcons\b/);
-  assert.match(focus, /aria-pressed=\{active\}/);
+  assert.match(focus, /aria-pressed=\{currentState === "Active"\}/);
   assert.doesNotMatch(stylesheet, /\.j-focus(?:[\s.{:#]|$)|--ff-size/);
   assert.match(stylesheet, /\.j-cms-icon/);
+});
+
+test("SideFocusAmenityBar uses focus states, a four-item viewport, and aligned selection", () => {
+  const source = read("components/rooms/SideFocusAmenityBar.tsx");
+
+  assert.match(source, /seenIds\.has\(item\.id\) \|\| seenTitles\.has\(normalizedTitle\)/);
+  assert.match(source, /h-\[min\(528px,calc\(100dvh-220px\)\)\]/);
+  assert.match(source, /scrollIntoView\(/);
+  assert.match(source, /onScroll=\{updateCardPosition\}/);
+  assert.match(source, /"focus-active" : "focus-default hover:focus-hover"/);
+  assert.match(source, /style=\{\{ top: cardCenter \}\}/);
+  assert.doesNotMatch(source, /state="Active" tone="faded"/);
 });
 
 test("native button detector is case-sensitive for JSX components", () => {

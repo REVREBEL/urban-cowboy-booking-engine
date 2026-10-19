@@ -307,3 +307,34 @@
   --fg: var(--alpine-linen);
   --border: var(--cowboy-umber-fade);
 }
+
+
+
+
+@utility focus-default {
+ --button-bg: var(--secondary);
+ --button-fg: var(--secondary-foreground);
+ --icon-bg: var(--secondary-foreground);
+ --icon-fg: var(--secondary);
+}
+
+@utility focus-hover {
+ --button-bg: var(--accent-foreground);
+ --button-fg:  var(--accent);
+ --icon-bg: var(--accent);
+ --icon-fg: var(--accent-foreground);
+}
+
+@utility focus-active {
+ --button-bg: var(--accent);
+ --button-fg: var(--paper);
+ --icon-bg: var(--paper);
+ --icon-fg: var(--accent);
+}
+
+@utility focus-disabled {
+ --button-bg: transparent;
+ --button-fg: transparent;
+  --icon-bg: var(--secondary);
+ --icon-fg: var(--secondary-foreground);
+}

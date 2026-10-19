@@ -76,6 +76,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   const [sort, setSort] = useState<Sort>("price-asc");
   const [view, setView] = useState<"spreads" | "index">(studioCatalog ? "index" : "spreads");
   const [detail, setDetail] = useState<string | null>(null);
+  const [sideAmenitiesHost, setSideAmenitiesHost] = useState<HTMLDivElement | null>(null);
   const roomStage = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -236,6 +237,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     <section ref={roomStage} className={`j-room-stage pb-24 ${detail ? "is-details-open" : ""}`}>
       {/* Floating filter overlay */}
       <div ref={filterOverlay} className="j-room-filters sticky top-16 z-30 mx-auto max-w-[1600px] px-3 pt-2 sm:px-6">
+        <div ref={setSideAmenitiesHost} className="j-side-focus-amenities-host" data-tour-panel />
         <div className="flex items-center gap-2 rounded-2xl bg-smoke/85 p-2 backdrop-blur-md sm:hidden">
           <Button type="button" variant="outline" colorScheme="paper" size="xsmall" onClick={openSheet} aria-haspopup="dialog" aria-expanded={sheetOpen}
             className="gap-2 rounded-full">
@@ -391,7 +393,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
           {list.map((m, i) => (
             <RoomPhotoTour key={m.room.id} room={m.room} cmsHotspots={cmsHotspots} position={i} count={list.length}
               currency={m.source.rates[0]?.currency ?? "USD"}
-               details={detail === m.room.id}
+              details={detail === m.room.id} sideAmenitiesHost={sideAmenitiesHost}
               onDetails={(open) => setDetail(open ? m.room.id : null)} onChoose={() => onChoose(m.source)}
               onPrevious={i > 0 ? () => visitRoom(i - 1) : undefined}
               onNext={i < list.length - 1 ? () => visitRoom(i + 1) : undefined} />

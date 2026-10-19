@@ -72,7 +72,8 @@
 .j-hotspot-card { position: absolute; top: 0; width: min(360px, 30vw); min-width: 280px; padding: 30px 26px; border-radius: 6px; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 16px 48px color-mix(in srgb, var(--color-smoke) 34%, transparent); pointer-events: auto; transform: translateY(-50%); }
 .j-hotspot-card.is-right { left: 92px; }
 .j-hotspot-card.is-left { right: 92px; }
-.j-side-focus-amenities { position: absolute; right: 24px; bottom: 96px; z-index: 21; width: min(680px, calc(100% - 48px)); pointer-events: auto; }
+.j-side-focus-amenities-host { position: absolute; inset: 8px 32px auto; z-index: 1; display: flex; justify-content: flex-start; pointer-events: none; }
+.j-side-focus-amenities-host > * { pointer-events: auto; }
 .j-hotspot { pointer-events: auto; border: 1px solid var(--color-paper) !important; background: color-mix(in oklab, var(--color-smoke) 65%, transparent) !important; }
 .j-hotspot[aria-pressed="true"] { background: var(--color-paper) !important; color: var(--color-primary-foreground) !important; }
 .j-pin-core { font-family: var(--font-body); font-size: 13px; }
@@ -157,7 +158,7 @@
  .j-photo-prev { left: 8px; } .j-photo-next { right: 8px; }
  .j-pin-label { display: none; }
  /* Mobile details: small numbered pins on the photo + a swipeable highlight row in a bottom sheet */
- .j-pin-desktop, .j-tour-feature, .j-roomnav-desktop, .j-side-focus-amenities { display: none; }
+ .j-pin-desktop, .j-tour-feature, .j-roomnav-desktop, .j-side-focus-amenities-host { display: none; }
  .j-mobile-only { display: inline; }
  .j-pin-mobile { pointer-events: auto; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; font-size: 13px; font-weight: 600; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-paper) 35%, transparent); }
  .j-pin-mobile[aria-pressed="true"] { color: var(--color-paper); background: var(--alpine-linen); box-shadow: 0 0 0 6px color-mix(in oklab, var(--alpine-linen) 40%, transparent); }
