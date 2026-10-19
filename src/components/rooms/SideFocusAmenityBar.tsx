@@ -85,7 +85,7 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
             </div>
             <button type="button" aria-label="Close amenities" onClick={() => toggle(false)}
               className="absolute left-[52px] -top-3 z-10 grid size-[45px] place-items-center bg-accent text-primary focus-visible:outline-2">
-              <FocusAmenityAction state="Hover" className="size-[45px] border-0" />
+              <FocusAmenityAction state="Active" tone="faded" className="size-[45px] border-0" />
             </button>
             <div className="absolute left-[142px] top-1/2 flex -translate-y-1/2 flex-col gap-3">
               <button type="button" aria-label="Previous amenity" onClick={() => cycle(-1)} className="grid size-9 place-items-center focus-visible:outline-2">
