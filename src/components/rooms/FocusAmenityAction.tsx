@@ -18,13 +18,14 @@ export function FocusAmenityAction({ state = "Default", className = "" }: FocusA
     <span
       aria-hidden="true"
       data-state={state}
-      className={`grid size-10 shrink-0 place-items-center border-2 transition-colors duration-200 max-sm:size-8 ${styles[state]} ${className}`}
+      className={`relative grid size-10 shrink-0 place-items-center overflow-hidden transition-colors duration-200 max-sm:size-8 ${styles[state]} ${className}`}
     >
-      <svg viewBox="0 0 24 24" fill="none" width="20" height="20" className="size-1/2" focusable="false">
-        {state === "Active"
-          ? <path d="M5 5 19 19M19 5 5 19" stroke="currentColor" strokeWidth="8" strokeLinecap="square" />
-          : <path d="M12 3V21M3 12H21" stroke="currentColor" strokeWidth="8" strokeLinecap="square" />}
-      </svg>
+      <img src="/assets/icons/ui/sqaure_single_line.svg" alt="" className="absolute inset-0 size-full object-contain" />
+      <span
+        aria-hidden="true"
+        className={`relative block size-1/2 bg-current transition-transform duration-200 ${state === "Active" ? "rotate-45" : ""}`}
+        style={{ mask: 'url("/assets/icons/ui/ui-plus.svg") center / contain no-repeat', WebkitMask: 'url("/assets/icons/ui/ui-plus.svg") center / contain no-repeat' }}
+      />
     </span>
   );
 }
