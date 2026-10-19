@@ -21,10 +21,10 @@ export function FocusAmenityAction({ state = "Default", className = "" }: FocusA
       className={`relative grid size-10 shrink-0 place-items-center overflow-hidden transition-colors duration-200 max-sm:size-8 ${styles[state]} ${className}`}
     >
       <img src="/assets/icons/ui/sqaure_single_line.svg" alt="" className="absolute inset-0 size-full object-contain" />
-      <img
-        src="/assets/icons/ui/ui-plus.svg"
-        alt=""
-        className={`relative size-1/2 object-contain transition-transform duration-200 ${state === "Active" ? "rotate-45" : ""}`}
+      <span
+        aria-hidden="true"
+        className={`relative block size-1/2 bg-current transition-transform duration-200 ${state === "Active" ? "rotate-45" : ""}`}
+        style={{ mask: 'url("/assets/icons/ui/ui-plus.svg") center / contain no-repeat', WebkitMask: 'url("/assets/icons/ui/ui-plus.svg") center / contain no-repeat' }}
       />
     </span>
   );
