@@ -72,18 +72,7 @@
 .j-hotspot-card { position: absolute; top: 0; width: min(360px, 30vw); min-width: 280px; padding: 30px 26px; border-radius: 6px; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 16px 48px color-mix(in srgb, var(--color-smoke) 34%, transparent); pointer-events: auto; transform: translateY(-50%); }
 .j-hotspot-card.is-right { left: 92px; }
 .j-hotspot-card.is-left { right: 92px; }
-.j-other-amenities { position: absolute; right: 20px; bottom: 104px; z-index: 21; display: flex; align-items: end; gap: 12px; pointer-events: auto; }
-.j-other-amenities-label { width: 132px; color: var(--color-paper); font-family: var(--font-headline); font-size: 16px; font-weight: 700; line-height: .82; text-align: right; text-transform: uppercase; text-wrap: balance; text-shadow: 0 1px 8px color-mix(in srgb, var(--color-smoke) 75%, transparent); }
-.j-other-amenities-rail { display: flex; flex-direction: column; gap: 2px; padding: 6px; overflow: visible; border-radius: 12px; background: var(--color-paper); box-shadow: 0 10px 32px color-mix(in srgb, var(--color-smoke) 35%, transparent); }
-.j-other-amenity-item { position: relative; flex: none; }
-.j-other-amenity-button { display: grid !important; min-width: 46px !important; width: 46px; height: 46px; place-items: center; padding: 0 !important; border: 0 !important; border-radius: 8px !important; background: transparent !important; color: var(--color-primary-foreground) !important; cursor: pointer; transition: color 160ms ease, background-color 160ms ease; }
-.j-other-amenity-button:hover,
-.j-other-amenity-button[aria-pressed="true"] { color: var(--color-paper) !important; background: var(--color-primary-foreground) !important; }
-.j-other-amenity-button:focus-visible { outline: 2px solid var(--color-primary-foreground); outline-offset: 2px; }
-.j-other-amenity-button .j-cms-icon { width: 36px; height: 36px; }
-.j-other-amenity-button:hover .j-cms-icon,
-.j-other-amenity-button[aria-pressed="true"] .j-cms-icon { filter: brightness(0) invert(1); }
-.j-hotspot-card.j-other-amenity-card { top: 50%; right: calc(100% + 18px); left: auto; transform: translateY(-50%); }
+.j-side-focus-amenities { position: absolute; right: 24px; bottom: 96px; z-index: 21; width: min(680px, calc(100% - 48px)); pointer-events: auto; }
 .j-hotspot { pointer-events: auto; border: 1px solid var(--color-paper) !important; background: color-mix(in oklab, var(--color-smoke) 65%, transparent) !important; }
 .j-hotspot[aria-pressed="true"] { background: var(--color-paper) !important; color: var(--color-primary-foreground) !important; }
 .j-pin-core { font-family: var(--font-body); font-size: 13px; }
@@ -168,7 +157,7 @@
  .j-photo-prev { left: 8px; } .j-photo-next { right: 8px; }
  .j-pin-label { display: none; }
  /* Mobile details: small numbered pins on the photo + a swipeable highlight row in a bottom sheet */
- .j-pin-desktop, .j-tour-feature, .j-roomnav-desktop, .j-other-amenities { display: none; }
+ .j-pin-desktop, .j-tour-feature, .j-roomnav-desktop, .j-side-focus-amenities { display: none; }
  .j-mobile-only { display: inline; }
  .j-pin-mobile { pointer-events: auto; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; font-size: 13px; font-weight: 600; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-paper) 35%, transparent); }
  .j-pin-mobile[aria-pressed="true"] { color: var(--color-paper); background: var(--alpine-linen); box-shadow: 0 0 0 6px color-mix(in oklab, var(--alpine-linen) 40%, transparent); }
