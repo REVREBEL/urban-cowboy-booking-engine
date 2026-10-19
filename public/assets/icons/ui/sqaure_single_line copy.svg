@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Single_Line_Square" data-name="Single Line Square" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 655 655">
+  <defs>
+    <style>
+      .sqaure-body {
+        fill: black;
+      }
+      .inset-line {
+        fill: white;
+      }
+    </style>
+  </defs>
+  <g>
+    <polygon id="Primary" points="75.09 82.5 74.73 82.5 74.37 82.5 74.37 572.17 579.02 572.17 579.02 82.5 75.09 82.5 75.09 82.5"/>
+    <path id="Primary-Inner" data-name="Primary" class="sqaure-body" d="M-.27,0v655h655V0H-.27ZM590.48,71.83v511.67H63.98V71.5h526.5v.33Z"/>
+  </g>
+  <path id="Secondary" class="inset-line" d="M63.98,71.5h0v512h526.5V71.5H63.98ZM579.02,572.17H74.37V82.5h504.64v489.67Z"/>
+</svg>

@@ -9,9 +9,9 @@ export interface FocusAmenityActionProps {
 // Match the Count's three CMS hotspot states. Named group selectors are
 // Tailwind v4 utilities and activate with native button :hover.
 const styles: Record<FocusState, string> = {
-  Default: "bg-primary-foreground text-primary border-primary-foreground group-hover/focus-amenity:bg-accent group-hover/focus-amenity:text-accent-foreground group-hover/focus-amenity:border-accent",
-  Hover: "bg-accent text-accent-foreground border-accent",
-  Active: "bg-primary text-accent border-primary",
+  Default: "bg-secondary text-secondary-foreground border-secondary-foreground group-hover/focus-amenity:bg-accent group-hover/focus-amenity:text-accent-foreground group-hover/focus-amenity:border-accent",
+  Hover: "bg-accent-foreground text-accent border-accent-foreground",
+  Active: "bg-accent text-accent-foreground border-accent-foreground",
 };
 
 export function FocusAmenityAction({ state = "Default", tone = "standard", className = "" }: FocusAmenityActionProps) {
@@ -19,7 +19,7 @@ export function FocusAmenityAction({ state = "Default", tone = "standard", class
     <span
       aria-hidden="true"
       data-state={state}
-      className={`relative grid size-10 shrink-0 place-items-center overflow-hidden transition-colors duration-200 max-sm:size-8 ${tone === "faded" ? "bg-accent text-secondary" : styles[state]} ${className}`}
+      className={`relative grid size-10 shrink-0 place-items-center overflow-hidden transition-colors duration-200 max-sm:size-8 ${tone === "faded" ? "bg-accent text-accent-foreground" : styles[state]} ${className}`}
     >
       <img src="/assets/icons/ui/sqaure_single_line.svg" alt="" className={`pointer-events-none absolute inset-0 size-full scale-[1.11] object-fill ${tone === "faded" ? "mix-blend-screen" : ""}`} />
       <span

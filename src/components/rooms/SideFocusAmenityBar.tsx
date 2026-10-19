@@ -23,10 +23,10 @@ function AmenityTileArtwork({ item, active }: { item: SideFocusAmenityItem; acti
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const url = cmsIconUrl(item.iconPath);
   if (!url || failedUrl === url) {
-    return <CmsAmenityIcon iconPath={null} fallback={item.icon} className="size-[100px] object-contain" />;
+    return <CmsAmenityIcon iconPath={null} fallback={item.icon} className="size-25 object-contain" />;
   }
   return (
-    <span className="relative block h-[100px] w-[108px]">
+    <span className="relative block h-25 w-27">
       <img src={url} alt="" aria-hidden="true" className="pointer-events-none absolute size-px opacity-0" onError={() => setFailedUrl(url)} />
       <span
         aria-hidden="true"
@@ -54,12 +54,12 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
   if (!amenities.length) return null;
 
   return (
-    <section aria-label="More amenities and features" className={`w-full max-w-[680px] ${className}`}>
+    <section aria-label="More amenities and features" className={`w-full max-w-170 ${className}`}>
       {!expanded ? (
         <button type="button" aria-expanded={false} onClick={() => toggle(true)}
           className="flex w-full items-center gap-5 py-3 text-left text-primary focus-visible:outline-2 focus-visible:outline-offset-4">
-          <span className="grid size-[50px] shrink-0 place-items-center bg-primary-foreground shadow-[0_0_28px_rgba(242,242,242,.8)]">
-            <FocusAmenityAction state="Active" className="size-[35px] border-0" />
+          <span className="grid size-12.5 shrink-0 place-items-center bg-primary-foreground shadow-[0_0_28px_rgba(242,242,242,.8)]">
+            <FocusAmenityAction state="Active" className="size-8.75 border-0" />
           </span>
           <span className="flex min-w-0 flex-col font-heading uppercase leading-none tracking-[1px] drop-shadow-[0_0_55px_#363333]">
             <span className="text-[clamp(23px,4vw,41px)]">More amenities</span>
@@ -68,14 +68,14 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
         </button>
       ) : (
         <div className="flex max-h-[80dvh] min-h-0 items-center gap-6">
-          <div className="relative flex max-h-[80dvh] w-[164px] shrink-0 items-center">
-            <div className="flex max-h-[80dvh] min-h-0 w-[149px] flex-col rounded-[40px] bg-primary p-[2px] shadow-[0_0_12px_rgba(242,242,242,.75)]">
-              <div className="flex min-h-0 flex-col rounded-[39px] border-[1.5px] border-accent bg-secondary-foreground p-[2px]">
+          <div className="relative flex max-h-[80dvh] w-41 shrink-0 items-center">
+            <div className="flex max-h-[80dvh] min-h-0 w-37.25 flex-col rounded-modal-xl bg-primary p-0.5 shadow-[0_0_12px_rgba(242,242,242,.75)]">
+              <div className="flex min-h-0 flex-col rounded-[39px] border-[1.5px] border-accent bg-secondary-foreground p-0.5">
                 <div className="flex min-h-0 flex-col gap-2 overflow-y-auto overscroll-contain rounded-[35px] border-[1.5px] border-accent bg-secondary-foreground px-2 pb-4 pt-8">
                   {amenities.map((item) => (
                     <button key={item.id} type="button" aria-pressed={selected?.id === item.id} aria-label={item.title}
                       onClick={() => setSelectedId(item.id)}
-                      className="group grid h-[112px] w-full shrink-0 place-items-center border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2"
+                      className="group grid h-28 w-full shrink-0 place-items-center border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
                       <AmenityTileArtwork item={item} active={selected?.id === item.id} />
                     </button>
@@ -84,10 +84,10 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
               </div>
             </div>
             <button type="button" aria-label="Close amenities" onClick={() => toggle(false)}
-              className="absolute left-[52px] -top-3 z-10 grid size-[45px] place-items-center bg-accent text-primary focus-visible:outline-2">
-              <FocusAmenityAction state="Active" tone="faded" className="size-[45px] border-0" />
+              className="absolute left-13 -top-3 z-10 grid size-11.25 place-items-center bg-accent text-primary focus-visible:outline-2">
+              <FocusAmenityAction state="Active" tone="faded" className="size-11.25 border-0" />
             </button>
-            <div className="absolute left-[142px] top-1/2 flex -translate-y-1/2 flex-col gap-3">
+            <div className="absolute left-35.5 top-1/2 flex -translate-y-1/2 flex-col gap-3">
               <button type="button" aria-label="Previous amenity" onClick={() => cycle(-1)} className="grid size-9 place-items-center focus-visible:outline-2">
                 <img src="/assets/icons/ui/ui-arrow_single_line_up.svg" alt="" className="h-9 w-9 object-contain" />
               </button>
