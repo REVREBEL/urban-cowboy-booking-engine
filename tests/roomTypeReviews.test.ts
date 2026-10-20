@@ -5,6 +5,7 @@ import {
   normalizeRoomTypeDescriptions,
   normalizeRoomTypeReview,
   normalizeRoomTypeReviews,
+  webflowGetAllItems,
 } from "../worker/webflow/room-type-reviews.ts";
 
 const optionNames = new Map([
@@ -149,4 +150,29 @@ test("room descriptions are optional per field and ignore unpublished CMS items"
       longDescription: null,
     },
   });
+});
+
+test("Webflow item pagination loads records beyond the first 100", async () => {
+  const originalFetch = globalThis.fetch;
+  const requestedOffsets: string[] = [];
+  globalThis.fetch = async (input) => {
+    const url = new URL(typeof input === "string" ? input : input.url);
+    const offset = url.searchParams.get("offset") ?? "0";
+    requestedOffsets.push(offset);
+    const firstPage = Array.from({ length: 100 }, (_, index) => ({ id: `item-${index}` }));
+    const items = offset === "0" ? firstPage : [{ id: "item-100" }, { id: "item-101" }];
+    return new Response(JSON.stringify({ items, pagination: { limit: 100, offset: Number(offset), total: 102 } }));
+  };
+
+  try {
+    const result = await webflowGetAllItems(
+      { WEBFLOW_CMS_API_TOKEN: "test-token" } as never,
+      "https://api.webflow.test/v2",
+      "/collections/hotspots/items/live",
+    );
+    assert.equal(result.items?.length, 102);
+    assert.deepEqual(requestedOffsets, ["0", "100"]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });

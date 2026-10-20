@@ -65,13 +65,12 @@
 .j-room-tour.is-details-open .j-hotspot-anchor::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 50%; width: 230px; height: 230px; border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); background: radial-gradient(circle, color-mix(in srgb, var(--paper) 38%, transparent) 0%, color-mix(in srgb, var(--paper) 18%, transparent) 34%, transparent 72%); }
 .j-room-tour.is-details-open .j-photo-image > img,
 .j-room-tour.is-details-open .j-photo-neighbor img { filter: brightness(.42) saturate(.8); transition: filter 240ms ease; }
-.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child { opacity: 1; background: var(--color-primary-foreground); box-shadow: 0 0 0 2px var(--lake-forest-fade), 0 0 0 5px var(--paper), 0 0 0 7px var(--lake-forest-fade); }
-.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child img,
-.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child svg { filter: brightness(0) invert(1); }
 .j-hotspot-card-layer { position: absolute; z-index: 20; width: 0; height: 0; pointer-events: none; }
 .j-hotspot-card { position: absolute; top: 0; width: min(360px, 30vw); min-width: 280px; padding: 30px 26px; border-radius: 6px; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 16px 48px color-mix(in srgb, var(--color-smoke) 34%, transparent); pointer-events: auto; transform: translateY(-50%); }
 .j-hotspot-card.is-right { left: 92px; }
 .j-hotspot-card.is-left { right: 92px; }
+.j-side-focus-amenities-host { position: absolute; inset: 94px 32px auto; z-index: 1; display: flex; justify-content: flex-start; pointer-events: none; }
+.j-side-focus-amenities-host > * { pointer-events: auto; }
 .j-hotspot { pointer-events: auto; border: 1px solid var(--color-paper) !important; background: color-mix(in oklab, var(--color-smoke) 65%, transparent) !important; }
 .j-hotspot[aria-pressed="true"] { background: var(--color-paper) !important; color: var(--color-primary-foreground) !important; }
 .j-pin-core { font-family: var(--font-body); font-size: 13px; }
@@ -156,7 +155,7 @@
  .j-photo-prev { left: 8px; } .j-photo-next { right: 8px; }
  .j-pin-label { display: none; }
  /* Mobile details: small numbered pins on the photo + a swipeable highlight row in a bottom sheet */
- .j-pin-desktop, .j-tour-feature, .j-roomnav-desktop { display: none; }
+ .j-pin-desktop, .j-tour-feature, .j-roomnav-desktop, .j-side-focus-amenities-host { display: none; }
  .j-mobile-only { display: inline; }
  .j-pin-mobile { pointer-events: auto; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; font-size: 13px; font-weight: 600; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-paper) 35%, transparent); }
  .j-pin-mobile[aria-pressed="true"] { color: var(--color-paper); background: var(--alpine-linen); box-shadow: 0 0 0 6px color-mix(in oklab, var(--alpine-linen) 40%, transparent); }
@@ -232,4 +231,25 @@
 @media (prefers-reduced-motion: reduce) {
   .j-price-sort-toggle { transition: none !important; }
   .j-price-sort-toggle-label { animation: none; }
+}
+
+
+/* Amenity-focus choreography: the selected pin/card exits before the next opens.
+   State color changes continue using the component's own token transitions. */
+.j-pin-desktop.is-amenity-exiting {
+  opacity: 0;
+  transform: translateY(5px) scale(.985);
+  transition: opacity 150ms ease-in, transform 150ms ease-in;
+  pointer-events: none;
+}
+.j-pin-desktop.is-amenity-selected:not(.is-amenity-exiting) {
+  animation: j-amenity-enter 230ms cubic-bezier(.2,.75,.3,1) both;
+}
+@keyframes j-amenity-enter {
+  from { opacity: 0; transform: translateY(6px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .j-pin-desktop.is-amenity-exiting { opacity: 1; transform: none; transition: none; }
+  .j-pin-desktop.is-amenity-selected:not(.is-amenity-exiting) { animation: none; }
 }
