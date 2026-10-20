@@ -15,8 +15,13 @@ export interface FocusAmenityProps {
   state?: FocusAmenityState;
   active?: boolean;
   onSelect?: () => void;
+  totalCount?: number;
+  onPreviousAmenity?: () => void;
+  onNextAmenity?: () => void;
   className?: string;
   tone?: "standard" | "faded";
+  cardSide?: "left" | "right";
+  cardAlign?: "top" | "center" | "bottom";
 }
 
 // Map the 4 Figma design states to Tailwind CSS v4 @utility classes
@@ -48,6 +53,8 @@ export function FocusAmenity({
   onSelect,
   className = "",
   tone = "standard",
+  cardSide = "right",
+  cardAlign = "center",
 }: FocusAmenityProps) {
   // Resolve active state from explicit prop or boolean toggle
   const currentState: FocusAmenityState =
@@ -57,9 +64,15 @@ export function FocusAmenity({
     tone === "faded"
       ? "focus-hover"
       : stateStyles[currentState] ?? stateStyles.Default;
+  const cardSideClass = cardSide === "left" ? "right-full mr-4" : "left-full ml-4";
+  const cardAlignClass = {
+    top: "top-0",
+    center: "top-1/2 -translate-y-1/2",
+    bottom: "bottom-0",
+  }[cardAlign];
 
   return (
-    <div className={`relative inline-flex items-center ${className}`}>
+    <div className={`relative inline-flex items-center ${currentState === "Active" ? "z-50" : ""} ${className}`}>
       <button
         type="button"
         onClick={onSelect}
@@ -130,7 +143,7 @@ export function FocusAmenity({
         <div
           role="region"
           aria-label={title}
-          className="ml-4 flex max-w-sm flex-col justify-center rounded-2xl bg-primary p-6 shadow-sm transition-all duration-200 max-sm:ml-2 max-sm:p-4"
+          className={`pointer-events-auto absolute z-50 flex w-[min(360px,calc(100vw-2rem))] flex-col justify-center rounded-2xl bg-primary p-6 shadow-sm transition-all duration-200 max-sm:p-4 ${cardSideClass} ${cardAlignClass}`}
         >
           <h3 className="text-base font-bold uppercase tracking-wider text-(--primary-foreground,#1c3f32)">
             {title}

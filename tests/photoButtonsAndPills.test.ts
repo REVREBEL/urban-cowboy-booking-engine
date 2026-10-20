@@ -36,9 +36,15 @@ test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () =
   const stylesheet = read("styles/room-photo-tour.css");
 
   assert.match(tour, /import \{ FocusAmenity \} from ['"]@\/components\/rooms\/FocusAmenity['"]/);
-  assert.match(tour, /<FocusAmenity count=\{pinIndex \+ 1\}/);
+  assert.match(tour, /<FocusAmenity\s+count=\{pinIndex \+ 1\}/);
+  assert.match(tour, /zIndex: activePin === pin\.id \? 50 : 1/);
+  assert.match(tour, /cardSide=\{pin\.x > 55 \? "left" : "right"\}/);
+  assert.match(focus, /className=\{`pointer-events-auto absolute z-50/);
   assert.match(tour, /iconPath=\{pin\.iconPath\}/);
   assert.match(tour, /active=\{activePin === pin\.id\}/);
+  assert.match(tour, /state=\{activePin !== null && activePin !== pin\.id \? "Inactive" : undefined\}/);
+  assert.doesNotMatch(tour, /is-muted/);
+  assert.match(tour, /setActivePin\(willOpen \? id : null\)/);
   assert.match(tour, /const unseenAmenities = amenities\.filter/);
   assert.match(tour, /import \{ SideFocusAmenityBar \} from ['"]@\/components\/rooms\/SideFocusAmenityBar['"]/);
   assert.match(tour, /createPortal\(\s*<SideFocusAmenityBar amenities=\{sideAmenities\}/);
@@ -56,11 +62,18 @@ test("SideFocusAmenityBar uses focus states, a four-item viewport, and aligned s
   const source = read("components/rooms/SideFocusAmenityBar.tsx");
 
   assert.match(source, /seenIds\.has\(item\.id\) \|\| seenTitles\.has\(normalizedTitle\)/);
-  assert.match(source, /h-\[min\(528px,calc\(100dvh-220px\)\)\]/);
+  assert.match(source, /fixed top-1\/2 left-8/);
+  assert.match(source, /h-\[clamp\(224px,calc\(100dvh-128px\),528px\)\]/);
+  assert.match(source, /first:mt-11/);
+  assert.doesNotMatch(source, /pb-4 pt-11/);
   assert.match(source, /scrollIntoView\(/);
+  assert.match(source, /selectedIndex >= 0 \? uniqueAmenities\[selectedIndex\] : undefined/);
+  assert.match(source, /setSelectedId\(\(currentId\) => currentId === id \? null : id\)/);
+  assert.match(source, /if \(!value\) setSelectedId\(null\)/);
   assert.match(source, /onScroll=\{updateCardPosition\}/);
   assert.match(source, /"focus-active" : "focus-default hover:focus-hover"/);
   assert.match(source, /style=\{\{ top: cardCenter \}\}/);
+  assert.match(source, /Math\.min\(maximumCenter, Math\.max\(minimumCenter, desiredCenter\)\)/);
   assert.doesNotMatch(source, /state="Active" tone="faded"/);
 });
 

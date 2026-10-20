@@ -65,14 +65,11 @@
 .j-room-tour.is-details-open .j-hotspot-anchor::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 50%; width: 230px; height: 230px; border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); background: radial-gradient(circle, color-mix(in srgb, var(--paper) 38%, transparent) 0%, color-mix(in srgb, var(--paper) 18%, transparent) 34%, transparent 72%); }
 .j-room-tour.is-details-open .j-photo-image > img,
 .j-room-tour.is-details-open .j-photo-neighbor img { filter: brightness(.42) saturate(.8); transition: filter 240ms ease; }
-.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child { opacity: 1; background: var(--color-primary-foreground); box-shadow: 0 0 0 2px var(--lake-forest-fade), 0 0 0 5px var(--paper), 0 0 0 7px var(--lake-forest-fade); }
-.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child img,
-.j-room-tour.is-details-open .j-pin-desktop button.is-muted > span:last-child svg { filter: brightness(0) invert(1); }
 .j-hotspot-card-layer { position: absolute; z-index: 20; width: 0; height: 0; pointer-events: none; }
 .j-hotspot-card { position: absolute; top: 0; width: min(360px, 30vw); min-width: 280px; padding: 30px 26px; border-radius: 6px; color: var(--color-primary-foreground); background: var(--color-paper); box-shadow: 0 16px 48px color-mix(in srgb, var(--color-smoke) 34%, transparent); pointer-events: auto; transform: translateY(-50%); }
 .j-hotspot-card.is-right { left: 92px; }
 .j-hotspot-card.is-left { right: 92px; }
-.j-side-focus-amenities-host { position: absolute; inset: 8px 32px auto; z-index: 1; display: flex; justify-content: flex-start; pointer-events: none; }
+.j-side-focus-amenities-host { position: absolute; inset: 94px 32px auto; z-index: 1; display: flex; justify-content: flex-start; pointer-events: none; }
 .j-side-focus-amenities-host > * { pointer-events: auto; }
 .j-hotspot { pointer-events: auto; border: 1px solid var(--color-paper) !important; background: color-mix(in oklab, var(--color-smoke) 65%, transparent) !important; }
 .j-hotspot[aria-pressed="true"] { background: var(--color-paper) !important; color: var(--color-primary-foreground) !important; }

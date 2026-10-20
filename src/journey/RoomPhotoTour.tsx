@@ -90,7 +90,6 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     icon: amenity.icon,
   }));
   const selected = pins.find((pin) => pin.id === activePin);
-  const selectedIndex = selected ? pins.indexOf(selected) : -1;
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
   const goPhoto = (direction: number) => {
     const jump = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -119,9 +118,12 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     goPhoto(event.deltaX > 0 ? 1 : -1);
   };
   const highlightRow = useRef<HTMLDivElement>(null);
-  const pickPin = (id: string) => {
-    setActivePin(id);
-    highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  const handleSelectPin = (id: string) => {
+    const willOpen = activePin !== id;
+    setActivePin(willOpen ? id : null);
+    if (willOpen) {
+      highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
   };
   const handleCycleAmenity = (direction: number) => {
     if (pins.length === 0) return;
@@ -194,7 +196,11 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                 <div className={`j-hotspots ${details && photo === index ? 'is-open' : ''}`} inert={!details || photo !== index} aria-hidden={!details || photo !== index}>
 
                   {(room.cmsAmenities ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots) : PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex, allPins) => (
-                    <div key={pin.id} className="j-hotspot-anchor" style={{ left: `${pin.x}%`, top: `${pin.y}%` }}>
+                    <div
+                      key={pin.id}
+                      className="j-hotspot-anchor"
+                      style={{ left: `${pin.x}%`, top: `${pin.y}%`, zIndex: activePin === pin.id ? 50 : 1 }}
+                    >
                       <div className="j-pin-desktop">
                         <FocusAmenity
                           count={pinIndex + 1}
@@ -204,10 +210,12 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                           title={pin.title}
                           description={pin.longNote ?? pin.note ?? pin.title}
                           active={activePin === pin.id}
-                          onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)}
+                          state={activePin !== null && activePin !== pin.id ? "Inactive" : undefined}
+                          onSelect={() => handleSelectPin(pin.id)}
                           onPreviousAmenity={() => handleCycleAmenity(-1)}
                           onNextAmenity={() => handleCycleAmenity(1)}
-                          className={activePin && activePin !== pin.id ? "is-muted" : ""}
+                          cardSide={pin.x > 55 ? "left" : "right"}
+                          cardAlign={pin.y < 30 ? "top" : pin.y > 70 ? "bottom" : "center"}
                         />
                       </div>
                       <Button
@@ -219,7 +227,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                         className="j-pin-mobile"
                         aria-label={pin.title}
                         aria-pressed={activePin === pin.id}
-                        onClick={() => pickPin(pin.id)}
+                        onClick={() => handleSelectPin(pin.id)}
                       >
                         {pinIndex + 1}
                       </Button>
@@ -260,7 +268,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
             <p className="j-mobile-only text-[11px] uppercase tracking-[0.2em] opacity-60">In this photo · tap a number or swipe</p>
             <div ref={highlightRow} onScroll={syncMobileHighlight} className="j-highlight-row no-scrollbar">
               {pins.map((pin, i) => (
-                <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: "12px", fontWeight: 400, textAlign: "left", borderRadius: "10px" }} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => pickPin(pin.id)} className="j-highlight-card">
+                <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: "12px", fontWeight: 400, textAlign: "left", borderRadius: "10px" }} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => handleSelectPin(pin.id)} className="j-highlight-card">
                   <span className="j-highlight-num">{i + 1}</span>
                   <CmsAmenityIcon iconPath={pin.iconPath} fallback={pin.icon} className="size-10 shrink-0" />
                   <span className="min-w-0 text-left"><span className="block font-headline text-base leading-none">{pin.title}</span><span className="mt-0.5 block text-xs leading-snug opacity-75">{pin.longNote ?? pin.note}</span></span>
