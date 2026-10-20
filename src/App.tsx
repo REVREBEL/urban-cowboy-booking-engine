@@ -27,6 +27,10 @@ const Confirmation = lazy(() => import("./steps/Confirmation").then((module) => 
 
 const SHOW_API_DEBUGGER =
   import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
+// The Studio is a development surface locally, but never expose the API log
+// on production Studio URLs unless the developer explicitly enables it.
+const SHOW_STUDIO_API_DEBUGGER =
+  import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
 
 const PROGRESS_NUMBER: Record<Step, number> = {
   dates: 1,
@@ -103,7 +107,7 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
 
       {!photoJourney && <BookingFooter />}
       {!photoJourney && <ContactBar />}
-      {SHOW_API_DEBUGGER && !isStudioRoute() && <Suspense fallback={null}><DevPanel /></Suspense>}
+      {SHOW_API_DEBUGGER && (!isStudioRoute() || SHOW_STUDIO_API_DEBUGGER) && <Suspense fallback={null}><DevPanel /></Suspense>}
       {isStudioRoute() && <Suspense fallback={null}><StudioController /></Suspense>}
     </div>
   );
