@@ -36,7 +36,8 @@ test("Navigation respects reduced-motion and interrupts scrolling when the guest
   assert.match(tour, /if \(photoWheelLocked\.current\) return/);
   assert.match(tour, /if \(details\) \{/);
   assert.match(tour, /handleCycleAmenity/);
-  assert.match(tour, /className="j-hotspot-card-layer"/);
+  // FocusAmenity owns the active card; the retired hotspot card layer is absent.
+  assert.doesNotMatch(tour, /className="j-hotspot-card-layer"/);
   assert.match(tour, /Return to Rooms/);
   assert.match(rooms, /document\.documentElement\.style\.overflow = "hidden"/);
   assert.match(tour, /event\.stopPropagation\(\)/);
