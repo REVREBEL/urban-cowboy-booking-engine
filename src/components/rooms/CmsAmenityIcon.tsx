@@ -10,10 +10,10 @@ export function CmsAmenityIcon({ imageUrl, iconPath, fallback, className = "size
   fallback: TourIconName;
   className?: string;
 }) {
-  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const [failedUrls, setFailedUrls] = useState<string[]>([]);
   const webflowUrl = typeof imageUrl === "string" && /^https:\/\//i.test(imageUrl) ? imageUrl : null;
   const localUrl = cmsIconUrl(iconPath);
-  const url = webflowUrl && failedUrl !== webflowUrl ? webflowUrl : localUrl && failedUrl !== localUrl ? localUrl : null;
+  const url = webflowUrl && !failedUrls.includes(webflowUrl) ? webflowUrl : localUrl && !failedUrls.includes(localUrl) ? localUrl : null;
   if (!url) return <TourIcon name={fallback} className={className} />;
-  return <img key={url} src={url} alt="" aria-hidden="true" className={`j-cms-icon ${className}`} onError={() => setFailedUrl(url)} />;
+  return <img key={url} src={url} alt="" aria-hidden="true" className={`j-cms-icon ${className}`} onError={() => setFailedUrls((current) => current.includes(url) ? current : [...current, url])} />;
 }
