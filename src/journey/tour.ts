@@ -12,6 +12,7 @@ export interface PhotoHighlight {
   icon: TourIcon;
   amenityId?: string;
   iconPath?: string | null;
+  imageUrl?: string | null;
   longNote?: string;
 }
 
