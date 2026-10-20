@@ -232,3 +232,24 @@
   .j-price-sort-toggle { transition: none !important; }
   .j-price-sort-toggle-label { animation: none; }
 }
+
+
+/* Amenity-focus choreography: the selected pin/card exits before the next opens.
+   State color changes continue using the component's own token transitions. */
+.j-pin-desktop.is-amenity-exiting {
+  opacity: 0;
+  transform: translateY(5px) scale(.985);
+  transition: opacity 150ms ease-in, transform 150ms ease-in;
+  pointer-events: none;
+}
+.j-pin-desktop.is-amenity-selected:not(.is-amenity-exiting) {
+  animation: j-amenity-enter 230ms cubic-bezier(.2,.75,.3,1) both;
+}
+@keyframes j-amenity-enter {
+  from { opacity: 0; transform: translateY(6px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .j-pin-desktop.is-amenity-exiting { opacity: 1; transform: none; transition: none; }
+  .j-pin-desktop.is-amenity-selected:not(.is-amenity-exiting) { animation: none; }
+}
