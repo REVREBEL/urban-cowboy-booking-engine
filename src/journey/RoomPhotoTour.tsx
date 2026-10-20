@@ -36,6 +36,39 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   const [photo, setPhoto] = useState(0);
   const [ratios, setRatios] = useState<Record<number, number>>({});
   const [activePin, setActivePin] = useState<string | null>(null);
+  const [amenityExiting, setAmenityExiting] = useState(false);
+  const amenitySwapTimer = useRef<number | null>(null);
+  const pendingPin = useRef<string | null>(null);
+  const activePinRef = useRef(activePin);
+  activePinRef.current = activePin;
+
+  const selectAmenity = useCallback((next: string | null) => {
+    if (amenitySwapTimer.current !== null) {
+      window.clearTimeout(amenitySwapTimer.current);
+      amenitySwapTimer.current = null;
+    }
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || !activePinRef.current || activePinRef.current === next) {
+      pendingPin.current = null;
+      setAmenityExiting(false);
+      activePinRef.current = next;
+      setActivePin(next);
+      return;
+    }
+    pendingPin.current = next;
+    setAmenityExiting(true);
+    amenitySwapTimer.current = window.setTimeout(() => {
+      const target = pendingPin.current;
+      activePinRef.current = target;
+      setActivePin(target);
+      setAmenityExiting(false);
+      pendingPin.current = null;
+      amenitySwapTimer.current = null;
+    }, 150);
+  }, []);
+  useEffect(() => () => {
+    if (amenitySwapTimer.current !== null) window.clearTimeout(amenitySwapTimer.current);
+  }, []);
   const photoWheelLocked = useRef(false);
   const photoWheelUnlock = useRef<number | null>(null);
   const detailsRef = useRef(details);
@@ -45,6 +78,11 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
 
   const sync = useCallback(() => {
     setPhoto(carousel?.selectedScrollSnap() ?? 0);
+    if (amenitySwapTimer.current !== null) window.clearTimeout(amenitySwapTimer.current);
+    amenitySwapTimer.current = null;
+    pendingPin.current = null;
+    activePinRef.current = null;
+    setAmenityExiting(false);
     setActivePin(null);
   }, [carousel]);
   useEffect(() => {
@@ -68,7 +106,16 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => { if (!details) setActivePin(null); }, [details]);
+  useEffect(() => {
+    if (!details) {
+      if (amenitySwapTimer.current !== null) window.clearTimeout(amenitySwapTimer.current);
+      amenitySwapTimer.current = null;
+      pendingPin.current = null;
+      activePinRef.current = null;
+      setAmenityExiting(false);
+      setActivePin(null);
+    }
+  }, [details]);
   useEffect(() => {
     if (!details) return;
     const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') onDetails(false); };
@@ -120,16 +167,16 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   const highlightRow = useRef<HTMLDivElement>(null);
   const handleSelectPin = (id: string) => {
     const willOpen = activePin !== id;
-    setActivePin(willOpen ? id : null);
+    selectAmenity(willOpen ? id : null);
     if (willOpen) {
       highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
   };
   const handleCycleAmenity = (direction: number) => {
     if (pins.length === 0) return;
-    const currentIndex = Math.max(0, pins.findIndex((pin) => pin.id === activePin));
+    const currentIndex = Math.max(0, pins.findIndex((pin) => pin.id === (pendingPin.current ?? activePinRef.current)));
     const nextIndex = (currentIndex + direction + pins.length) % pins.length;
-    setActivePin(pins[nextIndex].id);
+    selectAmenity(pins[nextIndex].id);
   };
   // Swiping the mobile editorial cards keeps its numbered photo dot in sync.
   const syncMobileHighlight = () => {
@@ -148,7 +195,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
         distance = delta;
       }
     });
-    if (nearest) setActivePin((current) => current === nearest ? current : nearest);
+    if (nearest && nearest !== (pendingPin.current ?? activePinRef.current)) selectAmenity(nearest);
   };
 
   const roomNav = (cls: string) => (
@@ -201,7 +248,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                       className="j-hotspot-anchor"
                       style={{ left: `${pin.x}%`, top: `${pin.y}%`, zIndex: activePin === pin.id ? 50 : 1 }}
                     >
-                      <div className="j-pin-desktop">
+                      <div className={`j-pin-desktop ${amenityExiting && activePin === pin.id ? "is-amenity-exiting" : ""} ${activePin === pin.id && !amenityExiting ? "is-amenity-selected" : ""}`}>
                         <FocusAmenity
                           count={pinIndex + 1}
                           totalCount={allPins.length}
