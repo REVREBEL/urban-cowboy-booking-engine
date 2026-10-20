@@ -339,7 +339,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
         {roomNav('j-roomnav-mobile')}
         <div className="j-tour-info min-w-0">
           <p className="truncate text-xs text--paper/75"><span className="capitalize">{room.building.toLocaleLowerCase()}</span> · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · <span className="font-number">{position + 1}/{count}</span></span></p>
-          <h2 className="mt-1 truncate font-headline text-xl leading-none sm:text-4xl sm:whitespace-normal">{room.name}</h2>
+          <h2 className="mt-1 text-balance font-headline text-xl leading-none sm:text-4xl">{room.name}</h2>
           <p className="mt-1 hidden text-sm text--paper/80 lg:block" style={{ opacity: details ? 0 : 1 }}>{room.tagline}</p>
         </div>
 
