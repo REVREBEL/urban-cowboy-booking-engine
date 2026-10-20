@@ -34,6 +34,7 @@ export function cmsHighlightsForPhoto(
       longNote: amenity.longDescription ?? amenity.shortDescription ?? amenity.name,
       icon: tourIconForTitle(amenity.name),
       iconPath: amenity.iconPath,
+      imageUrl: amenity.imageUrl,
     }];
   });
 }
