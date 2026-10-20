@@ -44,7 +44,9 @@ test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () =
   assert.match(tour, /active=\{activePin === pin\.id\}/);
   assert.match(tour, /state=\{activePin !== null && activePin !== pin\.id \? "Inactive" : undefined\}/);
   assert.doesNotMatch(tour, /is-muted/);
-  assert.match(tour, /setActivePin\(willOpen \? id : null\)/);
+  assert.match(tour, /selectAmenity\(willOpen \? id : null\)/);
+  assert.match(tour, /setAmenityExiting\(true\)/);
+  assert.match(tour, /pendingPin\.current = next/);
   assert.match(tour, /const unseenAmenities = amenities\.filter/);
   assert.match(tour, /import \{ SideFocusAmenityBar \} from ['"]@\/components\/rooms\/SideFocusAmenityBar['"]/);
   assert.match(tour, /createPortal\(\s*<SideFocusAmenityBar amenities=\{sideAmenities\}/);
