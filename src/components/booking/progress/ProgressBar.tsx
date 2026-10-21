@@ -167,7 +167,7 @@ export const ProgressStep: React.FC<ProgressStepProps> = ({
       aria-current={state === 'current' ? 'step' : undefined}
       aria-busy={isBusy}
       aria-label={`Step ${step}: ${label} (${state})`}
-      className={`group relative inline-flex items-center justify-center select-none transition-all duration-200 box-border w-fit shrink-0 ${
+      className={`group relative inline-flex items-center justify-center select-none transition-all duration-200 box-border w-fit shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-1 ${
         isInteractive && !isInteractiveDisabled
           ? 'cursor-pointer hover:opacity-90 active:scale-[0.97]'
           : isBusy
