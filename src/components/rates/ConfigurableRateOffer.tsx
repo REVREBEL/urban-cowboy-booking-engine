@@ -22,6 +22,8 @@ export interface ConfigurableRateOfferPricing {
   remaining: number | string;
 }
 
+const numberFmtEnUS = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 export interface ConfigurableRateOfferProps {
   config: RateCardConfig;
   live: RateCardLiveContent;
@@ -73,7 +75,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   const amountDisplay = (value: number | string): string => {
     if (typeof value !== "number") return value;
     const prefix = live.price.match(/^[^0-9-]+/)?.[0]?.trim() ?? "";
-    return `${prefix}${new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}`;
+    return `${prefix}${numberFmtEnUS.format(value)}`;
   };
   const freeCancelDate = milestone(config.cancellationPenaltyWindow, config.cancellationPenaltyWindowPeriod);
   const nonRefundableDate = milestone(config.cancellationFullForfeitWindow, config.cancellationFullForfeitWindowPeriod);
