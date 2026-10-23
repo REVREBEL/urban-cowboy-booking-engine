@@ -31,6 +31,29 @@ const RATE_CARD_KEYS = ['ride-easy', 'member', 'sunup', 'stay-while', 'plan-ahea
 // Staggered top-to-bottom vertical offsets (in px) across the 5 cards
 const STAGGER_OFFSETS = [36, 0, 52, 12, 44];
 
+// Module-level cached Intl instances to prevent allocation during render and scroll animations.
+const livePriceFormatCache = new Map<string, Intl.NumberFormat>();
+const remainingDueDateFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+
+function getLivePriceFormatter(currency: string, minDec: number): Intl.NumberFormat {
+  const key = `${currency}:${minDec}`;
+  let fmt = livePriceFormatCache.get(key);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: minDec,
+      maximumFractionDigits: 2,
+    });
+    livePriceFormatCache.set(key, fmt);
+  }
+  return fmt;
+}
+
 interface RateSelectionViewProps {
   room: RoomType;
   criteria: SearchCriteria;
@@ -331,13 +354,10 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     };
   };
 
-  const formatLivePrice = (liveRate: ShapedRate, amount: number) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: liveRate.currency,
-      minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
+  const formatLivePrice = (liveRate: ShapedRate, amount: number) => {
+    const minDec = amount % 1 === 0 ? 0 : 2;
+    return getLivePriceFormatter(liveRate.currency, minDec).format(amount);
+  };
 
   const configurableLiveContent = (
     liveRate: ShapedRate,
@@ -394,11 +414,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     const days = period === 'days' ? window : window / 24;
     due.setUTCDate(due.getUTCDate() - days);
 
-    return `Due ${new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'UTC',
-    }).format(due)}`;
+    return `Due ${remainingDueDateFormat.format(due)}`;
   };
 
   const fullCancellationPolicyForRate = (liveRate: ShapedRate) =>
