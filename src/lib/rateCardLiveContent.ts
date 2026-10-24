@@ -37,6 +37,29 @@ export function rateCardPricePresentation(
 
 const PROPERTY_TIME_ZONE = "America/New_York";
 
+// Cache for property date calculation and policy date formatting to avoid re-allocating Intl instances on every rate card evaluation.
+const propertyDateFmtCache = new Map<string, Intl.DateTimeFormat>();
+function getPropertyDateFmt(timeZone: string): Intl.DateTimeFormat {
+  let fmt = propertyDateFmtCache.get(timeZone);
+  if (!fmt) {
+    fmt = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    propertyDateFmtCache.set(timeZone, fmt);
+  }
+  return fmt;
+}
+
+const policyDateFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: "UTC",
+  month: "short",
+  day: "2-digit",
+  year: "numeric",
+});
+
 function parseDateOnly(value: string): Date | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!match) return null;
@@ -47,12 +70,7 @@ function parseDateOnly(value: string): Date | null {
 }
 
 function dateOnlyInPropertyTimeZone(now: Date): Date {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: PROPERTY_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(now);
+  const parts = getPropertyDateFmt(PROPERTY_TIME_ZONE).formatToParts(now);
 
   const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
   return new Date(
@@ -61,12 +79,7 @@ function dateOnlyInPropertyTimeZone(now: Date): Date {
 }
 
 function formatPolicyDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  }).format(date);
+  return policyDateFmt.format(date);
 }
 
 function cutoffDate(
