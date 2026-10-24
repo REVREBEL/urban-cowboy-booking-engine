@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useId } from "react";
 import { Compass, X } from "lucide-react";
 import type {
   MatchInterest,
@@ -24,6 +24,7 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
   onSubmit,
   initialPreferences,
 }) => {
+  const titleId = useId();
   const [step, setStep] = useState<0 | 1>(0);
   const [party, setParty] = useState<PartyType | null>(
     initialPreferences?.party ?? null,
@@ -36,6 +37,20 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
         ) as MatchInterest[])
       : [],
   );
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    const origOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = origOverflow;
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -61,11 +76,19 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm sm:p-6">
-      <div className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border-2 border-cowboy-umber bg-paper shadow-2xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="relative flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border-2 border-cowboy-umber bg-paper shadow-2xl"
+      >
         <div className="flex items-center justify-between border-b border-alpine-linen bg-alpine-linen px-6 py-4">
           <div className="flex items-center gap-2.5">
             <Compass className="h-5 w-5 text-copper" />
-            <h2 className="font-number text-sm font-bold uppercase tracking-[2px] text-cowboy-umber">
+            <h2
+              id={titleId}
+              className="font-number text-sm font-bold uppercase tracking-[2px] text-cowboy-umber"
+            >
               Cowboy Stay Matcher
             </h2>
           </div>
@@ -74,7 +97,7 @@ export const HelpMeChooseModal: React.FC<HelpMeChooseModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close stay matcher"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-cowboy-umber transition-colors hover:bg-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-cowboy-umber transition-colors hover:bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-cowboy-umber"
           >
             <X className="h-5 w-5" />
           </button>
