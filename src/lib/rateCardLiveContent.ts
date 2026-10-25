@@ -37,6 +37,21 @@ export function rateCardPricePresentation(
 
 const PROPERTY_TIME_ZONE = "America/New_York";
 
+// Module-level cached formatters avoid repeated ICU allocations during rate card list rendering.
+const propertyDateFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: PROPERTY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+const policyDateFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: "UTC",
+  month: "short",
+  day: "2-digit",
+  year: "numeric",
+});
+
 function parseDateOnly(value: string): Date | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!match) return null;
@@ -47,12 +62,7 @@ function parseDateOnly(value: string): Date | null {
 }
 
 function dateOnlyInPropertyTimeZone(now: Date): Date {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: PROPERTY_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(now);
+  const parts = propertyDateFmt.formatToParts(now);
 
   const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
   return new Date(
@@ -61,12 +71,7 @@ function dateOnlyInPropertyTimeZone(now: Date): Date {
 }
 
 function formatPolicyDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  }).format(date);
+  return policyDateFmt.format(date);
 }
 
 function cutoffDate(

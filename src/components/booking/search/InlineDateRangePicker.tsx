@@ -153,6 +153,14 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
     }
     return false;
   }, [dailyRates, view.year, view.month]);
+
+  // Performance optimization: memoize formatted date range header so high-frequency date hover events
+  // don't re-parse Date objects and format strings on every frame.
+  const selectedRangeHeader = useMemo(() => {
+    if (!checkIn || !checkOut) return "Select your dates";
+    return formatSelectedRange(checkIn, checkOut);
+  }, [checkIn, checkOut]);
+
   useEffect(() => {
     if (!onVisibleRangeChange) return;
     const startDate = toIso(view.year, view.month, 1);
@@ -185,7 +193,7 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
         </button>
         <p className="min-w-0 flex-1 truncate px-2 text-center font-label text-sm uppercase tracking-[1.5px] text-(--calendar-date-foreground)">
-          {checkIn && checkOut ? formatSelectedRange(checkIn, checkOut) : "Select your dates"}
+          {selectedRangeHeader}
         </p>
         <button
           type="button"
