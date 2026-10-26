@@ -46,13 +46,24 @@ function parseDateOnly(value: string): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+// Reusable Intl.DateTimeFormat instances to avoid allocating heavy ICU context bindings
+// on every cancellation confirmation evaluation during rate card rendering.
+const propertyDateFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: PROPERTY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+const policyDateFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: "UTC",
+  month: "short",
+  day: "2-digit",
+  year: "numeric",
+});
+
 function dateOnlyInPropertyTimeZone(now: Date): Date {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: PROPERTY_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(now);
+  const parts = propertyDateFmt.formatToParts(now);
 
   const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
   return new Date(
@@ -61,12 +72,7 @@ function dateOnlyInPropertyTimeZone(now: Date): Date {
 }
 
 function formatPolicyDate(date: Date): string {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  }).format(date);
+  return policyDateFmt.format(date);
 }
 
 function cutoffDate(
