@@ -148,7 +148,7 @@ export function PhoneInput({
           }}
           aria-label={t("phone.countryCode")}
           title={regionName(country_.code)}
-          className="font-emoji absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent text-transparent outline-none"
+          className="font-emoji absolute inset-0 h-full w-full cursor-pointer appearance-none border-0 bg-transparent text-transparent outline-none focus-visible:ring-2 focus-visible:ring-(--foreground)/20 rounded-l-xl"
         >
           {COUNTRIES.map((c) => (
             <option key={c.code} value={c.code} className="font-emoji emoji-text text-(--color-input)">
@@ -182,6 +182,7 @@ export function PhoneInput({
           inputMode="tel"
           autoComplete="tel-national"
           required={required}
+          aria-label={t("phone.number")}
           aria-invalid={invalid || showInvalid || undefined}
           aria-describedby={ariaDescribedBy}
           className="h-full w-full border-0 bg-transparent px-3 py-3 pr-9 text-(--color-input) outline-none placeholder:text-(--color-input)/35"
