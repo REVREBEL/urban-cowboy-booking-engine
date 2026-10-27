@@ -22,6 +22,10 @@ export interface ConfigurableRateOfferPricing {
   remaining: number | string;
 }
 
+// Module-scope cached formatters to prevent GC allocations during render passes
+const usdAmountFmt = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const shortMonthFmt = new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" });
+
 export interface ConfigurableRateOfferProps {
   config: RateCardConfig;
   live: RateCardLiveContent;
@@ -58,6 +62,7 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   const isCompact = variant === "compact";
   const sideWidth = isCompact ? 557 : 528;
   const panelHeight = isCompact ? 675 : 900;
+
   const milestone = (amount: number | null | undefined, unit: "days" | "hours" | null | undefined): MilestoneDate | undefined => {
     if (!checkIn || amount == null || !unit || amount < 0) return undefined;
     const days = unit === "days" ? amount : amount / 24;
@@ -68,12 +73,12 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
     const date = new Date(Date.UTC(year, month - 1, day));
     if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return undefined;
     date.setUTCDate(date.getUTCDate() - days);
-    return { daysPrior: days, day: date.getUTCDate(), month: date.toLocaleString("en-US", { month: "short", timeZone: "UTC" }).toUpperCase() };
+    return { daysPrior: days, day: date.getUTCDate(), month: shortMonthFmt.format(date).toUpperCase() };
   };
   const amountDisplay = (value: number | string): string => {
     if (typeof value !== "number") return value;
     const prefix = live.price.match(/^[^0-9-]+/)?.[0]?.trim() ?? "";
-    return `${prefix}${new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}`;
+    return `${prefix}${usdAmountFmt.format(value)}`;
   };
   const freeCancelDate = milestone(config.cancellationPenaltyWindow, config.cancellationPenaltyWindowPeriod);
   const nonRefundableDate = milestone(config.cancellationFullForfeitWindow, config.cancellationFullForfeitWindowPeriod);

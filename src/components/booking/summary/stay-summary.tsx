@@ -14,14 +14,17 @@ export type StaySummaryProps = {
   currency?: string;
 };
 
+// Module-scope cached formatter to prevent GC allocations during stay summary renders
+const summaryDateFmt = new Intl.DateTimeFormat("en-US", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
 function formatDate(value: string) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${value}T00:00:00Z`));
+  return summaryDateFmt.format(new Date(`${value}T00:00:00Z`));
 }
 
 function partyLine(adults: number, children = 0, dog = false) {

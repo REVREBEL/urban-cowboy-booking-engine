@@ -31,6 +31,30 @@ const RATE_CARD_KEYS = ['ride-easy', 'member', 'sunup', 'stay-while', 'plan-ahea
 // Staggered top-to-bottom vertical offsets (in px) across the 5 cards
 const STAGGER_OFFSETS = [36, 0, 52, 12, 44];
 
+// Module-scope cached formatters to prevent GC allocations during render passes
+const dueUtcDateFmt = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+
+const livePriceFmtCache = new Map<string, Intl.NumberFormat>();
+const getLivePriceFmt = (currency: string, isInteger: boolean) => {
+  const minDecimals = isInteger ? 0 : 2;
+  const key = `${currency}:${minDecimals}`;
+  let fmt = livePriceFmtCache.get(key);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: minDecimals,
+      maximumFractionDigits: 2,
+    });
+    livePriceFmtCache.set(key, fmt);
+  }
+  return fmt;
+};
+
 interface RateSelectionViewProps {
   room: RoomType;
   criteria: SearchCriteria;
@@ -332,12 +356,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   };
 
   const formatLivePrice = (liveRate: ShapedRate, amount: number) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: liveRate.currency,
-      minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
+    getLivePriceFmt(liveRate.currency, amount % 1 === 0).format(amount);
 
   const configurableLiveContent = (
     liveRate: ShapedRate,
@@ -394,11 +413,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     const days = period === 'days' ? window : window / 24;
     due.setUTCDate(due.getUTCDate() - days);
 
-    return `Due ${new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'UTC',
-    }).format(due)}`;
+    return `Due ${dueUtcDateFmt.format(due)}`;
   };
 
   const fullCancellationPolicyForRate = (liveRate: ShapedRate) =>
