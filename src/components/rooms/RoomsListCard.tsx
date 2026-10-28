@@ -167,8 +167,9 @@ export const RoomsListCard: React.FC<RoomsListCardProps> = ({
               <CaretRight className="h-9 w-9 drop-shadow-xs" style={{ color: overlayColors.next }} aria-hidden="true" />
             </button>
             <span className="absolute bottom-3 right-3 z-10 px-2.5 py-1 font-button text-[9px] font-bold uppercase tracking-wider drop-shadow-xs"
-              style={{ color: overlayColors.counter }}>
-              {activeImageIndex + 1} / {imageUrls.length}
+              style={{ color: overlayColors.counter }} role="status" aria-live="polite" aria-atomic="true">
+              <span aria-hidden="true">{activeImageIndex + 1} / {imageUrls.length}</span>
+              <span className="sr-only">Photo {activeImageIndex + 1} of {imageUrls.length}</span>
             </span>
           </>
         )}
