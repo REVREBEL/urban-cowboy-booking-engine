@@ -1,5 +1,5 @@
 // SearchBarGuestDropdown.tsx
-import React, { useState, useId } from 'react';
+import React, { useState, useId, useEffect, useRef } from 'react';
 
 export interface GuestCounts {
   adults: number;
@@ -150,11 +150,33 @@ export const SearchBarGuestDropdown: React.FC<SearchBarGuestDropdownProps> = ({
   const isInfantsMinusDisabled = currentCounts.infants <= 0;
   const isInfantsPlusDisabled = currentCounts.infants >= 10;
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialogRef.current?.focus();
+    return () => {
+      if (triggerRef.current?.isConnected) triggerRef.current.focus();
+    };
+  }, []);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      onClose?.();
+    }
+  };
+
   return (
     <div
+      ref={dialogRef}
+      tabIndex={-1}
+      onKeyDown={handleKeyDown}
       role="dialog"
       aria-label="Guest selection"
-      className={`relative box-border flex h-86.25 max-h-130 w-90 max-w-full select-none flex-col items-start rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] ${className}`}
+      className={`relative box-border flex h-86.25 max-h-130 w-90 max-w-full select-none flex-col items-start rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-input-border ${className}`}
     >
       {/* guests-dropdown (308px x 293px, gap: 12px) */}
       <div className="flex h-73.25 w-full flex-col items-start gap-3 p-0 self-stretch">
