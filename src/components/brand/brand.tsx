@@ -1,11 +1,14 @@
-export function Brand({ className = "", subtle = false }: { className?: string; subtle?: boolean }) {
+export function Brand({ className = "", subtle = false, alt = false }: {
+  className?: string;
+  subtle?: boolean;
+  /** Use the full brand lockup instead of the compact mark. */
+  alt?: boolean;
+}) {
   return (
-    <span
-      role="img"
-      aria-label="Urban Cowboy"
-      className={`inline-flex h-7 items-center font-heading text-xl font-semibold uppercase tracking-[0.16em] sm:h-8 ${subtle ? "opacity-70" : ""} ${className}`}
-    >
-      Urban Cowboy
-    </span>
+    <img
+      src={alt ? "/assets/brand/logos/brand-full.svg" : "/assets/brand/logos/brand.svg"}
+      alt="Urban Cowboy"
+      className={`inline-block h-auto w-auto max-w-full object-contain ${subtle ? "opacity-70" : ""} ${className}`}
+    />
   );
 }
