@@ -109,11 +109,9 @@ export function rankRecommendedRooms(
   const count = eligible.length;
   if (count <= 1) return eligible;
 
-  // Performance optimization: pre-compute scores, priorities, and prices into parallel
-  // typed arrays to eliminate temporary wrapper object allocations ({ room, index, score, priority })
-  // and secondary array passes (.map(({ room }) => room)) on every room ranking pass.
+  // Cache comparisons before sorting indices while preserving fractional priorities.
   const scores = new Float64Array(count);
-  const priorities = new Int32Array(count);
+  const priorities = new Float64Array(count);
   const prices = new Float64Array(count);
   const indices = new Int32Array(count);
 
@@ -127,7 +125,7 @@ export function rankRecommendedRooms(
     indices[i] = i;
   }
 
-  // Sort array of indices based on precomputed metrics in primitive typed arrays
+  // Sort indices using the same score, priority, price, and stable-index tie breaks.
   const sortedIndices = Array.from(indices);
   sortedIndices.sort((iA, iB) => {
     if (scores[iA] !== scores[iB]) return scores[iB] - scores[iA];

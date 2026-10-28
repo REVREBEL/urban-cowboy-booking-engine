@@ -1,4 +1,4 @@
-import { cmsPhotoKey } from "../lib/cmsPhotoHotspots.ts";
+import { cmsPhotoKeys } from "../lib/cmsPhotoHotspots.ts";
 import type { CmsPhotoHotspotMap, CmsRoomAmenity } from "../types/photo-hotspot-cms.ts";
 import type { PhotoHighlight } from "./tour.ts";
 import { tourIconForTitle } from "../lib/tourIconFallback.ts";
@@ -12,10 +12,12 @@ export function cmsHighlightsForPhoto(
   amenities: readonly CmsRoomAmenity[],
   hotspots: CmsPhotoHotspotMap,
 ): PhotoHighlight[] {
-  const key = cmsPhotoKey(imageUrl);
-  if (!key) return [];
-  const photoHotspots = hotspots[key];
-  if (!photoHotspots || photoHotspots.length === 0) return [];
+  const photoHotspots = [...new Map(
+    cmsPhotoKeys(imageUrl)
+      .flatMap((key) => hotspots[key] ?? [])
+      .map((hotspot) => [hotspot.id, hotspot] as const),
+  ).values()];
+  if (photoHotspots.length === 0) return [];
   if (amenities.length === 0) return [];
 
   const byId = new Map(amenities.map((amenity) => [amenity.id, amenity]));
@@ -32,6 +34,7 @@ export function cmsHighlightsForPhoto(
       longNote: amenity.longDescription ?? amenity.shortDescription ?? amenity.name,
       icon: tourIconForTitle(amenity.name),
       iconPath: amenity.iconPath,
+      imageUrl: amenity.imageUrl,
     }];
   });
 }

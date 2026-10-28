@@ -4,7 +4,7 @@
  * canonical Payment step handles payment confirmation and Mews operations.
  */
 import { lazy, Suspense, useState, type FormEvent } from "react";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { useBooking } from "../state/booking";
 import { EMAIL_RE, money } from "../lib/format";
 import { getLang } from "../lib/lang";
@@ -63,11 +63,11 @@ export function PhotoReviewGuest() {
     <section className="grid min-h-dvh items-start bg-smoke text-paper lg:grid-cols-[1.1fr_1fr]" data-photo-review-step>
       <div className="lg:sticky lg:top-0">
         {image && (
-          <figure className="relative w-full">
-            <img src={image} alt={room.name} fetchPriority="high" className="block h-auto w-full" />
+          <figure className="relative w-full lg:h-dvh">
+            <img src={image} alt={room.name} fetchPriority="high" className="block h-auto w-full lg:h-full lg:object-cover" />
             <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-smoke to-transparent p-6 pt-24 sm:p-8 sm:pt-32">
               <p className={`${label} text-paper/80`}>{photo.building}</p>
-              <h1 className="font-heading text-4xl leading-none sm:text-5xl">{room.name}</h1>
+              <h1 className="text-balance font-heading text-4xl leading-none sm:text-5xl">{room.name}</h1>
             </div>
           </figure>
         )}
@@ -137,8 +137,8 @@ export function PhotoReviewGuest() {
             <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
             Next, review payment and reservation conditions before confirming.
           </p>
-          <Button type="submit" variant="filled" colorScheme="alpine-linen" size="small" className="w-full rounded-full uppercase tracking-[0.2em]">
-            Continue to payment review <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          <Button type="submit" variant="filled" colorScheme="alpine-linen" size="small" icon={<span className="block size-4 rotate-90 bg-current mask-[url('/assets/icons/ui/ui-arrow-up.svg')] mask-contain mask-center mask-no-repeat" aria-hidden="true" />} className="w-full whitespace-nowrap rounded-full uppercase tracking-[0.2em]">
+            Continue to payment review
           </Button>
         </form>
       </div>

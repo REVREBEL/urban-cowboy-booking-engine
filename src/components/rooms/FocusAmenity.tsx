@@ -8,18 +8,21 @@ export type FocusAmenityState = "Default" | "Hover" | "Active" | "Inactive" | "D
 
 export interface FocusAmenityProps {
   count?: number | string;
-  totalCount?: number;
   icon: TourIcon;
   iconPath?: string | null;
+  imageUrl?: string | null;
   title: string;
   description?: string;
   state?: FocusAmenityState;
   active?: boolean;
   onSelect?: () => void;
+  totalCount?: number;
   onPreviousAmenity?: () => void;
   onNextAmenity?: () => void;
   className?: string;
   tone?: "standard" | "faded";
+  cardSide?: "left" | "right";
+  cardAlign?: "top" | "center" | "bottom";
 }
 
 // Map the 4 Figma design states to Tailwind CSS v4 @utility classes
@@ -44,6 +47,7 @@ export function FocusAmenity({
   count = 1,
   icon,
   iconPath,
+  imageUrl,
   title,
   description = "The Cabin keeps the sleeping setup relaxed: a proper king bed anchors the room, while the built-in bunk or lounging nook gives you another place to stretch out, read, or tuck someone in without turning the whole space into a bedroom.",
   state,
@@ -51,6 +55,8 @@ export function FocusAmenity({
   onSelect,
   className = "",
   tone = "standard",
+  cardSide = "right",
+  cardAlign = "center",
 }: FocusAmenityProps) {
   // Resolve active state from explicit prop or boolean toggle
   const currentState: FocusAmenityState =
@@ -60,9 +66,15 @@ export function FocusAmenity({
     tone === "faded"
       ? "focus-hover"
       : stateStyles[currentState] ?? stateStyles.Default;
+  const cardSideClass = cardSide === "left" ? "right-full mr-4" : "left-full ml-4";
+  const cardAlignClass = {
+    top: "top-0",
+    center: "top-1/2 -translate-y-1/2",
+    bottom: "bottom-0",
+  }[cardAlign];
 
   return (
-    <div className={`relative inline-flex items-center ${className}`}>
+    <div className={`relative inline-flex items-center ${currentState === "Active" ? "z-50" : ""} ${className}`}>
       <button
         type="button"
         onClick={onSelect}
@@ -112,7 +124,7 @@ export function FocusAmenity({
 
           {/* Centered Amenity Icon inside Disc */}
           <span className="relative z-10 flex size-full items-center justify-center p-3 text-(--icon-fg) transition-colors duration-200 max-sm:p-2 [&>svg]:size-full [&>svg]:max-h-full [&>svg]:max-w-full">
-          <AmenityIcons icon={icon} iconPath={iconPath} />
+          <AmenityIcons icon={icon} iconPath={iconPath} imageUrl={imageUrl} />
           </span>
         </span>
 
@@ -133,7 +145,7 @@ export function FocusAmenity({
         <div
           role="region"
           aria-label={title}
-          className="ml-4 flex max-w-sm flex-col justify-center rounded-2xl bg-primary p-6 shadow-sm transition-all duration-200 max-sm:ml-2 max-sm:p-4"
+          className={`pointer-events-auto absolute z-50 flex w-[min(360px,calc(100vw-2rem))] flex-col justify-center rounded-2xl bg-primary p-6 shadow-sm transition-all duration-200 max-sm:p-4 ${cardSideClass} ${cardAlignClass}`}
         >
           <h3 className="text-base font-bold uppercase tracking-wider text-(--primary-foreground,#1c3f32)">
             {title}

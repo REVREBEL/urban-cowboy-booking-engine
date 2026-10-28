@@ -1,7 +1,7 @@
 import type {
   CmsPhotoHotspot, CmsPhotoHotspotMap, CmsRoomAmenity, RoomTypeCmsAmenityMap,
 } from "../../src/types/photo-hotspot-cms.ts";
-import { cmsIconUrl, cmsPhotoKey } from "../../src/lib/cmsPhotoHotspots.ts";
+import { cmsIconUrl, cmsPhotoKeys } from "../../src/lib/cmsPhotoHotspots.ts";
 
 export interface WebflowCmsItem {
   id?: unknown;
@@ -35,6 +35,7 @@ export function normalizePublishedAmenities(items: readonly WebflowCmsItem[]): M
       shortDescription: text(fields["short-description"]) || null,
       longDescription: text(fields["long-description"]) || null,
       iconPath,
+      imageUrl: typeof fields.image === "object" && fields.image !== null && "url" in fields.image && typeof fields.image.url === "string" && /^https:\/\//i.test(fields.image.url) ? fields.image.url : null,
     });
   }
   return content;
@@ -82,13 +83,18 @@ export function normalizePhotoHotspots(
     const yRaw = fields["y-percent"];
     const x = typeof xRaw === "number" ? xRaw : NaN;
     const y = typeof yRaw === "number" ? yRaw : NaN;
-    const photoKey = cmsPhotoKey(text(fields["photo-file-id"]) || text(fields["photo-url"]));
-    if (!id || !amenities.has(amenityId) || !photoKey ||
+    const photoKeys = [...new Set([
+      ...cmsPhotoKeys(text(fields["photo-file-id"])),
+      ...cmsPhotoKeys(text(fields["photo-url"])),
+    ])];
+    if (!id || !amenities.has(amenityId) || photoKeys.length === 0 ||
         !Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > 100 || y < 0 || y > 100) continue;
     const rawOrder = fields["display-order"];
     const order = typeof rawOrder === "number" && Number.isFinite(rawOrder) ? rawOrder : 9999;
-    const pin: CmsPhotoHotspot = { id, amenityId, photoKey, x, y, order };
-    (result[photoKey] ??= []).push(pin);
+    for (const photoKey of photoKeys) {
+      const pin: CmsPhotoHotspot = { id, amenityId, photoKey, x, y, order };
+      (result[photoKey] ??= []).push(pin);
+    }
   }
   for (const pins of Object.values(result)) pins.sort((a, b) => a.order - b.order || a.id.localeCompare(b.id));
   return result;

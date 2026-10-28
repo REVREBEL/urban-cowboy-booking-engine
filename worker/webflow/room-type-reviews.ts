@@ -36,6 +36,11 @@ interface WebflowCollectionItem {
 
 interface WebflowItemsResponse {
   items?: WebflowCollectionItem[];
+  pagination?: {
+    limit?: number;
+    offset?: number;
+    total?: number;
+  };
 }
 
 interface CachedReviewPayload {
@@ -55,7 +60,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 
 const CACHE_FRESH_MS = 5 * 60 * 1000;
 const CACHE_TTL_SECONDS = 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:room-type-content:v7";
+const CACHE_KEY_PREFIX = "webflow:room-type-content:v8";
 const BROWSER_CACHE_CONTROL =
   "public, max-age=60, s-maxage=120, stale-while-revalidate=300";
 
@@ -94,6 +99,35 @@ async function webflowGet<T>(
   } finally {
     clearTimeout(timeout);
   }
+}
+
+export async function webflowGetAllItems(
+  env: Env,
+  baseUrl: string,
+  path: string,
+): Promise<WebflowItemsResponse> {
+  const pageSize = 100;
+  const items: WebflowCollectionItem[] = [];
+  let offset = 0;
+
+  while (true) {
+    const separator = path.includes("?") ? "&" : "?";
+    const page = await webflowGet<WebflowItemsResponse>(
+      env,
+      baseUrl,
+      `${path}${separator}limit=${pageSize}&offset=${offset}`,
+    );
+    const pageItems = page.items ?? [];
+    items.push(...pageItems);
+
+    const total = page.pagination?.total;
+    offset += pageItems.length;
+    if (pageItems.length === 0 || (typeof total === "number" && offset >= total) || pageItems.length < pageSize) {
+      break;
+    }
+  }
+
+  return { items };
 }
 
 function optionNames(
@@ -228,7 +262,7 @@ async function fetchPublishedReviews(
   // Fetch live hotspot edits from the Webflow API rather than the CDN, which
   // can lag after publishing. Never turn an API failure into a cached empty map.
   const hotspotRequest = hotspotsId
-    ? webflowGet<WebflowItemsResponse>(env, WEBFLOW_API, `/collections/${encodeURIComponent(hotspotsId)}/items/live?limit=100`)
+    ? webflowGetAllItems(env, WEBFLOW_API, `/collections/${encodeURIComponent(hotspotsId)}/items/live`)
     : Promise.resolve({ items: [] } as WebflowItemsResponse);
   const [items, collection, amenityItems, hotspotItems] = await Promise.all([
     // Published room content is the required payload and uses Webflow's Content

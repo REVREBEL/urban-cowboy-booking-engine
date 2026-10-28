@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cmsIconUrl, cmsPhotoKey } from "../src/lib/cmsPhotoHotspots.ts";
+import { cmsIconUrl, cmsPhotoKey, cmsPhotoKeys } from "../src/lib/cmsPhotoHotspots.ts";
 import { cmsHighlightsForPhoto } from "../src/journey/cmsTour.ts";
 import {
   normalizePublishedAmenities,
@@ -45,6 +45,58 @@ test("Webflow photo identity remains stable across query parameters", () => {
   assert.equal(cmsPhotoKey(photo), "file:" + fileId);
   assert.equal(cmsPhotoKey(fileId), "file:" + fileId);
   assert.equal(cmsPhotoKey(photo.replace("?width=1600", "?width=900")), "file:" + fileId);
+});
+
+test("wrapped Webflow gallery filenames retain every embedded file identity", () => {
+  const wrapperId = "6ad658aa4a59edc8f0bb6c42";
+  const sourceId = "6acfd9c115bb4e953736bd1c";
+  const uploadId = "6acf99a70c36d6a9b4936dac";
+  const wrappedPhoto = `https://cdn.prod.website-files.com/site/${wrapperId}_${sourceId}_${uploadId}_Alpine.jpeg`;
+  assert.deepEqual(cmsPhotoKeys(wrappedPhoto), [
+    `file:${wrapperId}`,
+    `file:${sourceId}`,
+    `file:${uploadId}`,
+  ]);
+
+  const amenities = normalizePublishedAmenities([amenityItem]);
+  const pins = cmsHighlightsForPhoto(wrappedPhoto, [...amenities.values()], {
+    [`file:${sourceId}`]: [{ id: "wrapped-pin", amenityId: "amenity-tub", photoKey: `file:${sourceId}`, x: 38, y: 58, order: 1 }],
+  });
+  assert.equal(pins.length, 1);
+  assert.equal(pins[0].id, "wrapped-pin");
+});
+
+test("hotspots are indexed under explicit, wrapper and source photo identities", () => {
+  const wrapperId = "6ad211bfd95b31afcc5628a5";
+  const sourceId = "6ac88d47a6a679fb6f3c75b1";
+  const amenities = normalizePublishedAmenities([amenityItem]);
+  const byPhoto = normalizePhotoHotspots([{
+    ...pinItem,
+    fieldData: {
+      ...pinItem.fieldData,
+      "photo-file-id": wrapperId,
+      "photo-url": `https://cdn.prod.website-files.com/site/${wrapperId}_${sourceId}_room.jpeg`,
+    },
+  }], amenities);
+
+  assert.equal(byPhoto[`file:${wrapperId}`][0].id, "pin-1");
+  assert.equal(byPhoto[`file:${sourceId}`][0].id, "pin-1");
+});
+
+test("gallery aliases merge distinct hotspots and deduplicate the same CMS record", () => {
+  const wrapperId = "6ad211bfd95b31afcc5628a5";
+  const sourceId = "6ac88d47a6a679fb6f3c75b1";
+  const wrappedPhoto = `https://cdn.prod.website-files.com/site/${wrapperId}_${sourceId}_room.jpeg`;
+  const amenities = normalizePublishedAmenities([amenityItem]);
+  const sharedPin = { id: "shared", amenityId: "amenity-tub", photoKey: `file:${wrapperId}`, x: 38, y: 58, order: 1 };
+  const sourceOnlyPin = { id: "source-only", amenityId: "amenity-tub", photoKey: `file:${sourceId}`, x: 62, y: 42, order: 2 };
+
+  const pins = cmsHighlightsForPhoto(wrappedPhoto, [...amenities.values()], {
+    [`file:${wrapperId}`]: [sharedPin],
+    [`file:${sourceId}`]: [{ ...sharedPin, photoKey: `file:${sourceId}` }, sourceOnlyPin],
+  });
+
+  assert.deepEqual(pins.map((pin) => pin.id), ["shared", "source-only"]);
 });
 
 test("Published room references and photo coordinates join to CMS descriptions", () => {

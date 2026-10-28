@@ -7,6 +7,8 @@ export interface CmsRoomAmenity {
   longDescription: string | null;
   /** Validated site-local icon URL (public/assets/icons/...), never raw SVG markup. */
   iconPath: string | null;
+  /** Webflow Image field takes precedence over the local SVG fallback. */
+  imageUrl?: string | null;
 }
 
 export type RoomTypeCmsAmenityMap = Record<string, CmsRoomAmenity[]>;
