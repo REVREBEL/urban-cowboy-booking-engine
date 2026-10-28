@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useId, type CSSProperties } from "react";
 import { cmsIconUrl } from "@/lib/cmsPhotoHotspots";
 import { FocusAmenityAction } from "./FocusAmenityAction";
 import { CmsAmenityIcon } from "./CmsAmenityIcon";
@@ -43,6 +43,11 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
   const [localOpen, setLocalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [cardCenter, setCardCenter] = useState(56);
+  const id = useId();
+  const triggerId = `${id}-trigger`;
+  const panelId = `${id}-panel`;
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const restoreFocusRef = useRef(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -64,19 +69,31 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
 
   const toggle = useCallback((value: boolean) => {
     if (open === undefined) setLocalOpen(value);
-    if (!value) setSelectedId(null);
+    if (!value) {
+      setSelectedId(null);
+      restoreFocusRef.current = true;
+    }
     onOpenChange?.(value);
   }, [onOpenChange, open]);
+
+  useLayoutEffect(() => {
+    if (!expanded && restoreFocusRef.current) {
+      restoreFocusRef.current = false;
+      triggerRef.current?.focus();
+    }
+  }, [expanded]);
 
   useEffect(() => {
     if (!expanded) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        toggle(false);
-      }
+      if (event.key !== "Escape") return;
+      // Capture Escape before RoomPhotoTour's window bubble listener closes details.
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      toggle(false);
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
   }, [expanded, toggle]);
   const cycle = (direction: number) => {
     if (!uniqueAmenities.length) return;
@@ -123,14 +140,14 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
     <section aria-label="Other amenities & features" className={expanded
       ? `pointer-events-none! fixed top-1/2 left-8 z-40 w-[min(680px,calc(100vw-64px))] max-w-none -translate-y-1/2 ${className}`
       : `w-full max-w-170 ${className}`}>
-      {!expanded ? (
-        <button
+      <button
           type="button"
-          id="side-amenities-trigger"
-          aria-expanded={false}
-          aria-controls="side-amenities-panel"
+          ref={triggerRef}
+          id={triggerId}
+          aria-expanded={expanded}
+          aria-controls={panelId}
           onClick={() => toggle(true)}
-          className="flex w-full items-center gap-5 py-3 text-left text-primary focus-visible:outline-2 focus-visible:outline-offset-4"
+          className={`flex w-full items-center gap-5 py-3 text-left text-primary focus-visible:outline-2 focus-visible:outline-offset-4 ${expanded ? "hidden" : ""}`}
         >
           <FocusAmenityAction state="Active" className="size-12.5 border-0 shadow-[0_0_28px_rgba(242,242,242,.8)]" />
           <span className="flex min-w-0 flex-col font-heading uppercase leading-none tracking-[1px] drop-shadow-[0_0_55px_#363333]">
@@ -138,13 +155,13 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
             <span className="text-[clamp(32px,6vw,62px)]">&amp; Features</span>
           </span>
         </button>
-      ) : (
         <div
-          id="side-amenities-panel"
+          id={panelId}
+          hidden={!expanded}
           role="region"
           aria-label="Amenities and Features panel"
           ref={panelRef}
-          className="pointer-events-auto relative flex w-full min-h-0 items-start gap-6"
+          className={`pointer-events-auto relative w-full min-h-0 items-start gap-6 ${expanded ? "flex" : "hidden"}`}
         >
           <div className="relative flex h-[clamp(224px,calc(100dvh-128px),528px)] w-41 shrink-0 items-center">
             <div className="flex size-full min-h-0 w-37.25 flex-col rounded-modal-xl bg-primary p-0.5 shadow-[0_0_12px_rgba(242,242,242,.75)]">
@@ -187,7 +204,6 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
             </div>
           </div>}
         </div>
-      )}
     </section>
   );
 }
