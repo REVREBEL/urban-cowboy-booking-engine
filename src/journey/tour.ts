@@ -12,6 +12,7 @@ export interface PhotoHighlight {
   icon: TourIcon;
   amenityId?: string;
   iconPath?: string | null;
+  imageUrl?: string | null;
   longNote?: string;
 }
 
@@ -52,7 +53,7 @@ export const PHOTO_HIGHLIGHTS: Record<string, PhotoHighlight[]> = {
   ],
 };
 
-export function roomAmenities(room: JourneyRoom): { id?: string; title: string; icon: TourIcon; iconPath?: string | null; note?: string | null; longNote?: string | null }[] {
+export function roomAmenities(room: JourneyRoom): { id?: string; title: string; icon: TourIcon; iconPath?: string | null; imageUrl?: string | null; note?: string | null; longNote?: string | null }[] {
   const features = ROOMS.find((r) => r.id === room.id)?.features ?? room.highlights;
 
   if (room.cmsAmenities) return room.cmsAmenities.map((amenity) => ({
@@ -60,6 +61,7 @@ export function roomAmenities(room: JourneyRoom): { id?: string; title: string; 
     title: amenity.shortName,
     icon: tourIconForTitle(amenity.name),
     iconPath: amenity.iconPath,
+    imageUrl: amenity.imageUrl,
     note: amenity.shortDescription,
     longNote: amenity.longDescription,
   }));

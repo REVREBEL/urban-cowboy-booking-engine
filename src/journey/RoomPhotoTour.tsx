@@ -36,6 +36,39 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   const [photo, setPhoto] = useState(0);
   const [ratios, setRatios] = useState<Record<number, number>>({});
   const [activePin, setActivePin] = useState<string | null>(null);
+  const [amenityExiting, setAmenityExiting] = useState(false);
+  const amenitySwapTimer = useRef<number | null>(null);
+  const pendingPin = useRef<string | null>(null);
+  const activePinRef = useRef(activePin);
+  activePinRef.current = activePin;
+
+  const selectAmenity = useCallback((next: string | null) => {
+    if (amenitySwapTimer.current !== null) {
+      window.clearTimeout(amenitySwapTimer.current);
+      amenitySwapTimer.current = null;
+    }
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || !activePinRef.current || activePinRef.current === next) {
+      pendingPin.current = null;
+      setAmenityExiting(false);
+      activePinRef.current = next;
+      setActivePin(next);
+      return;
+    }
+    pendingPin.current = next;
+    setAmenityExiting(true);
+    amenitySwapTimer.current = window.setTimeout(() => {
+      const target = pendingPin.current;
+      activePinRef.current = target;
+      setActivePin(target);
+      setAmenityExiting(false);
+      pendingPin.current = null;
+      amenitySwapTimer.current = null;
+    }, 240);
+  }, []);
+  useEffect(() => () => {
+    if (amenitySwapTimer.current !== null) window.clearTimeout(amenitySwapTimer.current);
+  }, []);
   const photoWheelLocked = useRef(false);
   const photoWheelUnlock = useRef<number | null>(null);
   const detailsRef = useRef(details);
@@ -45,6 +78,11 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
 
   const sync = useCallback(() => {
     setPhoto(carousel?.selectedScrollSnap() ?? 0);
+    if (amenitySwapTimer.current !== null) window.clearTimeout(amenitySwapTimer.current);
+    amenitySwapTimer.current = null;
+    pendingPin.current = null;
+    activePinRef.current = null;
+    setAmenityExiting(false);
     setActivePin(null);
   }, [carousel]);
   useEffect(() => {
@@ -68,7 +106,16 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => { if (!details) setActivePin(null); }, [details]);
+  useEffect(() => {
+    if (!details) {
+      if (amenitySwapTimer.current !== null) window.clearTimeout(amenitySwapTimer.current);
+      amenitySwapTimer.current = null;
+      pendingPin.current = null;
+      activePinRef.current = null;
+      setAmenityExiting(false);
+      setActivePin(null);
+    }
+  }, [details]);
   useEffect(() => {
     if (!details) return;
     const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') onDetails(false); };
@@ -87,10 +134,10 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     title: amenity.title,
     description: amenity.longNote ?? amenity.note,
     iconPath: amenity.iconPath,
+    imageUrl: amenity.imageUrl,
     icon: amenity.icon,
   }));
   const selected = pins.find((pin) => pin.id === activePin);
-  const selectedIndex = selected ? pins.indexOf(selected) : -1;
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
   const goPhoto = (direction: number) => {
     const jump = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -119,15 +166,18 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     goPhoto(event.deltaX > 0 ? 1 : -1);
   };
   const highlightRow = useRef<HTMLDivElement>(null);
-  const pickPin = (id: string) => {
-    setActivePin(id);
-    highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  const handleSelectPin = (id: string) => {
+    const willOpen = activePin !== id;
+    selectAmenity(willOpen ? id : null);
+    if (willOpen) {
+      highlightRow.current?.querySelector(`[data-pin="${id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
   };
   const handleCycleAmenity = (direction: number) => {
     if (pins.length === 0) return;
-    const currentIndex = Math.max(0, pins.findIndex((pin) => pin.id === activePin));
+    const currentIndex = Math.max(0, pins.findIndex((pin) => pin.id === (pendingPin.current ?? activePinRef.current)));
     const nextIndex = (currentIndex + direction + pins.length) % pins.length;
-    setActivePin(pins[nextIndex].id);
+    selectAmenity(pins[nextIndex].id);
   };
   // Swiping the mobile editorial cards keeps its numbered photo dot in sync.
   const syncMobileHighlight = () => {
@@ -146,7 +196,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
         distance = delta;
       }
     });
-    if (nearest) setActivePin((current) => current === nearest ? current : nearest);
+    if (nearest && nearest !== (pendingPin.current ?? activePinRef.current)) selectAmenity(nearest);
   };
 
   const roomNav = (cls: string) => (
@@ -194,20 +244,27 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                 <div className={`j-hotspots ${details && photo === index ? 'is-open' : ''}`} inert={!details || photo !== index} aria-hidden={!details || photo !== index}>
 
                   {(room.cmsAmenities ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots) : PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex, allPins) => (
-                    <div key={pin.id} className="j-hotspot-anchor" style={{ left: `${pin.x}%`, top: `${pin.y}%` }}>
-                      <div className="j-pin-desktop">
+                    <div
+                      key={pin.id}
+                      className="j-hotspot-anchor"
+                      style={{ left: `${pin.x}%`, top: `${pin.y}%`, zIndex: activePin === pin.id ? 50 : 1 }}
+                    >
+                      <div className={`j-pin-desktop ${amenityExiting && activePin === pin.id ? "is-amenity-exiting" : ""} ${activePin === pin.id && !amenityExiting ? "is-amenity-selected" : ""}`}>
                         <FocusAmenity
                           count={pinIndex + 1}
                           totalCount={allPins.length}
                           icon={pin.icon}
                           iconPath={pin.iconPath}
+                          imageUrl={pin.imageUrl}
                           title={pin.title}
                           description={pin.longNote ?? pin.note ?? pin.title}
                           active={activePin === pin.id}
-                          onSelect={() => setActivePin(activePin === pin.id ? null : pin.id)}
+                          state={activePin !== null && activePin !== pin.id ? "Inactive" : undefined}
+                          onSelect={() => handleSelectPin(pin.id)}
                           onPreviousAmenity={() => handleCycleAmenity(-1)}
                           onNextAmenity={() => handleCycleAmenity(1)}
-                          className={activePin && activePin !== pin.id ? "is-muted" : ""}
+                          cardSide={pin.x > 55 ? "left" : "right"}
+                          cardAlign={pin.y < 30 ? "top" : pin.y > 70 ? "bottom" : "center"}
                         />
                       </div>
                       <Button
@@ -219,7 +276,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                         className="j-pin-mobile"
                         aria-label={pin.title}
                         aria-pressed={activePin === pin.id}
-                        onClick={() => pickPin(pin.id)}
+                        onClick={() => handleSelectPin(pin.id)}
                       >
                         {pinIndex + 1}
                       </Button>
@@ -260,9 +317,9 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
             <p className="j-mobile-only text-[11px] uppercase tracking-[0.2em] opacity-60">In this photo · tap a number or swipe</p>
             <div ref={highlightRow} onScroll={syncMobileHighlight} className="j-highlight-row no-scrollbar">
               {pins.map((pin, i) => (
-                <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: "12px", fontWeight: 400, textAlign: "left", borderRadius: "10px" }} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => pickPin(pin.id)} className="j-highlight-card">
+                <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: "12px", fontWeight: 400, textAlign: "left", borderRadius: "10px" }} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => handleSelectPin(pin.id)} className="j-highlight-card">
                   <span className="j-highlight-num">{i + 1}</span>
-                  <CmsAmenityIcon iconPath={pin.iconPath} fallback={pin.icon} className="size-10 shrink-0" />
+                  <CmsAmenityIcon imageUrl={pin.imageUrl} iconPath={pin.iconPath} fallback={pin.icon} className="size-10 shrink-0" />
                   <span className="min-w-0 text-left"><span className="block font-headline text-base leading-none">{pin.title}</span><span className="mt-0.5 block text-xs leading-snug opacity-75">{pin.longNote ?? pin.note}</span></span>
                 </Button>
               ))}
@@ -274,7 +331,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
             <Button variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: 0, borderRadius: "50%" }} className="j-tour-control j-panel-close" aria-label={`Close details for ${room.name}`} title="Close details" onClick={() => onDetails(false)}><X size={20} /></Button>
           </div>
           <ul className="j-amenity-list">
-            {unseenAmenities.map((a) => <li key={a.id ?? a.title}><CmsAmenityIcon iconPath={a.iconPath} fallback={a.icon} className="size-6" /><span><span className="block font-semibold">{a.title}</span>{a.note && <span className="block text-xs opacity-75">{a.note}</span>}</span></li>)}
+            {unseenAmenities.map((a) => <li key={a.id ?? a.title}><CmsAmenityIcon imageUrl={a.imageUrl} iconPath={a.iconPath} fallback={a.icon} className="size-6" /><span><span className="block font-semibold">{a.title}</span>{a.note && <span className="block text-xs opacity-75">{a.note}</span>}</span></li>)}
           </ul>
           {room.isMock && <p className="mt-3 text-xs">Sample room · photography reused</p>}
         </div>
@@ -284,7 +341,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
         {roomNav('j-roomnav-mobile')}
         <div className="j-tour-info min-w-0">
           <p className="truncate text-xs text--paper/75"><span className="capitalize">{room.building.toLocaleLowerCase()}</span> · Sleeps {room.maxGuests}{score !== undefined ? ` · ${score}% match` : ''}<span className="j-mobile-only"> · <span className="font-number">{position + 1}/{count}</span></span></p>
-          <h2 className="mt-1 truncate font-headline text-xl leading-none sm:text-4xl sm:whitespace-normal">{room.name}</h2>
+          <h2 className="mt-1 text-balance font-headline text-xl leading-none sm:text-4xl">{room.name}</h2>
           <p className="mt-1 hidden text-sm text--paper/80 lg:block" style={{ opacity: details ? 0 : 1 }}>{room.tagline}</p>
         </div>
 

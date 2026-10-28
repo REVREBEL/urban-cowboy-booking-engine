@@ -15,6 +15,7 @@ const meta: Meta<typeof Brand> = {
   tags: ['autodocs'],
   argTypes: {
     subtle: { control: 'boolean', description: 'Applies 70% opacity subtle styling' },
+    alt: { control: 'boolean', description: 'Use the full SVG brand lockup' },
     className: { control: 'text', description: 'Additional CSS classes' },
   },
 } satisfies Meta<typeof Brand>;
@@ -25,13 +26,16 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     subtle: false,
-    className: 'text-cowboy-umber',
+    className: '',
   },
 };
 
 export const Subtle: Story = {
   args: {
     subtle: true,
-    className: 'text-cowboy-umber',
+    className: '',
   },
 };
+
+export const Full: Story = { args: { alt: true, className: '' } };
+export const CustomColor: Story = { args: { className: 'text-cowboy-umber' } };

@@ -7,7 +7,49 @@ export function cmsIconUrl(raw: unknown): string | null {
 }
 
 const photoKeyCache = new Map<string, string | null>();
+const photoKeysCache = new Map<string, readonly string[]>();
 const MAX_CACHE_SIZE = 500;
+
+/**
+ * Webflow may wrap an existing gallery asset in a newly uploaded filename,
+ * leaving both the wrapper ID and the original file ID in the URL. Return all
+ * embedded IDs so gallery photos can still join to hotspot records keyed by
+ * the original asset.
+ */
+export function cmsPhotoKeys(raw: unknown): readonly string[] {
+  if (typeof raw !== "string") return [];
+  const value = raw.trim();
+  if (!value) return [];
+
+  const cached = photoKeysCache.get(value);
+  if (cached !== undefined) return cached;
+
+  let keys: string[] = [];
+  if (/^[a-f0-9]{24}$/i.test(value)) {
+    keys = [`file:${value.toLowerCase()}`];
+  } else {
+    try {
+      const url = new URL(value, "https://local-photo.invalid");
+      if (url.origin !== "https://local-photo.invalid" || value.startsWith("/")) {
+        const fileName = decodeURIComponent(url.pathname.split("/").pop() || "");
+        const fileIds = fileName.match(/[a-f0-9]{24}(?=_|$)/gi) ?? [];
+        keys = [...new Set(fileIds.map((fileId) => `file:${fileId.toLowerCase()}`))];
+        if (keys.length === 0 && ["https:", "http:"].includes(url.protocol)) {
+          keys = [`url:${url.origin}${url.pathname}`];
+        }
+      }
+    } catch {
+      keys = [];
+    }
+  }
+
+  if (photoKeysCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = photoKeysCache.keys().next().value;
+    if (firstKey !== undefined) photoKeysCache.delete(firstKey);
+  }
+  photoKeysCache.set(value, keys);
+  return keys;
+}
 
 /** Stable Webflow CDN file IDs survive URL query changes and reused photos. */
 export function cmsPhotoKey(raw: unknown): string | null {
@@ -18,27 +60,7 @@ export function cmsPhotoKey(raw: unknown): string | null {
   const cached = photoKeyCache.get(value);
   if (cached !== undefined) return cached;
 
-  let key: string | null = null;
-  if (/^[a-f0-9]{24}$/i.test(value)) {
-    key = `file:${value.toLowerCase()}`;
-  } else {
-    try {
-      const url = new URL(value, "https://local-photo.invalid");
-      if (url.origin === "https://local-photo.invalid" && !value.startsWith("/")) {
-        key = null;
-      } else {
-        const fileName = decodeURIComponent(url.pathname.split("/").pop() || "");
-        const fileId = fileName.match(/^([a-f0-9]{24})_/i)?.[1];
-        if (fileId) {
-          key = `file:${fileId.toLowerCase()}`;
-        } else if (["https:", "http:"].includes(url.protocol)) {
-          key = `url:${url.origin}${url.pathname}`;
-        }
-      }
-    } catch {
-      key = null;
-    }
-  }
+  const key = cmsPhotoKeys(value)[0] ?? null;
 
   if (photoKeyCache.size >= MAX_CACHE_SIZE) {
     const firstKey = photoKeyCache.keys().next().value;

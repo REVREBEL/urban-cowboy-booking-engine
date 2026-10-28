@@ -90,6 +90,7 @@ export function UpsellCard({
         <button
           type="button"
           onClick={() => setDetail(true)}
+          aria-label={`Learn more about ${product.name}`}
           className="absolute bottom-4 right-4 z-10 shrink-0 whitespace-nowrap text-xs font-medium text-turquoise underline-offset-2 hover:underline"
         >
           {t("upsell.learnMore")}
