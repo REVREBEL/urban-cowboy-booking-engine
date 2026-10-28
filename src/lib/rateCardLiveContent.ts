@@ -35,6 +35,27 @@ export function rateCardPricePresentation(
   };
 }
 
+// The caller owns the cache so its lifetime stays tied to the rate selection view.
+export function formatRateCardPrice(
+  currency: string,
+  amount: number,
+  cache: Map<string, Intl.NumberFormat>,
+): string {
+  const decimals = amount % 1 === 0 ? 0 : 2;
+  const key = `${currency}:${decimals}`;
+  let fmt = cache.get(key);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency,
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: 2,
+    });
+    cache.set(key, fmt);
+  }
+  return fmt.format(amount);
+}
+
 const PROPERTY_TIME_ZONE = "America/New_York";
 
 // Module-level Intl.DateTimeFormat instances.
