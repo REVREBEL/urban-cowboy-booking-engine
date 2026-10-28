@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type WheelEvent as ReactWheelEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type WheelEvent as ReactWheelEvent } from 'react';
 import { createPortal } from 'react-dom';
 import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import type { JourneyRoom } from './data';
-import { PHOTO_HIGHLIGHTS, roomAmenities } from '@/journey/tour';
+import { PHOTO_HIGHLIGHTS, roomAmenities, type PhotoHighlight } from '@/journey/tour';
 import { cmsHighlightsForPhoto } from '@/journey/cmsTour';
 import type { CmsPhotoHotspotMap } from '@/types/photo-hotspot-cms';
 import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
@@ -124,19 +124,33 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   }, [details, onDetails]);
 
   const fx = FX[position];
-  const pins = room.cmsAmenities
-    ? cmsHighlightsForPhoto(room.images[photo], room.cmsAmenities, cmsHotspots)
-    : PHOTO_HIGHLIGHTS[room.images[photo]] ?? [];
-  const amenities = roomAmenities(room);
-  const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
-  const sideAmenities = unseenAmenities.map((amenity) => ({
-    id: amenity.id ?? `amenity:${amenity.title}`,
-    title: amenity.title,
-    description: amenity.longNote ?? amenity.note,
-    iconPath: amenity.iconPath,
-    imageUrl: amenity.imageUrl,
-    icon: amenity.icon,
-  }));
+
+  // Performance optimization: Precompute CMS highlights or static photo highlights for all images of this room.
+  // Prevents re-running cmsHighlightsForPhoto and map allocations on every state update or active pin hover.
+  const photoHighlightsMap = useMemo(() => {
+    const map = new Map<string, PhotoHighlight[]>();
+    for (const src of room.images) {
+      const highlights = room.cmsAmenities
+        ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots)
+        : PHOTO_HIGHLIGHTS[src] ?? [];
+      map.set(src, highlights);
+    }
+    return map;
+  }, [room.images, room.cmsAmenities, cmsHotspots]);
+
+  const pins = photoHighlightsMap.get(room.images[photo]) ?? [];
+  const amenities = useMemo(() => roomAmenities(room), [room]);
+  const sideAmenities = useMemo(() => {
+    const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
+    return unseenAmenities.map((amenity) => ({
+      id: amenity.id ?? `amenity:${amenity.title}`,
+      title: amenity.title,
+      description: amenity.longNote ?? amenity.note,
+      iconPath: amenity.iconPath,
+      imageUrl: amenity.imageUrl,
+      icon: amenity.icon,
+    }));
+  }, [amenities, pins]);
   const selected = pins.find((pin) => pin.id === activePin);
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
   const goPhoto = (direction: number) => {
@@ -243,7 +257,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                   }} />
                 <div className={`j-hotspots ${details && photo === index ? 'is-open' : ''}`} inert={!details || photo !== index} aria-hidden={!details || photo !== index}>
 
-                  {(room.cmsAmenities ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots) : PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex, allPins) => (
+                  {(photoHighlightsMap.get(src) ?? []).map((pin, pinIndex, allPins) => (
                     <div
                       key={pin.id}
                       className="j-hotspot-anchor"
