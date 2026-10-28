@@ -26,15 +26,16 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     subtle: false,
-    className: 'w-44',
+    className: '',
   },
 };
 
 export const Subtle: Story = {
   args: {
     subtle: true,
-    className: 'w-44',
+    className: '',
   },
 };
 
-export const Full: Story = { args: { alt: true, className: 'w-64' } };
+export const Full: Story = { args: { alt: true, className: '' } };
+export const CustomColor: Story = { args: { className: 'text-cowboy-umber' } };
