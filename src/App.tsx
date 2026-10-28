@@ -103,7 +103,7 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
 
       {!photoJourney && <BookingFooter />}
       {!photoJourney && <ContactBar />}
-      {SHOW_API_DEBUGGER && !isStudioRoute() && <Suspense fallback={null}><DevPanel /></Suspense>}
+      {SHOW_API_DEBUGGER && <Suspense fallback={null}><DevPanel /></Suspense>}
       {isStudioRoute() && <Suspense fallback={null}><StudioController /></Suspense>}
     </div>
   );
