@@ -292,7 +292,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   return (
     <nav
       aria-label="Booking progress"
-      className={`relative inline-flex items-center box-border select-none max-w-full overflow-x-auto ${className}`}
+      className={`relative inline-flex items-center box-border select-none max-w-full overflow-x-auto px-1 py-1 ${className}`}
       style={{
         minHeight: '31px',
         padding: '3px 0px',
