@@ -3,17 +3,21 @@ import { cmsIconUrl } from "@/lib/cmsPhotoHotspots";
 import type { TourIcon as TourIconName } from "@/journey/tour";
 import { TourIcon } from "./TourIcon";
 
-/** Webflow Image first; local public SVG second; generic TourIcon last. */
-export function CmsAmenityIcon({ imageUrl, iconPath, fallback, className = "size-10" }: {
-  imageUrl?: string | null;
+/** Webflow supplies paths/filenames, while SVG bytes remain in the public assets folder. */
+export function CmsAmenityIcon({ iconPath, fallback, className = "size-10", monochrome = false }: {
   iconPath?: string | null;
   fallback: TourIconName;
   className?: string;
+  monochrome?: boolean;
 }) {
-  const [failedUrls, setFailedUrls] = useState<string[]>([]);
-  const webflowUrl = typeof imageUrl === "string" && /^https:\/\//i.test(imageUrl) ? imageUrl : null;
-  const localUrl = cmsIconUrl(iconPath);
-  const url = webflowUrl && !failedUrls.includes(webflowUrl) ? webflowUrl : localUrl && !failedUrls.includes(localUrl) ? localUrl : null;
-  if (!url) return <TourIcon name={fallback} className={className} />;
-  return <img key={url} src={url} alt="" aria-hidden="true" className={`j-cms-icon ${className}`} onError={() => setFailedUrls((current) => current.includes(url) ? current : [...current, url])} />;
+  const [failedPath, setFailedPath] = useState<string | null>(null);
+  const url = cmsIconUrl(iconPath);
+  if (!url || failedPath === url) return <TourIcon name={fallback} className={className} />;
+  if (monochrome) return (
+    <span aria-hidden="true" className={`inline-block bg-current transition-colors duration-200 motion-reduce:transition-none ${className}`}
+      style={{ maskImage: `url("${url}")`, maskSize: "contain", maskPosition: "center", maskRepeat: "no-repeat" }}>
+      <img src={url} alt="" className="size-full opacity-0" onError={() => setFailedPath(url)} />
+    </span>
+  );
+  return <img src={url} alt="" aria-hidden="true" className={`j-cms-icon ${className}`} onError={() => setFailedPath(url)} />;
 }

@@ -3,7 +3,6 @@
  * Product selection, Mews pricing and preferences still flow through Extras.
  */
 import { useState } from "react";
-import { ChevronLeft } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { AddonCustomizerModal } from "../components/booking/extras/AddonCustomizerModal";
 import { AddonCard } from "../components/booking/extras/AddonCard";
@@ -78,16 +77,19 @@ export function PhotoExtrasStep(props: Props) {
         </ul>
         {!props.products.length && <p className="py-12 text-paper/75">There are no additional extras available for this stay.</p>}
       </div>
-      <div className="fixed inset-x-0 bottom-0 z-30 bg-smoke/90 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-30" style={{ background: "linear-gradient(to top, var(--color-smoke), color-mix(in oklab, var(--color-smoke) 80%, transparent), color-mix(in oklab, var(--color-smoke) 0%, transparent))" }}>
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
           <div className="flex flex-wrap items-center gap-4">
-            <Button type="button" onClick={props.onBack} variant="transparent" colorScheme="paper" size="xsmall" className="gap-1 underline underline-offset-4" style={{padding:0}}>
-              <ChevronLeft className="h-4 w-4" aria-hidden="true" /> Back to rate
+            <Button type="button" onClick={props.onBack} variant="transparent" colorScheme="paper" size="xsmall" iconPosition="left" icon={<span className="block size-4 bg-current mask-[url('/assets/icons/ui/ui-chevron-left.svg')] mask-contain mask-center mask-no-repeat" aria-hidden="true" />} className="gap-1 whitespace-nowrap underline underline-offset-4" style={{padding:0}}>
+              Back to rate
             </Button>
             <p className="tabular-nums">{displayedSelected} extras · <strong>{money(props.total, props.currency)}</strong></p>
           </div>
           <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" className="rounded-full uppercase tracking-[0.2em]" onClick={props.onNext}>
-            {displayedSelected ? "Review stay →" : "Skip extras →"}
+            <span className="inline-flex items-center gap-2">
+              {displayedSelected ? "Review stay" : "Skip extras"}
+              <span className="block size-4 rotate-90 bg-current mask-[url('/assets/icons/ui/ui-arrow-up.svg')] mask-contain mask-center mask-no-repeat" aria-hidden="true" />
+            </span>
           </Button>
         </div>
       </div>

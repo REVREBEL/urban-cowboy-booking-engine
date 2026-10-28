@@ -43,6 +43,7 @@ test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () =
   assert.match(tour, /iconPath=\{pin\.iconPath\}/);
   assert.match(tour, /active=\{activePin === pin\.id\}/);
   assert.match(tour, /state=\{activePin !== null && activePin !== pin\.id \? "Inactive" : undefined\}/);
+  assert.match(tour, /<h2 className="mt-1 text-balance font-headline/);
   assert.doesNotMatch(tour, /is-muted/);
   assert.match(tour, /selectAmenity\(willOpen \? id : null\)/);
   assert.match(tour, /setAmenityExiting\(true\)/);
