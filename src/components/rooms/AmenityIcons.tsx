@@ -19,6 +19,7 @@ export function AmenityIcons({ icon, iconPath, className = "" }: AmenityIconsPro
       className={`relative grid size-full place-items-center overflow-hidden bg-transparent ${className}`}
     >
       <CmsAmenityIcon
+        monochrome
         iconPath={iconPath}
         fallback={icon}
         className="block size-[85%] object-contain mix-blend-normal"

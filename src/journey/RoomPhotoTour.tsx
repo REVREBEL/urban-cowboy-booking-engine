@@ -64,7 +64,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
       setAmenityExiting(false);
       pendingPin.current = null;
       amenitySwapTimer.current = null;
-    }, 150);
+    }, 240);
   }, []);
   useEffect(() => () => {
     if (amenitySwapTimer.current !== null) window.clearTimeout(amenitySwapTimer.current);
