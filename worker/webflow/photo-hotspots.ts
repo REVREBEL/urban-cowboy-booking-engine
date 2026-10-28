@@ -35,6 +35,7 @@ export function normalizePublishedAmenities(items: readonly WebflowCmsItem[]): M
       shortDescription: text(fields["short-description"]) || null,
       longDescription: text(fields["long-description"]) || null,
       iconPath,
+      imageUrl: typeof fields.image === "object" && fields.image !== null && "url" in fields.image && typeof fields.image.url === "string" && /^https:\/\//i.test(fields.image.url) ? fields.image.url : null,
     });
   }
   return content;

@@ -217,6 +217,17 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
                 />
               )}
 
+              {!isVerifying && currentValue && !statusFeedback?.isValid && (
+                <button
+                  type="button"
+                  onClick={handleApply}
+                  aria-label="Apply promo code"
+                  className="px-2 py-0.5 text-[11px] font-label font-bold uppercase tracking-wider bg-smoke text-alpine-linen rounded hover:bg-lake-forest focus-visible:ring-2 focus-visible:ring-smoke focus-visible:outline-none cursor-pointer transition-colors"
+                >
+                  Apply
+                </button>
+              )}
+
               {!isVerifying && currentValue && (
                 <button
                   type="button"
@@ -235,7 +246,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
           </div>
 
           {/* Validation Feedback Line */}
-          <div className="h-4 mt-1 flex items-center">
+          <div className="h-4 mt-1 flex items-center" aria-live="polite">
             {statusFeedback?.errorMessage && (
               <span className="text-[11px] font-urbanist font-medium text-bandana-red">
                 {statusFeedback.errorMessage}

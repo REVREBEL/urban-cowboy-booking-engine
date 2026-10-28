@@ -216,9 +216,9 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
       if (event.target.closest("button, select, input, textarea, [data-tour-panel], .j-room-filters, .j-tour-details")) return;
       const stage = roomStage.current;
       if (!stage?.contains(event.target)) return;
-      const offset = Number.parseFloat(getComputedStyle(stage).getPropertyValue("--j-room-top")) || 160;
       const sections = list.map((item) => document.getElementById(`tour-${item.room.id}`)).filter((node): node is HTMLElement => Boolean(node));
       if (!sections.length) return;
+      const offset = Number.parseFloat(getComputedStyle(sections[0]).scrollMarginTop) || 0;
       const current = sections.reduce((best, section, index) =>
         Math.abs(section.getBoundingClientRect().top - offset) < Math.abs(sections[best].getBoundingClientRect().top - offset) ? index : best, 0);
       const next = current + (event.deltaY > 0 ? 1 : -1);

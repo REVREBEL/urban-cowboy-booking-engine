@@ -64,7 +64,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
       setAmenityExiting(false);
       pendingPin.current = null;
       amenitySwapTimer.current = null;
-    }, 150);
+    }, 240);
   }, []);
   useEffect(() => () => {
     if (amenitySwapTimer.current !== null) window.clearTimeout(amenitySwapTimer.current);
@@ -134,6 +134,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
     title: amenity.title,
     description: amenity.longNote ?? amenity.note,
     iconPath: amenity.iconPath,
+    imageUrl: amenity.imageUrl,
     icon: amenity.icon,
   }));
   const selected = pins.find((pin) => pin.id === activePin);
@@ -254,6 +255,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                           totalCount={allPins.length}
                           icon={pin.icon}
                           iconPath={pin.iconPath}
+                          imageUrl={pin.imageUrl}
                           title={pin.title}
                           description={pin.longNote ?? pin.note ?? pin.title}
                           active={activePin === pin.id}
@@ -317,7 +319,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
               {pins.map((pin, i) => (
                 <Button key={pin.id} type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: "12px", fontWeight: 400, textAlign: "left", borderRadius: "10px" }} data-pin={pin.id} aria-pressed={selected?.id === pin.id} onClick={() => handleSelectPin(pin.id)} className="j-highlight-card">
                   <span className="j-highlight-num">{i + 1}</span>
-                  <CmsAmenityIcon iconPath={pin.iconPath} fallback={pin.icon} className="size-10 shrink-0" />
+                  <CmsAmenityIcon imageUrl={pin.imageUrl} iconPath={pin.iconPath} fallback={pin.icon} className="size-10 shrink-0" />
                   <span className="min-w-0 text-left"><span className="block font-headline text-base leading-none">{pin.title}</span><span className="mt-0.5 block text-xs leading-snug opacity-75">{pin.longNote ?? pin.note}</span></span>
                 </Button>
               ))}
@@ -329,7 +331,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
             <Button variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: 0, borderRadius: "50%" }} className="j-tour-control j-panel-close" aria-label={`Close details for ${room.name}`} title="Close details" onClick={() => onDetails(false)}><X size={20} /></Button>
           </div>
           <ul className="j-amenity-list">
-            {unseenAmenities.map((a) => <li key={a.id ?? a.title}><CmsAmenityIcon iconPath={a.iconPath} fallback={a.icon} className="size-6" /><span><span className="block font-semibold">{a.title}</span>{a.note && <span className="block text-xs opacity-75">{a.note}</span>}</span></li>)}
+            {unseenAmenities.map((a) => <li key={a.id ?? a.title}><CmsAmenityIcon imageUrl={a.imageUrl} iconPath={a.iconPath} fallback={a.icon} className="size-6" /><span><span className="block font-semibold">{a.title}</span>{a.note && <span className="block text-xs opacity-75">{a.note}</span>}</span></li>)}
           </ul>
           {room.isMock && <p className="mt-3 text-xs">Sample room · photography reused</p>}
         </div>

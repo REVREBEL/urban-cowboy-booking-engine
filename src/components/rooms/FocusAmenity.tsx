@@ -10,6 +10,7 @@ export interface FocusAmenityProps {
   count?: number | string;
   icon: TourIcon;
   iconPath?: string | null;
+  imageUrl?: string | null;
   title: string;
   description?: string;
   state?: FocusAmenityState;
@@ -46,6 +47,7 @@ export function FocusAmenity({
   count = 1,
   icon,
   iconPath,
+  imageUrl,
   title,
   description = "The Cabin keeps the sleeping setup relaxed: a proper king bed anchors the room, while the built-in bunk or lounging nook gives you another place to stretch out, read, or tuck someone in without turning the whole space into a bedroom.",
   state,
@@ -122,7 +124,7 @@ export function FocusAmenity({
 
           {/* Centered Amenity Icon inside Disc */}
           <span className="relative z-10 flex size-full items-center justify-center p-3 text-(--icon-fg) transition-colors duration-200 max-sm:p-2 [&>svg]:size-full [&>svg]:max-h-full [&>svg]:max-w-full">
-          <AmenityIcons icon={icon} iconPath={iconPath} />
+          <AmenityIcons icon={icon} iconPath={iconPath} imageUrl={imageUrl} />
           </span>
         </span>
 

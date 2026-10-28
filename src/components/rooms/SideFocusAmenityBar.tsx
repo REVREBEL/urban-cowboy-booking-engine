@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cmsIconUrl } from "@/lib/cmsPhotoHotspots";
 import { FocusAmenityAction } from "./FocusAmenityAction";
 import { CmsAmenityIcon } from "./CmsAmenityIcon";
@@ -9,6 +9,7 @@ export interface SideFocusAmenityItem {
   title: string;
   description?: string | null;
   iconPath?: string | null;
+  imageUrl?: string | null;
   icon: TourIcon;
 }
 export interface SideFocusAmenityBarProps {
@@ -23,6 +24,11 @@ export interface SideFocusAmenityBarProps {
 function AmenityTileArtwork({ item }: { item: SideFocusAmenityItem }) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const url = cmsIconUrl(item.iconPath);
+  const webflowUrl = item.imageUrl && /^https:\/\//i.test(item.imageUrl) ? item.imageUrl : null;
+  const [failedWebflowUrl, setFailedWebflowUrl] = useState<string | null>(null);
+  if (webflowUrl && failedWebflowUrl !== webflowUrl) {
+    return <img src={webflowUrl} alt="" aria-hidden="true" className="j-cms-icon h-25 w-27 object-contain" onError={() => setFailedWebflowUrl(webflowUrl)} />;
+  }
   if (!url || failedUrl === url) {
     return <CmsAmenityIcon iconPath={null} fallback={item.icon} className="size-25 object-contain" />;
   }
@@ -61,11 +67,23 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
   const expanded = open ?? localOpen;
   const selectedIndex = selectedId ? uniqueAmenities.findIndex((item) => item.id === selectedId) : -1;
   const selected = selectedIndex >= 0 ? uniqueAmenities[selectedIndex] : undefined;
-  const toggle = (value: boolean) => {
+
+  const toggle = useCallback((value: boolean) => {
     if (open === undefined) setLocalOpen(value);
     if (!value) setSelectedId(null);
     onOpenChange?.(value);
-  };
+  }, [onOpenChange, open]);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        toggle(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [expanded, toggle]);
   const cycle = (direction: number) => {
     if (!uniqueAmenities.length) return;
     const nextIndex = selectedIndex < 0
@@ -112,8 +130,14 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
       ? `pointer-events-none! fixed top-1/2 left-8 z-40 w-[min(680px,calc(100vw-64px))] max-w-none -translate-y-1/2 ${className}`
       : `w-full max-w-170 ${className}`}>
       {!expanded ? (
-        <button type="button" aria-expanded={false} onClick={() => toggle(true)}
-          className="flex w-full items-center gap-5 py-3 text-left text-primary focus-visible:outline-2 focus-visible:outline-offset-4">
+        <button
+          type="button"
+          id="side-amenities-trigger"
+          aria-expanded={false}
+          aria-controls="side-amenities-panel"
+          onClick={() => toggle(true)}
+          className="flex w-full items-center gap-5 py-3 text-left text-primary focus-visible:outline-2 focus-visible:outline-offset-4"
+        >
           <FocusAmenityAction state="Active" className="size-12.5 border-0 shadow-[0_0_28px_rgba(242,242,242,.8)]" />
           <span className="flex min-w-0 flex-col font-heading uppercase leading-none tracking-[1px] drop-shadow-[0_0_55px_#363333]">
             <span className="text-[clamp(23px,4vw,41px)]">More amenities</span>
@@ -121,7 +145,13 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
           </span>
         </button>
       ) : (
-        <div ref={panelRef} className="pointer-events-auto relative flex w-full min-h-0 items-start gap-6">
+        <div
+          id="side-amenities-panel"
+          role="region"
+          aria-label="Amenities and Features panel"
+          ref={panelRef}
+          className="pointer-events-auto relative flex w-full min-h-0 items-start gap-6"
+        >
           <div className="relative flex h-[clamp(224px,calc(100dvh-128px),528px)] w-41 shrink-0 items-center">
             <div className="flex size-full min-h-0 w-37.25 flex-col rounded-modal-xl bg-primary p-0.5 shadow-[0_0_12px_rgba(242,242,242,.75)]">
               <div className="flex min-h-0 flex-col rounded-[39px] border-[1.5px] border-accent bg-secondary-foreground p-0.5">

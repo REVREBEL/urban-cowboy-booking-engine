@@ -7,6 +7,7 @@ import { resolveRateCardConfig } from '../../lib/rateCardConfig';
 import { normalizeRateCardCtaLabel } from '../../lib/rateCardCta';
 import {
   cancellationConfirmation,
+  formatRateCardPrice,
   rateCardPricePresentation,
 } from '../../lib/rateCardLiveContent';
 import { ConfigurableRateOffer } from './ConfigurableRateOffer';
@@ -331,13 +332,11 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     };
   };
 
+  const priceFormatterCache = useRef<Map<string, Intl.NumberFormat>>(new Map());
+  const dueDateFormat = useRef<Intl.DateTimeFormat | null>(null);
+
   const formatLivePrice = (liveRate: ShapedRate, amount: number) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: liveRate.currency,
-      minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
+    formatRateCardPrice(liveRate.currency, amount, priceFormatterCache.current);
 
   const configurableLiveContent = (
     liveRate: ShapedRate,
@@ -394,11 +393,14 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     const days = period === 'days' ? window : window / 24;
     due.setUTCDate(due.getUTCDate() - days);
 
-    return `Due ${new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      timeZone: 'UTC',
-    }).format(due)}`;
+    if (!dueDateFormat.current) {
+      dueDateFormat.current = new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        timeZone: 'UTC',
+      });
+    }
+    return `Due ${dueDateFormat.current.format(due)}`;
   };
 
   const fullCancellationPolicyForRate = (liveRate: ShapedRate) =>
