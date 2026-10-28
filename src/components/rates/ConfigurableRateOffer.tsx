@@ -39,6 +39,10 @@ export interface ConfigurableRateOfferProps {
   disabled?: boolean;
 }
 
+// Module-level Intl formatters to prevent allocation during component renders
+const amountFormatter = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const monthFormatter = new Intl.DateTimeFormat("en-US", { month: "short", timeZone: "UTC" });
+
 export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
   config,
   live,
@@ -68,12 +72,12 @@ export const ConfigurableRateOffer: React.FC<ConfigurableRateOfferProps> = ({
     const date = new Date(Date.UTC(year, month - 1, day));
     if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return undefined;
     date.setUTCDate(date.getUTCDate() - days);
-    return { daysPrior: days, day: date.getUTCDate(), month: date.toLocaleString("en-US", { month: "short", timeZone: "UTC" }).toUpperCase() };
+    return { daysPrior: days, day: date.getUTCDate(), month: monthFormatter.format(date).toUpperCase() };
   };
   const amountDisplay = (value: number | string): string => {
     if (typeof value !== "number") return value;
     const prefix = live.price.match(/^[^0-9-]+/)?.[0]?.trim() ?? "";
-    return `${prefix}${new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}`;
+    return `${prefix}${amountFormatter.format(value)}`;
   };
   const freeCancelDate = milestone(config.cancellationPenaltyWindow, config.cancellationPenaltyWindowPeriod);
   const nonRefundableDate = milestone(config.cancellationFullForfeitWindow, config.cancellationFullForfeitWindowPeriod);
