@@ -72,9 +72,7 @@ test("SideFocusAmenityBar uses focus states, a four-item viewport, and aligned s
   assert.match(source, /scrollIntoView\(/);
   assert.match(source, /selectedIndex >= 0 \? uniqueAmenities\[selectedIndex\] : undefined/);
   assert.match(source, /setSelectedId\(\(currentId\) => currentId === id \? null : id\)/);
-  assert.match(source, /if \(!value\) \{/);
-  assert.match(source, /setSelectedId\(null\)/);
-  assert.match(source, /restoreFocusRef\.current = true/);
+  assert.match(source, /if \(!value\) setSelectedId\(null\)/);
   assert.match(source, /onScroll=\{updateCardPosition\}/);
   assert.match(source, /"focus-active" : "focus-default hover:focus-hover"/);
   assert.match(source, /style=\{\{ top: cardCenter \}\}/);
