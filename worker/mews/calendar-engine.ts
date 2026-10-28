@@ -104,16 +104,18 @@ const dateDistance = (start: string, end: string) =>
       86_400_000,
   );
 
+const easternDateTimeFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: EASTERN_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
 const easternParts = (timestamp = Date.now()) => {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: EASTERN_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date(timestamp));
+  const parts = easternDateTimeFmt.formatToParts(new Date(timestamp));
   const value = (type: string) => parts.find((part) => part.type === type)?.value ?? "";
   return {
     date: `${value("year")}-${value("month")}-${value("day")}`,
