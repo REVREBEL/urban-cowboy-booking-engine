@@ -100,19 +100,30 @@ export function occupancyForProperty(prop: Property, adults: number, children = 
   return out;
 }
 
+// Module-scoped Intl cache for Worker date conversions.
+const workerDateUtcFmtCache = new Map<string, Intl.DateTimeFormat>();
+function getWorkerDateUtcFmt(timeZone: string): Intl.DateTimeFormat {
+  let fmt = workerDateUtcFmtCache.get(timeZone);
+  if (!fmt) {
+    fmt = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+    });
+    workerDateUtcFmtCache.set(timeZone, fmt);
+  }
+  return fmt;
+}
+
 /** Convert a property-local calendar date to its UTC midnight, including DST. */
 export function propertyDateUtc(date: string, timeZone = "America/New_York"): string {
   const guess = Date.parse(`${date}T00:00:00Z`);
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(new Date(guess));
+  const parts = getWorkerDateUtcFmt(timeZone).formatToParts(new Date(guess));
   const value = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
   const representedAsUtc = Date.UTC(value("year"), value("month") - 1, value("day"), value("hour"), value("minute"), value("second"));
   return new Date(guess - (representedAsUtc - guess)).toISOString();
