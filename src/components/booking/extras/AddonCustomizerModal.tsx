@@ -312,7 +312,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                       setDeliveryType('waiting-in-room');
                       setSelectedTime('Waiting in room prior to check-in (4:00 PM)');
                     }}
-                    className={`p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between group ${
+                    className={`p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${
                       !isGift
                         ? 'border-cowboy-umber bg-alpine-linen/70 shadow-sm ring-1 ring-cowboy-umber'
                         : 'border-cowboy-umber/15 bg-white hover:border-cowboy-umber/40 hover:bg-paper'
@@ -348,7 +348,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                       setDeliveryType('gift-surprise');
                       setIncludeCard(true);
                     }}
-                    className={`p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between group ${
+                    className={`p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${
                       isGift
                         ? 'border-cowboy-umber bg-alpine-linen/70 shadow-sm ring-1 ring-cowboy-umber'
                         : 'border-cowboy-umber/15 bg-white hover:border-cowboy-umber/40 hover:bg-paper'
@@ -406,7 +406,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                           key={dateObj.isoDate}
                           type="button"
                           onClick={() => setSelectedDateIso(dateObj.isoDate)}
-                          className={`p-4 2xl:p-6 rounded-2xl 2xl:rounded-3xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between ${
+                          className={`p-4 2xl:p-6 rounded-2xl 2xl:rounded-3xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${
                             isSelected
                               ? 'bg-cowboy-umber text-white border-cowboy-umber shadow-md ring-2 ring-cowboy-umber/30'
                               : 'bg-white text-smoke border-cowboy-umber/20 hover:border-cowboy-umber/50 hover:bg-paper'
@@ -443,7 +443,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                           key={timeOption}
                           type="button"
                           onClick={() => setSelectedTime(timeOption)}
-                          className={`px-4 sm:px-5 py-3.5 sm:py-4 2xl:px-6 2xl:py-5 rounded-2xl 2xl:rounded-3xl border-2 text-left text-xs sm:text-sm lg:text-base 2xl:text-lg font-sans transition-all cursor-pointer flex items-center justify-between ${
+                          className={`px-4 sm:px-5 py-3.5 sm:py-4 2xl:px-6 2xl:py-5 rounded-2xl 2xl:rounded-3xl border-2 text-left text-xs sm:text-sm lg:text-base 2xl:text-lg font-sans transition-all cursor-pointer flex items-center justify-between focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${
                             isSelected
                               ? 'border-cowboy-umber bg-alpine-linen font-bold text-smoke shadow-2xs'
                               : 'border-cowboy-umber/15 bg-white text-alpine-linen-900 hover:border-cowboy-umber/35 hover:bg-paper'
@@ -509,7 +509,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                       key={wineType}
                       type="button"
                       onClick={() => setItemCustomization(wineType)}
-                      className={`p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl border-2 text-xs sm:text-sm 2xl:text-base font-sans text-left transition-all cursor-pointer ${
+                      className={`p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl border-2 text-xs sm:text-sm 2xl:text-base font-sans text-left transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${
                         itemCustomization === wineType
                           ? 'bg-cowboy-umber text-white border-cowboy-umber font-bold shadow-xs'
                           : 'bg-white text-smoke border-cowboy-umber/15 hover:border-cowboy-umber/40'
@@ -599,7 +599,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                       onChange={(e) => setIncludeCard(e.target.checked)}
                       className="sr-only peer"
                     />
-                    <div className="w-12 h-6 2xl:w-14 2xl:h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 2xl:after:h-6 2xl:after:w-6 after:transition-all peer-checked:bg-cowboy-umber"></div>
+                    <div className="w-12 h-6 2xl:w-14 2xl:h-7 bg-gray-300 peer-focus-visible:ring-2 peer-focus-visible:ring-cowboy-umber peer-focus-visible:ring-offset-2 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 2xl:after:h-6 2xl:after:w-6 after:transition-all peer-checked:bg-cowboy-umber"></div>
                   </label>
                 </div>
 

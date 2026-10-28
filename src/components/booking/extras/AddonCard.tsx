@@ -81,7 +81,12 @@ export function AddonCard({
 
       <div className={`mt-4 flex min-h-12 items-center gap-3 ${selected || locked ? "justify-between" : "justify-end"}`}>
         {(selected || locked) && onOpenCustomize && !locked && (
-          <button type="button" onClick={onOpenCustomize} className="flex min-w-0 items-center gap-2 text-left text-xs text-smoke-fade hover:text-cowboy-umber">
+          <button
+            type="button"
+            onClick={onOpenCustomize}
+            aria-label={`Customize ${product.name} schedule and preferences`}
+            className="flex min-w-0 items-center gap-2 rounded-lg text-left text-xs text-smoke-fade hover:text-cowboy-umber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2"
+          >
             <Clock className="h-4 w-4 shrink-0 text-copper" />
             <span className="min-w-0">
               <span className="block max-w-52.5 truncate font-bold text-cowboy-umber">{addOnPreferenceSummary(preference)}</span>
@@ -105,7 +110,12 @@ export function AddonCard({
             <Check className="h-4 w-4 text-nude-ember" /> Included
           </span>
         ) : (
-          <button type="button" onClick={onToggle} className="inline-flex h-12 min-w-37.75 items-center justify-center gap-2 rounded-full bg-lake-forest px-4 font-button text-sm uppercase tracking-wider text-white transition hover:brightness-110" aria-label={`Remove ${product.name} from stay`}>
+          <button
+            type="button"
+            onClick={onToggle}
+            className="inline-flex h-12 min-w-37.75 items-center justify-center gap-2 rounded-full bg-lake-forest px-4 font-button text-sm uppercase tracking-wider text-white transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2"
+            aria-label={`Remove ${product.name} from stay`}
+          >
             <Minus className="h-4 w-4" /> Added
           </button>
         )}
