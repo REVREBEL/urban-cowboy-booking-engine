@@ -13,6 +13,9 @@ import { FocusAmenity } from '@/components/rooms/FocusAmenity';
 import { SideFocusAmenityBar } from '@/components/rooms/SideFocusAmenityBar';
 import { PhotoTourArrow } from '@/journey/PhotoTourArrow';
 
+/** Empty fallback map to preserve reference stability across renders when cmsHotspots is omitted. */
+const EMPTY_CMS_HOTSPOTS: CmsPhotoHotspotMap = {};
+
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
 const FX: (string | undefined)[] = [];
 const FX_LABEL: Record<string, string> = {
@@ -21,7 +24,7 @@ const FX_LABEL: Record<string, string> = {
 };
 
 
-export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, details, onDetails, onChoose, onPrevious, onNext, sideAmenitiesHost, currency = "USD" }: {
+export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position, count, score, details, onDetails, onChoose, onPrevious, onNext, sideAmenitiesHost, currency = "USD" }: {
   room: JourneyRoom; cmsHotspots?: CmsPhotoHotspotMap; position: number; count: number; score?: number;
   details: boolean; onDetails: (open: boolean) => void; onChoose: () => void; currency?: string;
   onPrevious?: () => void; onNext?: () => void; sideAmenitiesHost?: HTMLElement | null;
@@ -139,18 +142,16 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   }, [room.images, room.cmsAmenities, cmsHotspots]);
 
   const pins = photoHighlightsMap.get(room.images[photo]) ?? [];
-  const amenities = useMemo(() => roomAmenities(room), [room]);
-  const sideAmenities = useMemo(() => {
-    const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
-    return unseenAmenities.map((amenity) => ({
-      id: amenity.id ?? `amenity:${amenity.title}`,
-      title: amenity.title,
-      description: amenity.longNote ?? amenity.note,
-      iconPath: amenity.iconPath,
-      imageUrl: amenity.imageUrl,
-      icon: amenity.icon,
-    }));
-  }, [amenities, pins]);
+  const amenities = roomAmenities(room);
+  const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
+  const sideAmenities = unseenAmenities.map((amenity) => ({
+    id: amenity.id ?? `amenity:${amenity.title}`,
+    title: amenity.title,
+    description: amenity.longNote ?? amenity.note,
+    iconPath: amenity.iconPath,
+    imageUrl: amenity.imageUrl,
+    icon: amenity.icon,
+  }));
   const selected = pins.find((pin) => pin.id === activePin);
   // Embla animates horizontal movement; jump immediately for reduced-motion users.
   const goPhoto = (direction: number) => {
