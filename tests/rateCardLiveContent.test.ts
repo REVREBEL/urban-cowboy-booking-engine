@@ -206,3 +206,58 @@ test("the free-cancellation cutoff day itself is already partially refundable", 
     "Partially Refundable until Jun 09, 2027",
   );
 });
+
+// Both cutoffs are property-local calendar dates, not UTC dates or arrival times.
+for (const { label, cutoff, midnight, clocks } of [
+  {
+    label: "spring forward",
+    cutoff: "2027-03-14",
+    midnight: "2027-03-14T05:00:00Z",
+    clocks: ["2027-03-14T06:59:59Z", "2027-03-14T07:00:00Z"],
+  },
+  {
+    label: "fall back",
+    cutoff: "2027-11-07",
+    midnight: "2027-11-07T04:00:00Z",
+    clocks: ["2027-11-07T05:30:00Z", "2027-11-07T06:30:00Z"],
+  },
+]) {
+  for (const period of ["days", "hours"] as const) {
+    test(`${label}: ${period} cancellation cutoffs change at New York midnight`, () => {
+      const config = {
+        ...baseConfig,
+        cancellationPenaltyWindow: period === "days" ? 14 : 14 * 24,
+        cancellationPenaltyWindowPeriod: period,
+        cancellationFullForfeitWindow: period === "days" ? 5 : 5 * 24,
+        cancellationFullForfeitWindowPeriod: period,
+      };
+      const arrival = new Date(`${cutoff}T12:00:00Z`);
+      arrival.setUTCDate(arrival.getUTCDate() + 14);
+      const checkIn = arrival.toISOString().slice(0, 10);
+      const freeText = label === "spring forward"
+        ? "Free Cancellation until Mar 14, 2027"
+        : "Free Cancellation until Nov 07, 2027";
+      const partialText = label === "spring forward"
+        ? "Partially Refundable until Mar 23, 2027"
+        : "Partially Refundable until Nov 16, 2027";
+      assert.equal(cancellationConfirmation(baseRate, config, checkIn,
+        new Date(Date.parse(midnight) - 1)), freeText);
+      for (const instant of [midnight, ...clocks]) {
+        assert.equal(cancellationConfirmation(baseRate, config, checkIn,
+          new Date(instant)), partialText, instant);
+      }
+
+      // Put the full-forfeit cutoff on the transition day as well.
+      arrival.setUTCDate(arrival.getUTCDate() - 9);
+      const forfeitCheckIn = arrival.toISOString().slice(0, 10);
+      assert.equal(cancellationConfirmation(baseRate, config, forfeitCheckIn,
+        new Date(Date.parse(midnight) - 1)), label === "spring forward"
+          ? "Partially Refundable until Mar 14, 2027"
+          : "Partially Refundable until Nov 07, 2027");
+      for (const instant of [midnight, ...clocks]) {
+        assert.equal(cancellationConfirmation(baseRate, config, forfeitCheckIn,
+          new Date(instant)), "Full Prepay Non Refundable", instant);
+      }
+    });
+  }
+}

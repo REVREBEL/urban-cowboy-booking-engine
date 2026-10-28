@@ -4,22 +4,9 @@ import { RoomType, SearchCriteria } from '@/types';
 import type { RoomTypeCmsReview } from '@/types/room-type-cms';
 import { AmenityWoodcutIcon } from '@/components/icons/AmenityWoodcutIcon';
 import { GuestReviewQuoteCard } from './GuestReviewQuoteCard';
+import { formatReviewDate } from '@/lib/reviewDate';
 import { X, Bath, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const reviewDateFmt = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-  day: "numeric",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-function formatReviewDate(value: string | null | undefined): string | null {
-  if (!value) return null;
-  const timestamp = Date.parse(value);
-  if (!Number.isFinite(timestamp)) return null;
-
-  return reviewDateFmt.format(new Date(timestamp));
-}
 
 export interface RoomDetailModalProps {
   room: RoomType | null;

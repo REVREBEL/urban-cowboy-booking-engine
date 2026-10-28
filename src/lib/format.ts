@@ -86,12 +86,9 @@ export function toUtc(date: string): string {
   return /T/.test(date) ? date : `${date}T00:00:00Z`;
 }
 
-// Mews stay boundaries must represent midnight at the property, not UTC midnight.
-// Catskills is currently the only configured property, so booking API calls use
-// America/New_York while display-only date math can continue using toUtc().
-const propUtcCache = new Map<string, Intl.DateTimeFormat>();
-const getPropUtcFormatter = (timeZone: string) => {
-  let f = propUtcCache.get(timeZone);
+const propertyUtcCache = new Map<string, Intl.DateTimeFormat>();
+const getPropertyUtcFormatter = (timeZone: string) => {
+  let f = propertyUtcCache.get(timeZone);
   if (!f) {
     f = new Intl.DateTimeFormat("en-US", {
       timeZone,
@@ -103,15 +100,18 @@ const getPropUtcFormatter = (timeZone: string) => {
       second: "2-digit",
       hourCycle: "h23",
     });
-    propUtcCache.set(timeZone, f);
+    propertyUtcCache.set(timeZone, f);
   }
   return f;
 };
 
+// Mews stay boundaries must represent midnight at the property, not UTC midnight.
+// Catskills is currently the only configured property, so booking API calls use
+// America/New_York while display-only date math can continue using toUtc().
 export function toPropertyUtc(date: string, timeZone = "America/New_York"): string {
   if (!date || /T/.test(date)) return date;
   const guess = Date.parse(`${date}T00:00:00Z`);
-  const parts = getPropUtcFormatter(timeZone).formatToParts(new Date(guess));
+  const parts = getPropertyUtcFormatter(timeZone).formatToParts(new Date(guess));
   const value = (type: string) => Number(parts.find((part) => part.type === type)?.value ?? 0);
   const representedAsUtc = Date.UTC(value("year"), value("month") - 1, value("day"), value("hour"), value("minute"), value("second"));
   return new Date(guess - (representedAsUtc - guess)).toISOString();

@@ -9,6 +9,7 @@ export interface SideFocusAmenityItem {
   title: string;
   description?: string | null;
   iconPath?: string | null;
+  imageUrl?: string | null;
   icon: TourIcon;
 }
 export interface SideFocusAmenityBarProps {
@@ -23,6 +24,11 @@ export interface SideFocusAmenityBarProps {
 function AmenityTileArtwork({ item }: { item: SideFocusAmenityItem }) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const url = cmsIconUrl(item.iconPath);
+  const webflowUrl = item.imageUrl && /^https:\/\//i.test(item.imageUrl) ? item.imageUrl : null;
+  const [failedWebflowUrl, setFailedWebflowUrl] = useState<string | null>(null);
+  if (webflowUrl && failedWebflowUrl !== webflowUrl) {
+    return <img src={webflowUrl} alt="" aria-hidden="true" className="j-cms-icon h-25 w-27 object-contain" onError={() => setFailedWebflowUrl(webflowUrl)} />;
+  }
   if (!url || failedUrl === url) {
     return <CmsAmenityIcon iconPath={null} fallback={item.icon} className="size-25 object-contain" />;
   }
