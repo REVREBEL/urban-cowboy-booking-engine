@@ -7,6 +7,7 @@
 import { ROOMS, RATE_OPTIONS, EXTRAS, ROOM_IMAGE_ASSETS } from "../data/hotelData.ts";
 import type { RoomType, RateOption } from "../types.ts";
 import type { CmsRoomAmenity } from "../types/photo-hotspot-cms";
+import { money as formatMoney } from "../lib/format.ts";
 
 export type Feature =
   | "indoor-tub"
@@ -236,5 +237,4 @@ export function addOnTotal(a: AddOn, qty: number, nights: number, guests: number
 export function nightsBetween(a: string, b: string) {
   return Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
 }
-export const money = (n: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+export const money = (n: number) => formatMoney(n, "USD", { decimals: 0 });
