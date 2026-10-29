@@ -12,9 +12,10 @@ import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import type { Feature, MatchProfile, Occasion } from "../journey/data";
 import { Button } from "../components/ui/Button";
 import { PillButton } from "@/components/ui/Pill";
+import { money as formatMoney } from "@/lib/format";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+const money = (n: number) => formatMoney(n, "USD", { decimals: 0 });
 const FEATURE_LABEL: Record<Feature, string> = {
   "indoor-tub": "Tub by the window",
   "outdoor-tub": "Soak outside",

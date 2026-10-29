@@ -70,8 +70,8 @@ const RANGES: { key: string; label: string; days: number | null }[] = [
 ];
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-const eur = (n: number | null | undefined) =>
-  new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n ?? 0);
+const eurFormatter = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+const eur = (n: number | null | undefined) => eurFormatter.format(n ?? 0);
 const pct = (n: number) => `${Math.round(n * 100)}%`;
 
 function timeAgo(iso: string): string {
@@ -86,15 +86,15 @@ const STEP_LABEL = new Map(STEPS.map((s) => [s.key, s.label]));
 const stepLabel = (key: string | null) => (key ? STEP_LABEL.get(key) ?? key : "—");
 const statusColor = (c: { paid: boolean; payment_initiated: boolean }) =>
   c.paid ? "bg-emerald-400" : c.payment_initiated ? "bg-amber-400" : "bg-smoke/20";
-const fmtDay = (iso: string) =>
-  new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" }).format(new Date(`${iso}T00:00:00`));
+
+const dayFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short" });
+const clockFmt = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+const dateTimeFmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+
+const fmtDay = (iso: string) => dayFmt.format(new Date(`${iso}T00:00:00`));
 const fmtRange = (ci: string, co: string | null) => (co ? `${fmtDay(ci)} → ${fmtDay(co)}` : fmtDay(ci));
-const fmtClock = (iso: string) =>
-  new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date(iso));
-const fmtDateTime = (iso: string) =>
-  new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(
-    new Date(iso),
-  );
+const fmtClock = (iso: string) => clockFmt.format(new Date(iso));
+const fmtDateTime = (iso: string) => dateTimeFmt.format(new Date(iso));
 // Libellé + couleur d'un événement de la timeline.
 function eventMeta(status: string, step: string | null): { label: string; dot: string } {
   if (status === "paiement_valide") return { label: "Paiement validé", dot: "bg-emerald-500" };
