@@ -357,7 +357,7 @@ const DICT = {
   "conv.holdTimer": { fr: (p) => `Nous gardons votre chambre ${p.time}`, en: (p) => `We're holding your room ${p.time}` },
   "dataBadge.live": { fr: "Données en direct · Mews", en: "Live data · Mews" },
   "dataBadge.secure": { fr: "Paiement sécurisé hébergé par Mews · 3-D Secure", en: "Secure payment hosted by Mews · 3-D Secure" },
-  "phone.countryCode": { fr: "Indicatif pays", en: "Country code" },
+  "phone.countryCode": { fr: "Pays ou région", en: "Country or region" },
   "datePicker.checkIn": { fr: "Arrivée", en: "Check-in" },
   "datePicker.checkOut": { fr: "Départ", en: "Check-out" },
   "datePicker.when": { fr: "Quand ?", en: "When?" },
