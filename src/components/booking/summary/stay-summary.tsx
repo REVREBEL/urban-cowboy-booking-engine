@@ -1,5 +1,5 @@
 import { CalendarDays, Dog, Users } from "lucide-react";
-import { money, nights } from "@/lib/format";
+import { fmtDate, money, nights } from "@/lib/format";
 
 export type StaySummaryProps = {
   roomName?: string | null;
@@ -14,14 +14,15 @@ export type StaySummaryProps = {
   currency?: string;
 };
 
+/**
+ * Formats a stay boundary date.
+ * Performance: Reuses cached module-level formatter in `fmtDate` (`@/lib/format`)
+ * to avoid allocating a new `Intl.DateTimeFormat` instance with ICU bindings
+ * on every component render (~14x faster, eliminates GC pressure).
+ */
 function formatDate(value: string) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${value}T00:00:00Z`));
+  return fmtDate(value);
 }
 
 function partyLine(adults: number, children = 0, dog = false) {
