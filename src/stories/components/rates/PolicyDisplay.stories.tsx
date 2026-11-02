@@ -149,14 +149,53 @@ export const CustomTooltips: Story = {
       month: 'DEC',
     },
     initialDepositTooltip: {
-      title: 'FIRST PAYMENT',
+      title: 'INITIAL DEPOSIT',
       description:
-        'A refundable holding deposit processed immediately upon reservation confirmation.',
+        'This is the amount due at booking. Once your reservation is confirmed, the hotel will charge this amount to the payment method provided.',
     },
     remainingBalanceTooltip: {
-      title: 'FINAL SETTLEMENT',
+      title: 'REMAINING BALANCE',
       description:
-        'The remaining charge automatically settled one week prior to check-in.',
+        'This is the remaining amount due for your stay. It will be charged automatically to your payment method on the date shown above.',
     },
+  },
+};
+
+/**
+ * Property-standard 50% deposit and five-day balance schedule.
+ */
+export const CowboyPaymentSchedule: Story = {
+  args: {
+    orientation: 'horizontal',
+    title: 'PAYMENT & CANCELLATION',
+    initialAmount: '$688.80',
+    remainingAmount: '$688.80',
+    freeCancelDate: {
+      daysPrior: '14',
+      day: '06',
+      month: 'JUN',
+    },
+    nonRefundableDate: {
+      daysPrior: '05',
+      day: '15',
+      month: 'JUN',
+    },
+    initialDepositTooltip: {
+      title: 'INITIAL DEPOSIT',
+      description:
+        'This is the amount due at booking. Once your reservation is confirmed, the hotel will charge this amount to the payment method provided.',
+    },
+    remainingBalanceTooltip: {
+      title: 'REMAINING BALANCE',
+      description:
+        'This is the remaining amount due for your stay. It will be charged automatically to your payment method on the date shown above.',
+    },
+  },
+};
+
+export const TextOnlyFallback: Story = {
+  args: {
+    text: 'Free cancellation through 14 days before arrival. Inside 14 days the deposit is forfeited; inside 5 days the full stay is non-refundable.',
+    label: 'Cancellation policy',
   },
 };
