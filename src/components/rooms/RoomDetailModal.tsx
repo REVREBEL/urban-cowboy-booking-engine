@@ -125,7 +125,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             ref={closeButtonRef}
             onClick={onClose}
             className="w-8 h-8 rounded-full bg-white border border-cowboy-umber/20 hover:bg-alpine-linen flex items-center justify-center text-cowboy-umber transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:outline-hidden"
-            aria-label="Close modal"
+            aria-label={`Close details for ${room.name}`}
           >
             <X className="w-5 h-5" aria-hidden="true" />
           </button>
@@ -161,7 +161,12 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                   </button>
                 </>
               )}
-              <div className="absolute bottom-4 left-4 bg-smoke/90 text-white px-3.5 py-1 rounded-full text-xs font-label uppercase tracking-wider border border-white/20">
+              <div
+                className="absolute bottom-4 left-4 bg-smoke/90 text-white px-3.5 py-1 rounded-full text-xs font-label uppercase tracking-wider border border-white/20"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 Photo {activeImageIndex + 1} of {room.images.length}
               </div>
             </div>
