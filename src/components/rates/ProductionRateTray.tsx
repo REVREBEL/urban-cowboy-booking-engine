@@ -343,6 +343,19 @@ export function ProductionRateTray({
                   <p className="rc-rate-supporting">{config.supportingText}</p>
                 )}
 
+                {timeline && (
+                  <ol className="rc-card-milestones" aria-label="Cancellation milestones">
+                    {timeline.phases.map((phase) => (
+                      <li key={phase.kind}>
+                        <span>{phaseHeading(phase.kind, language)}</span>
+                        <time dateTime={phase.start}>
+                          {formatShortDate(phase.start)}
+                        </time>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+
                 <div className="rc-rate-spacer" />
 
                 <p
