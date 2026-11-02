@@ -1,5 +1,5 @@
 // SearchBarLocationDropdown.tsx
-import React, { useState, useRef, useId } from 'react';
+import React, { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 
 export type CowboyLocation = 'CATSKILLS' | 'NASHVILLE' | 'DENVER' | string;
 
@@ -14,6 +14,8 @@ export interface SearchBarLocationDropdownProps {
   initialValue?: string;
   onChange?: (location: string) => void;
   onClose?: () => void;
+  /** Focus the currently selected location when opened by an interactive trigger. */
+  focusOnOpen?: boolean;
   className?: string;
 }
 
@@ -22,6 +24,11 @@ export const DEFAULT_LOCATIONS: LocationOption[] = [
   { id: 'nashville', name: 'NASHVILLE', label: 'NASHVILLE' },
   { id: 'denver', name: 'DENVER', label: 'DENVER' },
 ];
+
+function locationIndex(location: string): number {
+  const index = DEFAULT_LOCATIONS.findIndex((item) => item.name === location.toUpperCase());
+  return index >= 0 ? index : 0;
+}
 
 /**
  * Small indicator for the active selected location
@@ -63,16 +70,46 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
   initialValue = 'CATSKILLS',
   onChange,
   onClose,
+  focusOnOpen = false,
   className = '',
 }) => {
   const [internalValue, setInternalValue] = useState<string>(initialValue);
-  const [focusedIndex, setFocusedIndex] = useState<number>(0);
 
   const isControlled = controlledValue !== undefined;
   const activeLocation = isControlled ? controlledValue : internalValue;
+  const [focusedIndex, setFocusedIndex] = useState<number>(() => locationIndex(activeLocation));
 
   const headerId = useId();
-  const listRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setFocusedIndex(locationIndex(activeLocation));
+  }, [activeLocation]);
+
+  useLayoutEffect(() => {
+    if (!focusOnOpen) return;
+
+    const dropdownElement = rootRef.current;
+    const index = locationIndex(activeLocation);
+    triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setFocusedIndex(index);
+    optionRefs.current[index]?.focus();
+
+    return () => {
+      const activeElement = document.activeElement;
+      if (
+        activeElement instanceof HTMLElement &&
+        dropdownElement?.contains(activeElement) &&
+        triggerRef.current?.isConnected
+      ) {
+        triggerRef.current.focus();
+      }
+    };
+    // focusOnOpen is intentionally an open-time behavior. Changing the selected
+    // location must not recapture or restore focus while the dropdown is mounted.
+  }, [focusOnOpen]);
 
   const handleSelect = (locName: string) => {
     if (!isControlled) {
@@ -82,36 +119,44 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
     onClose?.();
   };
 
+  const focusOption = (index: number) => {
+    const next = (index + DEFAULT_LOCATIONS.length) % DEFAULT_LOCATIONS.length;
+    setFocusedIndex(next);
+    optionRefs.current[next]?.focus();
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setFocusedIndex((prev) => (prev + 1) % DEFAULT_LOCATIONS.length);
+      focusOption(focusedIndex + 1);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setFocusedIndex((prev) => (prev - 1 + DEFAULT_LOCATIONS.length) % DEFAULT_LOCATIONS.length);
-    } else if (e.key === 'Enter' || e.key === ' ') {
+      focusOption(focusedIndex - 1);
+    } else if (e.key === 'Home') {
       e.preventDefault();
-      const target = DEFAULT_LOCATIONS[focusedIndex];
-      if (target) handleSelect(target.name);
+      focusOption(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      focusOption(DEFAULT_LOCATIONS.length - 1);
     } else if (e.key === 'Escape') {
       e.preventDefault();
+      e.stopPropagation();
       onClose?.();
     }
   };
 
   return (
     <div
+      ref={rootRef}
       role="dialog"
       aria-labelledby={headerId}
-      tabIndex={0}
       onKeyDown={handleKeyDown}
-      className={`relative box-border flex h-64.75 w-90.5 select-none flex-col items-start gap-2.5 rounded-none border-2 border-input-border bg-input p-6.25 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] outline-none ${className}`}
+      className={`relative box-border flex h-64.75 w-90.5 select-none flex-col items-start gap-2.5 rounded-none border-2 border-input-border bg-input p-6.25 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] ${className}`}
     >
       {/* Frame: 308px x 205px, gap: 5px */}
       <div className="flex flex-col items-start p-0 gap-1.25 w-77 h-51.25 self-stretch flex-1">
         {/* Inner container (guests-dropdown class in CSS): 308px x 198px, gap: 12px */}
         <div
-          ref={listRef}
           role="listbox"
           aria-labelledby={headerId}
           className="flex flex-col items-start p-0 gap-3 w-77 h-49.5"
@@ -133,13 +178,16 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
 
           {/* Location 1: CATSKILLS (Row: 308px x 35px, padding: 8px 0px) */}
           <button
+            ref={(node) => { optionRefs.current[0] = node; }}
             type="button"
             role="option"
+            tabIndex={focusedIndex === 0 ? 0 : -1}
             aria-selected={activeLocation.toUpperCase() === 'CATSKILLS'}
             onClick={() => handleSelect('CATSKILLS')}
+            onFocus={() => setFocusedIndex(0)}
             onMouseEnter={() => setFocusedIndex(0)}
-            className={`box-border flex flex-row items-center justify-between py-2 px-0 w-77 h-8.75 self-stretch text-left bg-transparent border-none cursor-pointer group transition-all focus:outline-none ${
-              focusedIndex === 0 ? 'opacity-100' : 'opacity-90'
+            className={`box-border flex flex-row items-center justify-between py-2 px-1 w-77 h-8.75 self-stretch rounded text-left bg-transparent border-none cursor-pointer group transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-input-border focus-visible:ring-offset-1 ${
+              focusedIndex === 0 ? 'opacity-100 bg-smoke/5' : 'opacity-90'
             }`}
           >
             <div className="flex flex-col items-start p-0 gap-px w-auto h-4.75">
@@ -157,13 +205,16 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
 
           {/* Location 2: NASHVILLE (Row: 308px x 35px, padding: 8px 0px) */}
           <button
+            ref={(node) => { optionRefs.current[1] = node; }}
             type="button"
             role="option"
+            tabIndex={focusedIndex === 1 ? 0 : -1}
             aria-selected={activeLocation.toUpperCase() === 'NASHVILLE'}
             onClick={() => handleSelect('NASHVILLE')}
+            onFocus={() => setFocusedIndex(1)}
             onMouseEnter={() => setFocusedIndex(1)}
-            className={`box-border flex flex-row items-center justify-between py-2 px-0 w-77 h-8.75 self-stretch text-left bg-transparent border-none cursor-pointer group transition-all focus:outline-none ${
-              focusedIndex === 1 ? 'opacity-100' : 'opacity-90'
+            className={`box-border flex flex-row items-center justify-between py-2 px-1 w-77 h-8.75 self-stretch rounded text-left bg-transparent border-none cursor-pointer group transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-input-border focus-visible:ring-offset-1 ${
+              focusedIndex === 1 ? 'opacity-100 bg-smoke/5' : 'opacity-90'
             }`}
           >
             <div className="flex flex-col items-start p-0 gap-px w-auto h-4.75">
@@ -181,13 +232,16 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
 
           {/* Location 3: DENVER (Row: 308px x 35px, padding: 8px 0px) */}
           <button
+            ref={(node) => { optionRefs.current[2] = node; }}
             type="button"
             role="option"
+            tabIndex={focusedIndex === 2 ? 0 : -1}
             aria-selected={activeLocation.toUpperCase() === 'DENVER'}
             onClick={() => handleSelect('DENVER')}
+            onFocus={() => setFocusedIndex(2)}
             onMouseEnter={() => setFocusedIndex(2)}
-            className={`box-border flex flex-row items-center justify-between py-2 px-0 w-77 h-8.75 self-stretch text-left bg-transparent border-none cursor-pointer group transition-all focus:outline-none ${
-              focusedIndex === 2 ? 'opacity-100' : 'opacity-90'
+            className={`box-border flex flex-row items-center justify-between py-2 px-1 w-77 h-8.75 self-stretch rounded text-left bg-transparent border-none cursor-pointer group transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-input-border focus-visible:ring-offset-1 ${
+              focusedIndex === 2 ? 'opacity-100 bg-smoke/5' : 'opacity-90'
             }`}
           >
             <div className="flex flex-col justify-center items-start p-0 w-73 h-4.75">

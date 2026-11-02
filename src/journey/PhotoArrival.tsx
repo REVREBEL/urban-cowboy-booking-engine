@@ -229,6 +229,7 @@ export function Arrive(props: {
                   {props.activeSection === "property" && (
                     <SearchBarLocationDropdown
                       value={props.location}
+                      focusOnOpen
                       onChange={props.setLocation}
                       onClose={() => props.setActiveSection(null)}
                       className="max-w-full"
