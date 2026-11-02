@@ -348,7 +348,7 @@ export const AddonCustomizerModal: React.FC<AddonCustomizerModalProps> = ({
                       setDeliveryType('gift-surprise');
                       setIncludeCard(true);
                     }}
-                    className={`p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between group ${
+                    className={`p-5 sm:p-6 2xl:p-8 rounded-2xl 2xl:rounded-3xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber focus-visible:ring-offset-2 ${
                       isGift
                         ? 'border-cowboy-umber bg-alpine-linen/70 shadow-sm ring-1 ring-cowboy-umber'
                         : 'border-cowboy-umber/15 bg-white hover:border-cowboy-umber/40 hover:bg-paper'
