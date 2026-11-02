@@ -1,5 +1,5 @@
 // SearchBarLocationDropdown.tsx
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 
 export type CowboyLocation = 'CATSKILLS' | 'NASHVILLE' | 'DENVER' | string;
 
@@ -88,7 +88,7 @@ export const SearchBarLocationDropdown: React.FC<SearchBarLocationDropdownProps>
     setFocusedIndex(locationIndex(activeLocation));
   }, [activeLocation]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!focusOnOpen) return;
 
     const dropdownElement = rootRef.current;
