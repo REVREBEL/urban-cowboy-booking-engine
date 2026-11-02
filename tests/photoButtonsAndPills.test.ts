@@ -11,7 +11,6 @@ const photoComponents = [
   "journey/PhotoJourneyHeader.tsx",
   "journey/PhotoRooms.tsx",
   "journey/RoomPhotoTour.tsx",
-  "journey/PhotoRateStep.tsx",
   "journey/PhotoExtrasStep.tsx",
   "journey/PhotoReviewGuest.tsx",
 ];
@@ -28,6 +27,14 @@ test("Photo Engine actions use the shared Button or its PillButton composition",
     assert.ok(count >= closing, `Extra Button close in ${file}`);
     assert.ok(count <= closing + selfClosing + 1, `Possible unmatched Button in ${file}`);
   }
+});
+
+test("Photo rate step delegates actions to the production tray and retains Extras navigation", () => {
+  const step = read("journey/PhotoRateStep.tsx");
+  const tray = read("components/rates/ProductionRateTray.tsx");
+  assert.match(step, /<ProductionRateTray\b/);
+  assert.match(step, /booking\.goTo\("extras"\)/);
+  assert.match(tray, /onSelectRate\(rate\)/);
 });
 
 test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () => {
