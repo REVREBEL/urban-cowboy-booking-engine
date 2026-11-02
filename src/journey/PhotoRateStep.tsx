@@ -41,9 +41,9 @@ export function PhotoRateStep() {
   const image = photo.images[photo.images.length > 1 ? 1 : 0];
 
   return (
-    <section className="min-h-dvh bg-paper text-lake-forest" data-photo-rate-step>
+    <section className="relative min-h-dvh overflow-hidden bg-smoke text-paper" data-photo-rate-step>
       {image && (
-        <div className="relative h-44 overflow-hidden bg-smoke sm:h-60 lg:h-72">
+        <>
           <img
             src={image}
             alt=""
@@ -51,25 +51,25 @@ export function PhotoRateStep() {
             className="absolute inset-0 h-full w-full object-cover"
             fetchPriority="high"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-smoke/60 to-smoke/10" />
-          <p className="absolute bottom-6 left-5 font-label text-xs uppercase tracking-[0.22em] text-paper sm:left-8">
-            03 — How would you like to stay?
-          </p>
-        </div>
+          <div className="absolute inset-0 bg-linear-to-t from-smoke via-smoke/70 to-smoke/15" />
+        </>
       )}
-      <ProductionRateTray
-        roomName={room.name}
-        checkIn={booking.checkIn}
-        nights={booking.nightsCount}
-        rates={room.rates}
-        configs={configs}
-        selectedRateId={booking.selectedRate?.rateId ?? null}
-        onSelectRate={(rate) => {
-          booking.selectRoomRate(room, rate);
-          booking.goTo("extras");
-        }}
-        onChangeRoom={() => booking.goTo("results")}
-      />
+      <div className="relative z-10 pt-44 sm:pt-60 lg:pt-72">
+        <ProductionRateTray
+          roomName={room.name}
+          checkIn={booking.checkIn}
+          nights={booking.nightsCount}
+          rates={room.rates}
+          configs={configs}
+          selectedRateId={booking.selectedRate?.rateId ?? null}
+          showChangeRoomAction={false}
+          onSelectRate={(rate) => {
+            booking.selectRoomRate(room, rate);
+            booking.goTo("extras");
+          }}
+          onChangeRoom={() => booking.goTo("results")}
+        />
+      </div>
     </section>
   );
 }
