@@ -38,3 +38,15 @@ test("Photo add-ons use the existing card and smart customizer modal rather than
   assert.match(modal, /normalizeAddOnPreference/);
   assert.doesNotMatch(extras, /const timingOptions =/);
 });
+
+
+test("Extras customization controls preserve keyboard focus visibility and accessible names", () => {
+  const card = file("components/booking/extras/AddonCard.tsx");
+  const modal = file("components/booking/extras/AddonCustomizerModal.tsx");
+
+  assert.match(card, /Current preference: \${preferenceSummary}/);
+  assert.match(card, /focus-visible:ring-2 focus-visible:ring-cowboy-umber/);
+  assert.match(modal, /aria-label="Include handwritten Cowboy note card"/);
+  assert.match(modal, /peer-focus-visible:ring-2 peer-focus-visible:ring-cowboy-umber/);
+  assert.match(modal, /focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber/);
+});
