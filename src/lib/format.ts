@@ -37,13 +37,13 @@ export function regionName(code: string): string {
 
 // Currency formatters cached by locale + ISO currency + decimals.
 const numCache = new Map<string, Intl.NumberFormat>();
-const moneyFmt = (currency: string, decimals: number) => {
+const moneyFmt = (currency: string, decimals: number, localeOverride?: string) => {
   const code = (currency || "USD").toUpperCase();
   // USD prices belong to the Catskills property and should retain the familiar
   // American price treatment ($282.24) in both language variants. Formatting
   // USD with fr-FR/en-GB produces "$US"/"US$", which reads like an accidental
   // currency conversion rather than the hotel's native rate.
-  const formatLocale = code === "USD" ? "en-US" : locale();
+  const formatLocale = localeOverride ?? (code === "USD" ? "en-US" : locale());
   const key = `${formatLocale}:${code}:${decimals}`;
   let f = numCache.get(key);
   if (!f) {
@@ -63,12 +63,12 @@ const moneyFmt = (currency: string, decimals: number) => {
 export function money(
   value: number | null | undefined,
   currency: string,
-  opts?: { decimals?: 0 | 2 },
+  opts?: { decimals?: 0 | 2; locale?: string },
 ): string {
   if (value == null || !Number.isFinite(value)) return "—";
   const d = opts?.decimals ?? (Number.isInteger(value) ? 0 : 2);
   try {
-    return moneyFmt(currency, d).format(value);
+    return moneyFmt(currency, d, opts?.locale).format(value);
   } catch {
     return `${currency} ${value.toFixed(d)}`;
   }

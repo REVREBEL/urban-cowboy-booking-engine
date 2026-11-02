@@ -12,6 +12,7 @@ import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
 import { FocusAmenity } from '@/components/rooms/FocusAmenity';
 import { SideFocusAmenityBar } from '@/components/rooms/SideFocusAmenityBar';
 import { PhotoTourArrow } from '@/journey/PhotoTourArrow';
+import { money } from '@/lib/format';
 
 /** Empty fallback map to preserve reference stability across renders when cmsHotspots is omitted. */
 const EMPTY_CMS_HOTSPOTS: CmsPhotoHotspotMap = {};
@@ -361,7 +362,7 @@ export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position
         </div>
 
         <div className="j-tour-actions">
-          <p className="shrink-0 tabular-nums" style={{ opacity: details ? 0 : 1 }}><span className="text-xs text--paper/75">from </span><span className="font-number text-xl sm:text-[39px]">{new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(room.basePrice)}</span><span className="text-xs text--paper/75"> /night</span></p>
+          <p className="shrink-0 tabular-nums" style={{ opacity: details ? 0 : 1 }}><span className="text-xs text--paper/75">from </span><span className="font-number text-xl sm:text-[39px]">{money(room.basePrice, currency, { decimals: 0, locale: "en-US" })}</span><span className="text-xs text--paper/75"> /night</span></p>
           <Button variant="outline" colorScheme="alpine-linen" size="small" aria-expanded={details} aria-controls={`tour-details-${room.id}`} onClick={() => onDetails(!details)} className="j-details-toggle sm:px-5.5!">{details ? 'Return to Rooms' : 'Details'}</Button>
           <Button variant="filled" colorScheme="alpine-linen" size="small" onClick={onChoose} className="sm:px-5.5!" style={{ opacity: details ? 0 : 1, pointerEvents: details ? "none" : undefined }}>Choose room</Button>
           <div className="j-roomnav-desktop flex items-center gap-1" style={{ opacity: details ? 0 : 1, pointerEvents: details ? "none" : undefined }}>

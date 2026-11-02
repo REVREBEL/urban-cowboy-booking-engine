@@ -14,14 +14,16 @@ export type StaySummaryProps = {
   currency?: string;
 };
 
+const staySummaryDateFmt = new Intl.DateTimeFormat("en-US", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
 function formatDate(value: string) {
   if (!value) return "—";
-  return new Intl.DateTimeFormat("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(`${value}T00:00:00Z`));
+  return staySummaryDateFmt.format(new Date(`${value}T00:00:00Z`));
 }
 
 function partyLine(adults: number, children = 0, dog = false) {
