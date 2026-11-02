@@ -1,17 +1,20 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type WheelEvent as ReactWheelEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type WheelEvent as ReactWheelEvent } from 'react';
 import { createPortal } from 'react-dom';
 import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import type { JourneyRoom } from './data';
-import { PHOTO_HIGHLIGHTS, roomAmenities } from '@/journey/tour';
+import { PHOTO_HIGHLIGHTS, roomAmenities, type PhotoHighlight } from '@/journey/tour';
 import { cmsHighlightsForPhoto } from '@/journey/cmsTour';
 import type { CmsPhotoHotspotMap } from '@/types/photo-hotspot-cms';
 import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
 import { FocusAmenity } from '@/components/rooms/FocusAmenity';
 import { SideFocusAmenityBar } from '@/components/rooms/SideFocusAmenityBar';
 import { PhotoTourArrow } from '@/journey/PhotoTourArrow';
+
+/** Empty fallback map to preserve reference stability across renders when cmsHotspots is omitted. */
+const EMPTY_CMS_HOTSPOTS: CmsPhotoHotspotMap = {};
 
 /** Photo-enhancement demo: room 1 combines ambient backlight with film grain + vignette; all other photos stay plain. */
 const FX: (string | undefined)[] = [];
@@ -21,7 +24,7 @@ const FX_LABEL: Record<string, string> = {
 };
 
 
-export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, details, onDetails, onChoose, onPrevious, onNext, sideAmenitiesHost, currency = "USD" }: {
+export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position, count, score, details, onDetails, onChoose, onPrevious, onNext, sideAmenitiesHost, currency = "USD" }: {
   room: JourneyRoom; cmsHotspots?: CmsPhotoHotspotMap; position: number; count: number; score?: number;
   details: boolean; onDetails: (open: boolean) => void; onChoose: () => void; currency?: string;
   onPrevious?: () => void; onNext?: () => void; sideAmenitiesHost?: HTMLElement | null;
@@ -124,9 +127,21 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
   }, [details, onDetails]);
 
   const fx = FX[position];
-  const pins = room.cmsAmenities
-    ? cmsHighlightsForPhoto(room.images[photo], room.cmsAmenities, cmsHotspots)
-    : PHOTO_HIGHLIGHTS[room.images[photo]] ?? [];
+
+  // Performance optimization: Precompute CMS highlights or static photo highlights for all images of this room.
+  // Prevents re-running cmsHighlightsForPhoto and map allocations on every state update or active pin hover.
+  const photoHighlightsMap = useMemo(() => {
+    const map = new Map<string, PhotoHighlight[]>();
+    for (const src of room.images) {
+      const highlights = room.cmsAmenities
+        ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots)
+        : PHOTO_HIGHLIGHTS[src] ?? [];
+      map.set(src, highlights);
+    }
+    return map;
+  }, [room.images, room.cmsAmenities, cmsHotspots]);
+
+  const pins = photoHighlightsMap.get(room.images[photo]) ?? [];
   const amenities = roomAmenities(room);
   const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
   const sideAmenities = unseenAmenities.map((amenity) => ({
@@ -243,7 +258,7 @@ export function RoomPhotoTour({ room, cmsHotspots = {}, position, count, score, 
                   }} />
                 <div className={`j-hotspots ${details && photo === index ? 'is-open' : ''}`} inert={!details || photo !== index} aria-hidden={!details || photo !== index}>
 
-                  {(room.cmsAmenities ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots) : PHOTO_HIGHLIGHTS[src] ?? []).map((pin, pinIndex, allPins) => (
+                  {(photoHighlightsMap.get(src) ?? []).map((pin, pinIndex, allPins) => (
                     <div
                       key={pin.id}
                       className="j-hotspot-anchor"
