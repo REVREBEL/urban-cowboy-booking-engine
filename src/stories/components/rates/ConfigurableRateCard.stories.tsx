@@ -5,6 +5,14 @@ const meta: Meta<typeof ConfigurableRateCard> = {
   title: 'Components/Rates/ConfigurableRateCard',
   component: ConfigurableRateCard,
   tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        component: 'CMS-configurable rate artwork shell with live Mews pricing, cancellation copy, vertical and horizontal layouts, and an expandable booking action.',
+      },
+    },
+  },
   args: {
     config: {
       id: 'stay-awhile',
@@ -85,5 +93,26 @@ export const OutlineButton: Story = {
       ...meta.args!.config!,
       buttonStyle: 'outline',
     },
+  },
+};
+
+export const Expanded: Story = {
+  args: {
+    isExpanded: true,
+    confirmLabel: 'Agree & Confirm',
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
+};
+
+export const HorizontalExpanded: Story = {
+  args: {
+    layout: 'horizontal',
+    isExpanded: true,
+    confirmLabel: 'Agree & Confirm',
   },
 };

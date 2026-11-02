@@ -31,10 +31,10 @@ const meta: Meta<typeof ConfigurableRateOffer> = {
       ctaLabel: 'Book Rate',
       desktopOverlayPosition: 'normal',
       mobileOverlayPosition: 'normal',
-      cancellationPenaltyWindow: null,
-      cancellationPenaltyWindowPeriod: null,
-      cancellationFullForfeitWindow: null,
-      cancellationFullForfeitWindowPeriod: null,
+      cancellationPenaltyWindow: 14,
+      cancellationPenaltyWindowPeriod: 'days',
+      cancellationFullForfeitWindow: 5,
+      cancellationFullForfeitWindowPeriod: 'days',
     },
     live: {
       price: '$360',
@@ -50,12 +50,13 @@ const meta: Meta<typeof ConfigurableRateOffer> = {
       dueToday: '$360.00',
       remaining: '$812.40',
     },
-    depositNote: 'First night deposit due today upon booking.',
-    remainingNote: 'Remaining balance due 14 days prior to check-in.',
-    fullPolicyText: 'Free cancellation up to 14 days before arrival. Cancellations made within 14 days will forfeit the deposit.',
+    depositNote: '50% deposit charged once the reservation is confirmed.',
+    remainingNote: 'Remaining balance automatically charged 5 days before arrival.',
+    fullPolicyText: 'Free cancellation through 14 days before arrival. Inside 14 days the deposit is forfeited; inside 5 days the full stay is non-refundable.',
+    checkIn: '2027-06-20',
   },
   argTypes: {
-    theme: { control: 'select', options: ['paper', 'copper', 'lake-forest'] },
+    theme: { control: 'select', options: ['ride-easy', 'plan-ahead', 'stay-while', 'sunup', 'outfit'] },
     variant: { control: 'radio', options: ['default', 'compact'] },
     isExpanded: { control: 'boolean' },
     onToggleExpand: { action: 'onToggleExpand' },
@@ -84,6 +85,42 @@ export const CompactExpanded: Story = {
 export const PlanAheadThemeExpanded: Story = {
   args: {
     theme: 'plan-ahead',
+    isExpanded: true,
+  },
+};
+
+export const CompactWithPaymentMilestones: Story = {
+  args: {
+    variant: 'compact',
+    isExpanded: true,
+    checkIn: '2027-06-20',
+  },
+};
+
+export const RideEasyExpanded: Story = {
+  args: {
+    theme: 'ride-easy',
+    isExpanded: true,
+  },
+};
+
+export const StayAwhileExpanded: Story = {
+  args: {
+    theme: 'stay-while',
+    isExpanded: true,
+  },
+};
+
+export const SunupExpanded: Story = {
+  args: {
+    theme: 'sunup',
+    isExpanded: true,
+  },
+};
+
+export const OutfitExpanded: Story = {
+  args: {
+    theme: 'outfit',
     isExpanded: true,
   },
 };
