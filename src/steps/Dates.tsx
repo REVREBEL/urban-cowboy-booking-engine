@@ -193,6 +193,7 @@ export function Dates() {
                 {activeSection === "property" && (
                   <SearchBarLocationDropdown
                     value={location}
+                    focusOnOpen
                     onChange={setLocation}
                     onClose={() => setActiveSection(null)}
                     className="max-w-full"
