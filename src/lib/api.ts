@@ -19,6 +19,7 @@ import { apiLog } from "./apiLog";
 import { isStudioRoute } from "../studio/runtime";
 import { demoMewsResponse } from "../studio/demoData";
 import type { RateCardConfig } from "../types/rate-card";
+import type { PolicyLanguage } from "../types/policy-language";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 import type { AddOnCmsItem } from "../types/add-on-cms";
 import type {
@@ -185,6 +186,12 @@ export const api = {
         why: "Loads the shared 2-adult calendar snapshot for starting prices, sold-out states, and restriction guidance. Exact occupancy and pricing are validated by the live search after Search.",
       },
     ),
+
+  policyLanguage: () =>
+    contentCall<{ language: Partial<PolicyLanguage> }>("policy-language", {
+      label: "Policy wording CMS",
+      why: "Loads published policy copy from Webflow Content Settings for rates and payment milestones.",
+    }).then((response) => response.language).catch((): Partial<PolicyLanguage> => ({})),
 
   rateCards: () =>
     contentCall<{ cards: RateCardConfig[] }>("rate-cards", {
