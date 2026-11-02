@@ -391,7 +391,7 @@
 .rc-page {
   --rc-ink: var(--lake-forest);
   --rc-paper: var(--paper);
-  --rc-free: #3e5948;
+  --rc-free: var(--lake-forest-fade);
   --rc-kept: var(--copper);
   --rc-locked: var(--oxblood);
   --rc-line: color-mix(in oklab, var(--lake-forest) 18%, transparent);
@@ -521,8 +521,8 @@
 
 .rc-production {
   --rc-ink: var(--lake-forest);
-  --rc-paper: #ffffff;
-  --rc-free: #3e5948;
+  --rc-paper: var(--paper);
+  --rc-free: var(--lake-forest-fade);
   --rc-kept: var(--copper);
   --rc-locked: var(--oxblood);
   --rc-line: color-mix(in oklab, var(--lake-forest) 18%, transparent);
@@ -564,9 +564,24 @@
   font-size: 28px;
 }
 
-.rc-production .rc-book:disabled {
-  cursor: not-allowed;
-  opacity: .45;
+.rc-production .rc-action-slot {
+  flex-shrink: 0;
+}
+
+.rc-production .rc-action-link {
+  padding-inline: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.rc-production .rc-action-primary {
+  white-space: normal;
+  text-align: center;
+}
+
+.rc-production .rc-action-slot:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 3px;
 }
 
 .rc-empty {
@@ -596,7 +611,7 @@
     flex-direction: column;
   }
 
-  .rc-production-tray-actions .rc-book {
+  .rc-production-tray-actions .rc-action-primary {
     width: 100%;
   }
 }
