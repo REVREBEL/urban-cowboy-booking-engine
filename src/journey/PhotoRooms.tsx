@@ -15,9 +15,10 @@ import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
 import { photoGalleryForRoom, studioEditorialRoomTypeId, type PhotoSource } from "@/data/photoGalleries";
 import type { Feature, MatchProfile } from "../journey/data";
+import { money as formatMoney } from "@/lib/format";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const money = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+const money = (n: number) => formatMoney(n, "USD", { decimals: 0 });
 const FEATURE_LABEL: Record<Feature, string> = {
   "indoor-tub": "Tub by the window", "outdoor-tub": "Soak outside",
   fireplace: "Fire or wood stove", view: "Big views", gather: "Space to gather",
