@@ -348,8 +348,8 @@ export function ProductionRateTray({
                     {timeline.phases.map((phase) => (
                       <li key={phase.kind}>
                         <span>{phaseHeading(phase.kind, language)}</span>
-                        <time dateTime={phase.start}>
-                          {formatShortDate(phase.start)}
+                        <time dateTime={phase.end}>
+                          {formatShortDate(phase.end)}
                         </time>
                       </li>
                     ))}
