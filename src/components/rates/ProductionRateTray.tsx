@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
 import type { RateCardConfig } from "@/types/rate-card";
 import { resolveRateCardConfig } from "@/lib/rateCardConfig";
@@ -9,6 +10,32 @@ import {
   type CancellationTimeline,
   type PhaseKind,
 } from "@/lib/cancellationTimeline";
+
+// Named action slots keep every rate-card and tray action on the global Button system.
+type RateActionSlot = "change-room" | "details" | "select" | "close-details" | "browse-rooms";
+function RateAction({
+  slot, children, className = "", ...props
+}: {
+  slot: RateActionSlot;
+  children: ReactNode;
+  className?: string;
+} & Omit<React.ComponentProps<typeof Button>, "children" | "className" | "variant" | "colorScheme" | "size">) {
+  const isPrimary = slot === "select";
+  return (
+    <Button
+      type="button"
+      data-slot={slot}
+      variant={isPrimary ? "filled" : "transparent"}
+      colorScheme="lake-forest"
+      size={isPrimary ? "small" : "xsmall"}
+      textCase={isPrimary ? "uppercase" : "title"}
+      className={`rc-action-slot ${isPrimary ? "rc-action-primary" : "rc-action-link"} ${className}`}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+}
 
 const DEFAULT_POLICY = {
   freeCancelDays: 14,
@@ -287,9 +314,9 @@ export function ProductionRateTray({
           <p className="rc-eyebrow">Choose how you want to stay</p>
           <h1 id="rate-selection-title" className="rc-production-title">{roomName}</h1>
         </div>
-        <button type="button" className="rc-link" onClick={onChangeRoom}>
+        <RateAction slot="change-room" onClick={onChangeRoom}>
           ← Change room
-        </button>
+        </RateAction>
       </div>
 
       <div className="rc-production rc-grid-wrap">
@@ -349,24 +376,22 @@ export function ProductionRateTray({
                 </div>
 
                 <div className="rc-actions">
-                  <button
-                    type="button"
-                    className="rc-link"
+                  <RateAction
+                    slot="details"
                     aria-expanded={isOpen}
                     onClick={() => setOpenRateId(isOpen ? null : rate.rateId)}
                   >
                     {isOpen ? "Hide details" : "View details"}
-                  </button>
-                  <button
-                    type="button"
-                    className="rc-book"
+                  </RateAction>
+                  <RateAction
+                    slot="select"
                     disabled={rate.totalGross == null}
                     onClick={() => onSelectRate(rate)}
                   >
                     {isSelected
                       ? "Selected"
                       : config?.ctaLabel?.trim() || "Choose this rate"}
-                  </button>
+                  </RateAction>
                 </div>
               </article>
             );
@@ -380,13 +405,9 @@ export function ProductionRateTray({
                 <p className="rc-eyebrow">{openConfig?.eyebrow || "Rate details"}</p>
                 <h2 className="rc-name">{openConfig?.headline || openRate.name}</h2>
               </div>
-              <button
-                type="button"
-                className="rc-link"
-                onClick={() => setOpenRateId(null)}
-              >
+              <RateAction slot="close-details" onClick={() => setOpenRateId(null)}>
                 Close ×
-              </button>
+              </RateAction>
             </div>
 
             <RateDetailBody
@@ -400,14 +421,13 @@ export function ProductionRateTray({
               <b className="rc-num">
                 {formatMoney(openRate.totalGross, openRate.currency)}
               </b>
-              <button
-                type="button"
-                className="rc-book"
+              <RateAction
+                slot="select"
                 disabled={openRate.totalGross == null}
                 onClick={() => onSelectRate(openRate)}
               >
                 {openConfig?.ctaLabel?.trim() || "Choose this rate"}
-              </button>
+              </RateAction>
             </div>
           </div>
         )}
@@ -416,9 +436,9 @@ export function ProductionRateTray({
       {sortedRates.length === 0 && (
         <div className="rc-empty">
           <p>No rates are available for this room on these dates.</p>
-          <button type="button" className="rc-link" onClick={onChangeRoom}>
+          <RateAction slot="browse-rooms" onClick={onChangeRoom}>
             Browse other rooms
-          </button>
+          </RateAction>
         </div>
       )}
     </section>
