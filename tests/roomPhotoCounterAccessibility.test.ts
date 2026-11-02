@@ -12,8 +12,9 @@ test("room photo counter announces meaningful photo position", () => {
 });
 
 test("room detail modal photo counter announces photo position to screen readers", () => {
-  assert.match(modalSource, /role="status"/);
-  assert.match(modalSource, /aria-live="polite"/);
-  assert.match(modalSource, /aria-atomic="true"/);
-  assert.match(modalSource, /Photo \{activeImageIndex \+ 1\} of \{room\.images\.length\}/);
+  // Validate the counter's text and ARIA attributes together, not anywhere in the file.
+  assert.match(
+    modalSource,
+    /<div\b(?=[^>]*\brole="status")(?=[^>]*\baria-live="polite")(?=[^>]*\baria-atomic="true")[^>]*>\s*Photo \{activeImageIndex \+ 1\} of \{room\.images\.length\}\s*<\/div>/,
+  );
 });
