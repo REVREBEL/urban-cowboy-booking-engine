@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
 import type { RateCardConfig } from "@/types/rate-card";
@@ -19,7 +19,7 @@ function RateAction({
   slot: RateActionSlot;
   children: ReactNode;
   className?: string;
-} & Omit<React.ComponentProps<typeof Button>, "children" | "className" | "variant" | "colorScheme" | "size">) {
+} & Omit<ComponentProps<typeof Button>, "children" | "className" | "variant" | "colorScheme" | "size">) {
   const isPrimary = slot === "select";
   return (
     <Button
