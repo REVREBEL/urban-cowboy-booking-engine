@@ -27,6 +27,7 @@ export function PhotoJourneyHeader() {
   const booking = useBooking();
   if (booking.step === "confirmation") return null;
   const index = stageIndex(booking.step);
+  const isRateStep = booking.step === "rates";
   const previous: Record<Step, Step> = {
     dates: "dates",
     results: "dates",
@@ -41,14 +42,14 @@ export function PhotoJourneyHeader() {
   return (
     <header className="j-journey-header fixed inset-x-0 top-0 z-40 text-paper" data-photo-journey-header>
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <div className="flex w-20 shrink-0 items-center gap-3">
+        <div className={`flex shrink-0 items-center gap-3 ${isRateStep ? "w-32" : "w-20"}`}>
           {index > 0 && (
             <Button type="button" variant="transparent" colorScheme="paper" size="xsmall" style={{padding: 0, fontSize: "11px", fontWeight: 400}} onClick={() => booking.goTo(previous[booking.step])}
               className={`${label} j-journey-back flex items-center gap-2 text-paper/80 transition hover:text-paper`}>
               <span className="j-journey-back-icon" aria-hidden="true">
                 <PhotoTourArrow direction="left" size={20} />
               </span>
-              Back
+              {isRateStep ? "Change Room" : "Back"}
             </Button>
           )}
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import type { ShapedRate } from "@/types/mews";
 import type { RateCardConfig } from "@/types/rate-card";
 import { resolveRateCardConfig } from "@/lib/rateCardConfig";
@@ -46,6 +46,7 @@ interface ProductionRateTrayProps {
   selectedRateId?: string | null;
   onSelectRate: (rate: ShapedRate) => void;
   onChangeRoom: () => void;
+  showChangeRoomAction?: boolean;
 }
 
 function formatMoney(amount: number | null | undefined, currency: string) {
@@ -56,6 +57,19 @@ function formatMoney(amount: number | null | undefined, currency: string) {
     minimumFractionDigits: value % 1 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
   }).format(value);
+}
+
+function formatRateSelectionHeading(checkIn: string, nights: number) {
+  const [year, month, day] = checkIn.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+
+  return `Rate Selection, ${formattedDate} for ${nights} ${nights === 1 ? "Night" : "Nights"}`;
 }
 
 function todayInPropertyTimeZone() {
@@ -250,9 +264,12 @@ export function ProductionRateTray({
   selectedRateId,
   onSelectRate,
   onChangeRoom,
+  showChangeRoomAction = true,
 }: ProductionRateTrayProps) {
   const [openRateId, setOpenRateId] = useState<string | null>(null);
-  const trayRef = useRef<HTMLDivElement>(null);
+  const [isDrawerClosing, setIsDrawerClosing] = useState(false);
+
+  const closeDrawer = () => setIsDrawerClosing(true);
 
   const sortedRates = useMemo(
     () =>
@@ -273,23 +290,18 @@ export function ProductionRateTray({
     ? resolveRateCardConfig(configs, openRate.rateId)
     : null;
 
-  useEffect(() => {
-    if (!openRateId) return;
-    requestAnimationFrame(() =>
-      trayRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }),
-    );
-  }, [openRateId]);
-
   return (
     <section className="rc-production-page" aria-labelledby="rate-selection-title">
       <div className="rc-production-head">
         <div>
-          <p className="rc-eyebrow">Choose how you want to stay</p>
+          <p className="rc-eyebrow">{formatRateSelectionHeading(checkIn, nights)}</p>
           <h1 id="rate-selection-title" className="rc-production-title">{roomName}</h1>
         </div>
-        <button type="button" className="rc-link" onClick={onChangeRoom}>
-          ← Change room
-        </button>
+        {showChangeRoomAction && (
+          <button type="button" className="rc-link" onClick={onChangeRoom}>
+            ← Change room
+          </button>
+        )}
       </div>
 
       <div className="rc-production rc-grid-wrap">
@@ -353,7 +365,14 @@ export function ProductionRateTray({
                     type="button"
                     className="rc-link"
                     aria-expanded={isOpen}
-                    onClick={() => setOpenRateId(isOpen ? null : rate.rateId)}
+                    onClick={() => {
+                      if (isOpen) {
+                        closeDrawer();
+                        return;
+                      }
+                      setIsDrawerClosing(false);
+                      setOpenRateId(rate.rateId);
+                    }}
                   >
                     {isOpen ? "Hide details" : "View details"}
                   </button>
@@ -374,40 +393,64 @@ export function ProductionRateTray({
         </div>
 
         {openRate && (
-          <div ref={trayRef} key={openRate.rateId} className="rc-tray">
-            <div className="rc-sheet-head">
-              <div>
-                <p className="rc-eyebrow">{openConfig?.eyebrow || "Rate details"}</p>
-                <h2 className="rc-name">{openConfig?.headline || openRate.name}</h2>
-              </div>
-              <button
-                type="button"
-                className="rc-link"
-                onClick={() => setOpenRateId(null)}
-              >
-                Close ×
-              </button>
-            </div>
-
-            <RateDetailBody
-              rate={openRate}
-              config={openConfig}
-              checkIn={checkIn}
-              nights={nights}
+          <div
+            key={openRate.rateId}
+            className={`rc-drawer-layer ${isDrawerClosing ? "is-closing" : ""}`}
+          >
+            <button
+              type="button"
+              className="rc-backdrop"
+              aria-label="Close rate details"
+              onClick={closeDrawer}
             />
+            <div
+              className="rc-drawer"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${openConfig?.headline || openRate.name} details`}
+              onAnimationEnd={(event) => {
+                if (event.target !== event.currentTarget) return;
+                if (!isDrawerClosing) return;
+                setOpenRateId(null);
+                setIsDrawerClosing(false);
+              }}
+            >
+              <div className="rc-sheet-head">
+                <div>
+                  <p className="rc-eyebrow">{openConfig?.eyebrow || "Rate details"}</p>
+                  <h2 className="rc-name">{openConfig?.headline || openRate.name}</h2>
+                </div>
+                <button
+                  type="button"
+                  className="rc-link"
+                  onClick={closeDrawer}
+                >
+                  Close ×
+                </button>
+              </div>
 
-            <div className="rc-production-tray-actions">
-              <b className="rc-num">
-                {formatMoney(openRate.totalGross, openRate.currency)}
-              </b>
-              <button
-                type="button"
-                className="rc-book"
-                disabled={openRate.totalGross == null}
-                onClick={() => onSelectRate(openRate)}
-              >
-                {openConfig?.ctaLabel?.trim() || "Choose this rate"}
-              </button>
+              <div className="rc-drawer-body">
+                <RateDetailBody
+                  rate={openRate}
+                  config={openConfig}
+                  checkIn={checkIn}
+                  nights={nights}
+                />
+              </div>
+
+              <div className="rc-drawer-foot">
+                <b className="rc-num">
+                  {formatMoney(openRate.totalGross, openRate.currency)}
+                </b>
+                <button
+                  type="button"
+                  className="rc-book"
+                  disabled={openRate.totalGross == null}
+                  onClick={() => onSelectRate(openRate)}
+                >
+                  {openConfig?.ctaLabel?.trim() || "Choose this rate"}
+                </button>
+              </div>
             </div>
           </div>
         )}
