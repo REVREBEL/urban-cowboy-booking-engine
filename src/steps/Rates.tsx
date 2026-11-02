@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ProductionRateTray } from "@/components/rates/ProductionRateTray";
 import type { RateCardConfig } from "@/types/rate-card";
+import type { PolicyLanguage } from "@/types/policy-language";
 import { api } from "../lib/api";
 import { useBooking } from "../state/booking";
 
@@ -16,6 +17,15 @@ export function Rates() {
     goTo,
   } = useBooking();
   const [rateCardConfigs, setRateCardConfigs] = useState<RateCardConfig[]>([]);
+  const [policyLanguage, setPolicyLanguage] = useState<Partial<PolicyLanguage>>({});
+
+  useEffect(() => {
+    let active = true;
+    void api.policyLanguage().then((labels) => {
+      if (active) setPolicyLanguage(labels);
+    });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -44,6 +54,7 @@ export function Rates() {
       nights={nightsCount}
       rates={selectedRoom.rates}
       configs={rateCardConfigs}
+      policyLanguage={policyLanguage}
       selectedRateId={selectedRate?.rateId ?? null}
       onSelectRate={(rate) => {
         selectRoomRate(selectedRoom, rate);
