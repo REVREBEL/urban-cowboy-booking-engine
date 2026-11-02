@@ -38,7 +38,7 @@ test("scoped service restrictions are visibly indicated on touch calendars", () 
   assert.match(picker, /hasVisibleServiceRestrictions/);
   assert.match(picker, /serviceNote && !disabled/);
   assert.match(picker, /Restrictions may apply on selected dates\./);
-  assert.match(picker, /text-\\\[9px\\\]/);
+  assert.match(picker, /text-\[9px\]/);
   // Restriction information must never add a date-selection gate.
   assert.match(picker, /const disabled = date < minDate;/);
 });
