@@ -3,7 +3,7 @@ import { expect, userEvent, within } from "storybook/test";
 import { RateCardLab } from "@/components/rates/RateCardLab";
 
 const meta = {
-  title: "Components/Rates/RateCardLab",
+  title: "Journey/Rates/RateCardLab",
   component: RateCardLab,
   tags: ["autodocs"],
   parameters: {
