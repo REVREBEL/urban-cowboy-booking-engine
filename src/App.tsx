@@ -11,6 +11,7 @@ import { ContactBar } from "@/components/booking/chrome/contact-bar";
 import { t } from "./i18n";
 
 const StudioController = lazy(() => import("./studio/StudioController").then((module) => ({ default: module.StudioController })));
+const RateCardLab = lazy(() => import("./components/rates/RateCardLab").then((module) => ({ default: module.RateCardLab })));
 const PhotoArrival = lazy(() => import("./journey/PhotoArrival").then((module) => ({ default: module.PhotoArrival })));
 const PhotoJourneyHeader = lazy(() => import("./journey/PhotoJourneyHeader").then((module) => ({ default: module.PhotoJourneyHeader })));
 const PhotoRateStep = lazy(() => import("./journey/PhotoRateStep").then((module) => ({ default: module.PhotoRateStep })));
@@ -121,7 +122,7 @@ function HydrateLoader() {
   );
 }
 
-export default function App() {
+function BookingApp() {
   const studio = isStudioRoute();
   const [allowed, setAllowed] = useState<boolean | null>(studio ? null : true);
   const [layout, setLayout] = useState<RoomResultsLayout | null>(null);
@@ -154,4 +155,18 @@ export default function App() {
   if (allowed === null || layout === null) return <div className="grid min-h-screen place-items-center">Loading booking configuration…</div>;
   if (!allowed) return <main className="grid min-h-screen place-items-center p-8"><p>Booking Studio is disabled for this location.</p></main>;
   return <BookingProvider><Shell layout={layout} /></BookingProvider>;
+}
+
+const RATE_CARD_LAB_PATHS = new Set(["/rate-card", "/rate-card/", "/rate-cards", "/rate-cards/"]);
+
+export default function App() {
+  if (typeof window !== "undefined" && RATE_CARD_LAB_PATHS.has(window.location.pathname)) {
+    return (
+      <Suspense fallback={<HydrateLoader />}>
+        <RateCardLab />
+      </Suspense>
+    );
+  }
+
+  return <BookingApp />;
 }
