@@ -358,6 +358,7 @@ const DICT = {
   "dataBadge.live": { fr: "Données en direct · Mews", en: "Live data · Mews" },
   "dataBadge.secure": { fr: "Paiement sécurisé hébergé par Mews · 3-D Secure", en: "Secure payment hosted by Mews · 3-D Secure" },
   "phone.countryCode": { fr: "Indicatif pays", en: "Country code" },
+  "phone.number": { fr: "Numéro de téléphone", en: "Phone number" },
   "datePicker.checkIn": { fr: "Arrivée", en: "Check-in" },
   "datePicker.checkOut": { fr: "Départ", en: "Check-out" },
   "datePicker.when": { fr: "Quand ?", en: "When?" },
