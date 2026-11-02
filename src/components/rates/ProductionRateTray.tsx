@@ -583,7 +583,8 @@ function Timeline({
 
       <div className="rc-charges">
         <div>
-          <small>Due today</small>
+          <small>{language.atTimeOfBooking}</small>
+          <span className="rc-charge-subtitle">{language.atTimeOfBookingSubTitle}</span>
           <b className="rc-num">{formatMoney(timeline.dueToday, currency)}</b>
         </div>
         {balance && (
