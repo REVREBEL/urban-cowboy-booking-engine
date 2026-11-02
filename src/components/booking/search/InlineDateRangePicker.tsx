@@ -328,13 +328,12 @@ export const InlineDateRangePicker: React.FC<InlineDateRangePickerProps> = ({
         ))}
       </div>
       {hasVisibleServiceRestrictions && (
-        <p className="mt-3 flex items-start gap-2 font-body text-xs leading-relaxed text-(--calendar-date-foreground)">
+        <p className="mt-3 flex items-start gap-2 font-body text-[9px] leading-relaxed text-(--calendar-date-foreground)">
           <span
             aria-hidden="true"
             className="mt-1 inline-block size-2 shrink-0 rounded-full bg-(--calendar-date-restricted-foreground)"
           />
-          Marked dates may have check-in, check-out, or stay restrictions for some rooms or rates.
-          Search verifies your exact stay.
+          Restrictions may apply on selected dates.
         </p>
       )}
     </div>
