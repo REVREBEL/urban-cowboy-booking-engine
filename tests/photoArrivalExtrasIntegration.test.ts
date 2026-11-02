@@ -48,5 +48,5 @@ test("Extras customization controls preserve keyboard focus visibility and acces
   assert.match(card, /focus-visible:ring-2 focus-visible:ring-cowboy-umber/);
   assert.match(modal, /aria-label="Include handwritten Cowboy note card"/);
   assert.match(modal, /peer-focus-visible:ring-2 peer-focus-visible:ring-cowboy-umber/);
-  assert.match(modal, /focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber/);
+  assert.ok((modal.match(/focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cowboy-umber/g) ?? []).length >= 5);
 });
