@@ -25,7 +25,9 @@ const SCENARIOS = [
   { id: "20", label: "20 days out", days: 20 },
   { id: "10", label: "10 days out", days: 10 },
   { id: "3", label: "3 days out", days: 3 },
-];
+] as const;
+
+export type RateCardLabScenario = (typeof SCENARIOS)[number]["id"];
 
 const ARRIVAL = "2027-06-20";
 
@@ -44,23 +46,31 @@ const PHASE_COPY: Record<PhaseKind, { title: string; line: (t: CancellationTimel
   locked: { title: "Nothing back", line: () => "Stay is fully paid and locked" },
 };
 
-type Mode = "single" | "drawer" | "tray";
-const MODES: { id: Mode; label: string }[] = [
+export type RateCardLabMode = "single" | "drawer" | "tray";
+const MODES: { id: RateCardLabMode; label: string }[] = [
   { id: "single", label: "Single card" },
   { id: "drawer", label: "Option 1 · Slide-up drawer" },
   { id: "tray", label: "Option 2 · Full-width tray" },
 ];
 const LAB_ROOM_PRICE = 615;
 
-export function RateCardLab() {
+export interface RateCardLabProps {
+  initialMode?: RateCardLabMode;
+  initialScenario?: RateCardLabScenario;
+}
+
+export function RateCardLab({
+  initialMode = "drawer",
+  initialScenario = "62",
+}: RateCardLabProps = {}) {
   useEffect(() => {
     const previousTitle = document.title;
     document.title = "Rate Card Lab — Urban Cowboy Catskills";
     return () => { document.title = previousTitle; };
   }, []);
 
-  const [scenario, setScenario] = useState("62");
-  const [mode, setMode] = useState<Mode>("drawer");
+  const [scenario, setScenario] = useState<RateCardLabScenario>(initialScenario);
+  const [mode, setMode] = useState<RateCardLabMode>(initialMode);
   const [open, setOpen] = useState(false);
   const days = SCENARIOS.find((s) => s.id === scenario)!.days;
   const today = minusDays(ARRIVAL, days);
