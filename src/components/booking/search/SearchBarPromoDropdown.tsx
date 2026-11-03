@@ -93,10 +93,15 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
 
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
-  // Focus input automatically upon mounting
+  // Focus input automatically upon mounting and restore focus to trigger upon unmount
   useEffect(() => {
+    triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     inputRef.current?.focus();
+    return () => {
+      if (triggerRef.current?.isConnected) triggerRef.current.focus();
+    };
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,15 +174,26 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
       handleApply();
     } else if (e.key === 'Escape') {
       e.preventDefault();
+      e.stopPropagation();
+      onClose?.();
+    }
+  };
+
+  const handleContainerKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
       onClose?.();
     }
   };
 
   return (
     <div
+      tabIndex={-1}
       role="dialog"
       aria-label="Promo code entry"
-      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] ${className}`}
+      onKeyDown={handleContainerKeyDown}
+      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-input-border ${className}`}
     >
       {/* Container: 223px x 99px, padding: 8px 0px, gap: 8px */}
       <div className="flex flex-col items-start py-2 px-0 gap-2 w-55.75 h-24.75 self-stretch">
