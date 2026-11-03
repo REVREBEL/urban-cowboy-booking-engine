@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react";
+import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
 import type { RateCardConfig } from "@/types/rate-card";
