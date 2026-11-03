@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildCancellationTimeline } from "../src/lib/cancellationTimeline.ts";
+import { buildCancellationTimeline, formatShortDate } from "../src/lib/cancellationTimeline.ts";
 
 const policy = { freeCancelDays: 14, balanceDueDays: 5, depositShare: 0.5 };
 const checkIn = "2027-06-20";
@@ -37,4 +37,9 @@ test("booked 3 days out: full amount due today, nothing refundable", () => {
 test("the 14-day cutoff day itself is no longer free", () => {
   const t = buildCancellationTimeline("2027-06-06", checkIn, 1000, policy);
   assert.equal(t.currentPhase, "deposit-kept");
+});
+
+
+test("short cancellation dates preserve the existing en-US UTC display", () => {
+  assert.equal(formatShortDate("2027-06-06"), "Jun 6");
 });

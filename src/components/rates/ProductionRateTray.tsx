@@ -10,6 +10,7 @@ import {
   type CancellationTimeline,
   type PhaseKind,
 } from "@/lib/cancellationTimeline";
+import { money } from "@/lib/format";
 
 // Named action slots keep every rate-card and tray action on the global Button system.
 type RateActionSlot = "change-room" | "details" | "select" | "close-details" | "browse-rooms";
@@ -78,34 +79,33 @@ interface ProductionRateTrayProps {
 
 function formatMoney(amount: number | null | undefined, currency: string) {
   const value = typeof amount === "number" && Number.isFinite(amount) ? amount : 0;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
-  }).format(value);
+  return money(value, currency, { locale: "en-US" });
 }
+
+const rateSelectionHeadingFmt = new Intl.DateTimeFormat("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
 
 function formatRateSelectionHeading(checkIn: string, nights: number) {
   const [year, month, day] = checkIn.split("-").map(Number);
   const date = new Date(Date.UTC(year, month - 1, day));
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(date);
+  const formattedDate = rateSelectionHeadingFmt.format(date);
 
   return `Rate Selection, ${formattedDate} for ${nights} ${nights === 1 ? "Night" : "Nights"}`;
 }
 
+const propertyTodayFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: PROPERTY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 function todayInPropertyTimeZone() {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: PROPERTY_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(new Date());
+  const parts = propertyTodayFmt.formatToParts(new Date());
 
   const value = (type: Intl.DateTimeFormatPartTypes) =>
     parts.find((part) => part.type === type)?.value ?? "";
