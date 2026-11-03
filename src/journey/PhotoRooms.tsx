@@ -261,8 +261,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
               <p className={`${label} mt-5 text-foreground/60`}>Building</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {buildings.map((b) => (
-                  <PillButton key={b} type="button" pressed={draft.building === b} variant={draft.building === b ? "filled" : "outline"} colorScheme="lake-forest" onClick={() => setDraft({ ...draft, building: b })}
-                    className="text-sm">
+                  <PillButton key={b} type="button" pressed={draft.building === b} variant={draft.building === b ? "filled" : "outline"} colorScheme="lake-forest" size="small" onClick={() => setDraft({ ...draft, building: b })}>
                     {b === "all" ? "All buildings" : b}
                   </PillButton>
                 ))}
@@ -272,8 +271,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                 {(["indoor-tub", "outdoor-tub", "fireplace", "gather"] as Feature[]).map((f) => {
                   const on = draft.features.includes(f);
                   return (
-                    <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "lake-forest"} onClick={() => setDraft({ ...draft, features: on ? draft.features.filter((x) => x !== f) : [...draft.features, f] })}
-                      className="text-sm">
+                    <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "lake-forest"} size="small" onClick={() => setDraft({ ...draft, features: on ? draft.features.filter((x) => x !== f) : [...draft.features, f] })}>
                       {FEATURE_LABEL[f]}
                     </PillButton>
                   );
@@ -314,8 +312,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
               <div id="photo-building-options" ref={buildingStrip.ref} onScroll={buildingStrip.update}
                 className="j-photo-filter-strip no-scrollbar flex min-w-0 flex-1 gap-1 overflow-x-auto">
                 {buildings.map((b) => (
-                  <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setBuilding(b)}
-                    className="h-4.5 shrink-0 px-2.5! pt-1! pb-0! font-normal!">
+                  <PillButton key={b} type="button" pressed={building === b} variant={building === b ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setBuilding(b)} className="shrink-0">
                     {b === "all" ? "All buildings" : b}
                   </PillButton>
                 ))}
@@ -339,8 +336,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                 {(["indoor-tub", "outdoor-tub", "fireplace", "gather"] as Feature[]).map((f) => {
                   const on = features.includes(f);
                   return (
-                    <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="xsmall" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])}
-                      className="h-6 shrink-0 px-3! pt-1! pb-0! font-normal!">
+                    <PillButton key={f} type="button" pressed={on} variant={on ? "filled" : "outline"} colorScheme={on ? "alpine-linen" : "paper"} size="xsmall" onClick={() => setFeatures(on ? features.filter((x) => x !== f) : [...features, f])} className="shrink-0">
                       {FEATURE_LABEL[f]}
                     </PillButton>
                   );
@@ -364,10 +360,9 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
                 {sort === "price-desc" ? "Price: high to low" : "Price: low to high"}
               </span>
             </Button>
-            <div role="group" aria-label="View" className="flex h-7.5 items-center rounded-full bg-paper/10 p-0.5">
+            <div role="group" aria-label="View" className="inline-flex items-center rounded-full bg-paper/10 p-1">
               {(["spreads", "index"] as const).map((v) => (
-                <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="xsmall" onClick={() => setView(v)}
-                  className="h-7 px-2.5! pt-1! pb-0! font-normal! capitalize">
+                <PillButton key={v} type="button" pressed={view === v} variant={view === v ? "filled" : "transparent"} colorScheme="paper" size="xsmall" textCase="title" onClick={() => setView(v)}>
                   {v === "spreads" ? "Photo View" : "Multi Room View"}
                 </PillButton>
               ))}

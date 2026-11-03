@@ -63,6 +63,7 @@ export function PhotoArrival() {
   const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
   const [dailyRates, setDailyRates] = useState<Record<string, DailyRate>>({});
   const [stories, setStories] = useState<readonly ArrivalStory[] | null>(null);
+  const [showQuickSelect, setShowQuickSelect] = useState(false);
   const nights = checkIn && checkOut ? Math.max(0, Math.round((Date.parse(checkOut) - Date.parse(checkIn)) / 86400000)) : 0;
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export function PhotoArrival() {
     void api.locations().then((locations) => {
       if (!active) return;
       const locationContent = locations.hotel;
+      setShowQuickSelect(locationContent?.enableEventDatesQuickSelection === true);
       if (!locationContent) {
         setStories(FALLBACK_PILLARS);
         return;
@@ -140,6 +142,7 @@ export function PhotoArrival() {
         onBrowse={() => proceed("rooms")}
         nights={nights}
         stories={stories}
+        showQuickSelect={showQuickSelect}
       />
     </div>
   );
@@ -187,6 +190,7 @@ export function Arrive(props: {
   onBrowse: () => void;
   nights: number;
   stories: readonly ArrivalStory[] | null;
+  showQuickSelect: boolean;
 }) {
   const ready = props.nights > 0;
   const childCount = props.children + props.infants;
@@ -206,7 +210,7 @@ export function Arrive(props: {
               Come for the soak. Stay for the woods.
             </h1>
           </div>
-          <p className={`${label} text-alpine-linen`}>01 — When are you coming?</p>
+          <p className={`${label} text-alpine-linen`}>Pick your arrival and departure dates to continue.</p>
 
           <div className="relative z-20 mt-4">
             <SearchBarExpanded
@@ -241,6 +245,7 @@ export function Arrive(props: {
                       checkIn={props.checkIn || ""}
                       checkOut={props.checkOut || ""}
                       dailyRates={props.dailyRates}
+                      showQuickSelect={props.showQuickSelect}
                       onChange={(checkIn, checkOut) => props.setRange(checkIn || null, checkOut || null)}
                       onClose={() => props.setActiveSection(null)}
                       onVisibleRangeChange={props.loadCalendar}
@@ -280,28 +285,24 @@ export function Arrive(props: {
 
           <div className="mt-6 grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-10">
             <div>
-              <p className="max-w-[48ch] text-paper/80">
+              <p className="max-w-[48ch] text-balance text-paper/80">
                 Find the room that feels right for your stay, or wander through every available room.
-              </p>
-              <p id="dates-hint" className={`mt-3 text-sm text-paper/75 ${ready ? "invisible" : ""}`} aria-hidden={ready}>
-                Pick your arrival and departure dates to continue.
               </p>
             </div>
             <div className="flex flex-wrap gap-3 lg:justify-end">
               <Button
                 type="button"
                 variant="filled"
-                colorScheme="alpine-linen"
+                colorScheme="light"
                 size="small"
                 hasIcon
                 icon={<span aria-hidden="true" className="inline-block size-4 shrink-0 bg-current" style={{ WebkitMask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat', mask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat' }} />}
                 disabled={!ready}
-                aria-describedby="dates-hint"
                 onClick={() => ready && props.onMatch()}
               >
                 Match me with a room
               </Button>
-              <Button type="button" variant="outline" colorScheme="alpine-linen" size="small" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onBrowse()}>
+              <Button type="button" variant="outline" colorScheme="light" size="small" disabled={!ready} onClick={() => ready && props.onBrowse()}>
                 Browse every room
               </Button>
             </div>

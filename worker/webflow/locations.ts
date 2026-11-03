@@ -32,7 +32,7 @@ const WEBFLOW_TIMEOUT_MS = 8_000;
 // Published location settings should propagate quickly, including layout choices.
 const CACHE_FRESH_MS = 60 * 1000;
 const CACHE_TTL_SECONDS = 24 * 60 * 60;
-const CACHE_KEY_PREFIX = "webflow:booking-locations:v6";
+const CACHE_KEY_PREFIX = "webflow:booking-locations:v7";
 
 const memoryCache = new Map<string, CachedLocationPayload>();
 
@@ -94,6 +94,7 @@ async function webflowGet<T>(env: Env, path: string, baseUrl = WEBFLOW_CONTENT_A
 
 const LOCATION_SETTING_FIELDS = [
   "enable-demo-engine",
+  "enable-event-dates-quick-selection",
   "production-layout",
   "demo-layout",
 ] as const;
@@ -198,6 +199,7 @@ export function normalizeLocationItem(
     productionLayout: fields["production-layout"] === "f4859a16a8556038b0f026679aaa6a02" ? "photo" : "card",
     demoLayout: fields["demo-layout"] === "2142905a00c88401810632b026107cf2" ? "photo" : "card",
     enableDemoEngine: fields["enable-demo-engine"] === true,
+    enableEventDatesQuickSelection: fields["enable-event-dates-quick-selection"] === true,
     featureSectionEnabled: fields["enable-feature-section"] === true,
     features,
     city: text(fields.city) || null,

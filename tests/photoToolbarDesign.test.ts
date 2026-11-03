@@ -22,6 +22,9 @@ test("Photo toolbar uses xsmall pills and a label-font sort selector", () => {
   assert.match(rooms, /setBuilding\(b\)/);
   assert.match(rooms, /setView\(v\)/);
   assert.match(rooms, /setFeatures\(/);
+  assert.doesNotMatch(rooms, /(?:px|pt|pb)-[^"\s]*!|font-normal!/);
+  assert.match(rooms, /size="xsmall" textCase="title" onClick=\{\(\) => setView\(v\)\}/);
+  assert.match(rooms, /aria-label="View" className="inline-flex items-center rounded-full bg-paper\/10 p-1"/);
   // Test sorting as a capability, not a particular select, menu, or toggle design.
   assert.match(rooms, /setSort\(/);
   assert.match(rooms, /"price-asc"/);

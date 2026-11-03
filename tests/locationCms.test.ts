@@ -26,6 +26,7 @@ test("normalizes footer content from the published Locations CMS item", () => {
     productionLayout: "card",
     demoLayout: "card",
     enableDemoEngine: false,
+    enableEventDatesQuickSelection: false,
     featureSectionEnabled: false,
     features: [],
     city: "Big Indian",
@@ -34,6 +35,22 @@ test("normalizes footer content from the published Locations CMS item", () => {
     termsConditionsUrl: "https://example.com/terms",
     accessibilityUrl: "https://example.com/accessibility",
   });
+});
+
+test("normalizes the Event Dates Quick Selection setting as an explicit boolean", () => {
+  const make = (value: unknown) => normalizeLocationItem({
+    id: "catskills-item",
+    isArchived: false,
+    isDraft: false,
+    fieldData: {
+      "full-location-name": "Urban Cowboy Lodge & Resort",
+      "enable-event-dates-quick-selection": value,
+    },
+  });
+
+  assert.equal(make(true)?.enableEventDatesQuickSelection, true);
+  assert.equal(make(false)?.enableEventDatesQuickSelection, false);
+  assert.equal(make(undefined)?.enableEventDatesQuickSelection, false);
 });
 
 

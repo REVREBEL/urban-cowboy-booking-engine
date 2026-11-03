@@ -90,6 +90,15 @@ export function Dates() {
   const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
   const [error, setError] = useState("");
   const [dailyRates, setDailyRates] = useState<Record<string, DailyRate>>({});
+  const [showQuickSelect, setShowQuickSelect] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void api.locations().then((locations) => {
+      if (active) setShowQuickSelect(locations.hotel?.enableEventDatesQuickSelection === true);
+    });
+    return () => { active = false; };
+  }, []);
 
   const loadCalendar = useCallback(async (startDate: string, endDate: string) => {
     const request = {
@@ -205,6 +214,7 @@ export function Dates() {
                     checkIn={form.checkIn}
                     checkOut={form.checkOut}
                     dailyRates={dailyRates}
+                    showQuickSelect={showQuickSelect}
                     onChange={(checkIn, checkOut) => setDates(checkIn, checkOut)}
                     onClose={() => setActiveSection(null)}
                     onVisibleRangeChange={loadCalendar}

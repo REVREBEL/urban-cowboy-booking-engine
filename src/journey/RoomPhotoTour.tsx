@@ -4,6 +4,7 @@ import '@/styles/room-photo-tour.css';
 import useEmblaCarousel from 'embla-carousel-react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { Pill } from '@/components/ui/Pill';
 import type { JourneyRoom } from './data';
 import { PHOTO_HIGHLIGHTS, roomAmenities, type PhotoHighlight } from '@/journey/tour';
 import { cmsHighlightsForPhoto } from '@/journey/cmsTour';
@@ -217,8 +218,34 @@ export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position
 
   const roomNav = (cls: string) => (
     <div className={cls}>
-      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "50%" }} className="j-tour-control" disabled={!onPrevious} aria-label={`Previous room from ${room.name}`} title="Previous room" onClick={onPrevious}><PhotoTourArrow direction="up" size={18} /></Button>
-      <Button variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "50%" }} className="j-tour-control" disabled={!onNext} aria-label={`Next room from ${room.name}`} title="Next room" onClick={onNext}><PhotoTourArrow direction="down" size={18} /></Button>
+      <Pill variant="transparent" colorScheme="paper" size="small" 
+      style={
+        { padding: 0, 
+        borderRadius: "50%" 
+        }
+      } 
+       className="j-tour-control" 
+        clickable={!onPrevious} 
+        aria-label={`Previous room from ${room.name}`} 
+        title="Previous room" 
+        onClick={onPrevious}
+        >
+        
+      <PhotoTourArrow direction="up" size={18} /></Pill>
+      <Pill variant="transparent" colorScheme="paper" size="small" 
+      style={
+        { 
+        padding: 0, 
+        borderRadius: "50%" 
+        }
+        } 
+        className="j-tour-control" 
+        clickable={!onNext} 
+        aria-label={`Next room from ${room.name}`} 
+        title="Next room" 
+        onClick={onNext}>
+          <PhotoTourArrow direction="down" size={18} />
+      </Pill>
     </div>
   );
 
@@ -316,12 +343,21 @@ export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position
       {fx && <p className="j-fx-badge">Effect demo · {fx.split(' ').map((c) => FX_LABEL[c]).join(' + ')}</p>}
 
       {room.images.length > 1 && <>
-        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "50%", opacity: details ? 0 : 1, pointerEvents: details ? "none" : undefined }} className="j-tour-control j-photo-prev" aria-label={`Previous photo of ${room.name}`} title="Previous photo" onClick={() => goPhoto(-1)}><PhotoTourArrow direction="left" size={24} chevron /></Button>
-        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "50%", opacity: details ? 0 : 1, pointerEvents: details ? "none" : undefined }} className="j-tour-control j-photo-next" aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}><PhotoTourArrow direction="right" size={24} chevron /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "50%", opacity: details ? 0 : 1, pointerEvents: details ? "none" : undefined }} ////////
+        
+        
+        className="j-tour-control j-photo-prev" 
+        aria-label={`Previous photo of ${room.name}`} 
+        title="Previous photo" onClick={() => goPhoto(-1)}><PhotoTourArrow direction="left" size={24} chevron /></Button>
+        <Button variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "50%", opacity: details ? 0 : 1, pointerEvents: details ? "none" : undefined }} // 
+        className="j-tour-control j-photo-next" 
+        aria-label={`Next photo of ${room.name}`} title="Next photo" onClick={() => goPhoto(1)}>
+          <PhotoTourArrow direction="right" size={24} chevron /></Button>
       </>}
 
       <div className="j-photo-pagination" aria-label="Photo selection" style={{ opacity: details ? 0 : 1, pointerEvents: details ? "none" : undefined }}>
-        {room.images.map((_, index) => <Button key={index} variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "50%" }} className="j-tour-control j-photo-dot"
+        {room.images.map((_, index) => <Button key={index} variant="transparent" colorScheme="paper" size="xsmall" style={{ padding: 0, borderRadius: "50%" }} 
+        className="j-tour-control j-photo-dot"
           title={`Photo ${index + 1}`} aria-label={`Show photo ${index + 1} of ${room.name}`} aria-pressed={photo === index}
           onClick={() => carousel?.scrollTo(index, window.matchMedia("(prefers-reduced-motion: reduce)").matches)}><span /></Button>)}
         <span className="font-number text-xs tabular-nums text--paper/85" aria-live="polite">{photo + 1} / {room.images.length}</span>
@@ -344,7 +380,9 @@ export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position
 
           <div className="flex items-start justify-between gap-3">
             <div><h3 className="font-headline text-xl leading-none">The little comforts</h3><p className="mt-1 text-xs">{room.bedType} · {room.squareFeet} sq ft · {room.adultsOnly ? 'Guests 21+' : 'All ages'}{room.dogFriendly ? ' · Dogs welcome' : ''}</p></div>
-            <Button variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: 0, borderRadius: "50%" }} className="j-tour-control j-panel-close" aria-label={`Close details for ${room.name}`} title="Close details" onClick={() => onDetails(false)}><X size={20} /></Button>
+            <Button variant="transparent" colorScheme="lake-forest" size="xsmall" style={{ padding: 0, borderRadius: "50%" }} 
+            className="j-tour-control j-panel-close" 
+            aria-label={`Close details for ${room.name}`} title="Close details" onClick={() => onDetails(false)}><X size={20} /></Button>
           </div>
           <ul className="j-amenity-list">
             {unseenAmenities.map((a) => <li key={a.id ?? a.title}><CmsAmenityIcon imageUrl={a.imageUrl} iconPath={a.iconPath} fallback={a.icon} className="size-6" /><span><span className="block font-semibold">{a.title}</span>{a.note && <span className="block text-xs opacity-75">{a.note}</span>}</span></li>)}

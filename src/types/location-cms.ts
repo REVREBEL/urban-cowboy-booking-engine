@@ -10,6 +10,7 @@ export interface BookingLocationCms {
   productionLayout?: 'card' | 'photo';
   demoLayout?: 'card' | 'photo';
   enableDemoEngine?: boolean;
+  enableEventDatesQuickSelection: boolean;
   featureSectionEnabled: boolean;
   features: BookingLocationFeatureCms[];
   city: string | null;

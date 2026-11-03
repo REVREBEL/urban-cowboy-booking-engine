@@ -12,6 +12,7 @@ interface DateSearchDropdownProps {
   checkIn: string;
   checkOut: string;
   dailyRates: Record<string, DailyRate>;
+  showQuickSelect?: boolean;
   onChange: (checkIn: string, checkOut: string) => void;
   onClose: () => void;
   onVisibleRangeChange: (startDate: string, endDate: string) => void;
@@ -22,6 +23,7 @@ export function DateSearchDropdown({
   checkIn,
   checkOut,
   dailyRates,
+  showQuickSelect = true,
   onChange,
   onClose,
   onVisibleRangeChange,
@@ -69,39 +71,43 @@ export function DateSearchDropdown({
         onVisibleRangeChange={onVisibleRangeChange}
       />
 
-      <div className="mt-4 flex flex-col gap-4 border-t border-cowboy-umber/10 pt-4 text-left sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span className="font-number text-[10px] font-bold uppercase tracking-[1.5px] text-foreground/60">
-            Quick Select
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {QUICK_DATE_RANGES.map(([rangeLabel, rangeCheckIn, rangeCheckOut]) => (
-              <button
-                key={rangeLabel}
-                type="button"
-                onClick={() => onChange(rangeCheckIn, rangeCheckOut)}
-                className="rounded-full border border-input-border bg-transparent px-3 pb-1 pt-1.5 font-body text-xs leading-none text-foreground transition-colors hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              >
-                {rangeLabel}
-              </button>
-            ))}
-          </div>
-        </div>
+      {(showQuickSelect || variant === "confirm") && (
+        <div className="mt-4 flex flex-col gap-4 border-t border-cowboy-umber/10 pt-4 text-left sm:flex-row sm:items-end sm:justify-between">
+          {showQuickSelect && (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span className="font-number text-[10px] font-bold uppercase tracking-[1.5px] text-foreground/60">
+                Quick Select
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {QUICK_DATE_RANGES.map(([rangeLabel, rangeCheckIn, rangeCheckOut]) => (
+                  <button
+                    key={rangeLabel}
+                    type="button"
+                    onClick={() => onChange(rangeCheckIn, rangeCheckOut)}
+                    className="rounded-full border border-input-border bg-transparent px-3 pb-1 pt-1.5 font-body text-xs leading-none text-foreground transition-colors hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  >
+                    {rangeLabel}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
-        {variant === "confirm" && (
-          <Button
-            type="button"
-            disabled={!hasCompleteRange}
-            onClick={onClose}
-            variant="filled"
-            colorScheme="cowboy-umber"
-            size="small"
-            className="self-end rounded-full uppercase tracking-[1.5px] sm:shrink-0"
-          >
-            Confirm dates
-          </Button>
-        )}
-      </div>
+          {variant === "confirm" && (
+            <Button
+              type="button"
+              disabled={!hasCompleteRange}
+              onClick={onClose}
+              variant="filled"
+              colorScheme="cowboy-umber"
+              size="small"
+              className="self-end rounded-full uppercase tracking-[1.5px] sm:shrink-0"
+            >
+              Confirm dates
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
