@@ -625,3 +625,28 @@
     width: 100%;
   }
 }
+
+/* Optional Webflow payment-timeline subtitles. */
+.rc-charges .rc-charge-subtitle {
+  display: block;
+  max-width: 24ch;
+  font-size: 12px;
+  line-height: 1.3;
+  opacity: .7;
+}
+
+/* Policy milestones are rendered from live date windows, with CMS wording. */
+.rc-production .rc-card-milestones {
+  display: grid;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+.rc-production .rc-card-milestones li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.rc-production .rc-card-milestones time { font-variant-numeric: tabular-nums; opacity: .7; }

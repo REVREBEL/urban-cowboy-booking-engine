@@ -2,6 +2,7 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
 import type { RateCardConfig } from "@/types/rate-card";
+import { resolvePolicyLanguage, type PolicyLanguage } from "@/types/policy-language";
 import { resolveRateCardConfig } from "@/lib/rateCardConfig";
 import { cancellationConfirmation } from "@/lib/rateCardLiveContent";
 import {
@@ -46,24 +47,21 @@ const DEFAULT_POLICY = {
 
 const PROPERTY_TIME_ZONE = "America/New_York";
 
-const PHASE_COPY: Record<
-  PhaseKind,
-  { title: string; line: (timeline: CancellationTimeline, kept: number, currency: string) => string }
-> = {
-  refundable: {
-    title: "Full refund",
-    line: () => "Cancel and get your deposit back",
-  },
-  "deposit-kept": {
-    title: "Deposit kept",
-    line: (_timeline, kept, currency) =>
-      `Cancel and ${formatMoney(kept, currency)} is kept`,
-  },
-  locked: {
-    title: "Nothing back",
-    line: () => "Stay is fully paid and locked",
-  },
+const PHASE_COPY: Record<PhaseKind, {
+  title: keyof PolicyLanguage;
+  subtitle: keyof PolicyLanguage;
+}> = {
+  refundable: { title: "refundableLanguage", subtitle: "refundableLanguageSubTitle" },
+  "deposit-kept": { title: "partiallyRefundableLanguage", subtitle: "partiallyRefundableLanguageSubTitle" },
+  locked: { title: "nonRefundableLanguage", subtitle: "nonRefundableLanguageSubTitle" },
 };
+
+function phaseHeading(phase: PhaseKind, language: PolicyLanguage) {
+  return language[PHASE_COPY[phase].title];
+}
+function phaseSubtitle(phase: PhaseKind, language: PolicyLanguage) {
+  return language[PHASE_COPY[phase].subtitle];
+}
 
 interface ProductionRateTrayProps {
   roomName: string;
@@ -71,6 +69,7 @@ interface ProductionRateTrayProps {
   nights: number;
   rates: ShapedRate[];
   configs: RateCardConfig[];
+  policyLanguage?: Partial<PolicyLanguage>;
   selectedRateId?: string | null;
   onSelectRate: (rate: ShapedRate) => void;
   onChangeRoom: () => void;
@@ -199,11 +198,13 @@ function RateDetailBody({
   config,
   checkIn,
   nights,
+  language,
 }: {
   rate: ShapedRate;
   config: RateCardConfig | null;
   checkIn: string;
   nights: number;
+  language: PolicyLanguage;
 }) {
   const pricing = pricingForRate(rate, nights);
   const timeline = useMemo(
@@ -256,7 +257,7 @@ function RateDetailBody({
       </div>
 
       {timeline ? (
-        <Timeline timeline={timeline} currency={rate.currency} />
+        <Timeline timeline={timeline} currency={rate.currency} language={language} />
       ) : (
         <section className="rc-timeline" aria-label="Cancellation and payment summary">
           <div className="rc-tl-head">
@@ -265,7 +266,8 @@ function RateDetailBody({
           </div>
           <div className="rc-charges">
             <div>
-              <small>Due today</small>
+              <small>{language.atTimeOfBooking}</small>
+              <span className="rc-charge-subtitle">{language.atTimeOfBookingSubTitle}</span>
               <b className="rc-num">
                 {formatMoney(
                   rate.knownRateGroup === "NON_REFUNDABLE"
@@ -288,11 +290,13 @@ export function ProductionRateTray({
   nights,
   rates,
   configs,
+  policyLanguage,
   selectedRateId,
   onSelectRate,
   onChangeRoom,
   showChangeRoomAction = true,
 }: ProductionRateTrayProps) {
+  const language = resolvePolicyLanguage(policyLanguage);
   const [openRateId, setOpenRateId] = useState<string | null>(null);
   const [isDrawerClosing, setIsDrawerClosing] = useState(false);
 
@@ -366,13 +370,30 @@ export function ProductionRateTray({
                   <p className="rc-rate-supporting">{config.supportingText}</p>
                 )}
 
+                {timeline && (
+                  <ol className="rc-card-milestones" aria-label="Cancellation milestones">
+                    {timeline.phases.map((phase) => (
+                      <li key={phase.kind}>
+                        <span>{phaseHeading(phase.kind, language)}</span>
+                        <time dateTime={phase.end}>
+                          {formatShortDate(phase.end)}
+                        </time>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+
                 <div className="rc-rate-spacer" />
 
                 <p
                   className="rc-policy-line"
                   data-phase={timeline?.currentPhase ?? (rate.knownRateGroup === "NON_REFUNDABLE" ? "locked" : undefined)}
                 >
-                  {timeline?.summary || policyText}
+                  {timeline
+                    ? `${phaseHeading(timeline.currentPhase, language)}${timeline.phases.length > 1 ? ` until ${formatShortDate(timeline.phases[0].end)}` : ""}`
+                    : rate.knownRateGroup === "NON_REFUNDABLE"
+                      ? language.nonRefundableLanguage
+                      : policyText}
                 </p>
 
                 {timeline && <MiniBar timeline={timeline} />}
@@ -460,6 +481,7 @@ export function ProductionRateTray({
                   config={openConfig}
                   checkIn={checkIn}
                   nights={nights}
+                  language={language}
                 />
               </div>
 
@@ -527,9 +549,11 @@ function MiniBar({ timeline }: { timeline: CancellationTimeline }) {
 function Timeline({
   timeline,
   currency,
+  language,
 }: {
   timeline: CancellationTimeline;
   currency: string;
+  language: PolicyLanguage;
 }) {
   const balance = timeline.charges[1];
 
@@ -561,8 +585,8 @@ function Timeline({
                   <b>{formatShortDate(phase.start)}</b>
                   <small>
                     {phase.kind === "deposit-kept"
-                      ? "Deposit becomes non-refundable"
-                      : "Full stay becomes non-refundable"}
+                      ? language.partiallyRefundableLanguageSubTitle
+                      : language.nonRefundableLanguageSubTitle}
                   </small>
                 </span>
               )}
@@ -575,10 +599,8 @@ function Timeline({
               )}
             </div>
             <div className="rc-phase-copy">
-              <b>{PHASE_COPY[phase.kind].title}</b>
-              <span>
-                {PHASE_COPY[phase.kind].line(timeline, phase.kept, currency)}
-              </span>
+              <b>{phaseHeading(phase.kind, language)}</b>
+              <span>{phaseSubtitle(phase.kind, language)}</span>
               <small>
                 {phase.days === 0
                   ? "Arrival day"
@@ -598,12 +620,14 @@ function Timeline({
 
       <div className="rc-charges">
         <div>
-          <small>Due today</small>
+          <small>{language.atTimeOfBooking}</small>
+          <span className="rc-charge-subtitle">{language.atTimeOfBookingSubTitle}</span>
           <b className="rc-num">{formatMoney(timeline.dueToday, currency)}</b>
         </div>
         {balance && (
           <div>
-            <small>Charged {formatShortDate(balance.date)}</small>
+            <small>{language.nextDueDate} · {formatShortDate(balance.date)}</small>
+            <span className="rc-charge-subtitle">{language.nextDueDateSubTitle}</span>
             <b className="rc-num">{formatMoney(balance.amount, currency)}</b>
           </div>
         )}

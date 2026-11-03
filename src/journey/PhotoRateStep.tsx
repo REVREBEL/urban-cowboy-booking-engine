@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { ProductionRateTray } from "@/components/rates/ProductionRateTray";
 import type { RateCardConfig } from "@/types/rate-card";
+import type { PolicyLanguage } from "@/types/policy-language";
 import { useBooking } from "../state/booking";
 import { api } from "../lib/api";
 import { toPhotoTourRoom } from "@/data/photoTourRooms";
@@ -14,6 +15,15 @@ import { photoGalleryForRoom } from "@/data/photoGalleries";
 export function PhotoRateStep() {
   const booking = useBooking();
   const [configs, setConfigs] = useState<RateCardConfig[]>([]);
+  const [policyLanguage, setPolicyLanguage] = useState<Partial<PolicyLanguage>>({});
+
+  useEffect(() => {
+    let active = true;
+    void api.policyLanguage().then((labels) => {
+      if (active) setPolicyLanguage(labels);
+    });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -61,6 +71,7 @@ export function PhotoRateStep() {
           nights={booking.nightsCount}
           rates={room.rates}
           configs={configs}
+          policyLanguage={policyLanguage}
           selectedRateId={booking.selectedRate?.rateId ?? null}
           showChangeRoomAction={false}
           onSelectRate={(rate) => {
