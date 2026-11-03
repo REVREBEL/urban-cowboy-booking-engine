@@ -27,6 +27,8 @@
     "tokens:audit": "node scripts/tokenize-design-system.mjs",
     "tokens:fix": "node scripts/tokenize-design-system.mjs --write",
     "tokens:check": "node scripts/tokenize-design-system.mjs --check",
+    "lint:controls": "node scripts/check-control-contract.mjs",
+    "lint:controls:all": "node scripts/check-control-contract.mjs --all",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

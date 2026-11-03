@@ -30,3 +30,18 @@ This repository uses **Tailwind CSS v4**, not v3. Before changing UI classes or 
 - Do not add v3 `@tailwind base;`, `@tailwind components;`, `@tailwind utilities;`, or introduce a `tailwind.config.js` / v3-style plugin configuration as the source of truth.
 - Use the project's existing semantic theme variables and v4 `group` / `data` state variants. Component styling belongs in the component where practical; do not create one-off global stylesheets for FocusAmenity.
 - Before reusing the shared `Button`, account for its default hover opacity, pressed scaling, and rectangular focus ring. The photo hotspot medallion intentionally uses its own native accessible button and a **circular** keyboard-focus indicator.
+
+
+### Shared Control Design Contract (Required for All Agents)
+
+`src/components/ui/Button.tsx` and `src/components/ui/Pill.tsx` own all button and pill presentation. Screens, rate cards, and compositions only control placement, data, and callbacks.
+
+- Use approved control props for the appearance: `variant`, `colorScheme`, `size`, `textCase`, `borderColor`, and the documented icon/loading/disabled props.
+- **Do not override** radius, padding, border, fonts, tracking, colors, opacity, height, hover/focus, or pressed behavior with local classes, inline `style`, ancestor selectors, or important modifiers.
+- Use `className` on shared controls **only** for approved placement classes such as `w-full`, `shrink-0`, `self-end`, or grid order/span. Place other layout styles on a wrapper.
+- Do not forward opaque prop spreads into shared controls: explicitly pass the supported behavior props.
+- If a new appearance is needed, extend the shared component's documented variant or token styles and its Storybook examples rather than introducing a screen-local workaround.
+- An icon's own asset mask or dimensions belong on the icon child, not on the Button element.
+- Run `npm run lint:controls` before committing. CI compares changed TSX files against `main` and **rejects newly introduced** overrides. Existing violations elsewhere are technical debt, not precedent; use `npm run lint:controls:all` for a full audit.
+
+This is enforced by `scripts/check-control-contract.mjs`. Only scoped exceptions approved in the shared design-system implementation should bypass this contract.
