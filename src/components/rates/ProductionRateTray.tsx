@@ -324,9 +324,11 @@ export function ProductionRateTray({
           <p className="rc-eyebrow">{formatRateSelectionHeading(checkIn, nights)}</p>
           <h1 id="rate-selection-title" className="rc-production-title">{roomName}</h1>
         </div>
-        <RateAction slot="change-room" onClick={onChangeRoom}>
-          ← Change room
-        </RateAction>
+        {showChangeRoomAction && (
+          <RateAction slot="change-room" onClick={onChangeRoom}>
+            ← Change room
+          </RateAction>
+        )}
       </div>
 
       <div className="rc-production rc-grid-wrap">
@@ -420,8 +422,12 @@ export function ProductionRateTray({
             key={openRate.rateId}
             className={`rc-drawer-layer ${isDrawerClosing ? "is-closing" : ""}`}
           >
-            <button
+            <Button
               type="button"
+              variant="transparent"
+              colorScheme="lake-forest"
+              size="xsmall"
+              textCase="title"
               className="rc-backdrop"
               aria-label="Close rate details"
               onClick={closeDrawer}
@@ -443,18 +449,10 @@ export function ProductionRateTray({
                   <p className="rc-eyebrow">{openConfig?.eyebrow || "Rate details"}</p>
                   <h2 className="rc-name">{openConfig?.headline || openRate.name}</h2>
                 </div>
-                <button
-                  type="button"
-                  className="rc-link"
-                  onClick={closeDrawer}
-                >
+                <RateAction slot="close-details" onClick={closeDrawer}>
                   Close ×
-                </button>
+                </RateAction>
               </div>
-              <RateAction slot="close-details" onClick={() => setOpenRateId(null)}>
-                Close ×
-              </RateAction>
-            </div>
 
               <div className="rc-drawer-body">
                 <RateDetailBody
@@ -465,17 +463,18 @@ export function ProductionRateTray({
                 />
               </div>
 
-            <div className="rc-production-tray-actions">
-              <b className="rc-num">
-                {formatMoney(openRate.totalGross, openRate.currency)}
-              </b>
-              <RateAction
-                slot="select"
-                disabled={openRate.totalGross == null}
-                onClick={() => onSelectRate(openRate)}
-              >
-                {openConfig?.ctaLabel?.trim() || "Choose this rate"}
-              </RateAction>
+              <div className="rc-production-tray-actions">
+                <b className="rc-num">
+                  {formatMoney(openRate.totalGross, openRate.currency)}
+                </b>
+                <RateAction
+                  slot="select"
+                  disabled={openRate.totalGross == null}
+                  onClick={() => onSelectRate(openRate)}
+                >
+                  {openConfig?.ctaLabel?.trim() || "Choose this rate"}
+                </RateAction>
+              </div>
             </div>
           </div>
         )}
