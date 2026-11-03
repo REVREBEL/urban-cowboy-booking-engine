@@ -53,10 +53,14 @@ function iso(ms: number) {
 }
 const round = (n: number) => Math.round(n * 100) / 100;
 
+const shortDateFmt = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
+
 export function formatShortDate(isoDate: string) {
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(
-    new Date(parse(isoDate)),
-  );
+  return shortDateFmt.format(new Date(parse(isoDate)));
 }
 
 export function buildCancellationTimeline(

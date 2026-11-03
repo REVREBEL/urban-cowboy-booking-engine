@@ -71,7 +71,7 @@ test("Photo Journal matches center beside image selections and labels keep a dar
   assert.match(journal, /absolute inset-x-0 bottom-0 z-10/);
 });
 
-test("Photo rate step delegates its cards and full-width details tray to the shared production component", () => {
+test("Photo rate step delegates its cards and details drawer to the shared production component", () => {
   const rates = source("journey/PhotoRateStep.tsx");
   const tray = source("components/rates/ProductionRateTray.tsx");
   assert.match(rates, /import \{ ProductionRateTray \} from/);
@@ -80,7 +80,8 @@ test("Photo rate step delegates its cards and full-width details tray to the sha
   assert.match(rates, /configs=\{configs\}/);
   assert.match(rates, /booking\.selectRoomRate\(room, rate\)/);
   assert.match(rates, /booking\.goTo\("extras"\)/);
-  assert.match(tray, /className="rc-tray"/);
+  assert.match(tray, /rc-drawer-layer/);
+  assert.match(tray, /role="dialog"/);
   assert.match(tray, /<RateDetailBody/);
   assert.match(tray, /<Timeline timeline=\{timeline\}/);
   assert.doesNotMatch(rates, /RateOfferSidePanel|<PolicyDisplay/);

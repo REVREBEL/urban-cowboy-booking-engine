@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from "react";
+import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
 import type { RateCardConfig } from "@/types/rate-card";
@@ -10,6 +10,7 @@ import {
   type CancellationTimeline,
   type PhaseKind,
 } from "@/lib/cancellationTimeline";
+import { money } from "@/lib/format";
 
 // Named action slots keep every rate-card and tray action on the global Button system.
 type RateActionSlot = "change-room" | "details" | "select" | "close-details" | "browse-rooms";
@@ -78,34 +79,33 @@ interface ProductionRateTrayProps {
 
 function formatMoney(amount: number | null | undefined, currency: string) {
   const value = typeof amount === "number" && Number.isFinite(amount) ? amount : 0;
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
-  }).format(value);
+  return money(value, currency, { locale: "en-US" });
 }
+
+const rateSelectionHeadingFmt = new Intl.DateTimeFormat("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  timeZone: "UTC",
+});
 
 function formatRateSelectionHeading(checkIn: string, nights: number) {
   const [year, month, day] = checkIn.split("-").map(Number);
   const date = new Date(Date.UTC(year, month - 1, day));
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(date);
+  const formattedDate = rateSelectionHeadingFmt.format(date);
 
   return `Rate Selection, ${formattedDate} for ${nights} ${nights === 1 ? "Night" : "Nights"}`;
 }
 
+const propertyTodayFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: PROPERTY_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 function todayInPropertyTimeZone() {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: PROPERTY_TIME_ZONE,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(new Date());
+  const parts = propertyTodayFmt.formatToParts(new Date());
 
   const value = (type: Intl.DateTimeFormatPartTypes) =>
     parts.find((part) => part.type === type)?.value ?? "";
@@ -324,9 +324,11 @@ export function ProductionRateTray({
           <p className="rc-eyebrow">{formatRateSelectionHeading(checkIn, nights)}</p>
           <h1 id="rate-selection-title" className="rc-production-title">{roomName}</h1>
         </div>
-        <RateAction slot="change-room" onClick={onChangeRoom}>
-          ← Change room
-        </RateAction>
+        {showChangeRoomAction && (
+          <RateAction slot="change-room" onClick={onChangeRoom}>
+            ← Change room
+          </RateAction>
+        )}
       </div>
 
       <div className="rc-production rc-grid-wrap">
@@ -420,8 +422,12 @@ export function ProductionRateTray({
             key={openRate.rateId}
             className={`rc-drawer-layer ${isDrawerClosing ? "is-closing" : ""}`}
           >
-            <button
+            <Button
               type="button"
+              variant="transparent"
+              colorScheme="lake-forest"
+              size="xsmall"
+              textCase="title"
               className="rc-backdrop"
               aria-label="Close rate details"
               onClick={closeDrawer}
@@ -443,18 +449,10 @@ export function ProductionRateTray({
                   <p className="rc-eyebrow">{openConfig?.eyebrow || "Rate details"}</p>
                   <h2 className="rc-name">{openConfig?.headline || openRate.name}</h2>
                 </div>
-                <button
-                  type="button"
-                  className="rc-link"
-                  onClick={closeDrawer}
-                >
+                <RateAction slot="close-details" onClick={closeDrawer}>
                   Close ×
-                </button>
+                </RateAction>
               </div>
-              <RateAction slot="close-details" onClick={() => setOpenRateId(null)}>
-                Close ×
-              </RateAction>
-            </div>
 
               <div className="rc-drawer-body">
                 <RateDetailBody
@@ -465,17 +463,18 @@ export function ProductionRateTray({
                 />
               </div>
 
-            <div className="rc-production-tray-actions">
-              <b className="rc-num">
-                {formatMoney(openRate.totalGross, openRate.currency)}
-              </b>
-              <RateAction
-                slot="select"
-                disabled={openRate.totalGross == null}
-                onClick={() => onSelectRate(openRate)}
-              >
-                {openConfig?.ctaLabel?.trim() || "Choose this rate"}
-              </RateAction>
+              <div className="rc-production-tray-actions">
+                <b className="rc-num">
+                  {formatMoney(openRate.totalGross, openRate.currency)}
+                </b>
+                <RateAction
+                  slot="select"
+                  disabled={openRate.totalGross == null}
+                  onClick={() => onSelectRate(openRate)}
+                >
+                  {openConfig?.ctaLabel?.trim() || "Choose this rate"}
+                </RateAction>
+              </div>
             </div>
           </div>
         )}
