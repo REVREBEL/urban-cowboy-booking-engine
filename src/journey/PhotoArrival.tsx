@@ -295,15 +295,13 @@ export function Arrive(props: {
                 size="small"
                 hasIcon
                 icon={<span aria-hidden="true" className="inline-block size-4 shrink-0 bg-current" style={{ WebkitMask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat', mask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat' }} />}
-                className="rounded-full uppercase tracking-[0.2em]"
-                style={{ opacity: 1 }}
                 disabled={!ready}
                 aria-describedby="dates-hint"
                 onClick={() => ready && props.onMatch()}
               >
                 Match me with a room
               </Button>
-              <Button type="button" variant="outline" colorScheme="alpine-linen" size="small" className="rounded-full uppercase tracking-[0.2em]" style={{ opacity: 1 }} disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onBrowse()}>
+              <Button type="button" variant="outline" colorScheme="alpine-linen" size="small" disabled={!ready} aria-describedby="dates-hint" onClick={() => ready && props.onBrowse()}>
                 Browse every room
               </Button>
             </div>
