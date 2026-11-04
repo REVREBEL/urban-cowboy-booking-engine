@@ -190,7 +190,7 @@ export function Arrive(props: {
   onBrowse: () => void;
   nights: number;
   stories: readonly ArrivalStory[] | null;
-  showQuickSelect: boolean;
+  showQuickSelect?: boolean;
 }) {
   const ready = props.nights > 0;
   const childCount = props.children + props.infants;

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { InlineDateRangePicker, type DailyRate } from "./InlineDateRangePicker";
 
@@ -29,9 +30,34 @@ export function DateSearchDropdown({
   onVisibleRangeChange,
 }: DateSearchDropdownProps) {
   const hasCompleteRange = Boolean(checkIn && checkOut && checkOut > checkIn);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialogRef.current?.focus();
+    return () => {
+      if (triggerRef.current?.isConnected) triggerRef.current.focus();
+    };
+  }, []);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      onClose();
+    }
+  };
 
   return (
-    <div className="w-full rounded-3xl border-2 border-input-border bg-input p-4 text-foreground shadow-2xl sm:p-6">
+    <div
+      ref={dialogRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-label="Select dates of stay"
+      onKeyDown={handleKeyDown}
+      className="w-full rounded-3xl border-2 border-input-border bg-input p-4 text-foreground shadow-2xl focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-input-border sm:p-6"
+    >
       <div className="mb-4 flex items-center justify-between border-b border-input-border/20 pb-3 text-left">
         <span className="font-number text-sm font-bold uppercase tracking-[2px] text-foreground">
           Select dates of stay
