@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { FocusAmenityAction } from "@/components/rooms/FocusAmenityAction";
 
 const meta = {
-  title: "Components/Rooms/FocusAmenityAction",
+  title: "Components/Rooms/FocusAmenity/FocusAmenityAction",
   component: FocusAmenityAction,
   tags: ["autodocs"],
   args: { state: "Default" },
