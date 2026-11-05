@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // Enforce shared Button/Pill presentation contracts without blocking legacy debt.
-import { parse } from "@babel/parser";
-import { parse } from "@babel/parser";
+// TypeScript 7 exposes the native CLI but not the classic compiler API.
+// Keep the JSX AST checker on the TypeScript 6 compatibility API.
+import { parse } from "@typescript/@babel/parser";
+import { parse } from "@babel/parser6";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -14,16 +16,16 @@ const SOURCE_PATH = /^src\/(?!stories\/).+\.tsx$/;
 
 function canonical(value) { return value.replace(/\s+/g, " ").trim(); }
 function attributeValue(attribute, source) {
-  if (!attribute.initializer) return "";
+  if (!attribute.initializer) return { value: "", dynamic: false };
   const init = attribute.initializer;
-  if (ts.isStringLiteral(init)) return init.text;
+  if (ts.isStringLiteral(init)) return { value: init.text, dynamic: false };
   if (ts.isJsxExpression(init)) {
     const expr = init.expression;
-    if (!expr) return "";
-    if (ts.isStringLiteral(expr) || ts.isNoSubstitutionTemplateLiteral(expr)) return expr.text;
-    return expr.getText(source);
+    if (!expr) return { value: "", dynamic: false };
+    if (ts.isStringLiteral(expr) || ts.isNoSubstitutionTemplateLiteral(expr)) return { value: expr.text, dynamic: false };
+    return { value: expr.getText(source), dynamic: true };
   }
-  return init.getText(source);
+  return { value: init.getText(source), dynamic: false };
 }
 function controlNames(source) {
   const names = new Set(COMPONENTS);
@@ -54,13 +56,13 @@ export function violations(file, content) {
             continue;
           }
           const name = attribute.name.text;
-          const value = attributeValue(attribute, source);
+          const { value, dynamic } = attributeValue(attribute, source);
           if (name === "style") {
             findings.push({ file, line, tag, kind: "style", value: canonical(value) });
           }
           if (name === "className") {
             // Unknown expressions are rejected: they may inject presentation classes.
-            if (/[{}$()?:+]/.test(value)) {
+            if (dynamic || /[{}$()?:+]/.test(value)) {
               findings.push({ file, line, tag, kind: "dynamic-class", value: canonical(value) });
             } else {
               for (const token of value.split(/\s+/).filter(Boolean)) {

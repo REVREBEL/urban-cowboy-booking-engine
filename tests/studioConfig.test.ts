@@ -39,6 +39,7 @@ test("Studio checks the specific live CMS item through the Data API", async () =
     });
     assert.deepEqual(called, [
       `https://api.webflow.com/v2/collections/${collectionId}/items/${itemId}/live`,
+      `https://api.webflow.com/v2/collections/${collectionId}/items/${itemId}`,
     ]);
   } finally {
     globalThis.fetch = originalFetch;
