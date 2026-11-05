@@ -34,14 +34,16 @@ if (!existsSync(resolve(staticDir, "index.json"))) {
 mkdirSync(reportDir, { recursive: true });
 // Wait for the spawned Python server to confirm it actually bound the port.
 // An unrelated server answering /index.json must never make this test pass.
-const server = spawn("python3", ["-u", "-m", "http.server", String(port), "--bind", "127.0.0.1", "--directory", staticDir], { stdio: ["ignore", "ignore", "pipe"] });
+const server = spawn("python3", ["-u", "-m", "http.server", String(port), "--bind", "127.0.0.1", "--directory", staticDir], { stdio: ["ignore", "pipe", "pipe"] });
 let serverReady = false;
 let serverError = "";
-server.stderr.on("data", (chunk) => {
+const onServerOutput = (chunk) => {
   const message = chunk.toString();
-  if (message.includes("Serving HTTP on 127.0.0.1 port")) serverReady = true;
+  if (/Serving HTTP on .*port [0-9]+/.test(message)) serverReady = true;
   if (/Address already in use|OSError|Traceback/.test(message)) serverError += message;
-});
+};
+server.stdout.on("data", onServerOutput);
+server.stderr.on("data", onServerOutput);
 server.on("error", (error) => { serverError += error.message; });
 
 const sleep = (ms) => new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
