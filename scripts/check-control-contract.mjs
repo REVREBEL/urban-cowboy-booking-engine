@@ -17,8 +17,8 @@ export function violations(file, content) {
   let ast;
   try {
     ast = parse(content, { sourceType: "module", plugins: ["jsx", "typescript"] });
-  } catch {
-    return [];
+  } catch (error) {
+    throw new Error(`Cannot parse ${file} for control-contract validation: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
   }
   const controls = new Set(COMPONENTS);
   for (const statement of ast.program.body) {
