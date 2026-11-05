@@ -4,7 +4,7 @@ import React, {
   type ButtonHTMLAttributes,
   type ReactNode,
 } from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
@@ -288,7 +288,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         ref={ref}
-        disabled={isDisabledOrLoading}
+        disabled={asChild ? undefined : isDisabledOrLoading}
         aria-busy={isLoading || undefined}
         className={cn(
           buttonVariants({ variant, size }),
@@ -313,7 +313,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <span className="inline-flex items-center justify-center">{iconNode}</span>
         ) : null}
 
-        <span className={iconPosition === "left" && iconNode && !isLoading ? "pr-1" : undefined}>{children}</span>
+        {asChild ? (
+          <Slottable>{children}</Slottable>
+        ) : (
+          <span className={iconPosition === "left" && iconNode && !isLoading ? "pr-1" : undefined}>{children}</span>
+        )}
 
         {!isLoading && iconPosition === "right" && iconNode ? (
           <span className="inline-flex items-center justify-center">{iconNode}</span>

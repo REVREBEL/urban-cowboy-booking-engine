@@ -12,7 +12,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
 
     steps:
       - name: Check out repository
@@ -38,6 +38,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+
       - name: Test
         run: npm test
 
@@ -45,5 +48,19 @@ jobs:
         run: npm run build
 
       - name: Build Storybook
+        id: storybook
         if: success() || failure()
         run: npm run build-storybook
+
+      - name: Render every Storybook story in Chromium
+        if: always() && steps.storybook.outcome == 'success'
+        run: npm run test:storybook:runtime
+
+      - name: Upload Storybook runtime failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-runtime-report
+          path: storybook-runtime-report/
+          if-no-files-found: ignore
+          retention-days: 7
