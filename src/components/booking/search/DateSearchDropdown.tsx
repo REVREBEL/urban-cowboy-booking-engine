@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { InlineDateRangePicker, type DailyRate } from "./InlineDateRangePicker";
 
@@ -16,6 +17,7 @@ interface DateSearchDropdownProps {
   onChange: (checkIn: string, checkOut: string) => void;
   onClose: () => void;
   onVisibleRangeChange: (startDate: string, endDate: string) => void;
+  triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
 export function DateSearchDropdown({
@@ -27,11 +29,62 @@ export function DateSearchDropdown({
   onChange,
   onClose,
   onVisibleRangeChange,
+  triggerRef: externalTriggerRef,
 }: DateSearchDropdownProps) {
   const hasCompleteRange = Boolean(checkIn && checkOut && checkOut > checkIn);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const internalTriggerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (externalTriggerRef?.current) {
+      internalTriggerRef.current = externalTriggerRef.current;
+    } else {
+      const datesTrigger =
+        document.querySelector<HTMLElement>('button[aria-expanded="true"]') ||
+        (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+      internalTriggerRef.current = datesTrigger;
+    }
+
+    dialogRef.current?.focus();
+  }, [externalTriggerRef]);
+
+  const handleDismiss = () => {
+    onClose?.();
+    if (internalTriggerRef.current?.isConnected) {
+      internalTriggerRef.current.focus();
+    }
+  };
+
+  useEffect(() => {
+    const handleDocumentKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose?.();
+        const active = document.activeElement;
+        const isInside =
+          active instanceof HTMLElement &&
+          (dialogRef.current?.contains(active) || active === dialogRef.current);
+        if (isInside && internalTriggerRef.current?.isConnected) {
+          internalTriggerRef.current.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleDocumentKeyDown, true);
+    return () => {
+      document.removeEventListener("keydown", handleDocumentKeyDown, true);
+    };
+  }, [onClose]);
 
   return (
-    <div className="w-full rounded-3xl border-2 border-input-border bg-input p-4 text-foreground shadow-2xl sm:p-6">
+    <div
+      ref={dialogRef}
+      tabIndex={-1}
+      role="dialog"
+      aria-label="Select dates of stay"
+      className="w-full rounded-3xl border-2 border-input-border bg-input p-4 text-foreground shadow-2xl focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-input-border sm:p-6"
+    >
       <div className="mb-4 flex items-center justify-between border-b border-input-border/20 pb-3 text-left">
         <span className="font-number text-sm font-bold uppercase tracking-[2px] text-foreground">
           Select dates of stay
@@ -56,7 +109,7 @@ export function DateSearchDropdown({
             colorScheme="smoke"
             size="xsmall"
             className="size-8 rounded-full p-0!"
-            onClick={onClose}
+            onClick={handleDismiss}
           >
             ×
           </Button>
@@ -97,7 +150,7 @@ export function DateSearchDropdown({
             <Button
               type="button"
               disabled={!hasCompleteRange}
-              onClick={onClose}
+              onClick={handleDismiss}
               variant="filled"
               colorScheme="cowboy-umber"
               size="small"

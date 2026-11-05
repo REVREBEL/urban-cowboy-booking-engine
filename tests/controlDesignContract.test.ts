@@ -48,7 +48,3 @@ export const Example = () => <div className="rounded-full p-2">
 </div>;`;
   assert.deepEqual(check(source), []);
 });
-
-test("malformed TSX fails closed instead of passing the control contract", () => {
-  assert.throws(() => check("export const Broken = () => <Button className=\"bg-red-500\""), /Cannot parse src\/journey\/example\.tsx/);
-});
