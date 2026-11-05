@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cmsIconUrl } from "@/lib/cmsPhotoHotspots";
 import { FocusAmenityAction } from "./FocusAmenityAction";
+import { FocusAmenityCard } from "./FocusAmenityCard";
 import { CmsAmenityIcon } from "./CmsAmenityIcon";
 import type { TourIcon } from "@/journey/tour";
 
@@ -187,10 +188,12 @@ export function SideBarFocusAmenity({ amenities, open, onOpenChange, className =
             </div>
           </div>
           {selected && <div ref={cardRef} className="absolute right-0 left-47 min-w-0 -translate-y-1/2" style={{ top: cardCenter }} aria-live="polite">
-            <div key={selected.id} className="max-h-[min(350px,70dvh)] overflow-y-auto rounded-xl bg-white p-6 text-secondary shadow-[0_6px_24px_rgba(0,0,0,.18)] sm:p-8">
-              <h3 className="font-heading text-[clamp(20px,3vw,24px)] leading-tight text-accent">{selected.title}</h3>
-              {selected.description && <p className="mt-3 font-body text-[15px] leading-relaxed">{selected.description}</p>}
-            </div>
+            <FocusAmenityCard
+              key={selected.id}
+              headline={selected.title}
+              description={selected.description}
+              className="max-h-[min(350px,70dvh)] overflow-y-auto shadow-[0_6px_24px_rgba(0,0,0,.18)]"
+            />
           </div>}
         </div>
       )}
