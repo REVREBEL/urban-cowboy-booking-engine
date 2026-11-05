@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Enforce shared Button/Pill presentation contracts without blocking legacy debt.
-import ts from "typescript";
+// TypeScript 7 exposes the native CLI but not the classic compiler API.
+// Keep the JSX AST checker on the TypeScript 6 compatibility API.
+import ts from "@typescript/typescript6";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
