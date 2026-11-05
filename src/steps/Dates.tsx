@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchBarExpanded, type ActiveDropdownSection } from "@/components/booking/search/SearchBarExpanded";
 import { DateSearchDropdown } from "@/components/booking/search/DateSearchDropdown";
 import { SearchBarGuestDropdown } from "@/components/booking/search/SearchBarGuestsDropdown";
@@ -87,6 +87,7 @@ export function Dates() {
   });
   const [location, setLocation] = useState("CATSKILLS");
   const [accessible, setAccessible] = useState(false);
+  const datesTriggerRef = useRef<HTMLButtonElement>(null);
   const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
   const [error, setError] = useState("");
   const [dailyRates, setDailyRates] = useState<Record<string, DailyRate>>({});
@@ -194,6 +195,7 @@ export function Dates() {
             variant="circle"
             values={{ property: location, checkInDate: displayDate(form.checkIn), checkOutDate: displayDate(form.checkOut), guests: guestLabel, promoCode: form.voucherCode || "Add promo" }}
             activeSection={activeSection}
+            dateTriggerRef={datesTriggerRef}
             onSectionClick={setActiveSection}
             onSearch={submit}
             className="w-full!"
@@ -211,6 +213,7 @@ export function Dates() {
 
                 {activeSection === "dates" && (
                   <DateSearchDropdown
+                    triggerRef={datesTriggerRef}
                     checkIn={form.checkIn}
                     checkOut={form.checkOut}
                     dailyRates={dailyRates}
