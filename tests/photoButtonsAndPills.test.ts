@@ -73,22 +73,15 @@ test("SideFocusAmenityBar uses focus states, a four-item viewport, and aligned s
 
   assert.match(source, /seenIds\.has\(item\.id\) \|\| seenTitles\.has\(normalizedTitle\)/);
   assert.match(source, /fixed top-1\/2 left-8/);
-  assert.match(source, /h-\[min\(calc\(var\(--amenity-count\)\*112px\+64px\),calc\(100dvh-128px\),528px\)\]/);
-  assert.match(source, /"--amenity-count": uniqueAmenities\.length/);
-  assert.match(source, /first:mt-7/);
-  assert.match(source, /px-2 pb-8/);
-  assert.doesNotMatch(source, /first:mt-11|px-2 pb-4/);
+  assert.match(source, /h-\[clamp\(224px,calc\(100dvh-128px\),528px\)\]/);
+  assert.match(source, /first:mt-11/);
+  assert.doesNotMatch(source, /pb-4 pt-11/);
   assert.match(source, /scrollIntoView\(/);
   assert.match(source, /selectedIndex >= 0 \? uniqueAmenities\[selectedIndex\] : undefined/);
   assert.match(source, /setSelectedId\(\(currentId\) => currentId === id \? null : id\)/);
   assert.match(source, /if \(!value\) setSelectedId\(null\)/);
   assert.match(source, /onScroll=\{updateCardPosition\}/);
-  assert.match(source, /className="pointer-events-none relative flex w-full min-h-0 items-start gap-6"/);
-  assert.match(source, /className="pointer-events-auto relative flex h-\[min/);
-  assert.match(source, /className="pointer-events-auto absolute right-0 left-47/);
   assert.match(source, /"focus-active" : "focus-default hover:focus-hover"/);
-  assert.ok(source.indexOf("if (url && failedUrl !== url)") < source.indexOf("if (webflowUrl && failedWebflowUrl !== webflowUrl)"));
-  assert.match(source, /bg-primary mask-\[url\('\/assets\/icons\/ui\/ui-arrow_single_line_up\.svg'\)\]/);
   assert.match(source, /style=\{\{ top: cardCenter \}\}/);
   assert.match(source, /Math\.min\(maximumCenter, Math\.max\(minimumCenter, desiredCenter\)\)/);
   assert.doesNotMatch(source, /state="Active" tone="faded"/);

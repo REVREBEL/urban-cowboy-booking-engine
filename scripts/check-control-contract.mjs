@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Enforce shared Button/Pill presentation contracts without blocking legacy debt.
-import { parse } from "@babel/parser";
+import ts from "typescript";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
@@ -12,82 +12,69 @@ const LAYOUT_CLASS = /^(?:w-full|w-auto|max-w-full|min-w-0|shrink-0|shrink|grow|
 const SOURCE_PATH = /^src\/(?!stories\/).+\.tsx$/;
 
 function canonical(value) { return value.replace(/\s+/g, " ").trim(); }
-
-export function violations(file, content) {
-  let ast;
-  try {
-    ast = parse(content, { sourceType: "module", plugins: ["jsx", "typescript"] });
-  } catch (error) {
-    throw new Error(`Cannot parse ${file} for control-contract validation: ${error instanceof Error ? error.message : String(error)}`, { cause: error });
+function attributeValue(attribute, source) {
+  if (!attribute.initializer) return "";
+  const init = attribute.initializer;
+  if (ts.isStringLiteral(init)) return init.text;
+  if (ts.isJsxExpression(init)) {
+    const expr = init.expression;
+    if (!expr) return "";
+    if (ts.isStringLiteral(expr) || ts.isNoSubstitutionTemplateLiteral(expr)) return expr.text;
+    return expr.getText(source);
   }
-  const controls = new Set(COMPONENTS);
-  for (const statement of ast.program.body) {
-    if (statement.type === "ImportDeclaration" && CONTROL_IMPORT.test(statement.source.value)) {
-      for (const spec of statement.specifiers) {
-        if (spec.type === "ImportSpecifier") {
-          const imported = spec.imported.type === "Identifier" ? spec.imported.name : spec.imported.value;
-          if (COMPONENTS.has(imported)) {
-            controls.add(spec.local.name);
-          }
-        }
-      }
+  return init.getText(source);
+}
+function controlNames(source) {
+  const names = new Set(COMPONENTS);
+  for (const statement of source.statements) {
+    if (!ts.isImportDeclaration(statement)) continue;
+    const spec = statement.moduleSpecifier;
+    if (!ts.isStringLiteral(spec) || !CONTROL_IMPORT.test(spec.text)) continue;
+    const bindings = statement.importClause?.namedBindings;
+    if (!bindings || !ts.isNamedImports(bindings)) continue;
+    for (const item of bindings.elements) {
+      if (COMPONENTS.has(item.propertyName?.text ?? item.name.text)) names.add(item.name.text);
     }
   }
-
+  return names;
+}
+export function violations(file, content) {
+  const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const controls = controlNames(source);
   const findings = [];
-  function walk(node) {
-    if (!node || typeof node !== "object") return;
-    if (node.type === "JSXOpeningElement") {
-      const tag = node.name.type === "JSXIdentifier" ? node.name.name : "";
+  function visit(node) {
+    if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+      const tag = node.tagName.getText(source);
       if (controls.has(tag)) {
-        const line = node.loc?.start?.line ?? 1;
-        for (const attr of node.attributes) {
-          if (attr.type === "JSXSpreadAttribute") {
-            const raw = content.slice(attr.start, attr.end);
-            findings.push({ file, line, tag, kind: "spread", value: canonical(raw) });
+        const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
+        for (const attribute of node.attributes.properties) {
+          if (ts.isJsxSpreadAttribute(attribute)) {
+            findings.push({ file, line, tag, kind: "spread", value: canonical(attribute.getText(source)) });
             continue;
           }
-          if (attr.type === "JSXAttribute" && attr.name.type === "JSXIdentifier") {
-            const name = attr.name.name;
-            if (name === "style") {
-              const expr = attr.value?.type === "JSXExpressionContainer" ? attr.value.expression : attr.value;
-              const raw = expr ? content.slice(expr.start, expr.end) : "";
-              findings.push({ file, line, tag, kind: "style", value: canonical(raw) });
-            }
-            if (name === "className") {
-              if (attr.value?.type === "StringLiteral") {
-                const val = attr.value.value;
-                for (const token of val.split(/\s+/).filter(Boolean)) {
-                  if (!LAYOUT_CLASS.test(token)) findings.push({ file, line, tag, kind: "class", value: token });
-                }
-              } else if (attr.value?.type === "JSXExpressionContainer") {
-                const expr = attr.value.expression;
-                if (expr.type === "StringLiteral") {
-                  for (const token of expr.value.split(/\s+/).filter(Boolean)) {
-                    if (!LAYOUT_CLASS.test(token)) findings.push({ file, line, tag, kind: "class", value: token });
-                  }
-                } else {
-                  const raw = content.slice(expr.start, expr.end);
-                  findings.push({ file, line, tag, kind: "dynamic-class", value: canonical(raw) });
-                }
+          const name = attribute.name.text;
+          const value = attributeValue(attribute, source);
+          if (name === "style") {
+            findings.push({ file, line, tag, kind: "style", value: canonical(value) });
+          }
+          if (name === "className") {
+            // Unknown expressions are rejected: they may inject presentation classes.
+            if (/[{}$()?:+]/.test(value)) {
+              findings.push({ file, line, tag, kind: "dynamic-class", value: canonical(value) });
+            } else {
+              for (const token of value.split(/\s+/).filter(Boolean)) {
+                if (!LAYOUT_CLASS.test(token)) findings.push({ file, line, tag, kind: "class", value: token });
               }
             }
           }
         }
       }
     }
-    for (const key of Object.keys(node)) {
-      if (key !== "loc" && key !== "start" && key !== "end") {
-        const child = node[key];
-        if (Array.isArray(child)) child.forEach(walk);
-        else if (child && typeof child === "object") walk(child);
-      }
-    }
+    ts.forEachChild(node, visit);
   }
-  walk(ast);
+  visit(source);
   return findings;
 }
-
 function git(args) { return execFileSync("git", args, { encoding: "utf8", maxBuffer: 10_000_000 }); }
 function baseRevision() {
   if (process.env.GITHUB_EVENT_NAME === "pull_request") return "origin/" + (process.env.GITHUB_BASE_REF || "main");
