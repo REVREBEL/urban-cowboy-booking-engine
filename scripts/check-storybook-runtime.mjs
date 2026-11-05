@@ -13,10 +13,18 @@ import { chromium } from "playwright";
 
 const staticDir = resolve("storybook-static");
 const reportDir = resolve("storybook-runtime-report");
-const port = Number(process.env.STORYBOOK_SMOKE_PORT || 6020);
+function positiveIntegerEnv(name, fallback, max) {
+  const raw = process.env[name];
+  const value = raw === undefined ? fallback : Number(raw);
+  if (!Number.isSafeInteger(value) || value < 1 || value > max) {
+    throw new Error(`${name} must be a positive integer at most ${max}; got ${JSON.stringify(raw)}`);
+  }
+  return value;
+}
+const port = positiveIntegerEnv("STORYBOOK_SMOKE_PORT", 6020, 65535);
 const origin = `http://127.0.0.1:${port}`;
-const concurrency = Math.max(1, Math.min(6, Number(process.env.STORYBOOK_SMOKE_WORKERS || 3)));
-const storyTimeout = Number(process.env.STORYBOOK_SMOKE_TIMEOUT_MS || 15000);
+const concurrency = positiveIntegerEnv("STORYBOOK_SMOKE_WORKERS", 3, 6);
+const storyTimeout = positiveIntegerEnv("STORYBOOK_SMOKE_TIMEOUT_MS", 15000, 120000);
 
 if (!existsSync(resolve(staticDir, "index.json"))) {
   console.error("Storybook index.json missing. Run npm run build-storybook first.");
@@ -24,7 +32,17 @@ if (!existsSync(resolve(staticDir, "index.json"))) {
 }
 
 mkdirSync(reportDir, { recursive: true });
-const server = spawn("python3", ["-m", "http.server", String(port), "--bind", "127.0.0.1", "--directory", staticDir], { stdio: "ignore" });
+// Wait for the spawned Python server to confirm it actually bound the port.
+// An unrelated server answering /index.json must never make this test pass.
+const server = spawn("python3", ["-u", "-m", "http.server", String(port), "--bind", "127.0.0.1", "--directory", staticDir], { stdio: ["ignore", "ignore", "pipe"] });
+let serverReady = false;
+let serverError = "";
+server.stderr.on("data", (chunk) => {
+  const message = chunk.toString();
+  if (message.includes("Serving HTTP on 127.0.0.1 port")) serverReady = true;
+  if (/Address already in use|OSError|Traceback/.test(message)) serverError += message;
+});
+server.on("error", (error) => { serverError += error.message; });
 
 const sleep = (ms) => new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
 const unique = (messages) => [...new Set(messages)].filter(Boolean);
@@ -32,11 +50,14 @@ const safeName = (id) => id.replace(/[^a-z0-9_-]/gi, "_");
 
 async function waitForServer() {
   for (let attempt = 0; attempt < 80; attempt++) {
-    if (server.exitCode !== null) throw new Error("Storybook HTTP server exited early");
-    try {
-      const response = await fetch(`${origin}/index.json`);
-      if (response.ok) return response.json();
-    } catch { /* Server startup. */ }
+    if (serverError) throw new Error(`Storybook server failed: ${serverError}`);
+    if (server.exitCode !== null || server.signalCode !== null) throw new Error("Storybook HTTP server exited early");
+    if (serverReady) {
+      try {
+        const response = await fetch(`${origin}/index.json`);
+        if (response.ok) return response.json();
+      } catch { /* Bound server is still starting. */ }
+    }
     await sleep(150);
   }
   throw new Error("Timed out starting Storybook HTTP server");
@@ -48,10 +69,16 @@ function storyEntries(index) {
     .sort((a, b) => a.id.localeCompare(b.id));
 }
 
+const failures = [];
+let checked = 0;
+let fatalError = null;
+function saveReport() {
+  writeFileSync(resolve(reportDir, "results.json"), JSON.stringify({
+    checked, failed: failures.length, failures, fatalError,
+  }, null, 2) + "\n");
+}
 async function run() {
   let browser;
-  let failures = [];
-  let checked = 0;
   try {
     const index = await waitForServer();
     const entries = storyEntries(index);
@@ -86,7 +113,14 @@ async function run() {
           const errors = [];
           page.on("pageerror", (error) => errors.push(`Uncaught: ${error.message}\n${error.stack || ""}`));
           page.on("console", (message) => {
-            if (message.type() === "error") errors.push(`Console: ${message.text()}`);
+            if (message.type() !== "error") return;
+            // BrokenImageFallback deliberately requests an invalid image.
+            // Ignore that specific browser resource error, not React exceptions.
+            const expectedImageError =
+              entry.id === "components-media-photo--broken-image-fallback" &&
+              message.text().includes("net::ERR_NAME_NOT_RESOLVED") &&
+              message.location().url.includes("invalid-domain-name-404.com");
+            if (!expectedImageError) errors.push(`Console: ${message.text()}`);
           });
           try {
             await page.goto(`${origin}/iframe.html?id=${encodeURIComponent(entry.id)}&viewMode=story`, {
@@ -99,6 +133,10 @@ async function run() {
             }, undefined, { timeout: storyTimeout });
             // Allow effects and post-render promise rejections to surface.
             await page.waitForTimeout(350);
+            if (entry.id === "components-media-photo--broken-image-fallback") {
+              await page.getByRole("img", { name: "Broken image fallback" })
+                .waitFor({ state: "visible", timeout: storyTimeout });
+            }
           } catch (error) {
             errors.push(`Render: ${error instanceof Error ? error.message : String(error)}`);
           }
@@ -123,8 +161,7 @@ async function run() {
       }
     }));
 
-    const report = { checked, failed: failures.length, failures };
-    writeFileSync(resolve(reportDir, "results.json"), JSON.stringify(report, null, 2) + "\n");
+    if (checked !== entries.length) throw new Error(`Rendered ${checked} of ${entries.length} Storybook stories`);
     console.log(`Storybook runtime: ${checked} rendered, ${failures.length} failed`);
     if (failures.length) {
       for (const failure of failures.slice(0, 30)) {
@@ -133,7 +170,11 @@ async function run() {
       if (failures.length > 30) console.error(`... and ${failures.length - 30} more. See results.json artifact.`);
       process.exitCode = 1;
     }
+  } catch (error) {
+    fatalError = error instanceof Error ? error.stack || error.message : String(error);
+    throw error;
   } finally {
+    saveReport();
     await browser?.close();
     server.kill("SIGTERM");
   }
