@@ -17,6 +17,8 @@ export interface SearchBarExpandedProps {
   initialValues?: Partial<SearchBarExpandedValues>;
   dropdownVisible?: boolean;
   activeSection?: ActiveDropdownSection;
+  /** Exact When button for dialog focus restoration. */
+  dateTriggerRef?: React.Ref<HTMLButtonElement>;
   onSectionClick?: (section: ActiveDropdownSection) => void;
   onValuesChange?: (values: SearchBarExpandedValues) => void;
   onSearch?: (values: SearchBarExpandedValues) => Promise<void> | void;
@@ -103,13 +105,15 @@ type SearchSectionProps = {
   section: Exclude<ActiveDropdownSection, null>;
   activeSection: ActiveDropdownSection;
   onClick: (section: Exclude<ActiveDropdownSection, null>) => void;
+  buttonRef?: React.Ref<HTMLButtonElement>;
   className?: string;
 };
 
-function SearchSection({ label, value, section, activeSection, onClick, className = "" }: SearchSectionProps) {
+function SearchSection({ label, value, section, activeSection, onClick, buttonRef, className = "" }: SearchSectionProps) {
   const active = activeSection === section;
   return (
     <button
+      ref={buttonRef}
       type="button"
       aria-expanded={active}
       onClick={() => onClick(section)}
@@ -137,6 +141,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   initialValues,
   dropdownVisible = false,
   activeSection: controlledActiveSection,
+  dateTriggerRef,
   onSectionClick,
   onSearch,
   buttonSlot,
@@ -202,7 +207,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
           <SearchSection label="Property" value={<span>{properCase(currentValues.property)}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
-          <SearchSection label="When" value={<span>{dateValue}</span>} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection label="When" value={<span>{dateValue}</span>} section="dates" buttonRef={dateTriggerRef} activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
           <SearchSection label="Guests" value={<span>{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
