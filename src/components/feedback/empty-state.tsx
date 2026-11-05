@@ -11,7 +11,7 @@ export default function EmptyState({
 }: Props) {
   return (
     <div className="flex flex-col items-center justify-center py-24 gap-5 text-center px-5">
-      <img src="/assets/hammock.svg" alt="" aria-hidden="true" className="h-16 opacity-40" />
+      <img src="/assets/icons/icons-simple/hammock.svg" alt="" aria-hidden="true" className="h-16 opacity-40" />
       <h3
         className="text-2xl text-cowboy-umber"
         style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}

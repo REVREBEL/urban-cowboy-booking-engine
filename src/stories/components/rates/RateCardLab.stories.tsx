@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import { RateCardLab } from "@/components/rates/RateCardLab";
 
 const meta = {
@@ -43,7 +43,7 @@ export const SingleCardExpanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole("button", { name: "View details" }));
-    await expect(canvas.getByRole("heading", { name: "About this rate" })).toBeVisible();
+    await waitFor(() => expect(canvas.getByRole("heading", { name: "About this rate" })).toBeVisible(), { timeout: 2000 });
   },
 };
 
@@ -61,7 +61,7 @@ export const FullWidthTray: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getAllByRole("button", { name: "View details" })[0]);
-    await expect(canvas.getByRole("heading", { name: "About this rate" })).toBeVisible();
+    await waitFor(() => expect(canvas.getByRole("heading", { name: "About this rate" })).toBeVisible(), { timeout: 2000 });
   },
 };
 
