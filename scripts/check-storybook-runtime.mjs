@@ -129,10 +129,13 @@ async function run() {
               waitUntil: "domcontentloaded",
               timeout: storyTimeout,
             });
-            await page.waitForFunction(() => {
-              const root = document.querySelector("#storybook-root");
-              return Boolean(root && root.childNodes.length > 0);
-            }, undefined, { timeout: storyTimeout });
+            // Storybook marks the preview ready with sb-show-main. This also
+            // supports legitimate stories that intentionally render null/empty output.
+            await page.waitForFunction(
+              () => document.body.classList.contains("sb-show-main"),
+              undefined,
+              { timeout: storyTimeout },
+            );
             // Allow effects and post-render promise rejections to surface.
             await page.waitForTimeout(350);
             if (entry.id === "components-media-photo--broken-image-fallback") {

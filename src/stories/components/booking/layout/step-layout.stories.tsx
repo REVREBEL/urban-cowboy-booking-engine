@@ -1,10 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StepLayout } from '@/components/booking/layout/step-layout';
+import { BookingProvider } from '@/state/booking';
 
 const meta: Meta<typeof StepLayout> = {
   title: 'Components/Booking/Layout/StepLayout',
   component: StepLayout,
   tags: ['autodocs'],
+  decorators: [(Story) => (
+    <BookingProvider>
+      <Story />
+    </BookingProvider>
+  )],
   args: {
     title: 'Select Accommodations',
     subtitle: 'Choose your room at Urban Cowboy Catskills',
