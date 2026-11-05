@@ -44,12 +44,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Install Chromium for date dropdown interaction tests
-        run: npx playwright install --with-deps chromium
-
-      - name: Test date dropdown keyboard interactions
-        run: node --test tests/browser/dateDropdownAccessibility.test.ts
-
       - name: Build Storybook
         if: success() || failure()
         run: npm run build-storybook

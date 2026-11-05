@@ -3,7 +3,9 @@
 // TypeScript 7 exposes the native CLI but not the classic compiler API.
 // Keep the JSX AST checker on the TypeScript 6 compatibility API.
 import { parse } from "@typescript/@babel/parser";
-import { parse } from "@babel/parser6";
+// TypeScript 7 exposes the native CLI but not the classic compiler API.
+// Keep the JSX AST checker on the TypeScript 6 compatibility API.
+import ts from "@typescript/typescript66";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";

@@ -17,8 +17,6 @@ export interface SearchBarExpandedProps {
   initialValues?: Partial<SearchBarExpandedValues>;
   dropdownVisible?: boolean;
   activeSection?: ActiveDropdownSection;
-  /** Exact When button for dialog focus restoration. */
-  dateTriggerRef?: React.Ref<HTMLButtonElement>;
   onSectionClick?: (section: ActiveDropdownSection) => void;
   onValuesChange?: (values: SearchBarExpandedValues) => void;
   onSearch?: (values: SearchBarExpandedValues) => Promise<void> | void;
@@ -105,35 +103,38 @@ type SearchSectionProps = {
   section: Exclude<ActiveDropdownSection, null>;
   activeSection: ActiveDropdownSection;
   onClick: (section: Exclude<ActiveDropdownSection, null>) => void;
-  buttonRef?: React.Ref<HTMLButtonElement>;
   className?: string;
 };
 
-function SearchSection({ label, value, section, activeSection, onClick, buttonRef, className = "" }: SearchSectionProps) {
-  const active = activeSection === section;
-  return (
-    <button
-      ref={buttonRef}
-      type="button"
-      aria-expanded={active}
-      onClick={() => onClick(section)}
-      className={`group relative flex min-h-16 min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-primary-foreground transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent md:min-h-14.5 ${className}`}
-    >
-      <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-primary-foreground/60">
-        {label}
-      </span>
-      <span className="mt-0.5 block max-w-full truncate font-body text-[14px] font-normal leading-5 normal-case text-primary-foreground">
-        {value}
-      </span>
-      <span
-        aria-hidden="true"
-        className={`absolute bottom-1.5 left-4 right-4 h-0.5 origin-left bg-accent transition-transform ${
-          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-        }`}
-      />
-    </button>
-  );
-}
+const SearchSection = React.forwardRef<HTMLButtonElement, SearchSectionProps>(
+  ({ label, value, section, activeSection, onClick, className = "" }, ref) => {
+    const active = activeSection === section;
+    return (
+      <button
+        ref={ref}
+        type="button"
+        aria-expanded={active}
+        onClick={() => onClick(section)}
+        className={`group relative flex min-h-16 min-w-0 flex-1 flex-col justify-center bg-transparent px-4 text-left text-primary-foreground transition-colors hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent md:min-h-14.5 ${className}`}
+      >
+        <span className="font-label text-[12px] font-normal uppercase leading-4 tracking-[0.08em] text-primary-foreground/60">
+          {label}
+        </span>
+        <span className="mt-0.5 block max-w-full truncate font-body text-[14px] font-normal leading-5 normal-case text-primary-foreground">
+          {value}
+        </span>
+        <span
+          aria-hidden="true"
+          className={`absolute bottom-1.5 left-4 right-4 h-0.5 origin-left bg-accent transition-transform ${
+            active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+          }`}
+        />
+      </button>
+    );
+  }
+);
+
+SearchSection.displayName = "SearchSection";
 
 export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   variant = "circle",
@@ -141,7 +142,6 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   initialValues,
   dropdownVisible = false,
   activeSection: controlledActiveSection,
-  dateTriggerRef,
   onSectionClick,
   onSearch,
   buttonSlot,
@@ -161,6 +161,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   });
   const [internalActiveSection, setInternalActiveSection] = useState<ActiveDropdownSection>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const datesTriggerRef = useRef<HTMLButtonElement>(null);
   const [availableAbove, setAvailableAbove] = useState<number | null>(null);
 
   const currentValues = controlledValues ?? internalValues;
@@ -207,7 +208,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
           <SearchSection label="Property" value={<span>{properCase(currentValues.property)}</span>} section="property" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
-          <SearchSection label="When" value={<span>{dateValue}</span>} section="dates" buttonRef={dateTriggerRef} activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection ref={datesTriggerRef} label="When" value={<span>{dateValue}</span>} section="dates" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
           <SearchSection label="Guests" value={<span>{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
@@ -235,7 +236,11 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
             ? { maxHeight: availableAbove }
             : undefined}
         >
-          {dropdownSlot}
+          {React.isValidElement(dropdownSlot) && currentActiveSection === "dates"
+            ? React.cloneElement(dropdownSlot as React.ReactElement<{ triggerRef?: React.RefObject<HTMLElement | null> }>, {
+                triggerRef: datesTriggerRef,
+              })
+            : dropdownSlot}
         </div>
       )}
     </div>

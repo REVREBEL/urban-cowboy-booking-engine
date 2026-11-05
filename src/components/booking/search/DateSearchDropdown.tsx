@@ -33,45 +33,49 @@ export function DateSearchDropdown({
 }: DateSearchDropdownProps) {
   const hasCompleteRange = Boolean(checkIn && checkOut && checkOut > checkIn);
   const dialogRef = useRef<HTMLDivElement>(null);
-  const restoreFocus = () => {
-    const trigger = externalTriggerRef?.current;
-    if (trigger?.isConnected) trigger.focus();
-  };
+  const internalTriggerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    dialogRef.current?.focus();
-  }, []);
+    if (externalTriggerRef?.current) {
+      internalTriggerRef.current = externalTriggerRef.current;
+    } else {
+      const datesTrigger =
+        document.querySelector<HTMLElement>('button[aria-expanded="true"]') ||
+        (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+      internalTriggerRef.current = datesTrigger;
+    }
 
-  // Restore focus only on explicit dismissal, never when switching sections.
+    dialogRef.current?.focus();
+  }, [externalTriggerRef]);
+
   const handleDismiss = () => {
-    onClose();
-    restoreFocus();
+    onClose?.();
+    if (internalTriggerRef.current?.isConnected) {
+      internalTriggerRef.current.focus();
+    }
   };
 
   useEffect(() => {
     const handleDocumentKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape" || event.defaultPrevented) return;
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) return;
-      const dialog = dialogRef.current;
-      const trigger = externalTriggerRef?.current;
-      // The keyboard can move to another search-bar control while Dates
-      // remains open. Do not intercept Escape in an unrelated overlay.
-      const withinDates = Boolean(dialog?.contains(target));
-      const withinSearch = Boolean(trigger?.closest('[role="search"]')?.contains(target));
-      const otherDialog = target.closest('[role="dialog"]');
-      if ((!withinDates && !withinSearch) || (otherDialog && otherDialog !== dialog)) return;
-
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      onClose();
-      // Switching focus into another section must not be undone.
-      if (withinDates || target === trigger) restoreFocus();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose?.();
+        const active = document.activeElement;
+        const isInside =
+          active instanceof HTMLElement &&
+          (dialogRef.current?.contains(active) || active === dialogRef.current);
+        if (isInside && internalTriggerRef.current?.isConnected) {
+          internalTriggerRef.current.focus();
+        }
+      }
     };
 
     document.addEventListener("keydown", handleDocumentKeyDown, true);
-    return () => document.removeEventListener("keydown", handleDocumentKeyDown, true);
-  }, [onClose, externalTriggerRef]);
+    return () => {
+      document.removeEventListener("keydown", handleDocumentKeyDown, true);
+    };
+  }, [onClose]);
 
   return (
     <div
