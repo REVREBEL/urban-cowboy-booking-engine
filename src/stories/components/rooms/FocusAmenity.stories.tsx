@@ -6,7 +6,7 @@ const sampleDescription =
   "The Cabin keeps the sleeping setup relaxed: a proper king bed anchors the room, while the built-in bunk or lounging nook gives you another place to stretch out, read, or tuck someone in without turning the whole space into a bedroom.";
 
 const meta: Meta<typeof FocusAmenity> = {
-  title: "Components/Rooms/FocusAmenity",
+  title: "Components/Rooms/FocusAmenity/FocusAmenity",
   component: FocusAmenity,
   tags: ["autodocs"],
   args: {

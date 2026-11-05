@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { FocusAmenityCount } from "@/components/rooms/FocusAmenityCount";
 
 const meta = {
-  title: "Components/Rooms/FocusAmenityCount",
+  title: "Components/Rooms/FocusAmenity/FocusAmenityCount",
   component: FocusAmenityCount,
   tags: ["autodocs"],
   args: { count: "01", state: "Default" },

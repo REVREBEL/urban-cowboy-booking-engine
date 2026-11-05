@@ -11,7 +11,7 @@ import { cmsHighlightsForPhoto } from '@/journey/cmsTour';
 import type { CmsPhotoHotspotMap } from '@/types/photo-hotspot-cms';
 import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
 import { FocusAmenity } from '@/components/rooms/FocusAmenity';
-import { SideFocusAmenityBar } from '@/components/rooms/SideFocusAmenityBar';
+import { SideBarFocusAmenity } from '@/components/rooms/SideBarFocusAmenity';
 import { PhotoTourArrow } from '@/journey/PhotoTourArrow';
 import { money } from '@/lib/format';
 
@@ -336,7 +336,7 @@ export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position
       </div>
 
       {details && sideAmenities.length > 0 && sideAmenitiesHost && createPortal(
-        <SideFocusAmenityBar amenities={sideAmenities} />,
+        <SideBarFocusAmenity amenities={sideAmenities} />,
         sideAmenitiesHost,
       )}
 

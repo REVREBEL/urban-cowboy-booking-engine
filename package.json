@@ -11,27 +11,33 @@
     "dev": "npm run build && concurrently -k -n worker,web -c magenta,cyan \"npm:dev:worker\" \"npm:dev:web\"",
     "dev:worker": "VITE_SHOW_API_DEBUGGER=true vite build && wrangler dev --port 8787 --ip 127.0.0.1",
     "dev:web": "vite",
+    
     "components": "vite --open /components.html",
     "build": "vite build",
     "preview": "npm run build && wrangler dev --port 8787 --ip 127.0.0.1",
     "deploy": "npm run build && wrangler deploy",
-    "typecheck": "node node_modules/typescript/bin/tsc --noEmit && node node_modules/typescript/bin/tsc -p worker/tsconfig.json --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p worker/tsconfig.json --noEmit",
     "test": "node --test tests/*.test.ts",
-    "room-ids": "node scripts/fetch-room-category-ids.mjs",
+
     "normalize:svgs": "node scripts/normalize-svg-assets.mjs --write",
     "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs",
+    
     "mews:smoke": "bash scripts/test-mews-booking-api.sh",
     "icons:build": "node scripts/build-icons.mjs",
     "icons:clean": "node scripts/build-icons.mjs --clean",
     "sync:room-photos": "node scripts/sync-mews-room-photos.mjs",
+    "room-ids": "node scripts/fetch-room-category-ids.mjs",
+    
     "tokens:audit": "node scripts/tokenize-design-system.mjs",
     "tokens:fix": "node scripts/tokenize-design-system.mjs --write",
     "tokens:check": "node scripts/tokenize-design-system.mjs --check",
+    
     "lint:controls": "node scripts/check-control-contract.mjs",
     "lint:controls:all": "node scripts/check-control-contract.mjs --all",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test:storybook:runtime": "node scripts/check-storybook-runtime.mjs"
+    "test:storybook:runtime": "node scripts/check-storybook-runtime.mjs",
+    "chromatic": "chromatic"
   },
   "dependencies": {
     "@playwright/test": "^1.64.0",
@@ -82,6 +88,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@babel/parser": "^7.29.13",
     "@chromatic-com/storybook": "latest",
     "@cloudflare/workers-types": "^5.20261009.1",
     "@storybook/addon-a11y": "^10.6.1",
@@ -111,8 +118,7 @@
     "typescript": "^7.0.0",
     "vite": "^8.3.4",
     "vitest": "^5.0.3",
-    "wrangler": "^4.149.0",
-    "@typescript/typescript6": "6.0.2"
+    "wrangler": "^4.149.0"
   },
   "allowScripts": {
     "fsevents@2.3.3": true,
