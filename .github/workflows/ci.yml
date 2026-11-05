@@ -38,6 +38,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+
       - name: Test
         run: npm test
 
@@ -48,10 +51,6 @@ jobs:
         id: storybook
         if: success() || failure()
         run: npm run build-storybook
-
-      - name: Install Chromium for Storybook smoke tests
-        if: always() && steps.storybook.outcome == 'success'
-        run: npx playwright install --with-deps chromium
 
       - name: Render every Storybook story in Chromium
         if: always() && steps.storybook.outcome == 'success'
