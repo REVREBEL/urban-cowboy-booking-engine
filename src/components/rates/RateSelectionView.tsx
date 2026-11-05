@@ -5,6 +5,7 @@ import type { RateCardConfig, RateCardLiveContent } from '@/types/rate-card';
 import { RATE_OPTIONS } from '@/data/hotelData';
 import { resolveRateCardConfig } from '../../lib/rateCardConfig';
 import { normalizeRateCardCtaLabel } from '../../lib/rateCardCta';
+import { formatDateDisplay, formatDueDate } from '../../lib/rateSelectionFormatters';
 import {
   cancellationConfirmation,
   formatRateCardPrice,
@@ -31,40 +32,6 @@ import {
 const RATE_CARD_KEYS = ['ride-easy', 'member', 'sunup', 'stay-while', 'plan-ahead'] as const;
 // Staggered top-to-bottom vertical offsets (in px) across the 5 cards
 const STAGGER_OFFSETS = [36, 0, 52, 12, 44];
-
-// Performance optimization: Module-scoped Intl.DateTimeFormat instances.
-// Calling toLocaleDateString() or allocating new Intl instances inside render loops
-// or helper functions creates heavy V8 ICU objects and triggers GC pressure during
-// carousel scrolling and component re-renders. Reusing static UTC formatters reduces
-// date formatting overhead by ~24x (~950ms -> ~40ms per 10k passes).
-export const rateSelectionDateFmt = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-
-export const dueDateFormat = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  timeZone: 'UTC',
-});
-
-export const formatDateDisplay = (dateStr: string): string => {
-  if (!dateStr) return '';
-  try {
-    const parts = dateStr.split('-');
-    if (parts.length === 3) {
-      const [y, m, d] = parts.map(Number);
-      if (y && m && d) {
-        return rateSelectionDateFmt.format(new Date(Date.UTC(y, m - 1, d)));
-      }
-    }
-    return dateStr;
-  } catch {
-    return dateStr;
-  }
-};
 
 interface RateSelectionViewProps {
   room: RoomType;
@@ -426,7 +393,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     const days = period === 'days' ? window : window / 24;
     due.setUTCDate(due.getUTCDate() - days);
 
-    return `Due ${dueDateFormat.format(due)}`;
+    return `Due ${formatDueDate(due)}`;
   };
 
   const fullCancellationPolicyForRate = (liveRate: ShapedRate) =>
