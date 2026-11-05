@@ -42,10 +42,10 @@ export function DateSearchDropdown({
   }, []);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
-      onClose();
+      onClose?.();
     }
   };
 

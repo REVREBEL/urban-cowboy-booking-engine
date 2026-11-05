@@ -13,72 +13,54 @@ const LAYOUT_CLASS = /^(?:w-full|w-auto|max-w-full|min-w-0|shrink-0|shrink|grow|
 const SOURCE_PATH = /^src\/(?!stories\/).+\.tsx$/;
 
 function canonical(value) { return value.replace(/\s+/g, " ").trim(); }
-
-function attributeValue(attribute, content) {
-  if (!attribute.value) return { value: "", dynamic: false };
-  const init = attribute.value;
-  if (init.type === "StringLiteral") return { value: init.value, dynamic: false };
-  if (init.type === "JSXExpressionContainer") {
+function attributeValue(attribute, source) {
+  if (!attribute.initializer) return "";
+  const init = attribute.initializer;
+  if (ts.isStringLiteral(init)) return init.text;
+  if (ts.isJsxExpression(init)) {
     const expr = init.expression;
-    if (!expr || expr.type === "JSXEmptyExpression") return { value: "", dynamic: false };
-    if (expr.type === "StringLiteral") return { value: expr.value, dynamic: false };
-    if (expr.type === "TemplateLiteral" && expr.quasis.length === 1) return { value: expr.quasis[0].value.raw, dynamic: false };
-    return { value: content.slice(expr.start, expr.end), dynamic: true };
+    if (!expr) return "";
+    if (ts.isStringLiteral(expr) || ts.isNoSubstitutionTemplateLiteral(expr)) return expr.text;
+    return expr.getText(source);
   }
-  return { value: content.slice(init.start, init.end), dynamic: false };
+  return init.getText(source);
 }
-
-function controlNames(ast) {
+function controlNames(source) {
   const names = new Set(COMPONENTS);
-  for (const statement of ast.program.body) {
-    if (statement.type !== "ImportDeclaration") continue;
-    const spec = statement.source;
-    if (spec.type !== "StringLiteral" || !CONTROL_IMPORT.test(spec.value)) continue;
-    for (const specifier of statement.specifiers) {
-      if (specifier.type === "ImportSpecifier") {
-        const imported = specifier.imported.type === "Identifier" ? specifier.imported.name : specifier.imported.value;
-        if (COMPONENTS.has(imported)) names.add(specifier.local.name);
-      }
+  for (const statement of source.statements) {
+    if (!ts.isImportDeclaration(statement)) continue;
+    const spec = statement.moduleSpecifier;
+    if (!ts.isStringLiteral(spec) || !CONTROL_IMPORT.test(spec.text)) continue;
+    const bindings = statement.importClause?.namedBindings;
+    if (!bindings || !ts.isNamedImports(bindings)) continue;
+    for (const item of bindings.elements) {
+      if (COMPONENTS.has(item.propertyName?.text ?? item.name.text)) names.add(item.name.text);
     }
   }
   return names;
 }
-
 export function violations(file, content) {
-  if (!content) return [];
-  let ast;
-  try {
-    ast = parse(content, {
-      sourceType: "module",
-      plugins: ["jsx", "typescript"],
-      errorRecovery: true,
-    });
-  } catch {
-    return [];
-  }
-  const controls = controlNames(ast);
+  const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const controls = controlNames(source);
   const findings = [];
-
   function visit(node) {
-    if (!node || typeof node !== "object") return;
-    if (node.type === "JSXOpeningElement") {
-      const tag = node.name.type === "JSXIdentifier" ? node.name.name : "";
+    if (ts.isJsxOpeningElement(node) || ts.isJsxSelfClosingElement(node)) {
+      const tag = node.tagName.getText(source);
       if (controls.has(tag)) {
-        const line = node.loc ? node.loc.start.line : 1;
-        for (const attribute of node.attributes) {
-          if (attribute.type === "JSXSpreadAttribute") {
-            findings.push({ file, line, tag, kind: "spread", value: canonical(content.slice(attribute.start, attribute.end)) });
+        const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
+        for (const attribute of node.attributes.properties) {
+          if (ts.isJsxSpreadAttribute(attribute)) {
+            findings.push({ file, line, tag, kind: "spread", value: canonical(attribute.getText(source)) });
             continue;
           }
-          if (attribute.type !== "JSXAttribute" || !attribute.name) continue;
-          const name = attribute.name.name;
-          const { value, dynamic } = attributeValue(attribute, content);
+          const name = attribute.name.text;
+          const value = attributeValue(attribute, source);
           if (name === "style") {
             findings.push({ file, line, tag, kind: "style", value: canonical(value) });
           }
           if (name === "className") {
             // Unknown expressions are rejected: they may inject presentation classes.
-            if (dynamic || /[{}$()?:+]/.test(value)) {
+            if (/[{}$()?:+]/.test(value)) {
               findings.push({ file, line, tag, kind: "dynamic-class", value: canonical(value) });
             } else {
               for (const token of value.split(/\s+/).filter(Boolean)) {
@@ -89,18 +71,9 @@ export function violations(file, content) {
         }
       }
     }
-    for (const key of Object.keys(node)) {
-      if (key === "loc" || key === "start" || key === "end") continue;
-      const child = node[key];
-      if (Array.isArray(child)) {
-        for (const item of child) visit(item);
-      } else if (child && typeof child === "object") {
-        visit(child);
-      }
-    }
+    ts.forEachChild(node, visit);
   }
-
-  visit(ast);
+  visit(source);
   return findings;
 }
 
