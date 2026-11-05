@@ -2,7 +2,7 @@
  * Photo-first arrival screen, ported from visual-booking-flow/src/routes/journey.tsx.
  * Only the editorial UI is imported; stay criteria use the canonical BookingProvider.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import { resetPhotoJourney } from "./photoSession";
@@ -192,6 +192,7 @@ export function Arrive(props: {
   stories: readonly ArrivalStory[] | null;
   showQuickSelect: boolean;
 }) {
+  const datesTriggerRef = useRef<HTMLButtonElement>(null);
   const ready = props.nights > 0;
   const childCount = props.children + props.infants;
   const guestLabel = `${props.adults} adult${props.adults === 1 ? "" : "s"}${
@@ -224,6 +225,7 @@ export function Arrive(props: {
                 promoCode: props.promoCode || "Add promo",
               }}
               activeSection={props.activeSection}
+              dateTriggerRef={datesTriggerRef}
               onSectionClick={props.setActiveSection}
               dropdownPlacement="above"
               constrainAboveToViewport
@@ -241,6 +243,7 @@ export function Arrive(props: {
                   )}
                   {props.activeSection === "dates" && (
                     <DateSearchDropdown
+                    triggerRef={datesTriggerRef}
                       variant="external-actions"
                       checkIn={props.checkIn || ""}
                       checkOut={props.checkOut || ""}
