@@ -26,22 +26,22 @@ function AmenityTileArtwork({ item }: { item: SideFocusAmenityItem }) {
   const url = cmsIconUrl(item.iconPath);
   const webflowUrl = item.imageUrl && /^https:\/\//i.test(item.imageUrl) ? item.imageUrl : null;
   const [failedWebflowUrl, setFailedWebflowUrl] = useState<string | null>(null);
+  if (url && failedUrl !== url) {
+    return (
+      <span className="relative block h-25 w-27">
+        <img src={url} alt="" aria-hidden="true" className="pointer-events-none absolute size-px opacity-0" onError={() => setFailedUrl(url)} />
+        <span
+          aria-hidden="true"
+          className="block size-full bg-current text-(--invert-fg) transition-colors"
+          style={{ maskImage: `url("${url}")`, WebkitMaskImage: `url("${url}")`, maskSize: "contain", WebkitMaskSize: "contain", maskPosition: "center", WebkitMaskPosition: "center", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat" } as CSSProperties}
+        />
+      </span>
+    );
+  }
   if (webflowUrl && failedWebflowUrl !== webflowUrl) {
     return <img src={webflowUrl} alt="" aria-hidden="true" className="j-cms-icon h-25 w-27 object-contain" onError={() => setFailedWebflowUrl(webflowUrl)} />;
   }
-  if (!url || failedUrl === url) {
-    return <CmsAmenityIcon iconPath={null} fallback={item.icon} className="size-25 object-contain" />;
-  }
-  return (
-    <span className="relative block h-25 w-27">
-      <img src={url} alt="" aria-hidden="true" className="pointer-events-none absolute size-px opacity-0" onError={() => setFailedUrl(url)} />
-      <span
-        aria-hidden="true"
-        className="block size-full bg-current text-(--invert-fg) transition-colors"
-        style={{ maskImage: `url("${url}")`, WebkitMaskImage: `url("${url}")`, maskSize: "contain", WebkitMaskSize: "contain", maskPosition: "center", WebkitMaskPosition: "center", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat" } as CSSProperties}
-      />
-    </span>
-  );
+  return <CmsAmenityIcon iconPath={null} fallback={item.icon} className="size-25 object-contain" />;
 }
 
 /** Receives the ordered amenities not marked on the currently visible photo. */
@@ -150,12 +150,15 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
           role="region"
           aria-label="Amenities and Features panel"
           ref={panelRef}
-          className="pointer-events-auto relative flex w-full min-h-0 items-start gap-6"
+          className="pointer-events-none relative flex w-full min-h-0 items-start gap-6"
         >
-          <div className="relative flex h-[clamp(224px,calc(100dvh-128px),528px)] w-41 shrink-0 items-center">
+          <div
+            className="pointer-events-auto relative flex h-[min(calc(var(--amenity-count)*112px+64px),calc(100dvh-128px),528px)] w-41 shrink-0 items-center"
+            style={{ "--amenity-count": uniqueAmenities.length } as CSSProperties}
+          >
             <div className="flex size-full min-h-0 w-37.25 flex-col rounded-modal-xl bg-primary p-0.5 shadow-[0_0_12px_rgba(242,242,242,.75)]">
               <div className="flex min-h-0 flex-col rounded-[39px] border-[1.5px] border-accent bg-secondary-foreground p-0.5">
-                <div ref={listRef} onScroll={updateCardPosition} className="no-scrollbar flex min-h-0 flex-col gap-2 overflow-y-auto overscroll-contain rounded-[35px] border-[1.5px] border-accent bg-secondary-foreground px-2 pb-4">
+                <div ref={listRef} onScroll={updateCardPosition} className="no-scrollbar flex min-h-0 flex-col gap-2 overflow-y-auto overscroll-contain rounded-[35px] border-[1.5px] border-accent bg-secondary-foreground px-2 pb-8">
                   {uniqueAmenities.map((item) => (
                     <button
                       key={item.id}
@@ -164,7 +167,7 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
                       aria-label={item.title}
                       onClick={() => handleSelectAmenity(item.id)}
                       ref={(node) => { if (node) itemRefs.current.set(item.id, node); else itemRefs.current.delete(item.id); }}
-                      className={`group grid h-28 w-full shrink-0 place-items-center border-0 bg-transparent p-0 first:mt-11 focus-visible:outline-2 focus-visible:outline-offset-2 ${selected?.id === item.id ? "focus-active" : "focus-default hover:focus-hover"
+                      className={`group grid h-28 w-full shrink-0 place-items-center border-0 bg-transparent p-0 first:mt-7 focus-visible:outline-2 focus-visible:outline-offset-2 ${selected?.id === item.id ? "focus-active" : "focus-default hover:focus-hover"
                         }`}
                     >
                       <AmenityTileArtwork item={item} />
@@ -179,14 +182,14 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
             </button>
             <div className="absolute left-35.5 top-1/2 flex -translate-y-1/2 flex-col gap-3">
               <button type="button" aria-label="Previous amenity" onClick={() => cycle(-1)} className="grid size-9 place-items-center focus-visible:outline-2">
-                <img src="/assets/icons/ui/ui-arrow_single_line_up.svg" alt="" className="h-9 w-9 object-contain" />
+                <span aria-hidden="true" className="size-9 bg-primary mask-[url('/assets/icons/ui/ui-arrow_single_line_up.svg')] mask-contain mask-center mask-no-repeat" />
               </button>
               <button type="button" aria-label="Next amenity" onClick={() => cycle(1)} className="grid size-8 place-items-center focus-visible:outline-2">
-                <img src="/assets/icons/ui/ui-arrow_single_line_down.svg" alt="" className="h-9 w-9 object-contain" />
+                <span aria-hidden="true" className="size-9 bg-primary mask-[url('/assets/icons/ui/ui-arrow_single_line_down.svg')] mask-contain mask-center mask-no-repeat" />
               </button>
             </div>
           </div>
-          {selected && <div ref={cardRef} className="absolute right-0 left-47 min-w-0 -translate-y-1/2" style={{ top: cardCenter }} aria-live="polite">
+          {selected && <div ref={cardRef} className="pointer-events-auto absolute right-0 left-47 min-w-0 -translate-y-1/2" style={{ top: cardCenter }} aria-live="polite">
             <div key={selected.id} className="max-h-[min(350px,70dvh)] overflow-y-auto rounded-xl bg-white p-6 text-secondary shadow-[0_6px_24px_rgba(0,0,0,.18)] sm:p-8">
               <h3 className="font-heading text-[clamp(20px,3vw,24px)] leading-tight text-accent">{selected.title}</h3>
               {selected.description && <p className="mt-3 font-body text-[15px] leading-relaxed">{selected.description}</p>}

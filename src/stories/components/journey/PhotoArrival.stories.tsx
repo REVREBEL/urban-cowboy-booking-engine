@@ -41,6 +41,7 @@ function Preview({ openCalendar = false, initialCheckIn = null, initialCheckOut 
         onMatch={() => setAction("Match me with a room")}
         onBrowse={() => setAction("Browse every room")}
         nights={nights} stories={stories}
+        showQuickSelect={false}
       />
       {action && <div role="status" className="fixed bottom-3 right-3 z-50 rounded-lg bg-paper px-4 py-2 text-sm text-smoke">
         Storybook preview: {action}
