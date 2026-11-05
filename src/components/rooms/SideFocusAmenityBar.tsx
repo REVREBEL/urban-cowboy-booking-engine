@@ -12,7 +12,7 @@ export interface SideFocusAmenityItem {
   imageUrl?: string | null;
   icon: TourIcon;
 }
-export interface SideFocusAmenityBarProps {
+export interface SideBarFocusAmenityProps {
   amenities: readonly SideFocusAmenityItem[];
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -45,7 +45,7 @@ function AmenityTileArtwork({ item }: { item: SideFocusAmenityItem }) {
 }
 
 /** Receives the ordered amenities not marked on the currently visible photo. */
-export function SideFocusAmenityBar({ amenities, open, onOpenChange, className = "" }: SideFocusAmenityBarProps) {
+export function SideBarFocusAmenity({ amenities, open, onOpenChange, className = "" }: SideBarFocusAmenityProps) {
   const [localOpen, setLocalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [cardCenter, setCardCenter] = useState(56);
@@ -200,4 +200,4 @@ export function SideFocusAmenityBar({ amenities, open, onOpenChange, className =
     </section>
   );
 }
-export default SideFocusAmenityBar;
+export default SideBarFocusAmenity;

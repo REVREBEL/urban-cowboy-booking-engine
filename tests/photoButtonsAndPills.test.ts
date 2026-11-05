@@ -56,8 +56,8 @@ test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () =
   assert.match(tour, /setAmenityExiting\(true\)/);
   assert.match(tour, /pendingPin\.current = next/);
   assert.match(tour, /const unseenAmenities = amenities\.filter/);
-  assert.match(tour, /import \{ SideFocusAmenityBar \} from ['"]@\/components\/rooms\/SideFocusAmenityBar['"]/);
-  assert.match(tour, /createPortal\(\s*<SideFocusAmenityBar amenities=\{sideAmenities\}/);
+  assert.match(tour, /import \{ SideBarFocusAmenity \} from ['"]@\/components\/rooms\/SideBarFocusAmenity['"]/);
+  assert.match(tour, /createPortal\(\s*<SideBarFocusAmenity amenities=\{sideAmenities\}/);
   assert.match(tour, /description: amenity\.longNote \?\? amenity\.note/);
   assert.doesNotMatch(tour, /j-other-amenities/);
   assert.doesNotMatch(tour, /FeatureFocus|<FeatureFocus/);
@@ -68,8 +68,8 @@ test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () =
   assert.match(stylesheet, /\.j-cms-icon/);
 });
 
-test("SideFocusAmenityBar uses focus states, a four-item viewport, and aligned selection", () => {
-  const source = read("components/rooms/SideFocusAmenityBar.tsx");
+test("SideBarFocusAmenity uses focus states, a four-item viewport, and aligned selection", () => {
+  const source = read("components/rooms/SideBarFocusAmenity.tsx");
 
   assert.match(source, /seenIds\.has\(item\.id\) \|\| seenTitles\.has\(normalizedTitle\)/);
   assert.match(source, /fixed top-1\/2 left-8/);
