@@ -5,6 +5,9 @@ const meta: Meta<typeof PropertyLocationLabel> = {
   title: 'Components/Booking/Search/PropertyLocationLabel',
   component: PropertyLocationLabel,
   tags: ['autodocs'],
+  args: {
+    location: 'catskills',
+  },
 };
 
 export default meta;

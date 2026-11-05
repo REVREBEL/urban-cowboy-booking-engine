@@ -5,6 +5,9 @@ const meta: Meta<typeof ContactBar> = {
   title: 'Components/Booking/Chrome/ContactBar',
   component: ContactBar,
   tags: ['autodocs'],
+  args: {
+    preview: true,
+  },
 };
 
 export default meta;
