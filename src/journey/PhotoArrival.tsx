@@ -243,8 +243,8 @@ export function Arrive(props: {
                   )}
                   {props.activeSection === "dates" && (
                     <DateSearchDropdown
-                    triggerRef={datesTriggerRef}
                       variant="external-actions"
+                      triggerRef={datesTriggerRef}
                       checkIn={props.checkIn || ""}
                       checkOut={props.checkOut || ""}
                       dailyRates={props.dailyRates}
