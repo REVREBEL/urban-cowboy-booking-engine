@@ -30,7 +30,8 @@
     "lint:controls": "node scripts/check-control-contract.mjs",
     "lint:controls:all": "node scripts/check-control-contract.mjs --all",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test:storybook:runtime": "node scripts/check-storybook-runtime.mjs"
   },
   "dependencies": {
     "@playwright/test": "^1.64.0",
