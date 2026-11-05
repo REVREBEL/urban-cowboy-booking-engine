@@ -34,3 +34,9 @@ storybook-static
 
 # Generated output inside source/story directories
 src/**/dist/
+
+# Chromatic
+build-storybook.log
+chromatic.log
+chromatic-build-*.xml
+chromatic-diagnostics.json
