@@ -57,6 +57,10 @@ jobs:
         if: always() && steps.storybook.outcome == 'success'
         run: npm run test:storybook:runtime
 
+      - name: Test date dropdown keyboard interactions in Chromium
+        if: always() && steps.storybook.outcome == 'success'
+        run: node --test tests/browser/dateDropdownAccessibility.test.ts
+
       - name: Upload Storybook runtime failures
         if: always()
         uses: actions/upload-artifact@v4
