@@ -37,7 +37,7 @@ export function RoomTypeCard({
       data-figma-node={isFocus ? "1352:14811" : "1352:2574"}
       data-state={state}
       className={[
-        "flex min-h-[295.5px] w-full max-w-[350px] min-w-0 flex-col items-center justify-center rounded-[5.122px] p-[17.073px] sm:w-[350px]",
+        "flex min-h-[295.5px] w-full max-w-[350px] min-w-0 flex-col items-center justify-center rounded-[5.122px] p-[17.073px]",
         isFocus ? "bg-accent" : "bg-primary-foreground",
         className,
       ]
