@@ -90,7 +90,7 @@ export function RoomTypeList({
       data-figma-node="1352:14825"
       data-name="RoomTypeList"
       className={[
-        "flex min-h-[1038px] w-[2175px] flex-col items-center gap-[60px] bg-primary-foreground",
+        "flex w-full max-w-[1513px] min-w-0 flex-col items-center gap-[60px] bg-primary-foreground",
         className,
       ]
         .filter(Boolean)
@@ -98,19 +98,19 @@ export function RoomTypeList({
     >
       <div
         data-name="BuildingGroup1"
-        className="flex w-full shrink-0 flex-col items-start overflow-clip"
+        className="flex w-full min-w-0 shrink-0 flex-col items-start"
       >
         {buildingGroup1 ?? DEFAULT_BUILDING_GROUP_1}
       </div>
       <div
         data-name="BuildingGroup2"
-        className="flex w-full shrink-0 flex-col items-start overflow-clip"
+        className="flex w-full min-w-0 shrink-0 flex-col items-start"
       >
         {buildingGroup2 ?? DEFAULT_BUILDING_GROUP_2}
       </div>
       <div
         data-name="BuildingGroup3"
-        className="flex w-full shrink-0 flex-col items-start overflow-clip"
+        className="flex w-full min-w-0 shrink-0 flex-col items-start"
       >
         {buildingGroup3 ?? DEFAULT_BUILDING_GROUP_3}
       </div>
