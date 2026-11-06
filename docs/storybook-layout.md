@@ -31,7 +31,7 @@ components; the default is `fullscreen`.
 
 Avoid story-local `overflow-x-auto` decorators: they introduce nested
 scrollbars in the Docs preview rather than letting responsive components
-reflow. The `RoomListItem` story demonstrates a fluid card grid with
+reflow. The `MultiRoomViewListItem` story demonstrates a fluid card grid with
 auto-fitting columns, replacing its old fixed 1790px Figma frame.
 The `RoomsListBuilding` story uses the global decorator without a local
 wrapper, so its responsive grid gets the same breathing room.

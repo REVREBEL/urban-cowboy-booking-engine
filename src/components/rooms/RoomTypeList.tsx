@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { BuildingDescription } from "./BuildingDescription";
+import { MultiRoomViewBuilding } from "./MultiRoomViewBuilding";
 import { BuildingIcon } from "./BuildingIcon";
-import { RoomListItem, type RoomTypeCardData } from "./RoomListItem";
+import { MultiRoomViewListItem, type RoomTypeCardData } from "./MultiRoomViewListItem";
 
 export interface RoomTypeListProps {
   className?: string;
@@ -33,12 +33,12 @@ const buildingCopy = {
 };
 
 const DEFAULT_BUILDING_GROUP_1 = (
-  <RoomListItem
+  <MultiRoomViewListItem
     layout="Row"
     className="[--room-list-building-panel:transparent]"
     roomTypes={makeDefaultRoomTypes("figma-group-1")}
     buildingSectionSlot={
-      <BuildingDescription
+      <MultiRoomViewBuilding
         {...buildingCopy}
         layout="StackedCenter"
         className="[--building-name-color:var(--paper)] [--building-description-color:var(--paper)] [--building-tagline-color:var(--alpine-linen)]"
@@ -48,11 +48,11 @@ const DEFAULT_BUILDING_GROUP_1 = (
 );
 
 const DEFAULT_BUILDING_GROUP_2 = (
-  <RoomListItem
+  <MultiRoomViewListItem
     layout="Row"
     roomTypes={makeDefaultRoomTypes("figma-group-2")}
     buildingSectionSlot={
-      <BuildingDescription
+      <MultiRoomViewBuilding
         {...buildingCopy}
         layout="StackedCenter"
         displayBuildingIcon
@@ -63,22 +63,22 @@ const DEFAULT_BUILDING_GROUP_2 = (
 );
 
 const DEFAULT_BUILDING_GROUP_3 = (
-  <RoomListItem
+  <MultiRoomViewListItem
     layout="Row"
     roomTypes={makeDefaultRoomTypes("figma-group-3")}
     buildingSectionSlot={
-      <BuildingDescription {...buildingCopy} layout="StackedCenter" />
+      <MultiRoomViewBuilding {...buildingCopy} layout="StackedCenter" />
     }
   />
 );
 
 /**
- * Figma RoomTypeList component (1352:14825).
+ * Figma MultiRoomViewList component (1352:14825).
  *
  * Figma exposes three BuildingGroup slots. Each default group is a Row
- * RoomListItem resized to the 1513px list frame, matching the source instances.
+ * MultiRoomViewListItem resized to the 1513px list frame, matching the source instances.
  */
-export function RoomTypeList({
+export function MultiRoomViewList({
   className = "",
   buildingGroup1 = null,
   buildingGroup2 = null,
@@ -87,7 +87,7 @@ export function RoomTypeList({
   return (
     <div
       data-figma-node="1352:14825"
-      data-name="RoomTypeList"
+      data-name="MultiRoomViewList"
       className={[
         "flex w-full max-w-[1513px] flex-col items-center gap-[60px] bg-primary-foreground",
         className,
@@ -117,4 +117,4 @@ export function RoomTypeList({
   );
 }
 
-export default RoomTypeList;
+export default MultiRoomViewList;

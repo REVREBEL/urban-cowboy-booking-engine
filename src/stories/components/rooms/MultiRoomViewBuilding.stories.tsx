@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { BuildingDescription } from "@/components/rooms/BuildingDescription";
+import { MultiRoomViewBuilding } from "@/components/rooms/MultiRoomViewBuilding";
 import { BuildingIcon } from "@/components/rooms/BuildingIcon";
 
 const icon = <BuildingIcon buildingName="Alpine" />;
 
 const meta = {
-  title: "Components/Rooms/BuildingDescription",
-  component: BuildingDescription,
+  title: "Components/Rooms/MultiRoomViewBuilding",
+  component: MultiRoomViewBuilding,
   tags: ["autodocs"],
   args: {
     buildingName: "Alpine",
@@ -41,7 +41,7 @@ const meta = {
     },
     layout: "centered",
   },
-} satisfies Meta<typeof BuildingDescription>;
+} satisfies Meta<typeof MultiRoomViewBuilding>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -53,7 +53,7 @@ export const RowWithIcon: Story = {
     displayBuildingIcon: true,
   },
   render: (args) => (
-    <BuildingDescription {...args} buildingIconSlot={icon} />
+    <MultiRoomViewBuilding {...args} buildingIconSlot={icon} />
   ),
 };
 
@@ -69,7 +69,7 @@ export const RowReverseWithIcon: Story = {
     displayBuildingIcon: true,
   },
   render: (args) => (
-    <BuildingDescription {...args} buildingIconSlot={icon} />
+    <MultiRoomViewBuilding {...args} buildingIconSlot={icon} />
   ),
 };
 
@@ -85,7 +85,7 @@ export const StackedCenterWithIcon: Story = {
     displayBuildingIcon: true,
   },
   render: (args) => (
-    <BuildingDescription {...args} buildingIconSlot={icon} />
+    <MultiRoomViewBuilding {...args} buildingIconSlot={icon} />
   ),
 };
 
@@ -101,6 +101,6 @@ export const StackedLeftWithIcon: Story = {
     displayBuildingIcon: true,
   },
   render: (args) => (
-    <BuildingDescription {...args} buildingIconSlot={icon} />
+    <MultiRoomViewBuilding {...args} buildingIconSlot={icon} />
   ),
 };

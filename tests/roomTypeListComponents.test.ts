@@ -40,8 +40,8 @@ test("BuildingIcon mirrors all Figma BuildingName variants and artwork geometry"
   assert.match(source, /aria-label=\{config\.label\}/);
 });
 
-test("BuildingDescription mirrors the compact Figma BuildingSection contract", () => {
-  const source = read("BuildingDescription.tsx");
+test("MultiRoomViewBuilding mirrors the compact Figma BuildingSection contract", () => {
+  const source = read("MultiRoomViewBuilding.tsx");
   assert.match(source, /"StackedCenter"/);
   assert.match(source, /"Row"/);
   assert.match(source, /"StackedLeft"/);
@@ -64,8 +64,8 @@ test("BuildingDescription mirrors the compact Figma BuildingSection contract", (
   assert.doesNotMatch(source, /w-\[400px\]/);
 });
 
-test("RoomTypeCard preserves the compact Figma geometry and states", () => {
-  const source = read("RoomTypeCard.tsx");
+test("MultiRoomViewRoomTypeCard preserves the compact Figma geometry and states", () => {
+  const source = read("MultiRoomViewRoomTypeCard.tsx");
   assert.match(source, /"Default" \| "Focus"/);
   assert.match(source, /roomTypeImage\?: ReactNode/);
   assert.match(source, /min-h-\[295\.5px\]/);
@@ -90,8 +90,8 @@ test("RoomTypeCard preserves the compact Figma geometry and states", () => {
   assert.match(source, /object-contain/);
 });
 
-test("RoomListItem preserves the updated Default, Row, and RowReverse layouts", () => {
-  const source = read("RoomListItem.tsx");
+test("MultiRoomViewListItem preserves the updated Default, Row, and RowReverse layouts", () => {
+  const source = read("MultiRoomViewListItem.tsx");
   assert.match(source, /"Default"/);
   assert.match(source, /"Row"/);
   assert.match(source, /"RowReverse"/);
@@ -117,8 +117,8 @@ test("RoomListItem preserves the updated Default, Row, and RowReverse layouts", 
   assert.doesNotMatch(source, /w-\[1330px\]/);
 });
 
-test("RoomTypeList preserves the updated 1513px three-slot composition", () => {
-  const source = read("RoomTypeList.tsx");
+test("MultiRoomViewList preserves the updated 1513px three-slot composition", () => {
+  const source = read("MultiRoomViewList.tsx");
   assert.match(source, /buildingGroup1\?: ReactNode \| null/);
   assert.match(source, /buildingGroup2\?: ReactNode \| null/);
   assert.match(source, /buildingGroup3\?: ReactNode \| null/);

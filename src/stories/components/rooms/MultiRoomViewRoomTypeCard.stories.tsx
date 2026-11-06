@@ -1,9 +1,11 @@
+
+
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { RoomTypeCard } from "@/components/rooms/RoomTypeCard";
+import { MultiRoomViewRoomTypeCard } from "@/components/rooms/MultiRoomViewRoomTypeCard";
 
 const meta = {
-  title: "Components/Rooms/RoomTypeCard",
-  component: RoomTypeCard,
+  title: "Components/Rooms/MultiRoomViewList/MultiRoomViewRoomTypeCard",
+  component: MultiRoomViewRoomTypeCard,
   tags: ["autodocs"],
   args: {
     buildingName: "Opa's Cabin",
@@ -33,7 +35,7 @@ const meta = {
     },
     layout: "centered",
   },
-} satisfies Meta<typeof RoomTypeCard>;
+} satisfies Meta<typeof MultiRoomViewRoomTypeCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -32,12 +32,12 @@ const taglineClass =
 
 /**
  * Figma BuildingSection component set (1352:15525), exposed under the
- * requested React component name BuildingDescription.
+ * requested React component name MultiRoomViewBuilding.
  *
  * The public API mirrors Figma's four layout variants, icon slot, icon
  * visibility property, and editable text properties.
  */
-export function BuildingDescription({
+export function MultiRoomViewBuilding({
   className = "",
   buildingDescription = DEFAULT_DESCRIPTION,
   buildingName = "Alpine",
@@ -155,4 +155,4 @@ export function BuildingDescription({
   );
 }
 
-export default BuildingDescription;
+export default MultiRoomViewBuilding;

@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { BuildingDescription } from "@/components/rooms/BuildingDescription";
+import { MultiRoomViewBuilding } from "@/components/rooms/MultiRoomViewBuilding";
 import {
-  RoomListItem,
-  type RoomTypeCardData,
-} from "@/components/rooms/RoomListItem";
+  MultiRoomViewListItem,
+  type MultiRoomViewRoomTypeCardData,
+} from "@/components/rooms/MultiRoomViewList/MultiRoomViewListItem";
 
-const makeRoomTypes = (count: number): RoomTypeCardData[] =>
+const makeRoomTypes = (count: number): RoomTypeCardDataData[] =>
   Array.from({ length: count }, (_, index) => ({
     id: "room-" + (index + 1),
     roomTypeName: "Opa's Cabin 4 Bedroom",
@@ -15,12 +15,12 @@ const makeRoomTypes = (count: number): RoomTypeCardData[] =>
     state: index === 1 ? "Focus" : "Default",
   }));
 
-const rowBuilding = <BuildingDescription layout="Row" />;
-const stackedBuilding = <BuildingDescription layout="StackedCenter" />;
+const rowBuilding = <MultiRoomViewBuilding layout="Row" />;
+const stackedBuilding = <MultiRoomViewBuilding layout="StackedCenter" />;
 
 const meta = {
-  title: "Components/Rooms/RoomListItem",
-  component: RoomListItem,
+  title: "Components/Rooms/MultiRoomViewListItem",
+  component: MultiRoomViewListItem,
   tags: ["autodocs"],
   args: {
     layout: "Default",
@@ -58,14 +58,14 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof RoomListItem>;
+} satisfies Meta<typeof MultiRoomViewListItem>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: (args) => (
-    <RoomListItem {...args} buildingSectionSlot={rowBuilding} />
+    <MultiRoomViewListItem {...args} buildingSectionSlot={rowBuilding} />
   ),
 };
 
@@ -75,7 +75,7 @@ export const Row: Story = {
     roomTypes: makeRoomTypes(6),
   },
   render: (args) => (
-    <RoomListItem {...args} buildingSectionSlot={stackedBuilding} />
+    <MultiRoomViewListItem {...args} buildingSectionSlot={stackedBuilding} />
   ),
 };
 
@@ -85,6 +85,6 @@ export const RowReverse: Story = {
     roomTypes: makeRoomTypes(6),
   },
   render: (args) => (
-    <RoomListItem {...args} buildingSectionSlot={stackedBuilding} />
+    <MultiRoomViewListItem {...args} buildingSectionSlot={stackedBuilding} />
   ),
 };

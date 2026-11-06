@@ -16,12 +16,12 @@ export interface RoomTypeCardProps {
 }
 
 /**
- * Figma RoomTypeCard component set (1352:14810).
+ * Figma MultiRoomViewRoomTypeCard component set (1352:14810).
  *
  * RoomTypeImage remains a slot, matching Figma, so production callers control
  * the actual media rather than the component inventing image behavior.
  */
-export function RoomTypeCard({
+export function MultiRoomViewRoomTypeCard({
   className = "",
   buildingName,
   roomTypeImage = null,
@@ -111,4 +111,4 @@ export function RoomTypeCard({
   );
 }
 
-export default RoomTypeCard;
+export default MultiRoomViewRoomTypeCard;

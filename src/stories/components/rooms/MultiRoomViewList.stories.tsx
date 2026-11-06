@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { RoomTypeList } from "@/components/rooms/RoomTypeList";
+import { MultiRoomViewList } from "@/components/rooms/RoomTypeList";
 
 const meta = {
-  title: "Components/Rooms/RoomTypeList",
-  component: RoomTypeList,
+  title: "Components/Rooms/MultiRoomViewList/MultiRoomViewList",
+  component: MultiRoomViewList,
   tags: ["autodocs"],
   argTypes: {
     buildingGroup1: {
@@ -36,7 +36,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof RoomTypeList>;
+} satisfies Meta<typeof MultiRoomViewList>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

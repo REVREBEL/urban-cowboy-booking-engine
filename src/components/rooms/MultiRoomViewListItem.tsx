@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { RoomTypeCard, type RoomTypeCardProps } from "./RoomTypeCard";
+import { MultiRoomViewRoomTypeCard, type MultiRoomViewRoomTypeCardProps } from "./MultiRoomViewRoomTypeCard";
 
 export type RoomListItemLayout =
   | "Default"
@@ -7,7 +7,7 @@ export type RoomListItemLayout =
   | "RowReverse"
   | "Row Reverse";
 
-export type RoomTypeCardData = RoomTypeCardProps & {
+export type MultiRoomViewRoomTypeCardData = MultiRoomViewRoomTypeCardProps & {
   id: string;
 };
 
@@ -16,17 +16,17 @@ export interface RoomListItemProps {
   buildingSectionSlot?: ReactNode | null;
   displayBuilding?: boolean;
   layout?: RoomListItemLayout;
-  roomTypes: readonly RoomTypeCardData[];
+  roomTypes: readonly MultiRoomViewRoomTypeCardData[];
 }
 
 /**
- * Figma RoomListItem component set (1352:15460).
+ * Figma MultiRoomViewListItem component set (1352:15460).
  *
  * Figma explicitly documents the six card slots as illustrative. The React
  * implementation therefore preserves the three Figma layouts while rendering
  * the supplied room collection in order.
  */
-export function RoomListItem({
+export function MultiRoomViewListItem({
   className = "",
   buildingSectionSlot = null,
   displayBuilding = true,
@@ -73,7 +73,7 @@ export function RoomListItem({
       ].join(" ")}
     >
       {roomTypes.map(({ id, ...roomType }) => (
-        <RoomTypeCard key={id} {...roomType} />
+        <MultiRoomViewMultiRoomViewRoomTypeCard key={id} {...roomType} />
       ))}
     </div>
   );
@@ -104,4 +104,4 @@ export function RoomListItem({
   );
 }
 
-export default RoomListItem;
+export default MultiRoomViewListItem;
