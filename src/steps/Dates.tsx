@@ -250,6 +250,7 @@ export function Dates() {
                       onChange={(voucherCode) => setForm((current) => ({ ...current, voucherCode }))}
                       onApply={(voucherCode) => {
                         setForm((current) => ({ ...current, voucherCode }));
+                        setActiveSection(null);
                       }}
                       onClose={() => setActiveSection(null)}
                     />
