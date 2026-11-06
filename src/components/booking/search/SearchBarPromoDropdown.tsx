@@ -106,9 +106,10 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
     applyAbortRef.current = null;
   };
 
-  const restoreTriggerFocus = () => {
+  const restoreTriggerFocus = (onlyAfterDismissal = false) => {
     const trigger = internalTriggerRef.current;
     window.setTimeout(() => {
+      if (onlyAfterDismissal && dialogRef.current?.isConnected) return;
       if (trigger?.isConnected) trigger.focus();
     }, 0);
   };
@@ -220,8 +221,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
         const shouldRestoreFocus =
           startedInsideDialog && (focusWasLost || focusStillInside);
 
-        onClose?.();
-        if (onClose && shouldRestoreFocus) restoreTriggerFocus();
+        if (shouldRestoreFocus) restoreTriggerFocus(true);
       } else {
         // Default local verification according to SKILL.md
         await new Promise((resolve) => setTimeout(resolve, 600));
