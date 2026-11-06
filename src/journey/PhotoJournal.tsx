@@ -67,7 +67,10 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
       {top && (
         <img src={top.room.images[0]} alt="" aria-hidden className="fixed inset-0 h-full w-full object-cover opacity-35 transition-opacity duration-700" />
       )}
-      <div className="fixed inset-0 bg-linear-to-r from-secondary-foreground via-secondary-foreground/90 to-secondary-foreground/40" />
+      <div
+        className="fixed inset-0"
+        style={{ background: "linear-gradient(to right, var(--primary), color-mix(in oklab, var(--primary) 90%, transparent), color-mix(in oklab, var(--primary) 40%, transparent))" }}
+      />
       <div className="relative mx-auto grid max-w-[1600px] gap-10 px-5 pb-16 pt-28 sm:px-8 lg:grid-cols-[1.3fr_1fr]">
         <div>
           <p className={`${label} text-alpine-linen`}>Your stay journal · page {page + 1} of {pages}</p>
@@ -88,6 +91,11 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
                         <span className="block font-headline text-2xl leading-none">{o.title}</span>
                         <span className="block text-sm text-paper/90">{o.note}</span>
                       </span>
+                      {p.occasion === o.id && (
+                        <span className="absolute right-3 top-3 z-20 rounded-full bg-primary px-3 py-1 font-label text-[10px] uppercase tracking-[0.16em] text-primary-foreground shadow-sm">
+                          Selected
+                        </span>
+                      )}
                     </span>
                   </Button>
                 ))}
@@ -135,11 +143,11 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
           )}
 
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            {page > 0 && <Button type="button" variant="outline" colorScheme="paper" size="small" className="rounded-full" onClick={() => setPage(page - 1)}>← Back</Button>}
+            {page > 0 && <Button type="button" variant="outline" colorScheme="paper" size="small" onClick={() => setPage(page - 1)}>← Back</Button>}
             {page < pages - 1 ? (
-              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" className="rounded-full" onClick={() => setPage(page + 1)}>Next page →</Button>
+              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" hasIcon onClick={() => setPage(page + 1)}>Next page</Button>
             ) : (
-              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" className="rounded-full" onClick={() => onDone({ ...p, adults, children })}>See my matches →</Button>
+              <Button type="button" variant="filled" colorScheme="alpine-linen" size="small" hasIcon onClick={() => onDone({ ...p, adults, children })}>See my matches</Button>
             )}
             <Button type="button" onClick={onSkip} variant="transparent" colorScheme="paper" size="xsmall" className="ml-auto underline underline-offset-4" style={{padding:0}}>Skip — show me everything</Button>
           </div>
@@ -169,7 +177,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
 function JournalPage({ title, note, children }: { title: string; note?: string; children: ReactNode }) {
   return (
     <div className="mt-8">
-      <h2 className="max-w-[20ch] font-headline text-4xl leading-none sm:text-5xl">{title}</h2>
+      <h2 className="max-w-[20ch] text-balance font-headline text-4xl leading-none sm:text-5xl">{title}</h2>
       {note && <p className="mt-3 max-w-[60ch] text-paper/70">{note}</p>}
       <div className="mt-8">{children}</div>
     </div>

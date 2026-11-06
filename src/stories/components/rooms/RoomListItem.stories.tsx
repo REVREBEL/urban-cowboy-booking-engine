@@ -44,6 +44,13 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  decorators: [
+    (Story) => (
+      <div className="w-full min-w-0 box-border p-4">
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof RoomListItem>;
 
 export default meta;
