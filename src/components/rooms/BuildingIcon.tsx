@@ -88,7 +88,7 @@ const BUILDING_ICON_CONFIG: Record<
 const BUILDING_ICON_COLOR_CLASS: Record<BuildingIconColor, string> = {
   Smoke: "bg-smoke",
   Snow: "bg-[var(--paper-50)]",
-  LakeForest: "bg-lake-forest-figma",
+  LakeForest: "bg-lake-forest",
   Ash: "bg-ash",
   Alpine: "bg-alpine-linen-fade",
 };
@@ -116,7 +116,7 @@ export function BuildingIcon({
         .join(" ")}
     >
       <div
-        className={["relative w-[283px] shrink-0", config.heightClass].join(" ")}
+        className={["relative w-70.75 shrink-0", config.heightClass].join(" ")}
         role="img"
         aria-label={config.label}
       >

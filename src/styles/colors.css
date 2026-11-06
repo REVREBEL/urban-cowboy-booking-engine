@@ -125,9 +125,6 @@
   --lake-forest:  var(--lake-forest-500);
 
 
-  /* Figma BuildingIcon lake-forest state */
-  --lake-forest-figma: #184428;
-
   /* Lodge Yellow */
   --lodge-yellow-50: oklch(94.57% 0.091 96.98);
   --lodge-yellow-100: oklch(93.48% 0.1072 96.52);
@@ -197,7 +194,7 @@
 
 
   /* Ash */
-  --ash-500: #ccc7bb;
+  --ash-500: oklch(83.035% 0.01728 88.003);
   --ash: var(--ash-500);
 
   /* Smoke */
