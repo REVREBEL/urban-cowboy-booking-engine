@@ -1,10 +1,13 @@
 import { BuildingDescription, type BuildingDescriptionTone } from "./BuildingDescription";
 import { BuildingIcon } from "./BuildingIcon";
 import { RoomTypeCard, type RoomTypeCardProps } from "./RoomTypeCard";
+import { ROOM_TYPE_GROUP_PRESENTATION } from "@/data/roomTypeGroupPresentation";
 import type { RoomTypeGroupKey } from "@/types/accommodations";
 
 export type RoomTypeCardData = RoomTypeCardProps & {
   id: string;
+  /** Canonical room slug used by ROOM_TYPE_GROUP_PRESENTATION.roomOrder. */
+  roomKey?: string;
 };
 
 export interface RoomListItemBuilding {
@@ -24,11 +27,36 @@ export interface RoomListItemProps {
   className?: string;
 }
 
+const orderRoomTypes = (
+  roomTypes: readonly RoomTypeCardData[],
+  group: RoomTypeGroupKey | null,
+): RoomTypeCardData[] => {
+  if (!group) return [...roomTypes];
+
+  const canonicalOrder = new Map(
+    ROOM_TYPE_GROUP_PRESENTATION[group].roomOrder.map((key, index) => [
+      key,
+      index,
+    ]),
+  );
+
+  return [...roomTypes].sort((a, b) => {
+    const aIndex = canonicalOrder.get(a.roomKey ?? a.id);
+    const bIndex = canonicalOrder.get(b.roomKey ?? b.id);
+
+    if (aIndex == null && bIndex == null) return 0;
+    if (aIndex == null) return 1;
+    if (bIndex == null) return -1;
+    return aIndex - bIndex;
+  });
+};
+
 /**
  * Figma RoomListItem (1352:15461).
  *
  * The Figma canvas shows six card slots for illustration. Production rendering
  * is collection-driven: every item in roomTypes becomes a RoomTypeCard.
+ * Canonical room slugs are ordered through the shared presentation registry.
  */
 export function RoomListItem({
   roomTypes,
@@ -36,18 +64,23 @@ export function RoomListItem({
   displayBuilding = true,
   className = "",
 }: RoomListItemProps) {
+  const orderedRoomTypes = orderRoomTypes(
+    roomTypes,
+    building?.group ?? null,
+  );
+
   return (
     <div
       data-figma-node="1352:15461"
       className={[
-        "flex w-[1790px] max-w-full items-center gap-[40px] p-[20px]",
+        "flex w-full max-w-[1790px] flex-col items-stretch gap-[40px] p-[20px] xl:flex-row xl:items-center",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
       {displayBuilding && building ? (
-        <aside className="flex w-[400px] shrink-0 self-stretch">
+        <aside className="flex w-full shrink-0 self-stretch xl:w-[400px]">
           <div
             className={[
               "flex h-full w-full flex-col items-start justify-center px-[20px] py-[40px]",
@@ -64,7 +97,10 @@ export function RoomListItem({
                 buildingName={building.name}
                 description={building.description}
                 tagline={building.tagline}
-                tone={building.tone}
+                tone={
+                  building.tone ??
+                  (building.panel ? "default" : "inverse")
+                }
               />
             </div>
           </div>
@@ -73,9 +109,9 @@ export function RoomListItem({
 
       <div
         data-name="List"
-        className="flex w-[1330px] max-w-full shrink-0 flex-wrap content-start items-start gap-[20px] p-[20px]"
+        className="grid min-w-0 w-full flex-1 grid-cols-1 content-start items-start justify-items-center gap-[20px] p-[20px] sm:grid-cols-2 xl:justify-items-start 2xl:grid-cols-3"
       >
-        {roomTypes.map(({ id, ...roomType }) => (
+        {orderedRoomTypes.map(({ id, roomKey: _roomKey, ...roomType }) => (
           <RoomTypeCard key={id} {...roomType} />
         ))}
       </div>

@@ -28,21 +28,37 @@ test("RoomTypeCard preserves Figma card geometry and Tailwind 4 sizing", () => {
   assert.match(source, /w-\[368px\]/);
   assert.match(source, /font-number/);
   assert.match(source, /size-full/);
+  assert.match(source, /object-cover/);
+  assert.match(source, /imageAlt: string/);
   assert.doesNotMatch(source, /w-full h-full/);
 });
 
-test("RoomListItem renders room cards from the collection rather than fixed slots", () => {
+test("RoomListItem maps each collection item into its own RoomTypeCard", () => {
   const source = read("RoomListItem.tsx");
-  assert.match(source, /roomTypes\.map/);
-  assert.match(source, /<RoomTypeCard/);
+  assert.match(
+    source,
+    /orderedRoomTypes\.map\(\(\{ id, roomKey: _roomKey, \.\.\.roomType \}\) => \(/,
+  );
+  assert.match(source, /<RoomTypeCard key=\{id\} \{\.\.\.roomType\} \/>/);
+  assert.match(source, /ROOM_TYPE_GROUP_PRESENTATION/);
   assert.match(source, /<BuildingIcon/);
   assert.match(source, /<BuildingDescription/);
 });
 
-test("RoomTypeList renders building groups from its collection", () => {
+test("RoomListItem stacks responsively and derives inverse text for unpanelled buildings", () => {
+  const source = read("RoomListItem.tsx");
+  assert.match(source, /flex-col/);
+  assert.match(source, /xl:flex-row/);
+  assert.match(source, /flex-1/);
+  assert.match(source, /building\.panel \? "default" : "inverse"/);
+});
+
+test("RoomTypeList renders building groups in canonical guest-facing order", () => {
   const source = read("RoomTypeList.tsx");
-  assert.match(source, /groups\.map/);
+  assert.match(source, /ROOM_TYPE_GROUPS/);
+  assert.match(source, /orderedGroups\.map/);
   assert.match(source, /<RoomListItem/);
   assert.match(source, /max-w-\[2175px\]/);
   assert.match(source, /gap-\[60px\]/);
+  assert.doesNotMatch(source, /overflow-clip/);
 });

@@ -2,24 +2,35 @@ import type { ReactNode } from "react";
 
 export type RoomTypeCardState = "Default" | "Focus";
 
-export interface RoomTypeCardProps {
+interface RoomTypeCardBaseProps {
   roomTypeName: string;
   buildingName: string;
   numberOfBeds: string;
   price: string;
-  imageSrc?: string | null;
-  imageAlt?: string;
   mediaSlot?: ReactNode | null;
   state?: RoomTypeCardState;
   className?: string;
 }
 
+type RoomTypeCardImageProps =
+  | {
+      imageSrc: string;
+      imageAlt: string;
+    }
+  | {
+      imageSrc?: null;
+      imageAlt?: never;
+    };
+
+export type RoomTypeCardProps = RoomTypeCardBaseProps & RoomTypeCardImageProps;
+
 /**
  * Figma RoomTypeCard (1352:2574 / focus state 1352:14811).
  *
- * Room photography stays data-driven through imageSrc or mediaSlot. The
- * component preserves the Figma geometry while using project typography and
- * semantic color tokens.
+ * Room photography stays data-driven through imageSrc or mediaSlot. When a
+ * photo URL is supplied its alt text is required by the component contract.
+ * The component preserves the Figma geometry while using project typography
+ * and semantic color tokens.
  */
 export function RoomTypeCard({
   roomTypeName,
@@ -27,7 +38,7 @@ export function RoomTypeCard({
   numberOfBeds,
   price,
   imageSrc = null,
-  imageAlt = "",
+  imageAlt,
   mediaSlot = null,
   state = "Default",
   className = "",
@@ -52,8 +63,8 @@ export function RoomTypeCard({
             (imageSrc ? (
               <img
                 src={imageSrc}
-                alt={imageAlt}
-                className="size-full max-w-none object-contain"
+                alt={imageAlt ?? roomTypeName}
+                className="size-full max-w-none object-cover"
               />
             ) : (
               <div aria-hidden="true" className="size-full bg-card-foreground" />
