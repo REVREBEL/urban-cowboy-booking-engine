@@ -51,8 +51,9 @@ test("BuildingDescription mirrors the Figma BuildingSection property contract", 
   assert.match(source, /"Row Reverse"/);
   assert.match(source, /buildingIconSlot/);
   assert.match(source, /displayBuildingIcon/);
-  assert.match(source, /w-\[894px\]/);
-  assert.match(source, /w-\[400px\]/);
+  assert.match(source, /max-w-\[894px\]/);
+  assert.match(source, /w-full/);
+  assert.match(source, /max-w-\[400px\]/);
   assert.match(source, /tracking-\[-2px\]/);
   assert.match(source, /tracking-\[1px\]/);
   assert.match(source, /font-family:Inter,sans-serif/);
@@ -66,10 +67,10 @@ test("RoomTypeCard preserves the two Figma states and RoomTypeImage slot", () =>
   const source = read("RoomTypeCard.tsx");
   assert.match(source, /"Default" \| "Focus"/);
   assert.match(source, /roomTypeImage\?: ReactNode/);
-  assert.match(source, /h-\[345\.328px\]/);
-  assert.match(source, /w-\[410px\]/);
+  assert.match(source, /min-h-\[345\.328px\]/);
+  assert.match(source, /w-full/);
   assert.match(source, /h-\[245\.328px\]/);
-  assert.match(source, /w-\[368px\]/);
+  assert.match(source, /min-w-0/);
   assert.match(source, /size-full/);
   assert.match(source, /DEFAULT_ROOM_TYPE_IMAGE_SRC/);
   assert.match(source, /object-contain/);
@@ -86,8 +87,8 @@ test("RoomTypeCard preserves the two Figma states and RoomTypeImage slot", () =>
 test("RoomListItem preserves Default, Row, and Row Reverse Figma layouts", () => {
   const source = read("RoomListItem.tsx");
   assert.match(source, /"Default" \| "Row" \| "Row Reverse"/);
-  assert.match(source, /w-\[1790px\]/);
-  assert.match(source, /w-\[1330px\]/);
+  assert.match(source, /w-full min-w-0 max-w-full/);
+  assert.match(source, /grid-cols-\[repeat\(auto-fit,minmax\(min\(100%,330px\),1fr\)\)\]/);
   assert.match(source, /gap-\[30px\]/);
   assert.match(source, /gap-\[40px\]/);
   assert.match(source, /roomTypes\.map/);
