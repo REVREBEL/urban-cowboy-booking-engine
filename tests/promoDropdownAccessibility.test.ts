@@ -109,26 +109,45 @@ test("Promo dropdown mounted keyboard and focus interactions", async (t) => {
     );
   });
 
-  await t.test("5. Escape closes even when focus has moved outside the dialog", async () => {
+  await t.test("5. Escape does not steal focus from a real external control", async () => {
     await promoButton().click();
     await promoDialog().waitFor({ state: "visible" });
 
-    await page.locator('button:has-text("Property")').first().focus();
+    const propertyButton = page.locator('button:has-text("Property")').first();
+    await propertyButton.focus();
     await page.keyboard.press("Escape");
     await promoDialog().waitFor({ state: "hidden" });
 
-    assert.equal(await promoDialog().isVisible(), false);
+    assert.equal(
+      await propertyButton.evaluate((button) => document.activeElement === button),
+      true,
+      "Escape should preserve deliberate focus outside Promo",
+    );
+  });
+
+  await t.test("6. Escape restores Promo trigger when verification has lost focus to body", async () => {
+    await promoButton().click();
+    await promoDialog().waitFor({ state: "visible" });
+
+    await page.evaluate(() => {
+      (document.activeElement as HTMLElement | null)?.blur();
+    });
+    assert.equal(
+      await page.evaluate(() => document.activeElement === document.body),
+      true,
+      "Test setup should leave focus on body",
+    );
+
+    await page.keyboard.press("Escape");
+    await promoDialog().waitFor({ state: "hidden" });
     await page.waitForFunction(
       (button) => document.activeElement === button,
       await promoButton().elementHandle(),
     );
-    const triggerFocused = await promoButton().evaluate(
-      (button) => document.activeElement === button,
-    );
     assert.equal(
-      triggerFocused,
+      await promoButton().evaluate((button) => document.activeElement === button),
       true,
-      "Escape dismissal should restore Promo trigger focus even if focus moved outside",
+      "Escape should recover focus to Promo after focus is lost",
     );
   });
 });
