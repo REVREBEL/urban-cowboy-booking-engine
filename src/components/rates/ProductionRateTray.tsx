@@ -268,7 +268,7 @@ export function ProductionRateTray({
                 roomSummary={`${roomName}, ${nights} ${nights === 1 ? "night" : "nights"}`}
                 total={rate.totalGross}
                 currency={rate.currency}
-                variant={rate.isPrivate ? "member" : config?.supportingText ? "package" : "default"}
+                variant={config?.memberOnly || rate.isPrivate ? "member" : rate.knownRateGroup === "PACKAGE" ? "package" : "default"}
                 isSelected={isSelected}
                 onDetails={() => {
                   if (isOpen) { closeDrawer(); return; }
@@ -325,6 +325,7 @@ export function ProductionRateTray({
                   : openRate.knownRateGroup === "NON_REFUNDABLE" ? "Full Prepay Non Refundable" : "See rate details for cancellation terms"}
                 timeline={timelineForRate(openRate, openConfig, checkIn)}
                 arrivalDate={checkIn}
+                language={language}
                 onClose={closeDrawer}
                 onConfirm={() => onSelectRate(openRate)}
                 disabled={openRate.totalGross == null}
