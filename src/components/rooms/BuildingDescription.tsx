@@ -46,7 +46,7 @@ export function BuildingDescription({
   displayBuildingIcon = false,
   layout = "Row",
 }: BuildingDescriptionProps) {
-  const icon = buildingIconSlot ?? <BuildingIcon decorative />;
+  const icon = buildingIconSlot ?? <BuildingIcon />;
 
   if (layout === "Row" || layout === "Row Reverse") {
     const iconSlot = displayBuildingIcon ? (

@@ -27,6 +27,8 @@ test("BuildingIcon mirrors all Figma BuildingName variants and exact artwork geo
   assert.match(source, /size-full/);
   assert.match(source, /bg-smoke/);
   assert.match(source, /WebkitMask/);
+  assert.doesNotMatch(source, /decorative\?:/);
+  assert.doesNotMatch(source, /loading\?:/);
 });
 
 test("BuildingDescription mirrors the Figma BuildingSection property contract", () => {
@@ -72,9 +74,12 @@ test("RoomListItem preserves Default, Row, and Row Reverse Figma layouts", () =>
 
 test("RoomTypeList is the exact three-slot Figma composition", () => {
   const source = read("RoomTypeList.tsx");
-  assert.match(source, /buildingGroup1: ReactNode/);
-  assert.match(source, /buildingGroup2: ReactNode/);
-  assert.match(source, /buildingGroup3: ReactNode/);
+  assert.match(source, /buildingGroup1\?: ReactNode \| null/);
+  assert.match(source, /buildingGroup2\?: ReactNode \| null/);
+  assert.match(source, /buildingGroup3\?: ReactNode \| null/);
+  assert.match(source, /DEFAULT_BUILDING_GROUP_1/);
+  assert.match(source, /DEFAULT_BUILDING_GROUP_2/);
+  assert.match(source, /DEFAULT_BUILDING_GROUP_3/);
   assert.match(source, /w-\[2175px\]/);
   assert.match(source, /gap-\[60px\]/);
   assert.match(source, /overflow-clip/);

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { BuildingDescription } from "@/components/rooms/BuildingDescription";
 import { BuildingIcon } from "@/components/rooms/BuildingIcon";
 
-const icon = <BuildingIcon buildingName="Alpine" decorative />;
+const icon = <BuildingIcon buildingName="Alpine" />;
 
 const meta = {
   title: "Components/Rooms/BuildingDescription",

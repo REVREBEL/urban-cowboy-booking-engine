@@ -23,7 +23,6 @@ const meta = {
   tags: ["autodocs"],
   args: {
     buildingName: "Default",
-    decorative: true,
   },
   argTypes: {
     buildingName: {
@@ -48,7 +47,6 @@ export const AllFigmaVariants: Story = {
         <BuildingIcon
           key={buildingName}
           buildingName={buildingName}
-          decorative
         />
       ))}
     </div>

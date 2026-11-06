@@ -11,11 +11,8 @@ export type BuildingIconName =
   | "OpasCabin";
 
 export interface BuildingIconProps {
-  buildingName?: BuildingIconName;
   className?: string;
-  alt?: string;
-  decorative?: boolean;
-  loading?: "eager" | "lazy";
+  buildingName?: BuildingIconName;
 }
 
 const BUILDING_ICON_CONFIG: Record<
@@ -81,11 +78,8 @@ const BUILDING_ICON_CONFIG: Record<
  * including the source spelling "MountianViewHaus".
  */
 export function BuildingIcon({
-  buildingName = "Default",
   className = "",
-  alt,
-  decorative = true,
-  loading = "lazy",
+  buildingName = "Default",
 }: BuildingIconProps) {
   const config = BUILDING_ICON_CONFIG[buildingName];
 
@@ -99,10 +93,7 @@ export function BuildingIcon({
     >
       <div
         className={["relative w-[283px] shrink-0", config.heightClass].join(" ")}
-        role={decorative ? undefined : "img"}
-        aria-label={decorative ? undefined : alt ?? config.label + " architectural illustration"}
-        aria-hidden={decorative || undefined}
-        data-loading={loading}
+        aria-hidden="true"
       >
         <span
           aria-hidden="true"
