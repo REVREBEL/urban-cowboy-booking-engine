@@ -18,7 +18,6 @@ const meta = {
     displayBuildingIcon: false,
   },
   argTypes: {
-    buildingIconSlot: { control: false, table: { disable: true } },
     layout: {
       control: "select",
       options: ["Row", "Row Reverse", "StackedCenter", "StackedLeft"],
@@ -36,7 +35,10 @@ const meta = {
     },
   },
   parameters: {
-    design: { type: "figma", url: "https://www.figma.com/design/2dpdHI6BTGjXcK54hTx2DK/Urban-Cowboy?node-id=1352-15525" },
+    design: {
+      type: "figma",
+      url: "https://www.figma.com/design/2dpdHI6BTGjXcK54hTx2DK/Urban-Cowboy?node-id=1352-15525",
+    },
     layout: "centered",
   },
 } satisfies Meta<typeof BuildingDescription>;

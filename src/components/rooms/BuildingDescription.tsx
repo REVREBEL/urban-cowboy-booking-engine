@@ -4,8 +4,8 @@ import { BuildingIcon } from "./BuildingIcon";
 export type BuildingDescriptionLayout =
   | "StackedCenter"
   | "Row"
-  | "StackedLeft"
-  | "Row Reverse";
+  | "Row Reverse"
+  | "StackedLeft";
 
 export interface BuildingDescriptionProps {
   className?: string;
@@ -34,8 +34,8 @@ const taglineClass =
  * Figma BuildingSection component set (1352:15525), exposed under the
  * requested React component name BuildingDescription.
  *
- * The public properties mirror Figma: four Layout variants, a building-icon
- * slot, DisplayBuildingIcon, and the three text properties.
+ * The public API mirrors Figma's four layout variants, icon slot, icon
+ * visibility property, and editable text properties.
  */
 export function BuildingDescription({
   className = "",
@@ -61,40 +61,36 @@ export function BuildingDescription({
     const copy = (
       <div
         data-name="BuildingDecriptionWrapper"
-        className="flex w-[555px] shrink-0 flex-col items-start justify-end gap-[10px] self-end text-balance [word-break:break-word]"
+        className="flex w-[555px] shrink-0 flex-col items-start justify-end gap-[10px] text-balance [word-break:break-word]"
       >
         <h2 className={[headingClass, "shrink-0 whitespace-nowrap"].join(" ")}>
           {buildingName}
         </h2>
-        <p className={[descriptionClass, "min-w-full w-[min-content] shrink-0"].join(" ")}>
+        <p
+          className={[
+            descriptionClass,
+            "min-w-full w-[min-content] shrink-0",
+          ].join(" ")}
+        >
           {buildingDescription}
         </p>
-        <p className={[taglineClass, "min-w-full w-[min-content] shrink-0"].join(" ")}>
+        <p
+          className={[
+            taglineClass,
+            "min-w-full w-[min-content] shrink-0",
+          ].join(" ")}
+        >
           {buildingTagline}
         </p>
       </div>
     );
-
-    if (!displayBuildingIcon) {
-      return (
-        <div
-          data-figma-node={layout === "Row" ? "1352:9404" : "1357:16082"}
-          data-layout={layout}
-          className={["flex w-[894px] items-end", className]
-            .filter(Boolean)
-            .join(" ")}
-        >
-          {copy}
-        </div>
-      );
-    }
 
     return (
       <div
         data-figma-node={layout === "Row" ? "1352:9404" : "1357:16082"}
         data-layout={layout}
         className={[
-          "grid w-[894px] grid-cols-[fit-content(100%)_minmax(0,1fr)] grid-rows-[repeat(1,fit-content(100%))] gap-x-[30px] gap-y-[10px]",
+          "flex w-fit items-start gap-[10px]",
           className,
         ]
           .filter(Boolean)
@@ -106,29 +102,46 @@ export function BuildingDescription({
     );
   }
 
+  const isCentered = layout === "StackedCenter";
   const iconSlot = displayBuildingIcon ? (
     <div
       data-name="BuildingIcon Slot"
       className={[
         "flex w-full shrink-0 items-start overflow-clip py-[10px] z-[2]",
-        layout === "StackedCenter" ? "justify-center" : "justify-start",
+        isCentered ? "justify-center" : "justify-start",
       ].join(" ")}
     >
       {icon}
     </div>
   ) : null;
 
-  const copy =
-    layout === "StackedCenter" ? (
+  return (
+    <div
+      data-figma-node={isCentered ? "1352:15526" : "1378:17369"}
+      data-layout={layout}
+      className={[
+        "isolate flex w-[350px] max-w-[350px] flex-col items-start gap-[40px] p-[20px]",
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {iconSlot}
       <div
         data-name="BuildingDecriptionWrapper"
-        className="flex w-full shrink-0 flex-col items-start gap-[20px] text-balance text-center z-[1] [word-break:break-word]"
+        className={[
+          "flex h-[212px] w-full shrink-0 flex-col items-center justify-between text-balance z-[1] [word-break:break-word]",
+          isCentered ? "text-center" : "text-left",
+        ].join(" ")}
       >
-        <div data-name="ContentWrapper" className="flex w-full shrink-0 flex-col items-start gap-[10px]">
-          <h2 className={[headingClass, "w-[360px] shrink-0"].join(" ")}>
+        <div
+          data-name="ContentWrapper"
+          className="flex h-[158px] w-full shrink-0 flex-col items-center justify-between"
+        >
+          <h2 className={[headingClass, "w-full shrink-0"].join(" ")}>
             {buildingName}
           </h2>
-          <p className={[descriptionClass, "w-[360px] shrink-0"].join(" ")}>
+          <p className={[descriptionClass, "w-full shrink-0"].join(" ")}>
             {buildingDescription}
           </p>
         </div>
@@ -136,38 +149,6 @@ export function BuildingDescription({
           {buildingTagline}
         </p>
       </div>
-    ) : (
-      <div
-        data-name="BuildingDecriptionWrapper"
-        className="flex w-full shrink-0 flex-col items-start gap-[20px] text-balance z-[1] [word-break:break-word]"
-      >
-        <div data-name="ContentWrapper" className="relative h-[158px] w-[360px] shrink-0">
-          <h2 className={[headingClass, "absolute left-0 top-0 w-[360px]"].join(" ")}>
-            {buildingName}
-          </h2>
-          <p className={[descriptionClass, "absolute left-0 top-[53px] w-[360px] text-pretty"].join(" ")}>
-            {buildingDescription}
-          </p>
-        </div>
-        <p className={[taglineClass, "min-w-full w-[min-content] shrink-0 text-balance"].join(" ")}>
-          {buildingTagline}
-        </p>
-      </div>
-    );
-
-  return (
-    <div
-      data-figma-node={layout === "StackedCenter" ? "1352:15526" : "1357:16091"}
-      data-layout={layout}
-      className={[
-        "isolate flex w-[400px] flex-col items-start gap-[40px] p-[20px]",
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      {iconSlot}
-      {copy}
     </div>
   );
 }

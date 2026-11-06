@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { RoomTypeCard, type RoomTypeCardProps } from "./RoomTypeCard";
 
-export type RoomListItemLayout = "Default" | "Row" | "Row Reverse";
+export type RoomListItemLayout = "Default" | "Row" | "RowReverse";
 
 export type RoomTypeCardData = RoomTypeCardProps & {
   id: string;
@@ -18,9 +18,9 @@ export interface RoomListItemProps {
 /**
  * Figma RoomListItem component set (1352:15460).
  *
- * Figma documents the card slots as illustrative only. The React version keeps
- * the exact three layout variants while populating the card list from the
- * supplied collection, in the supplied order.
+ * Figma explicitly documents the six card slots as illustrative. The React
+ * implementation therefore preserves the three Figma layouts while rendering
+ * the supplied room collection in order.
  */
 export function RoomListItem({
   className = "",
@@ -30,32 +30,37 @@ export function RoomListItem({
   roomTypes,
 }: RoomListItemProps) {
   const isDefault = layout === "Default";
-  const isRow = layout === "Row";
-  const isRowReverse = layout === "Row Reverse";
+  const isRowReverse = layout === "RowReverse";
 
-  const buildingContent = buildingSectionSlot;
-
-  const buildingPanel = displayBuilding && buildingContent ? (
-    <div
-      data-name="BuildingSectionSlot"
-      className={
-        isDefault
-          ? "flex w-[1790px] shrink-0 flex-col items-start bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
-          : "flex w-[400px] shrink-0 self-stretch flex-col items-start justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] px-[20px] py-[40px]"
-      }
-    >
-      {buildingContent}
-    </div>
-  ) : null;
+  const buildingPanel =
+    displayBuilding && buildingSectionSlot ? (
+      <div
+        data-name="BuildingSectionSlot"
+        className={[
+          "flex shrink-0 flex-col items-start",
+          isDefault
+            ? "w-full bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
+            : [
+                "max-w-[350px] flex-1 self-stretch justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] py-[40px]",
+                isRowReverse ? "px-[10px]" : "px-[20px]",
+              ].join(" "),
+        ].join(" ")}
+      >
+        {buildingSectionSlot}
+      </div>
+    ) : null;
 
   const list = (
     <div
       data-name="List"
       className={[
-        "flex shrink-0 flex-wrap content-start items-start gap-[20px]",
+        "flex flex-wrap items-center",
         isDefault
-          ? "w-[1790px]"
-          : "w-[1330px] p-[20px]",
+          ? "w-full gap-[20px]"
+          : [
+              "min-w-0 flex-1 content-center gap-[15px] p-[20px]",
+              isRowReverse ? "justify-end" : "justify-start",
+            ].join(" "),
       ].join(" ")}
     >
       {roomTypes.map(({ id, ...roomType }) => (
@@ -67,25 +72,24 @@ export function RoomListItem({
   return (
     <div
       data-figma-node={
-        isDefault ? "1352:2645" : isRow ? "1352:15461" : "1357:16356"
+        isDefault ? "1352:2645" : isRowReverse ? "1378:17281" : "1352:15461"
       }
       data-layout={layout}
       className={[
-        // Preserve the owning Figma component's exact frame geometry:
-        // 1790px frame, 20px row padding, 400px building slot, 40px gap,
-        // and 1330px list. The source component intentionally paints 20px
-        // beyond the nominal frame in Row variants.
-        "w-[1790px] overflow-visible",
+        "w-full",
         isDefault
-          ? "flex flex-col flex-wrap content-start items-start gap-[30px] py-[20px]"
-          : "flex items-center gap-[40px] bg-primary-foreground p-[20px]",
+          ? "flex max-w-[1460px] flex-col items-start gap-[30px] py-[20px]"
+          : [
+              "flex max-w-[1542px] items-center gap-[20px] bg-primary-foreground py-[20px]",
+              isRowReverse ? "px-[20px]" : "px-[10px]",
+            ].join(" "),
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
       {isRowReverse ? list : buildingPanel}
-      {isDefault ? list : isRow ? list : buildingPanel}
+      {isDefault ? list : isRowReverse ? buildingPanel : list}
     </div>
   );
 }
