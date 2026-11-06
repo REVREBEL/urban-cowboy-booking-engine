@@ -24,14 +24,11 @@ const meta = {
   },
   parameters: {
     layout: "fullscreen",
+    design: {
+      type: "figma",
+      url: "https://www.figma.com/design/2dpdHI6BTGjXcK54hTx2DK/Urban-Cowboy?node-id=1352-14825",
+    },
   },
-  decorators: [
-    (Story) => (
-      <div className="w-full overflow-x-auto bg-primary-foreground">
-        <Story />
-      </div>
-    ),
-  ],
 } satisfies Meta<typeof RoomTypeList>;
 
 export default meta;
