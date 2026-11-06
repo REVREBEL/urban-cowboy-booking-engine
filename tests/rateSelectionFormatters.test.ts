@@ -58,6 +58,7 @@ test("RateSelectionView consumes the shared formatter cache", () => {
 
   assert.match(source, /import \{ fmtDate, fmtMonthDay \} from '\.\.\/\.\.\/lib\/format'/);
   assert.match(source, /fmtDate\(dateStr, \{ locale: 'en-US' \}\)/);
+  assert.match(source, /Number\.isFinite\(due\.getTime\(\)\)/);
   assert.match(source, /fmtMonthDay\(due\.toISOString\(\), \{ locale: 'en-US' \}\)/);
   assert.doesNotMatch(source, /new Intl\.DateTimeFormat/);
   assert.doesNotMatch(source, /toLocaleDateString/);
