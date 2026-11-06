@@ -67,8 +67,15 @@ test("RoomTypeCard preserves updated Figma dimensions and stays fluid on mobile"
   assert.match(source, /"Default" \| "Focus"/);
   assert.match(source, /roomTypeImage\?: ReactNode/);
   assert.match(source, /min-h-\[295\.5px\]/);
-  assert.match(source, /max-w-\[350px\]/);
-  assert.match(source, /sm:w-\[350px\]/);
+  assert.match(
+    source,
+    /className=\{\[[\s\S]*?"flex min-h-\[295\.5px\] w-full max-w-\[350px\] min-w-0/,
+  );
+  assert.doesNotMatch(source, /sm:w-\[350px\]/);
+  assert.doesNotMatch(
+    source,
+    /className=\{\[[\s\S]*?"flex min-h-\[295\.5px\] w-\[350px\]/,
+  );
   assert.match(source, /aspect-\[314\.146\/209\.426\]/);
   assert.match(source, /max-w-\[314\.146px\]/);
   assert.match(source, /text-\[20\.488px\]/);
@@ -88,15 +95,23 @@ test("RoomListItem preserves updated layouts, mobile stacking, and reverse order
   assert.match(source, /layout === "Row Reverse" \? "RowReverse" : layout/);
   assert.match(source, /max-w-\[1460px\]/);
   assert.match(source, /max-w-\[1542px\]/);
-  assert.match(source, /xl:flex-row/);
+  assert.match(
+    source,
+    /"flex max-w-\[1542px\] flex-col items-stretch gap-\[20px\] bg-primary-foreground py-\[20px\] xl:flex-row xl:items-center"/,
+  );
   assert.match(source, /xl:w-\[350px\]/);
   assert.match(source, /gap-\[15px\]/);
   assert.match(source, /roomTypes\.map/);
+  assert.doesNotMatch(source, /order-first/);
   const reverseStart = source.indexOf("{isRowReverse ? (");
-  const reverseList = source.indexOf("{list}", reverseStart);
-  const reverseBuilding = source.indexOf("{buildingPanel}", reverseList);
+  const reverseEnd = source.indexOf(") : (", reverseStart);
   assert.ok(reverseStart >= 0, "RowReverse branch must exist");
-  assert.ok(reverseList > reverseStart, "RowReverse must render the room list");
+  assert.ok(reverseEnd > reverseStart, "RowReverse branch must be bounded");
+  const reverseBranch = source.slice(reverseStart, reverseEnd);
+  const reverseList = reverseBranch.indexOf("{list}");
+  const reverseBuilding = reverseBranch.indexOf("{buildingPanel}");
+  assert.ok(reverseList >= 0, "RowReverse must render the room list");
+  assert.ok(reverseBuilding >= 0, "RowReverse must render the building panel");
   assert.ok(
     reverseBuilding > reverseList,
     "RowReverse must render the building panel after the room list",
