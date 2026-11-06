@@ -52,7 +52,7 @@ export function BuildingDescription({
     const iconSlot = displayBuildingIcon ? (
       <div
         data-name="BuildingIcon Slot"
-        className="flex w-full max-w-[300px] shrink-0 items-start overflow-clip p-[10px]"
+        className="flex w-full max-w-[300px] min-w-0 items-start overflow-clip p-[10px] xl:flex-[0_1_300px]"
       >
         {icon}
       </div>
@@ -61,7 +61,7 @@ export function BuildingDescription({
     const copy = (
       <div
         data-name="BuildingDecriptionWrapper"
-        className="flex w-full max-w-[555px] min-w-0 shrink-0 flex-col items-start justify-end gap-[10px] text-balance [word-break:break-word]"
+        className="flex w-full max-w-[555px] min-w-0 flex-col items-start justify-end gap-[10px] text-balance [word-break:break-word] xl:flex-[1_1_555px]"
       >
         <h2 className={[headingClass, "w-full min-w-0 shrink-0 break-words"].join(" ")}>
           {buildingName}
