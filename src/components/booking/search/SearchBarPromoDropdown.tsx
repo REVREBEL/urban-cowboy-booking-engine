@@ -108,9 +108,19 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
 
   const restoreTriggerFocus = (onlyAfterDismissal = false) => {
     const trigger = internalTriggerRef.current;
+    const focusWhenScheduled = document.activeElement;
+
     window.setTimeout(() => {
       if (onlyAfterDismissal && dialogRef.current?.isConnected) return;
-      if (trigger?.isConnected) trigger.focus();
+
+      const active = document.activeElement;
+      const focusStillUnowned =
+        active === focusWhenScheduled ||
+        active === document.body ||
+        active === document.documentElement ||
+        active === null;
+
+      if (focusStillUnowned && trigger?.isConnected) trigger.focus();
     }, 0);
   };
 
@@ -119,8 +129,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
       internalTriggerRef.current = externalTriggerRef.current;
     } else {
       internalTriggerRef.current =
-        document.querySelector<HTMLElement>('button[aria-expanded="true"]') ||
-        (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+        document.activeElement instanceof HTMLElement ? document.activeElement : null;
     }
 
     inputRef.current?.focus();
