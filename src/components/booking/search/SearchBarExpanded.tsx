@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
+import { SearchBarPromoDropdown } from "./SearchBarPromoDropdown";
 
 export type SearchBarExpandedVariant = "circle" | "square";
 export type ActiveDropdownSection = "property" | "dates" | "guests" | "promo" | null;
@@ -23,11 +24,39 @@ export interface SearchBarExpandedProps {
   buttonSlot?: React.ReactNode;
   showSearchButton?: boolean;
   dropdownSlot?: React.ReactNode;
+  promoTriggerRef?: React.RefObject<HTMLButtonElement | null>;
   dropdownPlacement?: "above" | "below";
   /** Keep an above-the-bar dropdown within the available viewport without moving its bottom anchor. */
   constrainAboveToViewport?: boolean;
   isLoading?: boolean;
   className?: string;
+}
+
+function injectPromoTriggerRef(
+  node: React.ReactNode,
+  triggerRef: React.RefObject<HTMLElement | null>,
+): React.ReactNode {
+  return React.Children.map(node, (child) => {
+    if (!React.isValidElement(child)) return child;
+
+    if (child.type === SearchBarPromoDropdown) {
+      return React.cloneElement(
+        child as React.ReactElement<{
+          triggerRef?: React.RefObject<HTMLElement | null>;
+        }>,
+        { triggerRef },
+      );
+    }
+
+    const element = child as React.ReactElement<{ children?: React.ReactNode }>;
+    if (element.props.children === undefined) return child;
+
+    return React.cloneElement(
+      element,
+      undefined,
+      injectPromoTriggerRef(element.props.children, triggerRef),
+    );
+  });
 }
 
 export interface ExpandedSearchButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -147,6 +176,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   buttonSlot,
   showSearchButton = true,
   dropdownSlot,
+  promoTriggerRef: externalPromoTriggerRef,
   dropdownPlacement = "below",
   constrainAboveToViewport = false,
   isLoading = false,
@@ -162,6 +192,8 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   const [internalActiveSection, setInternalActiveSection] = useState<ActiveDropdownSection>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const datesTriggerRef = useRef<HTMLButtonElement>(null);
+  const internalPromoTriggerRef = useRef<HTMLButtonElement>(null);
+  const promoTriggerRef = externalPromoTriggerRef ?? internalPromoTriggerRef;
   const [availableAbove, setAvailableAbove] = useState<number | null>(null);
 
   const currentValues = controlledValues ?? internalValues;
@@ -214,7 +246,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
           <SearchSection label="Guests" value={<span>{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
-          <SearchSection label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection ref={promoTriggerRef} label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         {showSearchButton && (
           <div className="flex justify-end p-1.5 md:pl-3">
@@ -236,11 +268,16 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
             ? { maxHeight: availableAbove }
             : undefined}
         >
-          {React.isValidElement(dropdownSlot) && currentActiveSection === "dates"
-            ? React.cloneElement(dropdownSlot as React.ReactElement<{ triggerRef?: React.RefObject<HTMLElement | null> }>, {
-                triggerRef: datesTriggerRef,
-              })
-            : dropdownSlot}
+          {currentActiveSection === "promo"
+            ? injectPromoTriggerRef(dropdownSlot, promoTriggerRef)
+            : React.isValidElement(dropdownSlot) && currentActiveSection === "dates"
+              ? React.cloneElement(
+                  dropdownSlot as React.ReactElement<{
+                    triggerRef?: React.RefObject<HTMLElement | null>;
+                  }>,
+                  { triggerRef: datesTriggerRef },
+                )
+              : dropdownSlot}
         </div>
       )}
     </div>

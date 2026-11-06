@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchBarExpanded, type ActiveDropdownSection } from "@/components/booking/search/SearchBarExpanded";
 import { DateSearchDropdown } from "@/components/booking/search/DateSearchDropdown";
 import { SearchBarGuestDropdown } from "@/components/booking/search/SearchBarGuestsDropdown";
@@ -88,6 +88,7 @@ export function Dates() {
   const [location, setLocation] = useState("CATSKILLS");
   const [accessible, setAccessible] = useState(false);
   const [activeSection, setActiveSection] = useState<ActiveDropdownSection>(null);
+  const promoTriggerRef = useRef<HTMLButtonElement>(null);
   const [error, setError] = useState("");
   const [dailyRates, setDailyRates] = useState<Record<string, DailyRate>>({});
   const [showQuickSelect, setShowQuickSelect] = useState(false);
@@ -195,6 +196,7 @@ export function Dates() {
             values={{ property: location, checkInDate: displayDate(form.checkIn), checkOutDate: displayDate(form.checkOut), guests: guestLabel, promoCode: form.voucherCode || "Add promo" }}
             activeSection={activeSection}
             onSectionClick={setActiveSection}
+            promoTriggerRef={promoTriggerRef}
             onSearch={submit}
             className="w-full!"
             dropdownSlot={
@@ -243,12 +245,13 @@ export function Dates() {
                 {activeSection === "promo" && (
                   <div className="flex justify-end">
                     <SearchBarPromoDropdown
+                      triggerRef={promoTriggerRef}
                       value={form.voucherCode}
                       onChange={(voucherCode) => setForm((current) => ({ ...current, voucherCode }))}
                       onApply={(voucherCode) => {
                         setForm((current) => ({ ...current, voucherCode }));
-                        setActiveSection(null);
                       }}
+                      closeOnApply
                       onClose={() => setActiveSection(null)}
                     />
                   </div>
