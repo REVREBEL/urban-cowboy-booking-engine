@@ -73,7 +73,7 @@ export function MultiRoomViewListItem({
       ].join(" ")}
     >
       {roomTypes.map(({ id, ...roomType }) => (
-        <MultiRoomViewMultiRoomViewRoomTypeCard key={id} {...roomType} />
+        <MultiRoomViewRoomTypeCard key={id} {...roomType} />
       ))}
     </div>
   );

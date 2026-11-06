@@ -3,16 +3,16 @@ import type { ReactNode } from "react";
 const DEFAULT_ROOM_TYPE_IMAGE_SRC =
   "https://cdn.prod.website-files.com/6abc810fd801e90511049adb/6ac89730346974fa55ed2a44_Opas%20Cabing%20Living%20Room-2.jpg";
 
-export type RoomTypeCardState = "Default" | "Focus";
+export type MultiRoomViewRoomTypeCardState = "Default" | "Focus";
 
-export interface RoomTypeCardProps {
+export interface MultiRoomViewRoomTypeCardProps {
   className?: string;
   buildingName: string;
   roomTypeImage?: ReactNode | null;
   numberOfBeds: string;
   price: string;
   roomTypeName: string;
-  state?: RoomTypeCardState;
+  state?: MultiRoomViewRoomTypeCardState;
 }
 
 /**
@@ -29,7 +29,7 @@ export function MultiRoomViewRoomTypeCard({
   price,
   roomTypeName,
   state = "Default",
-}: RoomTypeCardProps) {
+}: MultiRoomViewRoomTypeCardProps) {
   const isFocus = state === "Focus";
 
   return (

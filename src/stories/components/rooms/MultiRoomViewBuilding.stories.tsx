@@ -5,7 +5,7 @@ import { BuildingIcon } from "@/components/rooms/BuildingIcon";
 const icon = <BuildingIcon buildingName="Alpine" />;
 
 const meta = {
-  title: "Components/Rooms/MultiRoomViewBuilding",
+  title: "Components/Rooms/MultiRoomViewList/MultiRoomViewBuilding",
   component: MultiRoomViewBuilding,
   tags: ["autodocs"],
   args: {

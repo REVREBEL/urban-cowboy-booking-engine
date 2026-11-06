@@ -3,9 +3,9 @@ import { MultiRoomViewBuilding } from "@/components/rooms/MultiRoomViewBuilding"
 import {
   MultiRoomViewListItem,
   type MultiRoomViewRoomTypeCardData,
-} from "@/components/rooms/MultiRoomViewList/MultiRoomViewListItem";
+} from "@/components/rooms/MultiRoomViewListItem";
 
-const makeRoomTypes = (count: number): RoomTypeCardDataData[] =>
+const makeRoomTypes = (count: number): MultiRoomViewRoomTypeCardData[] =>
   Array.from({ length: count }, (_, index) => ({
     id: "room-" + (index + 1),
     roomTypeName: "Opa's Cabin 4 Bedroom",
@@ -19,7 +19,7 @@ const rowBuilding = <MultiRoomViewBuilding layout="Row" />;
 const stackedBuilding = <MultiRoomViewBuilding layout="StackedCenter" />;
 
 const meta = {
-  title: "Components/Rooms/MultiRoomViewListItem",
+  title: "Components/Rooms/MultiRoomViewList/MultiRoomViewListItem",
   component: MultiRoomViewListItem,
   tags: ["autodocs"],
   args: {

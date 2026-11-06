@@ -91,8 +91,8 @@ export function MultiRoomViewBuilding({
         data-layout={layout}
         className={[
           displayBuildingIcon
-            ? "flex w-full max-w-[865px] flex-col items-start gap-[10px] xl:flex-row"
-            : "flex w-full max-w-[555px] items-start gap-[10px]",
+            ? "flex w-full max-w-216.25 flex-col items-start gap-2.5 xl:flex-row"
+            : "flex w-full max-w-138.75 items-start gap-2.5",
           className,
         ]
           .filter(Boolean)
@@ -109,7 +109,7 @@ export function MultiRoomViewBuilding({
     <div
       data-name="BuildingIcon Slot"
       className={[
-        "flex w-full shrink-0 items-start overflow-clip py-[10px] z-[2]",
+        "flex w-full shrink-0 items-start overflow-clip py-2.5 z-2",
         isCentered ? "justify-center" : "justify-start",
       ].join(" ")}
     >
