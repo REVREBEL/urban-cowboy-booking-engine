@@ -92,6 +92,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
   const [internalValue, setInternalValue] = useState<string>(initialValue);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
   const [statusFeedback, setStatusFeedback] = useState<PromoValidationResult | null>(null);
+  const [internallyDismissed, setInternallyDismissed] = useState(false);
 
   const isControlled = controlledValue !== undefined;
   const currentValue = isControlled ? controlledValue : internalValue;
@@ -114,6 +115,14 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
     if (trigger?.isConnected) trigger.focus();
   };
 
+  const dismiss = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      setInternallyDismissed(true);
+    }
+  };
+
   useEffect(() => {
     if (externalTriggerRef?.current) {
       internalTriggerRef.current = externalTriggerRef.current;
@@ -132,8 +141,6 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!onClose) return;
-
     const handleDocumentKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return;
 
@@ -150,7 +157,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
         active === null;
 
       cancelPendingApply();
-      onClose();
+      dismiss();
       if (focusWasInside || focusWasLost) focusTrigger();
     };
 
@@ -205,7 +212,18 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
 
     try {
       if (onApply) {
-        await onApply(trimmed, controller.signal);
+        const applyResult = onApply(trimmed, controller.signal);
+
+        // Preserve the original callback-owned dismissal contract. If a legacy
+        // onApply synchronously closes/unmounts Promo, React commits that close
+        // before this microtask and we can restore focus without waiting for the
+        // async result or fighting later user-driven section changes.
+        if (!closeOnApply && startedInsideDialog) {
+          await Promise.resolve();
+          if (!dialogRef.current?.isConnected) focusTrigger();
+        }
+
+        await applyResult;
         if (controller.signal.aborted || requestId !== applyRequestRef.current) return;
 
         const activeAfterApply = document.activeElement;
@@ -220,8 +238,8 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
         const shouldRestoreFocus =
           startedInsideDialog && (focusWasLost || focusStillInside);
 
-        if (closeOnApply && onClose) {
-          onClose();
+        if (closeOnApply) {
+          dismiss();
           if (shouldRestoreFocus) focusTrigger();
         }
       } else {
@@ -266,6 +284,8 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
       handleApply();
     }
   };
+
+  if (internallyDismissed) return null;
 
   return (
     <div
