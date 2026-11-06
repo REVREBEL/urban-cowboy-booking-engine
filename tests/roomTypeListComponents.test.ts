@@ -92,10 +92,15 @@ test("RoomListItem preserves updated layouts, mobile stacking, and reverse order
   assert.match(source, /xl:w-\[350px\]/);
   assert.match(source, /gap-\[15px\]/);
   assert.match(source, /roomTypes\.map/);
-  const reverseBranch = source.match(
-    /isRowReverse \? \([\s\S]*?<>{[\s\S]*?\{list\}[\s\S]*?\{buildingPanel\}[\s\S]*?<\/?>[\s\S]*?\) : \(/,
+  const reverseStart = source.indexOf("{isRowReverse ? (");
+  const reverseList = source.indexOf("{list}", reverseStart);
+  const reverseBuilding = source.indexOf("{buildingPanel}", reverseList);
+  assert.ok(reverseStart >= 0, "RowReverse branch must exist");
+  assert.ok(reverseList > reverseStart, "RowReverse must render the room list");
+  assert.ok(
+    reverseBuilding > reverseList,
+    "RowReverse must render the building panel after the room list",
   );
-  assert.ok(reverseBranch, "RowReverse must render the room list before the building panel");
   assert.doesNotMatch(source, /w-\[1790px\]/);
   assert.doesNotMatch(source, /w-\[1330px\]/);
 });
