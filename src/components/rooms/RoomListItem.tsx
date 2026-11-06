@@ -83,7 +83,8 @@ export function RoomListItem({
       data-figma-node={
         isDefault ? "1352:2645" : isRowReverse ? "1378:17281" : "1352:15461"
       }
-      data-layout={normalizedLayout}
+      data-layout={layout}
+      data-layout-normalized={normalizedLayout}
       className={[
         "w-full",
         isDefault
