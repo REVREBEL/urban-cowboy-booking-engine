@@ -50,17 +50,39 @@ test("shared date helpers return the production RateSelectionView display values
   }
 });
 
-test("RateSelectionView consumes the shared formatter cache", () => {
+test("RateSelectionView wires shared formatters into rendered and due-date paths", () => {
   const source = readFileSync(
     new URL("../src/components/rates/RateSelectionView.tsx", import.meta.url),
     "utf8",
   );
 
   assert.match(source, /import \{ fmtDate, fmtMonthDay \} from '\.\.\/\.\.\/lib\/format'/);
-  assert.match(source, /fmtDate\(dateStr, \{ locale: 'en-US' \}\)/);
-  assert.match(source, /Number\.isFinite\(due\.getTime\(\)\)/);
-  assert.match(source, /fmtMonthDay\(due\.toISOString\(\), \{ locale: 'en-US' \}\)/);
   assert.doesNotMatch(source, /new Intl\.DateTimeFormat/);
   assert.doesNotMatch(source, /toLocaleDateString/);
   assert.doesNotMatch(source, /dueDateFormat/);
+  assert.doesNotMatch(source, /formatDateDisplay/);
+
+  const selectedDatesStart = source.indexOf("{/* Selected Dates */}");
+  const nightsStart = source.indexOf("{/* # Nights */}", selectedDatesStart);
+  assert.ok(selectedDatesStart >= 0, "Selected Dates render block must exist");
+  assert.ok(nightsStart > selectedDatesStart, "Selected Dates block must be bounded");
+  const selectedDatesBlock = source.slice(selectedDatesStart, nightsStart);
+  assert.match(
+    selectedDatesBlock,
+    /\{fmtDate\(criteria\.checkIn, \{ locale: 'en-US' \}\)\} – \{fmtDate\(criteria\.checkOut, \{ locale: 'en-US' \}\)\}/,
+  );
+
+  const remainingStart = source.indexOf("const remainingNoteForRate");
+  const remainingEnd = source.indexOf(
+    "const fullCancellationPolicyForRate",
+    remainingStart,
+  );
+  assert.ok(remainingStart >= 0, "remainingNoteForRate must exist");
+  assert.ok(remainingEnd > remainingStart, "remainingNoteForRate must be bounded");
+  const remainingBlock = source.slice(remainingStart, remainingEnd);
+  assert.match(remainingBlock, /Number\.isFinite\(due\.getTime\(\)\)/);
+  assert.match(
+    remainingBlock,
+    /fmtMonthDay\(due\.toISOString\(\), \{ locale: 'en-US' \}\)/,
+  );
 });
