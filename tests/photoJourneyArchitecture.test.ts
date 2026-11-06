@@ -88,7 +88,8 @@ test("Photo rate step delegates its cards and details drawer to the shared produ
   assert.match(rates, /booking\.goTo\("extras"\)/);
   assert.match(tray, /rc-drawer-layer/);
   assert.match(tray, /role="dialog"/);
-  assert.match(tray, /<RateDetailBody/);
-  assert.match(tray, /<Timeline timeline=\{timeline\}/);
+  assert.match(tray, /<FigmaRateCard/);
+  assert.match(tray, /<FigmaRateDetailPopup/);
+  assert.match(source("components/rates/FigmaRateComponents.tsx"), /<FigmaPolicyTimeline/);
   assert.doesNotMatch(rates, /RateOfferSidePanel|<PolicyDisplay/);
 });
