@@ -25,6 +25,8 @@ test("BuildingIcon mirrors all Figma BuildingName variants and exact artwork geo
   assert.match(source, /h-\[144\.028px\]/);
   assert.match(source, /h-\[228\.762px\]/);
   assert.match(source, /size-full/);
+  assert.match(source, /bg-smoke/);
+  assert.match(source, /WebkitMask/);
 });
 
 test("BuildingDescription mirrors the Figma BuildingSection property contract", () => {
@@ -37,6 +39,9 @@ test("BuildingDescription mirrors the Figma BuildingSection property contract", 
   assert.match(source, /displayBuildingIcon/);
   assert.match(source, /w-\[894px\]/);
   assert.match(source, /w-\[400px\]/);
+  assert.match(source, /tracking-\[-2px\]/);
+  assert.match(source, /tracking-\[1px\]/);
+  assert.match(source, /font-family:Inter,Arial,sans-serif/);
   assert.doesNotMatch(source, /tone\??:/);
 });
 
@@ -49,6 +54,8 @@ test("RoomTypeCard preserves the two Figma states and RoomTypeImage slot", () =>
   assert.match(source, /h-\[245\.328px\]/);
   assert.match(source, /w-\[368px\]/);
   assert.match(source, /size-full/);
+  assert.match(source, /DEFAULT_ROOM_TYPE_IMAGE_SRC/);
+  assert.match(source, /object-contain/);
 });
 
 test("RoomListItem preserves Default, Row, and Row Reverse Figma layouts", () => {

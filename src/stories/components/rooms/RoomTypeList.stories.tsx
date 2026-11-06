@@ -3,7 +3,6 @@ import { BuildingDescription } from "@/components/rooms/BuildingDescription";
 import { BuildingIcon } from "@/components/rooms/BuildingIcon";
 import { RoomListItem, type RoomTypeCardData } from "@/components/rooms/RoomListItem";
 import { RoomTypeList } from "@/components/rooms/RoomTypeList";
-import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 
 const makeRoomTypes = (prefix: string): RoomTypeCardData[] =>
   Array.from({ length: 6 }, (_, index) => ({
@@ -13,13 +12,6 @@ const makeRoomTypes = (prefix: string): RoomTypeCardData[] =>
     numberOfBeds: "8 beds",
     price: "$596",
     state: index === 3 ? "Focus" : "Default",
-    roomTypeImage: (
-      <img
-        src={ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA}
-        alt="Cabin sitting area"
-        className="block size-full max-w-none rounded-[8px] object-cover"
-      />
-    ),
   }));
 
 const buildingCopy = {

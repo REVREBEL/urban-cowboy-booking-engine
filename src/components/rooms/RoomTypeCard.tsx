@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+const DEFAULT_ROOM_TYPE_IMAGE_SRC =
+  "https://cdn.prod.website-files.com/6abc810fd801e90511049adb/6ac89730346974fa55ed2a44_Opas%20Cabing%20Living%20Room-2.jpg";
+
 export type RoomTypeCardState = "Default" | "Focus";
 
 export interface RoomTypeCardProps {
@@ -49,7 +52,14 @@ export function RoomTypeCard({
           data-name="RoomTypeImage"
           className="relative h-[245.328px] w-[368px] shrink-0 overflow-hidden rounded-[8px] bg-smoke"
         >
-          {roomTypeImage ?? <div aria-hidden="true" className="size-full bg-smoke" />}
+          {roomTypeImage ?? (
+            <img
+              src={DEFAULT_ROOM_TYPE_IMAGE_SRC}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 block size-full max-w-none rounded-[8px] object-contain"
+            />
+          )}
         </div>
 
         <div

@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { RoomListItem, type RoomTypeCardData } from "@/components/rooms/RoomListItem";
-import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 
 const makeRoomTypes = (count: number): RoomTypeCardData[] =>
   Array.from({ length: count }, (_, index) => ({
@@ -10,13 +9,6 @@ const makeRoomTypes = (count: number): RoomTypeCardData[] =>
     numberOfBeds: "8 beds",
     price: "$596",
     state: index === 1 ? "Focus" : "Default",
-    roomTypeImage: (
-      <img
-        src={ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA}
-        alt="Cabin sitting area"
-        className="block size-full max-w-none rounded-[8px] object-cover"
-      />
-    ),
   }));
 
 const meta = {

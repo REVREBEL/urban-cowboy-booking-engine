@@ -97,13 +97,20 @@ export function BuildingIcon({
         .filter(Boolean)
         .join(" ")}
     >
-      <div className={["relative w-[283px] shrink-0", config.heightClass].join(" ")}>
-        <img
-          src={config.src}
-          alt={decorative ? "" : alt ?? config.label + " architectural illustration"}
-          aria-hidden={decorative || undefined}
-          loading={loading}
-          className="absolute inset-0 block size-full max-w-none object-contain"
+      <div
+        className={["relative w-[283px] shrink-0", config.heightClass].join(" ")}
+        role={decorative ? undefined : "img"}
+        aria-label={decorative ? undefined : alt ?? config.label + " architectural illustration"}
+        aria-hidden={decorative || undefined}
+        data-loading={loading}
+      >
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 block size-full bg-smoke"
+          style={{
+            WebkitMask: `url("${config.src}") center / contain no-repeat`,
+            mask: `url("${config.src}") center / contain no-repeat`,
+          }}
         />
       </div>
     </div>

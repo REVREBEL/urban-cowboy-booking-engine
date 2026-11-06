@@ -24,11 +24,11 @@ const DEFAULT_TAGLINE =
   "This is Where you Come to Soak, Slow Down and Disappear for a While.";
 
 const headingClass =
-  "font-heading text-[48px] font-bold leading-[0.9] [color:var(--building-name-color,var(--smoke))]";
+  "font-heading text-[48px] font-bold leading-[0.9] tracking-[-2px] [color:var(--building-name-color,var(--smoke))]";
 const descriptionClass =
-  "text-[13px] font-normal leading-[1.6] [font-family:Inter,sans-serif] [color:var(--building-description-color,var(--cowboy-umber))]";
+  "text-[13px] font-normal leading-[1.6] [font-family:Inter,Arial,sans-serif] [color:var(--building-description-color,var(--cowboy-umber))]";
 const taglineClass =
-  "font-label text-[11px] font-normal leading-[1.5] uppercase [color:var(--building-tagline-color,var(--copper))]";
+  "font-label text-[11px] font-normal leading-[1.5] tracking-[1px] uppercase [color:var(--building-tagline-color,var(--copper))]";
 
 /**
  * Figma BuildingSection component set (1352:15525), exposed under the
