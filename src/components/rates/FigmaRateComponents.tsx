@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { money as currencyMoney } from "@/lib/format";
 import type { PolicyLanguage } from "@/types/policy-language";
 import SheriffBadge from "@/components/icons/generated/ui/FiSheriffBadge";
 import {
@@ -26,8 +27,7 @@ const PHASE_COLORS: Record<PhaseKind, string> = {
   "deposit-kept": "bg-whiskey-sour",
   locked: "bg-nude-ember",
 };
-const money = (amount: number, currency: string) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
+const money = (amount: number, currency: string) => currencyMoney(amount, currency, { locale: "en-US", decimals: 2 });
 
 export function FigmaPolicyTimeline({ timeline, currency, arrivalDate, language }: {
   timeline: CancellationTimeline;
