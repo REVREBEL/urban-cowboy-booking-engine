@@ -275,6 +275,7 @@ export function Arrive(props: {
                         onChange={props.setPromoCode}
                         onApply={(value) => {
                           props.setPromoCode(value);
+                          props.setActiveSection(null);
                         }}
                         onClose={() => props.setActiveSection(null)}
                       />
