@@ -7,11 +7,11 @@ export type RoomTypeCardState = "Default" | "Focus";
 
 export interface RoomTypeCardProps {
   className?: string;
-  buildingName?: string;
+  buildingName: string;
   roomTypeImage?: ReactNode | null;
-  numberOfBeds?: string;
-  price?: string;
-  roomTypeName?: string;
+  numberOfBeds: string;
+  price: string;
+  roomTypeName: string;
   state?: RoomTypeCardState;
 }
 
@@ -23,17 +23,17 @@ export interface RoomTypeCardProps {
  */
 export function RoomTypeCard({
   className = "",
-  buildingName = "Opa's Cabin",
+  buildingName,
   roomTypeImage = null,
-  numberOfBeds = "8 beds",
-  price = "$596",
-  roomTypeName = "Opa's Cabin 4 Bedroom",
+  numberOfBeds,
+  price,
+  roomTypeName,
   state = "Default",
 }: RoomTypeCardProps) {
   const isFocus = state === "Focus";
 
   return (
-    <div
+    <article
       data-figma-node={isFocus ? "1352:14811" : "1352:2574"}
       data-state={state}
       className={[
@@ -74,14 +74,14 @@ export function RoomTypeCard({
               data-name="Headline"
               className="col-span-8 flex shrink-0 flex-col items-start justify-self-stretch overflow-clip self-start"
             >
-              <p
+              <h3
                 className={[
                   "w-full shrink-0 font-heading text-[24px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
                   isFocus ? "text-paper" : "text-primary",
                 ].join(" ")}
               >
                 {roomTypeName}
-              </p>
+              </h3>
             </div>
 
             <p
@@ -107,7 +107,7 @@ export function RoomTypeCard({
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 

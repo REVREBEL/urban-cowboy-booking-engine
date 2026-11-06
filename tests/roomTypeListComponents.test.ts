@@ -43,7 +43,8 @@ test("BuildingDescription mirrors the Figma BuildingSection property contract", 
   assert.match(source, /w-\[400px\]/);
   assert.match(source, /tracking-\[-2px\]/);
   assert.match(source, /tracking-\[1px\]/);
-  assert.match(source, /font-family:Inter,Arial,sans-serif/);
+  assert.match(source, /font-family:Inter,sans-serif/);
+  assert.match(source, /<h2/);
   assert.doesNotMatch(source, /tone\??:/);
 });
 
@@ -58,6 +59,12 @@ test("RoomTypeCard preserves the two Figma states and RoomTypeImage slot", () =>
   assert.match(source, /size-full/);
   assert.match(source, /DEFAULT_ROOM_TYPE_IMAGE_SRC/);
   assert.match(source, /object-contain/);
+  assert.match(source, /buildingName: string/);
+  assert.match(source, /numberOfBeds: string/);
+  assert.match(source, /price: string/);
+  assert.match(source, /roomTypeName: string/);
+  assert.match(source, /<article/);
+  assert.match(source, /<h3/);
 });
 
 test("RoomListItem preserves Default, Row, and Row Reverse Figma layouts", () => {

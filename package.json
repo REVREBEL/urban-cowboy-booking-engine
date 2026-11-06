@@ -40,6 +40,7 @@
     "chromatic": "chromatic"
   },
   "dependencies": {
+    "@fontsource/inter": "5.3.0",
     "@playwright/test": "^1.64.0",
     "@radix-ui/react-accordion": "^1.2.21",
     "@radix-ui/react-alert-dialog": "^1.1.24",

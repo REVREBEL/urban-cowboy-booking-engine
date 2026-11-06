@@ -17,57 +17,47 @@ export interface BuildingIconProps {
 
 const BUILDING_ICON_CONFIG: Record<
   BuildingIconName,
-  { src: string; heightClass: string; label: string }
+  { src: string; heightClass: string }
 > = {
   Default: {
     src: "/assets/icons/buildings/lodge.svg",
     heightClass: "h-[154.88px]",
-    label: "Building",
   },
   Alpine: {
     src: "/assets/icons/buildings/alpine.svg",
     heightClass: "h-[144.028px]",
-    label: "Alpine",
   },
   SlideMountain: {
     src: "/assets/icons/buildings/slide_mountain_haus.svg",
     heightClass: "h-[196.149px]",
-    label: "Slide Mountain Haus",
   },
   Ralphs: {
     src: "/assets/icons/buildings/ralphs_bar_bowling.svg",
     heightClass: "h-[130.089px]",
-    label: "Ralph's Bar and Bowling",
   },
   Chalet: {
     src: "/assets/icons/buildings/chalet.svg",
     heightClass: "h-[144.476px]",
-    label: "Chalet",
   },
   ForestHaus: {
     src: "/assets/icons/buildings/forest_haus.svg",
     heightClass: "h-[228.762px]",
-    label: "Forest Haus",
   },
   MountianViewHaus: {
     src: "/assets/icons/buildings/mountian_view_haus.svg",
     heightClass: "h-[131.991px]",
-    label: "Mountain View Haus",
   },
   EstonianSauna: {
     src: "/assets/icons/buildings/estonian_sauna.svg",
     heightClass: "h-[171.469px]",
-    label: "Estonian Sauna",
   },
   Cabin: {
     src: "/assets/icons/buildings/cabin.svg",
     heightClass: "h-[171.342px]",
-    label: "Cabin",
   },
   OpasCabin: {
     src: "/assets/icons/buildings/opas_cabin.svg",
     heightClass: "h-[192.172px]",
-    label: "Opa's Cabin",
   },
 };
 

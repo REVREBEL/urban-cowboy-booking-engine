@@ -26,7 +26,7 @@ const DEFAULT_TAGLINE =
 const headingClass =
   "font-heading text-[48px] font-bold leading-[0.9] tracking-[-2px] [color:var(--building-name-color,var(--smoke))]";
 const descriptionClass =
-  "text-[13px] font-normal leading-[1.6] [font-family:Inter,Arial,sans-serif] [color:var(--building-description-color,var(--cowboy-umber))]";
+  "text-[13px] font-normal leading-[1.6] [font-family:Inter,sans-serif] [color:var(--building-description-color,var(--cowboy-umber))]";
 const taglineClass =
   "font-label text-[11px] font-normal leading-[1.5] tracking-[1px] uppercase [color:var(--building-tagline-color,var(--copper))]";
 
@@ -63,9 +63,9 @@ export function BuildingDescription({
         data-name="BuildingDecriptionWrapper"
         className="flex w-[555px] shrink-0 flex-col items-start justify-end gap-[10px] self-end text-balance [word-break:break-word]"
       >
-        <p className={[headingClass, "shrink-0 whitespace-nowrap"].join(" ")}>
+        <h2 className={[headingClass, "shrink-0 whitespace-nowrap"].join(" ")}>
           {buildingName}
-        </p>
+        </h2>
         <p className={[descriptionClass, "min-w-full w-[min-content] shrink-0"].join(" ")}>
           {buildingDescription}
         </p>
@@ -111,9 +111,9 @@ export function BuildingDescription({
         className="flex w-full shrink-0 flex-col items-start gap-[20px] text-balance text-center z-[1] [word-break:break-word]"
       >
         <div data-name="ContentWrapper" className="flex w-full shrink-0 flex-col items-start gap-[10px]">
-          <p className={[headingClass, "w-[360px] shrink-0"].join(" ")}>
+          <h2 className={[headingClass, "w-[360px] shrink-0"].join(" ")}>
             {buildingName}
-          </p>
+          </h2>
           <p className={[descriptionClass, "w-[360px] shrink-0"].join(" ")}>
             {buildingDescription}
           </p>
@@ -128,9 +128,9 @@ export function BuildingDescription({
         className="flex w-full shrink-0 flex-col items-start gap-[20px] text-balance z-[1] [word-break:break-word]"
       >
         <div data-name="ContentWrapper" className="relative h-[158px] w-[360px] shrink-0">
-          <p className={[headingClass, "absolute left-0 top-0 w-[360px]"].join(" ")}>
+          <h2 className={[headingClass, "absolute left-0 top-0 w-[360px]"].join(" ")}>
             {buildingName}
-          </p>
+          </h2>
           <p className={[descriptionClass, "absolute left-0 top-[53px] w-[360px] text-pretty"].join(" ")}>
             {buildingDescription}
           </p>
