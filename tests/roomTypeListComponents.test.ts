@@ -25,6 +25,13 @@ test("BuildingIcon mirrors all Figma BuildingName variants and exact artwork geo
   assert.match(source, /h-\[144\.028px\]/);
   assert.match(source, /h-\[228\.762px\]/);
   assert.match(source, /size-full/);
+  assert.match(source, /"Smoke" \|/);
+  assert.match(source, /"Snow"/);
+  assert.match(source, /"LakeForest"/);
+  assert.match(source, /"Ash"/);
+  assert.match(source, /"Alpine"/);
+  assert.match(source, /BUILDING_ICON_COLOR_CLASS/);
+  assert.match(source, /data-color=\{color\}/);
   assert.match(source, /bg-smoke/);
   assert.match(source, /WebkitMask/);
   assert.match(source, /role="img"/);

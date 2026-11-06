@@ -25,6 +25,14 @@ const meta = {
     displayBuildingIcon: {
       control: "boolean",
     },
+    buildingIconSlot: {
+      control: false,
+      description: "ReactNode slot for a BuildingIcon instance.",
+      table: {
+        type: { summary: "ReactNode" },
+        defaultValue: { summary: "null" },
+      },
+    },
   },
   parameters: {
     layout: "centered",
@@ -39,8 +47,10 @@ export const Row: Story = {};
 export const RowWithIcon: Story = {
   args: {
     displayBuildingIcon: true,
-    buildingIconSlot: icon,
   },
+  render: (args) => (
+    <BuildingDescription {...args} buildingIconSlot={icon} />
+  ),
 };
 
 export const RowReverse: Story = {
@@ -53,8 +63,10 @@ export const RowReverseWithIcon: Story = {
   args: {
     layout: "Row Reverse",
     displayBuildingIcon: true,
-    buildingIconSlot: icon,
   },
+  render: (args) => (
+    <BuildingDescription {...args} buildingIconSlot={icon} />
+  ),
 };
 
 export const StackedCenter: Story = {
@@ -67,8 +79,10 @@ export const StackedCenterWithIcon: Story = {
   args: {
     layout: "StackedCenter",
     displayBuildingIcon: true,
-    buildingIconSlot: icon,
   },
+  render: (args) => (
+    <BuildingDescription {...args} buildingIconSlot={icon} />
+  ),
 };
 
 export const StackedLeft: Story = {
@@ -81,6 +95,8 @@ export const StackedLeftWithIcon: Story = {
   args: {
     layout: "StackedLeft",
     displayBuildingIcon: true,
-    buildingIconSlot: icon,
   },
+  render: (args) => (
+    <BuildingDescription {...args} buildingIconSlot={icon} />
+  ),
 };

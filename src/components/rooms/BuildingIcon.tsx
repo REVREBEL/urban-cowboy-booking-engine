@@ -10,9 +10,17 @@ export type BuildingIconName =
   | "Cabin"
   | "OpasCabin";
 
+export type BuildingIconColor =
+  | "Smoke"
+  | "Snow"
+  | "LakeForest"
+  | "Ash"
+  | "Alpine";
+
 export interface BuildingIconProps {
   className?: string;
   buildingName?: BuildingIconName;
+  color?: BuildingIconColor;
 }
 
 const BUILDING_ICON_CONFIG: Record<
@@ -77,16 +85,32 @@ const BUILDING_ICON_CONFIG: Record<
  * Variant names and geometry intentionally mirror the Figma component set,
  * including the source spelling "MountianViewHaus".
  */
+const BUILDING_ICON_COLOR_CLASS: Record<BuildingIconColor, string> = {
+  Smoke: "bg-smoke",
+  Snow: "bg-[var(--paper-50)]",
+  LakeForest: "bg-[#184428]",
+  Ash: "bg-[#ccc7bb]",
+  Alpine: "bg-alpine-linen-fade",
+};
+
+/**
+ * Figma BuildingIconColors component set (1352:15806) explicitly documents
+ * Color as part of BuildingIcon. It is folded into this API rather than kept
+ * as a separate wrapper component.
+ */
 export function BuildingIcon({
   className = "",
   buildingName = "Default",
+  color = "Smoke",
 }: BuildingIconProps) {
   const config = BUILDING_ICON_CONFIG[buildingName];
+  const colorClass = BUILDING_ICON_COLOR_CLASS[color];
 
   return (
     <div
       data-figma-node="1352:9306"
       data-building-name={buildingName}
+      data-color={color}
       className={["flex items-center justify-center", className]
         .filter(Boolean)
         .join(" ")}
@@ -98,7 +122,7 @@ export function BuildingIcon({
       >
         <span
           aria-hidden="true"
-          className="absolute inset-0 block size-full bg-smoke"
+          className={["absolute inset-0 block size-full", colorClass].join(" ")}
           style={{
             WebkitMask: `url("${config.src}") center / contain no-repeat`,
             mask: `url("${config.src}") center / contain no-repeat`,
