@@ -80,7 +80,15 @@ test("RateSelectionView wires shared formatters into rendered and due-date paths
   assert.ok(remainingStart >= 0, "remainingNoteForRate must exist");
   assert.ok(remainingEnd > remainingStart, "remainingNoteForRate must be bounded");
   const remainingBlock = source.slice(remainingStart, remainingEnd);
-  assert.match(remainingBlock, /Number\.isFinite\(due\.getTime\(\)\)/);
+  const invalidGuard = remainingBlock.indexOf(
+    "if (!Number.isFinite(due.getTime())) return 'Due before arrival';",
+  );
+  const toISOStringCall = remainingBlock.indexOf("due.toISOString()");
+  assert.ok(invalidGuard >= 0, "invalid due-date guard must exist");
+  assert.ok(
+    toISOStringCall > invalidGuard,
+    "invalid due-date fallback must run before toISOString()",
+  );
   assert.match(
     remainingBlock,
     /fmtMonthDay\(due\.toISOString\(\), \{ locale: 'en-US' \}\)/,
