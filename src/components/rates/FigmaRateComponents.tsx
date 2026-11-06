@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import type { PolicyLanguage } from "@/types/policy-language";
 import SheriffBadge from "@/components/icons/generated/ui/FiSheriffBadge";
 import {
   formatShortDate,
@@ -28,10 +29,11 @@ const PHASE_COLORS: Record<PhaseKind, string> = {
 const money = (amount: number, currency: string) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
 
-export function FigmaPolicyTimeline({ timeline, currency, arrivalDate }: {
+export function FigmaPolicyTimeline({ timeline, currency, arrivalDate, language }: {
   timeline: CancellationTimeline;
   currency: string;
   arrivalDate: string;
+  language?: PolicyLanguage;
 }) {
   return (
     <section className="w-full border-t border-alpine-linen-700 pt-2 text-primary-foreground" aria-label="Policy and deposit timeline" data-figma-node="1390:30329">
@@ -44,15 +46,15 @@ export function FigmaPolicyTimeline({ timeline, currency, arrivalDate }: {
                 <span className="rounded-full bg-primary-foreground px-2.5 py-1 font-label text-xs font-bold uppercase tracking-[1.5px] text-paper">You are here</span>
               ) : (
                 <div>
-                  <strong className="block font-heading text-xl leading-none">{formatShortDate(phase.start)}</strong>
+                  <strong className="block font-heading text-xl leading-none"><time dateTime={phase.start}>{formatShortDate(phase.start)}</time></strong>
                   <small className="font-body text-xs">{PHASE_SUBTITLES[phase.kind]}</small>
                 </div>
               )}
             </div>
             <div className={`my-2 h-2.5 rounded-sm ${PHASE_COLORS[phase.kind]}`} aria-hidden="true" />
             <div className="flex flex-col gap-1 pr-2">
-              <strong className="font-label text-[15px]">{PHASE_NAMES[phase.kind]}</strong>
-              <span className="font-body text-[13px]">{PHASE_SUBTITLES[phase.kind]}</span>
+              <strong className="font-label text-[15px]">{phase.kind === "refundable" ? language?.refundableLanguage ?? PHASE_NAMES[phase.kind] : phase.kind === "deposit-kept" ? language?.partiallyRefundableLanguage ?? PHASE_NAMES[phase.kind] : language?.nonRefundableLanguage ?? PHASE_NAMES[phase.kind]}</strong>
+              <span className="font-body text-[13px]">{phase.kind === "refundable" ? language?.refundableLanguageSubTitle ?? PHASE_SUBTITLES[phase.kind] : phase.kind === "deposit-kept" ? language?.partiallyRefundableLanguageSubTitle ?? PHASE_SUBTITLES[phase.kind] : language?.nonRefundableLanguageSubTitle ?? PHASE_SUBTITLES[phase.kind]}</span>
               <span className="font-body text-xs">{phase.days} {phase.days === 1 ? "day" : "days"}</span>
             </div>
           </li>
@@ -69,7 +71,7 @@ export function FigmaPolicyTimeline({ timeline, currency, arrivalDate }: {
           <div key={charge.date + charge.label} className="min-w-0">
             <strong className="block font-heading text-[15px] leading-tight">{index === 0 ? "Due today" : "Remaining Amount Due"}</strong>
             <span className="block font-number text-xl font-bold">{money(charge.amount, currency)}</span>
-            <span className="block font-body text-xs">{index === 0 ? "Amount Charged Once Confirmed" : `Final Payment · ${formatShortDate(charge.date)}`}</span>
+            <span className="block font-body text-xs">{index === 0 ? language?.atTimeOfBookingSubTitle ?? "Amount Charged Once Confirmed" : `${language?.nextDueDateSubTitle ?? "Final Payment"} · ${formatShortDate(charge.date)}`}</span>
           </div>
         ))}
       </div>
@@ -141,7 +143,7 @@ export function FigmaRateCard({
 /** Figma 1390:30695 and 1390:31186. */
 export function FigmaRateDetailPopup({
   name, eyebrow, description, nightly, currency, nights, subtotal, taxes, total,
-  policyText, timeline, arrivalDate, onClose, onConfirm, disabled,
+  policyText, timeline, arrivalDate, language, onClose, onConfirm, disabled,
 }: {
   name: string;
   eyebrow: string;
@@ -155,6 +157,7 @@ export function FigmaRateDetailPopup({
   policyText: string;
   timeline: CancellationTimeline | null;
   arrivalDate: string;
+  language?: PolicyLanguage;
   onClose: () => void;
   onConfirm: () => void;
   disabled?: boolean;
@@ -198,7 +201,7 @@ export function FigmaRateDetailPopup({
           </dl>
         </section>
       </div>
-      {timeline && <FigmaPolicyTimeline timeline={timeline} currency={currency} arrivalDate={arrivalDate} />}
+      {timeline && <FigmaPolicyTimeline timeline={timeline} currency={currency} arrivalDate={arrivalDate} language={language} />}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-lake-forest/20 pt-5">
         <strong className="font-number text-2xl">{money(total, currency)}</strong>
         <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small" onClick={onConfirm} disabled={disabled}>
