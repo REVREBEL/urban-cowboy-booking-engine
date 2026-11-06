@@ -75,9 +75,8 @@ const DEFAULT_BUILDING_GROUP_3 = (
 /**
  * Figma RoomTypeList component (1352:14825).
  *
- * Figma exposes three optional BuildingGroup slots. With no slot overrides the
- * component renders the exact default three-group composition from the source
- * component; callers can replace any group independently.
+ * Figma exposes three BuildingGroup slots. Each default group is a Row
+ * RoomListItem resized to the 1513px list frame, matching the source instances.
  */
 export function RoomTypeList({
   className = "",
@@ -90,7 +89,7 @@ export function RoomTypeList({
       data-figma-node="1352:14825"
       data-name="RoomTypeList"
       className={[
-        "flex min-h-[1038px] w-[2175px] flex-col items-center gap-[60px] bg-primary-foreground",
+        "flex w-full max-w-[1513px] flex-col items-center gap-[60px] bg-primary-foreground",
         className,
       ]
         .filter(Boolean)

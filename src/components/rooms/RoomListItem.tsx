@@ -1,7 +1,11 @@
 import type { ReactNode } from "react";
 import { RoomTypeCard, type RoomTypeCardProps } from "./RoomTypeCard";
 
-export type RoomListItemLayout = "Default" | "Row" | "Row Reverse";
+export type RoomListItemLayout =
+  | "Default"
+  | "Row"
+  | "RowReverse"
+  | "Row Reverse";
 
 export type RoomTypeCardData = RoomTypeCardProps & {
   id: string;
@@ -18,9 +22,9 @@ export interface RoomListItemProps {
 /**
  * Figma RoomListItem component set (1352:15460).
  *
- * Figma documents the card slots as illustrative only. The React version keeps
- * the exact three layout variants while populating the card list from the
- * supplied collection, in the supplied order.
+ * Figma explicitly documents the six card slots as illustrative. The React
+ * implementation therefore preserves the three Figma layouts while rendering
+ * the supplied room collection in order.
  */
 export function RoomListItem({
   className = "",
@@ -29,37 +33,47 @@ export function RoomListItem({
   layout = "Default",
   roomTypes,
 }: RoomListItemProps) {
-  const isDefault = layout === "Default";
-  const isRow = layout === "Row";
-  const isRowReverse = layout === "Row Reverse";
+  const normalizedLayout = layout === "Row Reverse" ? "RowReverse" : layout;
+  const isDefault = normalizedLayout === "Default";
+  const isRowReverse = normalizedLayout === "RowReverse";
 
-  const buildingContent = buildingSectionSlot;
-
-  const buildingPanel = displayBuilding && buildingContent ? (
-    <div
-      data-name="BuildingSectionSlot"
-      className={
-        isDefault
-          ? "flex w-full min-w-0 flex-col items-start bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
-          : "flex w-full min-w-0 self-stretch flex-col items-start justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] px-[20px] py-[40px] xl:w-[400px] xl:shrink-0"
-      }
-    >
-      {buildingContent}
-    </div>
-  ) : null;
+  const buildingPanel =
+    displayBuilding && buildingSectionSlot ? (
+      <div
+        data-name="BuildingSectionSlot"
+        className={[
+          "flex shrink-0 flex-col items-start",
+          isDefault
+            ? "w-full bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
+            : [
+                "order-1 w-full self-stretch justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] py-[40px] xl:min-w-px xl:max-w-[350px] xl:flex-[1_0_0]",
+                isRowReverse
+                  ? "px-[10px] xl:order-2"
+                  : "px-[20px] xl:order-1",
+              ].join(" "),
+        ].join(" ")}
+      >
+        {buildingSectionSlot}
+      </div>
+    ) : null;
 
   const list = (
     <div
       data-name="List"
       className={[
-        "grid w-full min-w-0 grid-cols-[repeat(auto-fit,minmax(min(100%,330px),1fr))] items-start gap-[20px]",
+        "flex flex-wrap",
         isDefault
-          ? ""
-          : "p-[20px]",
+          ? "w-full items-start gap-[20px]"
+          : [
+              "order-2 w-full content-center items-center gap-[15px] p-[20px] xl:min-w-px xl:flex-[1_0_0]",
+              isRowReverse
+                ? "justify-start xl:order-1 xl:justify-end"
+                : "justify-start xl:order-2",
+            ].join(" "),
       ].join(" ")}
     >
       {roomTypes.map(({ id, ...roomType }) => (
-        <RoomTypeCard key={id} {...roomType} className={["w-full", roomType.className].filter(Boolean).join(" ")} />
+        <RoomTypeCard key={id} {...roomType} />
       ))}
     </div>
   );
@@ -67,23 +81,25 @@ export function RoomListItem({
   return (
     <div
       data-figma-node={
-        isDefault ? "1352:2645" : isRow ? "1352:15461" : "1357:16356"
+        isDefault ? "1352:2645" : isRowReverse ? "1378:17281" : "1352:15461"
       }
       data-layout={layout}
+      data-layout-normalized={normalizedLayout}
       className={[
-        // The 1790px Figma frame defines proportions, not a minimum viewport.
-        // Let cards reflow within Storybook, mobile, and real booking layouts.
-        "w-full min-w-0 max-w-full",
+        "w-full",
         isDefault
-          ? "flex flex-col items-stretch gap-[30px] py-[20px]"
-          : "flex flex-col items-stretch gap-[40px] bg-primary-foreground p-[20px] xl:flex-row xl:items-start",
+          ? "flex max-w-[1460px] flex-col items-start gap-[30px] py-[20px]"
+          : [
+              "flex max-w-[1542px] flex-col items-stretch gap-[20px] bg-primary-foreground py-[20px] xl:flex-row xl:items-center",
+              isRowReverse ? "px-[20px]" : "px-[10px]",
+            ].join(" "),
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      {isRowReverse ? list : buildingPanel}
-      {isDefault ? list : isRow ? list : buildingPanel}
+      {buildingPanel}
+      {list}
     </div>
   );
 }

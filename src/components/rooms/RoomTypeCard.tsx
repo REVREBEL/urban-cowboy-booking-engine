@@ -37,7 +37,7 @@ export function RoomTypeCard({
       data-figma-node={isFocus ? "1352:14811" : "1352:2574"}
       data-state={state}
       className={[
-        "flex min-h-[345.328px] w-full min-w-0 flex-col items-center justify-center rounded-[6px] p-[20px]",
+        "flex min-h-[295.5px] w-full max-w-[350px] flex-col items-center justify-center rounded-[5.122px] p-[17.073px]",
         isFocus ? "bg-accent" : "bg-primary-foreground",
         className,
       ]
@@ -46,29 +46,29 @@ export function RoomTypeCard({
     >
       <div
         data-name="RoomTypeCardWrapper"
-        className="flex w-full shrink-0 flex-col items-center justify-center gap-[15px] rounded-[10px]"
+        className="flex w-full shrink-0 flex-col items-center justify-center gap-[12.805px] rounded-[8.537px]"
       >
         <div
           data-name="RoomTypeImage"
-          className="relative h-[245.328px] w-full min-w-0 shrink-0 overflow-hidden rounded-[8px] bg-smoke"
+          className="relative aspect-[314.146/209.426] w-full max-w-[314.146px] shrink-0 overflow-hidden rounded-[6.829px] bg-smoke"
         >
           {roomTypeImage ?? (
             <img
               src={DEFAULT_ROOM_TYPE_IMAGE_SRC}
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 block size-full max-w-none rounded-[8px] object-contain"
+              className="absolute inset-0 block size-full max-w-none rounded-[6.829px] object-contain"
             />
           )}
         </div>
 
         <div
           data-name="RoomTypeTextWrapper"
-          className="flex w-full shrink-0 flex-col items-start gap-[6px]"
+          className="flex w-full shrink-0 flex-col items-start gap-[5.122px]"
         >
           <div
             data-name="RoomTypeContentWrapper"
-            className="grid w-full shrink-0 grid-cols-10 gap-[10px]"
+            className="grid w-full shrink-0 grid-cols-10 gap-[8.537px]"
           >
             <div
               data-name="Headline"
@@ -76,8 +76,8 @@ export function RoomTypeCard({
             >
               <h3
                 className={[
-                  "w-full shrink-0 font-heading text-[24px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
-                  isFocus ? "text-paper" : "text-primary",
+                  "w-full shrink-0 font-heading text-[20.488px] font-normal leading-none tracking-[0.6031px] uppercase [word-break:break-word]",
+                  isFocus ? "[color:var(--paper-50)]" : "text-mist",
                 ].join(" ")}
               >
                 {roomTypeName}
@@ -86,8 +86,8 @@ export function RoomTypeCard({
 
             <p
               className={[
-                "col-span-2 shrink-0 self-center justify-self-stretch text-right font-number text-[14px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
-                isFocus ? "text-paper" : "text-primary",
+                "col-span-2 shrink-0 self-center justify-self-stretch text-right font-number text-[11.951px] font-normal leading-none tracking-[0.6031px] uppercase [word-break:break-word]",
+                isFocus ? "[color:var(--paper-50)]" : "text-mist",
               ].join(" ")}
             >
               {price}
@@ -97,13 +97,13 @@ export function RoomTypeCard({
           <div
             data-name="BuildingContentWrapper"
             className={[
-              "isolate flex w-full min-w-0 flex-wrap items-start font-label text-[16px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
+              "isolate flex w-full max-w-[314.146px] min-w-0 flex-wrap items-start font-label text-[13.659px] font-normal leading-none tracking-[0.6031px] uppercase [word-break:break-word]",
               isFocus ? "text-paper" : "text-alpine-linen-fade",
             ].join(" ")}
           >
-            <p className="min-w-0 z-[3]">{buildingName}</p>
-            <p className="w-[20px] shrink-0 text-center z-[2]">·</p>
-            <p className="min-w-0 z-[1]">{numberOfBeds}</p>
+            <p className="min-w-0 break-words z-[3]">{buildingName}</p>
+            <p className="w-[17.073px] shrink-0 text-center z-[2]">·</p>
+            <p className="min-w-0 break-words z-[1]">{numberOfBeds}</p>
           </div>
         </div>
       </div>
