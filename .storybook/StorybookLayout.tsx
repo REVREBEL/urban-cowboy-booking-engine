@@ -10,7 +10,7 @@ import {
 
 export const STORY_MAX_WIDTH = 1600;
 
-export function StoryWidthContainer({ children }: { children: ReactNode }) {
+export function StoryWidthContainer({ children, padding = 24 }: { children: ReactNode; padding?: number }) {
   return (
     <div
       style={{
@@ -18,6 +18,7 @@ export function StoryWidthContainer({ children }: { children: ReactNode }) {
         maxWidth: STORY_MAX_WIDTH,
         marginInline: "auto",
         boxSizing: "border-box",
+        padding,
       }}
     >
       {children}
@@ -28,7 +29,7 @@ export function StoryWidthContainer({ children }: { children: ReactNode }) {
 /** Shared layout for generated component documentation. */
 export function DocumentationTemplate() {
   return (
-    <StoryWidthContainer>
+    <StoryWidthContainer padding={0}>
       <Title />
       <Subtitle />
       <Description />
