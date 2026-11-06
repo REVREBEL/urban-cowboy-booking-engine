@@ -67,7 +67,7 @@ export function RoomTypeCard({
               <p
                 className={[
                   "w-full shrink-0 font-heading text-[24px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
-                  isFocus ? "text-white" : "text-primary",
+                  isFocus ? "text-paper" : "text-primary",
                 ].join(" ")}
               >
                 {roomTypeName}
@@ -77,7 +77,7 @@ export function RoomTypeCard({
             <p
               className={[
                 "col-span-2 shrink-0 self-center justify-self-stretch text-right font-number text-[14px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
-                isFocus ? "text-white" : "text-primary",
+                isFocus ? "text-paper" : "text-primary",
               ].join(" ")}
             >
               {price}
