@@ -18,7 +18,6 @@ const meta = {
     displayBuildingIcon: false,
   },
   argTypes: {
-    buildingIconSlot: { control: false, table: { disable: true } },
     layout: {
       control: "select",
       options: ["Row", "Row Reverse", "StackedCenter", "StackedLeft"],
