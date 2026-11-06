@@ -150,4 +150,35 @@ test("Promo dropdown mounted keyboard and focus interactions", async (t) => {
       "Escape should recover focus to Promo after focus is lost",
     );
   });
+
+  await t.test("7. Escape aborts an in-flight apply and blocks stale completion", async () => {
+    await page.goto(`http://localhost:${port}/tests/fixtures/promoDropdownHarness.html`);
+    await page.waitForLoadState("networkidle");
+
+    const trigger = page.locator('button:has-text("Promo")');
+    await trigger.click();
+
+    const dialog = page.locator('div[role="dialog"][aria-label="Promo code entry"]');
+    await dialog.waitFor({ state: "visible" });
+    await page.locator('button[aria-label="Apply promo code"]').click();
+
+    await page.keyboard.press("Escape");
+    await dialog.waitFor({ state: "hidden" });
+
+    await page.waitForFunction(
+      () => document.querySelector('[data-testid="aborted"]')?.textContent === "true",
+    );
+    assert.equal(
+      await page.locator('[data-testid="aborted"]').textContent(),
+      "true",
+      "Escape should abort the pending apply signal",
+    );
+
+    await page.waitForTimeout(350);
+    assert.equal(
+      await page.locator('[data-testid="completed"]').textContent(),
+      "false",
+      "An aborted apply must not perform its stale completion update",
+    );
+  });
 });
