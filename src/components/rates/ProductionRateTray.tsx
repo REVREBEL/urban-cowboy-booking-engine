@@ -432,7 +432,6 @@ export function ProductionRateTray({
                 onConfirm={() => onSelectRate(openRate)}
                 disabled={openRate.totalGross == null}
               />
-              </div>
             </div>
           </div>
         )}
