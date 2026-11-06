@@ -7,6 +7,8 @@ export interface SearchBarPromoDropdownProps {
   onChange?: (val: string) => void;
   onApply?: (val: string, signal?: AbortSignal) => Promise<void> | void;
   onClose?: () => void;
+  /** Opt in when the dropdown, rather than onApply, should own successful dismissal. */
+  closeOnApply?: boolean;
   className?: string;
   triggerRef?: React.RefObject<HTMLElement | null>;
 }
@@ -83,6 +85,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
   onChange,
   onApply,
   onClose,
+  closeOnApply = false,
   className = '',
   triggerRef: externalTriggerRef,
 }) => {
@@ -106,22 +109,9 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
     applyAbortRef.current = null;
   };
 
-  const restoreTriggerFocus = (onlyAfterDismissal = false) => {
+  const focusTrigger = () => {
     const trigger = internalTriggerRef.current;
-    const focusWhenScheduled = document.activeElement;
-
-    window.setTimeout(() => {
-      if (onlyAfterDismissal && dialogRef.current?.isConnected) return;
-
-      const active = document.activeElement;
-      const focusStillUnowned =
-        active === focusWhenScheduled ||
-        active === document.body ||
-        active === document.documentElement ||
-        active === null;
-
-      if (focusStillUnowned && trigger?.isConnected) trigger.focus();
-    }, 0);
+    if (trigger?.isConnected) trigger.focus();
   };
 
   useEffect(() => {
@@ -161,7 +151,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
 
       cancelPendingApply();
       onClose();
-      if (focusWasInside || focusWasLost) restoreTriggerFocus();
+      if (focusWasInside || focusWasLost) focusTrigger();
     };
 
     document.addEventListener('keydown', handleDocumentKeyDown, true);
@@ -230,7 +220,10 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
         const shouldRestoreFocus =
           startedInsideDialog && (focusWasLost || focusStillInside);
 
-        if (shouldRestoreFocus) restoreTriggerFocus(true);
+        if (closeOnApply && onClose) {
+          onClose();
+          if (shouldRestoreFocus) focusTrigger();
+        }
       } else {
         // Default local verification according to SKILL.md
         await new Promise((resolve) => setTimeout(resolve, 600));
