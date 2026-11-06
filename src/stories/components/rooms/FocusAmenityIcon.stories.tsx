@@ -375,7 +375,7 @@ export const InteractiveExplorer: Story = {
             className="mt-2 text-xs font-mono px-2 py-0.5 rounded"
             style={{ color: currentStateToken }}
           >
-            {currentStateToken}
+            {AMENITY_STATE_TOKENS[selectedState]}
           </code>
         </div>
 
