@@ -392,6 +392,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     const due = new Date(Date.UTC(year, month - 1, day, 12));
     const days = period === 'days' ? window : window / 24;
     due.setUTCDate(due.getUTCDate() - days);
+    if (!Number.isFinite(due.getTime())) return 'Due before arrival';
 
     return `Due ${fmtMonthDay(due.toISOString(), { locale: 'en-US' })}`;
   };
