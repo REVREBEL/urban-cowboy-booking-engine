@@ -277,7 +277,8 @@ export function ProductionRateTray({
                 }}
                 detailsLabel={isOpen ? "Hide Details" : "View Details"}
                 onConfirm={() => onSelectRate(rate)}
-                confirmLabel={config?.ctaLabel?.trim() || undefined}
+                // Until member eligibility is wired into the booking flow, do not imply an unlock occurred.
+                confirmLabel={config?.ctaLabel?.trim() || (config?.memberOnly || rate.isPrivate ? "Choose this rate" : undefined)}
               />
             );
           })}
