@@ -1,3 +1,4 @@
+import { FigmaRateCard, FigmaRateDetailPopup } from "./FigmaRateComponents";
 import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
@@ -359,81 +360,28 @@ export function ProductionRateTray({
                 : "See rate details for cancellation terms";
 
             return (
-              <article
+              <FigmaRateCard
                 key={rate.rateId}
-                className={`rc-rate ${isSelected ? "is-chosen" : ""} ${isOpen ? "is-open" : ""}`}
-              >
-                <p className="rc-eyebrow">{eyebrow}</p>
-                <h2 className="rc-name">{headline}</h2>
-                {description && <p className="rc-rate-sub">{description}</p>}
-                {config?.supportingText && (
-                  <p className="rc-rate-supporting">{config.supportingText}</p>
-                )}
-
-                {timeline && (
-                  <ol className="rc-card-milestones" aria-label="Cancellation milestones">
-                    {timeline.phases.map((phase) => (
-                      <li key={phase.kind}>
-                        <span>{phaseHeading(phase.kind, language)}</span>
-                        <time dateTime={phase.end}>
-                          {formatShortDate(phase.end)}
-                        </time>
-                      </li>
-                    ))}
-                  </ol>
-                )}
-
-                <div className="rc-rate-spacer" />
-
-                <p
-                  className="rc-policy-line"
-                  data-phase={timeline?.currentPhase ?? (rate.knownRateGroup === "NON_REFUNDABLE" ? "locked" : undefined)}
-                >
-                  {timeline
-                    ? `${phaseHeading(timeline.currentPhase, language)}${timeline.phases.length > 1 ? ` until ${formatShortDate(timeline.phases[0].end)}` : ""}`
-                    : rate.knownRateGroup === "NON_REFUNDABLE"
-                      ? language.nonRefundableLanguage
-                      : policyText}
-                </p>
-
-                {timeline && <MiniBar timeline={timeline} />}
-
-                <div className="rc-rate-price">
-                  <span>
-                    {formatMoney(pricing.nightly, rate.currency)} × {nights}{" "}
-                    {nights === 1 ? "night" : "nights"}
-                  </span>
-                  <b className="rc-num">
-                    {formatMoney(pricing.total, rate.currency)}
-                  </b>
-                </div>
-
-                <div className="rc-actions">
-                  <RateAction
-                    slot="details"
-                    aria-expanded={isOpen}
-                    onClick={() => {
-                      if (isOpen) {
-                        closeDrawer();
-                        return;
-                      }
-                      setIsDrawerClosing(false);
-                      setOpenRateId(rate.rateId);
-                    }}
-                  >
-                    {isOpen ? "Hide details" : "View details"}
-                  </RateAction>
-                  <RateAction
-                    slot="select"
-                    disabled={rate.totalGross == null}
-                    onClick={() => onSelectRate(rate)}
-                  >
-                    {isSelected
-                      ? "Selected"
-                      : config?.ctaLabel?.trim() || "Choose this rate"}
-                  </RateAction>
-                </div>
-              </article>
+                eyebrow={eyebrow}
+                name={headline}
+                description={[description, config?.supportingText].filter(Boolean).join(" ")}
+                policy={timeline
+                  ? `${phaseHeading(timeline.currentPhase, language)}${timeline.phases.length > 1 ? ` until ${formatShortDate(timeline.phases[0].end)}` : ""}`
+                  : rate.knownRateGroup === "NON_REFUNDABLE" ? language.nonRefundableLanguage : policyText}
+                roomSummary={`${roomName}, ${nights} ${nights === 1 ? "night" : "nights"}`}
+                total={rate.totalGross}
+                currency={rate.currency}
+                variant={rate.isPrivate ? "member" : config?.supportingText ? "package" : "default"}
+                isSelected={isSelected}
+                onDetails={() => {
+                  if (isOpen) { closeDrawer(); return; }
+                  setIsDrawerClosing(false);
+                  setOpenRateId(rate.rateId);
+                }}
+                detailsLabel={isOpen ? "Hide Details" : "View Details"}
+                onConfirm={() => onSelectRate(rate)}
+                confirmLabel={config?.ctaLabel?.trim() || undefined}
+              />
             );
           })}
         </div>
@@ -465,37 +413,25 @@ export function ProductionRateTray({
                 setIsDrawerClosing(false);
               }}
             >
-              <div className="rc-sheet-head">
-                <div>
-                  <p className="rc-eyebrow">{openConfig?.eyebrow || "Rate details"}</p>
-                  <h2 className="rc-name">{openConfig?.headline || openRate.name}</h2>
-                </div>
-                <RateAction slot="close-details" onClick={closeDrawer}>
-                  Close ×
-                </RateAction>
-              </div>
-
-              <div className="rc-drawer-body">
-                <RateDetailBody
-                  rate={openRate}
-                  config={openConfig}
-                  checkIn={checkIn}
-                  nights={nights}
-                  language={language}
-                />
-              </div>
-
-              <div className="rc-production-tray-actions">
-                <b className="rc-num">
-                  {formatMoney(openRate.totalGross, openRate.currency)}
-                </b>
-                <RateAction
-                  slot="select"
-                  disabled={openRate.totalGross == null}
-                  onClick={() => onSelectRate(openRate)}
-                >
-                  {openConfig?.ctaLabel?.trim() || "Choose this rate"}
-                </RateAction>
+              <FigmaRateDetailPopup
+                name={openConfig?.headline || openRate.name}
+                eyebrow={openConfig?.eyebrow || "Rate details"}
+                description={openConfig?.description || openRate.description || "Book direct for the best available offer."}
+                nightly={pricingForRate(openRate, nights).nightly}
+                subtotal={pricingForRate(openRate, nights).subtotal}
+                taxes={pricingForRate(openRate, nights).taxes}
+                total={pricingForRate(openRate, nights).total}
+                currency={openRate.currency}
+                nights={nights}
+                policyText={openConfig
+                  ? cancellationConfirmation(openRate, openConfig, checkIn)
+                  : openRate.knownRateGroup === "NON_REFUNDABLE" ? "Full Prepay Non Refundable" : "See rate details for cancellation terms"}
+                timeline={timelineForRate(openRate, openConfig, checkIn)}
+                arrivalDate={checkIn}
+                onClose={closeDrawer}
+                onConfirm={() => onSelectRate(openRate)}
+                disabled={openRate.totalGross == null}
+              />
               </div>
             </div>
           </div>
