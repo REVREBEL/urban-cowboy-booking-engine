@@ -27,7 +27,7 @@ const meta = {
   argTypes: {
     layout: {
       control: "select",
-      options: ["Default", "Row", "Row Reverse"],
+      options: ["Default", "Row", "RowReverse"],
     },
     displayBuilding: {
       control: "boolean",
@@ -43,6 +43,10 @@ const meta = {
   },
   parameters: {
     layout: "fullscreen",
+    design: {
+      type: "figma",
+      url: "https://www.figma.com/design/2dpdHI6BTGjXcK54hTx2DK/Urban-Cowboy?node-id=1352-15460",
+    },
   },
 } satisfies Meta<typeof RoomListItem>;
 
@@ -67,7 +71,7 @@ export const Row: Story = {
 
 export const RowReverse: Story = {
   args: {
-    layout: "Row Reverse",
+    layout: "RowReverse",
     roomTypes: makeRoomTypes(6),
   },
   render: (args) => (
