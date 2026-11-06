@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload Storybook runtime failures
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: storybook-runtime-report
           path: storybook-runtime-report/
