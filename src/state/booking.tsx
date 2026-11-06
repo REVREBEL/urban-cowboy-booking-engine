@@ -142,6 +142,15 @@ function writeUrl(s: BookingState) {
   if (typeof window === "undefined") return;
   const current = new URLSearchParams(window.location.search);
   const q = new URLSearchParams();
+  // Storybook renders stories in /iframe.html with selection state in the
+  // query string. Preserve its routing/controls params when the production
+  // booking provider is used in a story; otherwise replaceState would make
+  // refreshing or sharing the story URL lose the selected story.
+  if (window.location.pathname.endsWith("/iframe.html")) {
+    for (const key of ["id", "viewMode", "args", "globals"]) {
+      for (const value of current.getAll(key)) q.append(key, value);
+    }
+  }
   if (s.checkIn) q.set("in", s.checkIn);
   if (s.checkOut) q.set("out", s.checkOut);
   q.set("adults", String(s.adults));
