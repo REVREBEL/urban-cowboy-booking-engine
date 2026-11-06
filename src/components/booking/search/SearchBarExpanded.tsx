@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
+import { SearchBarPromoDropdown } from "./SearchBarPromoDropdown";
 
 export type SearchBarExpandedVariant = "circle" | "square";
 export type ActiveDropdownSection = "property" | "dates" | "guests" | "promo" | null;
@@ -29,6 +30,33 @@ export interface SearchBarExpandedProps {
   constrainAboveToViewport?: boolean;
   isLoading?: boolean;
   className?: string;
+}
+
+function injectPromoTriggerRef(
+  node: React.ReactNode,
+  triggerRef: React.RefObject<HTMLElement | null>,
+): React.ReactNode {
+  return React.Children.map(node, (child) => {
+    if (!React.isValidElement(child)) return child;
+
+    if (child.type === SearchBarPromoDropdown) {
+      return React.cloneElement(
+        child as React.ReactElement<{
+          triggerRef?: React.RefObject<HTMLElement | null>;
+        }>,
+        { triggerRef },
+      );
+    }
+
+    const element = child as React.ReactElement<{ children?: React.ReactNode }>;
+    if (element.props.children === undefined) return child;
+
+    return React.cloneElement(
+      element,
+      undefined,
+      injectPromoTriggerRef(element.props.children, triggerRef),
+    );
+  });
 }
 
 export interface ExpandedSearchButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -240,14 +268,16 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
             ? { maxHeight: availableAbove }
             : undefined}
         >
-          {React.isValidElement(dropdownSlot) && currentActiveSection === "dates"
-            ? React.cloneElement(
-                dropdownSlot as React.ReactElement<{
-                  triggerRef?: React.RefObject<HTMLElement | null>;
-                }>,
-                { triggerRef: datesTriggerRef },
-              )
-            : dropdownSlot}
+          {currentActiveSection === "promo"
+            ? injectPromoTriggerRef(dropdownSlot, promoTriggerRef)
+            : React.isValidElement(dropdownSlot) && currentActiveSection === "dates"
+              ? React.cloneElement(
+                  dropdownSlot as React.ReactElement<{
+                    triggerRef?: React.RefObject<HTMLElement | null>;
+                  }>,
+                  { triggerRef: datesTriggerRef },
+                )
+              : dropdownSlot}
         </div>
       )}
     </div>
