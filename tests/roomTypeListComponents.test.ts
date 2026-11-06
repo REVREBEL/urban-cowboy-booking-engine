@@ -51,6 +51,8 @@ test("BuildingDescription mirrors the compact Figma BuildingSection contract", (
   assert.match(source, /max-w-\[555px\]/);
   assert.match(source, /max-w-\[350px\]/);
   assert.match(source, /xl:flex-row/);
+  assert.match(source, /xl:flex-\[0_1_300px\]/);
+  assert.match(source, /xl:flex-\[1_1_555px\]/);
   assert.match(source, /gap-\[10px\]/);
   assert.match(source, /min-h-\[212px\]/);
   assert.match(source, /min-h-\[158px\]/);
@@ -70,7 +72,10 @@ test("RoomTypeCard preserves the compact Figma geometry and states", () => {
   assert.match(source, /w-full max-w-\[350px\]/);
   assert.match(source, /p-\[17\.073px\]/);
   assert.match(source, /aspect-\[314\.146\/209\.426\]/);
-  assert.match(source, /max-w-\[314\.146px\]/);
+  assert.match(
+    source,
+    /data-name="RoomTypeImage"[\s\S]*?className="[^"]*max-w-\[314\.146px\][^"]*"/,
+  );
   assert.match(source, /rounded-\[6\.829px\]/);
   assert.match(source, /gap-\[12\.805px\]/);
   assert.match(source, /text-\[20\.488px\]/);
@@ -92,6 +97,8 @@ test("RoomListItem preserves the updated Default, Row, and RowReverse layouts", 
   assert.match(source, /"RowReverse"/);
   assert.match(source, /"Row Reverse"/);
   assert.match(source, /const normalizedLayout = layout === "Row Reverse" \? "RowReverse" : layout/);
+  assert.match(source, /data-layout=\{layout\}/);
+  assert.match(source, /data-layout-normalized=\{normalizedLayout\}/);
   assert.match(source, /max-w-\[1460px\]/);
   assert.match(source, /max-w-\[1542px\]/);
   assert.match(source, /max-w-\[350px\]/);
