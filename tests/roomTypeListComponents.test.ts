@@ -59,7 +59,7 @@ test("BuildingDescription mirrors the Figma BuildingSection property contract", 
   assert.match(source, /font-family:Inter,sans-serif/);
   assert.match(source, /<h2/);
   assert.match(source, /if \(!displayBuildingIcon\)/);
-  assert.match(source, /flex w-\[894px\] items-end/);
+  assert.match(source, /flex w-full max-w-\[894px\] min-w-0 items-end/);
   assert.doesNotMatch(source, /tone\??:/);
 });
 
