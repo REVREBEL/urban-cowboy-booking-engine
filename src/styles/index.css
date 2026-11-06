@@ -1,5 +1,6 @@
 /* src/styles/index.css */
 
+@import "@fontsource/inter/400.css";
 @import "tailwindcss";
 @import "./theme.css";
 @import "./colors.css";

@@ -1,70 +1,119 @@
-import { ROOM_TYPE_GROUPS } from "@/data/roomTypeGroups";
-import { RoomListItem, type RoomListItemBuilding, type RoomTypeCardData } from "./RoomListItem";
-
-export interface RoomTypeListGroup {
-  id: string;
-  roomTypes: readonly RoomTypeCardData[];
-  building?: RoomListItemBuilding | null;
-  displayBuilding?: boolean;
-}
+import type { ReactNode } from "react";
+import { BuildingDescription } from "./BuildingDescription";
+import { BuildingIcon } from "./BuildingIcon";
+import { RoomListItem, type RoomTypeCardData } from "./RoomListItem";
 
 export interface RoomTypeListProps {
-  groups: readonly RoomTypeListGroup[];
   className?: string;
+  buildingGroup1?: ReactNode | null;
+  buildingGroup2?: ReactNode | null;
+  buildingGroup3?: ReactNode | null;
 }
 
-const groupOrder = new Map(
-  ROOM_TYPE_GROUPS.map((group, index) => [group.key, index]),
+const DEFAULT_BUILDING_DESCRIPTION =
+  "Built into the hillside above the Lodge, Alpine is home to ten of The Cowboy's most iconic rooms. Every suite pairs a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside.";
+
+const DEFAULT_BUILDING_TAGLINE =
+  "This is Where you Come to Soak, Slow Down and Disappear for a While.";
+
+const makeDefaultRoomTypes = (prefix: string): RoomTypeCardData[] =>
+  Array.from({ length: 6 }, (_, index) => ({
+    id: prefix + "-" + (index + 1),
+    buildingName: "Opa's Cabin",
+    numberOfBeds: "8 beds",
+    price: "$596",
+    roomTypeName: "Opa's Cabin 4 Bedroom",
+    state: index === 3 ? "Focus" : "Default",
+  }));
+
+const buildingCopy = {
+  buildingName: "Alpine",
+  buildingDescription: DEFAULT_BUILDING_DESCRIPTION,
+  buildingTagline: DEFAULT_BUILDING_TAGLINE,
+};
+
+const DEFAULT_BUILDING_GROUP_1 = (
+  <RoomListItem
+    layout="Row"
+    className="[--room-list-building-panel:transparent]"
+    roomTypes={makeDefaultRoomTypes("figma-group-1")}
+    buildingSectionSlot={
+      <BuildingDescription
+        {...buildingCopy}
+        layout="StackedCenter"
+        className="[--building-name-color:var(--paper)] [--building-description-color:var(--paper)] [--building-tagline-color:var(--alpine-linen)]"
+      />
+    }
+  />
 );
 
-const orderGroups = (
-  groups: readonly RoomTypeListGroup[],
-): RoomTypeListGroup[] =>
-  [...groups].sort((a, b) => {
-    const aIndex = a.building ? groupOrder.get(a.building.group) : undefined;
-    const bIndex = b.building ? groupOrder.get(b.building.group) : undefined;
+const DEFAULT_BUILDING_GROUP_2 = (
+  <RoomListItem
+    layout="Row"
+    roomTypes={makeDefaultRoomTypes("figma-group-2")}
+    buildingSectionSlot={
+      <BuildingDescription
+        {...buildingCopy}
+        layout="StackedCenter"
+        displayBuildingIcon
+        buildingIconSlot={<BuildingIcon buildingName="Alpine" />}
+      />
+    }
+  />
+);
 
-    if (aIndex == null && bIndex == null) return 0;
-    if (aIndex == null) return 1;
-    if (bIndex == null) return -1;
-    return aIndex - bIndex;
-  });
+const DEFAULT_BUILDING_GROUP_3 = (
+  <RoomListItem
+    layout="Row"
+    roomTypes={makeDefaultRoomTypes("figma-group-3")}
+    buildingSectionSlot={
+      <BuildingDescription {...buildingCopy} layout="StackedCenter" />
+    }
+  />
+);
 
 /**
- * Figma RoomTypeList (1352:14825).
+ * Figma RoomTypeList component (1352:14825).
  *
- * Building groups and cards are collection-driven so the component can render
- * the real booking-engine inventory rather than the illustrative slot count
- * shown in Figma. Known building groups use the canonical guest-facing order.
+ * Figma exposes three optional BuildingGroup slots. With no slot overrides the
+ * component renders the exact default three-group composition from the source
+ * component; callers can replace any group independently.
  */
 export function RoomTypeList({
-  groups,
   className = "",
+  buildingGroup1 = null,
+  buildingGroup2 = null,
+  buildingGroup3 = null,
 }: RoomTypeListProps) {
-  const orderedGroups = orderGroups(groups);
-
   return (
     <div
       data-figma-node="1352:14825"
+      data-name="RoomTypeList"
       className={[
-        "flex min-h-[1038px] w-full max-w-[2175px] flex-col items-center gap-[60px] bg-primary-foreground",
+        "flex min-h-[1038px] w-[2175px] flex-col items-center gap-[60px] bg-primary-foreground",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      {orderedGroups.map((group) => (
-        <section
-          key={group.id}
-          className="flex w-full shrink-0 flex-col items-start"
-        >
-          <RoomListItem
-            roomTypes={group.roomTypes}
-            building={group.building}
-            displayBuilding={group.displayBuilding}
-          />
-        </section>
-      ))}
+      <div
+        data-name="BuildingGroup1"
+        className="flex w-full shrink-0 flex-col items-start overflow-clip"
+      >
+        {buildingGroup1 ?? DEFAULT_BUILDING_GROUP_1}
+      </div>
+      <div
+        data-name="BuildingGroup2"
+        className="flex w-full shrink-0 flex-col items-start overflow-clip"
+      >
+        {buildingGroup2 ?? DEFAULT_BUILDING_GROUP_2}
+      </div>
+      <div
+        data-name="BuildingGroup3"
+        className="flex w-full shrink-0 flex-col items-start overflow-clip"
+      >
+        {buildingGroup3 ?? DEFAULT_BUILDING_GROUP_3}
+      </div>
     </div>
   );
 }

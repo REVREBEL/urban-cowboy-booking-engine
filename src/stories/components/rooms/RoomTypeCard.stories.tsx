@@ -1,24 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { RoomTypeCard } from "@/components/rooms/RoomTypeCard";
-
-const media = (
-  <div
-    aria-label="Room image placeholder"
-    className="size-full bg-secondary-foreground"
-  />
-);
-
 const meta = {
-  title: "Components/Rooms/RoomTypeList/RoomTypeCard",
+  title: "Components/Rooms/RoomTypeCard",
   component: RoomTypeCard,
   tags: ["autodocs"],
   args: {
-    roomTypeName: "Opa's Cabin 4 Bedroom",
     buildingName: "Opa's Cabin",
     numberOfBeds: "8 beds",
     price: "$596",
-    mediaSlot: media,
+    roomTypeName: "Opa's Cabin 4 Bedroom",
     state: "Default",
+  },
+  argTypes: {
+    state: {
+      control: "select",
+      options: ["Default", "Focus"],
+    },
   },
   parameters: {
     layout: "centered",

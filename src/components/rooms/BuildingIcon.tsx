@@ -1,48 +1,110 @@
-import { ROOM_TYPE_GROUP_PRESENTATION } from "@/data/roomTypeGroupPresentation";
-import { roomTypeGroupName } from "@/data/roomTypeGroups";
-import type { RoomTypeGroupKey } from "@/types/accommodations";
+export type BuildingIconName =
+  | "Default"
+  | "Alpine"
+  | "SlideMountain"
+  | "Ralphs"
+  | "Chalet"
+  | "ForestHaus"
+  | "MountianViewHaus"
+  | "EstonianSauna"
+  | "Cabin"
+  | "OpasCabin";
 
 export interface BuildingIconProps {
-  group: RoomTypeGroupKey;
   className?: string;
-  alt?: string;
-  decorative?: boolean;
-  loading?: "eager" | "lazy";
+  buildingName?: BuildingIconName;
 }
 
+const BUILDING_ICON_CONFIG: Record<
+  BuildingIconName,
+  { src: string; heightClass: string; label: string }
+> = {
+  Default: {
+    src: "/assets/icons/buildings/lodge.svg",
+    heightClass: "h-[154.88px]",
+    label: "The Lodge",
+  },
+  Alpine: {
+    src: "/assets/icons/buildings/alpine.svg",
+    heightClass: "h-[144.028px]",
+    label: "Alpine",
+  },
+  SlideMountain: {
+    src: "/assets/icons/buildings/slide_mountain_haus.svg",
+    heightClass: "h-[196.149px]",
+    label: "Slide Mountain Haus",
+  },
+  Ralphs: {
+    src: "/assets/icons/buildings/ralphs_bar_bowling.svg",
+    heightClass: "h-[130.089px]",
+    label: "Ralph’s Bar and Bowling",
+  },
+  Chalet: {
+    src: "/assets/icons/buildings/chalet.svg",
+    heightClass: "h-[144.476px]",
+    label: "Chalet",
+  },
+  ForestHaus: {
+    src: "/assets/icons/buildings/forest_haus.svg",
+    heightClass: "h-[228.762px]",
+    label: "Forest Haus",
+  },
+  MountianViewHaus: {
+    src: "/assets/icons/buildings/mountian_view_haus.svg",
+    heightClass: "h-[131.991px]",
+    label: "Mountain View Haus",
+  },
+  EstonianSauna: {
+    src: "/assets/icons/buildings/estonian_sauna.svg",
+    heightClass: "h-[171.469px]",
+    label: "Estonian Sauna",
+  },
+  Cabin: {
+    src: "/assets/icons/buildings/cabin.svg",
+    heightClass: "h-[171.342px]",
+    label: "Cabin",
+  },
+  OpasCabin: {
+    src: "/assets/icons/buildings/opas_cabin.svg",
+    heightClass: "h-[192.172px]",
+    label: "Opa’s Cabin",
+  },
+};
+
 /**
- * Figma BuildingIcon (1352:15528).
+ * Figma BuildingIcon component set (1352:9306).
  *
- * Uses the canonical room-type-group presentation registry so the component
- * always resolves artwork from /assets/icons/buildings without duplicating
- * asset-path logic.
+ * Variant names and geometry intentionally mirror the Figma component set,
+ * including the source spelling "MountianViewHaus".
  */
 export function BuildingIcon({
-  group,
   className = "",
-  alt,
-  decorative = false,
-  loading = "lazy",
+  buildingName = "Default",
 }: BuildingIconProps) {
-  const artwork = ROOM_TYPE_GROUP_PRESENTATION[group].iconPath;
-  const resolvedAlt = decorative
-    ? ""
-    : alt ?? roomTypeGroupName(group) + " Architectural Illustration";
+  const config = BUILDING_ICON_CONFIG[buildingName];
 
   return (
     <div
-      data-figma-node="1352:15528"
-      className={["flex w-full flex-col items-center justify-center", className]
+      data-figma-node="1352:9306"
+      data-building-name={buildingName}
+      className={["flex items-center justify-center", className]
         .filter(Boolean)
         .join(" ")}
     >
-      <img
-        src={artwork}
-        alt={resolvedAlt}
-        aria-hidden={decorative || undefined}
-        loading={loading}
-        className="h-[154.88px] w-[283px] max-w-full shrink-0 select-none object-contain"
-      />
+      <div
+        className={["relative w-[283px] shrink-0", config.heightClass].join(" ")}
+        role="img"
+        aria-label={config.label}
+      >
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 block size-full bg-smoke"
+          style={{
+            WebkitMask: `url("${config.src}") center / contain no-repeat`,
+            mask: `url("${config.src}") center / contain no-repeat`,
+          }}
+        />
+      </div>
     </div>
   );
 }

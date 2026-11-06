@@ -1,120 +1,91 @@
-import { BuildingDescription, type BuildingDescriptionTone } from "./BuildingDescription";
-import { BuildingIcon } from "./BuildingIcon";
+import type { ReactNode } from "react";
 import { RoomTypeCard, type RoomTypeCardProps } from "./RoomTypeCard";
-import { ROOM_TYPE_GROUP_PRESENTATION } from "@/data/roomTypeGroupPresentation";
-import type { RoomTypeGroupKey } from "@/types/accommodations";
+
+export type RoomListItemLayout = "Default" | "Row" | "Row Reverse";
 
 export type RoomTypeCardData = RoomTypeCardProps & {
   id: string;
-  /** Canonical room slug used by ROOM_TYPE_GROUP_PRESENTATION.roomOrder. */
-  roomKey?: string;
 };
-
-export interface RoomListItemBuilding {
-  group: RoomTypeGroupKey;
-  name: string;
-  description: string;
-  tagline?: string | null;
-  displayIcon?: boolean;
-  tone?: BuildingDescriptionTone;
-  panel?: boolean;
-}
 
 export interface RoomListItemProps {
-  roomTypes: readonly RoomTypeCardData[];
-  building?: RoomListItemBuilding | null;
-  displayBuilding?: boolean;
   className?: string;
+  buildingSectionSlot?: ReactNode | null;
+  displayBuilding?: boolean;
+  layout?: RoomListItemLayout;
+  roomTypes: readonly RoomTypeCardData[];
 }
 
-const orderRoomTypes = (
-  roomTypes: readonly RoomTypeCardData[],
-  group: RoomTypeGroupKey | null,
-): RoomTypeCardData[] => {
-  if (!group) return [...roomTypes];
-
-  const canonicalOrder = new Map(
-    ROOM_TYPE_GROUP_PRESENTATION[group].roomOrder.map((key, index) => [
-      key,
-      index,
-    ]),
-  );
-
-  return [...roomTypes].sort((a, b) => {
-    const aIndex = canonicalOrder.get(a.roomKey ?? a.id);
-    const bIndex = canonicalOrder.get(b.roomKey ?? b.id);
-
-    if (aIndex == null && bIndex == null) return 0;
-    if (aIndex == null) return 1;
-    if (bIndex == null) return -1;
-    return aIndex - bIndex;
-  });
-};
-
 /**
- * Figma RoomListItem (1352:15461).
+ * Figma RoomListItem component set (1352:15460).
  *
- * The Figma canvas shows six card slots for illustration. Production rendering
- * is collection-driven: every item in roomTypes becomes a RoomTypeCard.
- * Canonical room slugs are ordered through the shared presentation registry.
+ * Figma documents the card slots as illustrative only. The React version keeps
+ * the exact three layout variants while populating the card list from the
+ * supplied collection, in the supplied order.
  */
 export function RoomListItem({
-  roomTypes,
-  building = null,
-  displayBuilding = true,
   className = "",
+  buildingSectionSlot = null,
+  displayBuilding = true,
+  layout = "Default",
+  roomTypes,
 }: RoomListItemProps) {
-  const orderedRoomTypes = orderRoomTypes(
-    roomTypes,
-    building?.group ?? null,
+  const isDefault = layout === "Default";
+  const isRow = layout === "Row";
+  const isRowReverse = layout === "Row Reverse";
+
+  const buildingContent = buildingSectionSlot;
+
+  const buildingPanel = displayBuilding && buildingContent ? (
+    <div
+      data-name="BuildingSectionSlot"
+      className={
+        isDefault
+          ? "flex w-[1790px] shrink-0 flex-col items-start bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
+          : "flex w-[400px] shrink-0 self-stretch flex-col items-start justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] px-[20px] py-[40px]"
+      }
+    >
+      {buildingContent}
+    </div>
+  ) : null;
+
+  const list = (
+    <div
+      data-name="List"
+      className={[
+        "flex shrink-0 flex-wrap content-start items-start gap-[20px]",
+        isDefault
+          ? "w-[1790px]"
+          : "w-[1330px] p-[20px]",
+      ].join(" ")}
+    >
+      {roomTypes.map(({ id, ...roomType }) => (
+        <RoomTypeCard key={id} {...roomType} />
+      ))}
+    </div>
   );
 
   return (
     <div
-      data-figma-node="1352:15461"
+      data-figma-node={
+        isDefault ? "1352:2645" : isRow ? "1352:15461" : "1357:16356"
+      }
+      data-layout={layout}
       className={[
-        "flex w-full max-w-[1790px] flex-col items-stretch gap-[40px] p-[20px] xl:flex-row xl:items-center",
+        // Preserve the owning Figma component's exact frame geometry:
+        // 1790px frame, 20px row padding, 400px building slot, 40px gap,
+        // and 1330px list. The source component intentionally paints 20px
+        // beyond the nominal frame in Row variants.
+        "w-[1790px] overflow-visible",
+        isDefault
+          ? "flex flex-col flex-wrap content-start items-start gap-[30px] py-[20px]"
+          : "flex items-center gap-[40px] bg-primary-foreground p-[20px]",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      {displayBuilding && building ? (
-        <aside className="flex w-full shrink-0 self-stretch xl:w-[400px]">
-          <div
-            className={[
-              "flex h-full w-full flex-col items-start justify-center px-[20px] py-[40px]",
-              building.panel ? "bg-secondary-foreground" : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-          >
-            <div className="flex w-full flex-col items-start justify-center gap-[40px] py-[10px]">
-              {building.displayIcon ? (
-                <BuildingIcon group={building.group} decorative />
-              ) : null}
-              <BuildingDescription
-                buildingName={building.name}
-                description={building.description}
-                tagline={building.tagline}
-                tone={
-                  building.tone ??
-                  (building.panel ? "default" : "inverse")
-                }
-              />
-            </div>
-          </div>
-        </aside>
-      ) : null}
-
-      <div
-        data-name="List"
-        className="grid min-w-0 w-full flex-1 grid-cols-1 content-start items-start justify-items-center gap-[20px] p-[20px] sm:grid-cols-2 xl:justify-items-start 2xl:grid-cols-3"
-      >
-        {orderedRoomTypes.map(({ id, roomKey: _roomKey, ...roomType }) => (
-          <RoomTypeCard key={id} {...roomType} />
-        ))}
-      </div>
+      {isRowReverse ? list : buildingPanel}
+      {isDefault ? list : isRow ? list : buildingPanel}
     </div>
   );
 }
