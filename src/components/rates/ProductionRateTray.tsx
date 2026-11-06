@@ -299,7 +299,7 @@ export function ProductionRateTray({
               onClick={closeDrawer}
             />
             <div
-              className="rc-drawer"
+              className="rc-drawer rc-figma-drawer"
               role="dialog"
               aria-modal="true"
               aria-label={`${openConfig?.headline || openRate.name} details`}
