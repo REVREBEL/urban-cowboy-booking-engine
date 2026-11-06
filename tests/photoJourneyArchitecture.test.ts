@@ -66,12 +66,16 @@ test("Photo Journal matches center beside image selections and labels keep a dar
   const journal = source("journey/PhotoJournal.tsx");
   assert.match(journal, /page === 0 \? "self-center" : "self-start"/);
   assert.match(journal, /colorScheme="paper" size="small"/);
-  assert.match(journal, /linear-gradient\(to right, var\(--primary\)/);
+  assert.match(journal, /linear-gradient\(to right, var\(--primary-foreground\)/);
   assert.match(journal, /linear-gradient\(to top, rgba\(15, 18, 16, 0\.92\)/);
   assert.match(journal, /pointer-events-none absolute inset-0/);
   assert.match(journal, /absolute inset-x-0 bottom-0 z-10/);
   assert.match(journal, /p\.occasion === o\.id &&/);
-  assert.match(journal, />\s*Selected\s*</);
+  assert.match(journal, /<Pill colorScheme="light" size="xsmall" textCase="uppercase" className="absolute right-3 top-3 z-20">\s*Selected\s*<\/Pill>/);
+  assert.match(journal, /Get Matched for the Perfect Escape/);
+  assert.match(journal, /occasionFit\(p\.occasion, room\)/);
+  assert.match(journal, /p\.dog, p\.occasion, p\.mustHaves/);
+  assert.match(journal, /eligible\.slice\(0, 6\)/);
   assert.match(journal, /hasIcon onClick=\{\(\) => setPage\(page \+ 1\)\}>Next page<\/Button>/);
   assert.match(journal, /max-w-\[20ch\] text-balance font-headline/);
   assert.doesNotMatch(journal, /className="rounded-full" onClick=\{\(\) => setPage/);

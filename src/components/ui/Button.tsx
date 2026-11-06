@@ -173,6 +173,15 @@ export const buttonVariants = cva(
   }
 );
 
+const ICON_ONLY_SIZE_CLASSES: Record<ButtonSize, string> = {
+  xsmall: "size-11 rounded-full p-0",
+  small: "size-12 rounded-full p-0",
+  default: "size-13 rounded-full p-0",
+  medium: "size-14 rounded-full p-0",
+  large: "size-15 rounded-full p-0",
+  xlarge: "size-16 rounded-full p-0",
+};
+
 export const Spinner: React.FC<{ size?: number; color?: string }> = ({
   size = 16,
   color = "currentColor",
@@ -231,6 +240,8 @@ export interface ButtonProps
   hasIcon?: boolean;
   icon?: ReactNode;
   iconPosition?: "left" | "right";
+  /** Square, circular control for an icon with an accessible label. */
+  iconOnly?: boolean;
   isLoading?: boolean;
   children?: ReactNode;
   asChild?: boolean;
@@ -251,6 +262,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       hasIcon = false,
       icon,
       iconPosition = "right",
+      iconOnly = false,
       isLoading = false,
       disabled = false,
       children,
@@ -295,6 +307,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           colorClasses,
           !clickable && "control-not-clickable",
           TEXT_CASE_CLASSES[textCase],
+          iconOnly && ICON_ONLY_SIZE_CLASSES[size],
           isDisabledOrLoading
             ? "transform-none cursor-not-allowed"
             : clickable ? "active:scale-[0.98]" : "cursor-default",
@@ -305,6 +318,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         data-button-name={buttonName}
         data-button-page={buttonPage}
         data-button-content={buttonContent}
+        data-icon-only={iconOnly || undefined}
         {...restProps}
       >
         {isLoading ? (

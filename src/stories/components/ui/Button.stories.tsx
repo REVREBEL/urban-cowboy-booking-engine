@@ -157,5 +157,16 @@ export const States: Story = {
 export const Outline: Story = { args: { variant: "outline", colorScheme: "copper" } };
 export const Transparent: Story = { args: { variant: "transparent", colorScheme: "lake-forest" } };
 export const WithIcon: Story = { args: { hasIcon: true, children: "Explore Suites" } };
+export const IconOnly: Story = {
+  render: () => (
+    <div className="flex flex-wrap items-center gap-3 rounded-xl bg-smoke p-4">
+      {sizes.map((size) => (
+        <Button key={size} type="button" aria-label={`${size} icon control`} iconOnly colorScheme="paper" size={size}>
+          <span aria-hidden="true">→</span>
+        </Button>
+      ))}
+    </div>
+  ),
+};
 export const Loading: Story = { args: { isLoading: true, children: "Checking Availability..." } };
 export const Disabled: Story = { args: { disabled: true, children: "Sold Out" } };

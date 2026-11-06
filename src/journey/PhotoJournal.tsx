@@ -11,7 +11,7 @@ import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import type { Feature, MatchProfile, Occasion } from "../journey/data";
 import { Button } from "../components/ui/Button";
-import { PillButton } from "@/components/ui/Pill";
+import { Pill, PillButton } from "@/components/ui/Pill";
 import { money as formatMoney } from "@/lib/format";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
@@ -35,6 +35,15 @@ const OCCASIONS: { id: Occasion; title: string; note: string; img: string }[] = 
 
 const MUST: Feature[] = ["indoor-tub", "outdoor-tub", "fireplace", "view", "gather", "balcony"];
 
+function occasionFit(occasion: Occasion, room: ReturnType<typeof toPhotoTourRoom>): { reason: string; score: number } | null {
+  const hasTub = room.features.includes("indoor-tub") || room.features.includes("outdoor-tub");
+  if (occasion === "romance" && room.maxGuests <= 3 && hasTub) return { reason: "Made for two", score: 20 };
+  if (occasion === "friends" && room.features.includes("gather")) return { reason: "Room to gather", score: 20 };
+  if (occasion === "family" && room.maxGuests >= 4 && !room.adultsOnly) return { reason: "Family-friendly", score: 20 };
+  if (occasion === "solo" && room.maxGuests <= 2) return { reason: "Easy solo stay", score: 20 };
+  return null;
+}
+
 export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries, photoSource = "webflow", initial, onDone, onSkip }: { adults: number; children: number; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; photoSource?: PhotoSource; initial?: MatchProfile | null; onDone: (p: MatchProfile) => void; onSkip: () => void }) {
   const [p, setP] = useState<MatchProfile>(
     initial ?? { occasion: children > 0 ? "family" : "romance", adults, children, dog: false, mustHaves: [], quiet: 4, budget: 300 },
@@ -53,12 +62,14 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
       const room = toPhotoTourRoom(shaped, imageBaseUrl, photoGalleryForRoom(shaped.roomTypeId, galleries), photoSource);
       const hits = p.mustHaves.filter(feature => room.features.includes(feature));
       const reasons = hits.map(feature => FEATURE_LABEL[feature]);
+      const occasion = occasionFit(p.occasion, room);
+      if (occasion) reasons.unshift(occasion.reason);
       if (shaped.rates[0]?.perNightGross != null && shaped.rates[0].perNightGross <= p.budget) {
         reasons.push("Within your budget");
       }
-      return { room, reasons, score: hits.length * 100 + (room.basePrice <= p.budget ? 1 : 0) };
+      return { room, reasons, score: hits.length * 100 + (occasion?.score ?? 0) + (room.basePrice <= p.budget ? 1 : 0) };
     })
-    .sort((a, b) => b.score - a.score), [rooms, adults, children, p.dog, p.mustHaves, p.budget, imageBaseUrl, galleries, photoSource]);
+    .sort((a, b) => b.score - a.score), [rooms, adults, children, p.dog, p.occasion, p.mustHaves, p.budget, imageBaseUrl, galleries, photoSource]);
   const top = eligible[0];
   const set = <K extends keyof MatchProfile>(k: K, v: MatchProfile[K]) => setP((x) => ({ ...x, [k]: v }));
 
@@ -69,11 +80,11 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
       )}
       <div
         className="fixed inset-0"
-        style={{ background: "linear-gradient(to right, var(--primary), color-mix(in oklab, var(--primary) 90%, transparent), color-mix(in oklab, var(--primary) 40%, transparent))" }}
+        style={{ background: "linear-gradient(to right, var(--primary-foreground), color-mix(in oklab, var(--primary-foreground) 90%, transparent), color-mix(in oklab, var(--primary-foreground) 40%, transparent))" }}
       />
       <div className="relative mx-auto grid max-w-[1600px] gap-10 px-5 pb-16 pt-28 sm:px-8 lg:grid-cols-[1.3fr_1fr]">
         <div>
-          <p className={`${label} text-alpine-linen`}>Your stay journal · page {page + 1} of {pages}</p>
+          <p className={`${label} text-alpine-linen`}>Get Matched for the Perfect Escape</p>
           <div className="mt-2 h-px w-full bg-paper/15">
             <div className="h-px bg-alpine-linen transition-all" style={{ width: `${((page + 1) / pages) * 100}%` }} />
           </div>
@@ -92,9 +103,9 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
                         <span className="block text-sm text-paper/90">{o.note}</span>
                       </span>
                       {p.occasion === o.id && (
-                        <span className="absolute right-3 top-3 z-20 rounded-full bg-primary px-3 py-1 font-label text-[10px] uppercase tracking-[0.16em] text-primary-foreground shadow-sm">
+                        <Pill colorScheme="light" size="xsmall" textCase="uppercase" className="absolute right-3 top-3 z-20">
                           Selected
-                        </span>
+                        </Pill>
                       )}
                     </span>
                   </Button>
@@ -156,7 +167,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
         <aside aria-live="polite" className={`rounded-2xl bg-paper/95 p-5 text-foreground lg:sticky lg:top-28 ${page === 0 ? "self-center" : "self-start"}`}>
           <p className={`${label} text-lake-forest-fade`}>Matching · {eligible.length} of {rooms.length} available room types</p>
           <ol className="mt-4 space-y-3">
-            {eligible.slice(0, 4).map((m, i) => (
+            {eligible.slice(0, 6).map((m, i) => (
               <li key={m.room.id} className="grid grid-cols-[64px_minmax(0,1fr)_auto] items-center gap-3">
                 <img src={m.room.images[0]} alt="" className="aspect-square w-16 rounded-md object-cover" />
                 <div className="min-w-0">

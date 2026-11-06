@@ -51,6 +51,8 @@ test("live RoomPhotoTour uses FocusAmenity and retires the legacy hotspot", () =
   assert.match(tour, /active=\{activePin === pin\.id\}/);
   assert.match(tour, /state=\{activePin !== null && activePin !== pin\.id \? "Inactive" : undefined\}/);
   assert.match(tour, /<h2 className="mt-1 text-balance font-headline/);
+  assert.equal((tour.match(/size="xsmall" iconOnly style=\{\{ opacity: details/g) ?? []).length, 2);
+  assert.doesNotMatch(tour, /j-photo-(?:prev|next)[\s\S]{0,180}borderRadius/);
   assert.doesNotMatch(tour, /is-muted/);
   assert.match(tour, /selectAmenity\(willOpen \? id : null\)/);
   assert.match(tour, /setAmenityExiting\(true\)/);
@@ -92,6 +94,15 @@ test("native button detector is case-sensitive for JSX components", () => {
   assert.match('<button type="button">Click</button>', nativeButton);
   assert.doesNotMatch('<Button type="button">Click</Button>', nativeButton);
   assert.doesNotMatch('<PillButton type="button">Click</PillButton>', nativeButton);
+});
+
+test("Button icon-only controls use equal dimensions and a circular shared shape", () => {
+  const button = read("components/ui/Button.tsx");
+  const stories = read("stories/components/ui/Button.stories.tsx");
+  assert.match(button, /iconOnly\?: boolean/);
+  assert.match(button, /xsmall: "size-11 rounded-full p-0"/);
+  assert.match(button, /iconOnly && ICON_ONLY_SIZE_CLASSES\[size\]/);
+  assert.match(stories, /export const IconOnly/);
 });
 
 test("Pill shares the Button palette and interactive PillButton delegates to Button", () => {
