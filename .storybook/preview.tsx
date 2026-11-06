@@ -5,7 +5,30 @@ import type { Preview } from "@storybook/react-vite";
 import "../src/styles/index.css";
 
 const preview: Preview = {
+  // The toolbar sets global examples without changing production booking state.
+  globalTypes: {
+    bookingParty: {
+      description: "Example party used by stories that opt into this global",
+      toolbar: {
+        title: "Example party",
+        icon: "user",
+        dynamicTitle: true,
+        items: [
+          { value: "couple", title: "2 adults" },
+          { value: "family", title: "2 adults + 2 children" },
+          { value: "solo", title: "1 adult" },
+        ],
+      },
+    },
+  },
+  initialGlobals: {
+    bookingParty: "couple",
+  },
   parameters: {
+    github: {
+      repository: "REVREBEL/urban-cowboy-booking-engine",
+      branch: "main",
+    },
     docs: {
       codePanel: true,
     },
