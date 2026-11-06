@@ -7,6 +7,7 @@ function Harness() {
   const [open, setOpen] = useState(false);
   const [aborted, setAborted] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [closeCount, setCloseCount] = useState(0);
 
   return (
     <>
@@ -20,26 +21,28 @@ function Harness() {
       </button>
       <output data-testid="aborted">{String(aborted)}</output>
       <output data-testid="completed">{String(completed)}</output>
+      <output data-testid="close-count">{String(closeCount)}</output>
 
       {open ? (
         <SearchBarPromoDropdown
           initialValue="TESTCODE"
           triggerRef={triggerRef}
           closeOnApply
-          onClose={() => setOpen(false)}
+          onClose={() => {
+            setCloseCount((count) => count + 1);
+            setOpen(false);
+          }}
           onApply={(_, signal) =>
             new Promise<void>((resolve) => {
-              const timer = window.setTimeout(() => {
-                if (!signal?.aborted) setCompleted(true);
+              window.setTimeout(() => {
+                setCompleted(true);
                 resolve();
               }, 250);
 
               signal?.addEventListener(
                 "abort",
                 () => {
-                  window.clearTimeout(timer);
                   setAborted(true);
-                  resolve();
                 },
                 { once: true },
               );
