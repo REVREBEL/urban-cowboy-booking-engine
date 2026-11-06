@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
+import SheriffBadge from "@/components/icons/generated/ui/FiSheriffBadge";
 import {
   formatShortDate,
   type CancellationTimeline,
@@ -60,7 +60,7 @@ export function FigmaPolicyTimeline({ timeline, currency, arrivalDate }: {
         <li className="flex shrink-0 flex-col items-start gap-1 md:items-center">
           <strong className="font-heading text-xl leading-none">{formatShortDate(arrivalDate)}</strong>
           <span className="font-number text-xs">Arrive</span>
-          <span className="font-number text-2xl" aria-hidden="true">✦</span>
+          <span className="font-number text-2xl" aria-hidden="true"><SheriffBadge width={25} height={27} /></span>
         </li>
       </ol>
       {timeline.warning && <p className="mt-4 font-body text-sm">{timeline.warning}</p>}
@@ -101,7 +101,7 @@ export function FigmaRateCard({
 }) {
   return (
     <article data-figma-node="1390:31339" data-rate-variant={variant}
-      className="flex min-h-[430px] w-full min-w-0 flex-col gap-5 rounded-lg border border-lake-forest/20 bg-[#f9f9f9] p-5 text-primary-foreground shadow-[0_18px_25px_rgba(14,48,26,.08)] sm:p-7">
+      className="flex min-h-[430px] w-full min-w-0 flex-col gap-5 rounded-lg border border-lake-forest/20 bg-paper p-5 text-primary-foreground shadow-[0_18px_25px_rgba(14,48,26,.08)] sm:p-7">
       <header className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-label text-[11px] uppercase tracking-[1.5px]">{eyebrow}</p>
@@ -125,11 +125,11 @@ export function FigmaRateCard({
         <strong className="font-number text-2xl">{total == null ? "Rate unavailable" : money(total, currency)}</strong>
       </div>
       <footer className="flex flex-wrap items-center justify-between gap-3">
-        <Button variant="transparent" colorScheme="bandana-red" size="small" textCase="title"
+        <Button data-slot="details" variant="transparent" colorScheme="bandana-red" size="small" textCase="title"
           onClick={onDetails} aria-label={`View details for ${name}`}>
           {detailsLabel} <span aria-hidden="true">↗</span>
         </Button>
-        <Button variant="filled" colorScheme="lake-forest" size="small"
+        <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small"
           onClick={onConfirm} disabled={disabled || total == null}>
           {isSelected ? "Selected" : confirmLabel ?? (variant === "member" ? "Unlock this rate" : "Confirm rate")}
         </Button>
@@ -172,7 +172,7 @@ export function FigmaRateDetailPopup({
           <p className="font-label text-[11px] uppercase tracking-[2.2px]">{eyebrow}</p>
           <h2 className="font-heading text-[clamp(30px,5vw,40px)] leading-none">{name}</h2>
         </div>
-        <Button variant="transparent" colorScheme="lake-forest" size="small" textCase="title"
+        <Button data-slot="close-details" variant="transparent" colorScheme="lake-forest" size="small" textCase="title"
           onClick={onClose} aria-label="Close rate details">
           <span data-figma-node="1390:31186">Close</span> <span aria-hidden="true">×</span>
         </Button>
@@ -201,7 +201,7 @@ export function FigmaRateDetailPopup({
       {timeline && <FigmaPolicyTimeline timeline={timeline} currency={currency} arrivalDate={arrivalDate} />}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-lake-forest/20 pt-5">
         <strong className="font-number text-2xl">{money(total, currency)}</strong>
-        <Button variant="filled" colorScheme="lake-forest" size="small" onClick={onConfirm} disabled={disabled}>
+        <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small" onClick={onConfirm} disabled={disabled}>
           Confirm rate
         </Button>
       </div>
