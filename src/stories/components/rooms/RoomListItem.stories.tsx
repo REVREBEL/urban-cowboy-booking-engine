@@ -1,46 +1,69 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { RoomListItem, type RoomTypeCardData } from "@/components/rooms/RoomListItem";
+import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 
-const roomTypes: RoomTypeCardData[] = Array.from({ length: 6 }, (_, index) => ({
-  id: "opa-" + (index + 1),
-  roomTypeName: index % 2 === 0 ? "Opa's Cabin 4 Bedroom" : "Opa's Cabin 2 Bedroom",
-  buildingName: "Opa's Cabin",
-  numberOfBeds: index % 2 === 0 ? "8 beds" : "4 beds",
-  price: index % 2 === 0 ? "$596" : "$396",
-  mediaSlot: <div aria-hidden="true" className="size-full bg-secondary-foreground" />,
-  state: index === 3 ? "Focus" : "Default",
-}));
+const makeRoomTypes = (count: number): RoomTypeCardData[] =>
+  Array.from({ length: count }, (_, index) => ({
+    id: "room-" + (index + 1),
+    roomTypeName: "Opa's Cabin 4 Bedroom",
+    buildingName: "Opa's Cabin",
+    numberOfBeds: "8 beds",
+    price: "$596",
+    state: index === 1 ? "Focus" : "Default",
+    roomTypeImage: (
+      <img
+        src={ROOM_IMAGE_ASSETS.CABIN_SIDE_VIEW_SITTING_AREA}
+        alt="Cabin sitting area"
+        className="block size-full max-w-none rounded-[8px] object-cover"
+      />
+    ),
+  }));
 
 const meta = {
-  title: "Components/Rooms/RoomTypeList/RoomListItem",
+  title: "Components/Rooms/RoomListItem",
   component: RoomListItem,
   tags: ["autodocs"],
   args: {
-    roomTypes,
+    layout: "Default",
     displayBuilding: true,
-    building: {
-      group: "alpine",
-      name: "Alpine",
-      description:
-        "Built into the hillside above the Lodge, Alpine is home to ten of the Cowboy's most iconic rooms. Every suite pairs a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside.",
-      tagline: "This is where you come to soak, slow down and disappear for a while.",
-      displayIcon: true,
-      panel: true,
-      tone: "default",
+    roomTypes: makeRoomTypes(4),
+  },
+  argTypes: {
+    layout: {
+      control: "select",
+      options: ["Default", "Row", "Row Reverse"],
+    },
+    displayBuilding: {
+      control: "boolean",
     },
   },
   parameters: {
     layout: "fullscreen",
   },
+  decorators: [
+    (Story) => (
+      <div className="w-full overflow-x-auto p-4">
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof RoomListItem>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const WithBuilding: Story = {};
+export const Default: Story = {};
 
-export const CardsOnly: Story = {
+export const Row: Story = {
   args: {
-    displayBuilding: false,
+    layout: "Row",
+    roomTypes: makeRoomTypes(6),
+  },
+};
+
+export const RowReverse: Story = {
+  args: {
+    layout: "Row Reverse",
+    roomTypes: makeRoomTypes(6),
   },
 };

@@ -1,18 +1,30 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { BuildingDescription } from "@/components/rooms/BuildingDescription";
+import { BuildingIcon } from "@/components/rooms/BuildingIcon";
 
-const description =
-  "Built into the hillside above the Lodge, Alpine is home to ten of the Cowboy's most iconic rooms. Every suite pairs a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside.";
+const icon = <BuildingIcon buildingName="Alpine" decorative />;
 
 const meta = {
-  title: "Components/Rooms/RoomTypeList/BuildingDescription",
+  title: "Components/Rooms/BuildingDescription",
   component: BuildingDescription,
   tags: ["autodocs"],
   args: {
     buildingName: "Alpine",
-    description,
-    tagline: "This is where you come to soak, slow down and disappear for a while.",
-    tone: "default",
+    buildingDescription:
+      "Built into the hillside above the Lodge, Alpine is home to ten of The Cowboy's most iconic rooms. Every suite pairs a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside.",
+    buildingTagline:
+      "This is Where you Come to Soak, Slow Down and Disappear for a While.",
+    layout: "Row",
+    displayBuildingIcon: false,
+  },
+  argTypes: {
+    layout: {
+      control: "select",
+      options: ["Row", "Row Reverse", "StackedCenter", "StackedLeft"],
+    },
+    displayBuildingIcon: {
+      control: "boolean",
+    },
   },
   parameters: {
     layout: "centered",
@@ -22,25 +34,53 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  decorators: [
-    (Story) => (
-      <div className="bg-secondary-foreground p-10">
-        <Story />
-      </div>
-    ),
-  ],
+export const Row: Story = {};
+
+export const RowWithIcon: Story = {
+  args: {
+    displayBuildingIcon: true,
+    buildingIconSlot: icon,
+  },
 };
 
-export const Inverse: Story = {
+export const RowReverse: Story = {
   args: {
-    tone: "inverse",
+    layout: "Row Reverse",
   },
-  decorators: [
-    (Story) => (
-      <div className="bg-primary-foreground p-10">
-        <Story />
-      </div>
-    ),
-  ],
+};
+
+export const RowReverseWithIcon: Story = {
+  args: {
+    layout: "Row Reverse",
+    displayBuildingIcon: true,
+    buildingIconSlot: icon,
+  },
+};
+
+export const StackedCenter: Story = {
+  args: {
+    layout: "StackedCenter",
+  },
+};
+
+export const StackedCenterWithIcon: Story = {
+  args: {
+    layout: "StackedCenter",
+    displayBuildingIcon: true,
+    buildingIconSlot: icon,
+  },
+};
+
+export const StackedLeft: Story = {
+  args: {
+    layout: "StackedLeft",
+  },
+};
+
+export const StackedLeftWithIcon: Story = {
+  args: {
+    layout: "StackedLeft",
+    displayBuildingIcon: true,
+    buildingIconSlot: icon,
+  },
 };

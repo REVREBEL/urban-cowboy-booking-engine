@@ -1,30 +1,34 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { BuildingIcon } from "@/components/rooms/BuildingIcon";
+import {
+  BuildingIcon,
+  type BuildingIconName,
+} from "@/components/rooms/BuildingIcon";
+
+const variants: BuildingIconName[] = [
+  "Default",
+  "Alpine",
+  "SlideMountain",
+  "Ralphs",
+  "Chalet",
+  "ForestHaus",
+  "MountianViewHaus",
+  "EstonianSauna",
+  "Cabin",
+  "OpasCabin",
+];
 
 const meta = {
-  title: "Components/Rooms/RoomTypeList/BuildingIcon",
+  title: "Components/Rooms/BuildingIcon",
   component: BuildingIcon,
   tags: ["autodocs"],
   args: {
-    group: "alpine",
+    buildingName: "Default",
+    decorative: true,
   },
   argTypes: {
-    group: {
+    buildingName: {
       control: "select",
-      options: [
-        "alpine",
-        "walden",
-        "lodge",
-        "forest-house",
-        "cabin",
-        "chalet",
-        "opas",
-        "slide-mountain",
-        "mountain-view",
-      ],
-    },
-    decorative: {
-      control: "boolean",
+      options: variants,
     },
   },
   parameters: {
@@ -35,10 +39,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Alpine: Story = {};
+export const Default: Story = {};
 
-export const OpaCabin: Story = {
-  args: {
-    group: "opas",
-  },
+export const AllFigmaVariants: Story = {
+  render: () => (
+    <div className="flex w-[325px] flex-col items-center gap-[24px] p-[20px]">
+      {variants.map((buildingName) => (
+        <BuildingIcon
+          key={buildingName}
+          buildingName={buildingName}
+          decorative
+        />
+      ))}
+    </div>
+  ),
 };
