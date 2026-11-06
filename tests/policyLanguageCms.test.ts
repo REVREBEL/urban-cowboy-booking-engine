@@ -53,13 +53,19 @@ test("blank labels fall back independently and draft settings are ignored", () =
   }), {});
 });
 
-test("production rate cards use dynamic milestone dates and CMS phase labels", () => {
+test("production rate cards render live milestones and CMS language through Figma components", () => {
   const tray = source("src/components/rates/ProductionRateTray.tsx");
-  assert.match(tray, /timeline\.phases\.map/);
-  assert.match(tray, /phaseHeading\(phase\.kind, language\)/);
-  assert.match(tray, /dateTime=\{phase\.end\}/);
-  assert.match(tray, /language\.atTimeOfBookingSubTitle/);
-  assert.match(tray, /language\.nextDueDateSubTitle/);
+  const presentation = source("src/components/rates/FigmaRateComponents.tsx");
+  assert.match(tray, /timelineForRate\(rate, config, checkIn\)/);
+  assert.match(tray, /phaseHeading\(timeline.currentPhase, language\)/);
+  assert.match(tray, /language=\{language\}/);
+  assert.match(presentation, /timeline.phases.map/);
+  assert.match(presentation, /dateTime=\{phase.start\}/);
+  assert.match(presentation, /language\?\.refundableLanguage/);
+  assert.match(presentation, /language\?\.partiallyRefundableLanguage/);
+  assert.match(presentation, /language\?\.nonRefundableLanguage/);
+  assert.match(presentation, /language\?\.atTimeOfBookingSubTitle/);
+  assert.match(presentation, /language\?\.nextDueDateSubTitle/);
   assert.match(source("worker/index.ts"), /return policyLanguage\(\{ env \}\)/);
   for (const path of ["src/journey/PhotoRateStep.tsx", "src/steps/Rates.tsx"]) {
     assert.match(source(path), /policyLanguage=\{policyLanguage\}/);
