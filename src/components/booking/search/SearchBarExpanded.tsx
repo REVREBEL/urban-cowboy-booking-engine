@@ -23,6 +23,7 @@ export interface SearchBarExpandedProps {
   buttonSlot?: React.ReactNode;
   showSearchButton?: boolean;
   dropdownSlot?: React.ReactNode;
+  promoTriggerRef?: React.RefObject<HTMLButtonElement | null>;
   dropdownPlacement?: "above" | "below";
   /** Keep an above-the-bar dropdown within the available viewport without moving its bottom anchor. */
   constrainAboveToViewport?: boolean;
@@ -147,6 +148,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   buttonSlot,
   showSearchButton = true,
   dropdownSlot,
+  promoTriggerRef: externalPromoTriggerRef,
   dropdownPlacement = "below",
   constrainAboveToViewport = false,
   isLoading = false,
@@ -162,6 +164,8 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   const [internalActiveSection, setInternalActiveSection] = useState<ActiveDropdownSection>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const datesTriggerRef = useRef<HTMLButtonElement>(null);
+  const internalPromoTriggerRef = useRef<HTMLButtonElement>(null);
+  const promoTriggerRef = externalPromoTriggerRef ?? internalPromoTriggerRef;
   const [availableAbove, setAvailableAbove] = useState<number | null>(null);
 
   const currentValues = controlledValues ?? internalValues;
@@ -214,7 +218,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
           <SearchSection label="Guests" value={<span>{currentValues.guests}</span>} section="guests" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         <div className="border-b border-input-foreground/10 md:border-b-0 md:border-r">
-          <SearchSection label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
+          <SearchSection ref={promoTriggerRef} label="Promo" value={currentValues.promoCode || "Add promo"} section="promo" activeSection={currentActiveSection} onClick={toggleSection} />
         </div>
         {showSearchButton && (
           <div className="flex justify-end p-1.5 md:pl-3">
@@ -237,9 +241,12 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
             : undefined}
         >
           {React.isValidElement(dropdownSlot) && currentActiveSection === "dates"
-            ? React.cloneElement(dropdownSlot as React.ReactElement<{ triggerRef?: React.RefObject<HTMLElement | null> }>, {
-                triggerRef: datesTriggerRef,
-              })
+            ? React.cloneElement(
+                dropdownSlot as React.ReactElement<{
+                  triggerRef?: React.RefObject<HTMLElement | null>;
+                }>,
+                { triggerRef: datesTriggerRef },
+              )
             : dropdownSlot}
         </div>
       )}

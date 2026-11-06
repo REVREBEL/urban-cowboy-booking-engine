@@ -5,9 +5,10 @@ export interface SearchBarPromoDropdownProps {
   value?: string;
   initialValue?: string;
   onChange?: (val: string) => void;
-  onApply?: (val: string) => Promise<void> | void;
+  onApply?: (val: string, signal?: AbortSignal) => Promise<void> | void;
   onClose?: () => void;
   className?: string;
+  triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
 export interface PromoValidationResult {
@@ -83,6 +84,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
   onApply,
   onClose,
   className = '',
+  triggerRef: externalTriggerRef,
 }) => {
   const [internalValue, setInternalValue] = useState<string>(initialValue);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -93,11 +95,61 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
 
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const internalTriggerRef = useRef<HTMLElement | null>(null);
+  const applyRequestRef = useRef(0);
+  const applyAbortRef = useRef<AbortController | null>(null);
 
-  // Focus input automatically upon mounting
+  const cancelPendingApply = () => {
+    applyRequestRef.current += 1;
+    applyAbortRef.current?.abort();
+    applyAbortRef.current = null;
+  };
+
+  const restoreTriggerFocus = () => {
+    const trigger = internalTriggerRef.current;
+    window.setTimeout(() => {
+      if (trigger?.isConnected) trigger.focus();
+    }, 0);
+  };
+
   useEffect(() => {
+    if (externalTriggerRef?.current) {
+      internalTriggerRef.current = externalTriggerRef.current;
+    } else {
+      internalTriggerRef.current =
+        document.querySelector<HTMLElement>('button[aria-expanded="true"]') ||
+        (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    }
+
     inputRef.current?.focus();
+  }, [externalTriggerRef]);
+
+  useEffect(() => {
+    return () => {
+      cancelPendingApply();
+    };
   }, []);
+
+  useEffect(() => {
+    if (!onClose) return;
+
+    const handleDocumentKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      cancelPendingApply();
+      onClose();
+      restoreTriggerFocus();
+    };
+
+    document.addEventListener('keydown', handleDocumentKeyDown, true);
+    return () => {
+      document.removeEventListener('keydown', handleDocumentKeyDown, true);
+    };
+  }, [onClose]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
@@ -127,15 +179,45 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
       return;
     }
 
+    const activeBeforeApply = document.activeElement;
+    const startedInsideDialog =
+      activeBeforeApply instanceof HTMLElement &&
+      (dialogRef.current?.contains(activeBeforeApply) ||
+        activeBeforeApply === dialogRef.current);
+
+    const requestId = applyRequestRef.current + 1;
+    applyRequestRef.current = requestId;
+    applyAbortRef.current?.abort();
+    const controller = new AbortController();
+    applyAbortRef.current = controller;
+
     setIsVerifying(true);
     setStatusFeedback(null);
 
     try {
       if (onApply) {
-        await onApply(trimmed);
+        await onApply(trimmed, controller.signal);
+        if (controller.signal.aborted || requestId !== applyRequestRef.current) return;
+
+        const activeAfterApply = document.activeElement;
+        const focusWasLost =
+          activeAfterApply === document.body ||
+          activeAfterApply === document.documentElement ||
+          activeAfterApply === null;
+        const focusStillInside =
+          activeAfterApply instanceof HTMLElement &&
+          (dialogRef.current?.contains(activeAfterApply) ||
+            activeAfterApply === dialogRef.current);
+        const shouldRestoreFocus =
+          startedInsideDialog && (focusWasLost || focusStillInside);
+
+        onClose?.();
+        if (onClose && shouldRestoreFocus) restoreTriggerFocus();
       } else {
         // Default local verification according to SKILL.md
         await new Promise((resolve) => setTimeout(resolve, 600));
+        if (controller.signal.aborted || requestId !== applyRequestRef.current) return;
+
         const normalized = trimmed.toUpperCase();
         if (
           normalized === 'FALL2026' ||
@@ -154,12 +236,16 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
         }
       }
     } catch {
+      if (controller.signal.aborted || requestId !== applyRequestRef.current) return;
       setStatusFeedback({
         isValid: false,
         errorMessage: 'Failed to apply code',
       });
     } finally {
-      setIsVerifying(false);
+      if (requestId === applyRequestRef.current) {
+        if (applyAbortRef.current === controller) applyAbortRef.current = null;
+        setIsVerifying(false);
+      }
     }
   };
 
@@ -167,17 +253,16 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
     if (e.key === 'Enter') {
       e.preventDefault();
       handleApply();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      onClose?.();
     }
   };
 
   return (
     <div
+      ref={dialogRef}
+      tabIndex={-1}
       role="dialog"
       aria-label="Promo code entry"
-      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] ${className}`}
+      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-input-border ${className}`}
     >
       {/* Container: 223px x 99px, padding: 8px 0px, gap: 8px */}
       <div className="flex flex-col items-start py-2 px-0 gap-2 w-55.75 h-24.75 self-stretch">

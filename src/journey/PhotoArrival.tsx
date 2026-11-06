@@ -2,7 +2,7 @@
  * Photo-first arrival screen, ported from visual-booking-flow/src/routes/journey.tsx.
  * Only the editorial UI is imported; stay criteria use the canonical BookingProvider.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useBooking } from "../state/booking";
 import { ROOM_IMAGE_ASSETS } from "../data/roomImagePlaceholders";
 import { resetPhotoJourney } from "./photoSession";
@@ -192,6 +192,7 @@ export function Arrive(props: {
   stories: readonly ArrivalStory[] | null;
   showQuickSelect: boolean;
 }) {
+  const promoTriggerRef = useRef<HTMLButtonElement>(null);
   const ready = props.nights > 0;
   const childCount = props.children + props.infants;
   const guestLabel = `${props.adults} adult${props.adults === 1 ? "" : "s"}${
@@ -225,6 +226,7 @@ export function Arrive(props: {
               }}
               activeSection={props.activeSection}
               onSectionClick={props.setActiveSection}
+              promoTriggerRef={promoTriggerRef}
               dropdownPlacement="above"
               constrainAboveToViewport
               className="max-w-none!"
@@ -268,11 +270,11 @@ export function Arrive(props: {
                   {props.activeSection === "promo" && (
                     <div className="flex justify-end">
                       <SearchBarPromoDropdown
+                        triggerRef={promoTriggerRef}
                         value={props.promoCode}
                         onChange={props.setPromoCode}
                         onApply={(value) => {
                           props.setPromoCode(value);
-                          props.setActiveSection(null);
                         }}
                         onClose={() => props.setActiveSection(null)}
                       />
