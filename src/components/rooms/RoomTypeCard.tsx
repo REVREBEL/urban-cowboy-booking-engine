@@ -37,7 +37,7 @@ export function RoomTypeCard({
       data-figma-node={isFocus ? "1352:14811" : "1352:2574"}
       data-state={state}
       className={[
-        "flex h-[345.328px] w-[410px] shrink-0 flex-col items-center justify-center rounded-[6px] p-[20px]",
+        "flex min-h-[345.328px] w-full min-w-0 flex-col items-center justify-center rounded-[6px] p-[20px]",
         isFocus ? "bg-accent" : "bg-primary-foreground",
         className,
       ]
@@ -50,7 +50,7 @@ export function RoomTypeCard({
       >
         <div
           data-name="RoomTypeImage"
-          className="relative h-[245.328px] w-[368px] shrink-0 overflow-hidden rounded-[8px] bg-smoke"
+          className="relative h-[245.328px] w-full min-w-0 shrink-0 overflow-hidden rounded-[8px] bg-smoke"
         >
           {roomTypeImage ?? (
             <img
@@ -97,13 +97,13 @@ export function RoomTypeCard({
           <div
             data-name="BuildingContentWrapper"
             className={[
-              "isolate flex w-[368px] shrink-0 items-start font-label text-[16px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
+              "isolate flex w-full min-w-0 flex-wrap items-start font-label text-[16px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
               isFocus ? "text-paper" : "text-alpine-linen-fade",
             ].join(" ")}
           >
-            <p className="shrink-0 whitespace-nowrap z-[3]">{buildingName}</p>
+            <p className="min-w-0 z-[3]">{buildingName}</p>
             <p className="w-[20px] shrink-0 text-center z-[2]">·</p>
-            <p className="shrink-0 whitespace-nowrap z-[1]">{numberOfBeds}</p>
+            <p className="min-w-0 z-[1]">{numberOfBeds}</p>
           </div>
         </div>
       </div>
