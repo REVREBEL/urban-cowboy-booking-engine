@@ -23,7 +23,6 @@ const meta = {
     layout: "Default",
     displayBuilding: true,
     roomTypes: makeRoomTypes(4),
-    buildingSectionSlot: rowBuilding,
   },
   argTypes: {
     layout: {
@@ -32,6 +31,14 @@ const meta = {
     },
     displayBuilding: {
       control: "boolean",
+    },
+    buildingSectionSlot: {
+      control: false,
+      description: "ReactNode slot for the Figma BuildingSection component.",
+      table: {
+        type: { summary: "ReactNode" },
+        defaultValue: { summary: "null" },
+      },
     },
   },
   parameters: {
@@ -49,20 +56,28 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  render: (args) => (
+    <RoomListItem {...args} buildingSectionSlot={rowBuilding} />
+  ),
+};
 
 export const Row: Story = {
   args: {
     layout: "Row",
     roomTypes: makeRoomTypes(6),
-    buildingSectionSlot: stackedBuilding,
   },
+  render: (args) => (
+    <RoomListItem {...args} buildingSectionSlot={stackedBuilding} />
+  ),
 };
 
 export const RowReverse: Story = {
   args: {
     layout: "Row Reverse",
     roomTypes: makeRoomTypes(6),
-    buildingSectionSlot: stackedBuilding,
   },
+  render: (args) => (
+    <RoomListItem {...args} buildingSectionSlot={stackedBuilding} />
+  ),
 };

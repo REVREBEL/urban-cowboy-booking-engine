@@ -16,6 +16,14 @@ const meta = {
       control: "select",
       options: ["Default", "Focus"],
     },
+    roomTypeImage: {
+      control: false,
+      description: "ReactNode slot for the room type image.",
+      table: {
+        type: { summary: "ReactNode" },
+        defaultValue: { summary: "Figma default image" },
+      },
+    },
   },
   parameters: {
     layout: "centered",
