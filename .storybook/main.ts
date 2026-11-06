@@ -25,8 +25,9 @@ const config: StorybookConfig = {
     reactDocgen: "react-docgen-typescript",
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
-      propFilter: (prop) =>
-        prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
+      // Keep inherited HTML/React props (e.g. disabled, onClick) visible
+      // in Docs, Controls and the MCP component manifest.
+      propFilter: () => true,
     },
   },
   async viteFinal(config) {
