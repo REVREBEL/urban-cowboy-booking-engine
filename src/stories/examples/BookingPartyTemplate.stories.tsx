@@ -28,7 +28,7 @@ function BookingPartyTemplate({
   const { adults, children } = SCENARIOS[scenario];
 
   return (
-    <section className="flex max-w-md flex-col gap-4 rounded border p-6">
+    <section className="flex w-full flex-col gap-4 rounded border p-6">
       <h2 className="text-xl">Storybook booking scenario</h2>
       <p>Adults: {adults} | Children: {children}</p>
       <p>Dog requested: {dogRequested ? "Yes" : "No"}</p>
