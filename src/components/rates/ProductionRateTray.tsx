@@ -9,10 +9,8 @@ import { cancellationConfirmation } from "@/lib/rateCardLiveContent";
 import {
   buildCancellationTimeline,
   formatShortDate,
-  type CancellationTimeline,
   type PhaseKind,
 } from "@/lib/cancellationTimeline";
-import { money } from "@/lib/format";
 
 // Named action slots keep every rate-card and tray action on the global Button system.
 type RateActionSlot = "change-room" | "details" | "select" | "close-details" | "browse-rooms";
@@ -60,10 +58,6 @@ const PHASE_COPY: Record<PhaseKind, {
 function phaseHeading(phase: PhaseKind, language: PolicyLanguage) {
   return language[PHASE_COPY[phase].title];
 }
-function phaseSubtitle(phase: PhaseKind, language: PolicyLanguage) {
-  return language[PHASE_COPY[phase].subtitle];
-}
-
 interface ProductionRateTrayProps {
   roomName: string;
   checkIn: string;
@@ -75,11 +69,6 @@ interface ProductionRateTrayProps {
   onSelectRate: (rate: ShapedRate) => void;
   onChangeRoom: () => void;
   showChangeRoomAction?: boolean;
-}
-
-function formatMoney(amount: number | null | undefined, currency: string) {
-  const value = typeof amount === "number" && Number.isFinite(amount) ? amount : 0;
-  return money(value, currency, { locale: "en-US" });
 }
 
 const rateSelectionHeadingFmt = new Intl.DateTimeFormat("en-US", {
@@ -194,97 +183,6 @@ function timelineForRate(
   });
 }
 
-function RateDetailBody({
-  rate,
-  config,
-  checkIn,
-  nights,
-  language,
-}: {
-  rate: ShapedRate;
-  config: RateCardConfig | null;
-  checkIn: string;
-  nights: number;
-  language: PolicyLanguage;
-}) {
-  const pricing = pricingForRate(rate, nights);
-  const timeline = useMemo(
-    () => timelineForRate(rate, config, checkIn),
-    [rate, config, checkIn],
-  );
-  const policyText = config
-    ? cancellationConfirmation(rate, config, checkIn)
-    : rate.knownRateGroup === "NON_REFUNDABLE"
-      ? "Full Prepay Non Refundable"
-      : "See rate details for cancellation terms";
-
-  const description =
-    config?.description ||
-    rate.description ||
-    "Book direct for the best available offer.";
-
-  return (
-    <>
-      <div className="rc-details-grid">
-        <section className="rc-desc">
-          <h3 className="rc-h2">About this rate</h3>
-          <p>{description}</p>
-          {config?.supportingText && <p>{config.supportingText}</p>}
-          <p>
-            <strong>Cancellation:</strong> {policyText}
-          </p>
-        </section>
-
-        <section className="rc-table" aria-label="Stay pricing">
-          <h3 className="rc-h2">Stay pricing</h3>
-          <Row
-            label={`Nightly average · ${nights} ${nights === 1 ? "night" : "nights"}`}
-            value={formatMoney(pricing.nightly, rate.currency)}
-          />
-          <Row
-            label="Stay before taxes"
-            value={formatMoney(pricing.subtotal, rate.currency)}
-          />
-          <Row
-            label="Taxes & fees"
-            value={formatMoney(pricing.taxes, rate.currency)}
-          />
-          <Row
-            label="Total stay"
-            value={formatMoney(pricing.total, rate.currency)}
-            strong
-          />
-        </section>
-      </div>
-
-      {timeline ? (
-        <Timeline timeline={timeline} currency={rate.currency} language={language} />
-      ) : (
-        <section className="rc-timeline" aria-label="Cancellation and payment summary">
-          <div className="rc-tl-head">
-            <h3 className="rc-h2">Cancellation & payment</h3>
-            <p className="rc-today">{policyText}</p>
-          </div>
-          <div className="rc-charges">
-            <div>
-              <small>{language.atTimeOfBooking}</small>
-              <span className="rc-charge-subtitle">{language.atTimeOfBookingSubTitle}</span>
-              <b className="rc-num">
-                {formatMoney(
-                  rate.knownRateGroup === "NON_REFUNDABLE"
-                    ? pricing.total
-                    : pricing.total * depositShareForRate(rate),
-                  rate.currency,
-                )}
-              </b>
-            </div>
-          </div>
-        </section>
-      )}
-    </>
-  );
-}
-
 export function ProductionRateTray({
   roomName,
   checkIn,
@@ -340,7 +238,6 @@ export function ProductionRateTray({
         <div className="rc-grid">
           {sortedRates.map((rate, index) => {
             const config = resolveRateCardConfig(configs, rate.rateId);
-            const pricing = pricingForRate(rate, nights);
             const timeline = timelineForRate(rate, config, checkIn);
             const isOpen = openRateId === rate.rateId;
             const isSelected = selectedRateId === rate.rateId;
@@ -449,124 +346,3 @@ export function ProductionRateTray({
   );
 }
 
-function Row({
-  label,
-  value,
-  strong,
-}: {
-  label: string;
-  value: string;
-  strong?: boolean;
-}) {
-  return (
-    <div className={`rc-row ${strong ? "is-strong" : ""}`}>
-      <span>{label}</span>
-      <span className="rc-num">{value}</span>
-    </div>
-  );
-}
-
-function MiniBar({ timeline }: { timeline: CancellationTimeline }) {
-  return (
-    <div className="rc-mini" aria-hidden>
-      {timeline.phases.map((phase) => (
-        <span
-          key={phase.kind}
-          className="rc-seg"
-          data-phase={phase.kind}
-          style={{ flexGrow: phase.weight }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function Timeline({
-  timeline,
-  currency,
-  language,
-}: {
-  timeline: CancellationTimeline;
-  currency: string;
-  language: PolicyLanguage;
-}) {
-  const balance = timeline.charges[1];
-
-  return (
-    <section className="rc-timeline" aria-label="Cancellation timeline">
-      <div className="rc-tl-head">
-        <h3 className="rc-h2">If you cancel</h3>
-        <p className="rc-today">
-          Cancel today and get back{" "}
-          <strong>{formatMoney(timeline.refundIfCancelToday, currency)}</strong>
-        </p>
-      </div>
-
-      {timeline.warning && <p className="rc-warning">{timeline.warning}</p>}
-
-      <ol className="rc-track">
-        {timeline.phases.map((phase, index) => (
-          <li
-            key={phase.kind}
-            className="rc-phase"
-            data-phase={phase.kind}
-            style={{ flexGrow: phase.weight }}
-          >
-            <div className="rc-marker">
-              {index === 0 ? (
-                <span className="rc-pin">You are here</span>
-              ) : (
-                <span className="rc-date">
-                  <b>{formatShortDate(phase.start)}</b>
-                  <small>
-                    {phase.kind === "deposit-kept"
-                      ? language.partiallyRefundableLanguageSubTitle
-                      : language.nonRefundableLanguageSubTitle}
-                  </small>
-                </span>
-              )}
-            </div>
-            <div className="rc-bar">
-              {phase.compressed && (
-                <span className="rc-break" aria-hidden>
-                  ⫽
-                </span>
-              )}
-            </div>
-            <div className="rc-phase-copy">
-              <b>{phaseHeading(phase.kind, language)}</b>
-              <span>{phaseSubtitle(phase.kind, language)}</span>
-              <small>
-                {phase.days === 0
-                  ? "Arrival day"
-                  : `${phase.days} ${phase.days === 1 ? "day" : "days"}`}
-              </small>
-            </div>
-          </li>
-        ))}
-
-        <li className="rc-arrive">
-          <span className="rc-date">
-            <b>{formatShortDate(timeline.phases.at(-1)!.end)}</b>
-            <small>Arrive</small>
-          </span>
-        </li>
-      </ol>
-
-      <div className="rc-charges">
-        <div>
-          <small>{language.atTimeOfBooking}</small>
-          <span className="rc-charge-subtitle">{language.atTimeOfBookingSubTitle}</span>
-          <b className="rc-num">{formatMoney(timeline.dueToday, currency)}</b>
-        </div>
-        {balance && (
-          <div>
-            <small>{language.nextDueDate} · {formatShortDate(balance.date)}</small>
-            <span className="rc-charge-subtitle">{language.nextDueDateSubTitle}</span>
-            <b className="rc-num">{formatMoney(balance.amount, currency)}</b>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
