@@ -400,11 +400,6 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   const fullCancellationPolicyForRate = (liveRate: ShapedRate) =>
     liveRate.description || 'See rate details for the full cancellation policy.';
 
-  // Preserve the existing English display treatment while reusing the shared
-  // UTC formatter cache instead of constructing/looking up formatters per render.
-  const formatDateDisplay = (dateStr: string) =>
-    fmtDate(dateStr, { locale: 'en-US' });
-
   return (
     <div className="w-full texture-linen min-h-screen pb-24 overflow-x-hidden">
       {/* ================= TOP HEADER BAR: SELECTED ROOM & TRIP SPECS ================= */}
@@ -446,7 +441,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     DATES
                   </span>
                   <span className="block text-xs sm:text-sm font-sans font-bold text-smoke mt-0.5 whitespace-nowrap">
-                    {formatDateDisplay(criteria.checkIn)} – {formatDateDisplay(criteria.checkOut)}
+                    {fmtDate(criteria.checkIn, { locale: 'en-US' })} – {fmtDate(criteria.checkOut, { locale: 'en-US' })}
                   </span>
                 </div>
               </div>
