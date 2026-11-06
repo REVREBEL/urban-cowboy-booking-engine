@@ -1,7 +1,7 @@
 // src/stories/components/rooms/FocusAmenityIcons.stories.tsx
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import React, { useState } from 'react';
+import { useState } from "react";
 
 import {
   AmenityIcon,
