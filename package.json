@@ -88,7 +88,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@babel/parser": "^7.29.13",
+    "@babel/parser": "^8.0.0",
     "@chromatic-com/storybook": "latest",
     "@cloudflare/workers-types": "^5.20261009.1",
     "@storybook/addon-a11y": "^10.6.1",
