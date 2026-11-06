@@ -10,6 +10,7 @@ import {
   formatRateCardPrice,
   rateCardPricePresentation,
 } from '../../lib/rateCardLiveContent';
+import { fmtDate, fmtMonthDay } from '../../lib/format';
 import { ConfigurableRateOffer } from './ConfigurableRateOffer';
 import { OffersCard } from './RideEasyOffersCard';
 import { OffersCardOutfit } from './OutfitOffersCard';
@@ -333,7 +334,6 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
   };
 
   const priceFormatterCache = useRef<Map<string, Intl.NumberFormat>>(new Map());
-  const dueDateFormat = useRef<Intl.DateTimeFormat | null>(null);
 
   const formatLivePrice = (liveRate: ShapedRate, amount: number) =>
     formatRateCardPrice(liveRate.currency, amount, priceFormatterCache.current);
@@ -392,34 +392,13 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
     const due = new Date(Date.UTC(year, month - 1, day, 12));
     const days = period === 'days' ? window : window / 24;
     due.setUTCDate(due.getUTCDate() - days);
+    if (!Number.isFinite(due.getTime())) return 'Due before arrival';
 
-    if (!dueDateFormat.current) {
-      dueDateFormat.current = new Intl.DateTimeFormat('en-US', {
-        month: 'short',
-        day: 'numeric',
-        timeZone: 'UTC',
-      });
-    }
-    return `Due ${dueDateFormat.current.format(due)}`;
+    return `Due ${fmtMonthDay(due.toISOString(), { locale: 'en-US' })}`;
   };
 
   const fullCancellationPolicyForRate = (liveRate: ShapedRate) =>
     liveRate.description || 'See rate details for the full cancellation policy.';
-
-  // Format date string for display (e.g. "Oct 14, 2026")
-  const formatDateDisplay = (dateStr: string) => {
-    try {
-      const parts = dateStr.split('-');
-      if (parts.length === 3) {
-        const [y, m, d] = parts.map(Number);
-        const date = new Date(y, m - 1, d);
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      }
-      return dateStr;
-    } catch {
-      return dateStr;
-    }
-  };
 
   return (
     <div className="w-full texture-linen min-h-screen pb-24 overflow-x-hidden">
@@ -462,7 +441,7 @@ export const RateSelectionView: React.FC<RateSelectionViewProps> = ({
                     DATES
                   </span>
                   <span className="block text-xs sm:text-sm font-sans font-bold text-smoke mt-0.5 whitespace-nowrap">
-                    {formatDateDisplay(criteria.checkIn)} – {formatDateDisplay(criteria.checkOut)}
+                    {fmtDate(criteria.checkIn, { locale: 'en-US' })} – {fmtDate(criteria.checkOut, { locale: 'en-US' })}
                   </span>
                 </div>
               </div>
