@@ -1,3 +1,4 @@
+import { FigmaRateCard, FigmaRateDetailPopup } from "./FigmaRateComponents";
 import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
@@ -8,10 +9,8 @@ import { cancellationConfirmation } from "@/lib/rateCardLiveContent";
 import {
   buildCancellationTimeline,
   formatShortDate,
-  type CancellationTimeline,
   type PhaseKind,
 } from "@/lib/cancellationTimeline";
-import { money } from "@/lib/format";
 
 // Named action slots keep every rate-card and tray action on the global Button system.
 type RateActionSlot = "change-room" | "details" | "select" | "close-details" | "browse-rooms";
@@ -59,10 +58,6 @@ const PHASE_COPY: Record<PhaseKind, {
 function phaseHeading(phase: PhaseKind, language: PolicyLanguage) {
   return language[PHASE_COPY[phase].title];
 }
-function phaseSubtitle(phase: PhaseKind, language: PolicyLanguage) {
-  return language[PHASE_COPY[phase].subtitle];
-}
-
 interface ProductionRateTrayProps {
   roomName: string;
   checkIn: string;
@@ -74,11 +69,6 @@ interface ProductionRateTrayProps {
   onSelectRate: (rate: ShapedRate) => void;
   onChangeRoom: () => void;
   showChangeRoomAction?: boolean;
-}
-
-function formatMoney(amount: number | null | undefined, currency: string) {
-  const value = typeof amount === "number" && Number.isFinite(amount) ? amount : 0;
-  return money(value, currency, { locale: "en-US" });
 }
 
 const rateSelectionHeadingFmt = new Intl.DateTimeFormat("en-US", {
@@ -193,97 +183,6 @@ function timelineForRate(
   });
 }
 
-function RateDetailBody({
-  rate,
-  config,
-  checkIn,
-  nights,
-  language,
-}: {
-  rate: ShapedRate;
-  config: RateCardConfig | null;
-  checkIn: string;
-  nights: number;
-  language: PolicyLanguage;
-}) {
-  const pricing = pricingForRate(rate, nights);
-  const timeline = useMemo(
-    () => timelineForRate(rate, config, checkIn),
-    [rate, config, checkIn],
-  );
-  const policyText = config
-    ? cancellationConfirmation(rate, config, checkIn)
-    : rate.knownRateGroup === "NON_REFUNDABLE"
-      ? "Full Prepay Non Refundable"
-      : "See rate details for cancellation terms";
-
-  const description =
-    config?.description ||
-    rate.description ||
-    "Book direct for the best available offer.";
-
-  return (
-    <>
-      <div className="rc-details-grid">
-        <section className="rc-desc">
-          <h3 className="rc-h2">About this rate</h3>
-          <p>{description}</p>
-          {config?.supportingText && <p>{config.supportingText}</p>}
-          <p>
-            <strong>Cancellation:</strong> {policyText}
-          </p>
-        </section>
-
-        <section className="rc-table" aria-label="Stay pricing">
-          <h3 className="rc-h2">Stay pricing</h3>
-          <Row
-            label={`Nightly average · ${nights} ${nights === 1 ? "night" : "nights"}`}
-            value={formatMoney(pricing.nightly, rate.currency)}
-          />
-          <Row
-            label="Stay before taxes"
-            value={formatMoney(pricing.subtotal, rate.currency)}
-          />
-          <Row
-            label="Taxes & fees"
-            value={formatMoney(pricing.taxes, rate.currency)}
-          />
-          <Row
-            label="Total stay"
-            value={formatMoney(pricing.total, rate.currency)}
-            strong
-          />
-        </section>
-      </div>
-
-      {timeline ? (
-        <Timeline timeline={timeline} currency={rate.currency} language={language} />
-      ) : (
-        <section className="rc-timeline" aria-label="Cancellation and payment summary">
-          <div className="rc-tl-head">
-            <h3 className="rc-h2">Cancellation & payment</h3>
-            <p className="rc-today">{policyText}</p>
-          </div>
-          <div className="rc-charges">
-            <div>
-              <small>{language.atTimeOfBooking}</small>
-              <span className="rc-charge-subtitle">{language.atTimeOfBookingSubTitle}</span>
-              <b className="rc-num">
-                {formatMoney(
-                  rate.knownRateGroup === "NON_REFUNDABLE"
-                    ? pricing.total
-                    : pricing.total * depositShareForRate(rate),
-                  rate.currency,
-                )}
-              </b>
-            </div>
-          </div>
-        </section>
-      )}
-    </>
-  );
-}
-
 export function ProductionRateTray({
   roomName,
   checkIn,
@@ -339,7 +238,6 @@ export function ProductionRateTray({
         <div className="rc-grid">
           {sortedRates.map((rate, index) => {
             const config = resolveRateCardConfig(configs, rate.rateId);
-            const pricing = pricingForRate(rate, nights);
             const timeline = timelineForRate(rate, config, checkIn);
             const isOpen = openRateId === rate.rateId;
             const isSelected = selectedRateId === rate.rateId;
@@ -359,81 +257,29 @@ export function ProductionRateTray({
                 : "See rate details for cancellation terms";
 
             return (
-              <article
+              <FigmaRateCard
                 key={rate.rateId}
-                className={`rc-rate ${isSelected ? "is-chosen" : ""} ${isOpen ? "is-open" : ""}`}
-              >
-                <p className="rc-eyebrow">{eyebrow}</p>
-                <h2 className="rc-name">{headline}</h2>
-                {description && <p className="rc-rate-sub">{description}</p>}
-                {config?.supportingText && (
-                  <p className="rc-rate-supporting">{config.supportingText}</p>
-                )}
-
-                {timeline && (
-                  <ol className="rc-card-milestones" aria-label="Cancellation milestones">
-                    {timeline.phases.map((phase) => (
-                      <li key={phase.kind}>
-                        <span>{phaseHeading(phase.kind, language)}</span>
-                        <time dateTime={phase.end}>
-                          {formatShortDate(phase.end)}
-                        </time>
-                      </li>
-                    ))}
-                  </ol>
-                )}
-
-                <div className="rc-rate-spacer" />
-
-                <p
-                  className="rc-policy-line"
-                  data-phase={timeline?.currentPhase ?? (rate.knownRateGroup === "NON_REFUNDABLE" ? "locked" : undefined)}
-                >
-                  {timeline
-                    ? `${phaseHeading(timeline.currentPhase, language)}${timeline.phases.length > 1 ? ` until ${formatShortDate(timeline.phases[0].end)}` : ""}`
-                    : rate.knownRateGroup === "NON_REFUNDABLE"
-                      ? language.nonRefundableLanguage
-                      : policyText}
-                </p>
-
-                {timeline && <MiniBar timeline={timeline} />}
-
-                <div className="rc-rate-price">
-                  <span>
-                    {formatMoney(pricing.nightly, rate.currency)} × {nights}{" "}
-                    {nights === 1 ? "night" : "nights"}
-                  </span>
-                  <b className="rc-num">
-                    {formatMoney(pricing.total, rate.currency)}
-                  </b>
-                </div>
-
-                <div className="rc-actions">
-                  <RateAction
-                    slot="details"
-                    aria-expanded={isOpen}
-                    onClick={() => {
-                      if (isOpen) {
-                        closeDrawer();
-                        return;
-                      }
-                      setIsDrawerClosing(false);
-                      setOpenRateId(rate.rateId);
-                    }}
-                  >
-                    {isOpen ? "Hide details" : "View details"}
-                  </RateAction>
-                  <RateAction
-                    slot="select"
-                    disabled={rate.totalGross == null}
-                    onClick={() => onSelectRate(rate)}
-                  >
-                    {isSelected
-                      ? "Selected"
-                      : config?.ctaLabel?.trim() || "Choose this rate"}
-                  </RateAction>
-                </div>
-              </article>
+                eyebrow={eyebrow}
+                name={headline}
+                description={[description, config?.supportingText].filter(Boolean).join(" ")}
+                policy={timeline
+                  ? `${phaseHeading(timeline.currentPhase, language)}${timeline.phases.length > 1 ? ` until ${formatShortDate(timeline.phases[0].end)}` : ""}`
+                  : rate.knownRateGroup === "NON_REFUNDABLE" ? language.nonRefundableLanguage : policyText}
+                roomSummary={`${roomName}, ${nights} ${nights === 1 ? "night" : "nights"}`}
+                total={rate.totalGross}
+                currency={rate.currency}
+                variant={config?.memberOnly || rate.isPrivate ? "member" : rate.knownRateGroup === "PACKAGE" ? "package" : "default"}
+                isSelected={isSelected}
+                onDetails={() => {
+                  if (isOpen) { closeDrawer(); return; }
+                  setIsDrawerClosing(false);
+                  setOpenRateId(rate.rateId);
+                }}
+                detailsLabel={isOpen ? "Hide Details" : "View Details"}
+                onConfirm={() => onSelectRate(rate)}
+                // Until member eligibility is wired into the booking flow, do not imply an unlock occurred.
+                confirmLabel={config?.ctaLabel?.trim() || (config?.memberOnly || rate.isPrivate ? "Choose this rate" : undefined)}
+              />
             );
           })}
         </div>
@@ -454,7 +300,7 @@ export function ProductionRateTray({
               onClick={closeDrawer}
             />
             <div
-              className="rc-drawer"
+              className="rc-drawer rc-figma-drawer"
               role="dialog"
               aria-modal="true"
               aria-label={`${openConfig?.headline || openRate.name} details`}
@@ -465,38 +311,26 @@ export function ProductionRateTray({
                 setIsDrawerClosing(false);
               }}
             >
-              <div className="rc-sheet-head">
-                <div>
-                  <p className="rc-eyebrow">{openConfig?.eyebrow || "Rate details"}</p>
-                  <h2 className="rc-name">{openConfig?.headline || openRate.name}</h2>
-                </div>
-                <RateAction slot="close-details" onClick={closeDrawer}>
-                  Close ×
-                </RateAction>
-              </div>
-
-              <div className="rc-drawer-body">
-                <RateDetailBody
-                  rate={openRate}
-                  config={openConfig}
-                  checkIn={checkIn}
-                  nights={nights}
-                  language={language}
-                />
-              </div>
-
-              <div className="rc-production-tray-actions">
-                <b className="rc-num">
-                  {formatMoney(openRate.totalGross, openRate.currency)}
-                </b>
-                <RateAction
-                  slot="select"
-                  disabled={openRate.totalGross == null}
-                  onClick={() => onSelectRate(openRate)}
-                >
-                  {openConfig?.ctaLabel?.trim() || "Choose this rate"}
-                </RateAction>
-              </div>
+              <FigmaRateDetailPopup
+                name={openConfig?.headline || openRate.name}
+                eyebrow={openConfig?.eyebrow || "Rate details"}
+                description={openConfig?.description || openRate.description || "Book direct for the best available offer."}
+                nightly={pricingForRate(openRate, nights).nightly}
+                subtotal={pricingForRate(openRate, nights).subtotal}
+                taxes={pricingForRate(openRate, nights).taxes}
+                total={pricingForRate(openRate, nights).total}
+                currency={openRate.currency}
+                nights={nights}
+                policyText={openConfig
+                  ? cancellationConfirmation(openRate, openConfig, checkIn)
+                  : openRate.knownRateGroup === "NON_REFUNDABLE" ? "Full Prepay Non Refundable" : "See rate details for cancellation terms"}
+                timeline={timelineForRate(openRate, openConfig, checkIn)}
+                arrivalDate={checkIn}
+                language={language}
+                onClose={closeDrawer}
+                onConfirm={() => onSelectRate(openRate)}
+                disabled={openRate.totalGross == null}
+              />
             </div>
           </div>
         )}
@@ -514,124 +348,3 @@ export function ProductionRateTray({
   );
 }
 
-function Row({
-  label,
-  value,
-  strong,
-}: {
-  label: string;
-  value: string;
-  strong?: boolean;
-}) {
-  return (
-    <div className={`rc-row ${strong ? "is-strong" : ""}`}>
-      <span>{label}</span>
-      <span className="rc-num">{value}</span>
-    </div>
-  );
-}
-
-function MiniBar({ timeline }: { timeline: CancellationTimeline }) {
-  return (
-    <div className="rc-mini" aria-hidden>
-      {timeline.phases.map((phase) => (
-        <span
-          key={phase.kind}
-          className="rc-seg"
-          data-phase={phase.kind}
-          style={{ flexGrow: phase.weight }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function Timeline({
-  timeline,
-  currency,
-  language,
-}: {
-  timeline: CancellationTimeline;
-  currency: string;
-  language: PolicyLanguage;
-}) {
-  const balance = timeline.charges[1];
-
-  return (
-    <section className="rc-timeline" aria-label="Cancellation timeline">
-      <div className="rc-tl-head">
-        <h3 className="rc-h2">If you cancel</h3>
-        <p className="rc-today">
-          Cancel today and get back{" "}
-          <strong>{formatMoney(timeline.refundIfCancelToday, currency)}</strong>
-        </p>
-      </div>
-
-      {timeline.warning && <p className="rc-warning">{timeline.warning}</p>}
-
-      <ol className="rc-track">
-        {timeline.phases.map((phase, index) => (
-          <li
-            key={phase.kind}
-            className="rc-phase"
-            data-phase={phase.kind}
-            style={{ flexGrow: phase.weight }}
-          >
-            <div className="rc-marker">
-              {index === 0 ? (
-                <span className="rc-pin">You are here</span>
-              ) : (
-                <span className="rc-date">
-                  <b>{formatShortDate(phase.start)}</b>
-                  <small>
-                    {phase.kind === "deposit-kept"
-                      ? language.partiallyRefundableLanguageSubTitle
-                      : language.nonRefundableLanguageSubTitle}
-                  </small>
-                </span>
-              )}
-            </div>
-            <div className="rc-bar">
-              {phase.compressed && (
-                <span className="rc-break" aria-hidden>
-                  ⫽
-                </span>
-              )}
-            </div>
-            <div className="rc-phase-copy">
-              <b>{phaseHeading(phase.kind, language)}</b>
-              <span>{phaseSubtitle(phase.kind, language)}</span>
-              <small>
-                {phase.days === 0
-                  ? "Arrival day"
-                  : `${phase.days} ${phase.days === 1 ? "day" : "days"}`}
-              </small>
-            </div>
-          </li>
-        ))}
-
-        <li className="rc-arrive">
-          <span className="rc-date">
-            <b>{formatShortDate(timeline.phases.at(-1)!.end)}</b>
-            <small>Arrive</small>
-          </span>
-        </li>
-      </ol>
-
-      <div className="rc-charges">
-        <div>
-          <small>{language.atTimeOfBooking}</small>
-          <span className="rc-charge-subtitle">{language.atTimeOfBookingSubTitle}</span>
-          <b className="rc-num">{formatMoney(timeline.dueToday, currency)}</b>
-        </div>
-        {balance && (
-          <div>
-            <small>{language.nextDueDate} · {formatShortDate(balance.date)}</small>
-            <span className="rc-charge-subtitle">{language.nextDueDateSubTitle}</span>
-            <b className="rc-num">{formatMoney(balance.amount, currency)}</b>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}

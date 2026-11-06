@@ -650,3 +650,18 @@
   gap: 12px;
 }
 .rc-production .rc-card-milestones time { font-variant-numeric: tabular-nums; opacity: .7; }
+
+/* Figma 1390:30695: let the new detail sheet own its internal spacing and scroll. */
+.rc-production .rc-figma-drawer {
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.rc-production .rc-grid > [data-figma-node="1390:31339"] {
+  min-width: 0;
+}
+@media (max-width: 767px) {
+  .rc-production .rc-figma-drawer {
+    max-height: 90dvh;
+  }
+}
