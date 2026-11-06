@@ -88,8 +88,8 @@ const BUILDING_ICON_CONFIG: Record<
 const BUILDING_ICON_COLOR_CLASS: Record<BuildingIconColor, string> = {
   Smoke: "bg-smoke",
   Snow: "bg-[var(--paper-50)]",
-  LakeForest: "bg-[#184428]",
-  Ash: "bg-[#ccc7bb]",
+  LakeForest: "bg-lake-forest-figma",
+  Ash: "bg-ash",
   Alpine: "bg-alpine-linen-fade",
 };
 

@@ -124,6 +124,10 @@
   --lake-forest-fade:  var(--lake-forest-200);
   --lake-forest:  var(--lake-forest-500);
 
+
+  /* Figma BuildingIcon lake-forest state */
+  --lake-forest-figma: #184428;
+
   /* Lodge Yellow */
   --lodge-yellow-50: oklch(94.57% 0.091 96.98);
   --lodge-yellow-100: oklch(93.48% 0.1072 96.52);
@@ -191,6 +195,11 @@
   --cowboy-umber-fade:  var(--cowboy-umber-200);
   --cowboy-umber:  var(--cowboy-umber-500);
 
+
+  /* Ash */
+  --ash-500: #ccc7bb;
+  --ash: var(--ash-500);
+
   /* Smoke */
   --smoke-50: oklch(69.02% 0.0049 134.86);
   --smoke-100: oklch(62.33% 0.0057 145.51);
@@ -219,6 +228,8 @@
   --color-*: initial;
 
   --color-mist: var(--mist-500);
+  --color-ash: var(--ash);
+  --color-lake-forest-figma: var(--lake-forest-figma);
 
    /* paper */
   --color-paper-muted: var(--paper-600);

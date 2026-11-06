@@ -25,14 +25,17 @@ test("BuildingIcon mirrors all Figma BuildingName variants and exact artwork geo
   assert.match(source, /h-\[144\.028px\]/);
   assert.match(source, /h-\[228\.762px\]/);
   assert.match(source, /size-full/);
-  assert.match(source, /"Smoke" \|/);
-  assert.match(source, /"Snow"/);
-  assert.match(source, /"LakeForest"/);
-  assert.match(source, /"Ash"/);
-  assert.match(source, /"Alpine"/);
-  assert.match(source, /BUILDING_ICON_COLOR_CLASS/);
+  for (const color of ["Smoke", "Snow", "LakeForest", "Ash", "Alpine"]) {
+    assert.match(source, new RegExp(`"${color}"`));
+  }
+  assert.match(source, /Smoke: "bg-smoke"/);
+  assert.match(source, /Snow: "bg-\[var\(--paper-50\)\]"/);
+  assert.match(source, /LakeForest: "bg-lake-forest-figma"/);
+  assert.match(source, /Ash: "bg-ash"/);
+  assert.match(source, /Alpine: "bg-alpine-linen-fade"/);
+  assert.match(source, /const colorClass = BUILDING_ICON_COLOR_CLASS\[color\]/);
+  assert.match(source, /className=\{\["absolute inset-0 block size-full", colorClass\]\.join\(" "\)\}/);
   assert.match(source, /data-color=\{color\}/);
-  assert.match(source, /bg-smoke/);
   assert.match(source, /WebkitMask/);
   assert.match(source, /role="img"/);
   assert.match(source, /aria-label=\{config\.label\}/);
