@@ -75,6 +75,20 @@ export function BuildingDescription({
       </div>
     );
 
+    if (!displayBuildingIcon) {
+      return (
+        <div
+          data-figma-node={layout === "Row" ? "1352:9404" : "1357:16082"}
+          data-layout={layout}
+          className={["flex w-[894px] items-end", className]
+            .filter(Boolean)
+            .join(" ")}
+        >
+          {copy}
+        </div>
+      );
+    }
+
     return (
       <div
         data-figma-node={layout === "Row" ? "1352:9404" : "1357:16082"}

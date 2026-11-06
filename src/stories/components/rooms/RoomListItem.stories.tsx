@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { BuildingDescription } from "@/components/rooms/BuildingDescription";
 import { RoomListItem, type RoomTypeCardData } from "@/components/rooms/RoomListItem";
 
 const makeRoomTypes = (count: number): RoomTypeCardData[] =>
@@ -11,6 +12,9 @@ const makeRoomTypes = (count: number): RoomTypeCardData[] =>
     state: index === 1 ? "Focus" : "Default",
   }));
 
+const rowBuilding = <BuildingDescription layout="Row" />;
+const stackedBuilding = <BuildingDescription layout="StackedCenter" />;
+
 const meta = {
   title: "Components/Rooms/RoomListItem",
   component: RoomListItem,
@@ -19,6 +23,7 @@ const meta = {
     layout: "Default",
     displayBuilding: true,
     roomTypes: makeRoomTypes(4),
+    buildingSectionSlot: rowBuilding,
   },
   argTypes: {
     layout: {
@@ -50,6 +55,7 @@ export const Row: Story = {
   args: {
     layout: "Row",
     roomTypes: makeRoomTypes(6),
+    buildingSectionSlot: stackedBuilding,
   },
 };
 
@@ -57,5 +63,6 @@ export const RowReverse: Story = {
   args: {
     layout: "Row Reverse",
     roomTypes: makeRoomTypes(6),
+    buildingSectionSlot: stackedBuilding,
   },
 };

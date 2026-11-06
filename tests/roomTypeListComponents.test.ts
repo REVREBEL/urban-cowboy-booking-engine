@@ -27,6 +27,8 @@ test("BuildingIcon mirrors all Figma BuildingName variants and exact artwork geo
   assert.match(source, /size-full/);
   assert.match(source, /bg-smoke/);
   assert.match(source, /WebkitMask/);
+  assert.match(source, /role="img"/);
+  assert.match(source, /aria-label=\{config\.label\}/);
   assert.doesNotMatch(source, /decorative\?:/);
   assert.doesNotMatch(source, /loading\?:/);
 });
@@ -45,6 +47,8 @@ test("BuildingDescription mirrors the Figma BuildingSection property contract", 
   assert.match(source, /tracking-\[1px\]/);
   assert.match(source, /font-family:Inter,sans-serif/);
   assert.match(source, /<h2/);
+  assert.match(source, /if \(!displayBuildingIcon\)/);
+  assert.match(source, /flex w-\[894px\] items-end/);
   assert.doesNotMatch(source, /tone\??:/);
 });
 
@@ -65,6 +69,8 @@ test("RoomTypeCard preserves the two Figma states and RoomTypeImage slot", () =>
   assert.match(source, /roomTypeName: string/);
   assert.match(source, /<article/);
   assert.match(source, /<h3/);
+  assert.match(source, /text-alpine-linen-fade/);
+  assert.doesNotMatch(source, /text-\[#e2e2e1\]/);
 });
 
 test("RoomListItem preserves Default, Row, and Row Reverse Figma layouts", () => {
@@ -75,6 +81,12 @@ test("RoomListItem preserves Default, Row, and Row Reverse Figma layouts", () =>
   assert.match(source, /gap-\[30px\]/);
   assert.match(source, /gap-\[40px\]/);
   assert.match(source, /roomTypes\.map/);
+  assert.match(source, /const buildingContent = buildingSectionSlot/);
+  assert.match(
+    source,
+    /\{isRowReverse \? list : buildingPanel\}[\s\S]*\{isDefault \? list : isRow \? list : buildingPanel\}/,
+  );
+  assert.doesNotMatch(source, /<BuildingDescription/);
   assert.doesNotMatch(source, /ROOM_TYPE_GROUP_PRESENTATION/);
   assert.doesNotMatch(source, /ROOM_TYPE_GROUPS/);
 });
@@ -87,6 +99,9 @@ test("RoomTypeList is the exact three-slot Figma composition", () => {
   assert.match(source, /DEFAULT_BUILDING_GROUP_1/);
   assert.match(source, /DEFAULT_BUILDING_GROUP_2/);
   assert.match(source, /DEFAULT_BUILDING_GROUP_3/);
+  assert.match(source, /\{buildingGroup1 \?\? DEFAULT_BUILDING_GROUP_1\}/);
+  assert.match(source, /\{buildingGroup2 \?\? DEFAULT_BUILDING_GROUP_2\}/);
+  assert.match(source, /\{buildingGroup3 \?\? DEFAULT_BUILDING_GROUP_3\}/);
   assert.match(source, /w-\[2175px\]/);
   assert.match(source, /gap-\[60px\]/);
   assert.match(source, /overflow-clip/);

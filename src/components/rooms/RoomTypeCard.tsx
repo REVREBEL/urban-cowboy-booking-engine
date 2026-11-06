@@ -98,7 +98,7 @@ export function RoomTypeCard({
             data-name="BuildingContentWrapper"
             className={[
               "isolate flex w-[368px] shrink-0 items-start font-label text-[16px] font-normal leading-none tracking-[0.7065px] uppercase [word-break:break-word]",
-              isFocus ? "text-paper" : "text-[#e2e2e1]",
+              isFocus ? "text-paper" : "text-alpine-linen-fade",
             ].join(" ")}
           >
             <p className="shrink-0 whitespace-nowrap z-[3]">{buildingName}</p>
