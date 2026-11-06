@@ -41,7 +41,7 @@ export function RoomListItem({
           isDefault
             ? "w-full bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
             : [
-                "max-w-[350px] flex-1 self-stretch justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] py-[40px]",
+                "min-w-px max-w-[350px] flex-[1_0_0] self-stretch justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] py-[40px]",
                 isRowReverse ? "px-[10px]" : "px-[20px]",
               ].join(" "),
         ].join(" ")}
@@ -54,11 +54,11 @@ export function RoomListItem({
     <div
       data-name="List"
       className={[
-        "flex flex-wrap items-center",
+        "flex flex-wrap",
         isDefault
-          ? "w-full gap-[20px]"
+          ? "w-full items-start gap-[20px]"
           : [
-              "min-w-0 flex-1 content-center gap-[15px] p-[20px]",
+              "min-w-px flex-[1_0_0] content-center items-center gap-[15px] p-[20px]",
               isRowReverse ? "justify-end" : "justify-start",
             ].join(" "),
       ].join(" ")}
