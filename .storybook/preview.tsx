@@ -3,7 +3,14 @@
 
 import type { Preview } from "@storybook/react-vite";
 import "../src/styles/index.css";
-import { DocumentationTemplate, StoryWidthContainer } from "./StorybookLayout";
+import {
+  applyStorybookWidthToken,
+  DocumentationTemplate,
+  StoryWidthContainer,
+} from "./StorybookLayout";
+
+// Initialize the shared Docs CSS width token in each preview document.
+applyStorybookWidthToken();
 
 const preview: Preview = {
   decorators: [
