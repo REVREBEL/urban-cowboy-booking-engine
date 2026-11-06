@@ -8,6 +8,7 @@ export interface SearchBarPromoDropdownProps {
   onApply?: (val: string) => Promise<void> | void;
   onClose?: () => void;
   className?: string;
+  triggerRef?: React.RefObject<HTMLElement | null>;
 }
 
 export interface PromoValidationResult {
@@ -83,6 +84,7 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
   onApply,
   onClose,
   className = '',
+  triggerRef: externalTriggerRef,
 }) => {
   const [internalValue, setInternalValue] = useState<string>(initialValue);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
@@ -93,11 +95,45 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
 
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const internalTriggerRef = useRef<HTMLElement | null>(null);
 
-  // Focus input automatically upon mounting
   useEffect(() => {
+    if (externalTriggerRef?.current) {
+      internalTriggerRef.current = externalTriggerRef.current;
+    } else {
+      internalTriggerRef.current =
+        document.querySelector<HTMLElement>('button[aria-expanded="true"]') ||
+        (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    }
+
     inputRef.current?.focus();
-  }, []);
+  }, [externalTriggerRef]);
+
+  useEffect(() => {
+    const handleDocumentKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const active = document.activeElement;
+      const isInside =
+        active instanceof HTMLElement &&
+        (dialogRef.current?.contains(active) || active === dialogRef.current);
+
+      onClose?.();
+
+      if (isInside && internalTriggerRef.current?.isConnected) {
+        internalTriggerRef.current.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleDocumentKeyDown, true);
+    return () => {
+      document.removeEventListener('keydown', handleDocumentKeyDown, true);
+    };
+  }, [onClose]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const text = e.target.value;
@@ -167,17 +203,16 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
     if (e.key === 'Enter') {
       e.preventDefault();
       handleApply();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      onClose?.();
     }
   };
 
   return (
     <div
+      ref={dialogRef}
+      tabIndex={-1}
       role="dialog"
       aria-label="Promo code entry"
-      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] ${className}`}
+      className={`relative box-border flex h-37.75 max-h-130 w-68.75 max-w-522.25 select-none flex-col items-start overflow-hidden rounded-none border-2 border-input-border bg-input p-6 text-foreground shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-input-border ${className}`}
     >
       {/* Container: 223px x 99px, padding: 8px 0px, gap: 8px */}
       <div className="flex flex-col items-start py-2 px-0 gap-2 w-55.75 h-24.75 self-stretch">
