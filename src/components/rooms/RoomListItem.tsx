@@ -40,8 +40,8 @@ export function RoomListItem({
       data-name="BuildingSectionSlot"
       className={
         isDefault
-          ? "flex w-[1790px] shrink-0 flex-col items-start bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
-          : "flex w-[400px] shrink-0 self-stretch flex-col items-start justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] px-[20px] py-[40px]"
+          ? "flex w-full min-w-0 flex-col items-start bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
+          : "flex w-full min-w-0 self-stretch flex-col items-start justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] px-[20px] py-[40px] xl:w-[400px] xl:shrink-0"
       }
     >
       {buildingContent}
@@ -52,14 +52,14 @@ export function RoomListItem({
     <div
       data-name="List"
       className={[
-        "flex shrink-0 flex-wrap content-start items-start gap-[20px]",
+        "grid w-full min-w-0 grid-cols-[repeat(auto-fit,minmax(min(100%,330px),1fr))] items-start gap-[20px]",
         isDefault
-          ? "w-[1790px]"
-          : "w-[1330px] p-[20px]",
+          ? ""
+          : "p-[20px]",
       ].join(" ")}
     >
       {roomTypes.map(({ id, ...roomType }) => (
-        <RoomTypeCard key={id} {...roomType} />
+        <RoomTypeCard key={id} {...roomType} className={["w-full", roomType.className].filter(Boolean).join(" ")} />
       ))}
     </div>
   );
@@ -71,14 +71,12 @@ export function RoomListItem({
       }
       data-layout={layout}
       className={[
-        // Preserve the owning Figma component's exact frame geometry:
-        // 1790px frame, 20px row padding, 400px building slot, 40px gap,
-        // and 1330px list. The source component intentionally paints 20px
-        // beyond the nominal frame in Row variants.
-        "w-[1790px] overflow-visible",
+        // The 1790px Figma frame defines proportions, not a minimum viewport.
+        // Let cards reflow within Storybook, mobile, and real booking layouts.
+        "w-full min-w-0 max-w-full",
         isDefault
-          ? "flex flex-col flex-wrap content-start items-start gap-[30px] py-[20px]"
-          : "flex items-center gap-[40px] bg-primary-foreground p-[20px]",
+          ? "flex flex-col items-stretch gap-[30px] py-[20px]"
+          : "flex flex-col items-stretch gap-[40px] bg-primary-foreground p-[20px] xl:flex-row xl:items-start",
         className,
       ]
         .filter(Boolean)
