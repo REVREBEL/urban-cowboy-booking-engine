@@ -126,27 +126,52 @@ export function nights(start: string, end: string): number {
 }
 
 const dateCache = new Map<string, Intl.DateTimeFormat>();
-const dateFmtFor = (opts: Intl.DateTimeFormatOptions, tag: string) => {
-  const key = `${locale()}:${tag}`;
+const dateFmtFor = (
+  opts: Intl.DateTimeFormatOptions,
+  tag: string,
+  localeOverride?: string,
+) => {
+  const formatLocale = localeOverride ?? locale();
+  const key = `${formatLocale}:${tag}`;
   let f = dateCache.get(key);
   if (!f) {
-    f = new Intl.DateTimeFormat(locale(), { ...opts, timeZone: "UTC" });
+    f = new Intl.DateTimeFormat(formatLocale, { ...opts, timeZone: "UTC" });
     dateCache.set(key, f);
   }
   return f;
 };
 
-export function fmtDate(date: string): string {
+export function fmtDate(date: string, opts?: { locale?: string }): string {
   const t = Date.parse(toUtc(date));
   return Number.isNaN(t)
     ? date
-    : dateFmtFor({ day: "numeric", month: "short", year: "numeric" }, "short").format(new Date(t));
+    : dateFmtFor(
+        { day: "numeric", month: "short", year: "numeric" },
+        "short",
+        opts?.locale,
+      ).format(new Date(t));
 }
-export function fmtDateLong(date: string): string {
+
+export function fmtMonthDay(date: string, opts?: { locale?: string }): string {
   const t = Date.parse(toUtc(date));
   return Number.isNaN(t)
     ? date
-    : dateFmtFor({ weekday: "long", day: "numeric", month: "long" }, "long").format(new Date(t));
+    : dateFmtFor(
+        { day: "numeric", month: "short" },
+        "month-day",
+        opts?.locale,
+      ).format(new Date(t));
+}
+
+export function fmtDateLong(date: string, opts?: { locale?: string }): string {
+  const t = Date.parse(toUtc(date));
+  return Number.isNaN(t)
+    ? date
+    : dateFmtFor(
+        { weekday: "long", day: "numeric", month: "long" },
+        "long",
+        opts?.locale,
+      ).format(new Date(t));
 }
 
 // URL d'image Mews : `${ImageBaseUrl}/{imageId}?width=…`. Renvoie null si pas d'id.
