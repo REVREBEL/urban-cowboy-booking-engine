@@ -49,7 +49,6 @@ export function RoomListItem({
           isDefault
             ? "flex w-full min-w-0 flex-col items-start bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
             : "flex w-full min-w-0 self-stretch flex-col items-start justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] px-[20px] py-[40px] xl:w-[350px] xl:shrink-0",
-          isRowReverse ? "order-first xl:order-none" : "",
         ]
           .filter(Boolean)
           .join(" ")
