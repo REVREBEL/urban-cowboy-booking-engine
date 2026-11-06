@@ -3,15 +3,16 @@
 
 import type { Preview } from "@storybook/react-vite";
 import "../src/styles/index.css";
+import { DocumentationTemplate, StoryWidthContainer } from "./StorybookLayout";
 
 const preview: Preview = {
   decorators: [
     (Story, context) => context.parameters.layout === "centered"
       ? <Story />
       : (
-          <div style={{ width: "100%", maxWidth: 1600, marginInline: "auto", boxSizing: "border-box" }}>
+          <StoryWidthContainer>
             <Story />
-          </div>
+          </StoryWidthContainer>
         ),
   ],
   // The toolbar sets global examples without changing production booking state.
@@ -41,6 +42,7 @@ const preview: Preview = {
     },
     docs: {
       codePanel: true,
+      page: DocumentationTemplate,
     },
     controls: {
       matchers: {
