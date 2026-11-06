@@ -140,9 +140,18 @@ export const SearchBarPromoDropdown: React.FC<SearchBarPromoDropdownProps> = ({
       event.preventDefault();
       event.stopPropagation();
 
+      const active = document.activeElement;
+      const focusWasInside =
+        active instanceof HTMLElement &&
+        (dialogRef.current?.contains(active) || active === dialogRef.current);
+      const focusWasLost =
+        active === document.body ||
+        active === document.documentElement ||
+        active === null;
+
       cancelPendingApply();
       onClose();
-      restoreTriggerFocus();
+      if (focusWasInside || focusWasLost) restoreTriggerFocus();
     };
 
     document.addEventListener('keydown', handleDocumentKeyDown, true);
