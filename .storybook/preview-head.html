@@ -1,8 +1,12 @@
 <!-- .storybook/preview-head.html -->
 <style>
+  /* Let responsive components wrap inside the preview instead of
+     creating a nested horizontal scrolling region. */
   .sbdocs-preview,
   .docs-story {
-    overflow-x: auto !important;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: visible;
   }
   /* Override Storybook Docs' narrower default page width. */
   .sbdocs.sbdocs-content {
