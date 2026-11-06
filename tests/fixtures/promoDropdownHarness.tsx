@@ -25,6 +25,7 @@ function Harness() {
         <SearchBarPromoDropdown
           initialValue="TESTCODE"
           triggerRef={triggerRef}
+          closeOnApply
           onClose={() => setOpen(false)}
           onApply={(_, signal) =>
             new Promise<void>((resolve) => {
