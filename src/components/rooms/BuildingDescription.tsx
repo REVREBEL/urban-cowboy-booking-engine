@@ -52,7 +52,7 @@ export function BuildingDescription({
     const iconSlot = displayBuildingIcon ? (
       <div
         data-name="BuildingIcon Slot"
-        className="flex w-[300px] shrink-0 items-start overflow-clip p-[10px]"
+        className="flex w-full max-w-[300px] shrink-0 items-start overflow-clip p-[10px]"
       >
         {icon}
       </div>
@@ -61,9 +61,9 @@ export function BuildingDescription({
     const copy = (
       <div
         data-name="BuildingDecriptionWrapper"
-        className="flex w-[555px] shrink-0 flex-col items-start justify-end gap-[10px] text-balance [word-break:break-word]"
+        className="flex w-full max-w-[555px] min-w-0 shrink-0 flex-col items-start justify-end gap-[10px] text-balance [word-break:break-word]"
       >
-        <h2 className={[headingClass, "shrink-0 whitespace-nowrap"].join(" ")}>
+        <h2 className={[headingClass, "w-full min-w-0 shrink-0 break-words"].join(" ")}>
           {buildingName}
         </h2>
         <p
@@ -90,7 +90,9 @@ export function BuildingDescription({
         data-figma-node={layout === "Row" ? "1352:9404" : "1357:16082"}
         data-layout={layout}
         className={[
-          "flex w-fit items-start gap-[10px]",
+          displayBuildingIcon
+            ? "flex w-full max-w-[865px] flex-col items-start gap-[10px] xl:flex-row"
+            : "flex w-full max-w-[555px] items-start gap-[10px]",
           className,
         ]
           .filter(Boolean)
@@ -120,7 +122,7 @@ export function BuildingDescription({
       data-figma-node={isCentered ? "1352:15526" : "1378:17369"}
       data-layout={layout}
       className={[
-        "isolate flex w-[350px] max-w-[350px] flex-col items-start gap-[40px] p-[20px]",
+        "isolate flex w-full max-w-[350px] flex-col items-start gap-[40px] p-[20px]",
         className,
       ]
         .filter(Boolean)
@@ -130,13 +132,13 @@ export function BuildingDescription({
       <div
         data-name="BuildingDecriptionWrapper"
         className={[
-          "flex h-[212px] w-full shrink-0 flex-col items-center justify-between text-balance z-[1] [word-break:break-word]",
+          "flex min-h-[212px] w-full shrink-0 flex-col items-center justify-between text-balance z-[1] [word-break:break-word]",
           isCentered ? "text-center" : "text-left",
         ].join(" ")}
       >
         <div
           data-name="ContentWrapper"
-          className="flex h-[158px] w-full shrink-0 flex-col items-center justify-between"
+          className="flex min-h-[158px] w-full shrink-0 flex-col items-center justify-between"
         >
           <h2 className={[headingClass, "w-full shrink-0"].join(" ")}>
             {buildingName}

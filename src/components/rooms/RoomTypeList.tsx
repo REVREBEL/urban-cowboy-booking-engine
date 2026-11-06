@@ -56,7 +56,7 @@ const DEFAULT_BUILDING_GROUP_2 = (
         {...buildingCopy}
         layout="StackedCenter"
         displayBuildingIcon
-        buildingIconSlot={<BuildingIcon />}
+        buildingIconSlot={<BuildingIcon buildingName="Alpine" />}
       />
     }
   />
@@ -89,7 +89,7 @@ export function RoomTypeList({
       data-figma-node="1352:14825"
       data-name="RoomTypeList"
       className={[
-        "flex w-[1513px] flex-col items-center gap-[60px] bg-primary-foreground",
+        "flex w-full max-w-[1513px] flex-col items-center gap-[60px] bg-primary-foreground",
         className,
       ]
         .filter(Boolean)

@@ -37,7 +37,7 @@ export function RoomTypeCard({
       data-figma-node={isFocus ? "1352:14811" : "1352:2574"}
       data-state={state}
       className={[
-        "flex h-[295.5px] w-[350px] max-w-[350px] shrink-0 flex-col items-center justify-center rounded-[5.122px] p-[17.073px]",
+        "flex min-h-[295.5px] w-full max-w-[350px] flex-col items-center justify-center rounded-[5.122px] p-[17.073px]",
         isFocus ? "bg-accent" : "bg-primary-foreground",
         className,
       ]
@@ -50,7 +50,7 @@ export function RoomTypeCard({
       >
         <div
           data-name="RoomTypeImage"
-          className="relative h-[209.426px] w-[314.146px] shrink-0 overflow-hidden rounded-[6.829px] bg-smoke"
+          className="relative aspect-[314.146/209.426] w-full max-w-[314.146px] shrink-0 overflow-hidden rounded-[6.829px] bg-smoke"
         >
           {roomTypeImage ?? (
             <img
@@ -97,13 +97,13 @@ export function RoomTypeCard({
           <div
             data-name="BuildingContentWrapper"
             className={[
-              "isolate flex w-[314.146px] shrink-0 items-start font-label text-[13.659px] font-normal leading-none tracking-[0.6031px] uppercase [word-break:break-word]",
+              "isolate flex w-full max-w-[314.146px] min-w-0 flex-wrap items-start font-label text-[13.659px] font-normal leading-none tracking-[0.6031px] uppercase [word-break:break-word]",
               isFocus ? "text-paper" : "text-alpine-linen-fade",
             ].join(" ")}
           >
-            <p className="shrink-0 whitespace-nowrap z-[3]">{buildingName}</p>
+            <p className="min-w-0 break-words z-[3]">{buildingName}</p>
             <p className="w-[17.073px] shrink-0 text-center z-[2]">·</p>
-            <p className="shrink-0 whitespace-nowrap z-[1]">{numberOfBeds}</p>
+            <p className="min-w-0 break-words z-[1]">{numberOfBeds}</p>
           </div>
         </div>
       </div>

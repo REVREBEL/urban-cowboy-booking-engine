@@ -1,7 +1,11 @@
 import type { ReactNode } from "react";
 import { RoomTypeCard, type RoomTypeCardProps } from "./RoomTypeCard";
 
-export type RoomListItemLayout = "Default" | "Row" | "RowReverse";
+export type RoomListItemLayout =
+  | "Default"
+  | "Row"
+  | "RowReverse"
+  | "Row Reverse";
 
 export type RoomTypeCardData = RoomTypeCardProps & {
   id: string;
@@ -29,8 +33,9 @@ export function RoomListItem({
   layout = "Default",
   roomTypes,
 }: RoomListItemProps) {
-  const isDefault = layout === "Default";
-  const isRowReverse = layout === "RowReverse";
+  const normalizedLayout = layout === "Row Reverse" ? "RowReverse" : layout;
+  const isDefault = normalizedLayout === "Default";
+  const isRowReverse = normalizedLayout === "RowReverse";
 
   const buildingPanel =
     displayBuilding && buildingSectionSlot ? (
@@ -41,8 +46,10 @@ export function RoomListItem({
           isDefault
             ? "w-full bg-[var(--room-list-building-panel,var(--alpine-linen-fade))] p-[32px]"
             : [
-                "min-w-px max-w-[350px] flex-[1_0_0] self-stretch justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] py-[40px]",
-                isRowReverse ? "px-[10px]" : "px-[20px]",
+                "order-1 w-full self-stretch justify-center bg-[var(--room-list-building-panel,var(--secondary-foreground))] py-[40px] xl:min-w-px xl:max-w-[350px] xl:flex-[1_0_0]",
+                isRowReverse
+                  ? "px-[10px] xl:order-2"
+                  : "px-[20px] xl:order-1",
               ].join(" "),
         ].join(" ")}
       >
@@ -58,8 +65,10 @@ export function RoomListItem({
         isDefault
           ? "w-full items-start gap-[20px]"
           : [
-              "min-w-px flex-[1_0_0] content-center items-center gap-[15px] p-[20px]",
-              isRowReverse ? "justify-end" : "justify-start",
+              "order-2 w-full content-center items-center gap-[15px] p-[20px] xl:min-w-px xl:flex-[1_0_0]",
+              isRowReverse
+                ? "justify-start xl:order-1 xl:justify-end"
+                : "justify-start xl:order-2",
             ].join(" "),
       ].join(" ")}
     >
@@ -74,13 +83,13 @@ export function RoomListItem({
       data-figma-node={
         isDefault ? "1352:2645" : isRowReverse ? "1378:17281" : "1352:15461"
       }
-      data-layout={layout}
+      data-layout={normalizedLayout}
       className={[
         "w-full",
         isDefault
           ? "flex max-w-[1460px] flex-col items-start gap-[30px] py-[20px]"
           : [
-              "flex max-w-[1542px] items-center gap-[20px] bg-primary-foreground py-[20px]",
+              "flex max-w-[1542px] flex-col items-stretch gap-[20px] bg-primary-foreground py-[20px] xl:flex-row xl:items-center",
               isRowReverse ? "px-[20px]" : "px-[10px]",
             ].join(" "),
         className,
@@ -88,8 +97,8 @@ export function RoomListItem({
         .filter(Boolean)
         .join(" ")}
     >
-      {isRowReverse ? list : buildingPanel}
-      {isDefault ? list : isRowReverse ? buildingPanel : list}
+      {buildingPanel}
+      {list}
     </div>
   );
 }
