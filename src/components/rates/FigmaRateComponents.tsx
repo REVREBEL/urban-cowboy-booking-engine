@@ -203,7 +203,19 @@ export function FigmaRateDetailPopup({
           </dl>
         </section>
       </div>
-      {timeline && <FigmaPolicyTimeline timeline={timeline} currency={currency} arrivalDate={arrivalDate} language={language} />}
+      {timeline ? (
+        <FigmaPolicyTimeline timeline={timeline} currency={currency} arrivalDate={arrivalDate} language={language} />
+      ) : (
+        <section className="w-full border-t border-lake-forest/20 pt-4" aria-label="Cancellation and payment summary">
+          <h3 className="font-label text-xs font-bold uppercase tracking-[2px]">Policy &amp; Deposit Timeline</h3>
+          <p className="mt-3 font-body text-sm">{policyText}</p>
+          <div className="mt-5">
+            <span className="block font-heading text-[15px]">{language?.atTimeOfBooking ?? "Due today"}</span>
+            <strong className="block font-number text-xl">{money(total, currency)}</strong>
+            <span className="block font-body text-xs">{language?.atTimeOfBookingSubTitle ?? "Amount charged once confirmed"}</span>
+          </div>
+        </section>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-lake-forest/20 pt-5">
         <strong className="font-number text-2xl">{money(total, currency)}</strong>
         <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small" onClick={onConfirm} disabled={disabled}>
