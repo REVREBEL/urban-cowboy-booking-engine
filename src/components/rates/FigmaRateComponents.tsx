@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/Button";
 import { money as currencyMoney } from "@/lib/format";
 import type { PolicyLanguage } from "@/types/policy-language";
 import SheriffBadge from "@/components/icons/generated/ui/FiSheriffBadge";
+import PlusIcon from "@/components/icons/generated/ui/FiPlus";
+import CloseX from "@/components/icons/generated/ui/CloseX";
 import {
   formatShortDate,
   type CancellationTimeline,
@@ -129,7 +131,7 @@ export function FigmaRateCard({
       <footer className="flex flex-wrap items-center justify-between gap-3">
         <Button data-slot="details" variant="transparent" colorScheme="bandana-red" size="small" textCase="title"
           onClick={onDetails} aria-label={`View details for ${name}`}>
-          {detailsLabel} <span aria-hidden="true">↗</span>
+          {detailsLabel} <PlusIcon width={14} height={14} aria-hidden="true" />
         </Button>
         <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small"
           onClick={onConfirm} disabled={disabled || total == null}>
@@ -175,9 +177,9 @@ export function FigmaRateDetailPopup({
           <p className="font-label text-[11px] uppercase tracking-[2.2px]">{eyebrow}</p>
           <h2 className="font-heading text-[clamp(30px,5vw,40px)] leading-none">{name}</h2>
         </div>
-        <Button data-slot="close-details" variant="transparent" colorScheme="lake-forest" size="small" textCase="title"
+        <Button data-slot="close-details" variant="transparent" colorScheme="lake-forest" size="small" textCase="uppercase"
           onClick={onClose} aria-label="Close rate details">
-          <span data-figma-node="1390:31186">Close</span> <span aria-hidden="true">×</span>
+          <span data-figma-node="1390:31186">Close</span> <CloseX width={14} height={14} aria-hidden="true" />
         </Button>
       </header>
       <div className="grid gap-8 md:grid-cols-2">
@@ -205,7 +207,7 @@ export function FigmaRateDetailPopup({
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-lake-forest/20 pt-5">
         <strong className="font-number text-2xl">{money(total, currency)}</strong>
         <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small" onClick={onConfirm} disabled={disabled}>
-          Confirm rate
+          Confirm Booking
         </Button>
       </div>
     </div>
