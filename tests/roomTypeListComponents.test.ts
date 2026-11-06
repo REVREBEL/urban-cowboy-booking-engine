@@ -43,66 +43,64 @@ test("BuildingIcon mirrors all Figma BuildingName variants and exact artwork geo
   assert.doesNotMatch(source, /loading\?:/);
 });
 
-test("BuildingDescription mirrors the Figma BuildingSection property contract", () => {
+test("BuildingDescription mirrors the updated Figma BuildingSection contract", () => {
   const source = read("BuildingDescription.tsx");
   assert.match(source, /"StackedCenter"/);
   assert.match(source, /"Row"/);
-  assert.match(source, /"StackedLeft"/);
   assert.match(source, /"Row Reverse"/);
+  assert.match(source, /"StackedLeft"/);
   assert.match(source, /buildingIconSlot/);
   assert.match(source, /displayBuildingIcon/);
-  assert.match(source, /max-w-\[894px\]/);
-  assert.match(source, /w-full/);
-  assert.match(source, /max-w-\[400px\]/);
-  assert.match(source, /tracking-\[-2px\]/);
-  assert.match(source, /tracking-\[1px\]/);
+  assert.match(source, /max-w-\[555px\]/);
+  assert.match(source, /max-w-\[350px\]/);
+  assert.match(source, /min-h-\[212px\]/);
+  assert.match(source, /min-h-\[158px\]/);
+  assert.match(source, /break-words/);
   assert.match(source, /font-family:Inter,sans-serif/);
-  assert.match(source, /<h2/);
-  assert.match(source, /if \(!displayBuildingIcon\)/);
-  assert.match(source, /flex w-full max-w-\[894px\] min-w-0 items-end/);
-  assert.doesNotMatch(source, /tone\??:/);
+  assert.match(source, /1378:17369/);
+  assert.doesNotMatch(source, /max-w-\[400px\]/);
+  assert.doesNotMatch(source, /absolute left-0 top-\[53px\]/);
 });
 
-test("RoomTypeCard preserves the two Figma states and RoomTypeImage slot", () => {
+test("RoomTypeCard preserves updated Figma dimensions and stays fluid on mobile", () => {
   const source = read("RoomTypeCard.tsx");
   assert.match(source, /"Default" \| "Focus"/);
   assert.match(source, /roomTypeImage\?: ReactNode/);
-  assert.match(source, /min-h-\[345\.328px\]/);
-  assert.match(source, /w-full/);
-  assert.match(source, /h-\[245\.328px\]/);
-  assert.match(source, /min-w-0/);
-  assert.match(source, /size-full/);
-  assert.match(source, /DEFAULT_ROOM_TYPE_IMAGE_SRC/);
-  assert.match(source, /object-contain/);
-  assert.match(source, /buildingName: string/);
-  assert.match(source, /numberOfBeds: string/);
-  assert.match(source, /price: string/);
-  assert.match(source, /roomTypeName: string/);
-  assert.match(source, /<article/);
-  assert.match(source, /<h3/);
-  assert.match(source, /text-alpine-linen-fade/);
-  assert.doesNotMatch(source, /text-\[#e2e2e1\]/);
+  assert.match(source, /min-h-\[295\.5px\]/);
+  assert.match(source, /max-w-\[350px\]/);
+  assert.match(source, /sm:w-\[350px\]/);
+  assert.match(source, /aspect-\[314\.146\/209\.426\]/);
+  assert.match(source, /max-w-\[314\.146px\]/);
+  assert.match(source, /text-\[20\.488px\]/);
+  assert.match(source, /text-\[11\.951px\]/);
+  assert.match(source, /text-\[13\.659px\]/);
+  assert.match(source, /tracking-\[0\.6031px\]/);
+  assert.match(source, /flex-wrap/);
+  assert.match(source, /break-words/);
+  assert.doesNotMatch(source, /w-\[410px\]/);
+  assert.doesNotMatch(source, /h-\[245\.328px\]/);
 });
 
-test("RoomListItem preserves Default, Row, and Row Reverse Figma layouts", () => {
+test("RoomListItem preserves updated layouts, mobile stacking, and reverse order", () => {
   const source = read("RoomListItem.tsx");
-  assert.match(source, /"Default" \| "Row" \| "Row Reverse"/);
-  assert.match(source, /w-full min-w-0 max-w-full/);
-  assert.match(source, /grid-cols-\[repeat\(auto-fit,minmax\(min\(100%,330px\),1fr\)\)\]/);
-  assert.match(source, /gap-\[30px\]/);
-  assert.match(source, /gap-\[40px\]/);
+  assert.match(source, /"RowReverse"/);
+  assert.match(source, /"Row Reverse"/);
+  assert.match(source, /layout === "Row Reverse" \? "RowReverse" : layout/);
+  assert.match(source, /max-w-\[1460px\]/);
+  assert.match(source, /max-w-\[1542px\]/);
+  assert.match(source, /xl:flex-row/);
+  assert.match(source, /xl:w-\[350px\]/);
+  assert.match(source, /gap-\[15px\]/);
   assert.match(source, /roomTypes\.map/);
-  assert.match(source, /const buildingContent = buildingSectionSlot/);
-  assert.match(
-    source,
-    /\{isRowReverse \? list : buildingPanel\}[\s\S]*\{isDefault \? list : isRow \? list : buildingPanel\}/,
+  const reverseBranch = source.match(
+    /isRowReverse \? \([\s\S]*?<>{[\s\S]*?\{list\}[\s\S]*?\{buildingPanel\}[\s\S]*?<\/?>[\s\S]*?\) : \(/,
   );
-  assert.doesNotMatch(source, /<BuildingDescription/);
-  assert.doesNotMatch(source, /ROOM_TYPE_GROUP_PRESENTATION/);
-  assert.doesNotMatch(source, /ROOM_TYPE_GROUPS/);
+  assert.ok(reverseBranch, "RowReverse must render the room list before the building panel");
+  assert.doesNotMatch(source, /w-\[1790px\]/);
+  assert.doesNotMatch(source, /w-\[1330px\]/);
 });
 
-test("RoomTypeList is the exact three-slot Figma composition", () => {
+test("RoomTypeList preserves updated 1513px three-slot composition and overrides", () => {
   const source = read("RoomTypeList.tsx");
   assert.match(source, /buildingGroup1\?: ReactNode \| null/);
   assert.match(source, /buildingGroup2\?: ReactNode \| null/);
@@ -113,8 +111,9 @@ test("RoomTypeList is the exact three-slot Figma composition", () => {
   assert.match(source, /\{buildingGroup1 \?\? DEFAULT_BUILDING_GROUP_1\}/);
   assert.match(source, /\{buildingGroup2 \?\? DEFAULT_BUILDING_GROUP_2\}/);
   assert.match(source, /\{buildingGroup3 \?\? DEFAULT_BUILDING_GROUP_3\}/);
-  assert.match(source, /w-\[2175px\]/);
+  assert.match(source, /max-w-\[1513px\]/);
   assert.match(source, /gap-\[60px\]/);
-  assert.match(source, /overflow-clip/);
-  assert.doesNotMatch(source, /groups\.map/);
+  assert.match(source, /buildingIconSlot=\{<BuildingIcon buildingName="Alpine" \/>\}/);
+  assert.doesNotMatch(source, /w-\[2175px\]/);
 });
+
