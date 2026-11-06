@@ -20,11 +20,15 @@ const config: StorybookConfig = {
   features: {
     componentsManifest: true,
   },
-  // TypeScript 7 no longer exports the classic compiler API required by
-  // react-docgen-typescript. Use Storybook's supported Babel-based parser
-  // until that plugin supports TS7. Keep the component manifest enabled.
+  // Provide complete TS prop signatures to Docs/Controls and the MCP manifest.
   typescript: {
-    reactDocgen: "react-docgen",
+    reactDocgen: "react-docgen-typescript",
+    reactDocgenTypescriptOptions: {
+      shouldExtractLiteralValuesFromEnum: true,
+      // Keep inherited HTML/React props (e.g. disabled, onClick) visible
+      // in Docs, Controls and the MCP component manifest.
+      propFilter: () => true,
+    },
   },
   async viteFinal(config) {
     // Match the application build: Tailwind v4 directives are processed by
