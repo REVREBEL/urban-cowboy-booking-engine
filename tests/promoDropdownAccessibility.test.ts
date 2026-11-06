@@ -151,7 +151,7 @@ test("Promo dropdown mounted keyboard and focus interactions", async (t) => {
     );
   });
 
-  await t.test("7. Escape aborts an in-flight apply and blocks stale completion", async () => {
+  await t.test("7. Escape aborts pending verification, restores focus, and blocks stale dismissal", async () => {
     await page.goto(`http://localhost:${port}/tests/fixtures/promoDropdownHarness.html`);
     await page.waitForLoadState("networkidle");
 
@@ -161,6 +161,15 @@ test("Promo dropdown mounted keyboard and focus interactions", async (t) => {
     const dialog = page.locator('div[role="dialog"][aria-label="Promo code entry"]');
     await dialog.waitFor({ state: "visible" });
     await page.locator('button[aria-label="Apply promo code"]').click();
+
+    await page.evaluate(() => {
+      (document.activeElement as HTMLElement | null)?.blur();
+    });
+    assert.equal(
+      await page.evaluate(() => document.activeElement === document.body),
+      true,
+      "Pending verification setup should leave focus on body",
+    );
 
     await page.keyboard.press("Escape");
     await dialog.waitFor({ state: "hidden" });
@@ -173,12 +182,30 @@ test("Promo dropdown mounted keyboard and focus interactions", async (t) => {
       "true",
       "Escape should abort the pending apply signal",
     );
+    await page.waitForFunction(
+      (button) => document.activeElement === button,
+      await trigger.elementHandle(),
+    );
 
-    await page.waitForTimeout(350);
+    // Reopen immediately. The old apply promise deliberately ignores abort and
+    // resolves later; the stale request guard must not close this new session.
+    await trigger.click();
+    await dialog.waitFor({ state: "visible" });
+
+    await page.waitForFunction(
+      () => document.querySelector('[data-testid="completed"]')?.textContent === "true",
+    );
+    await page.waitForTimeout(50);
+
     assert.equal(
-      await page.locator('[data-testid="completed"]').textContent(),
-      "false",
-      "An aborted apply must not perform its stale completion update",
+      await dialog.isVisible(),
+      true,
+      "Late completion from the aborted apply must not close the reopened Promo dialog",
+    );
+    assert.equal(
+      await page.locator('[data-testid="close-count"]').textContent(),
+      "1",
+      "Only the Escape dismissal should have invoked onClose",
     );
   });
 });
