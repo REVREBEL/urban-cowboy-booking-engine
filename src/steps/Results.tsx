@@ -480,6 +480,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
               setPhotoPath("journal");
               setDiscoveryView("journal");
             }}
+            onChangeDates={() => goTo("dates")}
           /></Suspense>
         </div>
       );

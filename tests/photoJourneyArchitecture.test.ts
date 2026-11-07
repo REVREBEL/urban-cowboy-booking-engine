@@ -43,6 +43,9 @@ test("Photo room browser preserves original filters, mobile sheet and photo-inde
   assert.match(rooms, /toPhotoTourRoom\(/);
   assert.match(rooms, /photoGalleryForRoom\(/);
   assert.match(rooms, /studioEditorialRoomTypeId\(/);
+  assert.match(rooms, /if \(rooms\.length === 0\) return/);
+  assert.match(rooms, /No rooms are available for these dates\./);
+  assert.match(rooms, /onClick=\{onChangeDates\}>Change dates<\/Button>/);
   assert.doesNotMatch(rooms, /JOURNEY_ROOMS/);
 });
 

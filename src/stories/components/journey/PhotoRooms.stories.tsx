@@ -9,7 +9,7 @@ const meta = {
   args: {
     profile: null, rooms: [], imageBaseUrl: "", galleries: {},
     guests: 2, children: 0, studioCatalog: true,
-    onChoose: () => {}, onEditJournal: () => {},
+    onChoose: () => {}, onEditJournal: () => {}, onChangeDates: () => {},
   },
 } satisfies Meta<typeof PhotoRooms>;
 export default meta;

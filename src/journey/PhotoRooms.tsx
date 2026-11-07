@@ -71,7 +71,7 @@ function useHorizontalFilterStrip(itemsKey: string) {
 }
 
 
-export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", studioCatalog = false, children, onChoose, onEditJournal }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; studioCatalog?: boolean; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void }) {
+export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", studioCatalog = false, children, onChoose, onEditJournal, onChangeDates }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; studioCatalog?: boolean; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void; onChangeDates: () => void }) {
   const [building, setBuilding] = useState<string>("all");
   const [features, setFeatures] = useState<Feature[]>([]);
   const [sort, setSort] = useState<Sort>("price-asc");
@@ -234,6 +234,17 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
     return () => window.removeEventListener("wheel", onWheel);
   }, [view, list]);
 
+  if (rooms.length === 0) return (
+    <section className="relative z-10 grid min-h-dvh place-items-center bg-smoke px-5 py-24 text-paper" role="status" aria-live="polite">
+      <div className="max-w-xl rounded-2xl bg-paper p-8 text-center text-primary-foreground shadow-[0_18px_60px_rgba(0,0,0,.28)] sm:p-12">
+        <p className={label}>No availability</p>
+        <h1 className="mt-3 text-balance font-heading text-4xl leading-none">No rooms are available for these dates.</h1>
+        <p className="mx-auto mt-4 max-w-[45ch] text-sm leading-relaxed text-primary-foreground/70">Try shifting your stay by a day or choosing another date range to see available rooms.</p>
+        <Button type="button" variant="filled" colorScheme="lake-forest" size="small" className="mt-6" onClick={onChangeDates}>Change dates</Button>
+      </div>
+    </section>
+  );
+
   return (
     <section ref={roomStage} className={`j-room-stage pb-24 ${detail ? "is-details-open" : ""}`}>
       {/* Floating filter overlay */}
@@ -380,7 +391,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
       {list.length === 0 && (
         <div className="mx-auto max-w-xl px-5 py-24 text-center">
           <p className="font-heading text-3xl leading-none">No rooms fit every filter.</p>
-          <Button type="button" variant="outline" colorScheme="paper" size="small" className="mt-6 rounded-full" onClick={() => { setFeatures([]); setBuilding("all"); }}>Clear filters</Button>
+          <Button type="button" variant="outline" colorScheme="paper" size="small" className="mt-6" onClick={() => { setFeatures([]); setBuilding("all"); }}>Clear filters</Button>
         </div>
       )}
 
