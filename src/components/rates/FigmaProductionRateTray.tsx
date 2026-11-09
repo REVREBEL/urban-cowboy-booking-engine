@@ -1,4 +1,5 @@
 import { FigmaRateCard, FigmaRateDetailPopup } from "./FigmaRateComponents";
+import "./FigmaProductionRateTray.css";
 import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
