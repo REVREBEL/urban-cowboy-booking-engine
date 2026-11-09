@@ -57,7 +57,7 @@ export function FigmaPolicyTimeline({ timeline, currency, arrivalDate, language 
             <div className="flex flex-col gap-1 pr-2">
               <strong className="font-label text-[15px]">{phase.kind === "refundable" ? language?.refundableLanguage ?? PHASE_NAMES[phase.kind] : phase.kind === "deposit-kept" ? language?.partiallyRefundableLanguage ?? PHASE_NAMES[phase.kind] : language?.nonRefundableLanguage ?? PHASE_NAMES[phase.kind]}</strong>
               <span className="font-body text-[13px]">{phase.kind === "refundable" ? language?.refundableLanguageSubTitle ?? PHASE_SUBTITLES[phase.kind] : phase.kind === "deposit-kept" ? language?.partiallyRefundableLanguageSubTitle ?? PHASE_SUBTITLES[phase.kind] : language?.nonRefundableLanguageSubTitle ?? PHASE_SUBTITLES[phase.kind]}</span>
-              <span className="font-body text-xs">{phase.days} {phase.days === 1 ? "day" : "days"}</span>
+              <span className="font-body text-xs">{phase.days === 0 ? "Arrival day" : `${phase.days} ${phase.days === 1 ? "day" : "days"}`}</span>
             </div>
           </li>
         ))}
@@ -67,11 +67,14 @@ export function FigmaPolicyTimeline({ timeline, currency, arrivalDate, language 
           <span className="font-number text-2xl" aria-hidden="true"><SheriffBadge width={25} height={27} /></span>
         </li>
       </ol>
+      <p className="mt-4 font-body text-sm" aria-live="polite">
+        Cancel today and get back <strong className="font-number">{money(timeline.refundIfCancelToday, currency)}</strong>
+      </p>
       {timeline.warning && <p className="mt-4 font-body text-sm">{timeline.warning}</p>}
       <div className="mt-6 grid grid-cols-1 gap-5 sm:max-w-[440px] sm:grid-cols-2 sm:gap-10">
         {timeline.charges.map((charge, index) => (
           <div key={charge.date + charge.label} className="min-w-0">
-            <strong className="block font-heading text-[15px] leading-tight">{index === 0 ? "Due today" : "Remaining Amount Due"}</strong>
+            <strong className="block font-heading text-[15px] leading-tight">{index === 0 ? language?.atTimeOfBooking ?? "Due today" : language?.nextDueDate ?? "Remaining Amount Due"}</strong>
             <span className="block font-number text-xl font-bold">{money(charge.amount, currency)}</span>
             <span className="block font-body text-xs">{index === 0 ? language?.atTimeOfBookingSubTitle ?? "Amount Charged Once Confirmed" : `${language?.nextDueDateSubTitle ?? "Final Payment"} · ${formatShortDate(charge.date)}`}</span>
           </div>
@@ -84,7 +87,7 @@ export function FigmaPolicyTimeline({ timeline, currency, arrivalDate, language 
 /** Figma 1390:31339, standard, member and package rate-card variants. */
 export function FigmaRateCard({
   eyebrow, name, description, policy, roomSummary, total, currency,
-  variant = "default", perks, isSelected, onDetails, onConfirm, detailsLabel = "View Details", confirmLabel,
+  variant = "default", perks, isSelected, isDetailsOpen = false, onDetails, onConfirm, detailsLabel = "View Details", confirmLabel,
   disabled,
 }: {
   eyebrow: string;
@@ -97,6 +100,7 @@ export function FigmaRateCard({
   variant?: "default" | "member" | "package";
   perks?: string[];
   isSelected?: boolean;
+  isDetailsOpen?: boolean;
   onDetails: () => void;
   onConfirm: () => void;
   detailsLabel?: string;
@@ -130,7 +134,7 @@ export function FigmaRateCard({
       </div>
       <footer className="flex flex-wrap items-center justify-between gap-3">
         <Button data-slot="details" variant="transparent" colorScheme="bandana-red" size="small" textCase="title"
-          onClick={onDetails} aria-label={`View details for ${name}`}>
+          onClick={onDetails} aria-label={`${detailsLabel} for ${name}`} aria-expanded={isDetailsOpen}>
           {detailsLabel} <PlusIcon width={14} height={14} aria-hidden="true" />
         </Button>
         <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small"
@@ -144,34 +148,39 @@ export function FigmaRateCard({
 
 /** Figma 1390:30695 and 1390:31186. */
 export function FigmaRateDetailPopup({
-  name, eyebrow, description, nightly, currency, nights, subtotal, taxes, total,
-  policyText, timeline, arrivalDate, language, onClose, onConfirm, disabled,
+  name, eyebrow, description, supportingText, nightly, currency, nights, subtotal, taxes, total,
+  dueToday, policyText, timeline, arrivalDate, language, onClose, onConfirm, confirmLabel = "Confirm Booking", disabled,
 }: {
   name: string;
   eyebrow: string;
   description: string;
-  nightly: number;
+  supportingText?: string | null;
+  nightly: number | null;
   currency: string;
   nights: number;
-  subtotal: number;
-  taxes: number;
-  total: number;
+  subtotal: number | null;
+  taxes: number | null;
+  total: number | null;
+  /** Booking charge from Mews settlement, not necessarily the full stay amount. */
+  dueToday: number | null;
   policyText: string;
   timeline: CancellationTimeline | null;
   arrivalDate: string;
   language?: PolicyLanguage;
   onClose: () => void;
   onConfirm: () => void;
+  confirmLabel?: string;
   disabled?: boolean;
 }) {
-  const rows: Array<[string, number]> = [
+  const rows: Array<[string, number | null]> = [
     [`Nightly Average · ${nights} ${nights === 1 ? "night" : "nights"}`, nightly],
     ["Stay Before Taxes", subtotal],
     ["Taxes & Fees", taxes],
     ["Total Stay", total],
   ];
+  const displayAmount = (value: number | null) => value == null ? "Rate unavailable" : money(value, currency);
   return (
-    <div data-figma-node="1390:30695" className="mx-auto flex w-full max-w-[1200px] flex-col gap-7 bg-[#f9f9f9] px-5 py-7 text-primary-foreground sm:px-10 lg:px-14">
+    <div data-figma-node="1390:30695" className="mx-auto flex w-full max-w-[1200px] flex-col gap-7 bg-paper px-5 py-7 text-primary-foreground sm:px-10 lg:px-14">
       <header className="flex flex-wrap items-start justify-between gap-6 border-b border-lake-forest/20 pb-5">
         <div>
           <p className="font-label text-[11px] uppercase tracking-[2.2px]">{eyebrow}</p>
@@ -186,18 +195,19 @@ export function FigmaRateDetailPopup({
         <section>
           <h3 className="font-label text-sm uppercase tracking-wider">About This Rate</h3>
           <p className="mt-3 font-body text-base leading-7">{description}</p>
+          {supportingText && <p className="mt-3 font-body text-base leading-7">{supportingText}</p>}
           <p className="mt-4 font-body text-sm">{policyText}</p>
         </section>
         <section aria-label="Stay pricing">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <h3 className="font-label text-sm uppercase tracking-wider">Stay Pricing</h3>
-            <span className="font-number text-xl">{money(nightly, currency)} / night</span>
+            <span className="font-number text-xl">{nightly == null ? "Rate unavailable" : `${money(nightly, currency)} / night`}</span>
           </div>
           <dl className="mt-3 divide-y divide-lake-forest/15">
             {rows.map(([label, value], index) => (
               <div key={label} className="flex items-center justify-between gap-3 py-2">
                 <dt className={index === rows.length - 1 ? "font-label font-bold" : "font-number text-sm"}>{label}</dt>
-                <dd className="font-number font-bold">{money(value, currency)}</dd>
+                <dd className="font-number font-bold">{displayAmount(value)}</dd>
               </div>
             ))}
           </dl>
@@ -211,15 +221,15 @@ export function FigmaRateDetailPopup({
           <p className="mt-3 font-body text-sm">{policyText}</p>
           <div className="mt-5">
             <span className="block font-heading text-[15px]">{language?.atTimeOfBooking ?? "Due today"}</span>
-            <strong className="block font-number text-xl">{money(total, currency)}</strong>
+            <strong className="block font-number text-xl">{displayAmount(dueToday)}</strong>
             <span className="block font-body text-xs">{language?.atTimeOfBookingSubTitle ?? "Amount charged once confirmed"}</span>
           </div>
         </section>
       )}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-lake-forest/20 pt-5">
-        <strong className="font-number text-2xl">{money(total, currency)}</strong>
-        <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small" onClick={onConfirm} disabled={disabled}>
-          Confirm Booking
+        <strong className="font-number text-2xl">{displayAmount(total)}</strong>
+        <Button data-slot="select" variant="filled" colorScheme="lake-forest" size="small" onClick={onConfirm} disabled={disabled || total == null}>
+          {confirmLabel}
         </Button>
       </div>
     </div>
