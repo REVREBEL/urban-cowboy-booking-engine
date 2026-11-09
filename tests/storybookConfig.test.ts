@@ -18,3 +18,11 @@ test("storybook docgen includes inherited public React and HTML props", () => {
   assert.match(storybook, /reactDocgen: "react-docgen-typescript"/);
   assert.match(storybook, /propFilter: \(\) => true/);
 });
+
+test("Storybook uses the supported TypeScript compiler with react-docgen", () => {
+  const manifest = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  const lockfile = JSON.parse(readFileSync(new URL("../package-lock.json", import.meta.url), "utf8"));
+  assert.equal(manifest.devDependencies.typescript, "6.0.3");
+  assert.equal(lockfile.packages["node_modules/typescript"].version, "6.0.3");
+  assert.match(storybook, /reactDocgen: "react-docgen-typescript"/);
+});

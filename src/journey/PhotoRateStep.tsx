@@ -4,7 +4,7 @@
  * Keep Photo Journey's rate -> extras transition (the standard flow differs).
  */
 import { useEffect, useState } from "react";
-import { ProductionRateTray } from "@/components/rates/ProductionRateTray";
+import { ProductionRateTray } from "@/components/rates/FigmaProductionRateTray";
 import type { RateCardConfig } from "@/types/rate-card";
 import type { PolicyLanguage } from "@/types/policy-language";
 import { useBooking } from "../state/booking";

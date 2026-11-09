@@ -1,0 +1,12 @@
+/* Figma-specific sheet layout; shared Button owns all control appearance. */
+.rc-production-page .rc-figma-drawer {
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.rc-production-page .rc-grid > [data-figma-node="1390:31339"] {
+  min-width: 0;
+}
+@media (max-width: 767px) {
+  .rc-production-page .rc-figma-drawer { max-height: 90dvh; }
+}

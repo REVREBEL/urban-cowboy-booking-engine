@@ -6,14 +6,19 @@ const read = (path: string) =>
   readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8");
 
 test("production rate actions render named slots through the shared Button", () => {
-  const source = read("components/rates/ProductionRateTray.tsx");
+  const tray = read("components/rates/FigmaProductionRateTray.tsx");
+  const replacement = read("components/rates/FigmaRateComponents.tsx");
+  const source = tray + "\n" + replacement;
   assert.match(source, /import \{ Button \} from ["']@\/components\/ui\/Button["']/);
-  assert.match(source, /type RateActionSlot =/);
-  assert.match(source, /data-slot=\{slot\}/);
+  assert.match(tray, /type RateActionSlot =/);
+  assert.match(tray, /data-slot=\{slot\}/);
+  assert.match(tray, /<FigmaRateCard/);
+  assert.match(tray, /<FigmaRateDetailPopup/);
+  assert.match(replacement, /<FigmaPolicyTimeline/);
   assert.match(source, /<Button\b/);
   assert.doesNotMatch(source, /<button\b/);
   for (const slot of ["change-room", "details", "select", "close-details", "browse-rooms"]) {
-    assert.ok(source.includes(`slot="${slot}"`), `Missing named rate action slot: ${slot}`);
+    assert.ok(source.includes(`slot="${slot}"`), `Missing shared-button rate action slot: ${slot}`);
   }
 });
 
