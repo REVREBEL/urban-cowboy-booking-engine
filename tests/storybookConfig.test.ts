@@ -19,13 +19,10 @@ test("storybook docgen includes inherited public React and HTML props", () => {
   assert.match(storybook, /propFilter: \(\) => true/);
 });
 
-test("Storybook uses the TypeScript 6 compiler API while retaining the TypeScript 7 CLI", () => {
+test("Storybook uses the supported TypeScript compiler with react-docgen", () => {
   const manifest = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
   const lockfile = JSON.parse(readFileSync(new URL("../package-lock.json", import.meta.url), "utf8"));
-  assert.equal(manifest.devDependencies.typescript, "npm:@typescript/typescript6@6.0.2");
-  assert.equal(manifest.devDependencies.typescript7, "npm:typescript@7.0.2");
-  assert.equal(lockfile.packages["node_modules/typescript"].name, "@typescript/typescript6");
-  assert.equal(lockfile.packages["node_modules/@typescript/old"].name, "typescript");
-  assert.equal(lockfile.packages["node_modules/typescript7"].version, "7.0.2");
+  assert.equal(manifest.devDependencies.typescript, "6.0.3");
+  assert.equal(lockfile.packages["node_modules/typescript"].version, "6.0.3");
   assert.match(storybook, /reactDocgen: "react-docgen-typescript"/);
 });
