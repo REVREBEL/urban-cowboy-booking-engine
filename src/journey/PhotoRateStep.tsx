@@ -4,7 +4,7 @@
  * Keep Photo Journey's rate -> extras transition (the standard flow differs).
  */
 import { useEffect, useState } from "react";
-import { ProductionRateTray } from "@/components/rates/ProductionRateTray";
+import { FigmaProductionRateTray } from "@/components/rates/FigmaProductionRateTray";
 import type { RateCardConfig } from "@/types/rate-card";
 import type { PolicyLanguage } from "@/types/policy-language";
 import { useBooking } from "../state/booking";
@@ -65,7 +65,7 @@ export function PhotoRateStep() {
         </>
       )}
       <div className="relative z-10 pt-44 sm:pt-60 lg:pt-72">
-        <ProductionRateTray
+        <FigmaProductionRateTray
           roomName={room.name}
           checkIn={booking.checkIn}
           nights={booking.nightsCount}
