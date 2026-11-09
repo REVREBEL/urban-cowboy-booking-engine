@@ -131,7 +131,9 @@ function depositShareForRate(rate: ShapedRate) {
 }
 
 function pricingForRate(rate: ShapedRate, nights: number) {
-  const total = rate.totalGross ?? 0;
+  // Do not convert an unavailable offer into a valid zero-dollar quote.
+  if (rate.totalGross == null) return { nightly: null, subtotal: null, taxes: null, total: null };
+  const total = rate.totalGross;
   const taxes = rate.totalTax ?? 0;
   const subtotal = Math.max(0, total - taxes);
   const nightly =
@@ -285,7 +287,10 @@ export function ProductionRateTray({
                 key={rate.rateId}
                 eyebrow={eyebrow}
                 name={headline}
-                description={[description, config?.supportingText].filter(Boolean).join(" ")}
+                description={description}
+                perks={rate.knownRateGroup === "PACKAGE" && config?.supportingText
+                  ? config.supportingText.split(/\\n|;|•/).map((text) => text.trim()).filter(Boolean)
+                  : undefined}
                 policy={timeline
                   ? `${phaseHeading(timeline.currentPhase, language)}${timeline.phases.length > 1 ? ` until ${formatShortDate(timeline.phases[0].end)}` : ""}`
                   : rate.knownRateGroup === "NON_REFUNDABLE" ? language.nonRefundableLanguage : policyText}
@@ -300,6 +305,7 @@ export function ProductionRateTray({
                   setOpenRateId(rate.rateId);
                 }}
                 detailsLabel={isOpen ? "Hide Details" : "View Details"}
+                isDetailsOpen={isOpen}
                 onConfirm={() => requestSelection(rate, config)}
                 // Until member eligibility is wired into the booking flow, do not imply an unlock occurred.
                 confirmLabel={config?.memberOnly ? "Unlock this rate" : config?.ctaLabel?.trim()}
@@ -331,10 +337,12 @@ export function ProductionRateTray({
                 name={openConfig?.headline || openRate.name}
                 eyebrow={openConfig?.eyebrow || "Rate details"}
                 description={openConfig?.description || openRate.description || "Book direct for the best available offer."}
+                supportingText={openConfig?.supportingText}
                 nightly={pricingForRate(openRate, nights).nightly}
                 subtotal={pricingForRate(openRate, nights).subtotal}
                 taxes={pricingForRate(openRate, nights).taxes}
                 total={pricingForRate(openRate, nights).total}
+                dueToday={openRate.totalGross == null ? null : openRate.totalGross * depositShareForRate(openRate)}
                 currency={openRate.currency}
                 nights={nights}
                 policyText={openConfig
@@ -345,6 +353,7 @@ export function ProductionRateTray({
                 language={language}
                 onClose={closeDrawer}
                 onConfirm={() => requestSelection(openRate, openConfig)}
+                confirmLabel={openConfig?.memberOnly ? "Unlock this rate" : openConfig?.ctaLabel?.trim() || "Confirm rate"}
                 disabled={openRate.totalGross == null || (Boolean(openConfig?.memberOnly) && !onUnlockMember) || (openRate.isPrivate && !openConfig?.memberOnly)}
               />
             </div>
