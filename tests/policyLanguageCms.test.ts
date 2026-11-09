@@ -54,7 +54,7 @@ test("blank labels fall back independently and draft settings are ignored", () =
 });
 
 test("production rate cards render live milestones and CMS language through Figma components", () => {
-  const tray = source("src/components/rates/ProductionRateTray.tsx");
+  const tray = source("src/components/rates/FigmaProductionRateTray.tsx");
   const presentation = source("src/components/rates/FigmaRateComponents.tsx");
   assert.match(tray, /timelineForRate\(rate, config, checkIn\)/);
   assert.match(tray, /phaseHeading\(timeline.currentPhase, language\)/);
