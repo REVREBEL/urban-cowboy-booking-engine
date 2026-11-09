@@ -529,7 +529,7 @@
   line-height: .95;
 }
 
-.rc-production {
+.rc-production-page {
   --rc-ink: var(--lake-forest);
   --rc-paper: var(--paper);
   --rc-free: var(--lake-forest-fade);
