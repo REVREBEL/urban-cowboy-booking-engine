@@ -185,7 +185,7 @@ function timelineForRate(
   });
 }
 
-export function FigmaProductionRateTray({
+export function ProductionRateTray({
   roomName,
   checkIn,
   nights,
