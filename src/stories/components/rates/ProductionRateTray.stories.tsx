@@ -88,6 +88,15 @@ const configs: RateCardConfig[] = [
   { ...baseConfig, id: "story-plan-ahead", mewsRateId: "plan-ahead", sortOrder: 3, headline: "Plan Ahead", eyebrow: "Lock It In", description: "A lower rate for plans that are set in stone." },
 ];
 
+function futureArrival(): string {
+  const dateParts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(new Date());
+  const part = (type: string) => dateParts.find((entry) => entry.type === type)?.value ?? "01";
+  const arrival = new Date(Date.UTC(Number(part("year")), Number(part("month")) - 1, Number(part("day")) + 62));
+  return arrival.toISOString().slice(0, 10);
+}
+
 const meta = {
   title: "Journey/Rates/ProductionRateTray",
   component: ProductionRateTray,
@@ -102,7 +111,7 @@ const meta = {
   },
   args: {
     roomName: "Alpine Bathing Suite",
-    checkIn: "2027-06-20",
+    checkIn: futureArrival(),
     nights: 1,
     rates: [flexible, member, packageRate],
     configs,
@@ -124,6 +133,7 @@ export const StandardRateCard: Story = {
 
 export const MemberRateCard: Story = {
   args: { rates: [member] },
+  parameters: { docs: { description: { story: "Member rate without an eligibility service: selection must remain disabled." } } },
 };
 
 export const PackageRateCard: Story = {
@@ -157,7 +167,7 @@ export const StayPricing: Story = {
   args: { rates: [flexible] },
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole("button", { name: /view details/i }));
-    const dialog = within(document.body);
+    const dialog = within(await within(document.body).findByRole("dialog"));
     await waitFor(() => expect(dialog.getByRole("heading", { name: /stay pricing/i })).toBeVisible());
     await expect(dialog.getByText(/nightly average/i)).toBeVisible();
     await expect(dialog.getByText(/stay before taxes/i)).toBeVisible();
@@ -172,4 +182,23 @@ export const MobileRateDetailPopup: Story = {
   args: { rates: [flexible] },
   parameters: { viewport: { defaultViewport: "mobile1" } },
   play: RateDetailPopup.play,
+};
+
+/** Stubbed verification simulates the eligibility adapter and a server-retrieved rate. */
+export const MemberUnlockVerified: Story = {
+  args: {
+    rates: [member],
+    onUnlockMember: async (email, rate) => ({
+      eligible: email.toLowerCase() === "member@example.com",
+      rate: email.toLowerCase() === "member@example.com" ? rate : null,
+    }),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: /unlock this rate/i }));
+    const dialog = within(await within(document.body).findByRole("dialog"));
+    await userEvent.type(dialog.getByRole("textbox", { name: /email address/i }), "member@example.com");
+    await userEvent.click(dialog.getByRole("button", { name: /verify membership/i }));
+    await waitFor(() => expect(within(document.body).queryByRole("dialog")).not.toBeInTheDocument());
+  },
 };
