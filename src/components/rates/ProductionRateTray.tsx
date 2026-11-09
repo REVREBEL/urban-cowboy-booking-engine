@@ -307,6 +307,8 @@ export function ProductionRateTray({
   const [unlockPending, setUnlockPending] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
   const requestSelection = (rate: ShapedRate, config: RateCardConfig | null) => {
+    // Mews privacy is not proof of membership; do not silently select restricted rates.
+    if (rate.isPrivate && !config?.memberOnly) return;
     if (config?.memberOnly) {
       setUnlockError(null);
       setMemberEmail("");
@@ -459,12 +461,12 @@ export function ProductionRateTray({
                   </RateAction>
                   <RateAction
                     slot="select"
-                    disabled={rate.totalGross == null || (Boolean(config?.memberOnly) && !onUnlockMember)}
+                    disabled={rate.totalGross == null || ((Boolean(config?.memberOnly) && !onUnlockMember) || (rate.isPrivate && !config?.memberOnly))}
                     onClick={() => requestSelection(rate, config)}
                   >
                     {isSelected
                       ? "Selected"
-                      : config?.ctaLabel?.trim() || (config?.memberOnly ? "Unlock this rate" : "Confirm rate")}
+                      : config?.memberOnly ? "Unlock this rate" : config?.ctaLabel?.trim() || "Confirm rate"}
                   </RateAction>
                 </div>
               </article>
@@ -525,10 +527,10 @@ export function ProductionRateTray({
                 </b>
                 <RateAction
                   slot="select"
-                  disabled={openRate.totalGross == null || (Boolean(openConfig?.memberOnly) && !onUnlockMember)}
+                  disabled={openRate.totalGross == null || ((Boolean(openConfig?.memberOnly) && !onUnlockMember) || (openRate.isPrivate && !openConfig?.memberOnly))}
                   onClick={() => requestSelection(openRate, openConfig)}
                 >
-                  {openConfig?.ctaLabel?.trim() || (openConfig?.memberOnly ? "Unlock this rate" : "Confirm rate")}
+                  {openConfig?.memberOnly ? "Unlock this rate" : openConfig?.ctaLabel?.trim() || "Confirm rate"}
                 </RateAction>
               </div>
             </div>
