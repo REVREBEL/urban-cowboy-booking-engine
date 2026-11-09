@@ -1,6 +1,6 @@
 import { FigmaRateCard, FigmaRateDetailPopup } from "./FigmaRateComponents";
 import "./FigmaProductionRateTray.css";
-import { useMemo, useState, type ComponentProps, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
 import type { RateCardConfig } from "@/types/rate-card";
@@ -13,27 +13,12 @@ import {
   type PhaseKind,
 } from "@/lib/cancellationTimeline";
 
-// Named action slots keep every rate-card and tray action on the global Button system.
-type RateActionSlot = "change-room" | "details" | "select" | "close-details" | "browse-rooms";
-function RateAction({
-  slot, children, className = "", ...props
-}: {
-  slot: RateActionSlot;
-  children: ReactNode;
-  className?: string;
-} & Omit<ComponentProps<typeof Button>, "children" | "className" | "variant" | "colorScheme" | "size">) {
-  const isPrimary = slot === "select";
+// All visible rate actions inherit their appearance from the shared Button.
+type RateActionSlot = "change-room" | "browse-rooms";
+function RateAction({ slot, children, onClick }: { slot: RateActionSlot; children: ReactNode; onClick: () => void }) {
   return (
-    <Button
-      type="button"
-      data-slot={slot}
-      variant={isPrimary ? "filled" : "transparent"}
-      colorScheme="lake-forest"
-      size={isPrimary ? "small" : "xsmall"}
-      textCase={isPrimary ? "uppercase" : "title"}
-      className={`rc-action-slot ${isPrimary ? "rc-action-primary" : "rc-action-link"} ${className}`}
-      {...props}
-    >
+    <Button type="button" data-slot={slot} variant="transparent" colorScheme="lake-forest"
+      size="xsmall" textCase="title" onClick={onClick}>
       {children}
     </Button>
   );
@@ -329,16 +314,7 @@ export function ProductionRateTray({
             key={openRate.rateId}
             className={`rc-drawer-layer ${isDrawerClosing ? "is-closing" : ""}`}
           >
-            <Button
-              type="button"
-              variant="transparent"
-              colorScheme="lake-forest"
-              size="xsmall"
-              textCase="title"
-              className="rc-backdrop"
-              aria-label="Close rate details"
-              onClick={closeDrawer}
-            />
+            <button type="button" className="rc-backdrop" aria-label="Close rate details" onClick={closeDrawer} />
             <div
               className="rc-drawer rc-figma-drawer"
               role="dialog"
