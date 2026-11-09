@@ -43,6 +43,9 @@ test("Photo room browser preserves original filters, mobile sheet and photo-inde
   assert.match(rooms, /toPhotoTourRoom\(/);
   assert.match(rooms, /photoGalleryForRoom\(/);
   assert.match(rooms, /studioEditorialRoomTypeId\(/);
+  assert.match(rooms, /if \(rooms\.length === 0\) return/);
+  assert.match(rooms, /No rooms are available for these dates\./);
+  assert.match(rooms, /onClick=\{onChangeDates\}>Change dates<\/Button>/);
   assert.doesNotMatch(rooms, /JOURNEY_ROOMS/);
 });
 
@@ -66,12 +69,16 @@ test("Photo Journal matches center beside image selections and labels keep a dar
   const journal = source("journey/PhotoJournal.tsx");
   assert.match(journal, /page === 0 \? "self-center" : "self-start"/);
   assert.match(journal, /colorScheme="paper" size="small"/);
-  assert.match(journal, /linear-gradient\(to right, var\(--primary\)/);
+  assert.match(journal, /linear-gradient\(to right, var\(--lake-forest-950\), var\(--lake-forest-900\) 48%, color-mix\(in oklab, var\(--lake-forest\) 78%, transparent\)\)/);
   assert.match(journal, /linear-gradient\(to top, rgba\(15, 18, 16, 0\.92\)/);
   assert.match(journal, /pointer-events-none absolute inset-0/);
   assert.match(journal, /absolute inset-x-0 bottom-0 z-10/);
   assert.match(journal, /p\.occasion === o\.id &&/);
-  assert.match(journal, />\s*Selected\s*</);
+  assert.match(journal, /<Pill colorScheme="light" size="xsmall" textCase="uppercase" className="absolute right-3 top-3 z-20">\s*Selected\s*<\/Pill>/);
+  assert.match(journal, /Get Matched for the Perfect Escape/);
+  assert.match(journal, /occasionFit\(p\.occasion, room\)/);
+  assert.match(journal, /p\.dog, p\.occasion, p\.mustHaves/);
+  assert.match(journal, /eligible\.slice\(0, 6\)/);
   assert.match(journal, /hasIcon onClick=\{\(\) => setPage\(page \+ 1\)\}>Next page<\/Button>/);
   assert.match(journal, /max-w-\[20ch\] text-balance font-headline/);
   assert.doesNotMatch(journal, /className="rounded-full" onClick=\{\(\) => setPage/);
@@ -88,8 +95,7 @@ test("Photo rate step delegates its cards and details drawer to the shared produ
   assert.match(rates, /booking\.goTo\("extras"\)/);
   assert.match(tray, /rc-drawer-layer/);
   assert.match(tray, /role="dialog"/);
-  assert.match(tray, /<FigmaRateCard/);
-  assert.match(tray, /<FigmaRateDetailPopup/);
-  assert.match(source("components/rates/FigmaRateComponents.tsx"), /<FigmaPolicyTimeline/);
+  assert.match(tray, /<RateDetailBody/);
+  assert.match(tray, /<Timeline timeline=\{timeline\}/);
   assert.doesNotMatch(rates, /RateOfferSidePanel|<PolicyDisplay/);
 });
