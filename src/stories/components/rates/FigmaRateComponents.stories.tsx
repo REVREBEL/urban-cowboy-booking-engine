@@ -68,6 +68,7 @@ export const DetailsPopup: Story = {
         subtotal={255}
         taxes={30.6}
         total={285.6}
+        dueToday={142.8}
         policyText="Cancellation: Free Cancellation until Dec 30, 2026"
         timeline={timeline}
         arrivalDate={SAMPLE_DATE}
@@ -77,6 +78,52 @@ export const DetailsPopup: Story = {
     </div>
   ),
   parameters: { layout: "fullscreen" },
+};
+
+export const UnavailableDetails: Story = {
+  render: () => (
+    <FigmaRateDetailPopup
+      name="Ride Easy"
+      eyebrow="Rate unavailable"
+      description="This offer is not currently available."
+      nightly={null}
+      currency="USD"
+      nights={2}
+      subtotal={null}
+      taxes={null}
+      total={null}
+      dueToday={null}
+      policyText="Please choose another offer."
+      timeline={null}
+      arrivalDate={SAMPLE_DATE}
+      onClose={fn()}
+      onConfirm={fn()}
+    />
+  ),
+};
+
+export const DepositWithoutTimeline: Story = {
+  render: () => (
+    <FigmaRateDetailPopup
+      name="Ride Easy"
+      eyebrow="Flexible booking"
+      description="A deposit is due at booking."
+      supportingText="Breakfast is included."
+      nightly={142.8}
+      currency="USD"
+      nights={2}
+      subtotal={250}
+      taxes={35.6}
+      total={285.6}
+      dueToday={142.8}
+      policyText="50% deposit at booking."
+      timeline={null}
+      arrivalDate={SAMPLE_DATE}
+      confirmLabel="Reserve this rate"
+      onClose={fn()}
+      onConfirm={fn()}
+    />
+  ),
 };
 
 export const PolicyTimeline: Story = {
