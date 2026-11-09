@@ -119,12 +119,11 @@ const meta = {
     onSelectRate: () => {},
     onChangeRoom: () => {},
     showChangeRoomAction: false,
-    onUnlockMember: undefined,
   },
 } satisfies Meta<typeof ProductionRateTray>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof ProductionRateTray>;
 
 export const AllRateVariants: Story = {};
 
