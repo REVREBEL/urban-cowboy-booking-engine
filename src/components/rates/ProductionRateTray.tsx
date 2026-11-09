@@ -74,6 +74,8 @@ interface ProductionRateTrayProps {
   onSelectRate: (rate: ShapedRate) => void;
   onChangeRoom: () => void;
   showChangeRoomAction?: boolean;
+  /** Server-verified membership and retrieved Mews rate. Never infer membership from IsPrivate. */
+  onUnlockMember?: (email: string, rate: ShapedRate) => Promise<{ eligible: boolean; rate?: ShapedRate | null }>;
 }
 
 function formatMoney(amount: number | null | undefined, currency: string) {
@@ -235,7 +237,7 @@ function RateDetailBody({
         </section>
 
         <section className="rc-table" aria-label="Stay pricing">
-          <h3 className="rc-h2">Stay pricing</h3>
+          <h3 className="rc-h2 rc-stay-pricing-title">Stay pricing</h3>
           <Row
             label={`Nightly average · ${nights} ${nights === 1 ? "night" : "nights"}`}
             value={formatMoney(pricing.nightly, rate.currency)}
@@ -261,7 +263,7 @@ function RateDetailBody({
       ) : (
         <section className="rc-timeline" aria-label="Cancellation and payment summary">
           <div className="rc-tl-head">
-            <h3 className="rc-h2">Cancellation & payment</h3>
+            <h3 className="rc-h2">Policy & deposit timeline</h3>
             <p className="rc-today">{policyText}</p>
           </div>
           <div className="rc-charges">
@@ -295,10 +297,27 @@ export function ProductionRateTray({
   onSelectRate,
   onChangeRoom,
   showChangeRoomAction = true,
+  onUnlockMember,
 }: ProductionRateTrayProps) {
   const language = resolvePolicyLanguage(policyLanguage);
   const [openRateId, setOpenRateId] = useState<string | null>(null);
   const [isDrawerClosing, setIsDrawerClosing] = useState(false);
+  const [unlockRateId, setUnlockRateId] = useState<string | null>(null);
+  const [memberEmail, setMemberEmail] = useState("");
+  const [unlockPending, setUnlockPending] = useState(false);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
+  const requestSelection = (rate: ShapedRate, config: RateCardConfig | null) => {
+    // Mews privacy is not proof of membership; do not silently select restricted rates.
+    if (rate.isPrivate && !config?.memberOnly) return;
+    if (config?.memberOnly) {
+      setUnlockError(null);
+      setMemberEmail("");
+      setUnlockRateId(rate.rateId);
+      return;
+    }
+    onSelectRate(rate);
+  };
+
 
   const closeDrawer = () => setIsDrawerClosing(true);
 
@@ -315,6 +334,26 @@ export function ProductionRateTray({
     [rates, configs],
   );
 
+  const unlockRateCandidate = sortedRates.find((rate) => rate.rateId === unlockRateId) ?? null;
+  const handleUnlock = async (event: import("react").FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!unlockRateCandidate || !onUnlockMember || unlockPending) return;
+    setUnlockPending(true);
+    setUnlockError(null);
+    try {
+      const result = await onUnlockMember(memberEmail.trim(), unlockRateCandidate);
+      if (!result.eligible || !result.rate || result.rate.rateId !== unlockRateCandidate.rateId) {
+        setUnlockError("We couldn't verify eligibility for this rate. Please try another rate.");
+        return;
+      }
+      setUnlockRateId(null);
+      onSelectRate(result.rate);
+    } catch {
+      setUnlockError("Unable to verify your membership right now. Please try again.");
+    } finally {
+      setUnlockPending(false);
+    }
+  };
   const openRate =
     sortedRates.find((rate) => rate.rateId === openRateId) ?? null;
   const openConfig = openRate
@@ -361,13 +400,13 @@ export function ProductionRateTray({
             return (
               <article
                 key={rate.rateId}
-                className={`rc-rate ${isSelected ? "is-chosen" : ""} ${isOpen ? "is-open" : ""}`}
+                className={`rc-rate ${isSelected ? "is-chosen" : ""} ${isOpen ? "is-open" : ""} ${config?.memberOnly ? "is-member" : ""} ${config?.supportingText ? "has-perks" : ""}`}
               >
-                <p className="rc-eyebrow">{eyebrow}</p>
+                <div className="rc-card-heading"><p className="rc-eyebrow">{eyebrow}</p>{config?.memberOnly && <span className="rc-member-pill">Member rate</span>}</div>
                 <h2 className="rc-name">{headline}</h2>
                 {description && <p className="rc-rate-sub">{description}</p>}
                 {config?.supportingText && (
-                  <p className="rc-rate-supporting">{config.supportingText}</p>
+                  <div className="rc-rate-supporting"><strong>Included perks:</strong><p>{config.supportingText}</p></div>
                 )}
 
                 {timeline && (
@@ -399,10 +438,7 @@ export function ProductionRateTray({
                 {timeline && <MiniBar timeline={timeline} />}
 
                 <div className="rc-rate-price">
-                  <span>
-                    {formatMoney(pricing.nightly, rate.currency)} × {nights}{" "}
-                    {nights === 1 ? "night" : "nights"}
-                  </span>
+                  <span>{nights} {nights === 1 ? "night" : "nights"} · nightly average {formatMoney(pricing.nightly, rate.currency)}</span>
                   <b className="rc-num">
                     {formatMoney(pricing.total, rate.currency)}
                   </b>
@@ -421,16 +457,16 @@ export function ProductionRateTray({
                       setOpenRateId(rate.rateId);
                     }}
                   >
-                    {isOpen ? "Hide details" : "View details"}
+                    {isOpen ? "Hide details" : "View details"} <span aria-hidden="true">↗</span>
                   </RateAction>
                   <RateAction
                     slot="select"
-                    disabled={rate.totalGross == null}
-                    onClick={() => onSelectRate(rate)}
+                    disabled={rate.totalGross == null || ((Boolean(config?.memberOnly) && !onUnlockMember) || (rate.isPrivate && !config?.memberOnly))}
+                    onClick={() => requestSelection(rate, config)}
                   >
                     {isSelected
                       ? "Selected"
-                      : config?.ctaLabel?.trim() || "Choose this rate"}
+                      : config?.memberOnly ? "Unlock this rate" : config?.ctaLabel?.trim() || "Confirm rate"}
                   </RateAction>
                 </div>
               </article>
@@ -491,16 +527,38 @@ export function ProductionRateTray({
                 </b>
                 <RateAction
                   slot="select"
-                  disabled={openRate.totalGross == null}
-                  onClick={() => onSelectRate(openRate)}
+                  disabled={openRate.totalGross == null || ((Boolean(openConfig?.memberOnly) && !onUnlockMember) || (openRate.isPrivate && !openConfig?.memberOnly))}
+                  onClick={() => requestSelection(openRate, openConfig)}
                 >
-                  {openConfig?.ctaLabel?.trim() || "Choose this rate"}
+                  {openConfig?.memberOnly ? "Unlock this rate" : openConfig?.ctaLabel?.trim() || "Confirm rate"}
                 </RateAction>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {unlockRateCandidate && (
+        <div className="rc-drawer-layer rc-unlock-layer">
+          <div className="rc-unlock-backdrop" aria-hidden="true" />
+          <section className="rc-unlock-dialog" role="dialog" aria-modal="true" aria-labelledby="rc-unlock-title">
+            <div className="rc-sheet-head">
+              <div>
+                <p className="rc-eyebrow">Cowboy member rate</p>
+                <h2 id="rc-unlock-title" className="rc-name">Unlock your rate</h2>
+              </div>
+              <Button type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" onClick={() => !unlockPending && setUnlockRateId(null)}>Close</Button>
+            </div>
+            <p>Enter your email to verify member eligibility before choosing this rate.</p>
+            <form onSubmit={(event) => void handleUnlock(event)} className="rc-unlock-form">
+              <label htmlFor="rc-member-email">Email address</label>
+              <input id="rc-member-email" type="email" autoComplete="email" required value={memberEmail} onChange={(event) => setMemberEmail(event.target.value)} disabled={unlockPending} />
+              {unlockError && <p role="alert">{unlockError}</p>}
+              <Button type="submit" variant="filled" colorScheme="lake-forest" size="small" disabled={!onUnlockMember || unlockPending} isLoading={unlockPending}>Verify membership</Button>
+            </form>
+          </section>
+        </div>
+      )}
 
       {sortedRates.length === 0 && (
         <div className="rc-empty">
@@ -560,7 +618,7 @@ function Timeline({
   return (
     <section className="rc-timeline" aria-label="Cancellation timeline">
       <div className="rc-tl-head">
-        <h3 className="rc-h2">If you cancel</h3>
+        <h3 className="rc-h2">Policy & deposit timeline</h3>
         <p className="rc-today">
           Cancel today and get back{" "}
           <strong>{formatMoney(timeline.refundIfCancelToday, currency)}</strong>
