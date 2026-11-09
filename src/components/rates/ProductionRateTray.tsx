@@ -235,7 +235,7 @@ function RateDetailBody({
         </section>
 
         <section className="rc-table" aria-label="Stay pricing">
-          <h3 className="rc-h2">Stay pricing</h3>
+          <h3 className="rc-h2 rc-stay-pricing-title">Stay pricing</h3>
           <Row
             label={`Nightly average · ${nights} ${nights === 1 ? "night" : "nights"}`}
             value={formatMoney(pricing.nightly, rate.currency)}
@@ -261,7 +261,7 @@ function RateDetailBody({
       ) : (
         <section className="rc-timeline" aria-label="Cancellation and payment summary">
           <div className="rc-tl-head">
-            <h3 className="rc-h2">Cancellation & payment</h3>
+            <h3 className="rc-h2">Policy & deposit timeline</h3>
             <p className="rc-today">{policyText}</p>
           </div>
           <div className="rc-charges">
@@ -361,13 +361,13 @@ export function ProductionRateTray({
             return (
               <article
                 key={rate.rateId}
-                className={`rc-rate ${isSelected ? "is-chosen" : ""} ${isOpen ? "is-open" : ""}`}
+                className={`rc-rate ${isSelected ? "is-chosen" : ""} ${isOpen ? "is-open" : ""} ${rate.isPrivate ? "is-member" : ""} ${config?.supportingText ? "has-perks" : ""}`}
               >
-                <p className="rc-eyebrow">{eyebrow}</p>
+                <div className="rc-card-heading"><p className="rc-eyebrow">{eyebrow}</p>{rate.isPrivate && <span className="rc-member-pill">Member rate</span>}</div>
                 <h2 className="rc-name">{headline}</h2>
                 {description && <p className="rc-rate-sub">{description}</p>}
                 {config?.supportingText && (
-                  <p className="rc-rate-supporting">{config.supportingText}</p>
+                  <div className="rc-rate-supporting"><strong>Included perks:</strong><p>{config.supportingText}</p></div>
                 )}
 
                 {timeline && (
@@ -399,10 +399,7 @@ export function ProductionRateTray({
                 {timeline && <MiniBar timeline={timeline} />}
 
                 <div className="rc-rate-price">
-                  <span>
-                    {formatMoney(pricing.nightly, rate.currency)} × {nights}{" "}
-                    {nights === 1 ? "night" : "nights"}
-                  </span>
+                  <span>{nights} {nights === 1 ? "night" : "nights"} · nightly average {formatMoney(pricing.nightly, rate.currency)}</span>
                   <b className="rc-num">
                     {formatMoney(pricing.total, rate.currency)}
                   </b>
@@ -421,7 +418,7 @@ export function ProductionRateTray({
                       setOpenRateId(rate.rateId);
                     }}
                   >
-                    {isOpen ? "Hide details" : "View details"}
+                    {isOpen ? "Hide details" : "View details"} <span aria-hidden="true">↗</span>
                   </RateAction>
                   <RateAction
                     slot="select"
@@ -430,7 +427,7 @@ export function ProductionRateTray({
                   >
                     {isSelected
                       ? "Selected"
-                      : config?.ctaLabel?.trim() || "Choose this rate"}
+                      : config?.ctaLabel?.trim() || (rate.isPrivate ? "Unlock this rate" : "Confirm rate")}
                   </RateAction>
                 </div>
               </article>
@@ -560,7 +557,7 @@ function Timeline({
   return (
     <section className="rc-timeline" aria-label="Cancellation timeline">
       <div className="rc-tl-head">
-        <h3 className="rc-h2">If you cancel</h3>
+        <h3 className="rc-h2">Policy & deposit timeline</h3>
         <p className="rc-today">
           Cancel today and get back{" "}
           <strong>{formatMoney(timeline.refundIfCancelToday, currency)}</strong>
