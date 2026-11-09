@@ -69,7 +69,7 @@ test("Photo Journal matches center beside image selections and labels keep a dar
   const journal = source("journey/PhotoJournal.tsx");
   assert.match(journal, /page === 0 \? "self-center" : "self-start"/);
   assert.match(journal, /colorScheme="paper" size="small"/);
-  assert.match(journal, /linear-gradient\(to right, var\(--primary-foreground\)/);
+  assert.match(journal, /linear-gradient\(to right, var\(--lake-forest-950\), var\(--lake-forest-900\) 48%, color-mix\(in oklab, var\(--lake-forest\) 78%, transparent\)\)/);
   assert.match(journal, /linear-gradient\(to top, rgba\(15, 18, 16, 0\.92\)/);
   assert.match(journal, /pointer-events-none absolute inset-0/);
   assert.match(journal, /absolute inset-x-0 bottom-0 z-10/);

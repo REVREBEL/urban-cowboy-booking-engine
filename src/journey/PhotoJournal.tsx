@@ -80,7 +80,7 @@ export function PhotoJournal({ adults, children, rooms, imageBaseUrl, galleries,
       )}
       <div
         className="fixed inset-0"
-        style={{ background: "linear-gradient(to right, var(--primary-foreground), color-mix(in oklab, var(--primary-foreground) 90%, transparent), color-mix(in oklab, var(--primary-foreground) 40%, transparent))" }}
+        style={{ background: "linear-gradient(to right, var(--lake-forest-950), var(--lake-forest-900) 48%, color-mix(in oklab, var(--lake-forest) 78%, transparent))" }}
       />
       <div className="relative mx-auto grid max-w-[1600px] gap-10 px-5 pb-16 pt-28 sm:px-8 lg:grid-cols-[1.3fr_1fr]">
         <div>
