@@ -119,6 +119,7 @@ const meta = {
     onSelectRate: () => {},
     onChangeRoom: () => {},
     showChangeRoomAction: false,
+    onUnlockMember: undefined,
   },
 } satisfies Meta<typeof ProductionRateTray>;
 
