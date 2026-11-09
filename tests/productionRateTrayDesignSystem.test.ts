@@ -6,7 +6,7 @@ const read = (path: string) =>
   readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8");
 
 test("production rate actions render named slots through the shared Button", () => {
-  const tray = read("components/rates/ProductionRateTray.tsx");
+  const tray = read("components/rates/FigmaProductionRateTray.tsx");
   const replacement = read("components/rates/FigmaRateComponents.tsx");
   const source = tray + "\n" + replacement;
   assert.match(source, /import \{ Button \} from ["']@\/components\/ui\/Button["']/);
