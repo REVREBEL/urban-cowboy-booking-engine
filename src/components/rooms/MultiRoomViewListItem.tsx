@@ -11,6 +11,8 @@ export type MultiRoomViewRoomTypeCardData = MultiRoomViewRoomTypeCardProps & {
   id: string;
 };
 
+export type RoomTypeCardData = MultiRoomViewRoomTypeCardData;
+
 export interface RoomListItemProps {
   className?: string;
   buildingSectionSlot?: ReactNode | null;

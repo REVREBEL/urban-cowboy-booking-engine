@@ -9,16 +9,18 @@ import { RoomPhotoTour } from "./RoomPhotoTour";
 import { PhotoTourArrow } from "./PhotoTourArrow";
 import { Button } from "../components/ui/Button";
 import { Pill, PillButton } from "@/components/ui/Pill";
+import { MultiRoomViewBuilding } from "@/components/rooms/MultiRoomViewBuilding";
+import { MultiRoomViewListItem } from "@/components/rooms/MultiRoomViewListItem";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";
 import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
 import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
 import { photoGalleryForRoom, studioEditorialRoomTypeId, type PhotoSource } from "@/data/photoGalleries";
 import type { Feature, MatchProfile } from "../journey/data";
+import { ROOM_TYPE_GROUP_PRESENTATION } from "@/data/roomTypeGroupPresentation";
 import { money as formatMoney } from "@/lib/format";
 
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
-const money = (n: number) => formatMoney(n, "USD", { decimals: 0 });
 const FEATURE_LABEL: Record<Feature, string> = {
   "indoor-tub": "Tub by the window", "outdoor-tub": "Soak outside",
   fireplace: "Fire or wood stove", view: "Big views", gather: "Space to gather",
@@ -149,6 +151,16 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
   const applySheet = () => { setBuilding(draft.building); setFeatures(draft.features); setSort(draft.sort); setView(draft.view); setSheetOpen(false); };
   const draftCount = filterRooms(draft.building, draft.features, draft.sort).length;
   const activeFilters = (building === "all" ? 0 : 1) + features.length;
+  const multiRoomGroups = useMemo(() => {
+    const groups = new Map<string, typeof list>();
+    for (const item of list) {
+      const key = item.source.merchandising?.roomTypeGroupKey ?? item.room.building;
+      const group = groups.get(key);
+      if (group) group.push(item);
+      else groups.set(key, [item]);
+    }
+    return [...groups.entries()];
+  }, [list]);
   useEffect(() => {
     if (!sheetOpen) return;
     const esc = (e: KeyboardEvent) => { if (e.key === "Escape") setSheetOpen(false); };
@@ -407,22 +419,46 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
           ))}
         </div>
       ) : (
-        <ul className="mx-auto mt-6 grid max-w-[1600px] gap-x-4 gap-y-8 px-5 sm:grid-cols-2 sm:px-8 lg:grid-cols-3 xl:grid-cols-4">
-          {list.map((m) => (
-            <li key={m.room.id}>
-              <Button type="button" onClick={() => { setView("spreads"); setDetail(m.room.id); window.setTimeout(() => document.getElementById(`tour-${m.room.id}`)?.scrollIntoView({ block: "start" }), 0); }} variant="transparent" colorScheme="paper" size="xsmall" className="group block w-full text-left" style={{padding:0,display:"block",width:"100%",textAlign:"left",fontWeight:400}}>
-                <img src={m.room.images[0]} alt="" className="aspect-3/2 w-full rounded-lg bg-smoke object-contain transition group-hover:opacity-90" loading="lazy" />
-                <div className="mt-3 flex items-baseline justify-between gap-3">
-                  <h3 className="min-w-0 truncate font-heading text-xl leading-none">{m.room.name}</h3>
-                  <span className="shrink-0 tabular-nums">{money(m.room.basePrice)}</span>
-                </div>
-                <p className="text-sm text-paper/70">
-                  {m.room.building} · {m.room.bedType}{profile ? ` · ${profile.mustHaves.filter(feature => m.room.features.includes(feature)).length} features matched` : ""}
-                </p>
-              </Button>
-            </li>
-          ))}
-        </ul>
+        <div className="mx-auto mt-6 flex max-w-[1600px] flex-col items-center gap-[60px] bg-primary-foreground px-5 sm:mt-[var(--j-room-top)] sm:px-8">
+          {multiRoomGroups.map(([groupKey, groupRooms]) => {
+            const first = groupRooms[0];
+            const presentation = groupKey in ROOM_TYPE_GROUP_PRESENTATION
+              ? ROOM_TYPE_GROUP_PRESENTATION[groupKey as keyof typeof ROOM_TYPE_GROUP_PRESENTATION]
+              : null;
+            return (
+              <MultiRoomViewListItem
+                key={groupKey}
+                layout="Row"
+                className="[--room-list-building-panel:transparent]"
+                roomTypes={groupRooms.map((m) => ({
+                  id: m.room.id,
+                  roomTypeName: m.room.name,
+                  buildingName: m.room.building,
+                  numberOfBeds: m.room.bedType,
+                  price: formatMoney(m.room.basePrice, m.source.rates[0]?.currency ?? "USD", { decimals: 0 }),
+                  roomTypeImage: (
+                    <img
+                      src={m.room.images[0]}
+                      alt=""
+                      className="absolute inset-0 size-full object-cover"
+                      loading="lazy"
+                    />
+                  ),
+                }))}
+                buildingSectionSlot={first ? (
+                  <MultiRoomViewBuilding
+                    layout="StackedCenter"
+                    displayBuildingIcon={false}
+                    className="[--building-name-color:var(--paper)] [--building-description-color:var(--paper)] [--building-tagline-color:var(--alpine-linen)]"
+                    buildingName={first.room.building}
+                    buildingDescription={presentation?.paragraphs.join(" ") ?? first.room.description}
+                    buildingTagline={presentation?.callout ?? presentation?.headline ?? first.room.tagline}
+                  />
+                ) : null}
+              />
+            );
+          })}
+        </div>
       )}
 
 
