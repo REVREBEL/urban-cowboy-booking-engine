@@ -64,3 +64,10 @@ test("Photo screens contain no invalid legacy palette utility names", () => {
     }
   }
 });
+
+test("Photo room footer fades softly into the image", () => {
+  const photo = read("styles/room-photo-tour.css");
+  assert.match(photo, /\.j-tour-footer::before/);
+  assert.match(photo, /inset: -120px 0 auto/);
+  assert.match(photo, /linear-gradient\(to bottom, color-mix\(in oklab, var\(--color-smoke\) 0%, transparent\)/);
+});

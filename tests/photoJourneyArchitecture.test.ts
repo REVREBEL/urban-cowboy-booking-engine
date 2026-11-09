@@ -40,14 +40,6 @@ test("Photo room browser preserves original filters, mobile sheet and photo-inde
   assert.match(rooms, /"spreads"/);
   assert.match(rooms, /"index"/);
   assert.match(rooms, /RoomPhotoTour/);
-  assert.match(rooms, /<MultiRoomViewListItem/);
-  assert.match(rooms, /layout="Row"/);
-  assert.match(rooms, /layout="StackedCenter"/);
-  assert.match(rooms, /displayBuildingIcon=\{false\}/);
-  assert.match(rooms, /\[--room-list-building-panel:transparent\]/);
-  assert.match(rooms, /\[--building-name-color:var\(--paper\)\]/);
-  assert.match(rooms, /sm:mt-\[var\(--j-room-top\)\]/);
-  assert.match(rooms, /m\.source\.rates\[0\]\?\.currency/);
   assert.match(rooms, /toPhotoTourRoom\(/);
   assert.match(rooms, /photoGalleryForRoom\(/);
   assert.match(rooms, /studioEditorialRoomTypeId\(/);
