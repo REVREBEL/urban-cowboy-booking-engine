@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FigmaProductionRateTray } from "@/components/rates/FigmaProductionRateTray";
+import { ProductionRateTray } from "@/components/rates/FigmaProductionRateTray";
 import type { RateCardConfig } from "@/types/rate-card";
 import type { PolicyLanguage } from "@/types/policy-language";
 import { api } from "../lib/api";
@@ -48,7 +48,7 @@ export function Rates() {
   if (!selectedRoom) return null;
 
   return (
-    <FigmaProductionRateTray
+    <ProductionRateTray
       roomName={selectedRoom.name}
       checkIn={checkIn}
       nights={nightsCount}
