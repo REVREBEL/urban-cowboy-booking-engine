@@ -10,6 +10,18 @@ CREATE TABLE IF NOT EXISTS tenants (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS buildings (
+  id TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  location_id TEXT,
+  name TEXT NOT NULL,
+  slug TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id),
+  FOREIGN KEY (location_id) REFERENCES locations (id)
+);
+
 CREATE TABLE IF NOT EXISTS locations (
   id TEXT PRIMARY KEY,
   tenant_id TEXT NOT NULL,
@@ -246,4 +258,65 @@ CREATE TABLE IF NOT EXISTS analytics_daily (
   value REAL NOT NULL DEFAULT 0,
   UNIQUE (tenant_id, location_id, day, metric),
   FOREIGN KEY (tenant_id) REFERENCES tenants (id)
+);
+CREATE TABLE IF NOT EXISTS room_types (
+  id TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  location_id TEXT,
+  mews_room_category_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  slug TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id),
+  FOREIGN KEY (location_id) REFERENCES locations (id)
+);
+
+CREATE TABLE IF NOT EXISTS amenities (
+  id TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  image_name TEXT,
+  image_path TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id)
+);
+
+CREATE TABLE IF NOT EXISTS room_type_amenities (
+  room_type_id TEXT NOT NULL,
+  amenity_id TEXT NOT NULL,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  excluded INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (room_type_id, amenity_id),
+  FOREIGN KEY (room_type_id) REFERENCES room_types (id),
+  FOREIGN KEY (amenity_id) REFERENCES amenities (id)
+);
+
+CREATE TABLE IF NOT EXISTS photo_hotspots (
+  id TEXT PRIMARY KEY,
+  media_asset_id TEXT NOT NULL,
+  media_version INTEGER NOT NULL,
+  x REAL NOT NULL,
+  y REAL NOT NULL,
+  amenity_id TEXT,
+  label TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (media_asset_id) REFERENCES media_assets (id),
+  FOREIGN KEY (amenity_id) REFERENCES amenities (id)
+);
+
+CREATE TABLE IF NOT EXISTS rate_merchandising (
+  id TEXT PRIMARY KEY,
+  tenant_id TEXT NOT NULL,
+  location_id TEXT,
+  rate_product_id TEXT NOT NULL,
+  position INTEGER NOT NULL DEFAULT 0,
+  styling TEXT,
+  geo_targeting TEXT,
+  cancellation_rules TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id),
+  FOREIGN KEY (location_id) REFERENCES locations (id)
 );

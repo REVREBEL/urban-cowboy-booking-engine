@@ -34,12 +34,14 @@ export async function listContentItems(
 export async function getContentItem(
   db: D1Database,
   id: string,
+  tenantId: string,
+  locationId?: string | null,
 ): Promise<unknown | null> {
   const row = await db
     .prepare(
-      "SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items WHERE id = ?1",
+      "SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items WHERE id = ?1 AND tenant_id = ?2 AND (?3 IS NULL OR location_id = ?3)",
     )
-    .bind(id)
+    .bind(id, tenantId, locationId ?? null)
     .first();
   return row ?? null;
 }
