@@ -61,9 +61,9 @@ crons = ["*/15 * * * *"]
 
 # D1 database: owns editorial content, settings, publishing revisions, stable
 # media IDs, merchandising, guest recovery state and reporting read models.
-# Create with `wrangler d1 create urban-cowboy-content` then fill database_id.
+# Provisioned in REVREBEL Cloudflare account. Keep D1 cutover gated until validated.
 [[d1_databases]]
 binding = "DB"
 database_name = "urban-cowboy-content"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "0d09ca5a-74fe-4e83-a058-b8aa5fb21562"
 migrations_dir = "migrations"
