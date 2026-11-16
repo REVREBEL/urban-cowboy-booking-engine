@@ -15,7 +15,7 @@ export async function onRequestGet(ctx: Ctx): Promise<Response> {
   const tenantId = url.searchParams.get("tenant") ?? "urban-cowboy";
   const kind = url.searchParams.get("kind") ?? undefined;
   const locationId = url.searchParams.get("location") ?? undefined;
-  const items = await listContentItems(db, { tenantId, locationId }, kind);
+  const items = await listContentItems(db, { tenantId, locationId }, kind, true);
   return new Response(JSON.stringify({ items }), {
     status: 200,
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },

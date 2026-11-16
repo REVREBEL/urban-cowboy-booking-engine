@@ -1,5 +1,5 @@
-// Generates D1 seed SQL from Webflow CMS CSV exports.
-// Usage: node scripts/seed-d1-from-webflow.mjs > seed.sql
+// Generates a row-count report from Webflow CMS CSV exports.
+// Full SQL generation is not implemented yet; this script validates inputs.
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
@@ -23,8 +23,7 @@ function parseCsv(text) {
 for (const f of files) {
   const text = readFileSync(join(dir, f), "utf8");
   const rows = parseCsv(text);
-  console.log(`-- ${f}: ${rows.length} rows`);
+  console.log(`${f}: ${rows.length} rows`);
 }
-console.log("-- Seed generation placeholder: map columns per collection in D1 schema.");
+console.log("Seed generation placeholder: map columns per collection in D1 schema.");
 EOF
-node scripts/seed-d1-from-webflow.mjs

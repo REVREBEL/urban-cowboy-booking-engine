@@ -21,8 +21,12 @@ function makeList(table: string) {
     }
     const url = new URL(ctx.request.url);
     const tenantId = url.searchParams.get("tenant") ?? "urban-cowboy";
+    const where =
+      table === "events"
+        ? "tenant_id = ?1 AND display_flag = 1"
+        : "tenant_id = ?1 AND status = 'published'";
     const stmt = db
-      .prepare(`SELECT * FROM ${table} WHERE tenant_id = ?1 ORDER BY created_at DESC`)
+      .prepare(`SELECT * FROM ${table} WHERE ${where} ORDER BY created_at DESC`)
       .bind(tenantId);
     const result = await stmt.all();
     return new Response(JSON.stringify({ items: result.results ?? [] }), {

@@ -14,8 +14,11 @@ export async function analyticsSummary(ctx: Ctx): Promise<Response> {
       headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
     });
   }
+  const url = new URL(ctx.request.url);
+  const tenantId = url.searchParams.get("tenant") ?? "urban-cowboy";
   const result = await db
-    .prepare("SELECT day, metric, SUM(value) as value FROM analytics_daily GROUP BY day, metric ORDER BY day DESC LIMIT 200")
+    .prepare("SELECT day, metric, SUM(value) as value FROM analytics_daily WHERE tenant_id = ?1 GROUP BY day, metric ORDER BY day DESC LIMIT 200")
+    .bind(tenantId)
     .all();
   return new Response(JSON.stringify({ items: result.results ?? [] }), {
     status: 200,

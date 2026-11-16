@@ -17,13 +17,15 @@ export async function listContentItems(
   db: D1Database,
   scope: TenantScope,
   kind?: string,
+  publishedOnly = true,
 ): Promise<unknown[]> {
+  const statusClause = publishedOnly ? " AND status = 'published'" : "";
   const stmt = kind
     ? db.prepare(
-        "SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2) AND kind = ?3 ORDER BY updated_at DESC",
+        `SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2) AND kind = ?3${statusClause} ORDER BY updated_at DESC`,
       ).bind(scope.tenantId, scope.locationId ?? null, kind)
     : db.prepare(
-        "SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2) ORDER BY updated_at DESC",
+        `SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2)${statusClause} ORDER BY updated_at DESC`,
       ).bind(scope.tenantId, scope.locationId ?? null);
   const result = await stmt.all();
   return result.results ?? [];

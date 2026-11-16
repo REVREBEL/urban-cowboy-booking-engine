@@ -5,7 +5,7 @@ import { requireRole } from "./auth";
 type Ctx = { request: Request; env: Env };
 
 export async function recoveryList(ctx: Ctx): Promise<Response> {
-  const denied = requireRole(ctx.request, ["admin", "editor"]);
+  const denied = requireRole(ctx.request, ["admin", "editor"], ctx.env);
   if (denied) return denied;
   const db = getDb(ctx.env);
   if (!db) {
@@ -14,8 +14,11 @@ export async function recoveryList(ctx: Ctx): Promise<Response> {
       headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
     });
   }
+  const url = new URL(ctx.request.url);
+  const tenantId = url.searchParams.get("tenant") ?? "urban-cowboy";
   const result = await db
-    .prepare("SELECT * FROM cart_abandonments ORDER BY created_at DESC LIMIT 100")
+    .prepare("SELECT ca.* FROM cart_abandonments ca JOIN guest_sessions gs ON gs.id = ca.session_id WHERE gs.tenant_id = ?1 ORDER BY ca.created_at DESC LIMIT 100")
+    .bind(tenantId)
     .all();
   return new Response(JSON.stringify({ items: result.results ?? [] }), {
     status: 200,
