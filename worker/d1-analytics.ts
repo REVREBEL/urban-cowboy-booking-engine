@@ -5,7 +5,7 @@ import { requireRole } from "./auth";
 type Ctx = { request: Request; env: Env };
 
 export async function analyticsSummary(ctx: Ctx): Promise<Response> {
-  const denied = requireRole(ctx.request, ["admin", "editor", "viewer"]);
+  const denied = requireRole(ctx.request, ["admin", "editor", "viewer"], ctx.env);
   if (denied) return denied;
   const db = getDb(ctx.env);
   if (!db) {

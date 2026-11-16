@@ -16,7 +16,8 @@ export async function fetchD1Module<T = unknown>(
   module: "events" | "add-ons" | "offers" | "upgrades",
   tenant = "urban-cowboy",
 ): Promise<T[]> {
-  const res = await fetch(`/api/content/${module}?tenant=${encodeURIComponent(tenant)}`);
+  const path = module === "add-ons" ? "/api/d1/add-ons" : `/api/content/${module}`;
+  const res = await fetch(`${path}?tenant=${encodeURIComponent(tenant)}`);
   if (!res.ok) throw new Error(`D1 ${module} fetch failed: ${res.status}`);
   const data = (await res.json()) as { items: T[] };
   return data.items ?? [];

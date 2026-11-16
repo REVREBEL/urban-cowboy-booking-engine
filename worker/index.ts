@@ -100,7 +100,7 @@ export default {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return eventsList({ request, env });
     }
-    if (url.pathname.match(/^\/api\/content\/add-ons\/?$/)) {
+    if (url.pathname.match(/^\/api\/d1\/add-ons\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return addOnsList({ request, env });
     }
