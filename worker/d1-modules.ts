@@ -29,7 +29,15 @@ function makeList(table: string) {
       .prepare(`SELECT * FROM ${table} WHERE ${where} ORDER BY created_at DESC`)
       .bind(tenantId);
     const result = await stmt.all();
-    return new Response(JSON.stringify({ items: result.results ?? [] }), {
+    const items = (result.results ?? []).map((r: any) => {
+      const out: any = {};
+      for (const [k, v] of Object.entries(r)) {
+        const camel = k.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+        out[camel] = v;
+      }
+      return out;
+    });
+    return new Response(JSON.stringify({ items }), {
       status: 200,
       headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
     });
