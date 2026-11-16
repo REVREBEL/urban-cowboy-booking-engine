@@ -58,3 +58,12 @@ crons = ["*/15 * * * *"]
 # [[kv_namespaces]]
 # binding = "WEBFLOW_CONTENT_CACHE"
 # id = "<webflow-content-cache-namespace-id>"
+
+# D1 database: owns editorial content, settings, publishing revisions, stable
+# media IDs, merchandising, guest recovery state and reporting read models.
+# Create with `wrangler d1 create urban-cowboy-content` then fill database_id.
+[[d1_databases]]
+binding = "DB"
+database_name = "urban-cowboy-content"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"

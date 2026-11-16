@@ -5,6 +5,9 @@
 export interface Env {
   // Binding Static Assets : sert le front buildé (dist/) + fallback SPA.
   ASSETS: Fetcher;
+  // D1 database: owns editorial content, settings, revisions, media IDs,
+  // merchandising, guest recovery state and reporting read models.
+  DB?: D1Database;
   // Preferred shared calendar snapshot store. The calendar engine falls back to
   // the Worker Cache API when this KV binding has not been provisioned yet.
   CALENDAR_CACHE?: KVNamespace;
