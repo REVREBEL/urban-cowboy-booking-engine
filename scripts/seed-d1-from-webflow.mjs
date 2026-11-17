@@ -34,7 +34,19 @@ const reportPath = option("--report", "docs/generated/d1-reconciliation.json");
 
 const TENANT_ID = "urban-cowboy";
 const CATSKILLS_ID = "6abc9142d98b325b2821ca23";
-const DEFAULT_TIME_ZONE = "America/New_York";
+// Explicit per-property IANA zones. Never apply Catskills' zone to Denver/Nashville.
+const LOCATION_TIME_ZONES = Object.freeze({
+  catskills: "America/New_York",
+  denver: "America/Denver",
+  "nashville-east": "America/Chicago",
+  "nashville-downtown": "America/Chicago",
+});
+function locationTimeZone(slug) {
+  const zone = LOCATION_TIME_ZONES[slug];
+  if (!zone) throw new Error("Unknown location time zone for " + JSON.stringify(slug));
+  return zone;
+}
+const DEFAULT_TIME_ZONE = "America/New_York"; // Catskills event fallback only
 const IMPORT_ACTOR = "webflow-cms-import";
 
 // ---------------------------------------------------------------------------
@@ -237,7 +249,7 @@ addSection("locations", buildInsert(
   "locations",
   ["id", "tenant_id", "slug", "name", "time_zone", "mews_hotel_id"],
   collections.locations.rows.map((r) => [
-    val(r, "id"), TENANT_ID, val(r, "slug"), val(r, "name"), DEFAULT_TIME_ZONE, null,
+    val(r, "id"), TENANT_ID, val(r, "slug"), val(r, "name"), locationTimeZone(val(r, "slug")), null,
   ]),
 ));
 note(`${collections.locations.rows.length} locations have no Mews hotel ID in the export; ` +
