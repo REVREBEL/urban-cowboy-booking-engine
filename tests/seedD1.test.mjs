@@ -14,6 +14,8 @@ function makeDb() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
   db.exec(read("migrations/0001_init.sql"));
+  // 0003 creates the provenance/alias tables that the regenerated seed fills.
+  db.exec(read("migrations/0003_property_scoped_contracts.sql"));
   db.exec(read("seed.sql"));
   return db;
 }
@@ -94,6 +96,19 @@ test("versioned content model carries the three collections with correct publica
   db.close();
 });
 
+test("every imported record carries source provenance", () => {
+  const db = makeDb();
+  const report = JSON.parse(read("docs/generated/d1-reconciliation.json"));
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM content_provenance").get().n, report.provenanceRows);
+  assert.ok(report.provenanceRows >= 160, "at least the represented source records have provenance");
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM content_provenance WHERE source_snapshot_date IS NULL OR source_hash IS NULL").get().n, 0);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM content_provenance WHERE source_system != 'webflow_cms'").get().n, 0);
+  const roomType = db.prepare("SELECT source_id, source_collection, location_id FROM content_provenance WHERE target_table='room_types' LIMIT 1").get();
+  assert.equal(roomType.source_collection, "roomTypes");
+  assert.ok(roomType.source_id && roomType.location_id);
+  db.close();
+});
+
 test("no fake foreign keys or placeholder media were introduced", () => {
   const seed = read("seed.sql");
   assert.doesNotMatch(seed, /placeholder-media/i);
@@ -118,6 +133,8 @@ test("reconciliation report matches generated SQL and source scope", () => {
   const report = JSON.parse(read("docs/generated/d1-reconciliation.json"));
   assert.equal(report.totalSourceRecords, 398);
   assert.equal(report.structurallyRepresentedSourceRecords, 136);
+  assert.ok(report.provenanceRows > 0);
+  assert.ok(report.files.every((file) => /^[a-f0-9]{64}$/.test(file.sha256)));
   assert.equal(report.relationships.roomAmenityRows, 253);
   assert.equal(report.relationships.hotspotsExcluded, 238);
   assert.equal(report.tenantId, TENANT);

@@ -22,6 +22,8 @@ export interface SourceMapping {
   sourceCollection: string;
   sourceSystem: SourceSystem;
   snapshotDate: string;
+  /** Source CSV field carrying the location reference, when present. */
+  locationField?: string;
   targets: SourceTarget[];
 }
 
@@ -34,16 +36,16 @@ export interface ExcludedSource {
 export type ProvenanceSeed = Omit<ContentProvenanceContract, "importedAt">;
 
 export const WEBFLOW_MAPPINGS: readonly SourceMapping[] = [
-  { sourceCollection: "locations", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "locations" }] },
-  { sourceCollection: "buildings", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "buildings" }] },
-  { sourceCollection: "roomTypes", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "room_types" }, { table: "room_type_amenities", note: "derived from features-amenities / display-order / restricted-amenity-ids" }] },
+  { sourceCollection: "locations", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, locationField: "id", targets: [{ table: "locations" }] },
+  { sourceCollection: "buildings", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, locationField: "location", targets: [{ table: "buildings" }] },
+  { sourceCollection: "roomTypes", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, locationField: "property-location", targets: [{ table: "room_types" }, { table: "room_type_amenities", note: "derived from features-amenities / display-order / restricted-amenity-ids; no provenance row (no single row ID)" }] },
   { sourceCollection: "amenities", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "amenities" }] },
-  { sourceCollection: "events", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "events" }] },
-  { sourceCollection: "offers", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "offers" }, { table: "rate_merchandising", note: "published offers with a Mews rate product only" }] },
+  { sourceCollection: "events", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, locationField: "property-location", targets: [{ table: "events" }] },
+  { sourceCollection: "offers", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, locationField: "location", targets: [{ table: "offers" }, { table: "rate_merchandising", note: "published offers with a Mews rate product only" }] },
   { sourceCollection: "addOns", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "add_ons" }] },
-  { sourceCollection: "instagrams", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "content_items", contentKind: "instagram" }, { table: "content_revisions", contentKind: "instagram" }] },
-  { sourceCollection: "outlets", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "content_items", contentKind: "outlet" }, { table: "content_revisions", contentKind: "outlet" }] },
-  { sourceCollection: "contentSettings", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, targets: [{ table: "content_items", contentKind: "policy" }, { table: "content_revisions", contentKind: "policy" }] },
+  { sourceCollection: "instagrams", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, locationField: "location", targets: [{ table: "content_items", contentKind: "instagram" }, { table: "content_revisions", contentKind: "instagram" }] },
+  { sourceCollection: "outlets", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, locationField: "location", targets: [{ table: "content_items", contentKind: "outlet" }, { table: "content_revisions", contentKind: "outlet" }] },
+  { sourceCollection: "contentSettings", sourceSystem: "webflow_cms", snapshotDate: WEBFLOW_SNAPSHOT_DATE, locationField: "location", targets: [{ table: "content_items", contentKind: "policy" }, { table: "content_revisions", contentKind: "policy" }] },
 ];
 
 export const EXCLUDED_SOURCE_COLLECTIONS: readonly ExcludedSource[] = [
@@ -83,6 +85,7 @@ export function provenanceSeed(input: {
   targetTable: string;
   targetId: string;
   sourceSystem: SourceSystem;
+  locationId?: string | null;
   sourceCollection?: string | null;
   sourceId?: string | null;
   sourceHash?: string | null;
@@ -90,6 +93,7 @@ export function provenanceSeed(input: {
 }): ProvenanceSeed {
   return {
     tenantId: input.tenantId,
+    locationId: input.locationId ?? null,
     targetTable: input.targetTable,
     targetId: input.targetId,
     sourceSystem: input.sourceSystem,

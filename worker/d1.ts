@@ -74,57 +74,173 @@ export async function getContentItem(
 
 // ---------------------------------------------------------------------------
 // Property-scoped, contract-validated queries (COW-30).
-// Every read binds both tenant_id and the optional location_id. A null
-// location scope deliberately means "all locations in this tenant".
+//
+// Each supported combination (location present/absent, optional filter
+// present/absent) has its own SQL with explicit predicates instead of an
+// "(? IS NULL OR column = ?) OR" pattern. This lets SQLite use the location-
+// prefixed index and honour the ORDER BY without a temporary sort. The query
+// builders are exported so tests exercise the exact production SQL.
 // ---------------------------------------------------------------------------
+
+export interface ScopedQuery {
+  sql: string;
+  bindings: unknown[];
+}
+
+const CONTENT_ITEMS_SELECT =
+  "SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items";
+
+export function contentItemsQuery(scope: TenantScope, kind?: string): ScopedQuery {
+  if (scope.locationId != null && kind) {
+    return {
+      sql: `${CONTENT_ITEMS_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 AND kind = ?3 AND status = 'published' ORDER BY updated_at DESC, id`,
+      bindings: [scope.tenantId, scope.locationId, kind],
+    };
+  }
+  if (scope.locationId != null) {
+    return {
+      sql: `${CONTENT_ITEMS_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 AND status = 'published' ORDER BY updated_at DESC, id`,
+      bindings: [scope.tenantId, scope.locationId],
+    };
+  }
+  if (kind) {
+    return {
+      sql: `${CONTENT_ITEMS_SELECT} WHERE tenant_id = ?1 AND kind = ?2 AND status = 'published' ORDER BY updated_at DESC, id`,
+      bindings: [scope.tenantId, kind],
+    };
+  }
+  return {
+    sql: `${CONTENT_ITEMS_SELECT} WHERE tenant_id = ?1 AND status = 'published' ORDER BY updated_at DESC, id`,
+    bindings: [scope.tenantId],
+  };
+}
+
+const EVENTS_SELECT =
+  "SELECT id, tenant_id, location_id, title, description, venue, time_zone, starts_at, ends_at, recurrence_rule, capacity, display_flag, media_asset_id, created_at, updated_at FROM events";
+
+export function eventsQuery(scope: TenantScope): ScopedQuery {
+  if (scope.locationId != null) {
+    return {
+      sql: `${EVENTS_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 AND display_flag = 1 ORDER BY starts_at, id`,
+      bindings: [scope.tenantId, scope.locationId],
+    };
+  }
+  return {
+    sql: `${EVENTS_SELECT} WHERE tenant_id = ?1 AND display_flag = 1 ORDER BY starts_at, id`,
+    bindings: [scope.tenantId],
+  };
+}
+
+const MEDIA_SELECT =
+  "SELECT id, tenant_id, location_id, kind, original_filename, created_at, updated_at FROM media_assets";
+
+export function mediaAssetsQuery(
+  scope: TenantScope,
+  kind?: "image" | "video" | "document",
+): ScopedQuery {
+  if (scope.locationId != null && kind) {
+    return {
+      sql: `${MEDIA_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 AND kind = ?3 ORDER BY id`,
+      bindings: [scope.tenantId, scope.locationId, kind],
+    };
+  }
+  if (scope.locationId != null) {
+    return {
+      sql: `${MEDIA_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 ORDER BY id`,
+      bindings: [scope.tenantId, scope.locationId],
+    };
+  }
+  if (kind) {
+    return {
+      sql: `${MEDIA_SELECT} WHERE tenant_id = ?1 AND kind = ?2 ORDER BY id`,
+      bindings: [scope.tenantId, kind],
+    };
+  }
+  return {
+    sql: `${MEDIA_SELECT} WHERE tenant_id = ?1 ORDER BY id`,
+    bindings: [scope.tenantId],
+  };
+}
+
+const LOCATIONS_SELECT =
+  "SELECT id, tenant_id, slug, name, time_zone, mews_hotel_id, created_at FROM locations";
+
+export function locationsQuery(scope: TenantScope): ScopedQuery {
+  if (scope.locationId != null) {
+    return {
+      sql: `${LOCATIONS_SELECT} WHERE tenant_id = ?1 AND id = ?2 ORDER BY slug`,
+      bindings: [scope.tenantId, scope.locationId],
+    };
+  }
+  return {
+    sql: `${LOCATIONS_SELECT} WHERE tenant_id = ?1 ORDER BY slug`,
+    bindings: [scope.tenantId],
+  };
+}
+
+const ALIAS_SELECT =
+  "SELECT a.id, a.tenant_id, a.media_asset_id, a.alias_type, a.alias_value, a.created_at FROM media_aliases a";
+
+export function mediaAliasQuery(
+  scope: TenantScope,
+  aliasType: MediaAliasType,
+  aliasValue: string,
+): ScopedQuery {
+  if (scope.locationId != null) {
+    return {
+      sql: `${ALIAS_SELECT} JOIN media_assets m ON m.id = a.media_asset_id WHERE a.tenant_id = ?1 AND m.location_id = ?2 AND a.alias_type = ?3 AND a.alias_value = ?4`,
+      bindings: [scope.tenantId, scope.locationId, aliasType, aliasValue],
+    };
+  }
+  return {
+    sql: `${ALIAS_SELECT} WHERE a.tenant_id = ?1 AND a.alias_type = ?2 AND a.alias_value = ?3`,
+    bindings: [scope.tenantId, aliasType, aliasValue],
+  };
+}
+
+const PROVENANCE_SELECT =
+  "SELECT tenant_id, location_id, target_table, target_id, source_system, source_collection, source_id, source_snapshot_date, source_hash, imported_at FROM content_provenance";
+
+export function provenanceQuery(
+  scope: TenantScope,
+  targetTable: string,
+  targetId: string,
+): ScopedQuery {
+  if (scope.locationId != null) {
+    return {
+      sql: `${PROVENANCE_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 AND target_table = ?3 AND target_id = ?4`,
+      bindings: [scope.tenantId, scope.locationId, targetTable, targetId],
+    };
+  }
+  return {
+    sql: `${PROVENANCE_SELECT} WHERE tenant_id = ?1 AND target_table = ?2 AND target_id = ?3`,
+    bindings: [scope.tenantId, targetTable, targetId],
+  };
+}
 
 export function listScopedContentItems(
   db: D1Database,
   scope: TenantScope,
   kind?: string,
-  publishedOnly = true,
 ): Promise<ContentItemContract[]> {
-  const status = publishedOnly ? " AND status = 'published'" : "";
-  const select =
-    "SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items";
-  if (kind) {
-    return allScoped(
-      db,
-      `${select} WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2) AND kind = ?3${status} ORDER BY updated_at DESC, id`,
-      [scope.tenantId, scope.locationId ?? null, kind],
-      contentItemRowSchema,
-    );
-  }
-  return allScoped(
-    db,
-    `${select} WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2)${status} ORDER BY updated_at DESC, id`,
-    [scope.tenantId, scope.locationId ?? null],
-    contentItemRowSchema,
-  );
+  const query = contentItemsQuery(scope, kind);
+  return allScoped(db, query.sql, query.bindings, contentItemRowSchema);
 }
 
 export function listScopedLocations(
   db: D1Database,
   scope: TenantScope,
 ): Promise<LocationContract[]> {
-  return allScoped(
-    db,
-    "SELECT id, tenant_id, slug, name, time_zone, mews_hotel_id, created_at FROM locations WHERE tenant_id = ?1 AND (?2 IS NULL OR id = ?2) ORDER BY slug",
-    [scope.tenantId, scope.locationId ?? null],
-    locationRowSchema,
-  );
+  const query = locationsQuery(scope);
+  return allScoped(db, query.sql, query.bindings, locationRowSchema);
 }
 
 export function listScopedEvents(
   db: D1Database,
   scope: TenantScope,
 ): Promise<EventContract[]> {
-  return allScoped(
-    db,
-    "SELECT id, tenant_id, location_id, title, description, venue, time_zone, starts_at, ends_at, recurrence_rule, capacity, display_flag, media_asset_id, created_at, updated_at FROM events WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2) AND display_flag = 1 ORDER BY starts_at, id",
-    [scope.tenantId, scope.locationId ?? null],
-    eventRowSchema,
-  );
+  const query = eventsQuery(scope);
+  return allScoped(db, query.sql, query.bindings, eventRowSchema);
 }
 
 export function listScopedMediaAssets(
@@ -132,27 +248,19 @@ export function listScopedMediaAssets(
   scope: TenantScope,
   kind?: "image" | "video" | "document",
 ): Promise<MediaAssetContract[]> {
-  return allScoped(
-    db,
-    "SELECT id, tenant_id, location_id, kind, original_filename, created_at, updated_at FROM media_assets WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2) AND (?3 IS NULL OR kind = ?3) ORDER BY id",
-    [scope.tenantId, scope.locationId ?? null, kind ?? null],
-    mediaAssetRowSchema,
-  );
+  const query = mediaAssetsQuery(scope, kind);
+  return allScoped(db, query.sql, query.bindings, mediaAssetRowSchema);
 }
 
-/** Resolves a legacy ID/CDN URL to its stable media asset, scoped to a tenant. */
+/** Resolves a legacy ID/CDN URL to its stable media asset within the tenant. */
 export async function resolveMediaAlias(
   db: D1Database,
   scope: TenantScope,
   aliasType: MediaAliasType,
   aliasValue: string,
 ): Promise<MediaAliasContract | null> {
-  const rows = await allScoped(
-    db,
-    "SELECT a.id, a.media_asset_id, a.alias_type, a.alias_value, a.created_at FROM media_aliases a JOIN media_assets m ON m.id = a.media_asset_id WHERE m.tenant_id = ?1 AND (?2 IS NULL OR m.location_id = ?2) AND a.alias_type = ?3 AND a.alias_value = ?4",
-    [scope.tenantId, scope.locationId ?? null, aliasType, aliasValue],
-    mediaAliasRowSchema,
-  );
+  const query = mediaAliasQuery(scope, aliasType, aliasValue);
+  const rows = await allScoped(db, query.sql, query.bindings, mediaAliasRowSchema);
   return rows[0] ?? null;
 }
 
@@ -162,11 +270,7 @@ export async function getProvenance(
   targetTable: string,
   targetId: string,
 ): Promise<ContentProvenanceContract | null> {
-  const rows = await allScoped(
-    db,
-    "SELECT tenant_id, target_table, target_id, source_system, source_collection, source_id, source_snapshot_date, source_hash, imported_at FROM content_provenance WHERE tenant_id = ?1 AND target_table = ?2 AND target_id = ?3",
-    [scope.tenantId, targetTable, targetId],
-    contentProvenanceRowSchema,
-  );
+  const query = provenanceQuery(scope, targetTable, targetId);
+  const rows = await allScoped(db, query.sql, query.bindings, contentProvenanceRowSchema);
   return rows[0] ?? null;
 }

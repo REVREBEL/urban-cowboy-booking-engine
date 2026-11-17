@@ -174,7 +174,14 @@ export const contentRevisionRowSchema = z.object({
   id,
   content_item_id: id,
   revision: z.number().int().positive(),
-  payload_json: z.string().min(1),
+  payload_json: z.string().min(1).refine((value) => {
+    try {
+      JSON.parse(value);
+      return true;
+    } catch {
+      return false;
+    }
+  }, "payload_json must be valid JSON"),
   published_at: nullableText,
   created_by: nullableText,
   created_at: timestamp,
@@ -361,12 +368,14 @@ export type MediaAssetContract = z.output<typeof mediaAssetRowSchema>;
 
 export const mediaAliasRowSchema = z.object({
   id,
+  tenant_id: id,
   media_asset_id: id,
   alias_type: mediaAliasTypeSchema,
   alias_value: id,
   created_at: timestamp,
 }).transform((row) => ({
   id: row.id,
+  tenantId: row.tenant_id,
   mediaAssetId: row.media_asset_id,
   aliasType: row.alias_type,
   aliasValue: row.alias_value,
@@ -376,6 +385,7 @@ export type MediaAliasContract = z.output<typeof mediaAliasRowSchema>;
 
 export const contentProvenanceRowSchema = z.object({
   tenant_id: id,
+  location_id: nullableText,
   target_table: id,
   target_id: id,
   source_system: sourceSystemSchema,
@@ -386,6 +396,7 @@ export const contentProvenanceRowSchema = z.object({
   imported_at: timestamp,
 }).transform((row) => ({
   tenantId: row.tenant_id,
+  locationId: row.location_id,
   targetTable: row.target_table,
   targetId: row.target_id,
   sourceSystem: row.source_system,
