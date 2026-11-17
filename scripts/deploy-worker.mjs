@@ -24,10 +24,10 @@ const renderOnly = args.has("--render-only");
 const dryRun = args.has("--dry-run");
 const sourceFlag = process.argv.indexOf("--env-file");
 const sourcePath = sourceFlag === -1 ? join(root, ".env") : resolve(process.argv[sourceFlag + 1] ?? "");
-const workerSecretNames = ["MEWS_CLIENT", "WEBFLOW_CMS_API_TOKEN", "ADMIN_TOKEN"];
-const requiredVars = ["MEWS_BASE_URL", "MEWS_APP_BASE_URL", "MEWS_HOTEL_ID", "MEWS_CONFIG_ID"];
-const requiredSecrets = ["MEWS_CLIENT", "ADMIN_TOKEN"];
-const deployTarget = process.argv.includes("--demo") ? "demo" : "production";
+const workerSecretNames = ["WEBFLOW_CMS_API_TOKEN", "ADMIN_TOKEN"];
+const requiredVars = ["MEWS_CLIENT", "MEWS_BASE_URL", "MEWS_APP_BASE_URL", "MEWS_HOTEL_ID", "MEWS_CONFIG_ID"];
+const requiredSecrets = ["ADMIN_TOKEN"];
+
 
 function fail(message) {
   console.error("Deploy configuration error: " + message);
@@ -55,15 +55,6 @@ const apiToken = (process.env.CLOUDFLARE_API_TOKEN || value("CLOUDFLARE_API_TOKE
 if (!accountId || !/^[0-9a-f]{32}$/i.test(accountId)) fail("Missing/invalid CLOUDFLARE_ACCOUNT_ID");
 for (const key of requiredVars) if (!value(key)) fail("Missing required " + key);
 if (!renderOnly) {
-  const api = value("MEWS_BASE_URL")?.replace(/\/+$/, "");
-  const app = value("MEWS_APP_BASE_URL")?.replace(/\/+$/, "");
-  if (deployTarget === "production" &&
-      (api !== "https://api.mews.com" || app !== "https://app.mews.com")) {
-    fail("Production deployment requires MEWS_BASE_URL=https://api.mews.com and MEWS_APP_BASE_URL=https://app.mews.com; use --demo only for an intentional demo deployment");
-  }
-  if (deployTarget === "demo" && api !== "https://api.mews-demo.com") {
-    fail("Demo deployment must target https://api.mews-demo.com");
-  }
   for (const key of requiredSecrets) if (!value(key)) fail("Missing required Worker secret " + key);
   if (!dryRun && !apiToken) fail("Missing CLOUDFLARE_API_TOKEN");
 }
@@ -96,7 +87,7 @@ if (!/^account_id\s*=/m.test(template)) fail("Couldn't render account_id");
 // Nonsecret values, but keep file private and outside version control anyway.
 writeFileSync(renderedConfig, template, { encoding: "utf8", mode: 0o600 });
 console.log("Rendered " + substituted.length + " Worker variable declarations from " + sourcePath);
-console.log("Mews target: " + deployTarget + (renderOnly ? " (render-only, not deployed)" : ""));
+console.log("Mews API endpoint: " + value("MEWS_BASE_URL") + (renderOnly ? " (render-only)" : ""));
 console.log("Configuration: .wrangler.generated.toml (gitignored)");
 if (renderOnly) process.exit(0);
 
