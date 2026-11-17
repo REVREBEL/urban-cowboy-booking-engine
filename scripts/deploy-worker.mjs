@@ -53,6 +53,14 @@ const apiToken = (process.env.CLOUDFLARE_API_TOKEN || value("CLOUDFLARE_API_TOKE
   .replace(/^Bearer\s+/i, "").trim();
 
 if (!accountId || !/^[0-9a-f]{32}$/i.test(accountId)) fail("Missing/invalid CLOUDFLARE_ACCOUNT_ID");
+const expectedAccountId = "4c154709ffe87621073f9ecfa86a57dd";
+if (accountId.toLowerCase() !== expectedAccountId) {
+  fail("Cloudflare account mismatch. Urban Cowboy belongs to " + expectedAccountId + ", but .env points to " + accountId);
+}
+if (process.env.CLOUDFLARE_ACCOUNT_ID &&
+    process.env.CLOUDFLARE_ACCOUNT_ID.toLowerCase() !== expectedAccountId) {
+  fail("Shell CLOUDFLARE_ACCOUNT_ID conflicts with the Urban Cowboy account. Unset or correct it.");
+}
 for (const key of requiredVars) if (!value(key)) fail("Missing required " + key);
 if (!renderOnly) {
   for (const key of requiredSecrets) if (!value(key)) fail("Missing required Worker secret " + key);
@@ -79,11 +87,11 @@ template = template.replace(
 if (substituted.length === 0 || template.includes("__ENV_")) {
   fail("Unresolved or missing Wrangler variable placeholders");
 }
-template = template.replace(
-  /^(name\s*=\s*"[^"]+"\s*)$/m,
-  "$1\naccount_id = " + JSON.stringify(accountId),
-);
-if (!/^account_id\s*=/m.test(template)) fail("Couldn't render account_id");
+// Account must appear before all TOML tables, not inside [[d1_databases]].
+template = "account_id = " + JSON.stringify(accountId) + "\n" + template;
+if (!template.includes('database_id = "0d09ca5a-74fe-4e83-a058-b8aa5fb21562"')) {
+  fail("D1 database ID does not match the Urban Cowboy Cloudflare account");
+}
 // Nonsecret values, but keep file private and outside version control anyway.
 writeFileSync(renderedConfig, template, { encoding: "utf8", mode: 0o600 });
 console.log("Rendered " + substituted.length + " Worker variable declarations from " + sourcePath);
