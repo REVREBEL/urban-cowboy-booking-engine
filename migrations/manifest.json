@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "migrations": [
+    {
+      "id": 1,
+      "file": "0001_init.sql",
+      "sha256": "0e8a6b32d621388bb4ea05f6bccdbe1dbf34187192b59085c10c44149612ede0"
+    },
+    {
+      "id": 2,
+      "file": "0002_module_list_indexes.sql",
+      "sha256": "5411a4c58e8454fe9ffd731b7483d033c376d71c9ba673afaa0c54eeca107a54"
+    }
+  ]
+}

@@ -71,6 +71,11 @@ jobs:
       - name: Validate D1 seed and foreign keys
         run: npm run test:seed
 
+      - name: Validate D1 migrations (order, checksums, idempotency)
+        run: |
+          npm run test:migrate
+          npm run d1:migrate:check
+
       - name: Stop local Cloudflare Worker
         if: always()
         run: |
