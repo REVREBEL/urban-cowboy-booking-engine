@@ -105,6 +105,29 @@ test("alias values may be reused across tenants but not within one", () => {
   db.close();
 });
 
+test("an alias cannot claim one tenant while referencing another tenant's asset", async () => {
+  const db = makeDb();
+  // Schema guard: the composite FK rejects the mismatched row outright.
+  assert.throws(() => db.exec(
+    "INSERT INTO media_aliases (id, tenant_id, media_asset_id, alias_type, alias_value) VALUES ('mismatch', 'contracts-fixture', 'other-media', 'webflow_file_id', 'mismatched-value')",
+  ));
+  db.close();
+
+  // Read-path guard: even if a legacy row slipped through with FK checks off,
+  // neither scoped nor tenant-wide alias resolution may return that asset.
+  const legacy = makeDb();
+  legacy.exec("PRAGMA foreign_keys = OFF");
+  legacy.exec(
+    "INSERT INTO media_aliases (id, tenant_id, media_asset_id, alias_type, alias_value) VALUES ('mismatch', 'contracts-fixture', 'other-media', 'webflow_file_id', 'mismatched-value')",
+  );
+  legacy.exec("PRAGMA foreign_keys = ON");
+  const api = d1(legacy);
+  assert.equal(await resolveMediaAlias(api, { tenantId: "contracts-fixture" }, "webflow_file_id", "mismatched-value"), null);
+  assert.equal(await resolveMediaAlias(api, { tenantId: "contracts-fixture", locationId: "fixture-location" }, "webflow_file_id", "mismatched-value"), null);
+  assert.equal(await resolveMediaAlias(api, { tenantId: "other-tenant" }, "webflow_file_id", "mismatched-value"), null);
+  legacy.close();
+});
+
 test("every scoped helper query uses its index without a temp sort", () => {
   const db = makeDb();
   const scope = { tenantId: "contracts-fixture" };

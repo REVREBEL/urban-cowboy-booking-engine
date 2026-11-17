@@ -17,12 +17,12 @@ This document records the schema decisions delivered for COW-30. It complements 
 
 | Column | Purpose |
 | --- | --- |
-| `id`, `tenant_id`, `media_asset_id` | Stable internal alias row, owning tenant and `media_assets` FK |
+| `id`, `tenant_id`, `media_asset_id` | Stable internal alias row, owning tenant and `media_assets` FK. A composite FK `(tenant_id, media_asset_id) → media_assets(tenant_id, id)` (backed by a unique parent key) prevents an alias from claiming tenant A while referencing tenant B's asset |
 | `alias_type` | Free text in SQL (e.g. `webflow_file_id`, `webflow_cdn_url`, `squarespace_asset_id`, `squarespace_url`, `mews_asset_id`); the Zod contract is the validation boundary, so a new provider needs no DB migration |
 | `alias_value` | Legacy value as supplied by the source; `UNIQUE (tenant_id, alias_type, alias_value)` allows two tenants to hold the same legacy ID while preventing ambiguous resolution inside one |
 | `created_at` | Import timestamp |
 
-`resolveMediaAlias()` in `worker/d1.ts` resolves an alias only for the requested tenant, and enforces the optional location through a join to `media_assets`.
+`resolveMediaAlias()` in `worker/d1.ts` always joins `media_assets` with `m.tenant_id = a.tenant_id`, for both scoped and tenant-wide lookups, and enforces the optional location through the same join. The read path does not rely solely on the composite FK, so a legacy row inserted before the constraint was added still cannot leak another tenant's media ID. A test inserts a deliberately mismatched alias (with FK checks temporarily off) and asserts it is never resolvable.
 
 Note: `0001_init.sql` still has `squarespace_asset_id` / `squarespace_url` columns on `media_assets` and `media_versions`. They are legacy artifacts, not the identity model. New imports should write aliases; removing those columns is a separate, breaking migration for a later milestone.
 

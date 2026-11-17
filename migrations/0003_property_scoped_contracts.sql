@@ -16,6 +16,12 @@
 -- is an alias to a stable internal media_asset_id, never a primary identity.
 -- alias_type is intentionally a free-text column: the Zod contract owns the
 -- allowed values, so adding a provider needs no database migration.
+--
+-- The UNIQUE (tenant_id, id) parent key and the composite FK are what make
+-- tenant ownership of an alias inseparable from ownership of its media asset.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_media_assets_tenant_id
+  ON media_assets (tenant_id, id);
+
 CREATE TABLE IF NOT EXISTS media_aliases (
   id TEXT PRIMARY KEY,
   tenant_id TEXT NOT NULL,
@@ -25,7 +31,8 @@ CREATE TABLE IF NOT EXISTS media_aliases (
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE (tenant_id, alias_type, alias_value),
   FOREIGN KEY (tenant_id) REFERENCES tenants (id),
-  FOREIGN KEY (media_asset_id) REFERENCES media_assets (id)
+  FOREIGN KEY (media_asset_id) REFERENCES media_assets (id),
+  FOREIGN KEY (tenant_id, media_asset_id) REFERENCES media_assets (tenant_id, id)
 );
 
 -- ---------------------------------------------------------------------------
@@ -79,8 +86,7 @@ CREATE INDEX IF NOT EXISTS idx_media_assets_scope_id
   ON media_assets (tenant_id, location_id, id);
 CREATE INDEX IF NOT EXISTS idx_media_assets_tenant_kind
   ON media_assets (tenant_id, kind, id);
-CREATE INDEX IF NOT EXISTS idx_media_assets_tenant_id
-  ON media_assets (tenant_id, id);
+-- idx_media_assets_tenant_id is the UNIQUE parent key created above.
 
 -- Other structured editorial tables: tenant + location scoping plus their
 -- natural presentation/sort order.

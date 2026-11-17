@@ -181,6 +181,12 @@ export function locationsQuery(scope: TenantScope): ScopedQuery {
 const ALIAS_SELECT =
   "SELECT a.id, a.tenant_id, a.media_asset_id, a.alias_type, a.alias_value, a.created_at FROM media_aliases a";
 
+// Always join the owning asset and require both tenant IDs to match. The
+// composite FK in 0003 prevents mismatched rows in a conforming database, but
+// the read path does not rely on that alone (legacy/imported data may predate
+// the constraint). Neither query may return another tenant's media ID.
+const ALIAS_JOIN = "JOIN media_assets m ON m.id = a.media_asset_id AND m.tenant_id = a.tenant_id";
+
 export function mediaAliasQuery(
   scope: TenantScope,
   aliasType: MediaAliasType,
@@ -188,12 +194,12 @@ export function mediaAliasQuery(
 ): ScopedQuery {
   if (scope.locationId != null) {
     return {
-      sql: `${ALIAS_SELECT} JOIN media_assets m ON m.id = a.media_asset_id WHERE a.tenant_id = ?1 AND m.location_id = ?2 AND a.alias_type = ?3 AND a.alias_value = ?4`,
+      sql: `${ALIAS_SELECT} ${ALIAS_JOIN} WHERE a.tenant_id = ?1 AND m.location_id = ?2 AND a.alias_type = ?3 AND a.alias_value = ?4`,
       bindings: [scope.tenantId, scope.locationId, aliasType, aliasValue],
     };
   }
   return {
-    sql: `${ALIAS_SELECT} WHERE a.tenant_id = ?1 AND a.alias_type = ?2 AND a.alias_value = ?3`,
+    sql: `${ALIAS_SELECT} ${ALIAS_JOIN} WHERE a.tenant_id = ?1 AND a.alias_type = ?2 AND a.alias_value = ?3`,
     bindings: [scope.tenantId, aliasType, aliasValue],
   };
 }
