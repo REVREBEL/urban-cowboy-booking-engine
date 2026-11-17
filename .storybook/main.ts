@@ -8,7 +8,7 @@ const config: StorybookConfig = {
     "!../src/stories/**/dist/**",
     "!../src/stories/**/build/**",
   ],
-  addons: [
+  // Storybook must serve the same public icon URLs as the application.\n  staticDirs: ["../public"],\n  addons: [
     "@chromatic-com/storybook",
     "@storybook/addon-vitest",
     "@storybook/addon-a11y",
