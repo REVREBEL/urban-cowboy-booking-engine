@@ -1,11 +1,11 @@
 import type { Env } from "./mews/_lib";
 import { getDb } from "./d1";
-import { requireRole } from "./auth";
+import { requireAdmin } from "./auth";
 
 type Ctx = { request: Request; env: Env };
 
 export async function recoveryList(ctx: Ctx): Promise<Response> {
-  const denied = requireRole(ctx.request, ["admin", "editor"], ctx.env);
+  const denied = requireAdmin(ctx.request, ctx.env);
   if (denied) return denied;
   const db = getDb(ctx.env);
   if (!db) {

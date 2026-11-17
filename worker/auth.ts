@@ -1,11 +1,14 @@
-// Minimal RBAC scaffold. Production must verify signed session/JWT and
-// server-side role assignment; never trust client headers.
+// Shared-token gate for private operational routes.
+//
+// There is no session/JWT verification here: ADMIN_TOKEN is a single shared
+// secret, so the only principal it can represent is "admin". Do not add a
+// role list argument until a verified session supplies real roles — a list
+// checked against a hardcoded value would give the appearance of scoping
+// without enforcing it. Never derive authorization from client headers or
+// query parameters such as ?tenant=.
 
-export type Role = "admin" | "editor" | "viewer";
-
-export function requireRole(
+export function requireAdmin(
   request: Request,
-  allowed: Role[],
   env?: { ADMIN_TOKEN?: string },
 ): Response | null {
   const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
@@ -13,13 +16,6 @@ export function requireRole(
   if (!expected || !token || token !== expected) {
     return new Response(JSON.stringify({ error: "unauthorized" }), {
       status: 401,
-      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
-    });
-  }
-  // Role granularity is enforced server-side in production; scaffold grants admin.
-  if (!allowed.includes("admin")) {
-    return new Response(JSON.stringify({ error: "forbidden" }), {
-      status: 403,
       headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
     });
   }

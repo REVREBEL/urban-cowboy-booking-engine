@@ -59,6 +59,14 @@ companion to the generated [reconciliation report](../generated/d1-reconciliatio
   an in-memory SQLite database with `PRAGMA foreign_keys = ON`, then checks row
   counts, `foreign_key_check`, `integrity_check`, mappings, idempotency and the
   reconciliation report.
+- `migrations/0002_module_list_indexes.sql` adds `(tenant_id, status, created_at)`
+  indexes for `add_ons`/`offers`/`upgrades` and `(tenant_id, display_flag, created_at)`
+  for `events`, matching the list queries in `worker/d1-modules.ts`. It is a
+  separate migration because `0001_init.sql` is already applied in production.
+  `tests/moduleIndexes.test.ts` verifies the query plans use the indexes.
+- `worker/auth.ts` now exports `requireAdmin(request, env)` instead of
+  `requireRole` with an unused role list. The two private endpoints call it
+  directly. `tests/auth.test.ts` covers the behavior and the honest contract.
 
 ## Decisions on collections and empty tables
 
@@ -101,9 +109,10 @@ this work; applying the regenerated seed is a separate, explicitly approved step
   suffix. Confirm the `America/New_York` interpretation with editorial.
 - Photo hotspot `display-order` has no D1 column; add it in a migration before
   importing hotspots so medallion order is preserved.
-- These fixes address **data ingestion only**. The merge gate still requires a
-  read-only health check of the deployed Worker's `DB` binding, securing or
-  disabling private endpoints (`worker/auth.ts` uses a shared `ADMIN_TOKEN` with
-  no binding in the audit), typed content-service parity behind a feature flag,
-  a rollback test, and CI/end-to-end smoke tests. Do not switch public reads
-  from Webflow to D1 until those pass.
+- These fixes address **data ingestion and the two PR review findings**. The
+  merge gate still requires a read-only health check of the deployed Worker's
+  `DB` binding, real session/role authentication (or disabling `/api/recovery`
+  and `/api/analytics/summary`) — `requireAdmin` is only a shared-token gate and
+  the deployed Worker had no `ADMIN_TOKEN` binding — typed content-service parity
+  behind a feature flag, a rollback test, and CI/end-to-end smoke tests. Do not
+  switch public reads from Webflow to D1 until those pass.

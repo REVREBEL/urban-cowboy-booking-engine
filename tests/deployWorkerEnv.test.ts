@@ -80,6 +80,8 @@ test("deployment renderer rejects a Cloudflare account that does not own Urban C
     cpSync(join(repo, "scripts", "deploy-worker.mjs"), join(root, "scripts", "deploy-worker.mjs"));
     writeFileSync(join(root, "package.json"), '{"type":"module"}\n');
     writeFileSync(join(root, ".env"), [
+      // Must be a valid 32-hex Cloudflare account ID, otherwise the format
+      // check rejects it before the ownership check can run.
       "CLOUDFLARE_ACCOUNT_ID=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "MEWS_CLIENT=Urban Cowboy Booking Engine",
       "MEWS_BASE_URL=https://api.mews.com",
