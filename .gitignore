@@ -43,3 +43,6 @@ chromatic-build-*.xml
 chromatic-diagnostics.json
 .qwen/skills/scry-setup
 .trae/skills/scry-setup
+
+# D1 production exports can contain guest/private records
+/backups/d1/
