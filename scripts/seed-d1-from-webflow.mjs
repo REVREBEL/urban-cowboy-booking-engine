@@ -46,7 +46,7 @@ function locationTimeZone(slug) {
   if (!zone) throw new Error("Unknown location time zone for " + JSON.stringify(slug));
   return zone;
 }
-const DEFAULT_TIME_ZONE = "America/New_York"; // Catskills event fallback only
+const LOCATION_ZONE_BY_ID = new Map();
 const IMPORT_ACTOR = "webflow-cms-import";
 
 // ---------------------------------------------------------------------------
@@ -244,6 +244,10 @@ addSection("tenants", buildInsert(
   [[TENANT_ID, TENANT_ID, "Urban Cowboy"]],
 ));
 
+// Derive event zones from their source property-location IDs, not a global default.
+for (const location of collections.locations.rows) {
+  LOCATION_ZONE_BY_ID.set(val(location, "id"), locationTimeZone(val(location, "slug")));
+}
 // 2. Locations. Source has no Mews hotel ID field; leave NULL with a decision.
 addSection("locations", buildInsert(
   "locations",
@@ -352,10 +356,13 @@ for (const r of collections.events.rows) {
   if (!val(r, "datetime")) eventStartFallback++;
   const venue = val(r, "onsite-event-location") || val(r, "onsite-custom-location") ||
     (isTrue(r, "offsite-event") ? val(r, "offsite-event-location") : "");
+  const eventLocationId = scopedLocation(r, "property-location");
+  const eventTimeZone = LOCATION_ZONE_BY_ID.get(eventLocationId);
+  if (!eventTimeZone) throw new Error("Missing location time zone for event " + val(r, "id"));
   eventRows.push([
-    val(r, "id"), TENANT_ID, scopedLocation(r, "property-location"),
+    val(r, "id"), TENANT_ID, eventLocationId,
     val(r, "name"), val(r, "short-description") || val(r, "long-description") || null,
-    venue || null, DEFAULT_TIME_ZONE, start || null,
+    venue || null, eventTimeZone, start || null,
     val(r, "datetime-end") || null, val(r, "recurrence-type") || null,
     null, published(r) ? 1 : 0, null,
   ]);
