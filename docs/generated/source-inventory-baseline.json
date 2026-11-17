@@ -1,0 +1,129 @@
+{
+  "audit": "COW-29",
+  "purpose": "Integrity baseline for the Webflow CMS CSV export used by the D1 migration importer. Pair with d1-reconciliation.json for authoritative parsed row counts.",
+  "capturedAt": "2026-11-17",
+  "sourceSnapshotDate": "2026-11-15",
+  "sourceDirectory": "webflow_cms_export",
+  "countingNote": "The `bytes` and `sha256` values are computed over the exact file bytes. Raw newline counts are deliberately omitted: several fields contain quoted multiline text, so a newline count is NOT a row count. Use `parsedRows` (from d1-reconciliation.json, produced by the strict CSV importer) as the authoritative count.",
+  "files": [
+    {
+      "file": "2026-11-15 - Locations.csv",
+      "collection": "locations",
+      "parsedRows": 4,
+      "bytes": 4706,
+      "sha256": "d4423adf609b3f5ba5c9f5337e0d18f4fc16ac423074577ec8980c03560139d5"
+    },
+    {
+      "file": "2026-11-15 - Buildings.csv",
+      "collection": "buildings",
+      "parsedRows": 9,
+      "bytes": 7299,
+      "sha256": "c15c40f6c1313a2244b9d578cd72108da5aee80c3daf3811390c671678341e9e",
+      "duplicateOf": null,
+      "note": "2026-11-15 - Buildings 2.csv is byte-identical (same SHA-256) and is skipped by the importer."
+    },
+    {
+      "file": "2026-11-15 - Buildings 2.csv",
+      "collection": "buildings",
+      "parsedRows": 9,
+      "bytes": 7299,
+      "sha256": "c15c40f6c1313a2244b9d578cd72108da5aee80c3daf3811390c671678341e9e",
+      "duplicateOf": "2026-11-15 - Buildings.csv"
+    },
+    {
+      "file": "2026-11-15 - Room Types.csv",
+      "collection": "roomTypes",
+      "parsedRows": 22,
+      "bytes": 48314,
+      "sha256": "f23f7350ef440308d2aa1a055f3a481d23106384e899b9f3a7a1bd0cd3c9cc92"
+    },
+    {
+      "file": "2026-11-15 - Amenities.csv",
+      "collection": "amenities",
+      "parsedRows": 76,
+      "bytes": 55476,
+      "sha256": "5a42e17ba09b944b96cf449b959023d611d1f4e079e8eee2ef9f54364485dfc8"
+    },
+    {
+      "file": "2026-11-15 - Events.csv",
+      "collection": "events",
+      "parsedRows": 8,
+      "bytes": 4763,
+      "sha256": "0b9b0bbd20f29cb1f0b2bb12763978207c2ebf14addbc4b5a1354337594b5f30"
+    },
+    {
+      "file": "2026-11-15 - Offers.csv",
+      "collection": "offers",
+      "parsedRows": 8,
+      "bytes": 7408,
+      "sha256": "a358dacd8e7f6dc57d8100be16301db3409214d14d8ea980334b0d1c61b58690"
+    },
+    {
+      "file": "2026-11-15 - Add Ons.csv",
+      "collection": "addOns",
+      "parsedRows": 9,
+      "bytes": 4458,
+      "sha256": "e6231d229e0645d636876337785c8343fa451061d2a186ddddfd98800d4feaa4"
+    },
+    {
+      "file": "2026-11-15 - Photo Hotspots.csv",
+      "collection": "photoHotspots",
+      "parsedRows": 238,
+      "bytes": 78515,
+      "sha256": "006533302199ea5d2b44a74d0032ffa68b773cd2e1f589b747de321f59860965",
+      "note": "Excluded from import: export has no photo-file-id or photo-url columns, so no stable media_asset_id can be resolved."
+    },
+    {
+      "file": "2026-11-15 - Instagrams.csv",
+      "collection": "instagrams",
+      "parsedRows": 20,
+      "bytes": 10237,
+      "sha256": "8f1a3762255f39c20817ce0e2d0ba5903b8955a80d69304bd49107bfbe0484a0"
+    },
+    {
+      "file": "2026-11-15 - Outlets.csv",
+      "collection": "outlets",
+      "parsedRows": 3,
+      "bytes": 2890,
+      "sha256": "4c46c685138f30672339f42dc42e06a259d3733f96a5c5a9a8ea6b49b81a94ae",
+      "duplicateOf": null,
+      "note": "2026-11-15 - Outlets 2.csv is byte-identical (same SHA-256) and is skipped by the importer."
+    },
+    {
+      "file": "2026-11-15 - Outlets 2.csv",
+      "collection": "outlets",
+      "parsedRows": 3,
+      "bytes": 2890,
+      "sha256": "4c46c685138f30672339f42dc42e06a259d3733f96a5c5a9a8ea6b49b81a94ae",
+      "duplicateOf": "2026-11-15 - Outlets.csv"
+    },
+    {
+      "file": "2026-11-15 - Content Settings.csv",
+      "collection": "contentSettings",
+      "parsedRows": 1,
+      "bytes": 705,
+      "sha256": "dc29f92add8d6359ad7eb634fbdc834a06b09dec8d1636a848c4cc8e1a68a686",
+      "note": "Draft in source (isDraft=true, no lastPublished); imported as status='draft'."
+    },
+    {
+      "file": "2026-11-15 - Menu Items.csv",
+      "collection": "menuItems",
+      "parsedRows": 0,
+      "bytes": 79,
+      "sha256": "f38cebf9a96faa2a973bd801fa49a1aa876f74fbc6296f2ddffb1bf25be30277"
+    }
+  ],
+  "totals": {
+    "sourceRecords": 398,
+    "structurallyRepresentedSourceRecords": 136,
+    "excludedRecords": 238,
+    "excludedReason": "photo hotspots: missing media identity",
+    "duplicateFilesSkipped": 2,
+    "emptyCollections": 1
+  },
+  "verification": {
+    "command": "shasum -a 256 webflow_cms_export/*.csv",
+    "expected": "Each SHA-256 above must match the committed file. Regenerate this baseline after any CMS re-export.",
+    "rowCountSource": "docs/generated/d1-reconciliation.json (sourceCounts) and scripts/seed-d1-from-webflow.mjs"
+  }
+}
