@@ -25,7 +25,7 @@ test("deployment renderer uses shared .env, keeps credentials private and emits 
       "MEWS_CONFIG_ID=test-config-id",
       "MEWS_ADULT_AGE_CATEGORY_ID=test-adult-category",
       "MEWS_CHILD_AGE_CATEGORY_ID=test-child-category",
-      "MEWS_CLIENT=private-mews-client",
+      "MEWS_CLIENT=REVREBEL Urban Cowboy Booking Engine 1.0.0",
       "WEBFLOW_CMS_API_TOKEN=private-webflow-token",
       "ADMIN_TOKEN=private-admin-token",
       "WEBFLOW_SITE_ID=test-site-id",
@@ -40,6 +40,7 @@ test("deployment renderer uses shared .env, keeps credentials private and emits 
     assert.match(rendered, /^account_id = "4c154709ffe87621073f9ecfa86a57dd"$/m);
     assert.match(rendered, /^MEWS_BASE_URL = "https:\/\/api.mews-demo.com"$/m);
     assert.match(rendered, /^MEWS_HOTEL_ID = "test-hotel-id"$/m);
+    assert.match(rendered, /^MEWS_CLIENT = "REVREBEL Urban Cowboy Booking Engine 1.0.0"$/m);
     assert.match(rendered, /^WEBFLOW_SITE_ID = "test-site-id"$/m);
     assert.match(rendered, /^\[\[d1_databases\]\]$/m);
     assert.doesNotMatch(rendered, /__ENV_|private-|wrong-environment|CLOUDFLARE_API_TOKEN\s*=/);
