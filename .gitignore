@@ -6,6 +6,7 @@ dist/
 
 # Cloudflare / Wrangler
 .wrangler/
+.wrangler.generated.toml
 .mf/
 
 # secrets & local env (JAMAIS committé)

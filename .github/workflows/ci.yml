@@ -41,11 +41,42 @@ jobs:
       - name: Install Chromium for browser tests
         run: npx playwright install --with-deps chromium
 
+      # Vite proxies /api/* to Wrangler at 127.0.0.1:8787. Start it before
+      # API-dependent tests so CI exercises the local backend, not a dead port.
+      - name: Build
+        run: npm run build
+
+      - name: Start local Cloudflare Worker
+        run: |
+          npx wrangler dev --local --port 8787 > /tmp/urban-cowboy-wrangler.log 2>&1 &
+          echo $! > /tmp/urban-cowboy-wrangler.pid
+          for attempt in $(seq 1 60); do
+            if [ "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:8787/ || true)" != "000" ]; then
+              echo "Local Worker is ready."
+              exit 0
+            fi
+            if ! kill -0 "$(cat /tmp/urban-cowboy-wrangler.pid)" 2>/dev/null; then
+              cat /tmp/urban-cowboy-wrangler.log
+              exit 1
+            fi
+            sleep 1
+          done
+          cat /tmp/urban-cowboy-wrangler.log
+          echo "Timed out waiting for Wrangler to start." >&2
+          exit 1
+
       - name: Test
         run: npm test
 
-      - name: Build
-        run: npm run build
+      - name: Validate D1 seed and foreign keys
+        run: npm run test:seed
+
+      - name: Stop local Cloudflare Worker
+        if: always()
+        run: |
+          if [ -f /tmp/urban-cowboy-wrangler.pid ]; then
+            kill "$(cat /tmp/urban-cowboy-wrangler.pid)" 2>/dev/null || true
+          fi
 
       - name: Build Storybook
         id: storybook

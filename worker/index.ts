@@ -28,6 +28,10 @@ import { onRequestGet as addOns } from "./webflow/add-ons";
 import { onRequestGet as roomTypeReviews } from "./webflow/room-type-reviews";
 import { onRequestGet as locations, onRequestStudioConfig } from "./webflow/locations";
 import { onRequestGet as buildings } from "./webflow/buildings";
+import { onRequestGet as contentList } from "./d1-content";
+import { eventsList, addOnsList, offersList, upgradesList } from "./d1-modules";
+import { recoveryList } from "./d1-recovery";
+import { analyticsSummary } from "./d1-analytics";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
 // waitUntil permet de lancer les webhooks en tâche de fond sans bloquer la réponse.
@@ -48,6 +52,7 @@ const ROUTES: Record<string, Partial<Record<string, Handler>>> = {
   track: { POST: h(track) },
   geo: { GET: h(geo) },
   "products-debug": { GET: h(productsDebug) },
+  content: { GET: h(contentList) },
 };
 
 const json = (data: unknown, status: number) =>
@@ -86,6 +91,34 @@ export default {
     if (url.pathname.match(/^\/api\/content\/buildings\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return buildings({ env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    if (url.pathname.match(/^\/api\/content\/items\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return contentList({ request, env });
+    }
+    if (url.pathname.match(/^\/api\/content\/events\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return eventsList({ request, env });
+    }
+    if (url.pathname.match(/^\/api\/d1\/add-ons\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return addOnsList({ request, env });
+    }
+    if (url.pathname.match(/^\/api\/content\/offers\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return offersList({ request, env });
+    }
+    if (url.pathname.match(/^\/api\/content\/upgrades\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return upgradesList({ request, env });
+    }
+    if (url.pathname.match(/^\/api\/recovery\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return recoveryList({ request, env });
+    }
+    if (url.pathname.match(/^\/api\/analytics\/summary\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return analyticsSummary({ request, env });
     }
     const match = url.pathname.match(/^\/api\/mews\/([a-z-]+)\/?$/);
     if (match) {

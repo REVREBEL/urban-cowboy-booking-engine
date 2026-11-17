@@ -10,29 +10,34 @@ directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
 
-# Safe demo defaults. Production identifiers and integrations must be supplied
-# explicitly in the target Cloudflare environment; none are inherited here.
+# Template only. scripts/deploy-worker.mjs reads the shared .env and renders
+# these placeholders into .wrangler.generated.toml before deployment.
+# NEVER deploy this template directly or put credentials into [vars].
 [vars]
-MEWS_BASE_URL = "https://api.mews-demo.com"
-MEWS_APP_BASE_URL = "https://api.mews-demo.com"
-MEWS_HOTEL_ID = "3edbe1b4-6739-40b7-81b3-d369d9469c48"
-MEWS_CONFIG_ID = "93e27b6f-cba7-4e0b-a24a-819e1b7b388a"
-MEWS_ADULT_AGE_CATEGORY_ID = "5485e2f3-4034-4ca1-8a8f-ade30114c61f"
-MEWS_CHILD_AGE_CATEGORY_ID = "fece4b6b-39fa-4ccd-9909-afba0092eeb1"
+MEWS_CLIENT = "__ENV_MEWS_CLIENT__"
+MEWS_BASE_URL = "__ENV_MEWS_BASE_URL__"
+MEWS_APP_BASE_URL = "__ENV_MEWS_APP_BASE_URL__"
+MEWS_HOTEL_ID = "__ENV_MEWS_HOTEL_ID__"
+MEWS_CONFIG_ID = "__ENV_MEWS_CONFIG_ID__"
+MEWS_ADULT_AGE_CATEGORY_ID = "__ENV_MEWS_ADULT_AGE_CATEGORY_ID__"
+MEWS_CHILD_AGE_CATEGORY_ID = "__ENV_MEWS_CHILD_AGE_CATEGORY_ID__"
+WEBFLOW_SITE_ID = "__ENV_WEBFLOW_SITE_ID__"
+WEBFLOW_RATE_CARD_COLLECTION_ID = "__ENV_WEBFLOW_RATE_CARD_COLLECTION_ID__"
+WEBFLOW_CONTENT_SETTINGS_COLLECTION_ID = "__ENV_WEBFLOW_CONTENT_SETTINGS_COLLECTION_ID__"
+WEBFLOW_POLICY_LANGUAGE_ITEM_ID = "__ENV_WEBFLOW_POLICY_LANGUAGE_ITEM_ID__"
+WEBFLOW_ADD_ON_COLLECTION_ID = "__ENV_WEBFLOW_ADD_ON_COLLECTION_ID__"
+WEBFLOW_ROOM_TYPE_COLLECTION_ID = "__ENV_WEBFLOW_ROOM_TYPE_COLLECTION_ID__"
+WEBFLOW_LOCATION_COLLECTION_ID = "__ENV_WEBFLOW_LOCATION_COLLECTION_ID__"
+WEBFLOW_BUILDING_COLLECTION_ID = "__ENV_WEBFLOW_BUILDING_COLLECTION_ID__"
+WEBFLOW_AMENITY_COLLECTION_ID = "__ENV_WEBFLOW_AMENITY_COLLECTION_ID__"
+WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID = "__ENV_WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID__"
+WEBFLOW_LOCATION_ITEM_ID = "__ENV_WEBFLOW_LOCATION_ITEM_ID__"
+WEBHOOK_EVENTS = "__ENV_WEBHOOK_EVENTS__"
 
-# Public Webflow identifiers. The API token remains a Worker secret supplied as
-# WEBFLOW_CMS_API_TOKEN and is never included in the browser bundle.
-WEBFLOW_SITE_ID = "6aaa2497c8ea366207beba30"
-WEBFLOW_RATE_CARD_COLLECTION_ID = "6abc811cb92ea32dd64d79e0"
-WEBFLOW_CONTENT_SETTINGS_COLLECTION_ID = "6ae9007b42ce65b87edf2606"
-WEBFLOW_POLICY_LANGUAGE_ITEM_ID = "6ae90585b3980e103b55a468"
-WEBFLOW_ADD_ON_COLLECTION_ID = "6ac364287c8782e8e653075e"
-WEBFLOW_ROOM_TYPE_COLLECTION_ID = "6abc815b36cbcba74b8b01c4"
-WEBFLOW_LOCATION_COLLECTION_ID = "6abc812fd98b325b281d6301"
-WEBFLOW_BUILDING_COLLECTION_ID = "6abc8192a900d21d00b7c588"
-WEBFLOW_AMENITY_COLLECTION_ID = "6abc8175a7bbdc92fa9e6599"
-WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID = "6acfb8250c28159487fb2aaf"
-WEBFLOW_LOCATION_ITEM_ID = "6abc9142d98b325b2821ca23"
+# Secret binding names are declared here; their values are loaded from .env
+# and passed to Wrangler through --secrets-file, never as plaintext vars.
+[secrets]
+required = ["ADMIN_TOKEN"]
 
 # Tracking is intentionally disabled until Urban Cowboy provisions its own endpoint.
 
@@ -58,3 +63,12 @@ crons = ["*/15 * * * *"]
 # [[kv_namespaces]]
 # binding = "WEBFLOW_CONTENT_CACHE"
 # id = "<webflow-content-cache-namespace-id>"
+
+# D1 database: owns editorial content, settings, publishing revisions, stable
+# media IDs, merchandising, guest recovery state and reporting read models.
+# Provisioned in REVREBEL Cloudflare account. Keep D1 cutover gated until validated.
+[[d1_databases]]
+binding = "DB"
+database_name = "urban-cowboy-content"
+database_id = "0d09ca5a-74fe-4e83-a058-b8aa5fb21562"
+migrations_dir = "migrations"

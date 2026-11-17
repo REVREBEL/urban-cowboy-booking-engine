@@ -6,7 +6,7 @@ MEWS_BASE_URL=https://api.mews.com
 MEWS_APP_BASE_URL=https://app.mews.com
 
 # Booking Engine API client string registered with Mews.
-MEWS_CLIENT=<Client string provided/registered with Mews — DO NOT commit the real value>
+MEWS_CLIENT="REVREBEL Urban Cowboy Booking Engine 1.0.0"
 
 MEWS_HOTEL_ID=8bd38131-c371-4625-9c29-b10600705d34
 MEWS_CONFIG_ID=4725ace3-6b93-439f-a549-b4bc00ae1d10

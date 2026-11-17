@@ -5,6 +5,9 @@
 export interface Env {
   // Binding Static Assets : sert le front buildé (dist/) + fallback SPA.
   ASSETS: Fetcher;
+  // D1 database: owns editorial content, settings, revisions, media IDs,
+  // merchandising, guest recovery state and reporting read models.
+  DB?: D1Database;
   // Preferred shared calendar snapshot store. The calendar engine falls back to
   // the Worker Cache API when this KV binding has not been provisioned yet.
   CALENDAR_CACHE?: KVNamespace;
@@ -33,6 +36,7 @@ export interface Env {
   // ★ UNIQUE endpoint de suivi → n8n → Supabase : reçoit TOUS les events du funnel
   // (chaque étape + paiement initié/validé). C'est LE endpoint du back-office.
   WEBHOOK_EVENTS?: string;
+  ADMIN_TOKEN?: string;
 }
 
 // POST best-effort d'un JSON vers une URL de webhook. No-op si l'URL est absente/invalide.

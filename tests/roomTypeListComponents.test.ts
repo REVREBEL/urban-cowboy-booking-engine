@@ -118,7 +118,7 @@ test("MultiRoomViewListItem preserves the updated Default, Row, and RowReverse l
 });
 
 test("MultiRoomViewList preserves the updated 1513px three-slot composition", () => {
-  const source = read("MultiRoomViewList.tsx");
+  const source = read("RoomTypeList.tsx");
   assert.match(source, /buildingGroup1\?: ReactNode \| null/);
   assert.match(source, /buildingGroup2\?: ReactNode \| null/);
   assert.match(source, /buildingGroup3\?: ReactNode \| null/);

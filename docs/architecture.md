@@ -201,7 +201,7 @@ same build (`/dashboard`).
 
 | Secret | Role | Location |
 | --- | --- | --- |
-| `MEWS_CLIENT` | Mews Distributor Token | `.dev.vars` (local) **+** Cloudflare Secret (prod) |
+| `MEWS_CLIENT` | Public-facing Mews Distributor Client identifier | Shared `.env` (deployed as Cloudflare Worker text variable) |
 | Supabase `service_role` | Full database access (bypasses RLS) | **Only** in n8n credentials |
 | Supabase `anon` (public) | Frontend read via RLS + Auth | `src/dashboard/config.ts` (public by design) |
 | Public Mews IDs + `WEBHOOK_EVENTS` | Non-secrets (hotel/config/age categories) | Deployment environment; repository values are demo-only |

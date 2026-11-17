@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { MultiRoomViewBuilding } from "./MultiRoomViewBuilding";
 import { BuildingIcon } from "./BuildingIcon";
-import { MultiRoomViewListItem, type RoomTypeCardData } from "./MultiRoomViewListItem";
+import { MultiRoomViewListItem, type MultiRoomViewRoomTypeCardData as RoomTypeCardData } from "./MultiRoomViewListItem";
 
 export interface RoomTypeListProps {
   className?: string;
