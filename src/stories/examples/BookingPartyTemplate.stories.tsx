@@ -6,6 +6,7 @@ type PartyScenario = "couple" | "family" | "solo";
 interface BookingPartyTemplateProps {
   dogRequested: boolean;
   highlightEligibility: boolean;
+  onToggleDog?: () => void;
 }
 
 const SCENARIOS: Record<PartyScenario, { adults: number; children: number }> = {
@@ -22,9 +23,9 @@ const SCENARIOS: Record<PartyScenario, { adults: number; children: number }> = {
 function BookingPartyTemplate({
   dogRequested,
   highlightEligibility,
+  onToggleDog,
   scenario,
 }: BookingPartyTemplateProps & { scenario: PartyScenario }) {
-  const [, updateArgs] = useArgs<BookingPartyTemplateProps>();
   const { adults, children } = SCENARIOS[scenario];
 
   return (
@@ -71,10 +72,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Interactive: Story = {
-  render: (args, context) => (
-    <BookingPartyTemplate
-      {...args}
-      scenario={(context.globals.bookingParty as PartyScenario) || "couple"}
-    />
-  ),
+  render: (args, context) => {
+    const [, updateArgs] = useArgs<BookingPartyTemplateProps>();
+    return (
+      <BookingPartyTemplate
+        {...args}
+        onToggleDog={() => updateArgs({ dogRequested: !args.dogRequested })}
+        scenario={(context.globals.bookingParty as PartyScenario) || "couple"}
+      />
+    );
+  },
 };
