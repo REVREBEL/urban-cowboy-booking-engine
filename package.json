@@ -17,6 +17,8 @@
     "deploy": "node scripts/deploy-worker.mjs",
     "typecheck": "tsc --noEmit && tsc -p worker/tsconfig.json --noEmit",
     "test": "node --test tests/*.test.ts",
+    "test:seed": "node --test tests/seedD1.test.mjs",
+    "seed:d1": "node scripts/seed-d1-from-webflow.mjs webflow_cms_export --write",
     "normalize:svgs": "node scripts/normalize-svg-assets.mjs --write",
     "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs",
     "mews:smoke": "bash scripts/test-mews-booking-api.sh",

@@ -1,0 +1,268 @@
+{
+  "generatedAt": "2026-11-17T19:33:21.451Z",
+  "sourceDirectory": "webflow_cms_export",
+  "tenantId": "urban-cowboy",
+  "policy": {
+    "mews": "Source of truth for availability, pricing and reservations; only IDs are imported/validated here.",
+    "cutover": "This seed does not enable public D1 reads; keep Webflow path and feature flag for rollback."
+  },
+  "files": [
+    {
+      "collection": "locations",
+      "file": "2026-11-15 - Locations.csv",
+      "rows": 4,
+      "normalizedValues": 4,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "buildings",
+      "file": "2026-11-15 - Buildings.csv",
+      "rows": 9,
+      "normalizedValues": 6,
+      "duplicatesSkipped": [
+        "2026-11-15 - Buildings 2.csv"
+      ]
+    },
+    {
+      "collection": "roomTypes",
+      "file": "2026-11-15 - Room Types.csv",
+      "rows": 22,
+      "normalizedValues": 17,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "amenities",
+      "file": "2026-11-15 - Amenities.csv",
+      "rows": 76,
+      "normalizedValues": 19,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "events",
+      "file": "2026-11-15 - Events.csv",
+      "rows": 8,
+      "normalizedValues": 2,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "offers",
+      "file": "2026-11-15 - Offers.csv",
+      "rows": 8,
+      "normalizedValues": 2,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "addOns",
+      "file": "2026-11-15 - Add Ons.csv",
+      "rows": 9,
+      "normalizedValues": 4,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "photoHotspots",
+      "file": "2026-11-15 - Photo Hotspots.csv",
+      "rows": 238,
+      "normalizedValues": 17,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "instagrams",
+      "file": "2026-11-15 - Instagrams.csv",
+      "rows": 20,
+      "normalizedValues": 0,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "outlets",
+      "file": "2026-11-15 - Outlets.csv",
+      "rows": 3,
+      "normalizedValues": 1,
+      "duplicatesSkipped": [
+        "2026-11-15 - Outlets 2.csv"
+      ]
+    },
+    {
+      "collection": "contentSettings",
+      "file": "2026-11-15 - Content Settings.csv",
+      "rows": 1,
+      "normalizedValues": 1,
+      "duplicatesSkipped": []
+    },
+    {
+      "collection": "menuItems",
+      "file": "2026-11-15 - Menu Items.csv",
+      "rows": 0,
+      "normalizedValues": 0,
+      "duplicatesSkipped": []
+    }
+  ],
+  "sourceCounts": {
+    "locations": 4,
+    "buildings": 9,
+    "roomTypes": 22,
+    "amenities": 76,
+    "events": 8,
+    "offers": 8,
+    "addOns": 9,
+    "photoHotspots": 238,
+    "instagrams": 20,
+    "outlets": 3,
+    "contentSettings": 1,
+    "menuItems": 0
+  },
+  "totalSourceRecords": 398,
+  "structurallyRepresentedSourceRecords": 136,
+  "destinationRows": {
+    "tenants": 1,
+    "locations": 4,
+    "buildings": 9,
+    "amenities": 76,
+    "room_types": 22,
+    "room_type_amenities": 253,
+    "events": 8,
+    "offers": 8,
+    "rate_merchandising": 5,
+    "add_ons": 9,
+    "content_items": 24,
+    "content_revisions": 24
+  },
+  "tablesWithNoRows": [
+    "media_assets",
+    "media_versions",
+    "photo_hotspots",
+    "audit_log",
+    "guest_sessions",
+    "email_captures",
+    "saved_room_matches",
+    "cart_abandonments",
+    "recovery_campaigns",
+    "analytics_events",
+    "analytics_daily",
+    "upgrades"
+  ],
+  "unresolvedReferences": {
+    "draftRoomTypes": [
+      {
+        "id": "6abd4a1debcab0ea7e461c9a",
+        "name": "Walden Forest Bathing Suite with Den"
+      }
+    ],
+    "hotspotsBlocked": {
+      "sourceRecords": 238,
+      "reason": "CSV export lacks photo-file-id / photo-url columns required to resolve media_assets IDs",
+      "requiredBeforeImport": [
+        "stable media_asset_id per photo (Webflow fileId or validated CDN asset)",
+        "media version per asset",
+        "room/photo association and exact x/y coordinates (source percentages are present)",
+        "amenity references (all 238 validate against the Amenities export)"
+      ]
+    }
+  },
+  "publication": {
+    "offersWithoutRateProductId": 3,
+    "draftRoomTypes": 1,
+    "contentSettingsDraft": true,
+    "eventsUsingRecurringStart": 5
+  },
+  "relationships": {
+    "roomAmenityReferences": 253,
+    "roomAmenityRows": 253,
+    "hotspotsExcluded": 238
+  },
+  "findings": [
+    {
+      "id": "F-01",
+      "message": "4 locations have no Mews hotel ID in the export; mews_hotel_id remains NULL pending an explicit per-location Mews mapping."
+    },
+    {
+      "id": "F-02",
+      "message": "76 amenities have no image-name/image-path columns in this export; image_name/image_path are NULL (no fabricated icon filenames)."
+    },
+    {
+      "id": "F-03",
+      "message": "253 room-to-amenity references resolved into 253 relationship rows (21 restricted-amenity flags, all subsets of features-amenities)."
+    },
+    {
+      "id": "F-04",
+      "message": "1 of 22 room types are drafts in the export. room_types has no status column, so D1 cannot filter them; record IDs for editorial review."
+    },
+    {
+      "id": "F-05",
+      "message": "5 of 8 events are recurring and used recurring-start as starts_at. Times are stored verbatim (source Z suffix); confirm the America/New_York interpretation before cutover."
+    },
+    {
+      "id": "F-06",
+      "message": "3 of 8 offers have no Mews rate product ID; they are imported as draft/editorial-only (not bookable) and should be confirmed with Mews."
+    },
+    {
+      "id": "F-07",
+      "message": "9 add-ons retained their non-empty Mews product IDs; validate them against Mews as the system of record."
+    },
+    {
+      "id": "F-08",
+      "message": "238 photo hotspots were NOT imported: the export has no photo-file-id/photo-url, so there is no legitimate media_asset_id. No placeholder FKs or FK-disabling were used. Re-export with media identity, then import hotspots and media_assets."
+    },
+    {
+      "id": "F-09",
+      "message": "photo_hotspots.display-order has no column in the current D1 schema; add it in a migration before importing hotspots so editorial medallion order is preserved."
+    },
+    {
+      "id": "F-10",
+      "message": "Duplicate export(s) skipped for buildings: 2026-11-15 - Buildings 2.csv (byte-identical after BOM normalization)."
+    },
+    {
+      "id": "F-11",
+      "message": "Duplicate export(s) skipped for outlets: 2026-11-15 - Outlets 2.csv (byte-identical after BOM normalization)."
+    },
+    {
+      "id": "F-12",
+      "message": "Menu Items export is empty; no import required."
+    },
+    {
+      "id": "F-13",
+      "message": "instagrams: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = instagram)."
+    },
+    {
+      "id": "F-14",
+      "message": "outlets: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = outlet)."
+    },
+    {
+      "id": "F-15",
+      "message": "contentSettings: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = policy)."
+    },
+    {
+      "id": "F-16",
+      "message": "content_settings is a draft in the export (isDraft=true, no lastPublished); its content_item status is 'draft' and will not appear in published APIs until approved."
+    }
+  ],
+  "samplePayloadComparisons": [
+    {
+      "collection": "add_ons",
+      "sourceId": "6ac3657002f7d9d8f917db42",
+      "oldSeedDescription": "cad13cb9-752d-49e8-b5d3-b124016d3aa8",
+      "newSeedDescription": "Mark a birthday, anniversary, or just a very good reason to ...",
+      "reason": "description now comes from long-description, not the Mews UUID in short-description"
+    },
+    {
+      "collection": "offers",
+      "sourceId": "6ac1cf91f851c777cc3c9b68",
+      "oldSeedStatus": "published",
+      "newSeedStatus": "draft",
+      "reason": "active=false and no Mews rate product ID"
+    },
+    {
+      "collection": "events",
+      "sourceId": "6abe630cb8d821676cbd1b55",
+      "oldSeedStartsAt": null,
+      "newSeedStartsAt": "2027-02-01T13:40:00.000Z",
+      "reason": "recurring event: recurring-start used when datetime is empty (NOT NULL requirement)"
+    },
+    {
+      "collection": "room_types",
+      "sourceId": "6abd50f0e0589519e89a7f10",
+      "oldSeedLocationId": null,
+      "newSeedLocationId": "6abc9142d98b325b2821ca23",
+      "reason": "property-location mapped to location_id"
+    }
+  ]
+}
