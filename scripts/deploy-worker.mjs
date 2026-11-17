@@ -15,6 +15,10 @@ for (const line of readFileSync(envPath, "utf8").split(/\r?\n/)) {
   const m = line.match(/^([^#=]+)=(.*)$/);
   if (m) values[m[1].trim()] = m[2].trim();
 }
+// Allow process env to override local file
+for (const k of ["CLOUDFLARE_API_TOKEN","CLOUDFLARE_ACCOUNT_ID","CLOUDFLARE_ZONE_ID"]) {
+  if (process.env[k]) values[k] = process.env[k];
+}
 
 // Normalize bearer prefix on token
 if (values.CLOUDFLARE_API_TOKEN) {
