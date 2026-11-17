@@ -14,7 +14,7 @@
     "components": "vite --open /components.html",
     "build": "vite build",
     "preview": "npm run build && wrangler dev --port 8787",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "node scripts/deploy-worker.mjs",
     "typecheck": "tsc --noEmit && tsc -p worker/tsconfig.json --noEmit",
     "test": "node --test tests/*.test.ts",
     "normalize:svgs": "node scripts/normalize-svg-assets.mjs --write",
@@ -32,7 +32,9 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test:storybook:runtime": "node scripts/check-storybook-runtime.mjs",
-    "chromatic": "chromatic"
+    "chromatic": "chromatic",
+    "deploy:render": "node scripts/deploy-worker.mjs --render-only",
+    "deploy:check": "node scripts/deploy-worker.mjs --dry-run"
   },
   "dependencies": {
     "@fontsource/inter": "5.3.0",
