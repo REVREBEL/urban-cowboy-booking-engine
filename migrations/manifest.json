@@ -10,6 +10,11 @@
       "id": 2,
       "file": "0002_module_list_indexes.sql",
       "sha256": "5411a4c58e8454fe9ffd731b7483d033c376d71c9ba673afaa0c54eeca107a54"
+    },
+    {
+      "id": 3,
+      "file": "0003_property_scoped_contracts.sql",
+      "sha256": "a56e3fd9fab878666eb474e1348ae7e003fdcdae63ceff5c3c66d9f03b006f83"
     }
   ]
 }

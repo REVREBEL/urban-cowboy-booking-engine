@@ -9,6 +9,7 @@ import { test } from "node:test";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const runner = join(root, "scripts", "migrate-d1.mjs");
+const committed = JSON.parse(readFileSync(new URL("../migrations/manifest.json", import.meta.url), "utf8"));
 
 function migrate(dir, ...args) {
   return spawnSync(process.execPath, [runner, ...args, "--dir", dir], {
@@ -30,7 +31,7 @@ const second = "CREATE INDEX IF NOT EXISTS idx_t ON t (id);\n";
 test("committed migrations pass the check gate", () => {
   const result = spawnSync(process.execPath, [runner, "--check"], { cwd: root, encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Applied 2 migration\(s\) twice/);
+  assert.match(result.stdout, new RegExp(`Applied ${committed.migrations.length} migration\\(s\\) twice`));
   assert.match(result.stdout, /FK and integrity checks passed/);
 });
 
