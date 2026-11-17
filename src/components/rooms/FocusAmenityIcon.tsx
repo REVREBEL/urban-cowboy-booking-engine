@@ -228,12 +228,12 @@ export const AMENITY_ICON_REGISTRY: Record<string, AmenityIconDefinition> = {
     group: 'Badge',
   },
   'Adults Only': {
-    assetPath: 'assets/icons/badges/features/adults_only.svg',
+    assetPath: 'assets/icons/detailed/adults_only.svg',
     displayName: 'Adults Only',
     group: 'Badge',
   },
   adults_only: {
-    assetPath: 'assets/icons/badges/features/adults_only.svg',
+    assetPath: 'assets/icons/detailed/adults_only.svg',
     displayName: 'Adults Only',
     group: 'Badge',
   },
@@ -250,22 +250,22 @@ export const AMENITY_ICON_REGISTRY: Record<string, AmenityIconDefinition> = {
     group: 'Room Feature',
   },
   'Alpine Bathing Suite Den': {
-    assetPath: 'assets/icons/icons-simple/walden_bathing_suite_den.svg',
+    assetPath: 'assets/icons/icons-simple/alpine_bathing_suite_den.svg',
     displayName: 'Alpine Bathing Suite Den',
     group: 'Room Feature',
   },
   walden_bathing_suite_den: {
-    assetPath: 'assets/icons/icons-simple/walden_bathing_suite_den.svg',
+    assetPath: 'assets/icons/icons-simple/alpine_bathing_suite_den.svg',
     displayName: 'Alpine Bathing Suite Den',
     group: 'Room Feature',
   },
   'Opas Living Room': {
-    assetPath: 'assets/icons/icons-simple/opas_livingroom.svg',
+    assetPath: 'assets/icons/icons-simple/opas_living_room.svg',
     displayName: "Opa's Living Room",
     group: 'Room Feature',
   },
   opas_livingroom: {
-    assetPath: 'assets/icons/icons-simple/opas_livingroom.svg',
+    assetPath: 'assets/icons/icons-simple/opas_living_room.svg',
     displayName: "Opa's Living Room",
     group: 'Room Feature',
   },
@@ -290,12 +290,12 @@ export const AMENITY_ICON_REGISTRY: Record<string, AmenityIconDefinition> = {
     group: 'Room Feature',
   },
   'Chalet Living Room': {
-    assetPath: 'assets/icons/icons-simple/chalet_upper_living_room.svg',
+    assetPath: 'assets/icons/icons-simple/chalet_living_room.svg',
     displayName: 'Chalet Living Room',
     group: 'Room Feature',
   },
   chalet_upper_living_room: {
-    assetPath: 'assets/icons/icons-simple/chalet_upper_living_room.svg',
+    assetPath: 'assets/icons/icons-simple/chalet_living_room.svg',
     displayName: 'Chalet Living Room',
     group: 'Room Feature',
   },
@@ -370,12 +370,12 @@ export const AMENITY_ICON_REGISTRY: Record<string, AmenityIconDefinition> = {
     group: 'Room Feature',
   },
   'Scenic Views': {
-    assetPath: 'assets/icons/icons-simple/view_from_window.svg',
+    assetPath: 'assets/icons/icons-simple/view.svg',
     displayName: 'Scenic Views',
     group: 'Room Feature',
   },
   view_from_window: {
-    assetPath: 'assets/icons/icons-simple/view_from_window.svg',
+    assetPath: 'assets/icons/icons-simple/view.svg',
     displayName: 'Scenic Views',
     group: 'Room Feature',
   },
@@ -424,12 +424,12 @@ export const AMENITY_ICON_REGISTRY: Record<string, AmenityIconDefinition> = {
     group: 'Kitchen Feature',
   },
   'Lodge Penhouse Private Bar': {
-    assetPath: 'assets/icons/icons-simple/lodge_penthouse_private_bar.svg',
+    assetPath: 'assets/icons/icons-simple/private_bar.svg',
     displayName: 'Lodge Penthouse Private Bar',
     group: 'Kitchen Feature',
   },
   lodge_penthouse_private_bar: {
-    assetPath: 'assets/icons/icons-simple/lodge_penthouse_private_bar.svg',
+    assetPath: 'assets/icons/icons-simple/private_bar.svg',
     displayName: 'Lodge Penthouse Private Bar',
     group: 'Kitchen Feature',
   },
@@ -486,12 +486,12 @@ export const AMENITY_ICON_REGISTRY: Record<string, AmenityIconDefinition> = {
     group: 'Basic Features',
   },
   'Bath Amenities': {
-    assetPath: 'assets/icons/icons-simple/bath_amenities.svg',
+    assetPath: 'assets/icons/icons-simple/bathroom_amenities.svg',
     displayName: 'Bath Amenities',
     group: 'Basic Features',
   },
   bath_amenities: {
-    assetPath: 'assets/icons/icons-simple/bath_amenities.svg',
+    assetPath: 'assets/icons/icons-simple/bathroom_amenities.svg',
     displayName: 'Bath Amenities',
     group: 'Basic Features',
   },
@@ -560,12 +560,12 @@ export const AMENITY_ICON_REGISTRY: Record<string, AmenityIconDefinition> = {
     group: 'Bed Type Icon',
   },
   'Single Bed': {
-    assetPath: 'assets/icons/icons-simple/single_bed.svg',
+    assetPath: 'assets/icons/icons-simple/bed_single.svg',
     displayName: 'Single Bed',
     group: 'Bed Type Icon',
   },
   single_bed: {
-    assetPath: 'assets/icons/icons-simple/single_bed.svg',
+    assetPath: 'assets/icons/icons-simple/bed_single.svg',
     displayName: 'Single Bed',
     group: 'Bed Type Icon',
   },
@@ -602,12 +602,12 @@ export const AMENITY_ICON_REGISTRY: Record<string, AmenityIconDefinition> = {
 
   // Outdoor Connection (assets/icons/icons-simple/)
   'Private Deck or Porch': {
-    assetPath: 'assets/icons/icons-simple/private_deck_or_porch.svg',
+    assetPath: 'assets/icons/icons-simple/private_balcony.svg',
     displayName: 'Private Deck or Porch',
     group: 'Outdoor Connection',
   },
   private_deck_or_porch: {
-    assetPath: 'assets/icons/icons-simple/private_deck_or_porch.svg',
+    assetPath: 'assets/icons/icons-simple/private_balcony.svg',
     displayName: 'Private Deck or Porch',
     group: 'Outdoor Connection',
   },
