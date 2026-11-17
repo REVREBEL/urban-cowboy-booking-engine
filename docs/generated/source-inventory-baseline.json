@@ -116,6 +116,8 @@
   "totals": {
     "sourceRecords": 398,
     "structurallyRepresentedSourceRecords": 136,
+    "versionedContentRecords": 24,
+    "totalRepresentedRecords": 160,
     "excludedRecords": 238,
     "excludedReason": "photo hotspots: missing media identity",
     "duplicateFilesSkipped": 2,

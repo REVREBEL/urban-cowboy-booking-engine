@@ -23,7 +23,7 @@ Method: static inspection of both repositories at the paths cited below, plus th
 
 Invariants that constrain every later migration step:
 
-1. **Mews is the source of truth** for availability, pricing, restrictions, payments, settlement and reservation creation. D1/Webflow only hold editorial content and Mews identifiers.
+1. **Mews is the source of truth** for availability, pricing, restrictions, payments, settlement and reservation creation. D1 must never author those transactional facts. Webflow holds editorial content; D1 holds editorial content plus Mews identifiers. D1 is also the planned store for **operational and analytics** data (guest sessions, email captures, recovery and analytics tables in §2.4) — that data is not editorial and is governed separately under §4 and COW-44/45/48.
 2. **Published-only reads.** Public readers must never serve draft or archived CMS content. The current Worker enforces this per item (`worker/webflow/locations.ts`, `buildings.ts`, `policy-language.ts`, `photo-hotspots.ts`); any D1 read path must preserve it.
 3. **No guest PII in shareable URLs.** Selection state may be shared; personal data may not (COW-2, COW-13).
 4. **Dual-run before cutover.** Webflow/n8n/Supabase stay live and reconcilable until every gate in §7 passes.
@@ -41,7 +41,7 @@ Eleven collections are statically configured in `cowboy-dashboard/src/lib/collec
 
 | Collection | CMS collection id | Source rows | Publication / data notes | D1 destination (from PR #298) |
 | --- | --- | ---: | --- | --- |
-| Locations | `6abc812fd98b325b281d6301` | 4 | 1 draft; carries business contact fields and policy language | `locations` (4) |
+| Locations | `6abc812fd98b325b281d6301` | 4 | 1 draft; publication state is **not** carried into D1 (open gate §7 A); carries business contact fields and policy language | `locations` (4) |
 | Buildings | `6abc8192a900d21d00b7c588` | 9 | Duplicate `Buildings 2.csv` skipped | `buildings` (9) |
 | Room Types | `6abc815b36cbcba74b8b01c4` | 22 | 1 draft; `mews-room-type-id`, features/restricted amenities | `room_types` (22), `room_type_amenities` (253) |
 | Amenities | `6abc8175a7bbdc92fa9e6599` | 76 | No icon name/path columns in export | `amenities` (76) |
@@ -54,9 +54,11 @@ Eleven collections are statically configured in `cowboy-dashboard/src/lib/collec
 | Content Settings | — | 1 | Draft, no `lastPublished` — policy language | `content_items` / `content_revisions` (`kind='policy'`, status `draft`) |
 | Menu Items | `6abc8145eb90b8f4d6d650f4` | 0 | Empty export | none |
 
-Every export carries `isDraft`, `isArchived` and `lastPublished`. The runtime Webflow readers treat these as authoritative: they fetch the live/published record through the Webflow Data API (`/collections/{id}/items/live` via `webflowGet`), reject draft/archived items, and compare the staged record so an unpublished edit cannot silently override a published value (`worker/webflow/locations.ts:118-176, 234-253`). This is the behavior that must survive the D1 cutover.
+Every export carries `isDraft`, `isArchived` and `lastPublished`. All runtime readers use Webflow's live/published endpoints and skip draft or archived items: `worker/webflow/buildings.ts:75-89, 133-145` filters them and fetches `/items/live`, and `worker/webflow/photo-hotspots.ts` and `worker/webflow/policy-language.ts:27-56` do the same at their own granularity. Only the **location-settings** path (`worker/webflow/locations.ts:118-176, 234-253`) goes further and compares the staged record with the live one using `lastPublished`, so an unpublished edit cannot silently override a published setting. `policy-language.ts` reads the single published item but does not model `lastPublished`; that safeguard must not be assumed elsewhere. Every D1 read path must at minimum preserve live-only, draft/archived-excluding reads, and add staged/publication checks for settings-equivalent content.
 
 **Media identity.** Webflow has no internal immutable media id. Assets are addressed by a 24-hex Webflow `fileId` and a CDN URL of the form `https://cdn.prod.website-files.com/{siteId}/{assetId}_{filename}`. `cowboy-dashboard/src/lib/photo-hotspots-utils.ts` parses those ids out of `photo-file-id`/`photo-url` to bind a hotspot to a photo, and deliberately discards the shared `siteId` segment to avoid false matches. The portal repairs hotspots after a photo re-upload through `/api/cms/rekey-photo`. Because the CSV export omits `photo-file-id`/`photo-url`, all 238 hotspots are blocked (finding F-08); the export also has no `display-order` column in the D1 `photo_hotspots` table (F-09).
+
+The current D1 schema is **Squarespace-shaped**: `media_assets` and `media_versions` name their identity columns `squarespace_asset_id` and `squarespace_url` (`migrations/0001_init.sql:37-59`), not Webflow `fileId`/CDN fields. Before a media import can be specified, decide whether to rename/generalise those columns or add Webflow-compatible identity columns plus aliases. This is an explicit gate in §7 A.
 
 ### 2.2 Astro portal and operations — `cowboy-dashboard`
 
@@ -127,7 +129,7 @@ browser → /api/mews/track (Worker) → WEBHOOK_EVENTS → n8n → Supabase
 ## 3. Count and hash baselines
 
 - **Source records:** 398 across 12 collections (`d1-reconciliation.json`).
-- **Structurally represented in D1:** 136 source records → 443 seed rows across 12 tables.
+- **Represented in D1:** 160 source records total — 136 in the seven structured tables (→ 443 seed rows across 12 tables; this is the reconciliation's `structurallyRepresentedSourceRecords` figure) plus 24 versioned-content records (20 instagrams, 3 outlets, 1 content setting) in `content_items`/`content_revisions`.
 - **Excluded:** 238 photo-hotspot records; 2 byte-identical duplicate files skipped; 1 empty collection.
 - **Integrity:** per-file byte size and SHA-256 are in `docs/generated/source-inventory-baseline.json`. Verify with `shasum -a 256 webflow_cms_export/*.csv`. The two duplicate pairs have identical hashes, confirming the importer's duplicate detection.
 - **Live read-only check (2026-11-17, recorded in the ingestion doc):** 4 locations, 9 buildings, 22 room types, 76 amenities, 8 events, 8 offers, 9 add-ons present in `urban-cowboy-content`; the relationship, hotspot, media and versioned-content tables are still at 0 rows, `mews_hotel_id` is NULL for all locations, and all 8 offers are `published`. That is the pre-seed state: applying the regenerated seed is a separate, explicitly approved step.
@@ -142,8 +144,8 @@ browser → /api/mews/track (Worker) → WEBHOOK_EVENTS → n8n → Supabase
 | --- | --- | --- | --- |
 | `customer.firstName`, `lastName`, `email`, `telephone`, `nationalityCode` | Booking journey → `/api/mews/track` → n8n → Supabase `booking_events.payload` and `carts.customer_*` | **Direct PII** | Never store or transmit as readable plaintext outside the trusted boundary. Encrypt at rest (AES-256-GCM, unique IV per value), keys only as Worker secrets; searchable email via keyed HMAC; decrypt only in an authenticated server workflow; no CDN caching. Retain only for the agreed recovery window, then delete/anonymise. (COW-13) |
 | Guest notes / scheduled add-on delivery instructions | Mews reservation notes | **Operational PII** | Stays in Mews. Do not copy into analytics/D1. Never route to inherited n8n/Supabase. |
-| `matchSave.shareUrl`, `topRoomCategoryId`, `alternates`, `interests` | `/api/mews/track` (`cart.matches_saved`) | **Sensitive / linkable** | Share URLs must carry selection only, never PII (COW-2). Treat as pseudonymous behavioural data; limit retention. |
-| `cartId`, funnel `step`, stay dates/occupancy, room/rate choice, totals, payment state, `reservationGroupId`, `paymentRequestId` | `/api/mews/track` | **Pseudonymous behavioural** | Queryable in normal analytics columns. Linkable to a person via `cartId`; keep retention-limited and access-controlled. `paymentRequestId`/`reservationGroupId` are Mews correlation keys, not secrets. |
+| `matchSave.shareUrl`, `topRoomCategoryId`, `alternateRoomCategoryIds`, `party`, `dog`, `interests` | `/api/mews/track` (`cart.matches_saved`) | **Sensitive / linkable** | Share URLs must carry selection only, never PII (COW-2). Treat as pseudonymous behavioural data; limit retention. |
+| `cartId`, funnel `step`, stay dates/occupancy, room/rate choice, totals, payment state, `reservationGroupId`, `paymentRequestId` | `/api/mews/track` | **Pseudonymous behavioural** | Queryable in normal analytics columns. Linkable to a person via `cartId`; keep retention-limited and access-controlled. `reservationGroupId` is **capability-sensitive**: submitting it to the unauthenticated `reservation-status` endpoint can disclose payment state and reservation numbers. Do not log or expose it beyond the active booking flow, and require verifiable authorization before returning reservation details. `paymentRequestId` is a Mews correlation key, not a secret. |
 | `utm_*`, `gclid`, `fbclid` | Arrival URL → attribution in `/api/mews/track` | **Pseudonymous / advertising identifiers** | Whitelist only known keys (already done in `track.ts`); minimise and expire with the cart record. |
 | Locations: street addresses, `primary-phone`, `front-desk-operations-emails`, `reservations-email`, `sales-email`, `general-email`; Outlets: `email-address`, `main-phone`, addresses | Webflow Locations/Outlets | **Public business contact — not guest PII** | Safe to publish as property information. Keep Webflow as source and preserve provenance. |
 | Editorial content (rooms, amenities, offers, events, policy language, instagrams) | Webflow CMS | **Non-sensitive** | No PII expected. Spot-check free-text fields before publishing a re-export. |
@@ -161,6 +163,9 @@ Mappings are those implemented by `scripts/seed-d1-from-webflow.mjs` (regenerate
 | --- | --- | --- |
 | `locations.id`, `.slug`, `.name` | `locations.id`, `.slug`, `.name` | Direct. `time_zone` derived from slug (`catskills` → `America/New_York`, Denver/Nashville zones asserted by `deploy:d1`). |
 | *(none — export gap)* | `locations.mews_hotel_id` | NULL. Per-location Mews mapping required (F-01). |
+| `locations.street-address-line-1/2`, `.city`, `.state`, `.postal-code`, `.google-maps-link`, `.website`, `.instagram`, `.facebook`, `.trip-advisor`, `.youtube` | *(none — no D1 columns)* | Public property metadata; **not imported** by the current seed. Decide whether to add columns or keep Webflow as the source; no retention concern while the data stays public, but preserve re-export provenance. |
+| `locations.primary-phone`, `.front-desk-operations-emails`, `.reservations-email`, `.sales-email`, `.general-email` | *(none — no D1 columns)* | Business contact points, classified in §4 as public business contact, not guest PII. Not imported by the current seed; retain only while published. |
+| `locations.privacy-policy`, `.terms-conditions`, `.accessibility`, `.location-details` | *(candidate: `content_items`/`content_revisions`)* | Policy/legal copy; not imported by the current seed. Decide source and publication workflow before cutover. |
 | `buildings.id`, `.name`, `.slug`, `.sort` | `buildings.id`, `.name`, `.slug`, `.sort_order` | Direct; `location` multi-ref → `location_id`. |
 | `amenities.id`, `.name` (fallback `.short-name`) | `amenities.id`, `.name` | `image_name`/`image_path` NULL — export has no such columns; no fabricated icon names (F-02). |
 | `roomTypes.id`, `.name`/`.short-name`, `.slug`, `.sort` | `room_types.id`, `.name`, `.slug`, `.sort_order` | `property-location` → `location_id`; `mews-room-type-id` → `mews_room_category_id` (validated non-empty). |
@@ -172,9 +177,10 @@ Mappings are those implemented by `scripts/seed-d1-from-webflow.mjs` (regenerate
 | `instagrams.*`, `outlets.*`, `contentSettings.*` | `content_items` + `content_revisions` | Full source row stored as `payload_json`; `kind` = `instagram`/`outlet`/`policy`; `status` from publication; content settings stays `draft` (F-16). |
 | `photoHotspots.*` | *(none)* | **Blocked.** No `photo-file-id`/`photo-url` in export; no legitimate `media_asset_id` (F-08). `display-order` also lacks a D1 column (F-09). |
 | `menuItems.*` | *(none)* | Empty collection. |
-| `/api/mews/track` payload | Supabase `booking_events` / `carts` (current); D1 `guest_sessions` / `email_captures` / `cart_abandonments` / `analytics_events` / `analytics_daily` (target, 0 rows) | No field-level import exists yet. Define the mapping when the queued D1 ingestion dual-run is built (COW-44/45/48); encrypt PII per §4. |
+| `matchSave` in `/api/mews/track` (`cart.matches_saved`) | Supabase event payload (current); D1 `saved_room_matches` (target, 0 rows) | Include `saved_room_matches` in the dual-run mapping (COW-44/46). Map `topRoomCategoryId` → `room_category_id`, the session/stay context → `session_id`, `check_in`, `check_out`, `adults`, `children`. `alternateRoomCategoryIds`, `party`, `dog`, `interests` and `shareUrl` have no dedicated column yet: add fields to the schema or document a deliberate exclusion before cutover. |
+| Rest of `/api/mews/track` payload | Supabase `booking_events` / `carts` (current); D1 `guest_sessions` / `email_captures` / `cart_abandonments` / `analytics_events` / `analytics_daily` (target, 0 rows) | No field-level import exists yet. Define the mapping when the queued D1 ingestion dual-run is built (COW-44/45/48); encrypt PII per §4. |
 
-Publication lineage: `isDraft`/`isArchived`/`lastPublished` → `content_items.status` and `content_revisions.published_at` for versioned content, and `offers.status` / `add_ons.status` / `events.display_flag` for structured tables. Note that `room_types` has **no status column**, so the one draft room type cannot be filtered in D1 (F-04).
+Publication lineage: `isDraft`/`isArchived`/`lastPublished` → `content_items.status` and `content_revisions.published_at` for versioned content, and `offers.status` / `add_ons.status` / `events.display_flag` for structured tables. Two gaps remain: `room_types` has **no status column**, so the one draft room type cannot be filtered in D1 (F-04); and `locations` has no status column while the importer does not filter by `isDraft`, so the one draft location would be indistinguishable from published locations in D1. Both are gates in §7 A.
 
 ---
 
@@ -199,11 +205,14 @@ All gates are **open** today. No legacy service may be decommissioned until ever
 **A. Data and lineage**
 - [ ] Re-run `npm run seed:d1 && npm run test:seed` and reconcile counts against `d1-reconciliation.json` and the hash baseline.
 - [ ] Close unresolved references F-01 (per-location Mews hotel IDs), F-04 (draft room type status), F-05 (event timezone interpretation), F-06 (3 nonbookable offers), F-07 (9 add-on product IDs validated against Mews).
-- [ ] Re-export hotspots with stable media identity; migrate `photo_hotspots.display-order`; import and verify all 238 hotspot placements (COW-33/34).
+- [ ] Preserve publication state for the draft location in D1 (add a status column or exclude it from public reads) before any public D1 location read.
+- [ ] Decide the D1 destination for location address/contact fields (new columns vs Webflow-as-source), with publication and retention notes.
+- [ ] Re-export hotspots with stable media identity; migrate `photo_hotspots.display-order`; import and verify all 238 hotspot placements (COW-33/34). Resolve the Squarespace-shaped `squarespace_asset_id`/`squarespace_url` identity columns against Webflow `fileId`/CDN fields before specifying that import.
 - [ ] Editorial source-of-truth policy agreed before D1-native editing (seed uses upserts and can overwrite direct D1 edits).
 
 **B. Security and PII**
 - [ ] Guest PII encrypted at rest and absent from routine analytics payloads; no PII in share URLs (COW-2, COW-13).
+- [ ] `reservationGroupId` treated as capability-sensitive: not logged or exposed beyond the active booking flow, and `reservation-status` requires verifiable authorization before returning reservation details.
 - [ ] Admin endpoints behind real session/role auth; `ADMIN_TOKEN` (or equivalent) bound in the deployed Worker; `/api/recovery` and `/api/analytics/summary` protected or disabled.
 - [ ] n8n webhook authenticated (HMAC + replay protection) if retained; no raw PII in webhook events.
 - [ ] Clean clone cannot reach Bambou/NoCodeFactory endpoints or inherited Supabase project (COW-17).
@@ -216,7 +225,7 @@ All gates are **open** today. No legacy service may be decommissioned until ever
 
 **D. Reliability and operations**
 - [ ] CI includes seed validation, index plans, API-dependent tests and E2E smoke; rollback/restore drill passes against a backed-up D1.
-- [ ] n8n/Supabase and D1 dual-run reconciled (event counts, carts, conversions); email delivery and attribution verified against Mews-confirmed status.
+- [ ] n8n/Supabase and D1 dual-run reconciled (event counts, carts, conversions); include `saved_room_matches` and the missing `matchSave` fields in the mapping (§5); email delivery and attribution verified against Mews-confirmed status.
 - [ ] Observability and alerting for ingestion failures; no false sold-out from swallowed Mews errors.
 
 **E. Governance and retirement sequence**
