@@ -55,5 +55,3 @@ if (eventsFile) {
   }
   console.log("-- END EVENTS SEED");
 }
-EOF
-node scripts/seed-d1-from-webflow.mjs | head -10
