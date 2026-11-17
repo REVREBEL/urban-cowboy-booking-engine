@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Urban Cowboy (Mews Booking Engine API) — Cloudflare Workers + Static Assets",
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.5.0"
   },
   "scripts": {
     "dev": "npm run build && concurrently -k -n worker,web -c magenta,cyan \"npm:dev:worker\" \"npm:dev:web\"",
@@ -36,7 +36,8 @@
     "test:storybook:runtime": "node scripts/check-storybook-runtime.mjs",
     "chromatic": "chromatic",
     "deploy:render": "node scripts/deploy-worker.mjs --render-only",
-    "deploy:check": "node scripts/deploy-worker.mjs --dry-run"
+    "deploy:check": "node scripts/deploy-worker.mjs --dry-run",
+    "deploy:d1": "node scripts/deploy-d1.mjs"
   },
   "dependencies": {
     "@fontsource/inter": "5.3.0",
