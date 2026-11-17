@@ -14,6 +14,7 @@ not_found_handling = "single-page-application"
 # these placeholders into .wrangler.generated.toml before deployment.
 # NEVER deploy this template directly or put credentials into [vars].
 [vars]
+MEWS_CLIENT = "__ENV_MEWS_CLIENT__"
 MEWS_BASE_URL = "__ENV_MEWS_BASE_URL__"
 MEWS_APP_BASE_URL = "__ENV_MEWS_APP_BASE_URL__"
 MEWS_HOTEL_ID = "__ENV_MEWS_HOTEL_ID__"
@@ -36,7 +37,7 @@ WEBHOOK_EVENTS = "__ENV_WEBHOOK_EVENTS__"
 # Secret binding names are declared here; their values are loaded from .env
 # and passed to Wrangler through --secrets-file, never as plaintext vars.
 [secrets]
-required = ["MEWS_CLIENT", "ADMIN_TOKEN"]
+required = ["ADMIN_TOKEN"]
 
 # Tracking is intentionally disabled until Urban Cowboy provisions its own endpoint.
 
