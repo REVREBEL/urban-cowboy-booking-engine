@@ -13,6 +13,7 @@ not_found_handling = "single-page-application"
 # Safe demo defaults. Production identifiers and integrations must be supplied
 # explicitly in the target Cloudflare environment; none are inherited here.
 [vars]
+CLOUDFLARE_ZONE_ID = "6f149fe6e6c18c67a76bcf4d98055148"
 MEWS_BASE_URL = "https://api.mews-demo.com"
 MEWS_APP_BASE_URL = "https://api.mews-demo.com"
 MEWS_HOTEL_ID = "3edbe1b4-6739-40b7-81b3-d369d9469c48"
