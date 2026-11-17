@@ -127,3 +127,18 @@ test("reconciliation report matches generated SQL and source scope", () => {
     443,
   );
 });
+
+test("each location has its actual IANA time zone", () => {
+  const db = makeDb();
+  const zones = {
+    catskills: "America/New_York",
+    denver: "America/Denver",
+    "nashville-east": "America/Chicago",
+    "nashville-downtown": "America/Chicago",
+  };
+  const query = db.prepare("SELECT time_zone FROM locations WHERE slug = ?");
+  for (const [slug, zone] of Object.entries(zones)) {
+    assert.equal(query.get(slug)?.time_zone, zone, slug);
+  }
+  db.close();
+});
