@@ -42,3 +42,6 @@ chromatic-build-*.xml
 chromatic-diagnostics.json
 .qwen/skills/scry-setup
 .trae/skills/scry-setup
+
+webflow_backend/
+webflow_cms_export/
