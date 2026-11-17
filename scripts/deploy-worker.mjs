@@ -108,7 +108,7 @@ if (!existsSync(wrangler)) fail("Install dependencies with npm ci before deployi
 function run(command, commandArgs) {
   const proc = spawnSync(command, commandArgs, { cwd: root, env, stdio: "inherit" });
   if (proc.error) fail("Could not start " + command + ": " + proc.error.message);
-  if (proc.status !== 0) process.exit(proc.status ?? 1);
+  if (proc.status !== 0) throw new Error(`Command failed (${proc.status ?? "unknown"}): ${command}`);
 }
 
 run("npm", ["run", "build"]);
