@@ -5,18 +5,32 @@ const dir = process.argv[2] || "webflow_cms_export";
 const files = readdirSync(dir).filter((f) => f.endsWith(".csv"));
 
 function parseCsv(text) {
-  const lines = text.split(/\r?\n/).filter(Boolean);
-  if (!lines.length) return { header: [], rows: [] };
-  const header = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
-  const rows = lines.slice(1).map((line) => {
-    const cols = line.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
-    const row = {};
-    header.forEach((h, i) => {
-      row[h] = (cols[i] || "").trim().replace(/^"|"$/g, "");
-    });
-    return row;
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ",") { row.push(field); field = ""; }
+      else if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+      else if (c === "\r") {}
+      else field += c;
+    }
+  }
+  if (field !== "" || row.length) { row.push(field); rows.push(row); }
+  const header = rows.shift() || [];
+  return rows.filter((r) => r.length === header.length).map((r) => {
+    const o = {};
+    header.forEach((h, i) => (o[h] = r[i]));
+    return o;
   });
-  return { header, rows };
 }
 
 function esc(v) {
@@ -25,20 +39,21 @@ function esc(v) {
 }
 
 for (const f of files) {
-  const { header, rows } = parseCsv(readFileSync(join(dir, f), "utf8"));
-  console.log(`-- ${f}: ${rows.length} rows; columns: ${header.join(", ")}`);
+  const rows = parseCsv(readFileSync(join(dir, f), "utf8"));
+  console.log(`-- ${f}: ${rows.length} rows`);
 }
 
-// Example seed for Events collection if present.
 const eventsFile = files.find((f) => /events/i.test(f));
 if (eventsFile) {
-  const { rows } = parseCsv(readFileSync(join(dir, eventsFile), "utf8"));
+  const rows = parseCsv(readFileSync(join(dir, eventsFile), "utf8"));
   console.log("-- BEGIN EVENTS SEED");
   for (const r of rows) {
-    const id = r["ID"] || r["Slug"] || Math.random().toString(36).slice(2);
+    const id = r.id || r.slug;
     console.log(
-      `INSERT OR IGNORE INTO events (id, tenant_id, title, description, starts_at, display_flag) VALUES (${esc(id)}, 'urban-cowboy', ${esc(r["Name"] || r["Title"])}, ${esc(r["Description"])}, ${esc(r["Start"] || r["Date"])}, 1);`,
+      `INSERT OR IGNORE INTO events (id, tenant_id, title, description, starts_at, ends_at, display_flag) VALUES (${esc(id)}, 'urban-cowboy', ${esc(r.name)}, ${esc(r["short-description"])}, ${esc(r.datetime)}, ${esc(r["datetime-end"])}, ${r.isDraft === "true" ? 0 : 1});`,
     );
   }
   console.log("-- END EVENTS SEED");
 }
+EOF
+node scripts/seed-d1-from-webflow.mjs | head -10
