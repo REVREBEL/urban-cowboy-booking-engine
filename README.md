@@ -94,7 +94,7 @@ From the browser's perspective, everything is served from the same origin (`:517
 | --- | --- | --- | --- | --- |
 | `MEWS_BASE_URL` | Mews API base (`https://api.mews.com`) | no | `.dev.vars` | `wrangler.toml [vars]` or dashboard |
 | `MEWS_APP_BASE_URL` | Mews app base URL for the payment page | no | `.dev.vars` | same |
-| `MEWS_CLIENT` | Booking Engine API `Client` string | **YES** | `.dev.vars` | **Secret** in Worker dashboard |
+| `MEWS_CLIENT` | Public-facing Booking Engine API `Client` identifier | **NO** | Shared `.env` | Worker `[vars]` via `npm run deploy` |
 | `MEWS_HOTEL_ID` | Property UUID | no | `.dev.vars` | `wrangler.toml [vars]` or dashboard |
 | `MEWS_CONFIG_ID` | Configuration UUID | no | `.dev.vars` | same |
 | `MEWS_ADULT_AGE_CATEGORY_ID` | “Adult” age category | no | `.dev.vars` | same, with built-in enterprise fallback |
@@ -109,20 +109,20 @@ The `Client` and IDs **never** reach the frontend because no `VITE_*` variables 
 
 ### 🔑 Client String
 
-`MEWS_CLIENT = ‹Mews Client string — secret›`
+`MEWS_CLIENT = ‹registered Mews Client identifier›`
 
 This is a string **activated by Mews** for the Urban Cowboy enterprise and verified to return **200 OK**.
 
 Configure it as a Cloudflare **secret**:
 
 1. Cloudflare Dashboard → your Worker → **Settings → Variables and Secrets**.
-2. Add or modify the **secret** `MEWS_CLIENT` = `‹Mews Client string — secret›`. **No code changes required.**
+2. Set `MEWS_CLIENT` in the shared `.env` and run `npm run deploy` to render it as a Worker text binding. **No code changes required.**
 3. Redeploy, or select **Retry deployment**.
 
 Using the CLI:
 
 ```bash
-npx wrangler secret put MEWS_CLIENT
+# MEWS_CLIENT is a plain Worker variable; set it in .env and run npm run deploy
 ```
 
 ---
@@ -140,7 +140,7 @@ The project uses the **Worker + Static Assets** model.
    - **Deploy command**: `npx wrangler deploy`
    - **Non-production branch deploy command**: `npx wrangler versions upload`, providing preview URLs for PRs
    - **API token**: leave blank because Cloudflare creates one
-4. Under **Variables and Secrets**, add `MEWS_CLIENT` as a **Secret**. Other variables come from `wrangler.toml [vars]`.
+4. Use the shared `.env` and `npm run deploy`; `MEWS_CLIENT` is a text variable declared in `wrangler.toml [vars]`.
 5. **Deploy**. Afterward:
    - push to `main` = automatic **production**
    - each **PR** = preview version with its own URL
@@ -402,4 +402,4 @@ Reservations created by the booking engine appear there, with the confirmation n
 
 7. **`returnUrl`**: Base64 encoding of an absolute URL, constructed server-side.
 
-8. **Secrets**: `.dev.vars` is gitignored. In production, `MEWS_CLIENT` is stored as a **Secret** in the Worker dashboard, and `dist/` must contain no secrets.
+8. **Secrets**: `.dev.vars` is gitignored. In production, `MEWS_CLIENT` is deployed as a nonsecret Worker variable from `.env`, and `dist/` must contain no actual credentials.
