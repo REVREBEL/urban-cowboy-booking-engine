@@ -36,13 +36,15 @@ function BookingPartyTemplate({
       {highlightEligibility && (
         <p className="text-sm">Room eligibility must be calculated by the production matching logic.</p>
       )}
-      <button
-        type="button"
-        className="rounded border px-4 py-2"
-        onClick={onToggleDog}
-      >
-        {dogRequested ? "Remove dog request" : "Add dog request"}
-      </button>
+      {onToggleDog && (
+        <button
+          type="button"
+          className="rounded border px-4 py-2"
+          onClick={onToggleDog}
+        >
+          {dogRequested ? "Remove dog request" : "Add dog request"}
+        </button>
+      )}
     </section>
   );
 }
