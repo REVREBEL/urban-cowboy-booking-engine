@@ -41,7 +41,7 @@ Eleven collections are statically configured in `cowboy-dashboard/src/lib/collec
 
 | Collection | CMS collection id | Source rows | Publication / data notes | D1 destination (from PR #298) |
 | --- | --- | ---: | --- | --- |
-| Locations | `6abc812fd98b325b281d6301` | 4 | 1 draft; publication state is **not** carried into D1 (open gate §7 A); carries business contact fields and policy language | `locations` (4) |
+| Locations | `6abc812fd98b325b281d6301` | 4 | No draft items in the 2026-11-15 export; publication state is still **not** carried into D1 (open gate §7 A); carries business contact fields and policy language | `locations` (4) |
 | Buildings | `6abc8192a900d21d00b7c588` | 9 | Duplicate `Buildings 2.csv` skipped | `buildings` (9) |
 | Room Types | `6abc815b36cbcba74b8b01c4` | 22 | 1 draft; `mews-room-type-id`, features/restricted amenities | `room_types` (22), `room_type_amenities` (253) |
 | Amenities | `6abc8175a7bbdc92fa9e6599` | 76 | No icon name/path columns in export | `amenities` (76) |
@@ -180,7 +180,7 @@ Mappings are those implemented by `scripts/seed-d1-from-webflow.mjs` (regenerate
 | `matchSave` in `/api/mews/track` (`cart.matches_saved`) | Supabase event payload (current); D1 `saved_room_matches` (target, 0 rows) | Include `saved_room_matches` in the dual-run mapping (COW-44/46). Map `topRoomCategoryId` → `room_category_id`, the session/stay context → `session_id`, `check_in`, `check_out`, `adults`, `children`. `alternateRoomCategoryIds`, `party`, `dog`, `interests` and `shareUrl` have no dedicated column yet: add fields to the schema or document a deliberate exclusion before cutover. |
 | Rest of `/api/mews/track` payload | Supabase `booking_events` / `carts` (current); D1 `guest_sessions` / `email_captures` / `cart_abandonments` / `analytics_events` / `analytics_daily` (target, 0 rows) | No field-level import exists yet. Define the mapping when the queued D1 ingestion dual-run is built (COW-44/45/48); encrypt PII per §4. |
 
-Publication lineage: `isDraft`/`isArchived`/`lastPublished` → `content_items.status` and `content_revisions.published_at` for versioned content, and `offers.status` / `add_ons.status` / `events.display_flag` for structured tables. Two gaps remain: `room_types` has **no status column**, so the one draft room type cannot be filtered in D1 (F-04); and `locations` has no status column while the importer does not filter by `isDraft`, so the one draft location would be indistinguishable from published locations in D1. Both are gates in §7 A.
+Publication lineage: `isDraft`/`isArchived`/`lastPublished` → `content_items.status` and `content_revisions.published_at` for versioned content, and `offers.status` / `add_ons.status` / `events.display_flag` for structured tables. Two gaps remain: `room_types` has **no status column**, so the one draft room type cannot be filtered in D1 (F-04); and `locations` has no status column while the importer does not filter by `isDraft`, so a future draft location would be indistinguishable from published locations. (Correction: the 2026-11-15 export contains no draft Location rows; only the draft Room Type and draft Content Settings item.) Both are gates in §7 A.
 
 ---
 
@@ -205,7 +205,7 @@ All gates are **open** today. No legacy service may be decommissioned until ever
 **A. Data and lineage**
 - [ ] Re-run `npm run seed:d1 && npm run test:seed` and reconcile counts against `d1-reconciliation.json` and the hash baseline.
 - [ ] Close unresolved references F-01 (per-location Mews hotel IDs), F-04 (draft room type status), F-05 (event timezone interpretation), F-06 (3 nonbookable offers), F-07 (9 add-on product IDs validated against Mews).
-- [ ] Preserve publication state for the draft location in D1 (add a status column or exclude it from public reads) before any public D1 location read.
+- [ ] Add a publication-state contract for `locations` and `room_types` (which have no status column) before public D1 reads. The current export has no draft locations; the known draft room type is `6abd4a1debcab0ea7e461c9a`.
 - [ ] Decide the D1 destination for location address/contact fields (new columns vs Webflow-as-source), with publication and retention notes.
 - [ ] Re-export hotspots with stable media identity; migrate `photo_hotspots.display-order`; import and verify all 238 hotspot placements (COW-33/34). Resolve the Squarespace-shaped `squarespace_asset_id`/`squarespace_url` identity columns against Webflow `fileId`/CDN fields before specifying that import.
 - [ ] Editorial source-of-truth policy agreed before D1-native editing (seed uses upserts and can overwrite direct D1 edits).
