@@ -26,7 +26,8 @@ const sourceFlag = process.argv.indexOf("--env-file");
 const sourcePath = sourceFlag === -1 ? join(root, ".env") : resolve(process.argv[sourceFlag + 1] ?? "");
 const workerSecretNames = ["MEWS_CLIENT", "WEBFLOW_CMS_API_TOKEN", "ADMIN_TOKEN"];
 const requiredVars = ["MEWS_BASE_URL", "MEWS_APP_BASE_URL", "MEWS_HOTEL_ID", "MEWS_CONFIG_ID"];
-const requiredSecrets = ["MEWS_CLIENT", "WEBFLOW_CMS_API_TOKEN", "ADMIN_TOKEN"];
+const requiredSecrets = ["MEWS_CLIENT", "ADMIN_TOKEN"];
+const deployTarget = process.argv.includes("--demo") ? "demo" : "production";
 
 function fail(message) {
   console.error("Deploy configuration error: " + message);
@@ -34,7 +35,16 @@ function fail(message) {
 }
 if (!existsSync(sourcePath)) fail("Shared environment file missing: " + sourcePath);
 if (!existsSync(configTemplate)) fail("Missing wrangler.toml");
-const fromFile = parseEnv(readFileSync(sourcePath, "utf8"));
+const envText = readFileSync(sourcePath, "utf8");
+// Duplicate assignments in a shared .env are dangerous: later demo values can
+// silently override production credentials. Fail before any build or deploy.
+const assignments = [...envText.matchAll(/^\s*(?:export\s+)?([A-Z_][A-Z0-9_]*)\s*=/gm)];
+const seen = new Set();
+for (const [, key] of assignments) {
+  if (seen.has(key)) fail("Duplicate .env key " + key + "; keep one active value per key");
+  seen.add(key);
+}
+const fromFile = parseEnv(envText);
 // The selected file is authoritative for application runtime bindings.
 // Cloudflare credentials may come from the process environment, as in CI.
 const value = (key) => fromFile[key]?.trim();
@@ -45,6 +55,15 @@ const apiToken = (process.env.CLOUDFLARE_API_TOKEN || value("CLOUDFLARE_API_TOKE
 if (!accountId || !/^[0-9a-f]{32}$/i.test(accountId)) fail("Missing/invalid CLOUDFLARE_ACCOUNT_ID");
 for (const key of requiredVars) if (!value(key)) fail("Missing required " + key);
 if (!renderOnly) {
+  const api = value("MEWS_BASE_URL")?.replace(/\/+$/, "");
+  const app = value("MEWS_APP_BASE_URL")?.replace(/\/+$/, "");
+  if (deployTarget === "production" &&
+      (api !== "https://api.mews.com" || app !== "https://app.mews.com")) {
+    fail("Production deployment requires MEWS_BASE_URL=https://api.mews.com and MEWS_APP_BASE_URL=https://app.mews.com; use --demo only for an intentional demo deployment");
+  }
+  if (deployTarget === "demo" && api !== "https://api.mews-demo.com") {
+    fail("Demo deployment must target https://api.mews-demo.com");
+  }
   for (const key of requiredSecrets) if (!value(key)) fail("Missing required Worker secret " + key);
   if (!dryRun && !apiToken) fail("Missing CLOUDFLARE_API_TOKEN");
 }
@@ -77,6 +96,7 @@ if (!/^account_id\s*=/m.test(template)) fail("Couldn't render account_id");
 // Nonsecret values, but keep file private and outside version control anyway.
 writeFileSync(renderedConfig, template, { encoding: "utf8", mode: 0o600 });
 console.log("Rendered " + substituted.length + " Worker variable declarations from " + sourcePath);
+console.log("Mews target: " + deployTarget + (renderOnly ? " (render-only, not deployed)" : ""));
 console.log("Configuration: .wrangler.generated.toml (gitignored)");
 if (renderOnly) process.exit(0);
 
