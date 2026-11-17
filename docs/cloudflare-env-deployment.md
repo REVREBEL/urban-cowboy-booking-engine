@@ -27,6 +27,29 @@ The required nonsecret keys are `MEWS_CLIENT`, `MEWS_BASE_URL`, `MEWS_APP_BASE_U
 
 The D1 binding remains explicitly configured in `wrangler.toml` as `DB` for database `urban-cowboy-content`. It is a **resource binding**, not a plaintext environment variable.
 
+
+## Deploy content data to remote D1
+
+Worker deploys are separate from data imports. Once migration SQL and seed are reviewed:
+
+\`\`\`bash
+npm run deploy:d1
+\`\`\`
+
+This command uses the project's shared \`.env\`, verifies the REVREBEL account and exact D1 ID, runs \`npm run test:seed\` against a local in-memory database with foreign keys enabled, refreshes the ignored Wrangler config, exports a dated **remote backup** to \`backups/d1/\`, imports the idempotent \`seed.sql\` against the **remote** D1 database, and asserts table counts, Catskills/Denver/Nashville time zones, and Room Type/Building location assignments.
+
+The command **does not** deploy Worker code or alter table schema. It does not import the 238 photo hotspots because the source export lacks stable media IDs; this must be resolved before adding those records. The backup folder is gitignored, but backups must be stored securely outside Git.
+
+After changing Webflow export CSVs, regenerate and review the seed first:
+
+\`\`\`bash
+npm run seed:d1
+npm run test:seed
+npm run deploy:d1
+\`\`\`
+
+**Important:** The seed contains source-derived editorial records. Running it again uses upserts and can overwrite edits made directly in D1. Establish the editorial source-of-truth policy before switching to D1-native editing.
+
 ## CI and local development
 
 GitHub Actions test runs may use `wrangler dev --local` with the committed template and mocked backend data; **those are not production deployments**. For a local Worker with real project bindings, generate the config with `npm run deploy:render`, then use:
