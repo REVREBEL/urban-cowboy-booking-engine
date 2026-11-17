@@ -27,3 +27,11 @@ WEBFLOW_CMS_API_TOKEN=<Webflow CMS API token — DO NOT commit the real value>
 
 # Funnel tracking is disabled unless this project provisions its own endpoint.
 # WEBHOOK_EVENTS=https://example.com/webhook/booking-events
+
+# Cloudflare Access protects the private /api/recovery and
+# /api/analytics/summary routes. Set these only for a real Access application;
+# without them the Worker fails closed and returns 401.
+# CF_ACCESS_TEAM_DOMAIN=your-team.cloudflareaccess.com
+# CF_ACCESS_AUD=<Access application AUD UUID>
+# ADMIN_EMAILS=admin@example.com,ops@example.com
+# ADMIN_GROUPS=<IdP group UUID allowed the admin role>

@@ -1,11 +1,12 @@
 import type { Env } from "./mews/_lib";
 import { getDb } from "./d1";
-import { requireAdmin } from "./auth";
+import { requireViewer } from "./auth";
 
 type Ctx = { request: Request; env: Env };
 
 export async function analyticsSummary(ctx: Ctx): Promise<Response> {
-  const denied = requireAdmin(ctx.request, ctx.env);
+  // Aggregated metrics: any verified Access principal may read.
+  const denied = await requireViewer(ctx.request, ctx.env);
   if (denied) return denied;
   const db = getDb(ctx.env);
   if (!db) {

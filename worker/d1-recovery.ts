@@ -5,7 +5,8 @@ import { requireAdmin } from "./auth";
 type Ctx = { request: Request; env: Env };
 
 export async function recoveryList(ctx: Ctx): Promise<Response> {
-  const denied = requireAdmin(ctx.request, ctx.env);
+  // Guest recovery rows contain PII: require an explicitly allowlisted admin.
+  const denied = await requireAdmin(ctx.request, ctx.env);
   if (denied) return denied;
   const db = getDb(ctx.env);
   if (!db) {
