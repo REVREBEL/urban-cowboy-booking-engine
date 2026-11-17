@@ -320,7 +320,7 @@ export function ProductionRateTray({
             key={openRate.rateId}
             className={`rc-drawer-layer ${isDrawerClosing ? "is-closing" : ""}`}
           >
-            <button type="button" className="rc-backdrop" aria-label="Close rate details" onClick={closeDrawer} />
+            <Button type="button" variant="transparent" colorScheme="lake-forest" size="xsmall" className="rc-backdrop" aria-label="Close rate details" onClick={closeDrawer} />
             <div
               className="rc-drawer rc-figma-drawer"
               role="dialog"
