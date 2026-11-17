@@ -17,13 +17,13 @@ npm run deploy         # builds, uploads permitted secrets and deploys
 2. Substitutes the `__ENV_...` placeholders declared under `[vars]` in `wrangler.toml`. Required Worker identifiers must exist; optional missing values are omitted. Inserts `CLOUDFLARE_ACCOUNT_ID` as a **top-level** `account_id`.
 3. Writes `.wrangler.generated.toml` (gitignored and file mode 0600) next to `wrangler.toml`, keeping relative paths such as `./dist` and `./migrations` intact.
 4. Builds the frontend, then runs the project-local Wrangler with `--config .wrangler.generated.toml`.
-5. Loads **only** `MEWS_CLIENT`, `WEBFLOW_CMS_API_TOKEN`, and `ADMIN_TOKEN` from the same `.env` into a temporary 0600 `--secrets-file`. That file is deleted when the command exits. It never sends `CLOUDFLARE_API_TOKEN` or other project-wide secrets to Worker bindings.
+5. Loads **only** `WEBFLOW_CMS_API_TOKEN` (when present) and `ADMIN_TOKEN` from the same `.env` into a temporary 0600 `--secrets-file`. That file is deleted when the command exits. It never sends `CLOUDFLARE_API_TOKEN` or other project-wide secrets to Worker bindings.
 
 Cloudflare authentication is provided via `CLOUDFLARE_API_TOKEN` (from the process environment when defined, otherwise from `.env`), and `CLOUDFLARE_ACCOUNT_ID`. Neither is a runtime binding. `CLOUDFLARE_ZONE_ID` is not required as an application runtime binding; configure routes/domains separately when appropriate.
 
 ## Runtime values
 
-The required nonsecret keys are `MEWS_BASE_URL`, `MEWS_APP_BASE_URL`, `MEWS_HOTEL_ID`, and `MEWS_CONFIG_ID`. Additional declared `MEWS_*`, `WEBFLOW_*`, and `WEBHOOK_EVENTS` variables in `wrangler.toml` are optional and populated when present in the shared `.env`. Secret bindings `MEWS_CLIENT`, `WEBFLOW_CMS_API_TOKEN`, and `ADMIN_TOKEN` are required for a production deployment. Never declare their values in `[vars]` or prefix them `VITE_`.
+The required nonsecret keys are `MEWS_CLIENT`, `MEWS_BASE_URL`, `MEWS_APP_BASE_URL`, `MEWS_HOTEL_ID`, and `MEWS_CONFIG_ID`. Additional declared `MEWS_*`, `WEBFLOW_*`, and `WEBHOOK_EVENTS` variables in `wrangler.toml` are optional and populated when present in the shared `.env`. `MEWS_CLIENT` is a public-facing application identity, not a secret. `ADMIN_TOKEN` is required as a Worker secret, while `WEBFLOW_CMS_API_TOKEN` is optional during the D1 transition. URLs and IDs may identify production or demo systems; the renderer preserves whichever values are in the selected shared `.env`. Never declare actual credentials in `[vars]` or prefix them `VITE_`.
 
 The D1 binding remains explicitly configured in `wrangler.toml` as `DB` for database `urban-cowboy-content`. It is a **resource binding**, not a plaintext environment variable.
 
