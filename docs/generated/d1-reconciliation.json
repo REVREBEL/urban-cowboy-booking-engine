@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T19:33:21.451Z",
+  "generatedAt": "2026-11-17T22:47:30.517Z",
   "sourceDirectory": "webflow_cms_export",
   "tenantId": "urban-cowboy",
   "policy": {
@@ -12,7 +12,8 @@
       "file": "2026-11-15 - Locations.csv",
       "rows": 4,
       "normalizedValues": 4,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "f576d9acf31924c2088c57859d40a33ea669623d6ecc51dabf8e456dcc9ecec0"
     },
     {
       "collection": "buildings",
@@ -21,56 +22,64 @@
       "normalizedValues": 6,
       "duplicatesSkipped": [
         "2026-11-15 - Buildings 2.csv"
-      ]
+      ],
+      "sha256": "6fd9f8489c7cd0f9cb924f7fd580668e619f78f588b7d37b688d1ecf2e484056"
     },
     {
       "collection": "roomTypes",
       "file": "2026-11-15 - Room Types.csv",
       "rows": 22,
       "normalizedValues": 17,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "ed5b7bd22095a01955116459811d90db02a7fdade4ccc2fd579e0fca434c4361"
     },
     {
       "collection": "amenities",
       "file": "2026-11-15 - Amenities.csv",
       "rows": 76,
       "normalizedValues": 19,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "db560cd8401ad1eb593fd7a7a3d9cea8d34acbebb9404aa596bd948c4a3c947d"
     },
     {
       "collection": "events",
       "file": "2026-11-15 - Events.csv",
       "rows": 8,
       "normalizedValues": 2,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "9e67fb56195354de1a5672c5df6490af77a4e66efadc785cc768acd46b3bd421"
     },
     {
       "collection": "offers",
       "file": "2026-11-15 - Offers.csv",
       "rows": 8,
       "normalizedValues": 2,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "ff25684d71a8e7e85f37c9cc0c757fb7f83ffc3875418818481cd52bb5ec2d79"
     },
     {
       "collection": "addOns",
       "file": "2026-11-15 - Add Ons.csv",
       "rows": 9,
       "normalizedValues": 4,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "0c9e6207fb3b7c8f3a3acaaaf1d6a88fb8b4836bbd973850f3e32347eb51f1a9"
     },
     {
       "collection": "photoHotspots",
       "file": "2026-11-15 - Photo Hotspots.csv",
       "rows": 238,
       "normalizedValues": 17,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "81436e7dee52ca4e3d97f2cf62c480da47f2d8051daaa2671105d46f5a11e566"
     },
     {
       "collection": "instagrams",
       "file": "2026-11-15 - Instagrams.csv",
       "rows": 20,
       "normalizedValues": 0,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "31933b6861ec012f15f9cd197d58286012054837145abc17a03c7ce9aa3050af"
     },
     {
       "collection": "outlets",
@@ -79,21 +88,24 @@
       "normalizedValues": 1,
       "duplicatesSkipped": [
         "2026-11-15 - Outlets 2.csv"
-      ]
+      ],
+      "sha256": "439695930ca8d9fdf3b565983de338c082cec864d28ef93c072266530db23e2c"
     },
     {
       "collection": "contentSettings",
       "file": "2026-11-15 - Content Settings.csv",
       "rows": 1,
       "normalizedValues": 1,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "1f88d90939494421ab8fc1d05e30ee398f23c73d64a2208de4b3e931fd708007"
     },
     {
       "collection": "menuItems",
       "file": "2026-11-15 - Menu Items.csv",
       "rows": 0,
       "normalizedValues": 0,
-      "duplicatesSkipped": []
+      "duplicatesSkipped": [],
+      "sha256": "f38cebf9a96faa2a973bd801fa49a1aa876f74fbc6296f2ddffb1bf25be30277"
     }
   ],
   "sourceCounts": {
@@ -126,6 +138,7 @@
     "content_items": 24,
     "content_revisions": 24
   },
+  "provenanceRows": 189,
   "tablesWithNoRows": [
     "media_assets",
     "media_versions",
@@ -200,38 +213,42 @@
     },
     {
       "id": "F-08",
-      "message": "238 photo hotspots were NOT imported: the export has no photo-file-id/photo-url, so there is no legitimate media_asset_id. No placeholder FKs or FK-disabling were used. Re-export with media identity, then import hotspots and media_assets."
+      "message": "189 provenance rows link imported records to the 2026-11-15 export and its source file hashes."
     },
     {
       "id": "F-09",
-      "message": "photo_hotspots.display-order has no column in the current D1 schema; add it in a migration before importing hotspots so editorial medallion order is preserved."
+      "message": "238 photo hotspots were NOT imported: the export has no photo-file-id/photo-url, so there is no legitimate media_asset_id. No placeholder FKs or FK-disabling were used. Re-export with media identity, then import hotspots and media_assets."
     },
     {
       "id": "F-10",
-      "message": "Duplicate export(s) skipped for buildings: 2026-11-15 - Buildings 2.csv (byte-identical after BOM normalization)."
+      "message": "photo_hotspots.display-order has no column in the current D1 schema; add it in a migration before importing hotspots so editorial medallion order is preserved."
     },
     {
       "id": "F-11",
-      "message": "Duplicate export(s) skipped for outlets: 2026-11-15 - Outlets 2.csv (byte-identical after BOM normalization)."
+      "message": "Duplicate export(s) skipped for buildings: 2026-11-15 - Buildings 2.csv (byte-identical after BOM normalization)."
     },
     {
       "id": "F-12",
-      "message": "Menu Items export is empty; no import required."
+      "message": "Duplicate export(s) skipped for outlets: 2026-11-15 - Outlets 2.csv (byte-identical after BOM normalization)."
     },
     {
       "id": "F-13",
-      "message": "instagrams: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = instagram)."
+      "message": "Menu Items export is empty; no import required."
     },
     {
       "id": "F-14",
-      "message": "outlets: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = outlet)."
+      "message": "instagrams: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = instagram)."
     },
     {
       "id": "F-15",
-      "message": "contentSettings: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = policy)."
+      "message": "outlets: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = outlet)."
     },
     {
       "id": "F-16",
+      "message": "contentSettings: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = policy)."
+    },
+    {
+      "id": "F-17",
       "message": "content_settings is a draft in the export (isDraft=true, no lastPublished); its content_item status is 'draft' and will not appear in published APIs until approved."
     }
   ],

@@ -20,6 +20,12 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
+import {
+  WEBFLOW_MAPPINGS,
+  WEBFLOW_SNAPSHOT_DATE,
+  assertSourceCoverage,
+  provenanceSeed,
+} from "../src/lib/content-provenance.ts";
 
 const argv = process.argv.slice(2);
 const positional = argv.filter((a) => !a.startsWith("--"));
@@ -150,6 +156,8 @@ function loadCollection(collection, label = collection) {
     header: parsed.header,
     normalizedValues: parsed.normalizedValues,
     duplicatesSkipped: duplicates,
+    // Raw-byte hash of the canonical export, matching the COW-29 baseline.
+    hash: createHash("sha256").update(readFileSync(join(dir, canonical))).digest("hex"),
   };
 }
 
@@ -204,6 +212,10 @@ const collections = {
   contentSettings: loadCollection("contentSettings", "Content Settings"),
   menuItems: loadCollection("menuItems", "Menu Items"),
 };
+
+// Fail fast if a new Webflow collection appears that has no mapping and no
+// documented exclusion; otherwise a re-export could silently lose data.
+assertSourceCoverage(Object.keys(collections));
 
 const locationIds = new Set(collections.locations.rows.map((r) => val(r, "id")));
 const amenityIds = new Set(collections.amenities.rows.map((r) => val(r, "id")));
@@ -470,7 +482,56 @@ addSection("content_revisions", buildInsert(
   revisionRows,
 ));
 
-// 10. Photo hotspots / media: intentionally NOT generated from this export.
+// 10. Provenance for every imported source record (migration 0003). The
+// relationship table is derived (no single row ID) and is intentionally not
+// given a provenance row; rate merchandising rows only exist for published
+// offers that carry a Mews rate product, matching the section above.
+const provenanceRows = [];
+for (const mapping of WEBFLOW_MAPPINGS) {
+  const source = collections[mapping.sourceCollection];
+  if (!source) continue;
+  for (const row of source.rows) {
+    const id = val(row, "id");
+    if (!id) continue;
+    const locationId = mapping.locationField === "id"
+      ? id
+      : mapping.locationField ? scopedLocation(row, mapping.locationField) : null;
+    for (const target of mapping.targets) {
+      if (target.table === "room_type_amenities") continue;
+      if (target.table === "rate_merchandising" && !(published(row) && val(row, "mews-rate-id"))) continue;
+      const targetId = target.table === "content_revisions" ? `${id}-r1` : id;
+      const seed = provenanceSeed({
+        tenantId: TENANT_ID,
+        locationId,
+        targetTable: target.table,
+        targetId,
+        sourceSystem: mapping.sourceSystem,
+        sourceCollection: mapping.sourceCollection,
+        sourceId: id,
+        sourceHash: source.hash,
+        snapshotDate: WEBFLOW_SNAPSHOT_DATE,
+      });
+      provenanceRows.push([
+        seed.tenantId, seed.locationId, seed.targetTable, seed.targetId,
+        seed.sourceSystem, seed.sourceCollection, seed.sourceId,
+        seed.sourceSnapshotDate, seed.sourceHash,
+      ]);
+    }
+  }
+}
+const provenanceLines = buildInsert(
+  "content_provenance",
+  ["tenant_id", "location_id", "target_table", "target_id", "source_system", "source_collection", "source_id", "source_snapshot_date", "source_hash"],
+  provenanceRows,
+  ["tenant_id", "target_table", "target_id"],
+);
+// Kept out of destCounts so the COW-29 content-table totals stay comparable.
+if (provenanceLines.length) {
+  sections.push(`-- === content_provenance (${provenanceLines.length} rows) ===\n${provenanceLines.join("\n")}`);
+}
+note(`${provenanceRows.length} provenance rows link imported records to the ${WEBFLOW_SNAPSHOT_DATE} export and its source file hashes.`);
+
+// 11. Photo hotspots / media: intentionally NOT generated from this export.
 // The Webflow CMS API contract (worker/webflow/photo-hotspots.ts) requires
 // photo-file-id or photo-url; this CSV export has neither. Deriving media IDs
 // from slugs or inserting 'placeholder-media' would create fake foreign keys.
@@ -564,11 +625,13 @@ const report = {
     rows: c.rows.length,
     normalizedValues: c.normalizedValues,
     duplicatesSkipped: c.duplicatesSkipped,
+    sha256: c.hash,
   })),
   sourceCounts,
   totalSourceRecords: totalSource,
   structurallyRepresentedSourceRecords: represented,
   destinationRows: destCounts,
+  provenanceRows: provenanceRows.length,
   tablesWithNoRows: [
     "media_assets", "media_versions", "photo_hotspots",
     "audit_log", "guest_sessions", "email_captures", "saved_room_matches", "cart_abandonments",
