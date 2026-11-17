@@ -68,6 +68,9 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Validate D1 seed and foreign keys
+        run: npm run test:seed
+
       - name: Stop local Cloudflare Worker
         if: always()
         run: |
