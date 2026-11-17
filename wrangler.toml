@@ -39,6 +39,9 @@ CF_ACCESS_TEAM_DOMAIN = "__ENV_CF_ACCESS_TEAM_DOMAIN__"
 CF_ACCESS_AUD = "__ENV_CF_ACCESS_AUD__"
 ADMIN_EMAILS = "__ENV_ADMIN_EMAILS__"
 ADMIN_GROUPS = "__ENV_ADMIN_GROUPS__"
+# Tenant served by the private analytics/recovery routes. Queries bind this
+# value; a caller's ?tenant= is rejected when it differs.
+TENANT_ID = "__ENV_TENANT_ID__"
 
 # Secret binding names are declared here; their values are loaded from .env
 # and passed to Wrangler through --secrets-file, never as plaintext vars.

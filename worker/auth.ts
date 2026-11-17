@@ -1,10 +1,9 @@
-// Role gate for private operational routes.
+// Role and tenant gate for private operational routes.
 //
-// Identity comes only from a verified Cloudflare Access JWT (worker/access.ts).
-// There is no shared-token fallback: a static secret cannot represent a
-// principal, and a role list checked against a hardcoded value without a
-// verified session would only create the appearance of scoping. Authorization
-// never reads client headers or query parameters such as ?tenant=.
+// Identity and tenant scope come from a verified Cloudflare Access JWT and
+// server-side configuration (worker/access.ts). There is no shared-token
+// fallback. A ?tenant= query parameter can narrow nothing: it is accepted only
+// when it matches the configured scope and rejected otherwise.
 
 import { tokenFromRequest, verifyAccessJwt, type AccessClaims, type AccessEnv } from "./access.ts";
 
@@ -14,6 +13,8 @@ export interface AuthEnv extends AccessEnv {
   // Comma-separated Access emails / group IDs allowed the admin role.
   ADMIN_EMAILS?: string;
   ADMIN_GROUPS?: string;
+  // Tenant this Worker serves. Bound server-side; never taken from the request.
+  TENANT_ID?: string;
 }
 
 export interface Principal {
@@ -21,6 +22,7 @@ export interface Principal {
   email: string;
   groups: string[];
   roles: Role[];
+  tenantId: string;
 }
 
 function allowlist(value: string | undefined): string[] {
@@ -49,14 +51,27 @@ export function principalFromClaims(claims: AccessClaims, env: AuthEnv): Princip
     email,
     groups,
     roles,
+    tenantId: env.TENANT_ID?.trim() ?? "",
   };
 }
 
-function deny(status: 401 | 403, error: "unauthorized" | "forbidden"): Response {
+function deny(status: number, error: string): Response {
   return new Response(JSON.stringify({ error }), {
     status,
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
+}
+
+async function verifiedPrincipal(
+  request: Request,
+  env: AuthEnv,
+  role: Role,
+): Promise<Principal | Response> {
+  const claims = await verifyAccessJwt(tokenFromRequest(request), env);
+  if (!claims) return deny(401, "unauthorized");
+  const principal = principalFromClaims(claims, env);
+  if (!principal.roles.includes(role)) return deny(403, "forbidden");
+  return principal;
 }
 
 /** Returns null when the verified principal holds the role, otherwise a response. */
@@ -65,10 +80,25 @@ export async function requireRole(
   env: AuthEnv,
   role: Role,
 ): Promise<Response | null> {
-  const claims = await verifyAccessJwt(tokenFromRequest(request), env);
-  if (!claims) return deny(401, "unauthorized");
-  const principal = principalFromClaims(claims, env);
-  return principal.roles.includes(role) ? null : deny(403, "forbidden");
+  const result = await verifiedPrincipal(request, env, role);
+  return result instanceof Response ? result : null;
+}
+
+/**
+ * Returns the verified principal whose tenantId is the only scope queries may
+ * use. A caller-supplied tenant value is rejected unless it matches that scope.
+ */
+export async function authorizeScopedRequest(
+  request: Request,
+  env: AuthEnv,
+  role: Role,
+): Promise<Principal | Response> {
+  const principal = await verifiedPrincipal(request, env, role);
+  if (principal instanceof Response) return principal;
+  if (!principal.tenantId) return deny(503, "tenant_scope_not_configured");
+  const requested = new URL(request.url).searchParams.get("tenant");
+  if (requested && requested !== principal.tenantId) return deny(403, "forbidden");
+  return principal;
 }
 
 export function requireViewer(request: Request, env: AuthEnv): Promise<Response | null> {

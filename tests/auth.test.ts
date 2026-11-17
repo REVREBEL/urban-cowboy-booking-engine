@@ -56,6 +56,7 @@ const env = (overrides: Record<string, string> = {}): AuthEnv => ({
   CF_ACCESS_AUD: AUD,
   ADMIN_EMAILS: "admin@example.com",
   ADMIN_GROUPS: "admin-group-id",
+  TENANT_ID: "urban-cowboy",
   ...overrides,
 });
 

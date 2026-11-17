@@ -67,9 +67,11 @@ companion to the generated [reconciliation report](../generated/d1-reconciliatio
 - Private routes are now gated by a verified Cloudflare Access JWT.
   `worker/access.ts` verifies the RS256 signature against the team JWKS and
   checks issuer/audience/expiry; `worker/auth.ts` derives `viewer`/`admin` roles
-  from bound email/group allowlists. Analytics requires `viewer`, recovery (PII)
-  requires `admin`, and the legacy `ADMIN_TOKEN` is no longer an authorization
-  input. `tests/auth.test.ts` holds the role matrix.
+  from bound email/group allowlists. Tenant scope comes from `TENANT_ID`, and a
+  caller's `?tenant=` is rejected when it differs. Analytics requires `viewer`,
+  recovery (PII) requires `admin`, and the legacy `ADMIN_TOKEN` is no longer an
+  authorization input. `tests/auth.test.ts` holds the role matrix and
+  `tests/tenantScope.test.ts` covers cross-tenant denial.
 - `scripts/migrate-d1.mjs` is the migration runner. It validates filename order
   and checksums against `migrations/manifest.json` (so an applied SQL file cannot
   be silently edited), applies every migration twice to a fresh in-memory SQLite

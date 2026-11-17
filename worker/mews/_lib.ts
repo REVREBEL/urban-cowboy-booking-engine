@@ -41,6 +41,8 @@ export interface Env {
   CF_ACCESS_AUD?: string;
   ADMIN_EMAILS?: string;
   ADMIN_GROUPS?: string;
+  // Fixed tenant scope for private analytics/recovery routes.
+  TENANT_ID?: string;
   // Legacy shared secret. Kept bound for backward compatibility only; no
   // authorization decision reads it now that Access JWT verification is in place.
   ADMIN_TOKEN?: string;
