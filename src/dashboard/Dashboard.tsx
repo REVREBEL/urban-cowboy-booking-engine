@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/Button";
 import { PillButton } from "@/components/ui/Pill";
+import { ErrorPanel } from "./states";
 import { supabase, isConfigured } from "./supabase";
 
 // ── Types (colonnes de la table `carts`) ────────────────────────────────────
@@ -351,15 +352,7 @@ export function FunnelPanel() {
         </div>
       </div>
 
-        {error && (
-          <div className="rounded-xl2 border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            <b>Erreur de lecture :</b> {error}
-            <p className="mt-1 text-red-600/80">
-              Vérifie côté Supabase : la policy RLS de lecture sur <code>carts</code> et la fonction{" "}
-              <code>dashboard_funnel</code>.
-            </p>
-          </div>
-        )}
+        {error && <ErrorPanel message={error} onRetry={load} />}
 
         {/* KPIs */}
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">

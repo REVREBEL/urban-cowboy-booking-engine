@@ -61,5 +61,7 @@ export function hashForRoute(id: DashboardRouteId): string {
 }
 
 export function navItemFor(id: DashboardRouteId): DashboardNavItem {
-  return DASHBOARD_NAV.find((item) => item.id === id) ?? DASHBOARD_NAV[0];
+  const item = DASHBOARD_NAV.find((entry) => entry.id === id);
+  if (!item) throw new Error(`Unknown dashboard route: ${id}`);
+  return item;
 }

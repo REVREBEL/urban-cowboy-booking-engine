@@ -47,5 +47,5 @@ test("hashForRoute and navItemFor round-trip", () => {
     assert.equal(routeFromHash(hashForRoute(item.id)), item.id);
     assert.equal(navItemFor(item.id).label, item.label);
   }
-  assert.equal(navItemFor("not-a-route" as never).id, DASHBOARD_NAV[0].id);
+  assert.throws(() => navItemFor("not-a-route" as never), /Unknown dashboard route/);
 });

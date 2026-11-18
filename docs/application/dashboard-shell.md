@@ -43,10 +43,15 @@ URL, uses `credentials: "omit"`, and converts non-2xx responses into
 ## Shared states and controls
 
 `src/dashboard/states.tsx` provides loading, error and empty states. Errors expose a
-Retry action. Buttons and pill buttons use the shared `Button` and `PillButton`
-components with documented appearance props only. The funnel panel's range selector
-and refresh action were migrated to those components; no new local button theme was
-introduced.
+Retry action. `PanelErrorBoundary` wraps every panel so a render failure stays inside
+the shell, and a route change clears a previous boundary error. `useDashboardResource`
+ignores stale responses when a retry overlaps an in-flight request.
+
+The access token is cached until 60 seconds before its Supabase expiry and cleared on
+auth changes, so panel requests do not each call `getSession()`. Buttons and pill
+buttons use the shared `Button` and `PillButton` components with documented appearance
+props only. The funnel panel's range selector and refresh action were migrated to
+those components; no new local button theme was introduced.
 
 ## Verification
 

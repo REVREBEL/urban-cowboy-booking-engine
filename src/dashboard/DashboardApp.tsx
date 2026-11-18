@@ -6,6 +6,8 @@ import { ConfigNeeded, FunnelPanel, Login, Splash } from "./Dashboard";
 import { D1ContentPanel } from "./D1ContentPanel";
 import { DashboardShell } from "./DashboardShell";
 import { navItemFor, routeFromHash, type DashboardRouteId } from "./navigation";
+import { PanelErrorBoundary } from "./PanelErrorBoundary";
+import { createSessionTokenProvider } from "./sessionToken";
 import { isConfigured, supabase } from "./supabase";
 import { EmptyPanel } from "./states";
 
@@ -13,6 +15,15 @@ export function DashboardApp() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
   const [route, setRoute] = useState<DashboardRouteId>(() => routeFromHash(window.location.hash));
+
+  const tokenProvider = useMemo(
+    () => createSessionTokenProvider(async () => (await supabase.auth.getSession()).data.session ?? null),
+    [],
+  );
+  const api = useMemo(
+    () => createDashboardApi({ getToken: tokenProvider.getToken }),
+    [tokenProvider],
+  );
 
   useEffect(() => {
     let alive = true;
@@ -22,26 +33,21 @@ export function DashboardApp() {
       setReady(true);
     });
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => {
-      if (alive) setSession(next);
+      if (!alive) return;
+      tokenProvider.clear();
+      setSession(next);
     });
     return () => {
       alive = false;
       subscription.subscription.unsubscribe();
     };
-  }, []);
+  }, [tokenProvider]);
 
   useEffect(() => {
     const onHashChange = () => setRoute(routeFromHash(window.location.hash));
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
-
-  const api = useMemo(
-    () => createDashboardApi({
-      getToken: async () => (await supabase.auth.getSession()).data.session?.access_token ?? null,
-    }),
-    [],
-  );
 
   if (!isConfigured) return <ConfigNeeded />;
   if (!ready) return <Splash />;
@@ -52,13 +58,18 @@ export function DashboardApp() {
     <DashboardShell
       email={session.user.email ?? ""}
       route={route}
-      onSignOut={() => void supabase.auth.signOut()}
+      onSignOut={() => {
+        tokenProvider.clear();
+        void supabase.auth.signOut();
+      }}
     >
-      {route === "analytics" && <FunnelPanel />}
-      {route === "events" && <D1ContentPanel api={api} />}
-      {route !== "analytics" && route !== "events" && (
-        <EmptyPanel message={`${current.label} panel is not wired yet. Navigation and route protection are available now.`} />
-      )}
+      <PanelErrorBoundary resetKey={route}>
+        {route === "analytics" && <FunnelPanel />}
+        {route === "events" && <D1ContentPanel api={api} />}
+        {route !== "analytics" && route !== "events" && (
+          <EmptyPanel message={`${current.label} panel is not wired yet. Navigation and route protection are available now.`} />
+        )}
+      </PanelErrorBoundary>
     </DashboardShell>
   );
 }

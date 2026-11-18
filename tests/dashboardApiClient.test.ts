@@ -77,6 +77,9 @@ test("module and content helpers use the centralized client", async () => {
   const events = await api.getD1Module("events", "lodge");
   assert.equal(events[0].title, "/api/content/events?tenant=lodge");
 
+  const offers = await api.getD1Module("offers");
+  assert.equal(offers[0].title, "/api/content/offers?tenant=urban-cowboy");
+
   const policy = await api.getContentItems("policy", "urban-cowboy", "loc-1");
   assert.equal(policy[0].title, "/api/content/items?tenant=urban-cowboy&kind=policy&location=loc-1");
 });

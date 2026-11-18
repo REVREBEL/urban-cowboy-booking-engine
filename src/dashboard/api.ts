@@ -57,16 +57,18 @@ export function createDashboardApi(options: DashboardApiOptions): DashboardApi {
     init: RequestInit = {},
   ): Promise<T> {
     if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
-    const url = new URL(path, "http://dashboard.local");
+    const query = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
-      if (value !== undefined && value !== "") url.searchParams.set(key, String(value));
+      if (value !== undefined && value !== "") query.set(key, String(value));
     }
+    const search = query.toString();
+    const requestPath = search ? `${path}?${search}` : path;
     const token = await options.getToken();
     const headers = new Headers(init.headers);
     headers.set("accept", "application/json");
     // The token travels in a header, never in the URL or a query parameter.
     if (token) headers.set("authorization", `Bearer ${token}`);
-    const response = await doFetch(url.pathname + url.search, {
+    const response = await doFetch(requestPath, {
       ...init,
       headers,
       credentials: "omit",
@@ -81,6 +83,8 @@ export function createDashboardApi(options: DashboardApiOptions): DashboardApi {
   return {
     get,
     async getD1Module<T>(module: DashboardModule, tenant = DASHBOARD_TENANT): Promise<T[]> {
+      // Only add-ons has a dedicated /api/d1 route. events, offers and upgrades
+      // are served by /api/content/<module> in worker/index.ts.
       const path = module === "add-ons" ? "/api/d1/add-ons" : `/api/content/${module}`;
       const data = await get<{ items?: T[] }>(path, { tenant });
       return data.items ?? [];

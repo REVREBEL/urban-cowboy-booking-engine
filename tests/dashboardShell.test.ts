@@ -10,6 +10,10 @@ const app = read("src/dashboard/DashboardApp.tsx");
 const panel = read("src/dashboard/D1ContentPanel.tsx");
 const states = read("src/dashboard/states.tsx");
 const dashboard = read("src/dashboard/Dashboard.tsx");
+const boundary = read("src/dashboard/PanelErrorBoundary.tsx");
+const resource = read("src/dashboard/useDashboardResource.ts");
+const apiSource = read("src/dashboard/api.ts");
+const navigationSource = read("src/dashboard/navigation.ts");
 
 test("shell exposes a skip link, labelled nav and current-page state", () => {
   assert.match(shell, /href="#dashboard-main"/);
@@ -33,7 +37,7 @@ test("route protection happens before the shell or any panel renders", () => {
   assert.ok(app.indexOf("if (!session)") < app.indexOf("<DashboardShell"), "session gate precedes shell");
   assert.match(app, /routeFromHash\(window\.location\.hash\)/);
   assert.match(app, /hashchange/);
-  assert.match(app, /getToken: async \(\)/);
+  assert.match(app, /createSessionTokenProvider/);
   assert.doesNotMatch(app, /fetch\(/);
 });
 
@@ -54,4 +58,24 @@ test("the funnel panel uses shared controls for range and refresh actions", () =
   assert.match(dashboard, /aria-pressed|pressed=\{range === r\.key\}/);
   assert.match(dashboard, /<Button variant="outline" colorScheme="light" size="small" textCase="title" onClick=\{load\}/);
   assert.doesNotMatch(dashboard.slice(dashboard.indexOf("export function FunnelPanel")), /btn-ghost/);
+});
+
+test("panel errors use the shared ErrorPanel behind a route-aware boundary", () => {
+  assert.match(dashboard, /import \{ ErrorPanel \} from "\.\/states"/);
+  assert.match(dashboard, /<ErrorPanel message=\{error\} onRetry=\{load\} \/>/);
+  assert.doesNotMatch(dashboard, /Vérifie côté Supabase/);
+  assert.match(boundary, /extends Component<Props, State>/);
+  assert.match(boundary, /static getDerivedStateFromError/);
+  assert.match(boundary, /<ErrorPanel message=\{this\.state\.error\.message\} onRetry=\{this\.reset\} \/>/);
+  assert.match(app, /<PanelErrorBoundary resetKey=\{route\}>/);
+});
+
+test("token lookup is cached, stale responses are ignored and routes fail loudly", () => {
+  assert.match(app, /createSessionTokenProvider/);
+  assert.match(app, /tokenProvider\.clear\(\)/);
+  assert.doesNotMatch(app, /getToken: async \(\) =>/);
+  assert.match(resource, /requestId = useRef\(0\)/);
+  assert.match(resource, /id === requestId\.current/);
+  assert.doesNotMatch(apiSource, /dashboard\.local/);
+  assert.match(navigationSource, /Unknown dashboard route/);
 });
