@@ -60,6 +60,19 @@ async function main() {
   const locationId = argValue("--location") ?? process.env.WEBFLOW_LOCATION_ITEM_ID ?? DEFAULT_LOCATION;
   const feedUrl = argValue("--feed") ?? DEFAULT_FEED_URL;
 
+  // Room types cannot be derived from the feed: the page carries gallery ids, not
+  // room-type records. Generating SQL without them would silently produce nothing.
+  if (sqlOut && !roomTypesPath) {
+    console.error(
+      "--sql-out requires --room-types <file>.\n" +
+        "Room types come from D1 (table room_types), not from the feed, so they must be supplied.\n" +
+        "Export them first, for example:\n" +
+        "  wrangler d1 execute urban-cowboy-content --remote --json " +
+        "--command \"SELECT id, name, slug FROM room_types\" > room-types.json",
+    );
+    process.exit(1);
+  }
+
   let html;
   let sourceUrl = feedUrl;
   if (file) {
@@ -83,6 +96,10 @@ async function main() {
   const digest = createHash("sha256").update(html).digest("hex").slice(0, 16);
   const parsed = parseRoomGalleryFeed(html);
   const roomTypes = await loadRoomTypes(roomTypesPath);
+  if (sqlOut && roomTypes.length === 0) {
+    console.error("--room-types produced no room types; refusing to generate an empty import");
+    process.exit(1);
+  }
   const plan = buildImportPlan(parsed, roomTypes);
 
   const images = plan.rooms.reduce((total, room) => total + room.images.length, 0);

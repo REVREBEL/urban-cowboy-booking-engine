@@ -60,16 +60,27 @@ It is an explicit mapping, not a fuzzy match.
 
 ## Commands
 
+Room types live in D1 (`room_types`), not in the feed, so they must be exported before SQL can be
+generated. The CLI refuses `--sql-out` without them rather than emitting an empty import.
+
+Export room types:
+
+```bash
+wrangler d1 execute urban-cowboy-content --remote --json \
+  --command "SELECT id, name, slug FROM room_types" > room-types.json
+```
+
 Read-only plan (default):
 
 ```bash
-node scripts/sync-room-gallery.mjs
+node scripts/sync-room-gallery.mjs --room-types room-types.json
 ```
 
 Emit a reviewable import script:
 
 ```bash
-node scripts/sync-room-gallery.mjs --sql-out /tmp/room-gallery.sql
+node scripts/sync-room-gallery.mjs --room-types room-types.json \
+  --sql-out /tmp/room-gallery.sql
 ```
 
 Apply to local D1:
@@ -89,7 +100,7 @@ Offline replay against a captured page:
 ```bash
 node scripts/sync-room-gallery.mjs \
   --file tests/fixtures/room-gallery-image-feed.html \
-  --room-types /tmp/room-types.json
+  --room-types room-types.json
 ```
 
 ## What it writes
@@ -106,6 +117,10 @@ Three COW-33 tables, no new schema:
 One image referenced by two rooms produces **one** `media_assets` row and **two** placements.
 
 ### Ordering and removals
+
+`display_order` is **one-based everywhere**: the first image in a gallery is stored at `1`, and
+reconciliation compares stored order directly against the feed position. There is no zero-based
+boundary anywhere in the import path.
 
 Each room's existing placements are moved above `PARK_OFFSET` (1,000,000) before the new set is
 written. That frees the 1..N range so positions can be rewritten without colliding with the

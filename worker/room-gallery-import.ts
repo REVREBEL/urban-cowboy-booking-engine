@@ -144,11 +144,11 @@ function compare(
       unchanged.push({ kind: "unchanged", position: image.position, mediaAssetId });
     }
 
-    if (current.display_order + 1 !== image.position) {
+    if (current.display_order !== image.position) {
       reordered.push({
         kind: "reordered",
         mediaAssetId,
-        from: current.display_order + 1,
+        from: current.display_order,
         to: image.position,
       });
     }
@@ -159,7 +159,7 @@ function compare(
       removed.push({
         kind: "removed",
         mediaAssetId: row.media_asset_id,
-        position: row.display_order + 1,
+        position: row.display_order,
         url: row.squarespace_url ?? "",
       });
     }

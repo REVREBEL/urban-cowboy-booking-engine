@@ -1,6 +1,9 @@
 // COW-67: room-gallery parsing, resolution and import behaviour.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 import { DatabaseSync } from "node:sqlite";
 
@@ -25,6 +28,7 @@ import {
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
+const CLI = new URL("../scripts/sync-room-gallery.mjs", import.meta.url).pathname;
 
 const CDN = "https://images.squarespace-cdn.com/content/v1/688a8a7787f0d24169d34343";
 
@@ -70,6 +74,11 @@ const POSITIONAL_FIXTURE = `<html><body>
 
 const ROOM_TYPES: RoomTypeRecord[] = [
   { id: "room-alpine", name: "Alpine Bathing Suite", slug: "alpine-bathing-suite" },
+  {
+    id: "room-walden-forest",
+    name: "Walden Forest Bathing Suite",
+    slug: "walden-forest-bathing-suite",
+  },
   { id: "room-walden-king", name: "Walden King", slug: "walden-king" },
   {
     id: "room-walden-den",
@@ -260,7 +269,7 @@ test("resolves a heading by name when there is no id", () => {
 test("never creates a room and never fuzzy-matches", () => {
   const result = resolveRoomType("Walden Penthouse", ROOM_TYPES, null);
   assert.equal(result.status, "unmatched");
-  assert.equal(ROOM_TYPES.length, 3);
+  assert.equal(ROOM_TYPES.length, 4);
 });
 
 test("rejects an ambiguous name instead of guessing", () => {
@@ -451,4 +460,112 @@ test("parses the captured live feed into four id-addressed rooms and 23 images",
     ["id", "id", "id", "alias"],
   );
   assert.equal(parsed.warnings.length, 0);
+});
+
+// ---------------------------------------------------------------------------
+// Ordering convention: one-based everywhere
+// ---------------------------------------------------------------------------
+
+test("an immediately re-reconciled import reports nothing reordered or removed", async () => {
+  const db = makeDb();
+  const { write, read } = adapter(db);
+  await applyRoomGallery(write, input());
+
+  const result = await reconcileRoomGallery(read, input());
+  for (const room of result.rooms) {
+    assert.equal(room.reordered.length, 0, `${room.heading} reported a spurious reorder`);
+    assert.equal(room.removed.length, 0, `${room.heading} reported a spurious removal`);
+    assert.equal(room.urlChanged.length, 0, `${room.heading} reported a spurious url change`);
+    assert.equal(room.new.length, 0, `${room.heading} reported a spurious insert`);
+    assert.equal(room.unchanged.length, room.planned, `${room.heading} did not report all images as kept`);
+  }
+});
+
+test("removal reporting uses the stored one-based position", async () => {
+  const db = makeDb();
+  const { write, read } = adapter(db);
+  await applyRoomGallery(write, input());
+
+  const empty = buildImportPlan(parseRoomGalleryFeed(FIXTURE), ROOM_TYPES);
+  empty.rooms = empty.rooms.map((room) => ({ ...room, images: [] }));
+
+  const room = (await reconcileRoomGallery(read, input(empty))).rooms[0];
+  assert.deepEqual(
+    room.removed.map((change) => (change.kind === "removed" ? change.position : null)),
+    [1, 2],
+  );
+});
+
+// ---------------------------------------------------------------------------
+// CLI contract
+// ---------------------------------------------------------------------------
+
+function runCli(args: string[]) {
+  return spawnSync(process.execPath, ["--experimental-strip-types", CLI, ...args], {
+    encoding: "utf8",
+  });
+}
+
+function cliFixture() {
+  const dir = mkdtempSync(path.join(tmpdir(), "cow67-"));
+  const html = path.join(dir, "feed.html");
+  const rooms = path.join(dir, "room-types.json");
+  const sql = path.join(dir, "import.sql");
+  writeFileSync(html, read("tests/fixtures/room-gallery-image-feed.html"), "utf8");
+  writeFileSync(
+    rooms,
+    JSON.stringify(
+      ROOM_TYPES.map((room) => ({ id: room.id, name: room.name, slug: room.slug })),
+      null,
+      2,
+    ),
+    "utf8",
+  );
+  return { dir, html, rooms, sql };
+}
+
+test("--sql-out refuses to run without --room-types", () => {
+  const { html, sql } = cliFixture();
+  const result = runCli(["--file", html, "--sql-out", sql]);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /--sql-out requires --room-types/);
+  assert.ok(!existsSync(sql), "no SQL should be written when room types are missing");
+});
+
+test("--sql-out refuses an empty room-type list", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "cow67-empty-"));
+  const html = path.join(dir, "feed.html");
+  const rooms = path.join(dir, "empty.json");
+  const sql = path.join(dir, "import.sql");
+  writeFileSync(html, read("tests/fixtures/room-gallery-image-feed.html"), "utf8");
+  writeFileSync(rooms, "[]", "utf8");
+
+  const result = runCli(["--file", html, "--room-types", rooms, "--sql-out", sql]);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /no room types/);
+});
+
+test("--sql-out writes a reviewable import for the live fixture", () => {
+  const { html, rooms, sql } = cliFixture();
+  const result = runCli(["--file", html, "--room-types", rooms, "--sql-out", sql]);
+
+  assert.equal(result.status, 0, result.stderr);
+  const generated = readFileSync(sql, "utf8");
+  assert.match(generated, /BEGIN;/);
+  assert.match(generated, /COMMIT;/);
+  assert.match(generated, /INSERT INTO media_assets/);
+  assert.match(generated, /INSERT INTO media_placements/);
+  assert.match(generated, /'room_gallery'/);
+  assert.ok(!generated.includes("?1"), "params should be inlined");
+});
+
+test("the CLI reports four resolved rooms against the live fixture", () => {
+  const { html, rooms } = cliFixture();
+  const result = runCli(["--file", html, "--room-types", rooms]);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /galleries   : 4/);
+  assert.match(result.stdout, /images      : 23/);
+  assert.match(result.stdout, /unresolved  : 0/);
 });
