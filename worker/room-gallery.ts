@@ -184,7 +184,13 @@ export function parseRoomGalleryFeed(html: string): ParseResult {
   SECTION_RE.lastIndex = 0;
   let match: RegExpExecArray | null;
   while ((match = SECTION_RE.exec(html)) !== null) {
-    sections.push({ attrs: readAttrs(match[0]), start: match.index, bodyStart: match.index + match[0].length });
+    sections.push({
+      attrs: readAttrs(match[0]),
+      start: match.index,
+      bodyStart: match.index + match[0].length,
+      // Filled in below once every start offset is known.
+      bodyEnd: 0,
+    });
   }
   sections.forEach((section, index) => {
     section.bodyEnd = index + 1 < sections.length ? sections[index + 1].start : html.length;
