@@ -29,6 +29,7 @@ export const CONTENT_COLLECTIONS = [
   "addOns",
   "events",
   "contentItems",
+  "policyLanguage",
 ] as const;
 export type ContentCollection = (typeof CONTENT_COLLECTIONS)[number];
 
@@ -117,6 +118,12 @@ async function loadAllRows(
           status: row.status, currentRevisionId: row.currentRevisionId,
         },
       }));
+    case "policyLanguage":
+      return (await listScopedContentItems(db, scope, "policy"))
+        .filter((row) => row.slug === "policy-language")
+        .map((row) => ({
+          id: row.id, collection, payload: { slug: row.slug, status: row.status },
+        }));
   }
 }
 

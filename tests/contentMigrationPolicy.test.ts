@@ -44,8 +44,14 @@ const payload = {
   isArchived: "false",
   "refundable-language": "Free cancellation",
   "refundable-language-sub-title": "Full refund",
+  "partially-refundable-language": "Deposit kept",
+  "partially-refundable-language-sub-title": "Cancellation fee",
   "non-refundable-language": "Non refundable",
   "non-refundable-language-sub-title": "Stay locked",
+  "at-time-of-booking": "Due today",
+  "at-time-of-booking-sub-title": "Charged now",
+  "next-due-date": "Final payment",
+  "next-due-date-sub-title": "Balance due",
 };
 
 function seedPolicy(db: DatabaseSync, status: "published" | "draft", raw = JSON.stringify(payload)) {
@@ -107,19 +113,47 @@ test("published D1 policy rows normalize to the same PolicyLanguage shape", asyn
   }
 });
 
-test("draft rows, malformed payloads and missing revisions fall back safely", async () => {
+test("draft, malformed, empty, partial and ambiguous rows fall back safely", async () => {
+  const variants: Array<[string, "published" | "draft", string]> = [
+    ["draft", "draft", JSON.stringify(payload)],
+    ["malformed", "published", "{not json"],
+    ["empty object", "published", "{}"],
+    ["unrelated keys", "published", JSON.stringify({ unexpectedField: "x" })],
+    ["partial copy", "published", JSON.stringify({ "refundable-language": "Only one" })],
+  ];
+  for (const [name, status, raw] of variants) {
+    const db = makeDb();
+    try {
+      seedPolicy(db, status, raw);
+      assert.equal(await loadPolicyLanguageFromD1(d1(db) as D1Database, scope), null, name);
+    } finally {
+      db.close();
+    }
+  }
+
+  // Two published policies with no location query are ambiguous, so they must
+  // not silently select one property's cancellation terms.
   const db = makeDb();
   try {
-    seedPolicy(db, "draft");
-    assert.equal(await loadPolicyLanguageFromD1(d1(db) as D1Database, scope), null);
-
-    const malformed = makeDb();
-    try {
-      seedPolicy(malformed, "published", "{not json");
-      assert.equal(await loadPolicyLanguageFromD1(d1(malformed) as D1Database, scope), null);
-    } finally {
-      malformed.close();
+    for (const [id, location] of [
+      ["policy-catskills", "fixture-location"],
+      ["policy-denver", "second-location"],
+    ] as const) {
+      db.prepare(
+        `INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status, current_revision_id)
+         VALUES (?1, ?2, ?3, 'policy', 'policy-language', 'published', ?4)`,
+      ).run(id, TENANT, location, `${id}-r1`);
+      db.prepare(
+        `INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by)
+         VALUES (?1, ?2, 1, ?3, 'test')`,
+      ).run(`${id}-r1`, id, JSON.stringify({ ...payload, "refundable-language": `Refund ${location}` }));
     }
+    assert.equal(await loadPolicyLanguageFromD1(d1(db) as D1Database, { tenantId: TENANT }), null);
+    const scoped = await loadPolicyLanguageFromD1(d1(db) as D1Database, {
+      tenantId: TENANT,
+      locationId: "second-location",
+    });
+    assert.equal(scoped?.language.refundableLanguage, "Refund second-location");
   } finally {
     db.close();
   }
@@ -129,6 +163,11 @@ test("per-route flags override the global source and fall back on invalid values
   assert.equal(routeContentSource(envFor("d1"), "policyLanguage"), "d1");
   assert.equal(routeContentSource(envFor("shadow"), "policyLanguage"), "shadow");
   assert.equal(routeContentSource(envFor("invalid"), "policyLanguage"), "webflow");
+  assert.equal(routeContentSource({ CONTENT_SOURCE: "d1" } as Env, "policyLanguage"), "d1");
+  assert.equal(
+    routeContentSource({ CONTENT_SOURCE: "d1", CONTENT_SOURCE_POLICY_LANGUAGE: "invalid" } as Env, "policyLanguage"),
+    "webflow",
+  );
   assert.equal(routeContentSource({ CONTENT_SOURCE: "shadow" } as Env, "policyLanguage"), "shadow");
 });
 
@@ -180,6 +219,11 @@ test("webflow and shadow modes return Webflow content, with shadow flagged", asy
         assert.equal(response.headers.get("X-Content-Source"), "shadow-webflow");
         assert.equal(waits.length, 1);
         await waits[0];
+        const report = db.prepare(
+          "SELECT collection, summary_json FROM parity_reports WHERE collection = 'policyLanguage'",
+        ).get() as { collection: string; summary_json: string } | undefined;
+        assert.equal(report?.collection, "policyLanguage");
+        assert.equal(JSON.parse(report?.summary_json ?? "{}").collection, "policyLanguage");
       }
     }
   } finally {

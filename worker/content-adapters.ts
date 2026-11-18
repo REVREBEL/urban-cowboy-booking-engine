@@ -12,6 +12,7 @@ import { listScopedContentItems, publishedRevisionPayload, type TenantScope } fr
 import { routeContentSource } from "./content-source.ts";
 import { diffParity } from "./shadow-read.ts";
 import { normalizePolicyLanguage, POLICY_LANGUAGE_FIELDS, type PolicySourceItem } from "./policy-language.ts";
+import { recordParityReport } from "./published-snapshots.ts";
 import { onRequestGet as webflowPolicyLanguage } from "./webflow/policy-language.ts";
 
 type Ctx = { request: Request; env: Env; waitUntil: (promise: Promise<unknown>) => void };
@@ -32,15 +33,21 @@ function withHeaders(response: Response, headers: Record<string, string>): Respo
   return next;
 }
 
-/** Returns null when no published, contract-shaped D1 row is available. */
+/**
+ * Returns null unless exactly one published policy row matches and its current
+ * revision contains complete policy copy. Empty, partial or ambiguous data is
+ * not valid D1 content: callers must fall back to Webflow rather than serving
+ * missing cancellation/deposit terms.
+ */
 export async function loadPolicyLanguageFromD1(
   db: D1Database,
   scope: TenantScope,
-): Promise<{ language: Partial<PolicyLanguage> } | null> {
+): Promise<{ language: PolicyLanguage } | null> {
   const items = await listScopedContentItems(db, scope, "policy");
-  const item = items.find((row) => row.slug === POLICY_ITEM_SLUG);
-  if (!item) return null;
-  const payload = await publishedRevisionPayload(db, scope, item.id);
+  const matches = items.filter((row) => row.slug === POLICY_ITEM_SLUG);
+  // Without a trusted location, more than one published policy is ambiguous.
+  if (matches.length !== 1) return null;
+  const payload = await publishedRevisionPayload(db, scope, matches[0].id);
   if (!payload) return null;
   let source: unknown;
   try {
@@ -49,7 +56,12 @@ export async function loadPolicyLanguageFromD1(
     return null;
   }
   if (!source || typeof source !== "object" || Array.isArray(source)) return null;
-  return { language: normalizePolicyLanguage(source as PolicySourceItem) };
+  const language = normalizePolicyLanguage(source as PolicySourceItem);
+  const complete = POLICY_LANGUAGE_FIELDS.every((field) => {
+    const value = language[field];
+    return typeof value === "string" && value.trim().length > 0;
+  });
+  return complete ? { language: language as PolicyLanguage } : null;
 }
 
 function parityItems(language: Partial<PolicyLanguage>) {
@@ -79,8 +91,12 @@ export async function policyLanguageRead(ctx: Ctx): Promise<Response> {
     };
     ctx.waitUntil((async () => {
       try {
-        const d1 = await loadPolicyLanguageFromD1(dbForContent(ctx.env), scopeFor(ctx.request, ctx.env));
+        const db = dbForContent(ctx.env);
+        const scope = scopeFor(ctx.request, ctx.env);
+        const d1 = await loadPolicyLanguageFromD1(db, scope);
         const summary = policyLanguageParity(webflow.language ?? {}, d1?.language ?? {});
+        // Persist per-route parity so admins can review it like other collections.
+        await recordParityReport(db, scope, "policyLanguage", null, summary);
         console.info("[content-migration] policyLanguage parity", JSON.stringify(summary));
       } catch (error) {
         console.warn("[content-migration] policyLanguage shadow read failed", error instanceof Error ? error.message : "unknown");
