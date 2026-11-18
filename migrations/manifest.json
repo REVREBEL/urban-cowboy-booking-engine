@@ -20,6 +20,11 @@
       "id": 4,
       "file": "0004_published_snapshots.sql",
       "sha256": "a6216ae7d1a2c1455e539b0993e2c274e161d431c1dd5a84ab3df03a9da486b2"
+    },
+    {
+      "id": 5,
+      "file": "0005_media_registry.sql",
+      "sha256": "3984d9e03e2cb2b4c9b6170ce44c4d5e6d465b811b79d29d501f22006f797b30"
     }
   ]
 }

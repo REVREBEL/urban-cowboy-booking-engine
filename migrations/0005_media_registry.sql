@@ -1,6 +1,6 @@
 -- COW-33: master media registry extension.
 --
--- Additive only. 0001 to 0003 are already applied in production and are not
+-- Additive only. 0001 to 0004 are already applied in production and are not
 -- edited here. media_assets.id is the never-reused media_id; media_versions.id
 -- is the per-upload version_id. Replacing a photo adds a media_versions row and
 -- leaves both the media_id and every placement pointing at it unchanged.
@@ -9,7 +9,7 @@
 -- migration stays idempotent: SQLite has no ADD COLUMN IF NOT EXISTS, and the
 -- migration runner applies each file twice to prove idempotency.
 --
--- Rollback: scripts/d1-rollback/0004_media_registry_down.sql
+-- Rollback: scripts/d1-rollback/0005_media_registry_down.sql
 -- (rollback scripts are deliberately NOT in migrations_dir: Wrangler applies
 -- every *.sql file there as a forward migration).
 

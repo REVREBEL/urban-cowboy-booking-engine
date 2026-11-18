@@ -1,8 +1,8 @@
--- Rollback for migrations/0004_media_registry.sql.
+-- Rollback for migrations/0005_media_registry.sql.
 --
--- Safe to run more than once. Only objects created by 0004 are removed; no
--- object from 0001 to 0003 is altered. Metadata, placements and revision rows
--- added since 0004 was applied are lost by this rollback. Take a D1 export
+-- Safe to run more than once. Only objects created by 0005 are removed; no
+-- object from 0001 to 0004 is altered. Metadata, placements and revision rows
+-- added since 0005 was applied are lost by this rollback. Take a D1 export
 -- first (see docs/application/d1-schema-contracts.md).
 --
 -- This file lives outside migrations_dir on purpose: Wrangler treats every

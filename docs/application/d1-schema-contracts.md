@@ -80,7 +80,7 @@ Indexes include the `id` tiebreaker and `updated_at DESC` where needed, so `ORDE
 
 ## Media registry (COW-33)
 
-`migrations/0004_media_registry.sql` adds the registry extension. `media_assets.id` is the never-reused `media_id`. `media_versions.id` is the per-upload `version_id`. Triggers block updates to either ID and block moving a version to another media asset.
+`migrations/0005_media_registry.sql` adds the registry extension. `media_assets.id` is the never-reused `media_id`. `media_versions.id` is the per-upload `version_id`. Triggers block updates to either ID and block moving a version to another media asset.
 
 - `media_asset_metadata` holds global description, caption, tags, attribution, status and the current version ID.
 - `media_version_files` holds Cloudinary `public_id`/`version`, SHA-256, byte size and MIME type for one upload. Dimensions stay on `media_versions`. Uniqueness is on `(tenant_id, cloudinary_public_id, cloudinary_version)` because Cloudinary keeps `public_id` stable across uploads and advances `version`.
@@ -95,7 +95,7 @@ New metadata lives in extension tables because the migration runner applies ever
 
 - `scripts/d1-rollback/0002_module_list_indexes_down.sql` drops only the four module indexes.
 - `scripts/d1-rollback/0003_property_scoped_contracts_down.sql` drops only the indexes and tables created by 0003.
-- `scripts/d1-rollback/0004_media_registry_down.sql` drops only the indexes, triggers and tables created by 0004.
+- `scripts/d1-rollback/0005_media_registry_down.sql` drops only the indexes, triggers and tables created by 0005.
 - Every rollback script is idempotent and tested: base tables, rows and foundational indexes from earlier migrations survive; `PRAGMA foreign_key_check` stays clean; the up migrations re-apply afterwards.
 - `0001_init.sql` is foundational. There is no in-place down script for it; rollback to the pre-D1 state requires a point-in-time restore of the D1 database. Always export the remote database before applying or rolling back a migration.
 
@@ -103,7 +103,7 @@ New metadata lives in extension tables because the migration runner applies ever
 
 ```bash
 node --test tests/d1SchemaContracts.test.ts   # migration, indexes, rollback, contracts, provenance, scoped queries
-node --test tests/mediaRegistrySchema.test.ts  # 0004 schema, immutable IDs, placements, rollback
+node --test tests/mediaRegistrySchema.test.ts  # 0005 schema, immutable IDs, placements, rollback
 node --test tests/mediaRegistryService.test.ts # link/new/replace actions and cross-tenant denial
 node --test tests/mediaRegistryContracts.test.ts # media registry Zod contracts
 npm run test:seed                              # Webflow seed, provenance and FK integrity

@@ -22,7 +22,8 @@ function makeDb() {
     "migrations/0001_init.sql",
     "migrations/0002_module_list_indexes.sql",
     "migrations/0003_property_scoped_contracts.sql",
-    "migrations/0004_media_registry.sql",
+    "migrations/0004_published_snapshots.sql",
+    "migrations/0005_media_registry.sql",
     "tests/fixtures/d1-contracts-fixture.sql",
   ]) {
     db.exec(read(file));

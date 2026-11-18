@@ -11,8 +11,9 @@ const sql = {
   init: read("migrations/0001_init.sql"),
   moduleIndexes: read("migrations/0002_module_list_indexes.sql"),
   contracts: read("migrations/0003_property_scoped_contracts.sql"),
-  registry: read("migrations/0004_media_registry.sql"),
-  registryDown: read("scripts/d1-rollback/0004_media_registry_down.sql"),
+  snapshots: read("migrations/0004_published_snapshots.sql"),
+  registry: read("migrations/0005_media_registry.sql"),
+  registryDown: read("scripts/d1-rollback/0005_media_registry_down.sql"),
   fixture: read("tests/fixtures/d1-contracts-fixture.sql"),
 };
 
@@ -22,6 +23,7 @@ function makeDb() {
   db.exec(sql.init);
   db.exec(sql.moduleIndexes);
   db.exec(sql.contracts);
+  db.exec(sql.snapshots);
   db.exec(sql.registry);
   db.exec(sql.fixture);
   db.exec(`
@@ -35,7 +37,7 @@ function makeDb() {
   return db;
 }
 
-test("0004 applies to the production baseline with foreign keys on", () => {
+test("0005 applies to the production baseline with foreign keys on", () => {
   const db = makeDb();
   assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(), []);
   assert.equal(db.prepare("PRAGMA integrity_check").get().integrity_check, "ok");
@@ -168,7 +170,7 @@ test("revision actions and Cloudinary version identity are bounded", () => {
   db.close();
 });
 
-test("rollback removes only the 0004 objects and re-apply is clean", () => {
+test("rollback removes only the 0005 objects and re-apply is clean", () => {
   const db = makeDb();
   db.exec(sql.registryDown);
   db.exec(sql.registryDown); // safe to repeat
