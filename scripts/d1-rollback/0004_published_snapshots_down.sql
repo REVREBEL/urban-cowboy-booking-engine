@@ -3,6 +3,7 @@
 -- export the D1 database first. Feature flag CONTENT_SOURCE=webflow is the
 -- application-level rollback; this script is the schema-level one.
 
+DROP INDEX IF EXISTS idx_add_ons_tenant_status_sort;
 DROP INDEX IF EXISTS idx_add_ons_scope_status_sort;
 DROP INDEX IF EXISTS idx_parity_reports_collection;
 DROP INDEX IF EXISTS idx_published_snapshots_lookup;

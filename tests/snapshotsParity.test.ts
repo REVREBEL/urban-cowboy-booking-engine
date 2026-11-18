@@ -138,6 +138,27 @@ test("typed provider loads every published collection for a tenant", async () =>
   assert.equal(rooms.length, 1);
   assert.equal(rooms[0].payload.mewsRoomCategoryId, "mews-rt-1");
   assert.equal(toParityItems(rooms)[0].slug, "room-one");
+
+  // Draft add-ons are excluded from published snapshots; implicit collections
+  // (no status column) are published by presence, explicit ones are not.
+  const addOns = await loadPublishedCollection(api, scope, "addOns");
+  assert.deepEqual(addOns.map((r) => r.id), ["addon-1"]);
+  const unknownPublication = toParityItems([{
+    id: "x", collection: "events", payload: { name: "No status" },
+  }]);
+  assert.equal(unknownPublication[0].published, false);
+  db.close();
+});
+
+test("tenant-wide snapshots use the empty-string location sentinel without an FK violation", async () => {
+  const db = makeDb();
+  const api = d1(db);
+  const tenantWide = { tenantId: scope.tenantId };
+  const built = await buildSnapshot("locations", [record("a", "A")]);
+  await saveSnapshot(api, tenantWide, "locations", built);
+  assert.equal((await getSnapshot(api, tenantWide, "locations"))?.version, built.version);
+  assert.equal((await getSnapshotPointer(api, tenantWide, "locations"))?.currentVersion, built.version);
+  assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(), []);
   db.close();
 });
 

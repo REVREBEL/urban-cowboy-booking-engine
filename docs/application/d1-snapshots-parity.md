@@ -21,7 +21,7 @@ The flag is a Worker variable, never a request parameter. Rollback is setting it
 
 ## Tables (migration 0004)
 
-- `published_snapshots` — immutable rows keyed by `(tenant_id, location_id, collection, version)` with `payload_json`, `item_count`, `checksum`, `created_at`. `location_id = ''` means tenant-wide.
+- `published_snapshots` — immutable rows keyed by `(tenant_id, location_id, collection, version)` with `payload_json`, `item_count`, `checksum`, `created_at`. `location_id = ''` means tenant-wide. That sentinel is deliberately **not** an FK to `locations`; concrete location IDs are validated by the tenant-scoped read path instead.
 - `snapshot_pointers` — current and previous version per `(tenant_id, location_id, collection)`. A refresh writes a new snapshot and moves `current → previous`; a rollback swaps them back without deleting either snapshot.
 - `parity_reports` — one row per shadow comparison with `difference_count` and a JSON summary.
 
@@ -29,7 +29,7 @@ Rollback SQL lives in `scripts/d1-rollback/0004_published_snapshots_down.sql`, o
 
 ## Typed provider
 
-`worker/content-provider.ts` loads published, tenant-scoped rows for `locations`, `buildings`, `roomTypes`, `amenities`, `addOns`, `events` and `contentItems` through the contract-validated scoped helpers from COW-30. Publication is respected at the query level: public content only, displayed events only. Mews IDs are carried as references, never resolved into prices.
+`worker/content-provider.ts` loads published, tenant-scoped rows for `locations`, `buildings`, `roomTypes`, `amenities`, `addOns`, `events` and `contentItems` through the contract-validated scoped helpers from COW-30. Publication is respected at the query level: draft add-ons and content items are excluded, and only displayed events are read. Collections whose D1 table has no status column (`locations`, `buildings`, `roomTypes`, `amenities`) are published by presence; for every other collection the snapshot requires an explicit published/displayed signal. Mews IDs are carried as references, never resolved into prices.
 
 ## Snapshot behavior
 

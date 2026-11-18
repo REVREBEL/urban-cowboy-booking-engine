@@ -157,12 +157,17 @@ export async function buildSnapshot(
   };
 }
 
+/** Collections whose D1 table has no publication column; presence is publication. */
+const IMPLICITLY_PUBLISHED = new Set<ContentCollection>([
+  "locations", "buildings", "roomTypes", "amenities",
+]);
+
 /** Small, comparable projection for structured parity reporting. */
 export function toParityItems(records: PublishedRecord[]): ParityItem[] {
   return records.map((record) => {
     const p = record.payload;
-    const published = p.status === "published" || p.displayFlag === true ||
-      (p.status === undefined && p.displayFlag === undefined);
+    const published = IMPLICITLY_PUBLISHED.has(record.collection) ||
+      p.status === "published" || p.displayFlag === true;
     return {
       id: record.id,
       slug: typeof p.slug === "string" ? p.slug : null,

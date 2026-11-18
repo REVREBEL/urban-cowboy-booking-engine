@@ -286,8 +286,8 @@ export function listScopedAddOns(db: D1Database, scope: TenantScope): Promise<Ad
   return allScoped(
     db,
     scope.locationId != null
-      ? `${ADD_ONS_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 ORDER BY sort_order, id`
-      : `${ADD_ONS_SELECT} WHERE tenant_id = ?1 ORDER BY sort_order, id`,
+      ? `${ADD_ONS_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 AND status = 'published' ORDER BY sort_order, id`
+      : `${ADD_ONS_SELECT} WHERE tenant_id = ?1 AND status = 'published' ORDER BY sort_order, id`,
     scope.locationId != null ? [scope.tenantId, scope.locationId] : [scope.tenantId],
     addOnRowSchema,
   );

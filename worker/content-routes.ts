@@ -81,8 +81,10 @@ export async function snapshotGet(
       ...snapshotHeaders(snapshot.version, source),
       ...(pinned ? { "X-Snapshot-Pinned": "true" } : {}),
     });
-  } catch {
-    // Error fallback: never break the guest flow on a snapshot read failure.
+  } catch (err) {
+    // Error fallback: never break the guest flow on a snapshot read failure,
+    // but keep the underlying error visible for diagnosis.
+    console.error("[snapshotGet] D1 read failed, falling back to Webflow", err);
     const webflow = await fallbackLoader(ctx.env, collectionName);
     if (!webflow) return error(503, "snapshot_unavailable");
     const records: PublishedRecord[] = webflow.map((item) => ({

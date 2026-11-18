@@ -18,8 +18,9 @@ CREATE TABLE IF NOT EXISTS published_snapshots (
   checksum TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (tenant_id, location_id, collection, version),
-  FOREIGN KEY (tenant_id) REFERENCES tenants (id),
-  FOREIGN KEY (location_id) REFERENCES locations (id)
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id)
+  -- location_id is intentionally not an FK: '' is the tenant-wide sentinel
+  -- and concrete IDs are validated by the tenant-scoped read path.
 );
 
 CREATE TABLE IF NOT EXISTS snapshot_pointers (
@@ -30,8 +31,7 @@ CREATE TABLE IF NOT EXISTS snapshot_pointers (
   previous_version TEXT,
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (tenant_id, location_id, collection),
-  FOREIGN KEY (tenant_id) REFERENCES tenants (id),
-  FOREIGN KEY (location_id) REFERENCES locations (id)
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
 CREATE TABLE IF NOT EXISTS parity_reports (
@@ -43,8 +43,7 @@ CREATE TABLE IF NOT EXISTS parity_reports (
   difference_count INTEGER NOT NULL,
   summary_json TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  FOREIGN KEY (tenant_id) REFERENCES tenants (id),
-  FOREIGN KEY (location_id) REFERENCES locations (id)
+  FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
 CREATE INDEX IF NOT EXISTS idx_published_snapshots_lookup
@@ -53,3 +52,5 @@ CREATE INDEX IF NOT EXISTS idx_parity_reports_collection
   ON parity_reports (tenant_id, collection, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_add_ons_scope_status_sort
   ON add_ons (tenant_id, location_id, status, sort_order, id);
+CREATE INDEX IF NOT EXISTS idx_add_ons_tenant_status_sort
+  ON add_ons (tenant_id, status, sort_order, id);

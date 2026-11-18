@@ -111,7 +111,7 @@ export default {
       if (request.method !== "POST") return json({ error: "not_found" }, 404);
       return snapshotsRefresh({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
     }
-    const snapshotMatch = url.pathname.match(/^\/api\/content\/snapshots\/([a-zA-Z]+)\/?$/);
+    const snapshotMatch = url.pathname.match(/^\/api\/content\/snapshots\/([a-zA-Z0-9_]+)\/?$/);
     if (snapshotMatch) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return snapshotGet({ request, env, waitUntil: (p) => ctx.waitUntil(p) }, snapshotMatch[1]);
