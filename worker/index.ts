@@ -36,6 +36,8 @@ import {
   snapshotsRollback,
 } from "./content-routes.ts";
 import { eventOccurrences, eventPreview, eventVenues } from "./events.ts";
+import { adminSiteSettingsRead, siteSettingsRead } from "./property-settings.ts";
+import { dashboardPageRequest, isAdminPageRoute } from "./admin-pages.ts";
 import {
   createEditorDraft,
   getEditorItem,
@@ -79,6 +81,11 @@ const json = (data: unknown, status: number) =>
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    // COW-68: the React admin is a separate Vite entry (dashboard.html). Serve
+    // it at both readable admin routes; guest routes keep the SPA fallback.
+    if (isAdminPageRoute(url.pathname)) {
+      return env.ASSETS.fetch(dashboardPageRequest(request));
+    }
     if (url.pathname === "/api/studio/config") {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return onRequestStudioConfig({ request, env });
@@ -106,6 +113,14 @@ export default {
     if (url.pathname.match(/^\/api\/content\/buildings\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return buildings({ env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    if (url.pathname.match(/^\/api\/content\/site-settings\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return siteSettingsRead({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    if (url.pathname.match(/^\/api\/admin\/site-settings\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return adminSiteSettingsRead({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
     }
     if (url.pathname.match(/^\/api\/content\/items\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);

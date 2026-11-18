@@ -29,6 +29,7 @@ export interface DashboardApiOptions {
 export interface DashboardApi {
   get<T>(path: string, params?: Record<string, string | number | undefined>, init?: RequestInit): Promise<T>;
   post<T>(path: string, body: unknown): Promise<T>;
+  patch<T>(path: string, body: unknown): Promise<T>;
   getD1Module<T>(module: DashboardModule, tenant?: string): Promise<T[]>;
   getContentItems<T>(kind?: string, tenant?: string, location?: string): Promise<T[]>;
 }
@@ -87,6 +88,20 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
       if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
       const response = await doFetch(path, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw errorFrom(response.status, text);
+      }
+      return (await response.json()) as T;
+    },
+    async patch<T>(path: string, body: unknown): Promise<T> {
+      if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
+      const response = await doFetch(path, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
         body: JSON.stringify(body),

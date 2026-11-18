@@ -36,6 +36,8 @@ export interface Env {
   // ★ UNIQUE endpoint de suivi → n8n → Supabase : reçoit TOUS les events du funnel
   // (chaque étape + paiement initié/validé). C'est LE endpoint du back-office.
   WEBHOOK_EVENTS?: string;
+  // COW-68 per-route flag for the five property settings.
+  CONTENT_SOURCE_SITE_SETTINGS?: string;
   // Cloudflare Access configuration for verified private-route principals.
   CF_ACCESS_TEAM_DOMAIN?: string;
   CF_ACCESS_AUD?: string;

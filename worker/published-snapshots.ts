@@ -124,7 +124,7 @@ export async function rollbackSnapshot(
 export async function recordParityReport(
   db: D1Database,
   scope: TenantScope,
-  collection: ContentCollection,
+  collection: string,
   version: string | null,
   summary: ParitySummary,
 ): Promise<string> {
@@ -139,7 +139,7 @@ export async function recordParityReport(
 export async function latestParityReport(
   db: D1Database,
   scope: TenantScope,
-  collection: ContentCollection,
+  collection: string,
 ): Promise<{ id: string; summary: ParitySummary; createdAt: string } | null> {
   const row = await db.prepare(
     "SELECT id, summary_json, created_at FROM parity_reports WHERE tenant_id = ?1 AND location_id = ?2 AND collection = ?3 ORDER BY created_at DESC, id DESC LIMIT 1",

@@ -4,6 +4,7 @@ import type { Session } from "@supabase/supabase-js";
 import { createDashboardApi } from "./api";
 import { ConfigNeeded, FunnelPanel, Login, Splash } from "./Dashboard";
 import { EventsCalendarPanel } from "./EventsCalendarPanel";
+import { SiteSettingsPanel } from "./SiteSettingsPanel";
 import { DashboardShell } from "./DashboardShell";
 import { navItemFor, routeFromHash, type DashboardRouteId } from "./navigation";
 import { PanelErrorBoundary } from "./PanelErrorBoundary";
@@ -55,7 +56,8 @@ export function DashboardApp() {
       <PanelErrorBoundary resetKey={route}>
         {route === "analytics" && <FunnelPanel />}
         {route === "events" && <EventsCalendarPanel api={api} />}
-        {route !== "analytics" && route !== "events" && (
+        {route === "settings" && <SiteSettingsPanel api={api} />}
+        {route !== "analytics" && route !== "events" && route !== "settings" && (
           <EmptyPanel message={`${current.label} panel is not wired yet. Navigation and route protection are available now.`} />
         )}
       </PanelErrorBoundary>

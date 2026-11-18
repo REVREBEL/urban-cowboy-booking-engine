@@ -2,7 +2,7 @@
 import { z } from "zod";
 
 export const EDITOR_KINDS = [
-  "rate_card", "add_on", "event", "offer", "upgrade", "policy", "instagram", "outlet",
+  "rate_card", "add_on", "event", "offer", "upgrade", "policy", "instagram", "outlet", "site_settings",
 ] as const;
 export type EditorKind = (typeof EDITOR_KINDS)[number];
 
