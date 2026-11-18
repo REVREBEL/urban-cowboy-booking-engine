@@ -66,7 +66,7 @@ test("production rate cards render live milestones and CMS language through Figm
   assert.match(presentation, /language\?\.nonRefundableLanguage/);
   assert.match(presentation, /language\?\.atTimeOfBookingSubTitle/);
   assert.match(presentation, /language\?\.nextDueDateSubTitle/);
-  assert.match(source("worker/index.ts"), /return policyLanguage\(\{ env \}\)/);
+  assert.match(source("worker/index.ts"), /return policyLanguageRead\(\{ request, env, waitUntil/);
   for (const path of ["src/journey/PhotoRateStep.tsx", "src/steps/Rates.tsx"]) {
     assert.match(source(path), /policyLanguage=\{policyLanguage\}/);
   }
