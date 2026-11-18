@@ -48,7 +48,7 @@ function d1(db: DatabaseSync, failBatch = false): any {
         async first() { return db.prepare(sql).get(...params) ?? null; },
         async run() {
           db.prepare(sql).run(...params);
-          return { success: true, changes: (db.prepare("SELECT changes() AS n").get() as any).n };
+          return { success: true, meta: { changes: (db.prepare("SELECT changes() AS n").get() as any).n } };
         },
       };
     },
@@ -58,7 +58,7 @@ function d1(db: DatabaseSync, failBatch = false): any {
         if (failBatch) throw new Error("injected batch failure");
         const results = statements.map((s) => {
           db.prepare(s.sql).run(...s.params);
-          return { success: true, changes: (db.prepare("SELECT changes() AS n").get() as any).n };
+          return { success: true, meta: { changes: (db.prepare("SELECT changes() AS n").get() as any).n } };
         });
         db.exec("COMMIT");
         return results;
@@ -124,14 +124,25 @@ test("draft creation and draft edits never change the published snapshot", async
   db.close();
 });
 
-test("stale edits are rejected with a conflict instead of overwriting", async () => {
+test("competing saves with the same expected revision produce one winner and no partial writes", async () => {
   const db = makeDb();
   const { id, revisionId } = await create(db, { title: "v1" });
-  await saveEditorDraft(ctx(db, { payload: { title: "v2" }, expectedRevisionId: revisionId }), id, allowAdmin);
-  const stale = await saveEditorDraft(ctx(db, { payload: { title: "v3" }, expectedRevisionId: revisionId }), id, allowAdmin);
-  assert.equal(stale.status, 409);
-  assert.equal((await stale.json() as any).error, "edit_conflict");
+  const [first, second] = await Promise.all([
+    saveEditorDraft(ctx(db, { payload: { title: "winner" }, expectedRevisionId: revisionId }), id, allowAdmin),
+    saveEditorDraft(ctx(db, { payload: { title: "loser" }, expectedRevisionId: revisionId }), id, allowAdmin),
+  ]);
+  const statuses = [first.status, second.status].sort();
+  assert.deepEqual(statuses, [200, 409]);
+  const loser = first.status === 409 ? first : second;
+  assert.equal((await loser.json() as any).error, "edit_conflict");
+
+  // Exactly one revision and one audit row were committed; the pointer points
+  // at the winner, and no draft was silently overwritten.
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM content_revisions WHERE content_item_id=?").get(id).n, 2);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='draft_saved'").get().n, 1);
+  const working = db.prepare("SELECT working_revision_id FROM content_item_pointers WHERE content_item_id=?").get(id).working_revision_id;
+  assert.equal(working, `${id}-r2`);
+  assert.equal(db.prepare("SELECT payload_json FROM content_revisions WHERE id=?").get(working).payload_json, '{"title":"winner"}');
   db.close();
 });
 

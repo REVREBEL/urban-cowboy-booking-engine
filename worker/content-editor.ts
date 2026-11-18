@@ -19,8 +19,8 @@ import {
 
 export type EditorCtx = { request: Request; env: Env; waitUntil: (promise: Promise<unknown>) => void };
 
-/** D1's batch result type omits `changes`; this is the shape the runtime returns. */
-type BatchChange = { success: boolean; changes?: number };
+/** Cloudflare D1 returns affected-row counts in `meta.changes`, not at top level. */
+type BatchChange = { success: boolean; meta: { changes: number } };
 export type Authorize = (request: Request, env: Env, role: "admin" | "viewer") => Promise<Principal | Response>;
 
 const NO_STORE: Record<string, string> = {
@@ -255,7 +255,7 @@ export async function saveEditorDraft(
       "UPDATE content_item_pointers SET working_revision_id = ?1, updated_at = datetime('now') WHERE tenant_id = ?2 AND content_item_id = ?3 AND working_revision_id = ?4",
     ).bind(revisionId, principal.tenantId, id, input.expectedRevisionId),
   ]);
-  if (((results[2] as BatchChange).changes ?? 0) !== 1) {
+  if ((results[2] as BatchChange).meta.changes !== 1) {
     return json({ error: "edit_conflict", workingRevisionId: working }, 409);
   }
   // Deliberately no status change and no snapshot refresh: the public view,
