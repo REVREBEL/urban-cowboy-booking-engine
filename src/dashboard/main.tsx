@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
 import "../styles/index.css";
-import { Dashboard } from "./Dashboard";
+import { DashboardApp } from "./DashboardApp";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(<Dashboard />);
+ReactDOM.createRoot(document.getElementById("root")!).render(<DashboardApp />);

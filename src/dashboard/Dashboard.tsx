@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
+import { Button } from "@/components/ui/Button";
+import { PillButton } from "@/components/ui/Pill";
+import { ErrorPanel } from "./states";
 import { supabase, isConfigured } from "./supabase";
 
 // ── Types (colonnes de la table `carts`) ────────────────────────────────────
@@ -121,10 +124,10 @@ export function Dashboard() {
   if (!isConfigured) return <ConfigNeeded />;
   if (!ready) return <Splash />;
   if (!session) return <Login />;
-  return <Panel email={session.user.email ?? ""} />;
+  return <FunnelPanel />;
 }
 
-function Splash() {
+export function Splash() {
   return (
     <div className="grid min-h-dvh place-items-center bg-cream">
       <span className="h-8 w-8 animate-spin rounded-full border-2 border-turquoise/25 border-t-turquoise" />
@@ -132,7 +135,7 @@ function Splash() {
   );
 }
 
-function ConfigNeeded() {
+export function ConfigNeeded() {
   return (
     <div className="grid min-h-dvh place-items-center bg-cream px-6 text-center">
       <div className="max-w-md">
@@ -147,7 +150,7 @@ function ConfigNeeded() {
 }
 
 // ── Login (email / mot de passe) ────────────────────────────────────────────
-function Login() {
+export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -205,7 +208,7 @@ function Login() {
 // ══════════════════════════════════════════════════════════════════════════
 // Le dashboard (données live).
 // ══════════════════════════════════════════════════════════════════════════
-function Panel({ email }: { email: string }) {
+export function FunnelPanel() {
   const [range, setRange] = useState("30");
   const [carts, setCarts] = useState<Cart[]>([]);
   const [funnel, setFunnel] = useState<FunnelRow[]>([]);
@@ -322,52 +325,34 @@ function Panel({ email }: { email: string }) {
   }, [carts]);
 
   return (
-    <div className="min-h-dvh bg-cream text-smoke">
-      {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-smoke/10 bg-cream/85 backdrop-blur">
-        <div className="booking-shell flex flex-wrap items-center justify-between gap-3 py-3">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-corail">Urban Cowboy · Back-office</p>
-            <h1 className="font-heading text-xl text-smoke">Dashboard funnel</h1>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1 rounded-full bg-white p-1 shadow-card">
-              {RANGES.map((r) => (
-                <button
-                  key={r.key}
-                  onClick={() => setRange(r.key)}
-                  className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-                    range === r.key ? "bg-teal-deep text-cream" : "text-smoke/60 hover:text-smoke"
-                  }`}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-            <span className="inline-flex items-center gap-1.5 text-xs text-smoke/50">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-              {updatedAt ? `MàJ ${updatedAt.toLocaleTimeString("fr-FR")}` : "…"}
-            </span>
-            <button onClick={() => load()} className="btn-ghost text-sm">
-              Rafraîchir
-            </button>
-            <button onClick={() => supabase.auth.signOut()} className="text-sm text-smoke/55 hover:text-smoke" title={email}>
-              Déconnexion
-            </button>
-          </div>
+    <main className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-1">
+          {RANGES.map((r) => (
+            <PillButton
+              key={r.key}
+              variant="outline"
+              colorScheme="dark"
+              size="small"
+              textCase="title"
+              pressed={range === r.key}
+              onClick={() => setRange(r.key)}
+            >
+              {r.label}
+            </PillButton>
+          ))}
         </div>
-      </header>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground" role="status" aria-live="polite">
+            {updatedAt ? `MàJ ${updatedAt.toLocaleTimeString("fr-FR")}` : "…"}
+          </span>
+          <Button variant="outline" colorScheme="light" size="small" textCase="title" onClick={load}>
+            Rafraîchir
+          </Button>
+        </div>
+      </div>
 
-      <main className="booking-shell space-y-6 py-6">
-        {error && (
-          <div className="rounded-xl2 border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-            <b>Erreur de lecture :</b> {error}
-            <p className="mt-1 text-red-600/80">
-              Vérifie côté Supabase : la policy RLS de lecture sur <code>carts</code> et la fonction{" "}
-              <code>dashboard_funnel</code>.
-            </p>
-          </div>
-        )}
+        {error && <ErrorPanel message={error} onRetry={load} />}
 
         {/* KPIs */}
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -506,8 +491,7 @@ function Panel({ email }: { email: string }) {
         {openCart && (
           <CartDrawer cart={openCart} events={events} error={eventsErr} onClose={() => setOpenCart(null)} />
         )}
-      </main>
-    </div>
+    </main>
   );
 }
 

@@ -1,32 +1,26 @@
-import { useEffect, useState } from "react";
-import { fetchD1Module } from "@/lib/d1Client";
+// COW-37 Events panel uses the centralized client and shared loading/error states.
+import { useCallback } from "react";
 import type { D1Event } from "@/types/content";
+import type { DashboardApi } from "./api";
+import { EmptyPanel, ErrorPanel, LoadingPanel } from "./states";
+import { useDashboardResource } from "./useDashboardResource";
 
-export function D1ContentPanel() {
-  const [events, setEvents] = useState<D1Event[]>([]);
-  const [error, setError] = useState<string | null>(null);
+export function D1ContentPanel({ api }: { api: DashboardApi }) {
+  const load = useCallback(() => api.getD1Module<D1Event>("events"), [api]);
+  const { data, loading, error, reload } = useDashboardResource(load);
 
-  useEffect(() => {
-    fetchD1Module<D1Event>("events")
-      .then(setEvents)
-      .catch((e) => setError(String(e)));
-  }, []);
+  if (loading) return <LoadingPanel label="Loading events" />;
+  if (error) return <ErrorPanel message={error} onRetry={reload} />;
+  if (!data?.length) return <EmptyPanel message="No published events in D1." />;
 
   return (
-    <section className="p-4 space-y-3">
-      <h2 className="text-lg font-semibold">D1 Events</h2>
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-      <ul className="space-y-2">
-        {events.map((e) => (
-          <li key={e.id} className="border rounded p-2">
-            <div className="font-medium">{e.title}</div>
-            <div className="text-sm text-muted-foreground">{e.startsAt}</div>
-          </li>
-        ))}
-      </ul>
-      {events.length === 0 && !error && (
-        <p className="text-sm text-muted-foreground">No events.</p>
-      )}
-    </section>
+    <ul className="space-y-2">
+      {data.map((event) => (
+        <li key={event.id} className="card p-3">
+          <p className="font-medium text-foreground">{event.title}</p>
+          <p className="text-sm text-muted-foreground">{event.startsAt}</p>
+        </li>
+      ))}
+    </ul>
   );
 }
