@@ -36,3 +36,8 @@ WEBFLOW_CMS_API_TOKEN=<Webflow CMS API token — DO NOT commit the real value>
 # ADMIN_EMAILS=admin@example.com,ops@example.com
 # ADMIN_GROUPS=<IdP group UUID allowed the admin role>
 # TENANT_ID=urban-cowboy
+
+# CMS read migration (COW-39). webflow is the default; shadow compares D1 with
+# Webflow without serving it; d1 serves published D1 rows and falls back safely.
+# CONTENT_SOURCE=webflow
+# CONTENT_SOURCE_POLICY_LANGUAGE=webflow

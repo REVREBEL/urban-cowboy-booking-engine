@@ -15,3 +15,10 @@ INSERT INTO amenities (id, tenant_id, name) VALUES
 INSERT INTO add_ons (id, tenant_id, location_id, name, status, sort_order) VALUES
   ('addon-1', 'contracts-fixture', 'fixture-location', 'Breakfast', 'published', 1),
   ('addon-draft', 'contracts-fixture', 'fixture-location', 'Draft Only', 'draft', 2);
+
+-- Published policy language for COW-39 parity snapshots.
+INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status, current_revision_id) VALUES
+  ('policy-language-1', 'contracts-fixture', 'fixture-location', 'policy', 'policy-language', 'published', 'policy-language-r1');
+
+INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by) VALUES
+  ('policy-language-r1', 'policy-language-1', 1, '{"refundable-language":"Free cancellation","refundable-language-sub-title":"Full refund","partially-refundable-language":"Deposit kept","partially-refundable-language-sub-title":"Cancellation fee","non-refundable-language":"No refund","non-refundable-language-sub-title":"Stay locked","at-time-of-booking":"Due today","at-time-of-booking-sub-title":"Charged now","next-due-date":"Final payment","next-due-date-sub-title":"Balance due"}', 'test');

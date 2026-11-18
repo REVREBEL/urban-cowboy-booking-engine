@@ -23,7 +23,7 @@ import { onRequestGet as geo } from "./mews/geo";
 import { onRequestGet as productsDebug } from "./mews/products-debug";
 import { runScheduledCalendarRefresh } from "./mews/calendar-engine";
 import { onRequestGet as rateCards } from "./webflow/rate-cards";
-import { onRequestGet as policyLanguage } from "./webflow/policy-language";
+import { policyLanguageRead } from "./content-adapters.ts";
 import { onRequestGet as addOns } from "./webflow/add-ons";
 import { onRequestGet as roomTypeReviews } from "./webflow/room-type-reviews";
 import { onRequestGet as locations, onRequestStudioConfig } from "./webflow/locations";
@@ -85,7 +85,7 @@ export default {
     }
     if (url.pathname.match(/^\/api\/content\/policy-language\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
-      return policyLanguage({ env });
+      return policyLanguageRead({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
     }
     if (url.pathname.match(/^\/api\/content\/rate-cards\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
