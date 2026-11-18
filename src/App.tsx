@@ -3,6 +3,7 @@ import { isStudioRoute } from "./studio/runtime";
 import { currentStudioLayout, setStudioDefaultLayout, type RoomResultsLayout } from "./studio/roomLayout";
 import { api } from "./lib/api";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
+import { eventsMerchandisingEnabled } from "./journey/eventMerchandisingFlag";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
 import { Banner } from "@/components/ui/banner";
@@ -30,7 +31,7 @@ const Confirmation = lazy(() => import("./steps/Confirmation").then((module) => 
 const SHOW_API_DEBUGGER =
   import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
 const SHOW_EVENT_MERCHANDISING =
-  import.meta.env.VITE_EVENTS_MERCHANDISING === "true";
+  eventsMerchandisingEnabled(import.meta.env.VITE_EVENTS_MERCHANDISING);
 
 const PROGRESS_NUMBER: Record<Step, number> = {
   dates: 1,

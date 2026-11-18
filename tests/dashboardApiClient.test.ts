@@ -53,6 +53,7 @@ test("post sends JSON with Access cookies and surfaces typed errors", async () =
     () => api.post("/api/content/events/preview", {}),
     (error: unknown) => error instanceof DashboardApiError && error.code === "invalid_input",
   );
+  await assert.rejects(() => api.post("/etc/passwd", {}), /must start with \/api\//);
 });
 
 test("get rejects non-API paths", async () => {

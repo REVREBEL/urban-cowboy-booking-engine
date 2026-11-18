@@ -84,6 +84,7 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
   return {
     get,
     async post<T>(path: string, body: unknown): Promise<T> {
+      if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
       const response = await doFetch(path, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

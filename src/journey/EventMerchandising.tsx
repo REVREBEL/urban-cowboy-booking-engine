@@ -6,7 +6,6 @@
 import { useEffect, useState } from "react";
 import type { EventOccurrence } from "@/types/event-contracts";
 import { useBooking } from "@/state/booking";
-import { eventsMerchandisingEnabled } from "./eventMerchandisingFlag";
 
 interface OccurrencesResponse {
   duringStay: EventOccurrence[];
@@ -30,6 +29,7 @@ export function EventMerchandising() {
     });
     fetch(`/api/content/events/occurrences?${params.toString()}`, {
       headers: { accept: "application/json" },
+      credentials: "same-origin",
       cache: "no-store",
     })
       .then((response) => response.ok ? response.json() as Promise<OccurrencesResponse> : null)
@@ -56,5 +56,3 @@ export function EventMerchandising() {
     </aside>
   );
 }
-
-export const EVENTS_MERCHANDISING_ENABLED = eventsMerchandisingEnabled(import.meta.env.VITE_EVENTS_MERCHANDISING);

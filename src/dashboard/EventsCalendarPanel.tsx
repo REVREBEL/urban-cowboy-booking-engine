@@ -1,7 +1,7 @@
 // COW-40 calendar editor: published event schedule, occurrence calendar and
 // a draft schedule preview. No draft edit publishes anything — the preview
 // endpoint expands a payload without writing to D1.
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import type { D1Event } from "@/types/content";
 import type { EventOccurrence, WebflowEventFields } from "@/types/event-contracts";
 import { Button } from "@/components/ui/Button";
@@ -40,16 +40,18 @@ interface OccurrencesResponse {
   occurrences: EventOccurrence[];
 }
 
+/** Current calendar month in the editor's local time, recomputed each render. */
 const monthWindow = () => {
   const now = new Date();
-  const from = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}-01`;
-  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 2, 0));
-  const to = `${end.getUTCFullYear()}-${String(end.getUTCMonth() + 1).padStart(2, "0")}-${String(end.getUTCDate()).padStart(2, "0")}`;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const from = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-01`;
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const to = `${end.getFullYear()}-${pad(end.getMonth() + 1)}-${pad(end.getDate())}`;
   return { from, to };
 };
 
 export function EventsCalendarPanel({ api }: { api: DashboardApi }) {
-  const window = useMemo(monthWindow, []);
+  const window = monthWindow();
   const loadEvents = useCallback(
     () => Promise.all([
       api.getD1Module<D1Event>("events"),
@@ -75,6 +77,8 @@ export function EventsCalendarPanel({ api }: { api: DashboardApi }) {
       setPreviewError("Choose a start date to preview the schedule.");
       return;
     }
+    // Webflow stores these previews as 13:00Z (08:00 EST / 09:00 EDT), matching
+    // the existing Events export convention; the engine derives local wall time.
     const fields: WebflowEventFields = {
       name: name || "Untitled event",
       "recurrence-type": recurrence,
