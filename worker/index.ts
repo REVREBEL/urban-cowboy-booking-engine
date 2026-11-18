@@ -29,6 +29,12 @@ import { onRequestGet as roomTypeReviews } from "./webflow/room-type-reviews";
 import { onRequestGet as locations, onRequestStudioConfig } from "./webflow/locations";
 import { onRequestGet as buildings } from "./webflow/buildings";
 import { onRequestGet as contentList } from "./d1-content";
+import {
+  parityGet,
+  snapshotGet,
+  snapshotsRefresh,
+  snapshotsRollback,
+} from "./content-routes.ts";
 import { eventsList, addOnsList, offersList, upgradesList } from "./d1-modules";
 import { recoveryList } from "./d1-recovery";
 import { analyticsSummary } from "./d1-analytics";
@@ -95,6 +101,24 @@ export default {
     if (url.pathname.match(/^\/api\/content\/items\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return contentList({ request, env });
+    }
+    // Specific paths first: /snapshots/rollback must not be read as a collection.
+    if (url.pathname.match(/^\/api\/content\/snapshots\/rollback\/?$/)) {
+      if (request.method !== "POST") return json({ error: "not_found" }, 404);
+      return snapshotsRollback({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    if (url.pathname.match(/^\/api\/content\/snapshots\/?$/)) {
+      if (request.method !== "POST") return json({ error: "not_found" }, 404);
+      return snapshotsRefresh({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    const snapshotMatch = url.pathname.match(/^\/api\/content\/snapshots\/([a-zA-Z]+)\/?$/);
+    if (snapshotMatch) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return snapshotGet({ request, env, waitUntil: (p) => ctx.waitUntil(p) }, snapshotMatch[1]);
+    }
+    if (url.pathname.match(/^\/api\/content\/parity\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return parityGet({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
     }
     if (url.pathname.match(/^\/api\/content\/events\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);

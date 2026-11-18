@@ -15,6 +15,11 @@
       "id": 3,
       "file": "0003_property_scoped_contracts.sql",
       "sha256": "a56e3fd9fab878666eb474e1348ae7e003fdcdae63ceff5c3c66d9f03b006f83"
+    },
+    {
+      "id": 4,
+      "file": "0004_published_snapshots.sql",
+      "sha256": "3445fe38772191363e60f92e6b760b4c99fdddf0404a5c0e261cd975893675e9"
     }
   ]
 }
