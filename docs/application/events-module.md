@@ -46,6 +46,7 @@ Occurrence expansion is capped (400 by default) to avoid runaway ranges. Daily, 
 | --- | --- | --- | --- |
 | POST | `/api/content/events/preview` | admin (Access) | Expand a draft Webflow-like event payload over a local date range without publishing |
 | GET | `/api/content/events/occurrences?from=&to=&location=&checkIn=&checkOut=` | viewer (Access) | Published, displayed event occurrences in a range, with `duringStay` merchandising |
+| GET | `/api/content/events/venues` | admin (Access) | Onsite buildings and published outlet references for venue pickers |
 
 Both return `Cache-Control: no-store, private`. Tenant scope comes from the verified principal, never the query string. The existing `/api/content/events` route is unchanged.
 
@@ -62,9 +63,17 @@ npm test
 npm run typecheck
 ```
 
-## Remaining work (next slices)
+## Editor and merchandising UI
 
-- Calendar editor UI, venue/reference pickers and preview rendering in the dashboard (with screenshots).
-- Wire `duringStay` into the room journey behind an explicit flag, with Mews-backed availability language only.
+The dashboard `Events` route now renders `EventsCalendarPanel`: a calendar of published occurrences for the current month, plus a schedule preview form (name, start, recurrence, weekday, until, venue) that calls `/api/content/events/preview`. Venue options come from `/api/content/events/venues` and carry their type: buildings serialize as `onsite-event-location`, outlets as `offsite-event-location` plus `offsite-event=true`, so `parseVenue` preserves the distinction. The preview window is anchored to the selected event date (default 12 months, capped at 24, or the chosen `until`), not the calendar month, so a future event can be previewed while editing in an earlier month. Start times use a `datetime-local` control interpreted in the property time zone rather than a hardcoded UTC time. Preview never writes to D1; saving and publishing remain the separate COW-38 editor actions.
+
+Room-journey merchandising is an optional `EventMerchandising` component mounted on the results step only when `VITE_EVENTS_MERCHANDISING=true`. It reads stay dates from `useBooking()`, requests `/api/content/events/occurrences` with `checkIn`/`checkOut`, renders only `duringStay` events, and states that availability and pricing are confirmed during booking. The flag defaults to off, so guest-facing behavior is unchanged by default.
+
+No dashboard screenshots were captured in this change: the verification environment has no running dashboard/browser session. The UI follows the COW-37 shell and COW-38 shared control contract; screenshot capture is a follow-up verification task when a live environment is available.
+
+## Remaining work
+
+- Capture dashboard screenshots of the calendar panel and the flagged merchandising view in a live environment.
+- Add write/save/publish controls to the calendar panel using the COW-38 editor API (preview is already wired).
 - Materialized `event_occurrences` table and refresh job if range queries outgrow on-demand expansion.
 - Re-export/verify any offsite venue references against the Outlets collection before displaying addresses.

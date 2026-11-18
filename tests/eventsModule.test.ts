@@ -18,7 +18,8 @@ import {
   resolveWallTime,
   toEventSchedule,
 } from "../src/lib/event-recurrence.ts";
-import { eventOccurrences, eventPreview } from "../worker/events.ts";
+import { eventOccurrences, eventPreview, eventVenues } from "../worker/events.ts";
+import { eventsMerchandisingEnabled } from "../src/journey/eventMerchandisingFlag.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -226,6 +227,35 @@ test("preview and occurrence endpoints are Access-gated and stay schedule-only",
   assert.equal(crossTenant.status, 200);
   assert.deepEqual((await crossTenant.json() as any).occurrences, []);
   db.close();
+});
+
+test("venue references are admin-only and tenant-scoped", async () => {
+  const db = makeDb();
+  db.exec("INSERT INTO tenants (id, slug, name) VALUES ('other','other','Other')");
+  db.exec("INSERT INTO buildings (id, tenant_id, name) VALUES ('b1','urban-cowboy','Main Lodge')");
+  db.exec("INSERT INTO buildings (id, tenant_id, name) VALUES ('b2','other','Other Lodge')");
+  db.exec("INSERT INTO content_items (id, tenant_id, kind, slug, status) VALUES ('o1','urban-cowboy','outlet','Ralphs','published')");
+  db.exec("INSERT INTO content_items (id, tenant_id, kind, slug, status) VALUES ('o2','urban-cowboy','outlet','Draft Outlet','draft')");
+  const ctx: any = { request: new Request("https://example.test/api/content/events/venues"), env: { DB: d1(db) }, waitUntil: () => {} };
+  const deny = async () => new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
+  assert.equal((await eventVenues(ctx, deny)).status, 401);
+
+  const admin = async () => ({ sub: "s", email: "a@x.test", groups: [], roles: ["admin"], tenantId: "urban-cowboy" }) as any;
+  const res = await eventVenues(ctx, admin);
+  assert.equal(res.status, 200);
+  const body = await res.json() as any;
+  assert.deepEqual(body.onsite, [{ id: "b1", name: "Main Lodge", type: "onsite" }]);
+  assert.deepEqual(body.outlets, [{ id: "o1", name: "Ralphs", type: "offsite" }]);
+  const other = await eventVenues(ctx, async () => ({ sub: "s", email: "a@x.test", groups: [], roles: ["admin"], tenantId: "other" }) as any);
+  assert.deepEqual((await other.json() as any).onsite, [{ id: "b2", name: "Other Lodge", type: "onsite" }]);
+  db.close();
+});
+
+test("room-journey merchandising is off unless explicitly enabled", () => {
+  assert.equal(eventsMerchandisingEnabled(undefined), false);
+  assert.equal(eventsMerchandisingEnabled("false"), false);
+  assert.equal(eventsMerchandisingEnabled("1"), false);
+  assert.equal(eventsMerchandisingEnabled("true"), true);
 });
 
 test("D1 row schedule parsing tolerates legacy raw option IDs", () => {

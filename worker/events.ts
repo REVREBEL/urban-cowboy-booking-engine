@@ -72,6 +72,29 @@ export async function eventPreview(
   });
 }
 
+/** Venue references for the calendar editor: onsite buildings and outlet records. */
+export async function eventVenues(
+  ctx: EventCtx,
+  authorize: EventAuthorize = authorizeScopedRequest,
+): Promise<Response> {
+  const principal = await authorize(ctx.request, ctx.env, "admin");
+  if (principal instanceof Response) return principal;
+  const db = ctx.env.DB;
+  if (!db) return json({ error: "D1 not configured" }, 503);
+
+  const buildings = await db.prepare(
+    "SELECT id, name FROM buildings WHERE tenant_id = ?1 ORDER BY name, id",
+  ).bind(principal.tenantId).all();
+  const outlets = await db.prepare(
+    "SELECT id, slug FROM content_items WHERE tenant_id = ?1 AND kind = 'outlet' AND status = 'published' ORDER BY slug, id",
+  ).bind(principal.tenantId).all();
+
+  return json({
+    onsite: (buildings.results ?? []).map((row: any) => ({ id: row.id, name: row.name, type: "onsite" as const })),
+    outlets: (outlets.results ?? []).map((row: any) => ({ id: row.id, name: row.slug, type: "offsite" as const })),
+  });
+}
+
 /** Published event occurrences in a local date range, scoped by tenant/location. */
 export async function eventOccurrences(
   ctx: EventCtx,

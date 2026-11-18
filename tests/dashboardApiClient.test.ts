@@ -35,6 +35,27 @@ test("get builds the URL, carries the Access cookie and sends no Supabase token"
   assert.equal(calls[0].init?.credentials, "same-origin");
 });
 
+test("post sends JSON with Access cookies and surfaces typed errors", async () => {
+  const calls: Call[] = [];
+  const api = client(calls, (call) => String(call.init?.body ?? "").includes('"fields"')
+    ? new Response(JSON.stringify({ occurrences: ["2027-02-06"] }), { status: 200, headers: { "content-type": "application/json" } })
+    : new Response(JSON.stringify({ error: "invalid_input" }), { status: 400, headers: { "content-type": "application/json" } }));
+
+  const result = await api.post<{ occurrences: string[] }>("/api/content/events/preview", { fields: { name: "x" }, from: "2027-02-01", to: "2027-03-31" });
+  assert.deepEqual(result.occurrences, ["2027-02-06"]);
+  assert.equal(calls[0].init?.method, "POST");
+  assert.equal(calls[0].init?.credentials, "same-origin");
+  const headers = new Headers(calls[0].init?.headers);
+  assert.equal(headers.get("content-type"), "application/json");
+  assert.equal(JSON.parse(String(calls[0].init?.body)).fields.name, "x");
+
+  await assert.rejects(
+    () => api.post("/api/content/events/preview", {}),
+    (error: unknown) => error instanceof DashboardApiError && error.code === "invalid_input",
+  );
+  await assert.rejects(() => api.post("/etc/passwd", {}), /must start with \/api\//);
+});
+
 test("get rejects non-API paths", async () => {
   const api = client([]);
   await assert.rejects(() => api.get("/etc/passwd"), /must start with \/api\//);

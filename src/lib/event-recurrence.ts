@@ -113,6 +113,19 @@ export function wallTimeToInstant(
   return resolveWallTime(year, month, day, hour, minute, timeZone).instant;
 }
 
+/** Converts a datetime-local input in a time zone to a UTC ISO instant. */
+export function localDateTimeToIso(value: string, timeZone = EVENT_TIME_ZONE): string {
+  const [date, time] = value.split("T");
+  if (!date || !time) throw new Error("invalid_datetime_local");
+  const hour = Number(time.slice(0, 2));
+  const minute = Number(time.slice(3, 5));
+  const instant = resolveWallTime(
+    Number(date.slice(0, 4)), Number(date.slice(5, 7)), Number(date.slice(8, 10)),
+    hour, minute, timeZone,
+  );
+  return new Date(instant.instant).toISOString();
+}
+
 const pad = (n: number) => String(n).padStart(2, "0");
 export const localDateOf = (iso: string, timeZone: string): string => {
   const p = zonedParts(Date.parse(iso), timeZone);

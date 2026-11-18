@@ -3,6 +3,7 @@ import { isStudioRoute } from "./studio/runtime";
 import { currentStudioLayout, setStudioDefaultLayout, type RoomResultsLayout } from "./studio/roomLayout";
 import { api } from "./lib/api";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
+import { eventsMerchandisingEnabled } from "./journey/eventMerchandisingFlag";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
 import { Banner } from "@/components/ui/banner";
@@ -15,6 +16,7 @@ const RateCardLab = lazy(() => import("./components/rates/RateCardLab").then((mo
 const PhotoArrival = lazy(() => import("./journey/PhotoArrival").then((module) => ({ default: module.PhotoArrival })));
 const PhotoJourneyHeader = lazy(() => import("./journey/PhotoJourneyHeader").then((module) => ({ default: module.PhotoJourneyHeader })));
 const PhotoRateStep = lazy(() => import("./journey/PhotoRateStep").then((module) => ({ default: module.PhotoRateStep })));
+const EventMerchandising = lazy(() => import("./journey/EventMerchandising").then((module) => ({ default: module.EventMerchandising })));
 const PhotoReviewGuest = lazy(() => import("./journey/PhotoReviewGuest").then((module) => ({ default: module.PhotoReviewGuest })));
 const DevPanel = lazy(() => import("./components/dev/dev-panel").then((module) => ({ default: module.DevPanel })));
 const Dates = lazy(() => import("./steps/Dates").then((module) => ({ default: module.Dates })));
@@ -28,6 +30,8 @@ const Confirmation = lazy(() => import("./steps/Confirmation").then((module) => 
 
 const SHOW_API_DEBUGGER =
   import.meta.env.DEV || import.meta.env.VITE_SHOW_API_DEBUGGER === "true";
+const SHOW_EVENT_MERCHANDISING =
+  eventsMerchandisingEnabled(import.meta.env.VITE_EVENTS_MERCHANDISING);
 
 const PROGRESS_NUMBER: Record<Step, number> = {
   dates: 1,
@@ -99,6 +103,9 @@ function Shell({ layout }: { layout: RoomResultsLayout }) {
           photoJourney && (step === "payment" || step === "upgrade") ?
             <div className="min-h-dvh bg-paper pt-20 text-smoke"><StepView /></div> :
           <StepView />}
+        {SHOW_EVENT_MERCHANDISING && step === "results" && (
+          <Suspense fallback={null}><EventMerchandising /></Suspense>
+        )}
         </Suspense>
       </main>
 
