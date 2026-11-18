@@ -63,6 +63,8 @@ test("PoC stories import real components through client story controls", () => {
 
 test("Pages workflow validates PRs and gates publication behind an explicit variable", () => {
   assert.match(workflow, /pull_request:/);
+  assert.match(workflow, /fetch-depth: 0/);
+  assert.match(workflow, /npm run lint:controls/);
   assert.match(workflow, /npm run docs:build/);
   assert.match(workflow, /npm run docs:smoke/);
   assert.match(workflow, /vars\.DOCS_PAGES_ENABLED == 'true'/);

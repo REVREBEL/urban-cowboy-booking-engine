@@ -17,7 +17,10 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
+      # lint:controls diffs against origin/main, so the base ref must be present.
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v7
         with:
