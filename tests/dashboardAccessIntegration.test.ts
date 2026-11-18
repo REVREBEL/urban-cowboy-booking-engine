@@ -30,8 +30,9 @@ test.after(() => {
 });
 
 const b64u = (value: string | Uint8Array) => Buffer.from(value).toString("base64url");
+const forgedPrivateKey = generateKeyPairSync("rsa", { modulusLength: 2048 }).privateKey;
 
-function accessJwt(): string {
+function accessJwt(options: { expired?: boolean; forged?: boolean } = {}): string {
   const header = { alg: "RS256", typ: "JWT", kid: "cow37-kid" };
   const now = Math.floor(Date.now() / 1000);
   const payload = {
@@ -40,11 +41,12 @@ function accessJwt(): string {
     groups: [],
     iss: `https://${TEAM}`,
     aud: AUD,
-    exp: now + 600,
+    exp: options.expired ? now - 1 : now + 600,
     nbf: now - 60,
   };
   const input = `${b64u(JSON.stringify(header))}.${b64u(JSON.stringify(payload))}`;
-  return `${input}.${b64u(sign("RSA-SHA256", Buffer.from(input), privateKey))}`;
+  const key = options.forged ? forgedPrivateKey : privateKey;
+  return `${input}.${b64u(sign("RSA-SHA256", Buffer.from(input), key))}`;
 }
 
 const env: AuthEnv = {
@@ -54,7 +56,7 @@ const env: AuthEnv = {
   TENANT_ID: "urban-cowboy",
 };
 
-test("a dashboard API call is authorized by the injected Access JWT", async () => {
+test("dashboard API calls accept an injected Access JWT and reject missing/expired/forged tokens", async () => {
   const calls: Array<{ url: string; init?: RequestInit }> = [];
   const api = createDashboardApi({
     fetchImpl: (async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -79,4 +81,19 @@ test("a dashboard API call is authorized by the injected Access JWT", async () =
   const withSupabaseOnly = new Request(base, calls[0].init);
   withSupabaseOnly.headers.set("authorization", "Bearer supabase-access-token");
   assert.equal((await requireViewer(withSupabaseOnly, env))?.status, 401);
+
+  // The edge injects nothing when the Access cookie is absent.
+  assert.equal((await requireViewer(new Request(base, calls[0].init), env))?.status, 401);
+
+  const withExpired = new Request(base, calls[0].init);
+  withExpired.headers.set("cf-access-jwt-assertion", accessJwt({ expired: true }));
+  assert.equal((await requireViewer(withExpired, env))?.status, 401);
+
+  const withForged = new Request(base, calls[0].init);
+  withForged.headers.set("cf-access-jwt-assertion", accessJwt({ forged: true }));
+  assert.equal((await requireViewer(withForged, env))?.status, 401);
+
+  const withMalformed = new Request(base, calls[0].init);
+  withMalformed.headers.set("cf-access-jwt-assertion", "not-a-jwt");
+  assert.equal((await requireViewer(withMalformed, env))?.status, 401);
 });

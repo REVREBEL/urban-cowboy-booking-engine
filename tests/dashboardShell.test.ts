@@ -80,9 +80,9 @@ test("Worker API calls rely on Access cookies, not a Supabase token", () => {
   assert.match(navigationSource, /Unknown dashboard route/);
 });
 
-test("the skip link moves focus without changing the router hash", () => {
+test("the skip link uses the focus helper instead of the router hash", () => {
   assert.match(shell, /const mainRef = useRef<HTMLElement>\(null\)/);
-  assert.match(shell, /event\.preventDefault\(\)/);
-  assert.match(shell, /mainRef\.current\?\.focus\(\)/);
+  assert.match(shell, /import \{ activateSkipLink \} from "\.\/skipLink"/);
+  assert.match(shell, /onClick=\{\(event\) => activateSkipLink\(event, mainRef\.current\)\}/);
   assert.match(shell, /ref=\{mainRef\}/);
 });

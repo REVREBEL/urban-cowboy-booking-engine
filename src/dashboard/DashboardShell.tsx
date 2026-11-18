@@ -9,6 +9,7 @@ import {
   navItemFor,
   type DashboardRouteId,
 } from "./navigation";
+import { activateSkipLink } from "./skipLink";
 
 export interface DashboardShellProps {
   email: string;
@@ -25,11 +26,7 @@ export function DashboardShell({ email, route, onSignOut, children }: DashboardS
     <div className="min-h-dvh bg-background text-foreground">
       <a
         href="#dashboard-main"
-        onClick={(event) => {
-          // The hash is the router key. Move focus without changing it.
-          event.preventDefault();
-          mainRef.current?.focus();
-        }}
+        onClick={(event) => activateSkipLink(event, mainRef.current)}
         className="sr-only rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50"
       >
         Skip to dashboard content
