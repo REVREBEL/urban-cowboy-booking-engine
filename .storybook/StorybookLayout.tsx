@@ -7,10 +7,13 @@ import {
   Subtitle,
   Title,
 } from "@storybook/addon-docs/blocks";
+import {
+  STORY_MAX_WIDTH,
+  STORY_MAX_WIDTH_CSS_VAR,
+} from "../src/styles/documentation-layout.ts";
 
-/** Single source of truth for Canvas and Docs max widths. */
-export const STORY_MAX_WIDTH = 1600;
-export const STORY_MAX_WIDTH_CSS_VAR = "--storybook-story-max-width";
+/** Re-exported from the shared token so both docs systems use one value. */
+export { STORY_MAX_WIDTH, STORY_MAX_WIDTH_CSS_VAR };
 
 /** Set the CSS token consumed by Docs from the shared TypeScript value. */
 export function applyStorybookWidthToken() {
