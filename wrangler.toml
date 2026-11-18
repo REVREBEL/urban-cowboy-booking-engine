@@ -42,6 +42,8 @@ ADMIN_GROUPS = "__ENV_ADMIN_GROUPS__"
 # Tenant served by the private analytics/recovery routes. Queries bind this
 # value; a caller's ?tenant= is rejected when it differs.
 TENANT_ID = "__ENV_TENANT_ID__"
+# Per-route CMS migration flags. webflow (default), shadow or d1.
+CONTENT_SOURCE_POLICY_LANGUAGE = "__ENV_CONTENT_SOURCE_POLICY_LANGUAGE__"
 
 # Secret binding names are declared here; their values are loaded from .env
 # and passed to Wrangler through --secrets-file, never as plaintext vars.

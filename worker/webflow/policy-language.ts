@@ -1,38 +1,11 @@
 import { json, type Env } from "../mews/_lib.ts";
-import type { PolicyLanguage } from "../../src/types/policy-language.ts";
+import { normalizePolicyLanguage, type PolicySourceItem } from "../policy-language.ts";
 
-type Item = {
-  id?: string;
-  isArchived?: boolean;
-  isDraft?: boolean;
-  fieldData?: Record<string, unknown>;
-};
+type Item = PolicySourceItem & { id?: string };
 const WEBFLOW_API = "https://api.webflow.com/v2";
-const text = (value: unknown) => typeof value === "string" ? value.trim() : "";
 
-const FIELDS = {
-  refundableLanguage: "refundable-language",
-  refundableLanguageSubTitle: "refundable-language-sub-title",
-  partiallyRefundableLanguage: "partially-refundable-language",
-  partiallyRefundableLanguageSubTitle: "partially-refundable-language-sub-title",
-  nonRefundableLanguage: "non-refundable-language",
-  nonRefundableLanguageSubTitle: "non-refundable-language-sub-title",
-  atTimeOfBooking: "at-time-of-booking",
-  atTimeOfBookingSubTitle: "at-time-of-booking-sub-title",
-  nextDueDate: "next-due-date",
-  nextDueDateSubTitle: "next-due-date-sub-title",
-} as const;
-
-export function normalizeWebflowPolicyLanguage(item: Item): Partial<PolicyLanguage> {
-  if (item.isDraft || item.isArchived) return {};
-  const fields = item.fieldData ?? {};
-  const result: Partial<PolicyLanguage> = {};
-  for (const [key, slug] of Object.entries(FIELDS) as Array<[keyof PolicyLanguage, string]>) {
-    const value = text(fields[slug]);
-    if (value) result[key] = value;
-  }
-  return result;
-}
+/** Kept as the public Webflow-facing name; normalization is shared with D1. */
+export const normalizeWebflowPolicyLanguage = normalizePolicyLanguage;
 
 export async function onRequestGet({ env }: { env: Env }): Promise<Response> {
   const collectionId = env.WEBFLOW_CONTENT_SETTINGS_COLLECTION_ID;

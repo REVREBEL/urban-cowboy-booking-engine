@@ -241,6 +241,22 @@ export function listScopedContentItems(
   return allScoped(db, query.sql, query.bindings, contentItemRowSchema);
 }
 
+/** Published current-revision payload for one content item, tenant scoped. */
+export async function publishedRevisionPayload(
+  db: D1Database,
+  scope: TenantScope,
+  itemId: string,
+): Promise<string | null> {
+  const row = await db.prepare(
+    `SELECT cr.payload_json
+       FROM content_items ci
+       JOIN content_revisions cr ON cr.id = ci.current_revision_id
+      WHERE ci.tenant_id = ?1 AND ci.id = ?2 AND ci.status = 'published'
+        AND (?3 IS NULL OR ci.location_id = ?3)`,
+  ).bind(scope.tenantId, itemId, scope.locationId ?? null).first() as { payload_json: string } | null;
+  return row?.payload_json ?? null;
+}
+
 const ROOM_TYPES_SELECT =
   "SELECT id, tenant_id, location_id, mews_room_category_id, name, slug, sort_order, created_at FROM room_types";
 const BUILDINGS_SELECT =
