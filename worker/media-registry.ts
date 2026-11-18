@@ -6,7 +6,13 @@
 // media_revisions audit row. All validation happens before writes, and each
 // action is a single D1 batch so a later failure rolls back earlier statements.
 
-import type { MediaAction, MediaAliasType, MediaPlacementType } from "../src/types/d1-contracts.ts";
+import {
+  mediaAssetViewRowSchema,
+  type MediaAction,
+  type MediaAliasType,
+  type MediaAssetView,
+  type MediaPlacementType,
+} from "../src/types/d1-contracts.ts";
 
 export interface MediaFileInput {
   cloudinaryPublicId?: string | null;
@@ -24,7 +30,8 @@ export interface MediaMetadataInput {
 }
 
 interface ActionInput {
-  revisionId: string;
+  /** Caller tag for the audit row. The row ID itself is always generated. */
+  revisionId?: string;
   actor?: string | null;
   note?: string | null;
   metadataJson?: string | null;
@@ -55,7 +62,7 @@ export interface LinkExistingInput extends ActionInput {
 
 export interface PlacementInput {
   id: string;
-  revisionId: string;
+  revisionId?: string;
   tenantId: string;
   mediaId: string;
   targetTable: string;
@@ -121,6 +128,22 @@ async function assertOwned(db: D1Database, tenantId: string, mediaId: string): P
   if (!row) throw new Error("media asset not found in tenant");
 }
 
+function auditMetadata(input: ActionInput): string | null {
+  let base: Record<string, unknown> = {};
+  if (input.metadataJson) {
+    try {
+      const parsed: unknown = JSON.parse(input.metadataJson);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        base = parsed as Record<string, unknown>;
+      }
+    } catch {
+      base = { metadataJson: input.metadataJson };
+    }
+  }
+  const merged = input.revisionId ? { ...base, clientRevisionId: input.revisionId } : base;
+  return Object.keys(merged).length ? JSON.stringify(merged) : null;
+}
+
 function auditStatement(
   db: D1Database,
   input: ActionInput,
@@ -132,15 +155,17 @@ function auditStatement(
   targetTable: string | null = null,
   targetId: string | null = null,
 ): D1PreparedStatement {
+  // Every action gets its own row ID. A caller tag is stored in metadata_json
+  // so reusing a revisionId for two updates cannot collide on the primary key.
   return db.prepare(
     `INSERT INTO media_revisions
        (id, tenant_id, media_asset_id, action, from_version_id, to_version_id,
         target_table, target_id, actor, note, metadata_json)
      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)`,
   ).bind(
-    required(input.revisionId, "revisionId"), tenantId, mediaId, action,
+    crypto.randomUUID(), tenantId, mediaId, action,
     fromVersionId, toVersionId, targetTable, targetId,
-    input.actor ?? null, input.note ?? null, input.metadataJson ?? null,
+    input.actor ?? null, input.note ?? null, auditMetadata(input),
   );
 }
 
@@ -182,13 +207,25 @@ function versionStatements(
 
 function validatePlacement(input: PlacementInput): void {
   required(input.id, "placement id");
-  required(input.revisionId, "placement revisionId");
   required(input.tenantId, "tenantId");
   required(input.mediaId, "mediaId");
   required(input.targetTable, "targetTable");
   required(input.targetId, "targetId");
   required(input.placementType, "placementType");
   if (!Number.isInteger(input.displayOrder)) throw new Error("displayOrder must be an integer");
+}
+
+async function assertPlacementOrderFree(db: D1Database, input: PlacementInput): Promise<void> {
+  const occupied = await db.prepare(
+    `SELECT id FROM media_placements
+      WHERE tenant_id = ?1 AND target_table = ?2 AND target_id = ?3
+        AND placement_type = ?4 AND display_order = ?5 AND id <> ?6
+      LIMIT 1`,
+  ).bind(
+    input.tenantId, input.targetTable, input.targetId,
+    input.placementType, input.displayOrder, input.id,
+  ).first();
+  if (occupied) throw new Error("displayOrder is already used by another placement");
 }
 
 function placementStatements(
@@ -222,6 +259,9 @@ function placementStatements(
         metadataJson: JSON.stringify({
           placementType: input.placementType,
           displayOrder: input.displayOrder,
+          altTextOverride: input.altTextOverride ?? null,
+          captionOverride: input.captionOverride ?? null,
+          descriptionOverride: input.descriptionOverride ?? null,
         }),
       },
       "set_placement",
@@ -239,7 +279,6 @@ export async function createMediaAsset(
   const tenantId = required(input.tenantId, "tenantId");
   const mediaId = required(input.mediaId, "mediaId");
   const versionId = versionIdentity(mediaId, input.version, input.versionId);
-  required(input.revisionId, "revisionId");
   const statements: D1PreparedStatement[] = [
     db.prepare(
       `INSERT INTO media_assets
@@ -278,7 +317,6 @@ export async function linkExistingMedia(
 ): Promise<string> {
   const tenantId = required(input.tenantId, "tenantId");
   const mediaId = required(input.mediaId, "mediaId");
-  required(input.revisionId, "revisionId");
   if (Boolean(input.aliasType) !== Boolean(input.aliasValue)) {
     throw new Error("aliasType and aliasValue must be supplied together");
   }
@@ -289,6 +327,7 @@ export async function linkExistingMedia(
     }
   }
   await assertOwned(db, tenantId, mediaId);
+  if (input.placement) await assertPlacementOrderFree(db, input.placement);
 
   const statements: D1PreparedStatement[] = [];
   if (input.aliasType && input.aliasValue) {
@@ -314,14 +353,14 @@ export async function replaceMediaVersion(
   const tenantId = required(input.tenantId, "tenantId");
   const mediaId = required(input.mediaId, "mediaId");
   const versionId = versionIdentity(mediaId, input.version, input.versionId);
-  required(input.revisionId, "revisionId");
   await assertOwned(db, tenantId, mediaId);
 
   const current = await db.prepare(
     `SELECT MAX(v.version) AS latest, mmd.current_version_id AS current_version_id
        FROM media_versions v
        JOIN media_assets m ON m.id = v.media_asset_id
-       LEFT JOIN media_asset_metadata mmd ON mmd.media_asset_id = v.media_asset_id
+       LEFT JOIN media_asset_metadata mmd
+         ON mmd.media_asset_id = v.media_asset_id AND mmd.tenant_id = m.tenant_id
       WHERE v.media_asset_id = ?1 AND m.tenant_id = ?2`,
   ).bind(mediaId, tenantId).first() as { latest: number; current_version_id: string | null } | null;
   if (!current || input.version <= current.latest) {
@@ -352,6 +391,7 @@ export async function setMediaPlacement(
 ): Promise<string> {
   validatePlacement(input);
   await assertOwned(db, input.tenantId, input.mediaId);
+  await assertPlacementOrderFree(db, input);
   await db.batch(placementStatements(db, input));
   return input.id;
 }
@@ -363,7 +403,6 @@ export async function retireMediaAsset(
 ): Promise<void> {
   const tenantId = required(input.tenantId, "tenantId");
   const mediaId = required(input.mediaId, "mediaId");
-  required(input.revisionId, "revisionId");
   await assertOwned(db, tenantId, mediaId);
   await db.batch([
     db.prepare(
@@ -380,7 +419,7 @@ export async function getMediaAsset(
   db: D1Database,
   tenantId: string,
   mediaId: string,
-): Promise<Record<string, unknown> | null> {
+): Promise<MediaAssetView | null> {
   const row = await db.prepare(
     `SELECT m.id AS media_id, m.tenant_id, m.location_id, m.kind, m.original_filename,
             md.description, md.caption, md.tags, md.attribution, md.status,
@@ -392,5 +431,5 @@ export async function getMediaAsset(
        LEFT JOIN media_version_files vf ON vf.version_id = v.id AND vf.tenant_id = m.tenant_id
       WHERE m.id = ?1 AND m.tenant_id = ?2`,
   ).bind(mediaId, tenantId).first();
-  return (row as Record<string, unknown> | null) ?? null;
+  return row ? mediaAssetViewRowSchema.parse(row) : null;
 }

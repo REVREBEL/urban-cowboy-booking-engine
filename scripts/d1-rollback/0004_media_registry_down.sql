@@ -8,6 +8,7 @@
 -- This file lives outside migrations_dir on purpose: Wrangler treats every
 -- *.sql in migrations_dir as a forward migration.
 
+DROP INDEX IF EXISTS idx_media_versions_asset_id;
 DROP INDEX IF EXISTS idx_media_revisions_tenant_action;
 DROP INDEX IF EXISTS idx_media_revisions_asset;
 DROP INDEX IF EXISTS idx_media_placements_asset;

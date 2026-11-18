@@ -65,6 +65,23 @@ test("media_id and version_id cannot be rewritten", () => {
   db.close();
 });
 
+test("current_version_id must belong to the same media asset", () => {
+  const db = makeDb();
+  assert.throws(() => db.exec(`
+    INSERT INTO media_asset_metadata (media_asset_id, tenant_id, current_version_id)
+    VALUES ('fixture-media', 'contracts-fixture', 'other-version')
+  `), /FOREIGN KEY/);
+  db.exec(`
+    INSERT INTO media_asset_metadata (media_asset_id, tenant_id, current_version_id)
+    VALUES ('fixture-media', 'contracts-fixture', 'fixture-version-1')
+  `);
+  assert.equal(
+    db.prepare("SELECT current_version_id FROM media_asset_metadata WHERE media_asset_id = 'fixture-media'").get().current_version_id,
+    "fixture-version-1",
+  );
+  db.close();
+});
+
 test("a reupload adds a version without moving the media_id or its placements", () => {
   const db = makeDb();
   db.exec(`

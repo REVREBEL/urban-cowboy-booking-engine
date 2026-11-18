@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   mediaActionSchema,
   mediaAssetMetadataRowSchema,
+  mediaAssetViewRowSchema,
   mediaPlacementRowSchema,
   mediaRevisionRowSchema,
   mediaVersionFileRowSchema,
@@ -90,6 +91,33 @@ test("version file, placement and revision rows transform to camelCase", () => {
   assert.equal(revision.fromVersionId, "media-1:v1");
   assert.equal(revision.toVersionId, "media-1:v2");
   assert.equal(revision.actor, "editor@example.com");
+});
+
+test("the joined media view returns a typed camelCase contract", () => {
+  const view = mediaAssetViewRowSchema.parse({
+    media_id: "media-1",
+    tenant_id: "urban-cowboy",
+    location_id: null,
+    kind: "image",
+    original_filename: "room.png",
+    description: "Room photo",
+    caption: null,
+    tags: '["room"]',
+    attribution: null,
+    status: "active",
+    current_version_id: "media-1:v2",
+    version: 2,
+    cloudinary_public_id: "urban-cowboy/room-1",
+    cloudinary_version: "v2",
+    sha256: "hash-2",
+    byte_size: 2048,
+    mime_type: "image/png",
+  });
+  assert.equal(view.mediaId, "media-1");
+  assert.equal(view.currentVersionId, "media-1:v2");
+  assert.equal(view.cloudinaryPublicId, "urban-cowboy/room-1");
+  assert.deepEqual(view.tags, ["room"]);
+  assert.equal(view.status, "active");
 });
 
 test("media actions and placement types reject unknown values", () => {

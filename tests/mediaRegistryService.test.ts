@@ -113,8 +113,8 @@ test("create, link and replace preserve media_id, aliases, placements and metada
   try {
     const { client, created } = await seed(db);
     const before = await getMediaAsset(client, TENANT, created.mediaAssetId);
-    assert.equal(before?.media_id, "photo-1");
-    assert.equal(before?.current_version_id, "photo-1:v1");
+    assert.equal(before?.mediaId, "photo-1");
+    assert.equal(before?.currentVersionId, "photo-1:v1");
 
     const replaced = await replaceMediaVersion(client, {
       tenantId: TENANT,
@@ -139,14 +139,14 @@ test("create, link and replace preserve media_id, aliases, placements and metada
     assert.equal(replaced.versionId, "photo-1:v2");
 
     const after = await getMediaAsset(client, TENANT, created.mediaAssetId);
-    assert.equal(after?.media_id, "photo-1");
-    assert.equal(after?.current_version_id, "photo-1:v2");
+    assert.equal(after?.mediaId, "photo-1");
+    assert.equal(after?.currentVersionId, "photo-1:v2");
     assert.equal(after?.description, "Room photo");
     assert.equal(after?.caption, "Catskills suite");
-    assert.deepEqual(JSON.parse(String(after?.tags)), ["room", "suite"]);
+    assert.deepEqual(after?.tags, ["room", "suite"]);
     assert.equal(after?.attribution, "Photographer");
-    assert.equal(after?.cloudinary_public_id, "urban-cowboy/room-1");
-    assert.equal(after?.cloudinary_version, "v2");
+    assert.equal(after?.cloudinaryPublicId, "urban-cowboy/room-1");
+    assert.equal(after?.cloudinaryVersion, "v2");
     assert.equal(after?.sha256, "hash-2");
 
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_aliases WHERE media_asset_id = 'photo-1'").get().n, 1);
@@ -156,10 +156,13 @@ test("create, link and replace preserve media_id, aliases, placements and metada
 
     const actions = db.prepare("SELECT action FROM media_revisions ORDER BY rowid").all().map((row: any) => row.action);
     assert.deepEqual(actions, ["create_new", "link_existing", "set_placement", "replace"]);
-    const revision = db.prepare("SELECT from_version_id, to_version_id, note FROM media_revisions WHERE id = 'rev-replace'").get();
+    const revision = db.prepare(
+      "SELECT from_version_id, to_version_id, note, metadata_json FROM media_revisions WHERE action = 'replace'",
+    ).get();
     assert.equal(revision.from_version_id, "photo-1:v1");
     assert.equal(revision.to_version_id, "photo-1:v2");
     assert.equal(revision.note, "Reuploaded crop");
+    assert.equal(JSON.parse(revision.metadata_json).clientRevisionId, "rev-replace");
   } finally {
     db.close();
   }
@@ -211,7 +214,7 @@ test("replacement versions must advance and a retired asset stays resolvable", a
     await retireMediaAsset(client, { tenantId: TENANT, mediaId: created.mediaAssetId, revisionId: "rev-retire" });
     const asset = await getMediaAsset(client, TENANT, created.mediaAssetId);
     assert.equal(asset?.status, "retired");
-    assert.equal(asset?.media_id, "photo-1");
+    assert.equal(asset?.mediaId, "photo-1");
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_revisions WHERE action = 'retire'").get().n, 1);
   } finally {
     db.close();
@@ -250,9 +253,81 @@ test("validation runs before writes and a failed batch leaves no partial mutatio
       /simulated batch failure/,
     );
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_versions WHERE media_asset_id = 'photo-1'").get().n, 1);
-    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_revisions WHERE id = 'rev-failed-replace'").get().n, 0);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_revisions WHERE action = 'replace'").get().n, 0);
     const after = await getMediaAsset(client, TENANT, "photo-1");
-    assert.equal(after?.current_version_id, before?.current_version_id);
+    assert.equal(after?.currentVersionId, before?.currentVersionId);
+  } finally {
+    db.close();
+  }
+});
+
+test("repeated placement updates get unique revision rows and full override audit", async () => {
+  const db = makeDb();
+  try {
+    const { client } = await seed(db);
+    const placement = {
+      id: "placement-1",
+      revisionId: "same-tag",
+      tenantId: TENANT,
+      mediaId: "photo-1",
+      targetTable: "room_types",
+      targetId: "room-1",
+      placementType: "gallery" as const,
+      displayOrder: 0,
+      captionOverride: "First",
+    };
+    await setMediaPlacement(client, placement);
+    await setMediaPlacement(client, { ...placement, captionOverride: "Second" });
+
+    const rows = db.prepare(
+      "SELECT id, metadata_json FROM media_revisions WHERE action = 'set_placement' ORDER BY rowid",
+    ).all() as Array<{ id: string; metadata_json: string }>;
+    assert.equal(rows.length, 3);
+    assert.equal(new Set(rows.map((row) => row.id)).size, 3);
+    const latest = JSON.parse(rows[2].metadata_json);
+    assert.equal(latest.clientRevisionId, "same-tag");
+    assert.equal(latest.captionOverride, "Second");
+    assert.equal(latest.displayOrder, 0);
+  } finally {
+    db.close();
+  }
+});
+
+test("a display_order already used in the same target is rejected before writes", async () => {
+  const db = makeDb();
+  try {
+    const { client } = await seed(db);
+    await setMediaPlacement(client, {
+      id: "placement-2",
+      revisionId: "rev-placement-2",
+      tenantId: TENANT,
+      mediaId: "fixture-media",
+      targetTable: "room_types",
+      targetId: "room-1",
+      placementType: "gallery",
+      displayOrder: 1,
+    });
+    await assert.rejects(
+      () => setMediaPlacement(client, {
+        id: "placement-1",
+        revisionId: "rev-reorder",
+        tenantId: TENANT,
+        mediaId: "photo-1",
+        targetTable: "room_types",
+        targetId: "room-1",
+        placementType: "gallery",
+        displayOrder: 1,
+      }),
+      /displayOrder is already used/,
+    );
+    assert.equal(
+      db.prepare("SELECT display_order FROM media_placements WHERE id = 'placement-1'").get().display_order,
+      0,
+    );
+    assert.equal(
+      db.prepare("SELECT COUNT(*) AS n FROM media_revisions WHERE action = 'set_placement'").get().n,
+      2,
+    );
   } finally {
     db.close();
   }

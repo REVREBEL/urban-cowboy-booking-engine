@@ -37,6 +37,12 @@ BEGIN
   SELECT RAISE(ABORT, 'a version cannot change its media_id');
 END;
 
+-- Parent key for the composite FK that keeps current_version_id on the same
+-- media asset. media_versions.id is already globally unique; this index makes
+-- (media_asset_id, id) usable as a foreign key target.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_media_versions_asset_id
+  ON media_versions (media_asset_id, id);
+
 -- ---------------------------------------------------------------------------
 -- Global media metadata
 -- ---------------------------------------------------------------------------
@@ -56,7 +62,9 @@ CREATE TABLE IF NOT EXISTS media_asset_metadata (
   FOREIGN KEY (tenant_id) REFERENCES tenants (id),
   FOREIGN KEY (media_asset_id) REFERENCES media_assets (id),
   FOREIGN KEY (tenant_id, media_asset_id) REFERENCES media_assets (tenant_id, id),
-  FOREIGN KEY (current_version_id) REFERENCES media_versions (id)
+  FOREIGN KEY (current_version_id) REFERENCES media_versions (id),
+  FOREIGN KEY (media_asset_id, current_version_id)
+    REFERENCES media_versions (media_asset_id, id)
 );
 
 -- Provider-specific file facts for one upload. Dimensions already live on

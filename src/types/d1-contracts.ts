@@ -548,3 +548,43 @@ export const mediaRevisionRowSchema = z.object({
   createdAt: row.created_at,
 }));
 export type MediaRevisionContract = z.output<typeof mediaRevisionRowSchema>;
+
+/** Joined current-version view returned by the media registry service. */
+export const mediaAssetViewRowSchema = z.object({
+  media_id: id,
+  tenant_id: id,
+  location_id: nullableText,
+  kind: id,
+  original_filename: nullableText,
+  description: nullableText,
+  caption: nullableText,
+  tags: tagsText.nullable(),
+  attribution: nullableText,
+  status: z.enum(["active", "retired"]).nullable(),
+  current_version_id: nullableText,
+  version: z.number().int().nullable(),
+  cloudinary_public_id: nullableText,
+  cloudinary_version: nullableText,
+  sha256: nullableText,
+  byte_size: z.number().int().nullable(),
+  mime_type: nullableText,
+}).transform((row) => ({
+  mediaId: row.media_id,
+  tenantId: row.tenant_id,
+  locationId: row.location_id,
+  kind: row.kind,
+  originalFilename: row.original_filename,
+  description: row.description,
+  caption: row.caption,
+  tags: row.tags,
+  attribution: row.attribution,
+  status: row.status,
+  currentVersionId: row.current_version_id,
+  version: row.version,
+  cloudinaryPublicId: row.cloudinary_public_id,
+  cloudinaryVersion: row.cloudinary_version,
+  sha256: row.sha256,
+  byteSize: row.byte_size,
+  mimeType: row.mime_type,
+}));
+export type MediaAssetView = z.output<typeof mediaAssetViewRowSchema>;
