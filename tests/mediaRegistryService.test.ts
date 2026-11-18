@@ -30,15 +30,31 @@ function makeDb() {
   return db;
 }
 
-/** D1-shaped adapter over node:sqlite for the action tests. */
-function d1(db: DatabaseSync): any {
+/** D1-shaped adapter over node:sqlite. batch() is atomic, like D1. */
+function d1(db: DatabaseSync, options: { failBatch?: boolean } = {}): any {
   const statement = (sql: string, params: unknown[] = []): any => ({
     bind(...values: unknown[]) { return statement(sql, values); },
     async run() { return db.prepare(sql).run(...params); },
     async all() { return { results: db.prepare(sql).all(...params) }; },
     async first() { return db.prepare(sql).get(...params) ?? null; },
   });
-  return { prepare: (sql: string) => statement(sql) };
+  return {
+    prepare: (sql: string) => statement(sql),
+    async batch(statements: any[]) {
+      db.exec("BEGIN");
+      try {
+        if (options.failBatch) {
+          await statements[0].run();
+          throw new Error("simulated batch failure");
+        }
+        for (const stmt of statements) await stmt.run();
+        db.exec("COMMIT");
+      } catch (error) {
+        db.exec("ROLLBACK");
+        throw error;
+      }
+    },
+  };
 }
 
 const TENANT = "contracts-fixture";
@@ -79,6 +95,7 @@ async function seed(db: DatabaseSync) {
     actor: "editor@example.com",
     placement: {
       id: "placement-1",
+      revisionId: "rev-placement",
       tenantId: TENANT,
       mediaId: created.mediaAssetId,
       targetTable: "room_types",
@@ -110,7 +127,8 @@ test("create, link and replace preserve media_id, aliases, placements and metada
       actor: "editor@example.com",
       note: "Reuploaded crop",
       file: {
-        cloudinaryPublicId: "urban-cowboy/room-2",
+        // Cloudinary keeps public_id stable across uploads and advances version.
+        cloudinaryPublicId: "urban-cowboy/room-1",
         cloudinaryVersion: "v2",
         sha256: "hash-2",
         byteSize: 2048,
@@ -127,7 +145,8 @@ test("create, link and replace preserve media_id, aliases, placements and metada
     assert.equal(after?.caption, "Catskills suite");
     assert.deepEqual(JSON.parse(String(after?.tags)), ["room", "suite"]);
     assert.equal(after?.attribution, "Photographer");
-    assert.equal(after?.cloudinary_public_id, "urban-cowboy/room-2");
+    assert.equal(after?.cloudinary_public_id, "urban-cowboy/room-1");
+    assert.equal(after?.cloudinary_version, "v2");
     assert.equal(after?.sha256, "hash-2");
 
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_aliases WHERE media_asset_id = 'photo-1'").get().n, 1);
@@ -166,8 +185,9 @@ test("cross-tenant actions are rejected before touching another tenant's media",
     );
     await assert.rejects(
       () => setMediaPlacement(client, {
-        id: "bad-placement", tenantId: "other-tenant", mediaId: "photo-1",
-        targetTable: "room_types", targetId: "room-1", placementType: "gallery", displayOrder: 1,
+        id: "bad-placement", revisionId: "bad-placement-rev", tenantId: "other-tenant",
+        mediaId: "photo-1", targetTable: "room_types", targetId: "room-1",
+        placementType: "gallery", displayOrder: 1,
       }),
       /media asset not found in tenant/,
     );
@@ -193,6 +213,46 @@ test("replacement versions must advance and a retired asset stays resolvable", a
     assert.equal(asset?.status, "retired");
     assert.equal(asset?.media_id, "photo-1");
     assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_revisions WHERE action = 'retire'").get().n, 1);
+  } finally {
+    db.close();
+  }
+});
+
+test("validation runs before writes and a failed batch leaves no partial mutation", async () => {
+  const db = makeDb();
+  try {
+    const client = d1(db);
+    await assert.rejects(
+      () => createMediaAsset(client, { ...base, versionId: "wrong-id" }),
+      /versionId must match/,
+    );
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_assets WHERE id = 'photo-1'").get().n, 0);
+
+    const failing = d1(db, { failBatch: true });
+    await assert.rejects(
+      () => createMediaAsset(failing, {
+        ...base, mediaId: "atomic-1", versionId: "atomic-1:v1", revisionId: "rev-atomic",
+      }),
+      /simulated batch failure/,
+    );
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_assets WHERE id = 'atomic-1'").get().n, 0);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_versions WHERE media_asset_id = 'atomic-1'").get().n, 0);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_asset_metadata WHERE media_asset_id = 'atomic-1'").get().n, 0);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_revisions WHERE media_asset_id = 'atomic-1'").get().n, 0);
+
+    await seed(db);
+    const before = await getMediaAsset(client, TENANT, "photo-1");
+    await assert.rejects(
+      () => replaceMediaVersion(failing, {
+        tenantId: TENANT, mediaId: "photo-1", versionId: "photo-1:v2",
+        version: 2, revisionId: "rev-failed-replace",
+      }),
+      /simulated batch failure/,
+    );
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_versions WHERE media_asset_id = 'photo-1'").get().n, 1);
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_revisions WHERE id = 'rev-failed-replace'").get().n, 0);
+    const after = await getMediaAsset(client, TENANT, "photo-1");
+    assert.equal(after?.current_version_id, before?.current_version_id);
   } finally {
     db.close();
   }

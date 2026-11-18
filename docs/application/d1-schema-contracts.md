@@ -83,11 +83,11 @@ Indexes include the `id` tiebreaker and `updated_at DESC` where needed, so `ORDE
 `migrations/0004_media_registry.sql` adds the registry extension. `media_assets.id` is the never-reused `media_id`. `media_versions.id` is the per-upload `version_id`. Triggers block updates to either ID and block moving a version to another media asset.
 
 - `media_asset_metadata` holds global description, caption, tags, attribution, status and the current version ID.
-- `media_version_files` holds Cloudinary `public_id`/`version`, SHA-256, byte size and MIME type for one upload. Dimensions stay on `media_versions`.
+- `media_version_files` holds Cloudinary `public_id`/`version`, SHA-256, byte size and MIME type for one upload. Dimensions stay on `media_versions`. Uniqueness is on `(tenant_id, cloudinary_public_id, cloudinary_version)` because Cloudinary keeps `public_id` stable across uploads and advances `version`.
 - `media_placements` holds placement-level overrides and gallery order. Global metadata stays on the asset, so a reupload cannot change it.
 - `media_revisions` records `create_new`, `link_existing`, `replace`, `retire` and `set_placement` actions with actor, note and from/to version IDs.
 
-`worker/media-registry.ts` implements those actions. `createMediaAsset` creates the logical photo and its first version. `linkExistingMedia` adds a legacy alias and optional placement. `replaceMediaVersion` adds a new version, advances `current_version_id` and leaves every alias and placement untouched. `retireMediaAsset` marks the asset retired without deleting it. All actions are tenant scoped and write an audit row.
+`worker/media-registry.ts` implements those actions. `createMediaAsset` creates the logical photo and its first version. `linkExistingMedia` adds a legacy alias and optional placement. `replaceMediaVersion` adds a new version, advances `current_version_id` and leaves every alias and placement untouched. `retireMediaAsset` marks the asset retired without deleting it. All actions validate before writing, are tenant scoped, run as one D1 batch including the audit row, and roll back completely on failure.
 
 New metadata lives in extension tables because the migration runner applies every migration twice and SQLite has no `ADD COLUMN IF NOT EXISTS`. The Squarespace-shaped columns from 0001 remain for legacy data; new uploads put deterministic fallback values there until a later migration removes them.
 

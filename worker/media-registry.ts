@@ -3,7 +3,8 @@
 // A logical photo keeps media_assets.id for its whole life. Replacing a file
 // adds a media_versions row with a new version_id, so aliases, placements and
 // global metadata keep pointing at the same media_id. Every action writes a
-// media_revisions audit row. All reads and writes are tenant scoped.
+// media_revisions audit row. All validation happens before writes, and each
+// action is a single D1 batch so a later failure rolls back earlier statements.
 
 import type { MediaAction, MediaAliasType, MediaPlacementType } from "../src/types/d1-contracts.ts";
 
@@ -54,6 +55,7 @@ export interface LinkExistingInput extends ActionInput {
 
 export interface PlacementInput {
   id: string;
+  revisionId: string;
   tenantId: string;
   mediaId: string;
   targetTable: string;
@@ -80,6 +82,20 @@ export interface RetireInput extends ActionInput {
   mediaId: string;
 }
 
+function required(value: string | undefined, name: string): string {
+  if (!value?.trim()) throw new Error(`${name} is required`);
+  return value.trim();
+}
+
+function versionIdentity(mediaId: string, version: number, versionId: string): string {
+  required(mediaId, "mediaId");
+  required(versionId, "versionId");
+  if (!Number.isInteger(version) || version < 1) throw new Error("version must be a positive integer");
+  const expected = `${mediaId}:v${version}`;
+  if (versionId !== expected) throw new Error("versionId must match the media_id and version");
+  return versionId;
+}
+
 function tagsJson(tags: string[] | undefined): string | null {
   return tags ? JSON.stringify(tags) : null;
 }
@@ -97,13 +113,15 @@ function legacyAssetIdentity(file: MediaFileInput | undefined, fallback: string)
 }
 
 async function assertOwned(db: D1Database, tenantId: string, mediaId: string): Promise<void> {
+  required(tenantId, "tenantId");
+  required(mediaId, "mediaId");
   const row = await db.prepare(
     "SELECT id FROM media_assets WHERE id = ?1 AND tenant_id = ?2",
   ).bind(mediaId, tenantId).first();
   if (!row) throw new Error("media asset not found in tenant");
 }
 
-async function audit(
+function auditStatement(
   db: D1Database,
   input: ActionInput,
   action: MediaAction,
@@ -113,49 +131,104 @@ async function audit(
   toVersionId: string | null,
   targetTable: string | null = null,
   targetId: string | null = null,
-): Promise<void> {
-  await db.prepare(
+): D1PreparedStatement {
+  return db.prepare(
     `INSERT INTO media_revisions
        (id, tenant_id, media_asset_id, action, from_version_id, to_version_id,
         target_table, target_id, actor, note, metadata_json)
      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)`,
   ).bind(
-    input.revisionId, tenantId, mediaId, action, fromVersionId, toVersionId,
-    targetTable, targetId, input.actor ?? null, input.note ?? null,
-    input.metadataJson ?? null,
-  ).run();
+    required(input.revisionId, "revisionId"), tenantId, mediaId, action,
+    fromVersionId, toVersionId, targetTable, targetId,
+    input.actor ?? null, input.note ?? null, input.metadataJson ?? null,
+  );
 }
 
-async function insertVersionFile(
+function versionStatements(
   db: D1Database,
   tenantId: string,
   mediaId: string,
   version: number,
+  versionId: string,
   width: number | null,
   height: number | null,
   file: MediaFileInput | undefined,
-): Promise<string> {
-  const versionId = `${mediaId}:v${version}`;
+): D1PreparedStatement[] {
   const legacy = legacyAssetIdentity(file, versionId);
-  await db.prepare(
-    `INSERT INTO media_versions
-       (id, media_asset_id, version, squarespace_asset_id, squarespace_url, width, height)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
-  ).bind(versionId, mediaId, version, legacy.squarespaceAssetId, legacy.squarespaceUrl, width, height).run();
-  await db.prepare(
-    `INSERT INTO media_version_files
-       (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version,
-        sha256, byte_size, mime_type)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)`,
-  ).bind(
-    versionId, tenantId, mediaId,
-    file?.cloudinaryPublicId ?? null,
-    file?.cloudinaryVersion ?? null,
-    file?.sha256 ?? null,
-    file?.byteSize ?? null,
-    file?.mimeType ?? null,
-  ).run();
-  return versionId;
+  return [
+    db.prepare(
+      `INSERT INTO media_versions
+         (id, media_asset_id, version, squarespace_asset_id, squarespace_url, width, height)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
+    ).bind(
+      versionId, mediaId, version, legacy.squarespaceAssetId,
+      legacy.squarespaceUrl, width, height,
+    ),
+    db.prepare(
+      `INSERT INTO media_version_files
+         (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version,
+          sha256, byte_size, mime_type)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)`,
+    ).bind(
+      versionId, tenantId, mediaId,
+      file?.cloudinaryPublicId ?? null,
+      file?.cloudinaryVersion ?? null,
+      file?.sha256 ?? null,
+      file?.byteSize ?? null,
+      file?.mimeType ?? null,
+    ),
+  ];
+}
+
+function validatePlacement(input: PlacementInput): void {
+  required(input.id, "placement id");
+  required(input.revisionId, "placement revisionId");
+  required(input.tenantId, "tenantId");
+  required(input.mediaId, "mediaId");
+  required(input.targetTable, "targetTable");
+  required(input.targetId, "targetId");
+  required(input.placementType, "placementType");
+  if (!Number.isInteger(input.displayOrder)) throw new Error("displayOrder must be an integer");
+}
+
+function placementStatements(
+  db: D1Database,
+  input: PlacementInput,
+): D1PreparedStatement[] {
+  validatePlacement(input);
+  return [
+    db.prepare(
+      `INSERT INTO media_placements
+         (id, tenant_id, media_asset_id, target_table, target_id, placement_type,
+          alt_text_override, caption_override, description_override, display_order)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
+       ON CONFLICT (tenant_id, target_table, target_id, placement_type, media_asset_id)
+       DO UPDATE SET
+         alt_text_override = excluded.alt_text_override,
+         caption_override = excluded.caption_override,
+         description_override = excluded.description_override,
+         display_order = excluded.display_order,
+         updated_at = datetime('now')`,
+    ).bind(
+      input.id, input.tenantId, input.mediaId,
+      input.targetTable, input.targetId, input.placementType,
+      input.altTextOverride ?? null, input.captionOverride ?? null,
+      input.descriptionOverride ?? null, input.displayOrder,
+    ),
+    auditStatement(
+      db,
+      {
+        revisionId: input.revisionId,
+        metadataJson: JSON.stringify({
+          placementType: input.placementType,
+          displayOrder: input.displayOrder,
+        }),
+      },
+      "set_placement",
+      input.tenantId, input.mediaId, null, null,
+      input.targetTable, input.targetId,
+    ),
+  ];
 }
 
 /** Creates a new logical photo and its first immutable version. */
@@ -163,38 +236,39 @@ export async function createMediaAsset(
   db: D1Database,
   input: CreateMediaInput,
 ): Promise<{ mediaAssetId: string; versionId: string }> {
-  await db.prepare(
-    `INSERT INTO media_assets
-       (id, tenant_id, location_id, kind, original_filename)
-     VALUES (?1, ?2, ?3, ?4, ?5)`,
-  ).bind(
-    input.mediaId, input.tenantId, input.locationId ?? null,
-    input.kind, input.originalFilename ?? null,
-  ).run();
-
-  const versionId = await insertVersionFile(
-    db, input.tenantId, input.mediaId, input.version,
-    input.width ?? null, input.height ?? null, input.file,
-  );
-  if (versionId !== input.versionId) {
-    throw new Error("versionId must match the media_id and version");
-  }
-
-  await db.prepare(
-    `INSERT INTO media_asset_metadata
-       (media_asset_id, tenant_id, description, caption, tags, attribution, current_version_id)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
-  ).bind(
-    input.mediaId, input.tenantId,
-    input.metadata?.description ?? null,
-    input.metadata?.caption ?? null,
-    tagsJson(input.metadata?.tags),
-    input.metadata?.attribution ?? null,
-    versionId,
-  ).run();
-
-  await audit(db, input, "create_new", input.tenantId, input.mediaId, null, versionId);
-  return { mediaAssetId: input.mediaId, versionId };
+  const tenantId = required(input.tenantId, "tenantId");
+  const mediaId = required(input.mediaId, "mediaId");
+  const versionId = versionIdentity(mediaId, input.version, input.versionId);
+  required(input.revisionId, "revisionId");
+  const statements: D1PreparedStatement[] = [
+    db.prepare(
+      `INSERT INTO media_assets
+         (id, tenant_id, location_id, kind, original_filename)
+       VALUES (?1, ?2, ?3, ?4, ?5)`,
+    ).bind(
+      mediaId, tenantId, input.locationId ?? null,
+      input.kind, input.originalFilename ?? null,
+    ),
+    ...versionStatements(
+      db, tenantId, mediaId, input.version, versionId,
+      input.width ?? null, input.height ?? null, input.file,
+    ),
+    db.prepare(
+      `INSERT INTO media_asset_metadata
+         (media_asset_id, tenant_id, description, caption, tags, attribution, current_version_id)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
+    ).bind(
+      mediaId, tenantId,
+      input.metadata?.description ?? null,
+      input.metadata?.caption ?? null,
+      tagsJson(input.metadata?.tags),
+      input.metadata?.attribution ?? null,
+      versionId,
+    ),
+    auditStatement(db, input, "create_new", tenantId, mediaId, null, versionId),
+  ];
+  await db.batch(statements);
+  return { mediaAssetId: mediaId, versionId };
 }
 
 /** Links a legacy ID or placement to an existing media_id without copying metadata. */
@@ -202,19 +276,34 @@ export async function linkExistingMedia(
   db: D1Database,
   input: LinkExistingInput,
 ): Promise<string> {
-  await assertOwned(db, input.tenantId, input.mediaId);
+  const tenantId = required(input.tenantId, "tenantId");
+  const mediaId = required(input.mediaId, "mediaId");
+  required(input.revisionId, "revisionId");
+  if (Boolean(input.aliasType) !== Boolean(input.aliasValue)) {
+    throw new Error("aliasType and aliasValue must be supplied together");
+  }
+  if (input.placement) {
+    validatePlacement(input.placement);
+    if (input.placement.tenantId !== tenantId || input.placement.mediaId !== mediaId) {
+      throw new Error("placement must target this tenant and media asset");
+    }
+  }
+  await assertOwned(db, tenantId, mediaId);
+
+  const statements: D1PreparedStatement[] = [];
   if (input.aliasType && input.aliasValue) {
-    await db.prepare(
+    statements.push(db.prepare(
       `INSERT INTO media_aliases (id, tenant_id, media_asset_id, alias_type, alias_value)
        VALUES (?1, ?2, ?3, ?4, ?5)`,
     ).bind(
-      input.aliasId ?? `${input.mediaId}:${input.aliasType}`,
-      input.tenantId, input.mediaId, input.aliasType, input.aliasValue,
-    ).run();
+      input.aliasId ?? `${mediaId}:${input.aliasType}`,
+      tenantId, mediaId, input.aliasType, input.aliasValue,
+    ));
   }
-  await audit(db, input, "link_existing", input.tenantId, input.mediaId, null, null);
-  if (input.placement) await setMediaPlacement(db, input.placement);
-  return input.mediaId;
+  statements.push(auditStatement(db, input, "link_existing", tenantId, mediaId, null, null));
+  if (input.placement) statements.push(...placementStatements(db, input.placement));
+  await db.batch(statements);
+  return mediaId;
 }
 
 /** Adds a new upload version. The media_id, aliases and placements never change. */
@@ -222,35 +311,38 @@ export async function replaceMediaVersion(
   db: D1Database,
   input: ReplaceVersionInput,
 ): Promise<{ mediaAssetId: string; versionId: string }> {
-  await assertOwned(db, input.tenantId, input.mediaId);
+  const tenantId = required(input.tenantId, "tenantId");
+  const mediaId = required(input.mediaId, "mediaId");
+  const versionId = versionIdentity(mediaId, input.version, input.versionId);
+  required(input.revisionId, "revisionId");
+  await assertOwned(db, tenantId, mediaId);
+
   const current = await db.prepare(
     `SELECT MAX(v.version) AS latest, mmd.current_version_id AS current_version_id
        FROM media_versions v
        JOIN media_assets m ON m.id = v.media_asset_id
        LEFT JOIN media_asset_metadata mmd ON mmd.media_asset_id = v.media_asset_id
       WHERE v.media_asset_id = ?1 AND m.tenant_id = ?2`,
-  ).bind(input.mediaId, input.tenantId).first() as { latest: number; current_version_id: string | null } | null;
+  ).bind(mediaId, tenantId).first() as { latest: number; current_version_id: string | null } | null;
   if (!current || input.version <= current.latest) {
     throw new Error("replacement version must be greater than the latest version");
   }
 
-  const versionId = await insertVersionFile(
-    db, input.tenantId, input.mediaId, input.version,
-    input.width ?? null, input.height ?? null, input.file,
-  );
-  if (versionId !== input.versionId) {
-    throw new Error("versionId must match the media_id and version");
-  }
-  await db.prepare(
-    `UPDATE media_asset_metadata
-        SET current_version_id = ?1, updated_at = datetime('now')
-      WHERE media_asset_id = ?2 AND tenant_id = ?3`,
-  ).bind(versionId, input.mediaId, input.tenantId).run();
-  await audit(
-    db, input, "replace", input.tenantId, input.mediaId,
-    current.current_version_id, versionId,
-  );
-  return { mediaAssetId: input.mediaId, versionId };
+  await db.batch([
+    ...versionStatements(
+      db, tenantId, mediaId, input.version, versionId,
+      input.width ?? null, input.height ?? null, input.file,
+    ),
+    db.prepare(
+      `UPDATE media_asset_metadata
+          SET current_version_id = ?1, updated_at = datetime('now')
+        WHERE media_asset_id = ?2 AND tenant_id = ?3`,
+    ).bind(versionId, mediaId, tenantId),
+    auditStatement(
+      db, input, "replace", tenantId, mediaId, current.current_version_id, versionId,
+    ),
+  ]);
+  return { mediaAssetId: mediaId, versionId };
 }
 
 /** Adds or updates one placement. Global metadata stays on the media asset. */
@@ -258,34 +350,9 @@ export async function setMediaPlacement(
   db: D1Database,
   input: PlacementInput,
 ): Promise<string> {
+  validatePlacement(input);
   await assertOwned(db, input.tenantId, input.mediaId);
-  await db.prepare(
-    `INSERT INTO media_placements
-       (id, tenant_id, media_asset_id, target_table, target_id, placement_type,
-        alt_text_override, caption_override, description_override, display_order)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)
-     ON CONFLICT (tenant_id, target_table, target_id, placement_type, media_asset_id)
-     DO UPDATE SET
-       alt_text_override = excluded.alt_text_override,
-       caption_override = excluded.caption_override,
-       description_override = excluded.description_override,
-       display_order = excluded.display_order,
-       updated_at = datetime('now')`,
-  ).bind(
-    input.id, input.tenantId, input.mediaId,
-    input.targetTable, input.targetId, input.placementType,
-    input.altTextOverride ?? null, input.captionOverride ?? null,
-    input.descriptionOverride ?? null, input.displayOrder,
-  ).run();
-  await db.prepare(
-    `INSERT INTO media_revisions
-       (id, tenant_id, media_asset_id, action, target_table, target_id, metadata_json)
-     VALUES (?1, ?2, ?3, 'set_placement', ?4, ?5, ?6)`,
-  ).bind(
-    `placement:${input.id}`, input.tenantId, input.mediaId,
-    input.targetTable, input.targetId,
-    JSON.stringify({ placementType: input.placementType, displayOrder: input.displayOrder }),
-  ).run();
+  await db.batch(placementStatements(db, input));
   return input.id;
 }
 
@@ -294,13 +361,18 @@ export async function retireMediaAsset(
   db: D1Database,
   input: RetireInput,
 ): Promise<void> {
-  await assertOwned(db, input.tenantId, input.mediaId);
-  await db.prepare(
-    `UPDATE media_asset_metadata
-        SET status = 'retired', updated_at = datetime('now')
-      WHERE media_asset_id = ?1 AND tenant_id = ?2`,
-  ).bind(input.mediaId, input.tenantId).run();
-  await audit(db, input, "retire", input.tenantId, input.mediaId, null, null);
+  const tenantId = required(input.tenantId, "tenantId");
+  const mediaId = required(input.mediaId, "mediaId");
+  required(input.revisionId, "revisionId");
+  await assertOwned(db, tenantId, mediaId);
+  await db.batch([
+    db.prepare(
+      `UPDATE media_asset_metadata
+          SET status = 'retired', updated_at = datetime('now')
+        WHERE media_asset_id = ?1 AND tenant_id = ?2`,
+    ).bind(mediaId, tenantId),
+    auditStatement(db, input, "retire", tenantId, mediaId, null, null),
+  ]);
 }
 
 /** Returns the current version and global metadata for one media_id. */

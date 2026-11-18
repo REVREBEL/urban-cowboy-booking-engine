@@ -122,7 +122,7 @@ test("placement order and asset are unique per target, and tenant ownership is e
   db.close();
 });
 
-test("revision actions and Cloudinary public IDs are bounded", () => {
+test("revision actions and Cloudinary version identity are bounded", () => {
   const db = makeDb();
   assert.throws(() => db.exec(`
     INSERT INTO media_revisions (id, tenant_id, media_asset_id, action)
@@ -132,16 +132,22 @@ test("revision actions and Cloudinary public IDs are bounded", () => {
     INSERT INTO media_version_files (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version, sha256)
     VALUES ('fixture-version-1', 'contracts-fixture', 'fixture-media', 'urban-cowboy/room-1', 'v1', 'hash-1')
   `);
-  assert.throws(() => db.exec(`
+  // A reupload keeps the public_id and advances the Cloudinary version.
+  db.exec(`
     INSERT INTO media_version_files (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version, sha256)
     VALUES ('fixture-version-2', 'contracts-fixture', 'fixture-media', 'urban-cowboy/room-1', 'v2', 'hash-2')
-  `));
-  // The same public ID may exist under a different tenant.
-  db.exec(`
-    INSERT INTO media_version_files (version_id, tenant_id, media_asset_id, cloudinary_public_id)
-    VALUES ('other-version', 'other-tenant', 'other-media', 'urban-cowboy/room-1')
   `);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_version_files").get().n, 2);
+  assert.throws(() => db.exec(`
+    INSERT INTO media_version_files (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version, sha256)
+    VALUES ('fixture-version-3', 'contracts-fixture', 'fixture-media', 'urban-cowboy/room-1', 'v2', 'hash-3')
+  `));
+  // The same provider identity may exist under a different tenant.
+  db.exec(`
+    INSERT INTO media_version_files (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version)
+    VALUES ('other-version', 'other-tenant', 'other-media', 'urban-cowboy/room-1', 'v1')
+  `);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_version_files").get().n, 3);
   db.close();
 });
 

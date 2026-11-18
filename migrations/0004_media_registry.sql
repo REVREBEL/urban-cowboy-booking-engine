@@ -71,7 +71,9 @@ CREATE TABLE IF NOT EXISTS media_version_files (
   byte_size INTEGER,
   mime_type TEXT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  UNIQUE (tenant_id, cloudinary_public_id),
+  -- Cloudinary keeps public_id stable across uploads and changes the delivery
+  -- version. The pair identifies one delivered file; version_id is the PK.
+  UNIQUE (tenant_id, cloudinary_public_id, cloudinary_version),
   FOREIGN KEY (tenant_id) REFERENCES tenants (id),
   FOREIGN KEY (version_id) REFERENCES media_versions (id),
   FOREIGN KEY (media_asset_id) REFERENCES media_assets (id),
