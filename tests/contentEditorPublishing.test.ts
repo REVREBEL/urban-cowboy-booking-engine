@@ -13,7 +13,8 @@ import {
   type Authorize,
   type EditorCtx,
 } from "../worker/content-editor.ts";
-import { getSnapshot } from "../worker/published-snapshots.ts";
+import { getSnapshot, saveSnapshot } from "../worker/published-snapshots.ts";
+import { buildSnapshot, loadPublishedCollection } from "../worker/content-provider.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -28,21 +29,43 @@ function makeDb() {
     "migrations/0003_property_scoped_contracts.sql",
     "migrations/0004_published_snapshots.sql",
     "migrations/0005_media_registry.sql",
+    "migrations/0006_working_revision_pointer.sql",
   ]) db.exec(read(file));
   db.exec("INSERT INTO tenants (id, slug, name) VALUES ('urban-cowboy','urban-cowboy','Urban Cowboy')");
+  db.exec("INSERT INTO locations (id, tenant_id, slug, name) VALUES ('catskills','urban-cowboy','catskills','Catskills')");
   return db;
 }
 
-function d1(db: DatabaseSync): any {
+function d1(db: DatabaseSync, failBatch = false): any {
   return {
     prepare(sql: string) {
       let params: unknown[] = [];
       return {
+        get sql() { return sql; },
+        get params() { return params; },
         bind(...values: unknown[]) { params = values; return this; },
         async all() { return { results: db.prepare(sql).all(...params) }; },
         async first() { return db.prepare(sql).get(...params) ?? null; },
-        async run() { db.prepare(sql).run(...params); return { success: true }; },
+        async run() {
+          db.prepare(sql).run(...params);
+          return { success: true, changes: (db.prepare("SELECT changes() AS n").get() as any).n };
+        },
       };
+    },
+    async batch(statements: Array<{ sql: string; params: unknown[] }>) {
+      db.exec("BEGIN");
+      try {
+        if (failBatch) throw new Error("injected batch failure");
+        const results = statements.map((s) => {
+          db.prepare(s.sql).run(...s.params);
+          return { success: true, changes: (db.prepare("SELECT changes() AS n").get() as any).n };
+        });
+        db.exec("COMMIT");
+        return results;
+      } catch (err) {
+        db.exec("ROLLBACK");
+        throw err;
+      }
     },
   };
 }
@@ -54,14 +77,14 @@ const principal = {
 const allowAdmin: Authorize = async (_request, _env, role) =>
   role === "admin" ? principal : new Response(JSON.stringify({ error: "forbidden" }), { status: 403 });
 
-function ctx(db: DatabaseSync, body?: unknown): EditorCtx {
+function ctx(db: DatabaseSync, body?: unknown, failBatch = false): EditorCtx {
   return {
     request: new Request("https://example.test/api/content/editor/items", body === undefined ? {} : {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     }),
-    env: { DB: d1(db) } as any,
+    env: { DB: d1(db, failBatch) } as any,
     waitUntil: () => {},
   };
 }
@@ -94,7 +117,9 @@ test("draft creation and draft edits never change the published snapshot", async
 
   const item = db.prepare("SELECT status, current_revision_id FROM content_items WHERE id=?").get(id) as any;
   assert.equal(item.status, "draft");
-  assert.equal(item.current_revision_id, savedBody.revisionId);
+  assert.equal(item.current_revision_id, null); // published pointer never moves on edit
+  const working = db.prepare("SELECT working_revision_id FROM content_item_pointers WHERE tenant_id=? AND content_item_id=?").get(TENANT, id) as any;
+  assert.equal(working.working_revision_id, savedBody.revisionId);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='draft_saved'").get().n, 1);
   db.close();
 });
@@ -129,6 +154,7 @@ test("publish makes a revision live and refresh; rollback repoints an earlier on
   assert.equal(rolled.status, 200);
   assert.equal((await rolled.json() as any).revisionId, v1);
   assert.equal(db.prepare("SELECT current_revision_id FROM content_items WHERE id=?").get(id).current_revision_id, v1);
+  assert.equal(db.prepare("SELECT working_revision_id FROM content_item_pointers WHERE tenant_id=? AND content_item_id=?").get(TENANT, id).working_revision_id, v1);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='content_rolled_back'").get().n, 1);
   const previewCtx: EditorCtx = {
     ...ctx(db),
@@ -171,6 +197,58 @@ test("role and tenant checks live on the API, not only the UI", async () => {
     request: new Request(`https://example.test/api/content/editor/items/${id}`),
   }, id, otherTenant);
   assert.equal(read.status, 404);
+  db.close();
+});
+
+test("editing a published item cannot leak into an independent snapshot refresh", async () => {
+  const db = makeDb();
+  const { id, revisionId: v1 } = await create(db, { title: "v1" });
+  await publishEditorItem(ctx(db, { revisionId: v1 }), id, allowAdmin);
+  const publishedVersion = await snapshotVersion(db);
+  assert.ok(publishedVersion);
+
+  const saved = await saveEditorDraft(ctx(db, {
+    payload: { title: "draft-v2" }, expectedRevisionId: v1,
+  }), id, allowAdmin);
+  assert.equal(saved.status, 200);
+
+  // Simulate an independent/manual COW-32 refresh after the draft edit.
+  const api = d1(db);
+  const records = await loadPublishedCollection(api, { tenantId: TENANT }, "contentItems");
+  await saveSnapshot(api, { tenantId: TENANT }, "contentItems", await buildSnapshot("contentItems", records));
+  assert.equal(await snapshotVersion(db), publishedVersion);
+  assert.equal(db.prepare("SELECT current_revision_id FROM content_items WHERE id=?").get(id).current_revision_id, v1);
+
+  const explicit = await publishEditorItem(ctx(db, {}), id, allowAdmin);
+  assert.equal(explicit.status, 200);
+  assert.notEqual(await snapshotVersion(db), publishedVersion);
+  db.close();
+});
+
+test("a caller-supplied location must belong to the authorized tenant", async () => {
+  const db = makeDb();
+  const foreign = await createEditorDraft(ctx(db, {
+    kind: "policy", slug: "x", locationId: "foreign-location", payload: {},
+  }), allowAdmin);
+  assert.equal(foreign.status, 400);
+  assert.equal((await foreign.json() as any).error, "invalid_location");
+
+  const own = await createEditorDraft(ctx(db, {
+    kind: "policy", slug: "x", locationId: "catskills", payload: {},
+  }), allowAdmin);
+  assert.equal(own.status, 201);
+  db.close();
+});
+
+test("an injected batch failure leaves no partial revision or audit writes", async () => {
+  const db = makeDb();
+  const { id, revisionId } = await create(db, { title: "v1" });
+  await assert.rejects(() => saveEditorDraft(ctx(db, {
+    payload: { title: "v2" }, expectedRevisionId: revisionId,
+  }, true), id, allowAdmin));
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM content_revisions WHERE content_item_id=?").get(id).n, 1);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='draft_saved'").get().n, 0);
+  assert.equal(db.prepare("SELECT working_revision_id FROM content_item_pointers WHERE content_item_id=?").get(id).working_revision_id, revisionId);
   db.close();
 });
 

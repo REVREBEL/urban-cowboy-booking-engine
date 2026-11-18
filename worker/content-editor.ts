@@ -57,28 +57,28 @@ async function admin(ctx: EditorCtx, authorize: Authorize): Promise<Principal | 
 }
 
 /** D1 rows stay snake_case internally; the editor API speaks camelCase. */
-function toEditorItemSummary(row: any) {
+function toEditorItemSummary(row: any, workingRevisionId?: string | null) {
   return {
     id: row.id,
     kind: row.kind,
     slug: row.slug,
     status: row.status,
     currentRevisionId: row.current_revision_id ?? null,
+    workingRevisionId: workingRevisionId ?? null,
     updatedAt: row.updated_at,
   };
 }
 
-async function audit(
+/** Working pointer for an item; legacy rows fall back to the published pointer. */
+async function workingRevisionId(
   db: D1Database,
   tenantId: string,
-  actor: string,
-  action: string,
-  targetId: string,
-  metadata: Record<string, unknown>,
-): Promise<void> {
-  await db.prepare(
-    "INSERT INTO audit_log (id, tenant_id, actor, action, target_type, target_id, metadata_json) VALUES (?1, ?2, ?3, ?4, 'content_item', ?5, ?6)",
-  ).bind(crypto.randomUUID(), tenantId, actor, action, targetId, JSON.stringify(metadata)).run();
+  item: any,
+): Promise<string | null> {
+  const row = await db.prepare(
+    "SELECT working_revision_id FROM content_item_pointers WHERE tenant_id = ?1 AND content_item_id = ?2",
+  ).bind(tenantId, item.id).first() as { working_revision_id: string | null } | null;
+  return row?.working_revision_id ?? item.current_revision_id ?? null;
 }
 
 async function ownedItem(db: D1Database, id: string, tenantId: string): Promise<any | null> {
@@ -117,9 +117,9 @@ export async function listEditorItems(
   const db = ctx.env.DB;
   if (!db) return json({ error: "D1 not configured" }, 503);
   const result = await db.prepare(
-    "SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items WHERE tenant_id = ?1 ORDER BY updated_at DESC, id",
+    "SELECT ci.id, ci.kind, ci.slug, ci.status, ci.current_revision_id, ci.updated_at, p.working_revision_id FROM content_items ci LEFT JOIN content_item_pointers p ON p.tenant_id = ci.tenant_id AND p.content_item_id = ci.id WHERE ci.tenant_id = ?1 ORDER BY ci.updated_at DESC, ci.id",
   ).bind(principal.tenantId).all();
-  return json({ items: (result.results ?? []).map(toEditorItemSummary) });
+  return json({ items: (result.results ?? []).map((row: any) => toEditorItemSummary(row, row.working_revision_id)) });
 }
 
 export async function getEditorItem(
@@ -137,6 +137,7 @@ export async function getEditorItem(
   const revisions = await db.prepare(
     "SELECT id, revision, payload_json, published_at, created_by, created_at FROM content_revisions WHERE content_item_id = ?1 ORDER BY revision",
   ).bind(id).all();
+  const working = await workingRevisionId(db, principal.tenantId, item);
   const revisionsList = (revisions.results ?? []) as any[];
   const requested = new URL(ctx.request.url).searchParams.get("revisionId");
   let revision: any;
@@ -144,10 +145,10 @@ export async function getEditorItem(
     revision = revisionsList.find((r) => r.id === requested);
     if (!revision) return json({ error: "revision_not_found" }, 404);
   } else {
-    revision = revisionsList.find((r) => r.id === item.current_revision_id);
+    revision = revisionsList.find((r) => r.id === working);
   }
   return json({
-    item: toEditorItemSummary(item),
+    item: toEditorItemSummary(item, working),
     revisions: revisionsList.map((r) => ({
       id: r.id, revision: r.revision, publishedAt: r.published_at,
       createdBy: r.created_by, createdAt: r.created_at,
@@ -168,16 +169,32 @@ export async function createEditorDraft(
   const db = ctx.env.DB;
   if (!db) return json({ error: "D1 not configured" }, 503);
 
+  // A caller-supplied location must belong to the authorized tenant: the FK
+  // alone only proves the row exists somewhere.
+  if (input.locationId) {
+    const location = await db.prepare(
+      "SELECT id FROM locations WHERE id = ?1 AND tenant_id = ?2",
+    ).bind(input.locationId, principal.tenantId).first();
+    if (!location) return json({ error: "invalid_location" }, 400);
+  }
+
   const id = crypto.randomUUID();
   const revisionId = `${id}-r1`;
   const actor = principal.email || principal.sub || "unknown";
-  await db.prepare(
-    "INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status, current_revision_id) VALUES (?1, ?2, ?3, ?4, ?5, 'draft', ?6)",
-  ).bind(id, principal.tenantId, input.locationId ?? null, input.kind, input.slug, revisionId).run();
-  await db.prepare(
-    "INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by) VALUES (?1, ?2, 1, ?3, ?4)",
-  ).bind(revisionId, id, JSON.stringify(input.payload), actor).run();
-  await audit(db, principal.tenantId, actor, "draft_created", id, { kind: input.kind, slug: input.slug, revisionId });
+  await db.batch([
+    db.prepare(
+      "INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status, current_revision_id) VALUES (?1, ?2, ?3, ?4, ?5, 'draft', NULL)",
+    ).bind(id, principal.tenantId, input.locationId ?? null, input.kind, input.slug),
+    db.prepare(
+      "INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by) VALUES (?1, ?2, 1, ?3, ?4)",
+    ).bind(revisionId, id, JSON.stringify(input.payload), actor),
+    db.prepare(
+      "INSERT INTO content_item_pointers (tenant_id, content_item_id, working_revision_id) VALUES (?1, ?2, ?3)",
+    ).bind(principal.tenantId, id, revisionId),
+    db.prepare(
+      "INSERT INTO audit_log (id, tenant_id, actor, action, target_type, target_id, metadata_json) VALUES (?1, ?2, ?3, 'draft_created', 'content_item', ?4, ?5)",
+    ).bind(crypto.randomUUID(), principal.tenantId, actor, id, JSON.stringify({ kind: input.kind, slug: input.slug, revisionId })),
+  ]);
   return json({ id, revisionId, status: "draft" }, 201);
 }
 
@@ -194,8 +211,9 @@ export async function saveEditorDraft(
   if (!db) return json({ error: "D1 not configured" }, 503);
   const item = await ownedItem(db, id, principal.tenantId);
   if (!item) return json({ error: "not_found" }, 404);
-  if (item.current_revision_id !== input.expectedRevisionId) {
-    return json({ error: "edit_conflict", currentRevisionId: item.current_revision_id }, 409);
+  const working = await workingRevisionId(db, principal.tenantId, item);
+  if (working !== input.expectedRevisionId) {
+    return json({ error: "edit_conflict", workingRevisionId: working }, 409);
   }
 
   const last = await db.prepare(
@@ -204,14 +222,29 @@ export async function saveEditorDraft(
   const next = (last?.n ?? 0) + 1;
   const revisionId = `${id}-r${next}`;
   const actor = principal.email || principal.sub || "unknown";
-  await db.prepare(
-    "INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by) VALUES (?1, ?2, ?3, ?4, ?5)",
-  ).bind(revisionId, id, next, JSON.stringify(input.payload), actor).run();
-  await db.prepare(
-    "UPDATE content_items SET current_revision_id = ?1, updated_at = datetime('now') WHERE id = ?2 AND tenant_id = ?3",
-  ).bind(revisionId, id, principal.tenantId).run();
-  await audit(db, principal.tenantId, actor, "draft_saved", id, { revisionId, basedOn: input.expectedRevisionId });
-  // Deliberately no status change and no snapshot refresh: the public view is untouched.
+
+  // One atomic batch: every write is guarded by the same working-pointer
+  // predicate. Two stale saves cannot both win; the loser's writes are no-ops
+  // and it receives a deterministic 409 rather than a unique-key 500.
+  const guard =
+    "SELECT 1 FROM content_item_pointers WHERE tenant_id = ?6 AND content_item_id = ?2 AND working_revision_id = ?7";
+  const results = await db.batch([
+    db.prepare(
+      `INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by) SELECT ?1, ?2, ?3, ?4, ?5 WHERE EXISTS (${guard})`,
+    ).bind(revisionId, id, next, JSON.stringify(input.payload), actor, principal.tenantId, input.expectedRevisionId),
+    // Audit must run before the pointer moves: its guard checks the old pointer.
+    db.prepare(
+      "INSERT INTO audit_log (id, tenant_id, actor, action, target_type, target_id, metadata_json) SELECT ?1, ?2, ?3, 'draft_saved', 'content_item', ?4, ?5 WHERE EXISTS (SELECT 1 FROM content_item_pointers WHERE tenant_id = ?6 AND content_item_id = ?4 AND working_revision_id = ?7)",
+    ).bind(crypto.randomUUID(), principal.tenantId, actor, id, JSON.stringify({ revisionId, basedOn: input.expectedRevisionId }), principal.tenantId, input.expectedRevisionId),
+    db.prepare(
+      "UPDATE content_item_pointers SET working_revision_id = ?1, updated_at = datetime('now') WHERE tenant_id = ?2 AND content_item_id = ?3 AND working_revision_id = ?4",
+    ).bind(revisionId, principal.tenantId, id, input.expectedRevisionId),
+  ]);
+  if (((results[2] as any)?.changes ?? 0) !== 1) {
+    return json({ error: "edit_conflict", workingRevisionId: working }, 409);
+  }
+  // Deliberately no status change and no snapshot refresh: the public view,
+  // including content_items.current_revision_id, is untouched.
   return json({ id, revisionId, status: item.status, snapshotRefreshed: false });
 }
 
@@ -228,18 +261,28 @@ export async function publishEditorItem(
   if (!db) return json({ error: "D1 not configured" }, 503);
   const item = await ownedItem(db, id, principal.tenantId);
   if (!item) return json({ error: "not_found" }, 404);
-  const revisionId = input.revisionId ?? item.current_revision_id;
+  // With no explicit revision, publish the current draft (working pointer),
+  // not the already-published pointer.
+  const revisionId = input.revisionId ?? await workingRevisionId(db, principal.tenantId, item) ?? undefined;
+  if (!revisionId) return json({ error: "revision_not_found" }, 404);
   const revision = await db.prepare(
     "SELECT id FROM content_revisions WHERE id = ?1 AND content_item_id = ?2",
   ).bind(revisionId, id).first();
   if (!revision) return json({ error: "revision_not_found" }, 404);
 
   const actor = principal.email || principal.sub || "unknown";
-  await db.prepare("UPDATE content_revisions SET published_at = datetime('now') WHERE id = ?1").bind(revisionId).run();
-  await db.prepare(
-    "UPDATE content_items SET status = 'published', current_revision_id = ?1, updated_at = datetime('now') WHERE id = ?2 AND tenant_id = ?3",
-  ).bind(revisionId, id, principal.tenantId).run();
-  await audit(db, principal.tenantId, actor, "content_published", id, { revisionId });
+  await db.batch([
+    db.prepare("UPDATE content_revisions SET published_at = datetime('now') WHERE id = ?1").bind(revisionId),
+    db.prepare(
+      "UPDATE content_items SET status = 'published', current_revision_id = ?1, updated_at = datetime('now') WHERE id = ?2 AND tenant_id = ?3",
+    ).bind(revisionId, id, principal.tenantId),
+    db.prepare(
+      "INSERT INTO content_item_pointers (tenant_id, content_item_id, working_revision_id) VALUES (?1, ?2, ?3) ON CONFLICT (tenant_id, content_item_id) DO UPDATE SET working_revision_id = excluded.working_revision_id, updated_at = datetime('now')",
+    ).bind(principal.tenantId, id, revisionId),
+    db.prepare(
+      "INSERT INTO audit_log (id, tenant_id, actor, action, target_type, target_id, metadata_json) VALUES (?1, ?2, ?3, 'content_published', 'content_item', ?4, ?5)",
+    ).bind(crypto.randomUUID(), principal.tenantId, actor, id, JSON.stringify({ revisionId })),
+  ]);
   const refreshed = await refreshPublishedSnapshot(db, ctx.env, principal.tenantId, item.location_id);
   return json({ id, revisionId, status: "published", snapshotRefreshed: refreshed });
 }
@@ -263,13 +306,20 @@ export async function rollbackEditorItem(
   if (!revision) return json({ error: "revision_not_found" }, 404);
 
   const actor = principal.email || principal.sub || "unknown";
-  await db.prepare("UPDATE content_revisions SET published_at = datetime('now') WHERE id = ?1").bind(input.revisionId).run();
-  await db.prepare(
-    "UPDATE content_items SET status = 'published', current_revision_id = ?1, updated_at = datetime('now') WHERE id = ?2 AND tenant_id = ?3",
-  ).bind(input.revisionId, id, principal.tenantId).run();
-  await audit(db, principal.tenantId, actor, "content_rolled_back", id, {
-    fromRevisionId: item.current_revision_id, toRevisionId: input.revisionId,
-  });
+  await db.batch([
+    db.prepare("UPDATE content_revisions SET published_at = datetime('now') WHERE id = ?1").bind(input.revisionId),
+    db.prepare(
+      "UPDATE content_items SET status = 'published', current_revision_id = ?1, updated_at = datetime('now') WHERE id = ?2 AND tenant_id = ?3",
+    ).bind(input.revisionId, id, principal.tenantId),
+    db.prepare(
+      "INSERT INTO content_item_pointers (tenant_id, content_item_id, working_revision_id) VALUES (?1, ?2, ?3) ON CONFLICT (tenant_id, content_item_id) DO UPDATE SET working_revision_id = excluded.working_revision_id, updated_at = datetime('now')",
+    ).bind(principal.tenantId, id, input.revisionId),
+    db.prepare(
+      "INSERT INTO audit_log (id, tenant_id, actor, action, target_type, target_id, metadata_json) VALUES (?1, ?2, ?3, 'content_rolled_back', 'content_item', ?4, ?5)",
+    ).bind(crypto.randomUUID(), principal.tenantId, actor, id, JSON.stringify({
+      fromRevisionId: item.current_revision_id, toRevisionId: input.revisionId,
+    })),
+  ]);
   const refreshed = await refreshPublishedSnapshot(db, ctx.env, principal.tenantId, item.location_id);
   return json({ id, revisionId: input.revisionId, status: "published", snapshotRefreshed: refreshed });
 }

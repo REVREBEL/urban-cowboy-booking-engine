@@ -25,6 +25,11 @@
       "id": 5,
       "file": "0005_media_registry.sql",
       "sha256": "3984d9e03e2cb2b4c9b6170ce44c4d5e6d465b811b79d29d501f22006f797b30"
+    },
+    {
+      "id": 6,
+      "file": "0006_working_revision_pointer.sql",
+      "sha256": "d295efccbc8cb6d7e76bef4fbf1bcd6ffebe5161c8da8978a56981a629597974"
     }
   ]
 }

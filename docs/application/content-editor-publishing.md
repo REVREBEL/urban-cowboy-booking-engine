@@ -4,10 +4,13 @@ This document covers the backend publishing workflow delivered first for COW-38.
 
 ## Invariants
 
-1. **Drafts never reach guests.** `PATCH /api/content/editor/items/:id` writes a new `content_revisions` row but leaves `content_items.status` and the published snapshot untouched.
-2. **Publishing is explicit.** Only `/publish` (and `/rollback`) set `status='published'`, stamp `published_at`, write an audit entry and refresh the published `contentItems` snapshot from COW-32.
+1. **Drafts never reach guests.** `PATCH /api/content/editor/items/:id` writes a new `content_revisions` row but leaves `content_items.status`, `content_items.current_revision_id` and the published snapshot untouched.
+2. **Two revision pointers.** Migration 0006 adds `content_item_pointers.working_revision_id` for the current draft. `content_items.current_revision_id` is the **published** pointer and only publish/rollback move it. An independent snapshot refresh after a draft edit therefore still hashes the published revision, not the draft.
+3. **Publishing is explicit.** Only `/publish` (and `/rollback`) set `status='published'`, stamp `published_at`, write an audit entry and refresh the published `contentItems` snapshot from COW-32. With no explicit revision, publish uses the working (draft) pointer.
 3. **Roles and tenant are checked in the Worker.** Every handler calls `authorizeScopedRequest(request, env, "admin")`. A caller-supplied `?tenant=` is accepted only when it matches the configured scope. The UI is not part of the trust boundary.
 4. **No auto-publish.** The source `ItemEditor` publishes on save; the ported editor must call `saveEditorDraft` then explicitly `publishEditorItem`. This API enforces the separation regardless of UI behavior.
+5. **Atomic saves.** A draft save is one D1 `batch`: revision insert, audit insert and guarded pointer update all run in a transaction. Every write checks the prior working revision, so two stale editors cannot both win — the loser's writes are no-ops and it receives `409 edit_conflict`, not a unique-key 500. An injected mid-batch failure rolls back the whole operation.
+6. **Location ownership.** A caller-supplied `locationId` is rejected unless that location belongs to the authorized tenant (`400 invalid_location`). The FK alone only proves the row exists.
 
 ## Endpoints
 
@@ -25,7 +28,7 @@ All responses use `Cache-Control: no-store, private`.
 ## Validation and conflict detection
 
 - `src/types/editor-contracts.ts` defines Zod contracts for kinds, slugs, payload size and required optimistic-lock field. Staged payloads are bounded JSON objects; prototype-pollution keys are rejected on the **raw** body because Zod strips `__proto__` from record output.
-- A draft save must include the `current_revision_id` as `expectedRevisionId`. A stale editor gets `409 edit_conflict` with the current revision id instead of overwriting a newer draft.
+- A draft save must include the working revision id as `expectedRevisionId`. A stale editor gets `409 edit_conflict` with the current working revision id instead of overwriting a newer draft. `EditorItemSummary` exposes both `currentRevisionId` (published) and `workingRevisionId` (draft).
 - Publishing or rolling back to a revision that does not belong to the item returns `404 revision_not_found`.
 
 ## Audit and rollback
@@ -37,7 +40,7 @@ If the COW-32 snapshot refresh fails after a publish, the publish itself still s
 ## Verification
 
 ```bash
-node --test tests/contentEditorPublishing.test.ts  # 5 tests: draft isolation, conflicts, publish/rollback, auth, validation
+node --test tests/contentEditorPublishing.test.ts  # 8 tests: draft isolation, published-pointer isolation, atomic/conflict saves, rollback, auth, location ownership, validation
 npm test
 npm run typecheck
 ```

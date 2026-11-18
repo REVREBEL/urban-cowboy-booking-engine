@@ -22,7 +22,10 @@ export interface EditorItemSummary {
   kind: string;
   slug: string;
   status: string;
+  /** Published pointer: never moved by a draft save. */
   currentRevisionId: string | null;
+  /** Working pointer: the latest draft revision. */
+  workingRevisionId: string | null;
   updatedAt: string;
 }
 
