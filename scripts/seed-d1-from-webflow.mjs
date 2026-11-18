@@ -26,6 +26,7 @@ import {
   assertSourceCoverage,
   provenanceSeed,
 } from "../src/lib/content-provenance.ts";
+import { eventScheduleJson, parseVenue } from "../src/lib/event-recurrence.ts";
 
 const argv = process.argv.slice(2);
 const positional = argv.filter((a) => !a.startsWith("--"));
@@ -366,16 +367,18 @@ let eventStartFallback = 0;
 for (const r of collections.events.rows) {
   const start = val(r, "datetime") || val(r, "recurring-start");
   if (!val(r, "datetime")) eventStartFallback++;
-  const venue = val(r, "onsite-event-location") || val(r, "onsite-custom-location") ||
-    (isTrue(r, "offsite-event") ? val(r, "offsite-event-location") : "");
+  const venueInfo = parseVenue(r);
   const eventLocationId = scopedLocation(r, "property-location");
   const eventTimeZone = LOCATION_ZONE_BY_ID.get(eventLocationId);
   if (!eventTimeZone) throw new Error("Missing location time zone for event " + val(r, "id"));
+  // Canonical schedule contract (local wall time, weekdays, venue type,
+  // adults-only) replaces the raw Webflow option ID in recurrence_rule.
+  const schedule = JSON.stringify(eventScheduleJson(r, eventTimeZone));
   eventRows.push([
     val(r, "id"), TENANT_ID, eventLocationId,
     val(r, "name"), val(r, "short-description") || val(r, "long-description") || null,
-    venue || null, eventTimeZone, start || null,
-    val(r, "datetime-end") || null, val(r, "recurrence-type") || null,
+    venueInfo.venue, eventTimeZone, start || null,
+    val(r, "datetime-end") || null, schedule,
     null, published(r) ? 1 : 0, null,
   ]);
 }
