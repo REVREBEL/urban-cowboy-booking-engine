@@ -21,43 +21,42 @@ body, and RSS is not supported for this page type.
 
 ## How association works
 
-The page has **no** `id="image-gallery-<slug>"` attributes. Each room is a heading section
-immediately followed by its gallery section:
+Each gallery is a `<section>` carrying an explicit id:
 
-```
-6afd6d274cc3371e7615bf21  heading  "Alpine Bathing Suite"
-6afd4e854cc3371e7612305d  gallery  5 images
-6afd6d3854baec4a10c54b2d  heading  "Walden Forest Bathing Suite"
-6afd6d5e8fcd302800118d24  gallery  4 images
-6afd6e058cd0d01b251e47c7  heading  "Walden King"
-6afd5d4f0000e93adababdd4  gallery  9 images
-6afd6e5e7f74df557cb977fa  heading  "Walden Bathing Suite with Den"
-6afd6e0f0000e93adabcbbc2  gallery  5 images
+```html
+<section id="image-feed-alpine-bathing-suite"
+         data-section-id="6afd4e854cc3371e7612305d"
+         data-sqsp-section="gallery">
 ```
 
-`parseRoomGalleryFeed` pairs by document order and **warns rather than guessing** when a heading has
-no gallery or a gallery has no heading. That makes a markup regression visible instead of silently
-mis-assigning images.
+The slug in `id="image-feed-<slug>"` **is** the room identity. The parser reads it directly — no
+positional guessing, no dependence on heading order.
 
-The minimal CMS fix, if pairing ever breaks: add `data-room-type="<slug>"` to each gallery section.
-That would replace positional pairing with an explicit contract.
+A positional fallback (heading section followed by gallery section) remains for older markup with no
+id. Galleries resolved that way are tagged `extraction: "positional"` in the plan so a caller can
+tell which contract was in play, and a heading without a gallery produces a warning rather than a
+silent mismatch.
 
 ## Room resolution
 
-Headings are matched against `room_types` by normalised name, then slug, then an explicit alias map.
-**Zero or several matches both fail.** A room that does not resolve to exactly one room type
-contributes no statements.
+The gallery id slug is tried first, then the heading by normalised name, then slug, then an explicit
+alias map. **Zero or several matches both fail.** A room that does not resolve to exactly one room
+type contributes no statements.
+
+An unknown id is **not** rescued by its heading — the publisher named the gallery after something the
+catalogue does not have, and guessing would mask that.
 
 Current mapping:
 
-| Heading | Matched by | Room type |
+| Gallery id slug | Matched by | Room type |
 |---|---|---|
-| Alpine Bathing Suite | name | `alpine-bathing-suite` |
-| Walden Forest Bathing Suite | name | `walden-forest-bathing-suite` |
-| Walden King | name | `walden-king` |
-| Walden Bathing Suite with Den | **alias** | `walden-forest-bathing-suite-with-den` |
+| `alpine-bathing-suite` | id | `alpine-bathing-suite` |
+| `walden-forest-bathing-suite` | id | `walden-forest-bathing-suite` |
+| `walden-king` | id | `walden-king` |
+| `walden-bathing-suite-den` | **alias** | `walden-forest-bathing-suite-with-den` |
 
-The alias exists in `ROOM_HEADING_ALIASES` because the feed heading is not a verbatim room-type name.
+The alias exists in `ROOM_SLUG_ALIASES` because the feed's id is shorter than the catalogue slug.
+It is an explicit mapping, not a fuzzy match.
 
 ## Commands
 
@@ -145,8 +144,9 @@ Both are destructive and should only run with explicit approval.
 
 ## Known limitations
 
-- **Positional pairing.** Association depends on the heading-then-gallery section order. The CMS fix
-  above is the durable answer.
+- **The id is the contract, but nothing enforces it.** If a future edit drops `id="image-feed-…"` from
+  a gallery section, the parser silently falls back to positional pairing. Adding a CI check that
+  asserts every `data-sqsp-section="gallery"` has a feed id would close that.
 - **No content hashing.** Duplicate images uploaded under different asset IDs are not detected — the
   live feed already contains one image shared between two rooms under two asset IDs. Deduplicating
   that needs a content hash, which needs the binary, which v1 deliberately does not fetch.

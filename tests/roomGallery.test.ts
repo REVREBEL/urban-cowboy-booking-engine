@@ -29,19 +29,29 @@ const read = (path: string) => readFileSync(new URL(path, root), "utf8");
 const CDN = "https://images.squarespace-cdn.com/content/v1/688a8a7787f0d24169d34343";
 
 function figure(asset: string, filename: string, extra = ""): string {
-  return `<figure class="gallery-grid-item"><a href="?itemId=x" class="gallery-grid-lightbox-link"><img data-src="${CDN}/${asset}/${filename}" data-image="${CDN}/${asset}/${filename}" src="${CDN}/${asset}/${filename}" alt="${filename}" ${extra}></a></figure>`;
+  const url = `${CDN}/${asset}/${filename}`;
+  return `<figure class="gallery-grid-item"><a href="?itemId=x" class="gallery-grid-lightbox-link"><img data-src="${url}" data-image="${url}" src="${url}" alt="${filename}" ${extra}></a></figure>`;
 }
 
+/** Mirrors the live markup: the id is on the section that holds the gallery. */
 const FIXTURE = `<html><body>
-<section data-section-id="sec-head-alpine"><div class="sqs-html-content"><h2>Alpine Bathing Suite</h2></div></section>
-<section data-section-id="sec-gallery-alpine" data-test="gallery-grid-simple">
+<section id="image-feed-alpine-bathing-suite" data-section-id="sec-gallery-alpine" data-sqsp-section="gallery">
+  <div class="sqs-html-content"><h2>Alpine Bathing Suite</h2></div>
   <div class="gallery-grid-wrapper">
     ${figure("asset-alpine-1", "alpine_bed.jpg", 'data-image-dimensions="1500x1000"')}
-    ${figure("asset-alpine-2", "alpine_bath.jpg", 'data-image-dimensions="1200x800" srcset="' + CDN + '/asset-alpine-1/alpine_bed.jpg?format=100w 100w, ' + CDN + '/asset-alpine-1/alpine_bed.jpg?format=500w 500w"')}
+    ${figure(
+      "asset-alpine-2",
+      "alpine_bath.jpg",
+      'data-image-dimensions="1200x800" srcset="' +
+        CDN +
+        '/asset-alpine-1/alpine_bed.jpg?format=100w 100w, ' +
+        CDN +
+        '/asset-alpine-1/alpine_bed.jpg?format=500w 500w"',
+    )}
   </div>
 </section>
-<section data-section-id="sec-head-walden"><h2>Walden King</h2></section>
-<section data-section-id="sec-gallery-walden" data-test="gallery-grid-simple">
+<section id="image-feed-walden-king" data-section-id="sec-gallery-walden" data-sqsp-section="gallery">
+  <div class="sqs-html-content"><h2>Walden King</h2></div>
   <div class="gallery-grid-wrapper">
     ${figure("asset-alpine-1", "alpine_bed.jpg")}
     ${figure("asset-walden-1", "walden_king_bed.jpg")}
@@ -50,10 +60,22 @@ const FIXTURE = `<html><body>
 <section data-section-id="sec-footer"><img src="https://example.com/logo.png" alt="logo"></section>
 </body></html>`;
 
+/** Older markup with no id on the section: pairing must fall back to position. */
+const POSITIONAL_FIXTURE = `<html><body>
+<section data-section-id="sec-head"><div class="sqs-html-content"><h2>Alpine Bathing Suite</h2></div></section>
+<section data-section-id="sec-gallery" data-test="gallery-grid-simple">
+  <div class="gallery-grid-wrapper">${figure("asset-alpine-1", "alpine_bed.jpg")}</div>
+</section>
+</body></html>`;
+
 const ROOM_TYPES: RoomTypeRecord[] = [
   { id: "room-alpine", name: "Alpine Bathing Suite", slug: "alpine-bathing-suite" },
   { id: "room-walden-king", name: "Walden King", slug: "walden-king" },
-  { id: "room-walden-den", name: "Walden Forest Bathing Suite with Den", slug: "walden-forest-bathing-suite-with-den" },
+  {
+    id: "room-walden-den",
+    name: "Walden Forest Bathing Suite with Den",
+    slug: "walden-forest-bathing-suite-with-den",
+  },
 ];
 
 function input(plan = buildImportPlan(parseRoomGalleryFeed(FIXTURE), ROOM_TYPES)): RoomGalleryInput {
@@ -132,28 +154,37 @@ function placements(db: DatabaseSync, roomTypeId: string) {
 // Parsing
 // ---------------------------------------------------------------------------
 
-test("pairs each heading section with the gallery that follows it", () => {
+test("reads the room slug from id=image-feed-<slug>", () => {
   const parsed = parseRoomGalleryFeed(FIXTURE);
   assert.equal(parsed.galleries.length, 2);
   assert.deepEqual(
-    parsed.galleries.map((gallery) => gallery.heading),
-    ["Alpine Bathing Suite", "Walden King"],
+    parsed.galleries.map((gallery) => [gallery.slug, gallery.extraction]),
+    [
+      ["alpine-bathing-suite", "id"],
+      ["walden-king", "id"],
+    ],
   );
-  assert.equal(parsed.galleries[0].images.length, 2);
-  assert.equal(parsed.galleries[1].images.length, 2);
+  assert.deepEqual(parsed.galleries.map((gallery) => gallery.images.length), [2, 2]);
+});
+
+test("falls back to positional pairing when the section has no id", () => {
+  const parsed = parseRoomGalleryFeed(POSITIONAL_FIXTURE);
+    assert.equal(parsed.galleries.length, 1);
+    assert.equal(parsed.galleries[0].slug, null);
+    assert.equal(parsed.galleries[0].extraction, "positional");
+    assert.equal(parsed.galleries[0].heading, "Alpine Bathing Suite");
 });
 
 test("ignores images that are not inside a gallery figure", () => {
-  const parsed = parseRoomGalleryFeed(FIXTURE);
-  const urls = parsed.galleries.flatMap((gallery) => gallery.images.map((image) => image.url));
+  const urls = parseRoomGalleryFeed(FIXTURE)
+    .galleries.flatMap((gallery) => gallery.images.map((image) => image.url));
   assert.ok(!urls.some((url) => url.includes("example.com")));
 });
 
 test("strips resize queries so one asset is one URL", () => {
   assert.equal(canonicaliseUrl(`${CDN}/a/b.jpg?format=500w`), `${CDN}/a/b.jpg`);
   assert.equal(canonicaliseUrl(`${CDN}/a/b.jpg`), `${CDN}/a/b.jpg`);
-  const parsed = parseRoomGalleryFeed(FIXTURE);
-  const alpine = parsed.galleries[0].images;
+  const alpine = parseRoomGalleryFeed(FIXTURE).galleries[0].images;
   assert.equal(alpine[0].url, `${CDN}/asset-alpine-1/alpine_bed.jpg`);
   assert.deepEqual(alpine[1].srcset, [
     `${CDN}/asset-alpine-1/alpine_bed.jpg`,
@@ -162,8 +193,7 @@ test("strips resize queries so one asset is one URL", () => {
 });
 
 test("keeps source order and position", () => {
-  const parsed = parseRoomGalleryFeed(FIXTURE);
-  const images = parsed.galleries[0].images;
+  const images = parseRoomGalleryFeed(FIXTURE).galleries[0].images;
   assert.deepEqual(images.map((image) => image.position), [1, 2]);
   assert.ok(images[0].filename.endsWith("alpine_bed.jpg"));
 });
@@ -175,7 +205,9 @@ test("reads dimensions from data-image-dimensions", () => {
 });
 
 test("splits the durable asset id from the CDN path", () => {
-  const { assetId, filename } = splitAssetPath(`${CDN}/5bfcfa54-d329-49e1-9a49-5b269c1fe1d4/alpine_bed.jpg`);
+  const { assetId, filename } = splitAssetPath(
+    `${CDN}/5bfcfa54-d329-49e1-9a49-5b269c1fe1d4/alpine_bed.jpg`,
+  );
   assert.equal(assetId, "5bfcfa54-d329-49e1-9a49-5b269c1fe1d4");
   assert.equal(filename, "alpine_bed.jpg");
 });
@@ -184,14 +216,14 @@ test("warns instead of pairing when a heading has no gallery", () => {
   const html = `<section data-section-id="s1"><h2>Lonely Room</h2></section>`;
   const parsed = parseRoomGalleryFeed(html);
   assert.equal(parsed.galleries.length, 0);
-  assert.ok(parsed.warnings.some((warning) => warning.includes("no gallery follows")));
+  assert.ok(parsed.warnings.some((warning) => warning.includes("no gallery following it")));
 });
 
-test("warns when a gallery has no preceding heading", () => {
+test("warns when a positional gallery has no preceding heading", () => {
   const html = `<section data-section-id="s1">${figure("a", "a.jpg")}</section>`;
   const parsed = parseRoomGalleryFeed(html);
   assert.equal(parsed.galleries.length, 1);
-  assert.equal(parsed.galleries[0].heading, "");
+  assert.equal(parsed.galleries[0].extraction, "positional");
   assert.ok(parsed.warnings.some((warning) => warning.includes("no preceding heading")));
 });
 
@@ -199,29 +231,44 @@ test("warns when a gallery has no preceding heading", () => {
 // Room resolution
 // ---------------------------------------------------------------------------
 
-test("resolves a room type by exact name", () => {
-  const result = resolveRoomType("Alpine Bathing Suite", ROOM_TYPES);
+test("prefers the gallery id slug over the heading", () => {
+  const result = resolveRoomType("Something Else Entirely", ROOM_TYPES, "alpine-bathing-suite");
   assert.equal(result.status, "matched");
   assert.equal(result.status === "matched" && result.roomType.id, "room-alpine");
-  assert.equal(result.status === "matched" && result.matchedBy, "name");
+  assert.equal(result.status === "matched" && result.matchedBy, "id");
 });
 
-test("resolves a heading through the alias map", () => {
-  const result = resolveRoomType("Walden Bathing Suite with Den", ROOM_TYPES);
+test("resolves a gallery id through the slug alias map", () => {
+  const result = resolveRoomType("Walden Bathing Suite with Den", ROOM_TYPES, "walden-bathing-suite-den");
   assert.equal(result.status, "matched");
   assert.equal(result.status === "matched" && result.roomType.id, "room-walden-den");
   assert.equal(result.status === "matched" && result.matchedBy, "alias");
 });
 
+test("an unknown gallery id is not rescued by its heading", () => {
+  const result = resolveRoomType("Alpine Bathing Suite", ROOM_TYPES, "alpine-penthouse");
+  assert.equal(result.status, "unmatched");
+  assert.match(result.status === "unmatched" ? result.reason : "", /gallery id slug/);
+});
+
+test("resolves a heading by name when there is no id", () => {
+  const result = resolveRoomType("Walden King", ROOM_TYPES, null);
+  assert.equal(result.status, "matched");
+  assert.equal(result.status === "matched" && result.matchedBy, "name");
+});
+
 test("never creates a room and never fuzzy-matches", () => {
-  const result = resolveRoomType("Walden Penthouse", ROOM_TYPES);
+  const result = resolveRoomType("Walden Penthouse", ROOM_TYPES, null);
   assert.equal(result.status, "unmatched");
   assert.equal(ROOM_TYPES.length, 3);
 });
 
 test("rejects an ambiguous name instead of guessing", () => {
-  const duplicates = [...ROOM_TYPES, { id: "room-alpine-2", name: "Alpine Bathing Suite", slug: "alpine-2" }];
-  const result = resolveRoomType("Alpine Bathing Suite", duplicates);
+  const duplicates = [
+    ...ROOM_TYPES,
+    { id: "room-alpine-2", name: "Alpine Bathing Suite", slug: "alpine-2" },
+  ];
+  const result = resolveRoomType("Alpine Bathing Suite", duplicates, null);
   assert.equal(result.status, "unmatched");
   assert.match(result.status === "unmatched" ? result.reason : "", /2 room types/);
 });
@@ -235,10 +282,12 @@ test("an unresolved room contributes no statements", () => {
   plan.rooms.push({
     heading: "Mystery Suite",
     sectionId: "sec-mystery",
+    slug: "mystery-suite",
+    extraction: "id",
     roomTypeId: null,
     roomTypeName: null,
     matchedBy: null,
-    unresolvedReason: "no room type matches",
+    unresolvedReason: "no room type matches gallery id slug",
     images: [
       {
         position: 1,
@@ -328,8 +377,7 @@ test("a missing gallery reports removals but never deletes", async () => {
   assert.deepEqual(alpine.failed, [{ kind: "failed", reason: "no images in gallery" }]);
 
   await applyRoomGallery(write, input(empty));
-  const still = placements(db, "room-alpine");
-  assert.equal(still.length, 2);
+  assert.equal(placements(db, "room-alpine").length, 2);
 });
 
 test("reconciliation reports new, unchanged and url changes", async () => {
@@ -340,8 +388,7 @@ test("reconciliation reports new, unchanged and url changes", async () => {
   const changed = buildImportPlan(parseRoomGalleryFeed(FIXTURE), ROOM_TYPES);
   changed.rooms[0].images[0].url = `${CDN}/asset-alpine-1/alpine_bed_v2.jpg`;
 
-  const result = await reconcileRoomGallery(read, input(changed));
-  const room = result.rooms[0];
+  const room = (await reconcileRoomGallery(read, input(changed))).rooms[0];
   assert.equal(room.urlChanged.length, 1);
   assert.equal(room.unchanged.length, 1);
 });
@@ -351,40 +398,11 @@ test("summarise totals match the rooms", async () => {
   const { read } = adapter(db);
   const result = await reconcileRoomGallery(read, input());
   const { totals } = summarise(result);
-  const summed = result.rooms.reduce((total, room) => total + room.new.length, 0);
-  assert.equal(totals.new, summed);
   assert.equal(totals.new, 4);
-});
-
-// ---------------------------------------------------------------------------
-// Captured live fixture
-// ---------------------------------------------------------------------------
-
-test("parses the captured live feed into four rooms and 23 images", () => {
-  const html = read("tests/fixtures/room-gallery-image-feed.html");
-  const parsed = parseRoomGalleryFeed(html);
-  const plan = buildImportPlan(parsed, [
-    { id: "room-alpine", name: "Alpine Bathing Suite", slug: "alpine-bathing-suite" },
-    { id: "room-walden-forest", name: "Walden Forest Bathing Suite", slug: "walden-forest-bathing-suite" },
-    { id: "room-walden-king", name: "Walden King", slug: "walden-king" },
-    {
-      id: "room-walden-den",
-      name: "Walden Forest Bathing Suite with Den",
-      slug: "walden-forest-bathing-suite-with-den",
-    },
-  ]);
-
-  assert.deepEqual(
-    plan.rooms.map((room) => [room.heading, room.images.length]),
-    [
-      ["Alpine Bathing Suite", 5],
-      ["Walden Forest Bathing Suite", 4],
-      ["Walden King", 9],
-      ["Walden Bathing Suite with Den", 5],
-    ],
+  assert.equal(
+    totals.new,
+    result.rooms.reduce((total, room) => total + room.new.length, 0),
   );
-  assert.equal(plan.rooms.filter((room) => room.roomTypeId).length, 4);
-  assert.equal(parsed.warnings.length, 0);
 });
 
 test("renderSql inlines params and wraps in a transaction", () => {
@@ -395,4 +413,42 @@ test("renderSql inlines params and wraps in a transaction", () => {
   assert.ok(sql.trimEnd().endsWith("COMMIT;"));
   assert.ok(sql.includes("'urban-cowboy'"));
   assert.ok(!sql.includes("?1"));
+});
+
+// ---------------------------------------------------------------------------
+// Captured live fixture
+// ---------------------------------------------------------------------------
+
+test("parses the captured live feed into four id-addressed rooms and 23 images", () => {
+  const parsed = parseRoomGalleryFeed(read("tests/fixtures/room-gallery-image-feed.html"));
+  const plan = buildImportPlan(parsed, [
+    { id: "room-alpine", name: "Alpine Bathing Suite", slug: "alpine-bathing-suite" },
+    {
+      id: "room-walden-forest",
+      name: "Walden Forest Bathing Suite",
+      slug: "walden-forest-bathing-suite",
+    },
+    { id: "room-walden-king", name: "Walden King", slug: "walden-king" },
+    {
+      id: "room-walden-den",
+      name: "Walden Forest Bathing Suite with Den",
+      slug: "walden-forest-bathing-suite-with-den",
+    },
+  ]);
+
+  assert.deepEqual(
+    plan.rooms.map((room) => [room.slug, room.extraction, room.images.length]),
+    [
+      ["alpine-bathing-suite", "id", 5],
+      ["walden-forest-bathing-suite", "id", 4],
+      ["walden-king", "id", 9],
+      ["walden-bathing-suite-den", "id", 5],
+    ],
+  );
+  assert.equal(plan.rooms.filter((room) => room.roomTypeId).length, 4);
+  assert.deepEqual(
+    plan.rooms.map((room) => room.matchedBy),
+    ["id", "id", "id", "alias"],
+  );
+  assert.equal(parsed.warnings.length, 0);
 });
