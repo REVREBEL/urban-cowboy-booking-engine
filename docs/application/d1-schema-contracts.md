@@ -78,17 +78,34 @@ Indexes include the `id` tiebreaker and `updated_at DESC` where needed, so `ORDE
 
 `tests/fixtures/d1-contracts-fixture.sql` is a self-contained fixture with two tenants, three locations, legacy aliases (including a future provider), published/draft content items, a hidden event and provenance rows across locations. It exercises tenant/location isolation without depending on the Webflow seed.
 
+## Media registry (COW-33)
+
+`migrations/0004_media_registry.sql` adds the registry extension. `media_assets.id` is the never-reused `media_id`. `media_versions.id` is the per-upload `version_id`. Triggers block updates to either ID and block moving a version to another media asset.
+
+- `media_asset_metadata` holds global description, caption, tags, attribution, status and the current version ID.
+- `media_version_files` holds Cloudinary `public_id`/`version`, SHA-256, byte size and MIME type for one upload. Dimensions stay on `media_versions`.
+- `media_placements` holds placement-level overrides and gallery order. Global metadata stays on the asset, so a reupload cannot change it.
+- `media_revisions` records `create_new`, `link_existing`, `replace`, `retire` and `set_placement` actions with actor, note and from/to version IDs.
+
+`worker/media-registry.ts` implements those actions. `createMediaAsset` creates the logical photo and its first version. `linkExistingMedia` adds a legacy alias and optional placement. `replaceMediaVersion` adds a new version, advances `current_version_id` and leaves every alias and placement untouched. `retireMediaAsset` marks the asset retired without deleting it. All actions are tenant scoped and write an audit row.
+
+New metadata lives in extension tables because the migration runner applies every migration twice and SQLite has no `ADD COLUMN IF NOT EXISTS`. The Squarespace-shaped columns from 0001 remain for legacy data; new uploads put deterministic fallback values there until a later migration removes them.
+
 ## Rollback policy
 
 - `scripts/d1-rollback/0002_module_list_indexes_down.sql` drops only the four module indexes.
 - `scripts/d1-rollback/0003_property_scoped_contracts_down.sql` drops only the indexes and tables created by 0003.
-- Both scripts are idempotent and tested: base tables, rows and foundational indexes from 0001/0002 survive; `PRAGMA foreign_key_check` stays clean; the up migrations re-apply afterwards.
+- `scripts/d1-rollback/0004_media_registry_down.sql` drops only the indexes, triggers and tables created by 0004.
+- Every rollback script is idempotent and tested: base tables, rows and foundational indexes from earlier migrations survive; `PRAGMA foreign_key_check` stays clean; the up migrations re-apply afterwards.
 - `0001_init.sql` is foundational. There is no in-place down script for it; rollback to the pre-D1 state requires a point-in-time restore of the D1 database. Always export the remote database before applying or rolling back a migration.
 
 ## Verification
 
 ```bash
 node --test tests/d1SchemaContracts.test.ts   # migration, indexes, rollback, contracts, provenance, scoped queries
+node --test tests/mediaRegistrySchema.test.ts  # 0004 schema, immutable IDs, placements, rollback
+node --test tests/mediaRegistryService.test.ts # link/new/replace actions and cross-tenant denial
+node --test tests/mediaRegistryContracts.test.ts # media registry Zod contracts
 npm run test:seed                              # Webflow seed, provenance and FK integrity
 npm test                                        # full suite
 npm run typecheck
@@ -97,6 +114,6 @@ npm run typecheck
 ## Deferred (not in this change)
 
 - Publication-state columns for `locations` and `room_types`. The 2026-11-15 export has no draft locations; the single draft room type is `6abd4a1debcab0ea7e461c9a`. Adding a status column requires a backfill decision and is tracked in the COW-29 audit gates.
-- Importing the 238 photo hotspots and their media assets (COW-33/34).
-- Removing the Squarespace-shaped columns from `media_assets` / `media_versions`.
+- Importing the 238 photo hotspots: the source export still lacks stable media identity. The registry now exists; the re-export, importer and placement mapping are COW-34.
+- Removing the Squarespace-shaped columns from `media_assets` / `media_versions`. New uploads carry deterministic fallback values there so the NOT NULL constraints stay satisfied.
 - Using these helpers in public endpoints; that switch stays behind the parity/flag gates.
