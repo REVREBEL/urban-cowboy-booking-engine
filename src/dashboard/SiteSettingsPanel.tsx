@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import type { SiteSettings } from "@/types/site-settings";
 import type { DashboardApi } from "./api";
+import { hasUnsavedChanges, SITE_SETTING_FIELDS as FIELDS } from "./siteSettingsForm";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "./states";
 import { useDashboardResource } from "./useDashboardResource";
 
@@ -19,14 +20,6 @@ interface AdminSettingsResponse {
   workingRevisionId: string;
   revisions: RevisionSummary[];
 }
-
-const FIELDS: Array<{ key: keyof SiteSettings; label: string }> = [
-  { key: "productionLayout", label: "Guest booking layout" },
-  { key: "demoLayout", label: "Studio default layout" },
-  { key: "enableDemoEngine", label: "Booking Studio enabled" },
-  { key: "enableEventDatesQuickSelection", label: "Event date shortcuts" },
-  { key: "enableFeatureSection", label: "Location feature stories" },
-];
 
 const EMPTY_FORM: SiteSettings = {
   productionLayout: "card",
@@ -66,6 +59,7 @@ export function SiteSettingsPanel({ api }: { api: DashboardApi }) {
   if (!data) return <EmptyPanel message="No property settings found." />;
 
   const changed = FIELDS.filter(({ key }) => data.published && form[key] !== data.published[key]);
+  const dirty = hasUnsavedChanges(form, data.working);
 
   return (
     <section className="space-y-5">
@@ -142,7 +136,7 @@ export function SiteSettingsPanel({ api }: { api: DashboardApi }) {
           colorScheme="light"
           size="small"
           textCase="title"
-          disabled={busy}
+          disabled={busy || dirty}
           onClick={() => void act(() => api.post(`/api/content/editor/items/${data.itemId}/publish`, {
             revisionId: data.workingRevisionId,
           }))}
@@ -150,6 +144,11 @@ export function SiteSettingsPanel({ api }: { api: DashboardApi }) {
           Publish
         </Button>
       </div>
+      {dirty && (
+        <p className="text-sm text-muted-foreground" role="status">
+          You have unsaved changes. Save draft before publishing so the edits are included.
+        </p>
+      )}
       {actionError && <ErrorPanel message={actionError} />}
 
       <div className="card p-4">

@@ -98,7 +98,9 @@ export async function siteSettingsRead(ctx: SettingsCtx): Promise<Response> {
 
   try {
     const published = await loadSiteSettingsFromD1(dbForContent(ctx.env), scopeFor(ctx.request, ctx.env));
-    if (published) return withSource({ settings: published.settings, source: "d1", itemId: published.itemId }, "d1", true);
+    // Small settings document: no shared cache until publish/rollback can
+    // purge it or the response is keyed by revision.
+    if (published) return withSource({ settings: published.settings, source: "d1", itemId: published.itemId }, "d1", false);
   } catch (error) {
     console.warn("[content-migration] D1 site settings read failed", error instanceof Error ? error.message : "unknown");
   }

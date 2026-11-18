@@ -20,6 +20,7 @@ import { publishEditorItem, saveEditorDraft } from "../worker/content-editor.ts"
 import { onRequestStudioConfig } from "../worker/webflow/locations.ts";
 import { dashboardPageRequest, isAdminPageRoute } from "../worker/admin-pages.ts";
 import { fetchPublishedSiteSettings } from "../src/lib/siteSettingsClient.ts";
+import { hasUnsavedChanges } from "../src/dashboard/siteSettingsForm.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -115,7 +116,8 @@ test("flagged reads default to Webflow and fall back safely in d1 mode", async (
 
   const d1Mode = await siteSettingsRead(ctx);
   assert.equal((await d1Mode.json() as any).source, "d1");
-  assert.equal(d1Mode.headers.get("cache-control"), "public, max-age=0, s-maxage=300");
+  // No shared cache until publish/rollback can purge or the key is versioned.
+  assert.match(d1Mode.headers.get("cache-control") ?? "", /no-store/);
 
   const noDb = await siteSettingsRead({ ...ctx, env: { ...ctx.env, DB: undefined } });
   assert.equal((await noDb.json() as any).source, "webflow-fallback");
@@ -182,6 +184,14 @@ test("draft validation blocks invalid settings on save and publish", async () =>
   }, item.id, allowAdmin);
   assert.equal(published.status, 200);
   assert.equal((await loadSiteSettingsFromD1(api, { tenantId: TENANT }))?.settings.productionLayout, "card");
+
+  const guestRead = await siteSettingsRead({
+    request: new Request("https://example.test/api/content/site-settings"),
+    env: { DB: api, TENANT_ID: TENANT, CONTENT_SOURCE: "d1" } as any,
+    waitUntil: () => {},
+  });
+  assert.equal((await guestRead.json() as any).settings.productionLayout, "card");
+  assert.match(guestRead.headers.get("cache-control") ?? "", /no-store/);
   db.close();
 });
 
@@ -218,6 +228,14 @@ test("admin routes serve the React dashboard entry, guest routes keep SPA fallba
   }
   assert.equal(isAdminPageRoute("/confirmation"), false);
   assert.deepEqual(requested, ["/dashboard.html", "/dashboard.html"]);
+});
+
+test("publish cannot release unsaved form edits", () => {
+  const working = { ...DEFAULT_SITE_SETTINGS, productionLayout: "photo" as const };
+  assert.equal(hasUnsavedChanges(working, working), false);
+  assert.equal(hasUnsavedChanges({ ...working, productionLayout: "card" }, working), true);
+  assert.equal(hasUnsavedChanges({ ...working, enableFeatureSection: true }, working), true);
+  assert.equal(hasUnsavedChanges(working, null), false);
 });
 
 test("guest client ignores non-D1 settings responses", async () => {

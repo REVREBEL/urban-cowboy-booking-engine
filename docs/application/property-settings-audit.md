@@ -36,7 +36,8 @@ Audit of the code merged through PRs #298–#308 (COW-30/31/32/37/38/39/40) befo
 - `src/types/site-settings.ts` owns the typed contract, exact Webflow option-ID semantics and guest-safe defaults; draft saves and publishes validate the payload before any write.
 - `worker/property-settings.ts` provides `siteSettings` route flag handling (webflow default, shadow parity, d1 with Webflow fallback), a no-store admin view with revision history, and a public settings contract.
 - `worker/admin-pages.ts` serves the existing `dashboard.html` at `/admin` and `/dashboard`; guest routes still use the SPA fallback.
-- The dashboard Settings route renders the five controls with draft → preview → publish → rollback, role enforcement on the Worker, and optimistic conflict handling.
+- The dashboard Settings route renders the five controls with draft → preview → publish → rollback, role enforcement on the Worker, and optimistic conflict handling. Publish is disabled while the form differs from the saved working revision, so an edit cannot be silently discarded by publishing an older revision.
+- The public settings document is `no-store` in every mode: a five-minute shared cache cannot be invalidated on publish/rollback yet, so serving stale guest settings is avoided until a revisioned key or purge exists.
 - Runtime: production layout, event date shortcuts and feature stories read published D1 settings only when the Worker reports a `d1` source; otherwise the legacy Webflow path is unchanged. `/api/studio/config` uses the published D1 enablement/default layout in `d1` mode with its response contract intact.
 - Inherited gap fixed: seeded items lacked a working-revision pointer row (migration 0006 ran before the seed), so draft saves self-heal the pointer before the guarded batch.
 
