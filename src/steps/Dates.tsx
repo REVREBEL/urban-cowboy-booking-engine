@@ -101,7 +101,7 @@ export function Dates() {
       setShowQuickSelect(settings
         ? settings.settings.enableEventDatesQuickSelection
         : locations.hotel?.enableEventDatesQuickSelection === true);
-    });
+    }).catch(() => { if (active) setShowQuickSelect(false); });
     return () => { active = false; };
   }, []);
 

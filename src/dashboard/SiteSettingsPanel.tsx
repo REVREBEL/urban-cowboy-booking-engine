@@ -39,7 +39,9 @@ export function SiteSettingsPanel({ api }: { api: DashboardApi }) {
 
   useEffect(() => {
     if (data?.working) setForm(data.working);
-  }, [data?.working, data?.workingRevisionId]);
+    // Keyed on the revision id so a reload of identical content does not
+    // overwrite in-progress edits in the form.
+  }, [data?.workingRevisionId]);
 
   const act = async (run: () => Promise<unknown>) => {
     setBusy(true);

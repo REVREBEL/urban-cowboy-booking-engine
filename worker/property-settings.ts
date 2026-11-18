@@ -121,7 +121,7 @@ export async function adminSiteSettingsRead(
 
   const scope = scopeFor(ctx.request, ctx.env);
   const item = await db.prepare(
-    "SELECT id, status, current_revision_id FROM content_items WHERE tenant_id = ?1 AND kind = 'site_settings' AND slug = ?2 AND (?3 IS NULL OR location_id = ?3) ORDER BY id LIMIT 2",
+    "SELECT id, status, current_revision_id FROM content_items WHERE tenant_id = ?1 AND kind = 'site_settings' AND slug = ?2 AND (?3 IS NULL OR location_id = ?3) ORDER BY location_id DESC, id DESC LIMIT 2",
   ).bind(scope.tenantId, SITE_SETTINGS_SLUG, scope.locationId ?? null).all();
   if ((item.results ?? []).length !== 1) {
     return new Response(JSON.stringify({ error: "settings_item_missing_or_ambiguous" }), {
