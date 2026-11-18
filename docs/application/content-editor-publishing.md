@@ -37,6 +37,10 @@ Every write appends to `audit_log` with the acting principal's email, action (`d
 
 If the COW-32 snapshot refresh fails after a publish, the publish itself still succeeds and the response reports `snapshotRefreshed: false`; an admin can retry with `POST /api/content/snapshots/refresh`. This is logged, not silently ignored.
 
+## Rollback
+
+`migrations/0006_working_revision_pointer.sql` is additive and idempotent; its down script is `scripts/d1-rollback/0006_working_revision_pointer_down.sql` (outside `migrations_dir`). Rolling it back removes the working pointer table but leaves published pointers in `content_items` untouched. Application-level rollback is to stop calling the editor API and keep serving the existing published snapshots; no flag change is required for the read path.
+
 ## Verification
 
 ```bash
