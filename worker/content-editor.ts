@@ -56,6 +56,18 @@ async function admin(ctx: EditorCtx, authorize: Authorize): Promise<Principal | 
   return authorize(ctx.request, ctx.env, "admin");
 }
 
+/** D1 rows stay snake_case internally; the editor API speaks camelCase. */
+function toEditorItemSummary(row: any) {
+  return {
+    id: row.id,
+    kind: row.kind,
+    slug: row.slug,
+    status: row.status,
+    currentRevisionId: row.current_revision_id ?? null,
+    updatedAt: row.updated_at,
+  };
+}
+
 async function audit(
   db: D1Database,
   tenantId: string,
@@ -107,7 +119,7 @@ export async function listEditorItems(
   const result = await db.prepare(
     "SELECT id, tenant_id, location_id, kind, slug, status, current_revision_id, created_at, updated_at FROM content_items WHERE tenant_id = ?1 ORDER BY updated_at DESC, id",
   ).bind(principal.tenantId).all();
-  return json({ items: result.results ?? [] });
+  return json({ items: (result.results ?? []).map(toEditorItemSummary) });
 }
 
 export async function getEditorItem(
@@ -125,18 +137,23 @@ export async function getEditorItem(
   const revisions = await db.prepare(
     "SELECT id, revision, payload_json, published_at, created_by, created_at FROM content_revisions WHERE content_item_id = ?1 ORDER BY revision",
   ).bind(id).all();
+  const revisionsList = (revisions.results ?? []) as any[];
   const requested = new URL(ctx.request.url).searchParams.get("revisionId");
-  const revision = requested
-    ? (revisions.results ?? []).find((r: any) => r.id === requested)
-    : (revisions.results ?? []).find((r: any) => r.id === item.current_revision_id);
+  let revision: any;
+  if (requested) {
+    revision = revisionsList.find((r) => r.id === requested);
+    if (!revision) return json({ error: "revision_not_found" }, 404);
+  } else {
+    revision = revisionsList.find((r) => r.id === item.current_revision_id);
+  }
   return json({
-    item,
-    revisions: (revisions.results ?? []).map((r: any) => ({
+    item: toEditorItemSummary(item),
+    revisions: revisionsList.map((r) => ({
       id: r.id, revision: r.revision, publishedAt: r.published_at,
       createdBy: r.created_by, createdAt: r.created_at,
     })),
     // Preview: an explicit revision's payload, never implicitly published.
-    preview: revision ? JSON.parse((revision as any).payload_json) : null,
+    preview: revision ? JSON.parse(revision.payload_json) : null,
   });
 }
 

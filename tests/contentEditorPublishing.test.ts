@@ -6,6 +6,7 @@ import { DatabaseSync } from "node:sqlite";
 import {
   createEditorDraft,
   getEditorItem,
+  listEditorItems,
   publishEditorItem,
   rollbackEditorItem,
   saveEditorDraft,
@@ -136,6 +137,23 @@ test("publish makes a revision live and refresh; rollback repoints an earlier on
   const preview = await getEditorItem(previewCtx, id, allowAdmin);
   assert.equal(preview.status, 200);
   assert.deepEqual((await preview.json() as any).preview, { title: "v1" });
+
+  const unknownRevision: EditorCtx = {
+    ...ctx(db),
+    request: new Request(`https://example.test/api/content/editor/items/${id}?revisionId=missing`),
+  };
+  const missing = await getEditorItem(unknownRevision, id, allowAdmin);
+  assert.equal(missing.status, 404);
+  assert.equal((await missing.json() as any).error, "revision_not_found");
+
+  const list = await listEditorItems(ctx(db), allowAdmin);
+  assert.equal(list.status, 200);
+  const listed = (await list.json() as any).items[0];
+  assert.equal(listed.currentRevisionId, v1);
+  assert.ok(listed.updatedAt);
+  assert.equal(listed.current_revision_id, undefined);
+  const detail = await getEditorItem({ ...ctx(db), request: new Request(`https://example.test/api/content/editor/items/${id}`) }, id, allowAdmin);
+  assert.equal((await detail.json() as any).item.currentRevisionId, v1);
   db.close();
 });
 
