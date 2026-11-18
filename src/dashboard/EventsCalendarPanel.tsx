@@ -3,9 +3,10 @@
 // endpoint expands a payload without writing to D1.
 import { useCallback, useState } from "react";
 import type { D1Event } from "@/types/content";
-import type { EventOccurrence, WebflowEventFields } from "@/types/event-contracts";
+import type { EventOccurrence } from "@/types/event-contracts";
 import { Button } from "@/components/ui/Button";
 import type { DashboardApi } from "./api";
+import { buildPreviewFields, previewRange } from "./eventPreviewForm";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "./states";
 import { useDashboardResource } from "./useDashboardResource";
 
@@ -27,8 +28,8 @@ const WEEKDAYS = [
 ] as const;
 
 interface VenuesResponse {
-  onsite: Array<{ id: string; name: string }>;
-  outlets: Array<{ id: string; name: string }>;
+  onsite: Array<{ id: string; name: string; type: "onsite" }>;
+  outlets: Array<{ id: string; name: string; type: "offsite" }>;
 }
 
 interface PreviewResponse {
@@ -63,7 +64,7 @@ export function EventsCalendarPanel({ api }: { api: DashboardApi }) {
   const { data, loading, error, reload } = useDashboardResource(loadEvents);
 
   const [name, setName] = useState("");
-  const [start, setStart] = useState("");
+  const [startLocal, setStartLocal] = useState("");
   const [until, setUntil] = useState("");
   const [recurrence, setRecurrence] = useState<string>(RECURRENCE_OPTIONS[0].id);
   const [weekday, setWeekday] = useState<string>(WEEKDAYS[0].id);
@@ -73,22 +74,23 @@ export function EventsCalendarPanel({ api }: { api: DashboardApi }) {
 
   const showPreview = async () => {
     setPreviewError(null);
-    if (!start) {
-      setPreviewError("Choose a start date to preview the schedule.");
+    if (!startLocal) {
+      setPreviewError("Choose a start date and time to preview the schedule.");
       return;
     }
-    // Webflow stores these previews as 13:00Z (08:00 EST / 09:00 EDT), matching
-    // the existing Events export convention; the engine derives local wall time.
-    const fields: WebflowEventFields = {
-      name: name || "Untitled event",
-      "recurrence-type": recurrence,
-      "recurring-start": `${start}T13:00:00.000Z`,
-      "recurring-end": until ? `${until}T13:00:00.000Z` : undefined,
-      ...(recurrence === RECURRENCE_OPTIONS[2].id ? { "repeat-on": weekday, "repeat-every": "1" } : {}),
-      ...(venue ? { "onsite-event-location": venue } : {}),
-    };
+    const fields = buildPreviewFields({
+      name,
+      startLocal,
+      until: until || undefined,
+      recurrenceType: recurrence,
+      repeatOn: recurrence === RECURRENCE_OPTIONS[2].id ? weekday : undefined,
+      venue,
+    });
+    const range = previewRange(startLocal.slice(0, 10), until || undefined);
     try {
-      setPreview(await api.post<PreviewResponse>("/api/content/events/preview", { fields, from: window.from, to: window.to }));
+      setPreview(await api.post<PreviewResponse>("/api/content/events/preview", {
+        fields, from: range.from, to: range.to,
+      }));
     } catch (cause) {
       setPreviewError(cause instanceof Error ? cause.message : String(cause));
     }
@@ -130,8 +132,13 @@ export function EventsCalendarPanel({ api }: { api: DashboardApi }) {
             <input className="oc-input" value={name} onChange={(event) => setName(event.target.value)} />
           </label>
           <label className="grid gap-1 text-sm">
-            <span className="text-muted-foreground">Start (local date)</span>
-            <input className="oc-input" type="date" value={start} onChange={(event) => setStart(event.target.value)} />
+            <span className="text-muted-foreground">Start (property local time)</span>
+            <input
+              className="oc-input"
+              type="datetime-local"
+              value={startLocal}
+              onChange={(event) => setStartLocal(event.target.value)}
+            />
           </label>
           <label className="grid gap-1 text-sm">
             <span className="text-muted-foreground">Recurrence</span>
@@ -159,10 +166,10 @@ export function EventsCalendarPanel({ api }: { api: DashboardApi }) {
             <select className="oc-input" value={venue} onChange={(event) => setVenue(event.target.value)}>
               <option value="">No venue reference</option>
               <optgroup label="Onsite">
-                {venues.onsite.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                {venues.onsite.map((item) => <option key={item.id} value={`onsite:${item.id}`}>{item.name}</option>)}
               </optgroup>
-              <optgroup label="Outlets">
-                {venues.outlets.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+              <optgroup label="Outlets (offsite)">
+                {venues.outlets.map((item) => <option key={item.id} value={`offsite:${item.id}`}>{item.name}</option>)}
               </optgroup>
             </select>
           </label>

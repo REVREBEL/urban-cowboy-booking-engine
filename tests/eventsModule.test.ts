@@ -244,10 +244,10 @@ test("venue references are admin-only and tenant-scoped", async () => {
   const res = await eventVenues(ctx, admin);
   assert.equal(res.status, 200);
   const body = await res.json() as any;
-  assert.deepEqual(body.onsite, [{ id: "b1", name: "Main Lodge" }]);
-  assert.deepEqual(body.outlets, [{ id: "o1", name: "Ralphs" }]);
+  assert.deepEqual(body.onsite, [{ id: "b1", name: "Main Lodge", type: "onsite" }]);
+  assert.deepEqual(body.outlets, [{ id: "o1", name: "Ralphs", type: "offsite" }]);
   const other = await eventVenues(ctx, async () => ({ sub: "s", email: "a@x.test", groups: [], roles: ["admin"], tenantId: "other" }) as any);
-  assert.deepEqual((await other.json() as any).onsite, [{ id: "b2", name: "Other Lodge" }]);
+  assert.deepEqual((await other.json() as any).onsite, [{ id: "b2", name: "Other Lodge", type: "onsite" }]);
   db.close();
 });
 

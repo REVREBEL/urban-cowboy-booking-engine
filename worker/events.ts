@@ -90,8 +90,8 @@ export async function eventVenues(
   ).bind(principal.tenantId).all();
 
   return json({
-    onsite: (buildings.results ?? []).map((row: any) => ({ id: row.id, name: row.name })),
-    outlets: (outlets.results ?? []).map((row: any) => ({ id: row.id, name: row.slug })),
+    onsite: (buildings.results ?? []).map((row: any) => ({ id: row.id, name: row.name, type: "onsite" as const })),
+    outlets: (outlets.results ?? []).map((row: any) => ({ id: row.id, name: row.slug, type: "offsite" as const })),
   });
 }
 
