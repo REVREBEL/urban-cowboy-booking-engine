@@ -12,7 +12,7 @@ import { listScopedContentItems, publishedRevisionPayload, type TenantScope } fr
 import { routeContentSource } from "./content-source.ts";
 import { diffParity } from "./shadow-read.ts";
 import { normalizePolicyLanguage, POLICY_LANGUAGE_FIELDS, type PolicySourceItem } from "./policy-language.ts";
-import { recordParityReport } from "./published-snapshots.ts";
+import { latestParityReport, recordParityReport } from "./published-snapshots.ts";
 import { onRequestGet as webflowPolicyLanguage } from "./webflow/policy-language.ts";
 
 type Ctx = { request: Request; env: Env; waitUntil: (promise: Promise<unknown>) => void };
@@ -95,9 +95,13 @@ export async function policyLanguageRead(ctx: Ctx): Promise<Response> {
         const scope = scopeFor(ctx.request, ctx.env);
         const d1 = await loadPolicyLanguageFromD1(db, scope);
         const summary = policyLanguageParity(webflow.language ?? {}, d1?.language ?? {});
-        // Persist per-route parity so admins can review it like other collections.
-        await recordParityReport(db, scope, "policyLanguage", null, summary);
-        console.info("[content-migration] policyLanguage parity", JSON.stringify(summary));
+        // Persist only changes. Shadow runs on guest requests, so writing on
+        // every request would grow parity_reports without bound.
+        const latest = await latestParityReport(db, scope, "policyLanguage");
+        if (!latest || JSON.stringify(latest.summary) !== JSON.stringify(summary)) {
+          await recordParityReport(db, scope, "policyLanguage", null, summary);
+          console.info("[content-migration] policyLanguage parity", JSON.stringify(summary));
+        }
       } catch (error) {
         console.warn("[content-migration] policyLanguage shadow read failed", error instanceof Error ? error.message : "unknown");
       }

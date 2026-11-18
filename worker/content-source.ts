@@ -24,9 +24,8 @@ export function routeContentSource(env: Env, route: RoutedContentCollection): Co
   const override = (env[ROUTE_SOURCE_ENV_KEYS[route]] ?? "").trim().toLowerCase();
   // An explicit but unrecognised override is a misconfiguration. Fail safe to
   // Webflow instead of inheriting a global d1 flag for a route not verified here.
-  if (override && override !== "webflow" && override !== "shadow" && override !== "d1") {
-    return "webflow";
-  }
+  if (override === "webflow") return "webflow";
+  if (override && override !== "shadow" && override !== "d1") return "webflow";
   return parseSource(override) ?? contentSource(env);
 }
 

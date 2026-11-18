@@ -168,6 +168,10 @@ test("per-route flags override the global source and fall back on invalid values
     routeContentSource({ CONTENT_SOURCE: "d1", CONTENT_SOURCE_POLICY_LANGUAGE: "invalid" } as Env, "policyLanguage"),
     "webflow",
   );
+  assert.equal(
+    routeContentSource({ CONTENT_SOURCE: "d1", CONTENT_SOURCE_POLICY_LANGUAGE: "webflow" } as Env, "policyLanguage"),
+    "webflow",
+  );
   assert.equal(routeContentSource({ CONTENT_SOURCE: "shadow" } as Env, "policyLanguage"), "shadow");
 });
 
@@ -226,6 +230,36 @@ test("webflow and shadow modes return Webflow content, with shadow flagged", asy
         assert.equal(JSON.parse(report?.summary_json ?? "{}").collection, "policyLanguage");
       }
     }
+  } finally {
+    db.close();
+  }
+});
+
+test("shadow parity is stored only when the summary changes", async () => {
+  stubWebflow();
+  const db = makeDb();
+  try {
+    seedPolicy(db, "published");
+    const calls = async () => {
+      const waits: Promise<unknown>[] = [];
+      const response = await policyLanguageRead({
+        request: new Request(`https://example.com/api/content/policy-language?location=${LOCATION}`),
+        env: envFor("shadow", d1(db) as D1Database),
+        waitUntil: (p) => { waits.push(p); },
+      });
+      assert.equal(response.headers.get("X-Content-Source"), "shadow-webflow");
+      await Promise.all(waits);
+    };
+
+    const count = () => (db.prepare("SELECT COUNT(*) AS n FROM parity_reports").get() as { n: number }).n;
+    await calls();
+    await calls();
+    assert.equal(count(), 1);
+
+    db.prepare("UPDATE content_revisions SET payload_json = ? WHERE id = 'policy-revision'")
+      .run(JSON.stringify({ ...payload, "refundable-language": "Changed refund" }));
+    await calls();
+    assert.equal(count(), 2);
   } finally {
     db.close();
   }
