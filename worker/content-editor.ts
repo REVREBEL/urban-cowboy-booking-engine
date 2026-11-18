@@ -18,6 +18,9 @@ import {
 } from "../src/types/editor-contracts.ts";
 
 export type EditorCtx = { request: Request; env: Env; waitUntil: (promise: Promise<unknown>) => void };
+
+/** D1's batch result type omits `changes`; this is the shape the runtime returns. */
+type BatchChange = { success: boolean; changes?: number };
 export type Authorize = (request: Request, env: Env, role: "admin" | "viewer") => Promise<Principal | Response>;
 
 const NO_STORE: Record<string, string> = {
@@ -178,9 +181,17 @@ export async function createEditorDraft(
     if (!location) return json({ error: "invalid_location" }, 400);
   }
 
+  // Pre-check for a readable conflict; the UNIQUE constraint remains the
+  // final authority if two creates race.
+  const duplicate = await db.prepare(
+    "SELECT id FROM content_items WHERE tenant_id = ?1 AND kind = ?2 AND slug = ?3 AND location_id IS ?4",
+  ).bind(principal.tenantId, input.kind, input.slug, input.locationId ?? null).first();
+  if (duplicate) return json({ error: "slug_conflict" }, 409);
+
   const id = crypto.randomUUID();
   const revisionId = `${id}-r1`;
   const actor = principal.email || principal.sub || "unknown";
+  try {
   await db.batch([
     db.prepare(
       "INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status, current_revision_id) VALUES (?1, ?2, ?3, ?4, ?5, 'draft', NULL)",
@@ -195,6 +206,10 @@ export async function createEditorDraft(
       "INSERT INTO audit_log (id, tenant_id, actor, action, target_type, target_id, metadata_json) VALUES (?1, ?2, ?3, 'draft_created', 'content_item', ?4, ?5)",
     ).bind(crypto.randomUUID(), principal.tenantId, actor, id, JSON.stringify({ kind: input.kind, slug: input.slug, revisionId })),
   ]);
+  } catch (err) {
+    if (/UNIQUE constraint failed/i.test(String(err))) return json({ error: "slug_conflict" }, 409);
+    throw err;
+  }
   return json({ id, revisionId, status: "draft" }, 201);
 }
 
@@ -240,7 +255,7 @@ export async function saveEditorDraft(
       "UPDATE content_item_pointers SET working_revision_id = ?1, updated_at = datetime('now') WHERE tenant_id = ?2 AND content_item_id = ?3 AND working_revision_id = ?4",
     ).bind(revisionId, principal.tenantId, id, input.expectedRevisionId),
   ]);
-  if (((results[2] as any)?.changes ?? 0) !== 1) {
+  if (((results[2] as BatchChange).changes ?? 0) !== 1) {
     return json({ error: "edit_conflict", workingRevisionId: working }, 409);
   }
   // Deliberately no status change and no snapshot refresh: the public view,
@@ -262,9 +277,15 @@ export async function publishEditorItem(
   const item = await ownedItem(db, id, principal.tenantId);
   if (!item) return json({ error: "not_found" }, 404);
   // With no explicit revision, publish the current draft (working pointer),
-  // not the already-published pointer.
-  const revisionId = input.revisionId ?? await workingRevisionId(db, principal.tenantId, item) ?? undefined;
-  if (!revisionId) return json({ error: "revision_not_found" }, 404);
+  // not the already-published pointer. An item with neither has nothing to publish.
+  let revisionId: string;
+  if (input.revisionId) {
+    revisionId = input.revisionId;
+  } else {
+    const working = await workingRevisionId(db, principal.tenantId, item);
+    if (!working) return json({ error: "no_revision_to_publish" }, 409);
+    revisionId = working;
+  }
   const revision = await db.prepare(
     "SELECT id FROM content_revisions WHERE id = ?1 AND content_item_id = ?2",
   ).bind(revisionId, id).first();

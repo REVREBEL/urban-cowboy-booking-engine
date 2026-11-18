@@ -89,8 +89,8 @@ function ctx(db: DatabaseSync, body?: unknown, failBatch = false): EditorCtx {
   };
 }
 
-async function create(db: DatabaseSync, payload: Record<string, unknown>) {
-  const body = { kind: "policy", slug: "policy-a", payload };
+async function create(db: DatabaseSync, payload: Record<string, unknown>, slug = "policy-a") {
+  const body = { kind: "policy", slug, payload };
   const res = await createEditorDraft(ctx(db, body), allowAdmin);
   assert.equal(res.status, 201);
   return res.json() as Promise<{ id: string; revisionId: string }>;
@@ -249,6 +249,24 @@ test("an injected batch failure leaves no partial revision or audit writes", asy
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM content_revisions WHERE content_item_id=?").get(id).n, 1);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action='draft_saved'").get().n, 0);
   assert.equal(db.prepare("SELECT working_revision_id FROM content_item_pointers WHERE content_item_id=?").get(id).working_revision_id, revisionId);
+  db.close();
+});
+
+test("duplicate slugs and revisions with nothing to publish are handled explicitly", async () => {
+  const db = makeDb();
+  await create(db, { title: "v1" });
+  const duplicate = await createEditorDraft(ctx(db, {
+    kind: "policy", slug: "policy-a", payload: {},
+  }), allowAdmin);
+  assert.equal(duplicate.status, 409);
+  assert.equal((await duplicate.json() as any).error, "slug_conflict");
+
+  const { id } = await create(db, { title: "v1" }, "policy-b");
+  db.exec(`UPDATE content_items SET current_revision_id = NULL WHERE id='${id}'`);
+  db.exec(`DELETE FROM content_item_pointers WHERE content_item_id='${id}'`);
+  const nothing = await publishEditorItem(ctx(db, {}), id, allowAdmin);
+  assert.equal(nothing.status, 409);
+  assert.equal((await nothing.json() as any).error, "no_revision_to_publish");
   db.close();
 });
 
