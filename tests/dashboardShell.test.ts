@@ -19,7 +19,7 @@ test("shell exposes a skip link, labelled nav and current-page state", () => {
   assert.match(shell, /href="#dashboard-main"/);
   assert.match(shell, /Skip to dashboard content/);
   assert.match(shell, /<nav aria-label="Dashboard sections"/);
-  assert.match(shell, /<main id="dashboard-main" tabIndex={-1}/);
+  assert.match(shell, /<main id="dashboard-main"[^>]*tabIndex={-1}/);
   assert.match(shell, /aria-current={item.id === route \? "page" : undefined}/);
   assert.match(shell, /focus-visible:outline-2/);
 });
@@ -37,7 +37,7 @@ test("route protection happens before the shell or any panel renders", () => {
   assert.ok(app.indexOf("if (!session)") < app.indexOf("<DashboardShell"), "session gate precedes shell");
   assert.match(app, /routeFromHash\(window\.location\.hash\)/);
   assert.match(app, /hashchange/);
-  assert.match(app, /createSessionTokenProvider/);
+  assert.match(app, /createDashboardApi\(\)/);
   assert.doesNotMatch(app, /fetch\(/);
 });
 
@@ -70,12 +70,19 @@ test("panel errors use the shared ErrorPanel behind a route-aware boundary", () 
   assert.match(app, /<PanelErrorBoundary resetKey=\{route\}>/);
 });
 
-test("token lookup is cached, stale responses are ignored and routes fail loudly", () => {
-  assert.match(app, /createSessionTokenProvider/);
-  assert.match(app, /tokenProvider\.clear\(\)/);
-  assert.doesNotMatch(app, /getToken: async \(\) =>/);
+test("Worker API calls rely on Access cookies, not a Supabase token", () => {
+  assert.match(apiSource, /credentials: "same-origin"/);
+  assert.doesNotMatch(apiSource, /headers\.set\("authorization"/);
+  assert.match(app, /Cloudflare Access at the edge/);
   assert.match(resource, /requestId = useRef\(0\)/);
   assert.match(resource, /id === requestId\.current/);
   assert.doesNotMatch(apiSource, /dashboard\.local/);
   assert.match(navigationSource, /Unknown dashboard route/);
+});
+
+test("the skip link moves focus without changing the router hash", () => {
+  assert.match(shell, /const mainRef = useRef<HTMLElement>\(null\)/);
+  assert.match(shell, /event\.preventDefault\(\)/);
+  assert.match(shell, /mainRef\.current\?\.focus\(\)/);
+  assert.match(shell, /ref=\{mainRef\}/);
 });

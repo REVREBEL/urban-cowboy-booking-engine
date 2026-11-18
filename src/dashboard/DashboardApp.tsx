@@ -7,7 +7,6 @@ import { D1ContentPanel } from "./D1ContentPanel";
 import { DashboardShell } from "./DashboardShell";
 import { navItemFor, routeFromHash, type DashboardRouteId } from "./navigation";
 import { PanelErrorBoundary } from "./PanelErrorBoundary";
-import { createSessionTokenProvider } from "./sessionToken";
 import { isConfigured, supabase } from "./supabase";
 import { EmptyPanel } from "./states";
 
@@ -16,14 +15,9 @@ export function DashboardApp() {
   const [ready, setReady] = useState(false);
   const [route, setRoute] = useState<DashboardRouteId>(() => routeFromHash(window.location.hash));
 
-  const tokenProvider = useMemo(
-    () => createSessionTokenProvider(async () => (await supabase.auth.getSession()).data.session ?? null),
-    [],
-  );
-  const api = useMemo(
-    () => createDashboardApi({ getToken: tokenProvider.getToken }),
-    [tokenProvider],
-  );
+  // Worker APIs are authorized by Cloudflare Access at the edge, not by this
+  // Supabase session. The session gates only the legacy Supabase funnel panel.
+  const api = useMemo(() => createDashboardApi(), []);
 
   useEffect(() => {
     let alive = true;
@@ -33,15 +27,13 @@ export function DashboardApp() {
       setReady(true);
     });
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, next) => {
-      if (!alive) return;
-      tokenProvider.clear();
-      setSession(next);
+      if (alive) setSession(next);
     });
     return () => {
       alive = false;
       subscription.subscription.unsubscribe();
     };
-  }, [tokenProvider]);
+  }, []);
 
   useEffect(() => {
     const onHashChange = () => setRoute(routeFromHash(window.location.hash));
@@ -58,10 +50,7 @@ export function DashboardApp() {
     <DashboardShell
       email={session.user.email ?? ""}
       route={route}
-      onSignOut={() => {
-        tokenProvider.clear();
-        void supabase.auth.signOut();
-      }}
+      onSignOut={() => void supabase.auth.signOut()}
     >
       <PanelErrorBoundary resetKey={route}>
         {route === "analytics" && <FunnelPanel />}

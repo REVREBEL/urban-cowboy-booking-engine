@@ -1,8 +1,10 @@
 // COW-37 centralized dashboard API client.
 //
-// One place builds URLs, attaches the verified session token and turns failed
-// responses into typed errors. Panel components never assemble /api URLs or
-// read credentials themselves.
+// One place builds /api URLs and turns failed responses into typed errors.
+// Protected Worker routes use Cloudflare Access (COW-31): the browser sends the
+// Access cookie on same-origin requests and Cloudflare injects the verified JWT
+// header before the request reaches the Worker. No Supabase token is forwarded
+// here; that token authorizes Supabase data only.
 
 export const DASHBOARD_TENANT = "urban-cowboy";
 
@@ -21,7 +23,6 @@ export class DashboardApiError extends Error {
 }
 
 export interface DashboardApiOptions {
-  getToken: () => Promise<string | null>;
   fetchImpl?: typeof fetch;
 }
 
@@ -48,7 +49,7 @@ function errorFrom(status: number, text: string): DashboardApiError {
   return new DashboardApiError(message, status, code);
 }
 
-export function createDashboardApi(options: DashboardApiOptions): DashboardApi {
+export function createDashboardApi(options: DashboardApiOptions = {}): DashboardApi {
   const doFetch = options.fetchImpl ?? fetch;
 
   async function get<T>(
@@ -63,15 +64,14 @@ export function createDashboardApi(options: DashboardApiOptions): DashboardApi {
     }
     const search = query.toString();
     const requestPath = search ? `${path}?${search}` : path;
-    const token = await options.getToken();
     const headers = new Headers(init.headers);
     headers.set("accept", "application/json");
-    // The token travels in a header, never in the URL or a query parameter.
-    if (token) headers.set("authorization", `Bearer ${token}`);
+    // Same-origin credentials carry the Access cookie. Workers verify the JWT
+    // that Cloudflare injects; the dashboard never fabricates that header.
     const response = await doFetch(requestPath, {
       ...init,
       headers,
-      credentials: "omit",
+      credentials: "same-origin",
     });
     if (!response.ok) {
       const text = await response.text().catch(() => "");

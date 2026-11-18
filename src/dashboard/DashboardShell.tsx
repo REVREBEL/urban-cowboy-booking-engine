@@ -1,5 +1,6 @@
 // COW-37 responsive admin shell. Every route is reachable only when the
 // session gate in DashboardApp has already passed.
+import { useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   DASHBOARD_NAV,
@@ -18,11 +19,17 @@ export interface DashboardShellProps {
 
 export function DashboardShell({ email, route, onSignOut, children }: DashboardShellProps) {
   const current = navItemFor(route);
+  const mainRef = useRef<HTMLElement>(null);
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <a
         href="#dashboard-main"
+        onClick={(event) => {
+          // The hash is the router key. Move focus without changing it.
+          event.preventDefault();
+          mainRef.current?.focus();
+        }}
         className="sr-only rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50"
       >
         Skip to dashboard content
@@ -78,7 +85,7 @@ export function DashboardShell({ email, route, onSignOut, children }: DashboardS
           </ul>
         </nav>
 
-        <main id="dashboard-main" tabIndex={-1} className="min-w-0 px-4 py-6 lg:px-8">
+        <main id="dashboard-main" ref={mainRef} tabIndex={-1} className="min-w-0 px-4 py-6 lg:px-8">
           <div className="mb-5">
             <h1 className="font-heading text-2xl text-foreground">{current.label}</h1>
             <p className="mt-1 text-sm text-muted-foreground">{current.description}</p>

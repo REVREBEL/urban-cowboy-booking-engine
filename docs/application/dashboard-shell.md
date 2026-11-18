@@ -27,18 +27,27 @@ Unknown hashes fall back to Analytics. The shell marks the active link with
 
 ## Protection
 
-`DashboardApp` checks the Supabase session before rendering the shell or any panel.
-An unauthenticated hash cannot bypass that gate: all routes render the login screen
-until a session exists. Sign-out is handled in the shell header. Role-based navigation
-and per-route permissions are not implemented; no role is inferred from client input.
+Worker APIs are protected by Cloudflare Access (COW-31). The browser sends the Access
+cookie on same-origin requests and Cloudflare injects the verified JWT header before
+the request reaches the Worker. The dashboard never fabricates that header and never
+forwards a Supabase token to a Worker route.
+
+`DashboardApp` also checks a Supabase session before rendering the shell. That gate
+covers the legacy funnel panel, which reads Supabase carts directly; an unauthenticated
+hash cannot render any panel. This is separate from Worker authorization. Role-based
+navigation and per-route permissions are not implemented; no role is inferred from
+client input. Sign-out is handled in the shell header.
 
 ## API client
 
 `createDashboardApi` in `src/dashboard/api.ts` is the only place that builds `/api`
-URLs. It sends the session access token in an `Authorization` header, never in the
-URL, uses `credentials: "omit"`, and converts non-2xx responses into
+URLs. It uses `credentials: "same-origin"` so the Access cookie reaches the edge,
+sends no `Authorization` header, and converts non-2xx responses into
 `DashboardApiError` with `status`, `code` and message. `getD1Module` and
 `getContentItems` wrap the existing endpoints. Panels receive the client as a prop.
+
+The skip link focuses `<main>` through a ref after `preventDefault()`, so keyboard
+navigation does not mutate the hash used by the router.
 
 ## Shared states and controls
 
@@ -47,16 +56,14 @@ Retry action. `PanelErrorBoundary` wraps every panel so a render failure stays i
 the shell, and a route change clears a previous boundary error. `useDashboardResource`
 ignores stale responses when a retry overlaps an in-flight request.
 
-The access token is cached until 60 seconds before its Supabase expiry and cleared on
-auth changes, so panel requests do not each call `getSession()`. Buttons and pill
-buttons use the shared `Button` and `PillButton` components with documented appearance
-props only. The funnel panel's range selector and refresh action were migrated to
-those components; no new local button theme was introduced.
+Buttons and pill buttons use the shared `Button` and `PillButton` components with
+documented appearance props only. The funnel panel's range selector and refresh action
+were migrated to those components; no new local button theme was introduced.
 
 ## Verification
 
 ```bash
-node --test tests/dashboardNavigation.test.ts tests/dashboardApiClient.test.ts tests/dashboardShell.test.ts
+node --test tests/dashboardNavigation.test.ts tests/dashboardApiClient.test.ts tests/dashboardShell.test.ts tests/dashboardAccessIntegration.test.ts
 npm run typecheck
 npm run lint:controls
 npm run build

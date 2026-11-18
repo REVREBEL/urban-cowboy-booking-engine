@@ -5,7 +5,7 @@ import { createDashboardApi, DashboardApiError } from "../src/dashboard/api.ts";
 
 type Call = { url: string; init?: RequestInit };
 
-function client(token: string | null, calls: Call[], respond?: (call: Call) => Response) {
+function client(calls: Call[], respond?: (call: Call) => Response) {
   const fetchImpl = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const call = { url: String(input), init };
     calls.push(call);
@@ -14,13 +14,13 @@ function client(token: string | null, calls: Call[], respond?: (call: Call) => R
       headers: { "content-type": "application/json" },
     });
   }) as typeof fetch;
-  return createDashboardApi({ getToken: async () => token, fetchImpl });
+  return createDashboardApi({ fetchImpl });
 }
 
-test("get builds the URL, sends the token in a header and omits credentials", async () => {
+test("get builds the URL, carries the Access cookie and sends no Supabase token", async () => {
   const calls: Call[] = [];
-  const api = client("jwt-token", calls);
-  const result = await api.get<{ ok: boolean }>("/api/content/items", {
+  const api = client(calls);
+  const result = await api.get<{ items: unknown[] }>("/api/content/items", {
     tenant: "urban-cowboy",
     kind: "instagram",
     location: undefined,
@@ -30,23 +30,19 @@ test("get builds the URL, sends the token in a header and omits credentials", as
   assert.equal(calls.length, 1);
   assert.equal(calls[0].url, "/api/content/items?tenant=urban-cowboy&kind=instagram");
   const headers = new Headers(calls[0].init?.headers);
-  assert.equal(headers.get("authorization"), "Bearer jwt-token");
   assert.equal(headers.get("accept"), "application/json");
-  assert.equal(calls[0].init?.credentials, "omit");
-  assert.equal(calls[0].url.includes("jwt-token"), false);
+  assert.equal(headers.has("authorization"), false);
+  assert.equal(calls[0].init?.credentials, "same-origin");
 });
 
-test("get works without a token and rejects non-API paths", async () => {
-  const calls: Call[] = [];
-  const api = client(null, calls);
-  await api.get("/api/analytics/summary");
-  assert.equal(new Headers(calls[0].init?.headers).has("authorization"), false);
+test("get rejects non-API paths", async () => {
+  const api = client([]);
   await assert.rejects(() => api.get("/etc/passwd"), /must start with \/api\//);
 });
 
 test("failed responses become typed DashboardApiError", async () => {
   const calls: Call[] = [];
-  const api = client("token", calls, () => new Response(
+  const api = client(calls, () => new Response(
     JSON.stringify({ error: "forbidden", message: "Tenant scope denied" }),
     { status: 403, headers: { "content-type": "application/json" } },
   ));
@@ -60,13 +56,11 @@ test("failed responses become typed DashboardApiError", async () => {
       return true;
     },
   );
-  assert.equal(calls[0].url.includes("other"), true);
-  assert.equal(calls[0].url.includes("token"), false);
 });
 
 test("module and content helpers use the centralized client", async () => {
   const calls: Call[] = [];
-  const api = client("token", calls, (call) => new Response(
+  const api = client(calls, (call) => new Response(
     JSON.stringify({ items: [{ id: "x", title: call.url }] }),
     { status: 200, headers: { "content-type": "application/json" } },
   ));
