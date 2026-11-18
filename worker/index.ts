@@ -35,6 +35,14 @@ import {
   snapshotsRefresh,
   snapshotsRollback,
 } from "./content-routes.ts";
+import {
+  createEditorDraft,
+  getEditorItem,
+  listEditorItems,
+  publishEditorItem,
+  rollbackEditorItem,
+  saveEditorDraft,
+} from "./content-editor.ts";
 import { eventsList, addOnsList, offersList, upgradesList } from "./d1-modules";
 import { recoveryList } from "./d1-recovery";
 import { analyticsSummary } from "./d1-analytics";
@@ -101,6 +109,28 @@ export default {
     if (url.pathname.match(/^\/api\/content\/items\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return contentList({ request, env });
+    }
+    // Editorial / publishing API. All role + tenant checks happen in the Worker.
+    const editorAction = url.pathname.match(/^\/api\/content\/editor\/items\/([^/]+)\/(publish|rollback)\/?$/);
+    if (editorAction) {
+      if (request.method !== "POST") return json({ error: "not_found" }, 404);
+      const editorCtx = { request, env, waitUntil: (p: Promise<unknown>) => ctx.waitUntil(p) };
+      return editorAction[2] === "publish"
+        ? publishEditorItem(editorCtx, editorAction[1])
+        : rollbackEditorItem(editorCtx, editorAction[1]);
+    }
+    const editorItem = url.pathname.match(/^\/api\/content\/editor\/items\/([^/]+)\/?$/);
+    if (editorItem) {
+      const editorCtx = { request, env, waitUntil: (p: Promise<unknown>) => ctx.waitUntil(p) };
+      if (request.method === "GET") return getEditorItem(editorCtx, editorItem[1]);
+      if (request.method === "PATCH") return saveEditorDraft(editorCtx, editorItem[1]);
+      return json({ error: "not_found" }, 404);
+    }
+    if (url.pathname.match(/^\/api\/content\/editor\/items\/?$/)) {
+      const editorCtx = { request, env, waitUntil: (p: Promise<unknown>) => ctx.waitUntil(p) };
+      if (request.method === "GET") return listEditorItems(editorCtx);
+      if (request.method === "POST") return createEditorDraft(editorCtx);
+      return json({ error: "not_found" }, 404);
     }
     // Specific paths first: /snapshots/rollback must not be read as a collection.
     if (url.pathname.match(/^\/api\/content\/snapshots\/rollback\/?$/)) {
