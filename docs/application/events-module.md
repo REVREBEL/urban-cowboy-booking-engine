@@ -34,7 +34,11 @@ Webflow stores instants in UTC. Anchoring on the local wall time avoids drifting
 2. Generate recurrence dates on a local calendar (UTC-based date arithmetic, never a local `Date`).
 3. Convert each local date + wall time back to an instant with offset iteration.
 
-Example: a Saturday event anchored at `2027-02-01T13:40:00Z` is 08:40 EST. Its 2027-02-06 occurrence is `13:40Z`; its 2027-03-20 occurrence is `12:40Z` — still 08:40 local after the spring transition. The UTC-midnight Bingo anchor (`2026-10-06T00:00:00Z`) correctly resolves to Monday 20:00 local, which is why its Tuesday repeat lands on Tuesday local dates. Occurrence expansion is capped (400 by default) to avoid runaway ranges.
+Example: a Saturday event anchored at `2027-02-01T13:40:00Z` is 08:40 EST. Its 2027-02-06 occurrence is `13:40Z`; its 2027-03-20 occurrence is `12:40Z` — still 08:40 local after the spring transition. The UTC-midnight Bingo anchor (`2026-10-06T00:00:00Z`) correctly resolves to Monday 20:00 local, which is why its Tuesday repeat lands on Tuesday local dates.
+
+DST boundary policy is explicit in `resolveWallTime`: a repeated local time at fall-back resolves to the **first** (earlier) instant, and a nonexistent local time at spring-forward shifts **forward** by the offset gap (02:30 becomes 03:30 local). The result carries a `resolution` of `exact`, `ambiguous_earlier` or `shifted_forward`.
+
+Occurrence expansion is capped (400 by default) to avoid runaway ranges. Daily, weekly and monthly rules jump to the first candidate at or after the requested window before applying the cap, so a recurrence anchored years earlier cannot be truncated before a far-future query window is reached.
 
 ## Endpoints
 

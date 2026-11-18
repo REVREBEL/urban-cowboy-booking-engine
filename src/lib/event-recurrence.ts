@@ -65,19 +65,52 @@ function zoneOffsetMs(instant: number, timeZone: string): number {
   return asUtc - Math.floor(instant / 1000) * 1000;
 }
 
-/** Convert local wall-clock parts in a time zone back to a UTC instant. */
+export type WallTimeResolution = "exact" | "ambiguous_earlier" | "shifted_forward";
+
+export interface ResolvedWallTime {
+  instant: number;
+  resolution: WallTimeResolution;
+}
+
+/**
+ * Convert local wall-clock parts in a time zone back to a UTC instant.
+ *
+ * Policy: a repeated time at fall-back resolves to the FIRST (earlier) instant;
+ * a nonexistent time at spring-forward shifts forward by the offset gap (1 hour
+ * in America/New_York), i.e. 02:30 becomes 03:30 local. Both are deterministic
+ * and reported via `resolution` so callers can explain the result.
+ */
+export function resolveWallTime(
+  year: number, month: number, day: number, hour: number, minute: number, timeZone: string,
+): ResolvedWallTime {
+  const wall = Date.UTC(year, month - 1, day, hour, minute, 0);
+  const offsets = [...new Set([
+    zoneOffsetMs(wall - DAY_MS, timeZone),
+    zoneOffsetMs(wall, timeZone),
+    zoneOffsetMs(wall + DAY_MS, timeZone),
+  ])].sort((a, b) => a - b);
+  const matches = offsets
+    .map((offset) => wall - offset)
+    .filter((instant) => {
+      const p = zonedParts(instant, timeZone);
+      return p.year === year && p.month === month && p.day === day && p.hour === hour && p.minute === minute;
+    })
+    .sort((a, b) => a - b);
+
+  if (matches.length) {
+    return { instant: matches[0], resolution: matches.length > 1 ? "ambiguous_earlier" : "exact" };
+  }
+
+  const gap = offsets.length > 1 ? offsets[offsets.length - 1] - offsets[0] : 3_600_000;
+  const laterOffset = offsets[offsets.length - 1];
+  // Shift the wall time forward by the gap and resolve with the later offset.
+  return { instant: wall + gap - laterOffset, resolution: "shifted_forward" };
+}
+
 export function wallTimeToInstant(
   year: number, month: number, day: number, hour: number, minute: number, timeZone: string,
 ): number {
-  let guess = Date.UTC(year, month - 1, day, hour, minute, 0);
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const offset = zoneOffsetMs(guess, timeZone);
-    const candidate = guess - offset;
-    if (zoneOffsetMs(candidate, timeZone) === offset) return candidate;
-    guess = candidate;
-  }
-  // Nonexistent/ambiguous local times (DST boundary) settle on the last guess.
-  return guess - zoneOffsetMs(guess, timeZone);
+  return resolveWallTime(year, month, day, hour, minute, timeZone).instant;
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -213,6 +246,18 @@ export function toEventSchedule(row: any, timeZone = EVENT_TIME_ZONE): EventSche
   };
 }
 
+const localDateMs = (date: string): number =>
+  Date.UTC(Number(date.slice(0, 4)), Number(date.slice(5, 7)) - 1, Number(date.slice(8, 10)));
+const diffLocalDays = (a: string, b: string): number => Math.floor((localDateMs(a) - localDateMs(b)) / DAY_MS);
+const diffLocalMonths = (a: string, b: string): number =>
+  (Number(a.slice(0, 4)) - Number(b.slice(0, 4))) * 12 +
+  (Number(a.slice(5, 7)) - Number(b.slice(5, 7)));
+
+/**
+ * Candidates in [from, to]. Every branch jumps to the first candidate at or
+ * after `from` before applying `limit`, so a long history cannot consume the
+ * output budget before a far-future window is reached.
+ */
 function candidateLocalDates(rule: RecurrenceRule, from: string, to: string, limit: number): string[] {
   const last = rule.untilLocalDate && rule.untilLocalDate < to ? rule.untilLocalDate : to;
   if (last < from || rule.localStartDate > last) return [];
@@ -222,27 +267,38 @@ function candidateLocalDates(rule: RecurrenceRule, from: string, to: string, lim
     return [rule.localStartDate];
   }
   if (rule.type === "daily") {
-    for (let date = rule.localStartDate; date <= last && dates.length < limit; date = addLocalDays(date, rule.every)) {
+    let step = Math.max(0, Math.ceil(diffLocalDays(from, rule.localStartDate) / rule.every));
+    let date = addLocalDays(rule.localStartDate, step * rule.every);
+    while (date <= last && dates.length < limit) {
       dates.push(date);
+      step++;
+      date = addLocalDays(rule.localStartDate, step * rule.every);
     }
     return dates;
   }
   if (rule.type === "monthly") {
-    for (let i = 0; ; i++) {
-      const date = addLocalMonths(rule.localStartDate, i * rule.every);
-      if (date > last) break;
+    let step = Math.max(0, Math.ceil(diffLocalMonths(from, rule.localStartDate) / rule.every));
+    let date = addLocalMonths(rule.localStartDate, step * rule.every);
+    // Day-of-month clamping (e.g. the 31st in February) can land before `from`.
+    while (date < from) {
+      step++;
+      date = addLocalMonths(rule.localStartDate, step * rule.every);
+    }
+    while (date <= last && dates.length < limit) {
       dates.push(date);
-      if (dates.length >= limit) break;
+      step++;
+      date = addLocalMonths(rule.localStartDate, step * rule.every);
     }
     return dates;
   }
 
-  // Weekly: anchor the first week on the rule's start date, then step by
-  // `every` weeks and include each configured weekday in that week.
+  // Weekly: anchor the first week on the rule's start date, jump to the first
+  // week overlapping `from`, then include each configured weekday in that week.
   const startDow = weekdayOfLocalDate(rule.localStartDate);
   const weekStart = addLocalDays(rule.localStartDate, -startDow);
   const weekdays = [...new Set(rule.weekdays)].sort((a, b) => a - b);
-  for (let w = 0; ; w++) {
+  let w = Math.max(0, Math.floor(diffLocalDays(from, weekStart) / (7 * rule.every)));
+  for (;; w++) {
     const base = addLocalDays(weekStart, w * 7 * rule.every);
     if (base > last) break;
     for (const weekday of weekdays) {

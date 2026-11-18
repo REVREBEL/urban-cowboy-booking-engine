@@ -15,6 +15,7 @@ import {
   expandEventOccurrences,
   parseRecurrenceRule,
   parseScheduleJson,
+  resolveWallTime,
   toEventSchedule,
 } from "../src/lib/event-recurrence.ts";
 import { eventOccurrences, eventPreview } from "../worker/events.ts";
@@ -122,6 +123,40 @@ test("daily and monthly rules keep local time and clamp short months", () => {
   })!;
   const monthlyOccurrences = expandEventOccurrences(schedule({ recurrenceRule: monthly }), "2027-01-01", "2027-03-31");
   assert.deepEqual(monthlyOccurrences.map((o) => o.localDate), ["2027-01-31", "2027-02-28", "2027-03-31"]);
+});
+
+test("far-future windows are not truncated by a long recurrence history", () => {
+  const daily = parseRecurrenceRule({
+    "recurrence-type": "1ca8e904af0708d46f5e480d678256ca",
+    "repeat-every": "1", "datetime": "2026-01-01T15:00:00.000Z",
+  })!;
+  const dailyOccurrences = expandEventOccurrences(schedule({ recurrenceRule: daily }), "2028-06-01", "2028-06-07");
+  assert.deepEqual(dailyOccurrences.map((o) => o.localDate), [
+    "2028-06-01", "2028-06-02", "2028-06-03", "2028-06-04", "2028-06-05", "2028-06-06", "2028-06-07",
+  ]);
+
+  const monthly = parseRecurrenceRule({
+    "recurrence-type": "25f888fcdf13745275d035a6eacfe18c",
+    "repeat-every": "1", "datetime": "2027-01-31T15:00:00.000Z",
+  })!;
+  const monthlyOccurrences = expandEventOccurrences(schedule({ recurrenceRule: monthly }), "2030-05-01", "2030-07-31");
+  assert.deepEqual(monthlyOccurrences.map((o) => o.localDate), ["2030-05-31", "2030-06-30", "2030-07-31"]);
+});
+
+test("DST boundary local times use a documented deterministic policy", () => {
+  // Spring forward: 02:30 does not exist; shift forward to 03:30 local (EDT).
+  const spring = resolveWallTime(2027, 3, 14, 2, 30, EVENT_TIME_ZONE);
+  assert.equal(spring.resolution, "shifted_forward");
+  assert.equal(new Date(spring.instant).toISOString(), "2027-03-14T07:30:00.000Z");
+
+  // Fall back: 01:30 happens twice; use the first (EDT) instant.
+  const fall = resolveWallTime(2026, 11, 1, 1, 30, EVENT_TIME_ZONE);
+  assert.equal(fall.resolution, "ambiguous_earlier");
+  assert.equal(new Date(fall.instant).toISOString(), "2026-11-01T05:30:00.000Z");
+
+  const ordinary = resolveWallTime(2027, 6, 1, 12, 0, EVENT_TIME_ZONE);
+  assert.equal(ordinary.resolution, "exact");
+  assert.equal(new Date(ordinary.instant).toISOString(), "2027-06-01T16:00:00.000Z");
 });
 
 test("one-time events expand once and stay merchandising never claims availability", () => {
