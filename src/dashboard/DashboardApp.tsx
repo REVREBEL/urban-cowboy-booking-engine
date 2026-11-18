@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { createDashboardApi } from "./api";
 import { ConfigNeeded, FunnelPanel, Login, Splash } from "./Dashboard";
-import { D1ContentPanel } from "./D1ContentPanel";
+import { EventsCalendarPanel } from "./EventsCalendarPanel";
 import { DashboardShell } from "./DashboardShell";
 import { navItemFor, routeFromHash, type DashboardRouteId } from "./navigation";
 import { PanelErrorBoundary } from "./PanelErrorBoundary";
@@ -54,7 +54,7 @@ export function DashboardApp() {
     >
       <PanelErrorBoundary resetKey={route}>
         {route === "analytics" && <FunnelPanel />}
-        {route === "events" && <D1ContentPanel api={api} />}
+        {route === "events" && <EventsCalendarPanel api={api} />}
         {route !== "analytics" && route !== "events" && (
           <EmptyPanel message={`${current.label} panel is not wired yet. Navigation and route protection are available now.`} />
         )}

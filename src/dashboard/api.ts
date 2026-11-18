@@ -28,6 +28,7 @@ export interface DashboardApiOptions {
 
 export interface DashboardApi {
   get<T>(path: string, params?: Record<string, string | number | undefined>, init?: RequestInit): Promise<T>;
+  post<T>(path: string, body: unknown): Promise<T>;
   getD1Module<T>(module: DashboardModule, tenant?: string): Promise<T[]>;
   getContentItems<T>(kind?: string, tenant?: string, location?: string): Promise<T[]>;
 }
@@ -82,6 +83,19 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
 
   return {
     get,
+    async post<T>(path: string, body: unknown): Promise<T> {
+      const response = await doFetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw errorFrom(response.status, text);
+      }
+      return (await response.json()) as T;
+    },
     async getD1Module<T>(module: DashboardModule, tenant = DASHBOARD_TENANT): Promise<T[]> {
       // Only add-ons has a dedicated /api/d1 route. events, offers and upgrades
       // are served by /api/content/<module> in worker/index.ts.

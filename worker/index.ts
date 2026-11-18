@@ -35,7 +35,7 @@ import {
   snapshotsRefresh,
   snapshotsRollback,
 } from "./content-routes.ts";
-import { eventOccurrences, eventPreview } from "./events.ts";
+import { eventOccurrences, eventPreview, eventVenues } from "./events.ts";
 import {
   createEditorDraft,
   getEditorItem,
@@ -150,6 +150,10 @@ export default {
     if (url.pathname.match(/^\/api\/content\/parity\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return parityGet({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
+    }
+    if (url.pathname.match(/^\/api\/content\/events\/venues\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return eventVenues({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
     }
     if (url.pathname.match(/^\/api\/content\/events\/preview\/?$/)) {
       if (request.method !== "POST") return json({ error: "not_found" }, 404);
