@@ -1,0 +1,36 @@
+@source "../../src";
+@source "../../node_modules/fumadocs-ui/dist";
+@source "../../node_modules/@fumadocs/story/dist";
+
+@import "../../src/styles/index.css";
+@import "@fumadocs/story/css/preset.css";
+
+:root {
+  --storybook-story-max-width: 1600px;
+}
+
+html,
+body {
+  min-width: 320px;
+}
+
+/* One shared canvas width across Docs and Story. No nested scrolling surface. */
+[data-fumadocs-docs],
+.fumadocs-docs,
+.docs-story-frame {
+  width: 100%;
+  max-width: var(--storybook-story-max-width);
+  margin-inline: auto;
+  box-sizing: border-box;
+  overflow-x: visible;
+}
+
+.docs-story-frame {
+  padding: 24px 24px 48px;
+}
+
+@media (max-width: 640px) {
+  .docs-story-frame {
+    padding: 16px 16px 32px;
+  }
+}

@@ -3,6 +3,10 @@ node_modules/
 
 # build output
 dist/
+docs-app/.next/
+docs-app/out/
+docs-app/.source/
+docs-app/next-env.d.ts
 
 # Cloudflare / Wrangler
 .wrangler/

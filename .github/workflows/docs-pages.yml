@@ -1,0 +1,85 @@
+name: Component docs
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: component-docs
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      # lint:controls diffs against origin/main, so the base ref must be present.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Control contract
+        run: npm run lint:controls
+
+      - name: Build static docs
+        run: |
+          echo "DOCS_BASE_PATH=${{ vars.DOCS_BASE_PATH || format('/{0}', github.event.repository.name) }}" >> "$GITHUB_ENV"
+          npm run docs:build
+
+      - name: Smoke check static output
+        run: npm run docs:smoke
+
+  deploy:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && vars.DOCS_PAGES_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build static docs
+        run: |
+          echo "DOCS_BASE_PATH=${{ vars.DOCS_BASE_PATH || format('/{0}', github.event.repository.name) }}" >> "$GITHUB_ENV"
+          npm run docs:build
+
+      - name: Smoke check static output
+        run: npm run docs:smoke
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs-app/out
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

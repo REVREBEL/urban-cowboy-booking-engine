@@ -1,0 +1,27 @@
+{
+  "name": "@urban-cowboy/docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "fumadocs-mdx",
+    "dev": "next dev",
+    "prebuild": "fumadocs-mdx",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@fumadocs/story": "^1.5.4",
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.2.2",
+    "fumadocs-core": "^16.19.4",
+    "fumadocs-mdx": "^15.6.3",
+    "fumadocs-ui": "^16.19.4",
+    "next": "^16.4.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^6.0.3"
+  }
+}
