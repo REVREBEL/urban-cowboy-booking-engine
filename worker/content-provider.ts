@@ -19,6 +19,7 @@ import {
   type TenantScope,
 } from "./d1.ts";
 import type { Env } from "./mews/_lib.ts";
+import { isPublishedSource } from "./publication-gate.ts";
 
 export const CONTENT_COLLECTIONS = [
   "locations",
@@ -50,6 +51,15 @@ export function isContentCollection(value: string): value is ContentCollection {
 }
 
 export async function loadPublishedCollection(
+  db: D1Database,
+  scope: TenantScope,
+  collection: ContentCollection,
+): Promise<PublishedRecord[]> {
+  const records = await loadAllRows(db, scope, collection);
+  return records.filter((record) => isPublishedSource(collection, record.id));
+}
+
+async function loadAllRows(
   db: D1Database,
   scope: TenantScope,
   collection: ContentCollection,

@@ -21,7 +21,7 @@ The flag is a Worker variable, never a request parameter. Rollback is setting it
 
 ## Tables (migration 0004)
 
-- `published_snapshots` — immutable rows keyed by `(tenant_id, location_id, collection, version)` with `payload_json`, `item_count`, `checksum`, `created_at`. `location_id = ''` means tenant-wide. That sentinel is deliberately **not** an FK to `locations`; concrete location IDs are validated by the tenant-scoped read path instead.
+- `published_snapshots` — immutable rows keyed by `(tenant_id, location_id, collection, version)` with `payload_json`, `item_count`, `checksum`, `created_at`. `location_id = ''` means tenant-wide. That sentinel is deliberately **not** an FK to `locations`; concrete location IDs are validated by the tenant-scoped read path instead. Rows are insert-once: a version collision with different bytes throws `snapshot_version_conflict` rather than overwriting the existing payload.
 - `snapshot_pointers` — current and previous version per `(tenant_id, location_id, collection)`. A refresh writes a new snapshot and moves `current → previous`; a rollback swaps them back without deleting either snapshot.
 - `parity_reports` — one row per shadow comparison with `difference_count` and a JSON summary.
 
@@ -31,13 +31,15 @@ Rollback SQL lives in `scripts/d1-rollback/0004_published_snapshots_down.sql`, o
 
 `worker/content-provider.ts` loads published, tenant-scoped rows for `locations`, `buildings`, `roomTypes`, `amenities`, `addOns`, `events` and `contentItems` through the contract-validated scoped helpers from COW-30. Publication is respected at the query level: draft add-ons and content items are excluded, and only displayed events are read. Collections whose D1 table has no status column (`locations`, `buildings`, `roomTypes`, `amenities`) are published by presence; for every other collection the snapshot requires an explicit published/displayed signal. Mews IDs are carried as references, never resolved into prices.
 
+`worker/publication-gate.ts` is the authoritative deny-list for source records whose D1 table has no status column. COW-29 finding F-04 identified one draft Room Type (`6abd4a1debcab0ea7e461c9a`) in the export; the provider excludes it from snapshots and parity until a status column and backfill exist. This is why `roomTypes` is not yet described as fully published-only — the gate is explicit, not assumed.
+
 ## Snapshot behavior
 
 - `buildSnapshot()` sorts records by id, canonicalizes JSON (keys sorted recursively), and hashes it. The hash is the version, the ETag, and the checksum.
 - `GET /api/content/snapshots/:collection?location=&version=` returns the current or a pinned version. Pinned reads are immutable and carry `X-Snapshot-Pinned: true`.
-- Public snapshot responses use `Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=60` and `ETag: "<version>"` — version pinning makes a cached response safe across refreshes.
+- Only `d1` mode returns public cache headers: `Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=60` with `ETag: "<version>"`. Authenticated (`webflow`/`shadow` mode) snapshot reads always use `Cache-Control: no-store, private` so a shared edge cache cannot bypass the Access gate.
 - Admin endpoints use `Cache-Control: no-store, private` and Cloudflare Access role/tenant checks (`requireAdmin`, `authorizeScopedRequest`). A caller-supplied `?tenant=` is rejected unless it matches the configured scope.
-- **Error fallback:** if D1 is unavailable or the snapshot read fails, the route falls back to the Webflow loader and returns `X-Content-Fallback: webflow`. If that also fails it returns a clean `503` — never a 500 that could break the booking flow.
+- **Error fallback:** if D1 is unavailable or the snapshot read fails, the route falls back to the Webflow loader and returns `X-Content-Fallback: webflow`. A *missing current* snapshot is also an eligible fallback (the flag may be enabled before the first refresh), but an explicitly pinned missing version keeps its `404` rather than silently substituting another version. If the fallback loader itself fails, the route returns a clean `503` — never a 500 that could break the booking flow.
 
 ## Refresh, purge and rollback
 

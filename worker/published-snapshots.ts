@@ -51,9 +51,21 @@ export async function saveSnapshot(
   built: BuiltSnapshot,
 ): Promise<SnapshotPointer> {
   const before = await getSnapshotPointer(db, scope, collection);
+  // Content-addressed versions are immutable: insert once, then verify that a
+  // pre-existing row at the same version has exactly the same bytes. A mismatch
+  // is a corrupted or colliding version and must fail loudly, never overwrite.
   await db.prepare(
-    "INSERT INTO published_snapshots (tenant_id, location_id, collection, version, payload_json, item_count, checksum) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7) ON CONFLICT (tenant_id, location_id, collection, version) DO UPDATE SET payload_json = excluded.payload_json, item_count = excluded.item_count, checksum = excluded.checksum",
+    "INSERT INTO published_snapshots (tenant_id, location_id, collection, version, payload_json, item_count, checksum) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7) ON CONFLICT (tenant_id, location_id, collection, version) DO NOTHING",
   ).bind(scope.tenantId, loc(scope), collection, built.version, built.payloadJson, built.itemCount, built.checksum).run();
+  const stored = await db.prepare(
+    "SELECT payload_json, item_count, checksum FROM published_snapshots WHERE tenant_id = ?1 AND location_id = ?2 AND collection = ?3 AND version = ?4",
+  ).bind(scope.tenantId, loc(scope), collection, built.version).first() as
+    | { payload_json: string; item_count: number; checksum: string }
+    | null;
+  if (!stored || stored.payload_json !== built.payloadJson ||
+      stored.item_count !== built.itemCount || stored.checksum !== built.checksum) {
+    throw new Error("snapshot_version_conflict");
+  }
 
   const pointer: SnapshotPointer = {
     currentVersion: built.version,

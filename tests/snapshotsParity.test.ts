@@ -135,7 +135,7 @@ test("typed provider loads every published collection for a tenant", async () =>
     assert.ok(records.every((r) => r.collection === collection && r.id && r.payload));
   }
   const rooms = await loadPublishedCollection(api, scope, "roomTypes");
-  assert.equal(rooms.length, 1);
+  assert.deepEqual(rooms.map((r) => r.id), ["rt-1"]); // known Webflow draft is gated out
   assert.equal(rooms[0].payload.mewsRoomCategoryId, "mews-rt-1");
   assert.equal(toParityItems(rooms)[0].slug, "room-one");
 
@@ -202,6 +202,38 @@ test("a missing D1 snapshot falls back to Webflow instead of failing", async () 
   const unavailable = await snapshotGet(ctx, "locations", async () => null);
   assert.equal(unavailable.status, 503);
   assert.match(unavailable.headers.get("cache-control") ?? "", /no-store/);
+});
+
+test("an existing content-addressed version cannot be rewritten", async () => {
+  const db = makeDb();
+  const api = d1(db);
+  const original = await buildSnapshot("locations", [record("a", "A")]);
+  await saveSnapshot(api, scope, "locations", original);
+
+  const conflicting = { ...original, payloadJson: "{\"tampered\":true}", checksum: "deadbeef", itemCount: 99 };
+  await assert.rejects(() => saveSnapshot(api, scope, "locations", conflicting), /snapshot_version_conflict/);
+  const stored = await getSnapshot(api, scope, "locations");
+  assert.equal(stored?.payloadJson, original.payloadJson);
+  assert.equal(stored?.checksum, original.checksum);
+  db.close();
+});
+
+test("a missing current snapshot falls back, but a missing pin stays a 404", async () => {
+  const db = makeDb();
+  const env: any = { DB: d1(db), TENANT_ID: scope.tenantId, CONTENT_SOURCE: "d1" };
+  const ctx = { request: new Request("https://example.test/api/content/snapshots/locations"), env, waitUntil: () => {} };
+  const loader = async () => [{ id: "web-1", slug: "web-1", name: "Web", published: true }];
+
+  const fallback = await snapshotGet(ctx, "locations", loader);
+  assert.equal(fallback.status, 200);
+  assert.equal(fallback.headers.get("x-content-fallback"), "webflow");
+
+  const missingPin = await snapshotGet({ ...ctx, request: new Request("https://example.test/api/content/snapshots/locations?version=nope") }, "locations", loader);
+  assert.equal(missingPin.status, 404);
+
+  const broken = await snapshotGet(ctx, "locations", async () => { throw new Error("webflow down"); });
+  assert.equal(broken.status, 503);
+  db.close();
 });
 
 test("feature flag and cache policy default to the safe path", () => {

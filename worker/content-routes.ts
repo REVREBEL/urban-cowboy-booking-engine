@@ -71,32 +71,53 @@ export async function snapshotGet(
   const scope = scopeFor(ctx.request, ctx.env);
   const pinned = new URL(ctx.request.url).searchParams.get("version");
 
+  // Authenticated reads (anything outside d1 mode) must never be publicly
+  // cacheable: a shared edge cache could serve them without rechecking Access.
+  const headersFor = (version: string): Record<string, string> => ({
+    ...(source === "d1"
+      ? snapshotHeaders(version, source)
+      : { ...NO_STORE_HEADERS, ETag: `"${version}"`, "X-Content-Source": source }),
+  });
+
+  const fallback = async (): Promise<Response> => {
+    try {
+      const webflow = await fallbackLoader(ctx.env, collectionName);
+      if (!webflow) return error(503, "snapshot_unavailable");
+      const records: PublishedRecord[] = webflow.map((item) => ({
+        id: item.id,
+        collection: collectionName,
+        payload: { slug: item.slug, name: item.name, published: item.published },
+      }));
+      const built = await buildSnapshot(collectionName, records);
+      return jsonResponse(JSON.parse(built.payloadJson), 200, {
+        ...headersFor(built.version),
+        "X-Content-Fallback": "webflow",
+      });
+    } catch (err) {
+      console.error("[snapshotGet] Webflow fallback failed", err);
+      return error(503, "snapshot_unavailable");
+    }
+  };
+
   try {
     const db = dbForContent(ctx.env);
     const snapshot = await getSnapshot(db, scope, collectionName, pinned);
     if (!snapshot) {
-      return pinned ? error(404, "version_not_found") : error(404, "snapshot_not_published");
+      // An invalid pinned version keeps its 404: never silently substitute a
+      // different version for an explicit pin. A missing *current* snapshot is
+      // an eligible fallback (e.g. d1 flag enabled before the first refresh).
+      if (pinned) return error(404, "version_not_found");
+      return fallback();
     }
     return jsonResponse(JSON.parse(snapshot.payloadJson), 200, {
-      ...snapshotHeaders(snapshot.version, source),
+      ...headersFor(snapshot.version),
       ...(pinned ? { "X-Snapshot-Pinned": "true" } : {}),
     });
   } catch (err) {
-    // Error fallback: never break the guest flow on a snapshot read failure,
-    // but keep the underlying error visible for diagnosis.
+    // Never break the guest flow on a snapshot read failure, but keep the
+    // underlying error visible for diagnosis.
     console.error("[snapshotGet] D1 read failed, falling back to Webflow", err);
-    const webflow = await fallbackLoader(ctx.env, collectionName);
-    if (!webflow) return error(503, "snapshot_unavailable");
-    const records: PublishedRecord[] = webflow.map((item) => ({
-      id: item.id,
-      collection: collectionName,
-      payload: { slug: item.slug, name: item.name, published: item.published },
-    }));
-    const built = await buildSnapshot(collectionName, records);
-    return jsonResponse(JSON.parse(built.payloadJson), 200, {
-      ...snapshotHeaders(built.version, source),
-      "X-Content-Fallback": "webflow",
-    });
+    return fallback();
   }
 }
 
