@@ -46,6 +46,8 @@ export interface Env {
   // Legacy shared secret. Kept bound for backward compatibility only; no
   // authorization decision reads it now that Access JWT verification is in place.
   ADMIN_TOKEN?: string;
+  // COW-32 cutover flag: webflow (default) | shadow | d1.
+  CONTENT_SOURCE?: string;
 }
 
 // POST best-effort d'un JSON vers une URL de webhook. No-op si l'URL est absente/invalide.

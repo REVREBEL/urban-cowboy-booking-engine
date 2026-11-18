@@ -1,0 +1,194 @@
+/**
+ * Typed D1 content provider for published snapshots (COW-32).
+ *
+ * Reads are tenant-scoped and return contract-validated rows. Snapshots are
+ * versioned by a deterministic hash of their canonical payload, so a refresh
+ * that changes nothing keeps the same version and a pinned version always
+ * resolves to the same bytes. Mews remains the transactional authority: none
+ * of these collections carries price, availability or reservation state.
+ */
+import {
+  getDb,
+  listScopedAddOns,
+  listScopedAmenities,
+  listScopedBuildings,
+  listScopedContentItems,
+  listScopedEvents,
+  listScopedLocations,
+  listScopedRoomTypes,
+  type TenantScope,
+} from "./d1.ts";
+import type { Env } from "./mews/_lib.ts";
+import { isPublishedSource } from "./publication-gate.ts";
+
+export const CONTENT_COLLECTIONS = [
+  "locations",
+  "buildings",
+  "roomTypes",
+  "amenities",
+  "addOns",
+  "events",
+  "contentItems",
+] as const;
+export type ContentCollection = (typeof CONTENT_COLLECTIONS)[number];
+
+export interface PublishedRecord {
+  id: string;
+  collection: ContentCollection;
+  payload: Record<string, unknown>;
+}
+
+/** Comparable projection used for Webflow ↔ D1 parity. */
+export interface ParityItem {
+  id: string;
+  slug: string | null;
+  name: string | null;
+  published: boolean;
+}
+
+export function isContentCollection(value: string): value is ContentCollection {
+  return (CONTENT_COLLECTIONS as readonly string[]).includes(value);
+}
+
+export async function loadPublishedCollection(
+  db: D1Database,
+  scope: TenantScope,
+  collection: ContentCollection,
+): Promise<PublishedRecord[]> {
+  const records = await loadAllRows(db, scope, collection);
+  return records.filter((record) => isPublishedSource(collection, record.id));
+}
+
+async function loadAllRows(
+  db: D1Database,
+  scope: TenantScope,
+  collection: ContentCollection,
+): Promise<PublishedRecord[]> {
+  switch (collection) {
+    case "locations":
+      return (await listScopedLocations(db, scope)).map((row) => ({
+        id: row.id, collection, payload: {
+          slug: row.slug, name: row.name, timeZone: row.timeZone,
+          mewsHotelId: row.mewsHotelId, createdAt: row.createdAt,
+        },
+      }));
+    case "buildings":
+      return (await listScopedBuildings(db, scope)).map((row) => ({
+        id: row.id, collection, payload: {
+          locationId: row.locationId, name: row.name, slug: row.slug,
+          sortOrder: row.sortOrder, createdAt: row.createdAt,
+        },
+      }));
+    case "roomTypes":
+      return (await listScopedRoomTypes(db, scope)).map((row) => ({
+        id: row.id, collection, payload: {
+          locationId: row.locationId, mewsRoomCategoryId: row.mewsRoomCategoryId,
+          name: row.name, slug: row.slug, sortOrder: row.sortOrder,
+        },
+      }));
+    case "amenities":
+      return (await listScopedAmenities(db, scope)).map((row) => ({
+        id: row.id, collection, payload: {
+          name: row.name, imageName: row.imageName, imagePath: row.imagePath,
+          sortOrder: row.sortOrder,
+        },
+      }));
+    case "addOns":
+      return (await listScopedAddOns(db, scope)).map((row) => ({
+        id: row.id, collection, payload: {
+          locationId: row.locationId, name: row.name, description: row.description,
+          mewsProductId: row.mewsProductId, quantityCap: row.quantityCap,
+          sortOrder: row.sortOrder, status: row.status,
+        },
+      }));
+    case "events":
+      return (await listScopedEvents(db, scope)).map((row) => ({
+        id: row.id, collection, payload: {
+          locationId: row.locationId, title: row.title, description: row.description,
+          venue: row.venue, timeZone: row.timeZone, startsAt: row.startsAt,
+          endsAt: row.endsAt, recurrenceRule: row.recurrenceRule,
+          displayFlag: row.displayFlag, mediaAssetId: row.mediaAssetId,
+        },
+      }));
+    case "contentItems":
+      return (await listScopedContentItems(db, scope)).map((row) => ({
+        id: row.id, collection, payload: {
+          locationId: row.locationId, kind: row.kind, slug: row.slug,
+          status: row.status, currentRevisionId: row.currentRevisionId,
+        },
+      }));
+  }
+}
+
+/** Deterministic JSON: object keys sorted recursively, arrays preserved. */
+export function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([, v]) => v !== undefined)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, v]) => `${JSON.stringify(key)}:${canonicalJson(v)}`);
+    return `{${entries.join(",")}}`;
+  }
+  return JSON.stringify(value ?? null);
+}
+
+export async function sha256Hex(value: string): Promise<string> {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+export interface BuiltSnapshot {
+  version: string;
+  checksum: string;
+  itemCount: number;
+  payloadJson: string;
+}
+
+/** Builds an immutable snapshot; identical inputs always yield the same version. */
+export async function buildSnapshot(
+  collection: ContentCollection,
+  records: PublishedRecord[],
+): Promise<BuiltSnapshot> {
+  const ordered = [...records].sort((a, b) => a.id.localeCompare(b.id));
+  const canonical = canonicalJson(ordered);
+  const checksum = await sha256Hex(canonical);
+  return {
+    version: checksum,
+    checksum,
+    itemCount: ordered.length,
+    payloadJson: JSON.stringify({
+      collection,
+      version: checksum,
+      itemCount: ordered.length,
+      items: ordered,
+    }),
+  };
+}
+
+/** Collections whose D1 table has no publication column; presence is publication. */
+const IMPLICITLY_PUBLISHED = new Set<ContentCollection>([
+  "locations", "buildings", "roomTypes", "amenities",
+]);
+
+/** Small, comparable projection for structured parity reporting. */
+export function toParityItems(records: PublishedRecord[]): ParityItem[] {
+  return records.map((record) => {
+    const p = record.payload;
+    const published = IMPLICITLY_PUBLISHED.has(record.collection) ||
+      p.status === "published" || p.displayFlag === true;
+    return {
+      id: record.id,
+      slug: typeof p.slug === "string" ? p.slug : null,
+      name: typeof p.name === "string" ? p.name : null,
+      published,
+    };
+  }).sort((a, b) => a.id.localeCompare(b.id));
+}
+
+export function dbForContent(env: Env): D1Database {
+  const db = getDb(env);
+  if (!db) throw new Error("D1 not configured");
+  return db;
+}

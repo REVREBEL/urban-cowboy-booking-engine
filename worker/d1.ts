@@ -4,12 +4,19 @@
 
 import type { Env } from "./mews/_lib";
 import {
+  addOnRowSchema,
+  amenityRowSchema,
+  buildingRowSchema,
   contentItemRowSchema,
   contentProvenanceRowSchema,
   eventRowSchema,
   locationRowSchema,
   mediaAliasRowSchema,
   mediaAssetRowSchema,
+  roomTypeRowSchema,
+  type AddOnContract,
+  type AmenityContract,
+  type BuildingContract,
   type ContentItemContract,
   type ContentProvenanceContract,
   type EventContract,
@@ -17,6 +24,7 @@ import {
   type MediaAliasContract,
   type MediaAssetContract,
   type MediaAliasType,
+  type RoomTypeContract,
 } from "../src/types/d1-contracts.ts";
 
 export interface TenantScope {
@@ -231,6 +239,58 @@ export function listScopedContentItems(
 ): Promise<ContentItemContract[]> {
   const query = contentItemsQuery(scope, kind);
   return allScoped(db, query.sql, query.bindings, contentItemRowSchema);
+}
+
+const ROOM_TYPES_SELECT =
+  "SELECT id, tenant_id, location_id, mews_room_category_id, name, slug, sort_order, created_at FROM room_types";
+const BUILDINGS_SELECT =
+  "SELECT id, tenant_id, location_id, name, slug, sort_order, created_at FROM buildings";
+const AMENITIES_SELECT =
+  "SELECT id, tenant_id, name, image_name, image_path, sort_order, created_at FROM amenities";
+const ADD_ONS_SELECT =
+  "SELECT id, tenant_id, location_id, name, description, mews_product_id, icon_media_asset_id, quantity_cap, sort_order, status, created_at, updated_at FROM add_ons";
+
+/** Tenant-wide or location-scoped reads for the structured editorial tables. */
+export function listScopedRoomTypes(db: D1Database, scope: TenantScope): Promise<RoomTypeContract[]> {
+  return allScoped(
+    db,
+    scope.locationId != null
+      ? `${ROOM_TYPES_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 ORDER BY sort_order, id`
+      : `${ROOM_TYPES_SELECT} WHERE tenant_id = ?1 ORDER BY sort_order, id`,
+    scope.locationId != null ? [scope.tenantId, scope.locationId] : [scope.tenantId],
+    roomTypeRowSchema,
+  );
+}
+
+export function listScopedBuildings(db: D1Database, scope: TenantScope): Promise<BuildingContract[]> {
+  return allScoped(
+    db,
+    scope.locationId != null
+      ? `${BUILDINGS_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 ORDER BY sort_order, id`
+      : `${BUILDINGS_SELECT} WHERE tenant_id = ?1 ORDER BY sort_order, id`,
+    scope.locationId != null ? [scope.tenantId, scope.locationId] : [scope.tenantId],
+    buildingRowSchema,
+  );
+}
+
+export function listScopedAmenities(db: D1Database, scope: TenantScope): Promise<AmenityContract[]> {
+  return allScoped(
+    db,
+    `${AMENITIES_SELECT} WHERE tenant_id = ?1 ORDER BY sort_order, id`,
+    [scope.tenantId],
+    amenityRowSchema,
+  );
+}
+
+export function listScopedAddOns(db: D1Database, scope: TenantScope): Promise<AddOnContract[]> {
+  return allScoped(
+    db,
+    scope.locationId != null
+      ? `${ADD_ONS_SELECT} WHERE tenant_id = ?1 AND location_id = ?2 AND status = 'published' ORDER BY sort_order, id`
+      : `${ADD_ONS_SELECT} WHERE tenant_id = ?1 AND status = 'published' ORDER BY sort_order, id`,
+    scope.locationId != null ? [scope.tenantId, scope.locationId] : [scope.tenantId],
+    addOnRowSchema,
+  );
 }
 
 export function listScopedLocations(
