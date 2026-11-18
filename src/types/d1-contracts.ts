@@ -407,3 +407,144 @@ export const contentProvenanceRowSchema = z.object({
   importedAt: row.imported_at,
 }));
 export type ContentProvenanceContract = z.output<typeof contentProvenanceRowSchema>;
+
+// ---------------------------------------------------------------------------
+// COW-33 media registry extension
+// ---------------------------------------------------------------------------
+
+/** Explicit actions recorded in media_revisions. */
+export const mediaActionSchema = z.enum([
+  "create_new",
+  "link_existing",
+  "replace",
+  "retire",
+  "set_placement",
+]);
+export type MediaAction = z.infer<typeof mediaActionSchema>;
+
+/** Placement kinds. The database column stays free text; Zod owns the values. */
+export const mediaPlacementTypeSchema = z.enum([
+  "gallery",
+  "hero",
+  "icon",
+  "hotspot",
+  "document",
+]);
+export type MediaPlacementType = z.infer<typeof mediaPlacementTypeSchema>;
+
+const tagsText = z.string()
+  .refine((value) => {
+    try {
+      const parsed: unknown = JSON.parse(value);
+      return Array.isArray(parsed) && parsed.every((item) => typeof item === "string");
+    } catch {
+      return false;
+    }
+  }, "tags must be a JSON array of strings")
+  .transform((value) => JSON.parse(value) as string[]);
+
+export const mediaAssetMetadataRowSchema = z.object({
+  media_asset_id: id,
+  tenant_id: id,
+  description: nullableText,
+  caption: nullableText,
+  tags: tagsText.nullable(),
+  attribution: nullableText,
+  status: z.enum(["active", "retired"]),
+  current_version_id: nullableText,
+  created_at: timestamp,
+  updated_at: timestamp,
+}).transform((row) => ({
+  mediaAssetId: row.media_asset_id,
+  tenantId: row.tenant_id,
+  description: row.description,
+  caption: row.caption,
+  tags: row.tags,
+  attribution: row.attribution,
+  status: row.status,
+  currentVersionId: row.current_version_id,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+}));
+export type MediaAssetMetadataContract = z.output<typeof mediaAssetMetadataRowSchema>;
+
+export const mediaVersionFileRowSchema = z.object({
+  version_id: id,
+  tenant_id: id,
+  media_asset_id: id,
+  cloudinary_public_id: nullableText,
+  cloudinary_version: nullableText,
+  sha256: nullableText,
+  byte_size: z.number().int().nullable(),
+  mime_type: nullableText,
+  created_at: timestamp,
+}).transform((row) => ({
+  versionId: row.version_id,
+  tenantId: row.tenant_id,
+  mediaAssetId: row.media_asset_id,
+  cloudinaryPublicId: row.cloudinary_public_id,
+  cloudinaryVersion: row.cloudinary_version,
+  sha256: row.sha256,
+  byteSize: row.byte_size,
+  mimeType: row.mime_type,
+  createdAt: row.created_at,
+}));
+export type MediaVersionFileContract = z.output<typeof mediaVersionFileRowSchema>;
+
+export const mediaPlacementRowSchema = z.object({
+  id,
+  tenant_id: id,
+  media_asset_id: id,
+  target_table: id,
+  target_id: id,
+  placement_type: mediaPlacementTypeSchema,
+  alt_text_override: nullableText,
+  caption_override: nullableText,
+  description_override: nullableText,
+  display_order: z.number().int(),
+  created_at: timestamp,
+  updated_at: timestamp,
+}).transform((row) => ({
+  id: row.id,
+  tenantId: row.tenant_id,
+  mediaAssetId: row.media_asset_id,
+  targetTable: row.target_table,
+  targetId: row.target_id,
+  placementType: row.placement_type,
+  altTextOverride: row.alt_text_override,
+  captionOverride: row.caption_override,
+  descriptionOverride: row.description_override,
+  displayOrder: row.display_order,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+}));
+export type MediaPlacementContract = z.output<typeof mediaPlacementRowSchema>;
+
+export const mediaRevisionRowSchema = z.object({
+  id,
+  tenant_id: id,
+  media_asset_id: id,
+  action: mediaActionSchema,
+  from_version_id: nullableText,
+  to_version_id: nullableText,
+  target_table: nullableText,
+  target_id: nullableText,
+  actor: nullableText,
+  note: nullableText,
+  metadata_json: nullableText,
+  created_at: timestamp,
+}).transform((row) => ({
+  id: row.id,
+  tenantId: row.tenant_id,
+  mediaAssetId: row.media_asset_id,
+  action: row.action,
+  fromVersionId: row.from_version_id,
+  toVersionId: row.to_version_id,
+  targetTable: row.target_table,
+  targetId: row.target_id,
+  actor: row.actor,
+  note: row.note,
+  metadataJson: row.metadata_json,
+  createdAt: row.created_at,
+}));
+export type MediaRevisionContract = z.output<typeof mediaRevisionRowSchema>;
