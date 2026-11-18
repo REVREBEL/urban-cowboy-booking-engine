@@ -4,6 +4,11 @@ import type {
   BookingLocationFeatureCms,
 } from "../../src/types/location-cms.ts";
 import { json, propertiesForEnv, type Env } from "../mews/_lib.ts";
+import {
+  SITE_SETTINGS_SLUG, parseSiteSettings, siteSettingsFromWebflow, type SiteSettings,
+} from "../../src/types/site-settings.ts";
+import { listScopedContentItems, publishedRevisionPayload } from "../d1.ts";
+import { routeContentSource } from "../content-source.ts";
 
 interface WebflowCollectionItem {
   id?: unknown;
@@ -402,14 +407,33 @@ export async function onRequestGet({
 /** Live, fail-closed CMS check for property-scoped Studio access.
  * Deliberately bypasses the long-lived public Locations cache.
  */
+/** Published Webflow property settings for the configured location binding. */
+export async function loadPublishedSiteSettings(
+  env: Env,
+  propertyKey = "hotel",
+): Promise<SiteSettings | null> {
+  const binding = propertiesForEnv(env).find((property) => property.key === propertyKey);
+  if (!binding?.locationCmsItemId || !env.WEBFLOW_LOCATION_COLLECTION_ID) return null;
+  try {
+    const item = await fetchPublishedLocationItem(
+      env,
+      env.WEBFLOW_LOCATION_COLLECTION_ID,
+      binding.locationCmsItemId,
+      CONTENT_FIELDS,
+    );
+    if (!item || item.isDraft === true || item.isArchived === true) return null;
+    return siteSettingsFromWebflow(item.fieldData ?? {});
+  } catch {
+    return null;
+  }
+}
+
 export async function onRequestStudioConfig({ env, request }: { env: Env; request: Request }): Promise<Response> {
   const url = new URL(request.url);
   const key = url.searchParams.get("property") || "hotel";
-  const binding = propertiesForEnv(env).find((property) => property.key === key);
   // Local-only debugging, never expose authorization internals on deployed hosts.
   const localDiagnostics = url.hostname === "127.0.0.1" || url.hostname === "localhost";
   const denied = (reason: string) => {
-    // Log only the failure category. Do not print Webflow tokens or CMS data.
     console.warn("[booking studio] access check denied", { property: key, reason });
     return json({
       enabled: false,
@@ -418,6 +442,27 @@ export async function onRequestStudioConfig({ env, request }: { env: Env; reques
       ...(localDiagnostics ? { diagnostic: reason } : {}),
     }, 200, "no-store");
   };
+  // COW-68: d1 mode uses the published site-settings revision for Studio
+  // enablement and default layout. Webflow remains the default/fallback so
+  // the legacy response contract and Studio availability are unchanged.
+  if (routeContentSource(env, "siteSettings") === "d1" && env.DB) {
+    try {
+      const scope = { tenantId: env.TENANT_ID?.trim() || "urban-cowboy" };
+      const items = await listScopedContentItems(env.DB, scope, "site_settings");
+      const matches = items.filter((row) => row.slug === SITE_SETTINGS_SLUG);
+      if (matches.length === 1) {
+        const payload = await publishedRevisionPayload(env.DB, scope, matches[0].id);
+        const settings = payload ? parseSiteSettings(JSON.parse(payload)) : null;
+        if (settings) {
+          if (!settings.enableDemoEngine) return denied("cms_switch_off");
+          return json({
+            enabled: true, property: key, demoLayout: settings.demoLayout,
+          }, 200, "no-store");
+        }
+      }
+    } catch { /* fall through to the Webflow contract */ }
+  }
+  const binding = propertiesForEnv(env).find((property) => property.key === key);
   if (!binding?.locationCmsItemId) return denied("location_binding_missing");
   if (!env.WEBFLOW_LOCATION_COLLECTION_ID) return denied("collection_id_missing");
   if (!env.WEBFLOW_CMS_API_TOKEN) return denied("cms_token_missing");

@@ -41,8 +41,8 @@ test("per-table counts match the reconciliation plan", () => {
     add_ons: 9,
     room_type_amenities: 253,
     rate_merchandising: 5,
-    content_items: 24,
-    content_revisions: 24,
+    content_items: 25,
+    content_revisions: 25,
     media_assets: 0,
     media_versions: 0,
     photo_hotspots: 0,
@@ -109,6 +109,21 @@ test("every imported record carries source provenance", () => {
   db.close();
 });
 
+test("published Catskills site settings are imported with exact Webflow semantics", () => {
+  const db = makeDb();
+  const item = db.prepare("SELECT id, status, location_id, current_revision_id FROM content_items WHERE kind='site_settings'").get();
+  assert.ok(item);
+  assert.equal(item.status, "published");
+  assert.equal(item.location_id, CATSKILLS_ID);
+  const payload = JSON.parse(db.prepare("SELECT payload_json FROM content_revisions WHERE id=?").get(item.current_revision_id).payload_json);
+  assert.equal(payload.productionLayout, "photo");
+  assert.equal(payload.demoLayout, "photo");
+  assert.equal(payload.enableDemoEngine, false);
+  assert.equal(payload.enableEventDatesQuickSelection, false);
+  assert.equal(payload.enableFeatureSection, false);
+  db.close();
+});
+
 test("no fake foreign keys or placeholder media were introduced", () => {
   const seed = read("seed.sql");
   assert.doesNotMatch(seed, /placeholder-media/i);
@@ -141,7 +156,7 @@ test("reconciliation report matches generated SQL and source scope", () => {
   assert.deepEqual(report.destinationRows.room_type_amenities, 253);
   assert.equal(
     Object.values(report.destinationRows).reduce((a, b) => a + b, 0),
-    443,
+    445,
   );
 });
 

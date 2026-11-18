@@ -10,6 +10,7 @@ import type { Env } from "./mews/_lib.ts";
 import { authorizeScopedRequest, type Principal } from "./auth.ts";
 import { buildSnapshot, loadPublishedCollection } from "./content-provider.ts";
 import { saveSnapshot } from "./published-snapshots.ts";
+import { parseSiteSettings, SITE_SETTINGS_KIND } from "../src/types/site-settings.ts";
 import {
   createDraftSchema,
   publishSchema,
@@ -183,6 +184,9 @@ export async function createEditorDraft(
 
   // Pre-check for a readable conflict; the UNIQUE constraint remains the
   // final authority if two creates race.
+  if (input.kind === SITE_SETTINGS_KIND && !parseSiteSettings(input.payload)) {
+    return json({ error: "invalid_site_settings" }, 400);
+  }
   const duplicate = await db.prepare(
     "SELECT id FROM content_items WHERE tenant_id = ?1 AND kind = ?2 AND slug = ?3 AND location_id IS ?4",
   ).bind(principal.tenantId, input.kind, input.slug, input.locationId ?? null).first();
@@ -226,7 +230,15 @@ export async function saveEditorDraft(
   if (!db) return json({ error: "D1 not configured" }, 503);
   const item = await ownedItem(db, id, principal.tenantId);
   if (!item) return json({ error: "not_found" }, 404);
+  if (item.kind === SITE_SETTINGS_KIND && !parseSiteSettings(input.payload)) {
+    return json({ error: "invalid_site_settings" }, 400);
+  }
   const working = await workingRevisionId(db, principal.tenantId, item);
+  // Seeded items were created before migration 0006, so their pointer row may
+  // be missing. Seed it from the published pointer before the guarded batch.
+  await db.prepare(
+    "INSERT OR IGNORE INTO content_item_pointers (tenant_id, content_item_id, working_revision_id) SELECT tenant_id, id, current_revision_id FROM content_items WHERE id = ?1 AND tenant_id = ?2 AND current_revision_id IS NOT NULL",
+  ).bind(id, principal.tenantId).run();
   if (working !== input.expectedRevisionId) {
     return json({ error: "edit_conflict", workingRevisionId: working }, 409);
   }
@@ -290,6 +302,15 @@ export async function publishEditorItem(
     "SELECT id FROM content_revisions WHERE id = ?1 AND content_item_id = ?2",
   ).bind(revisionId, id).first();
   if (!revision) return json({ error: "revision_not_found" }, 404);
+  if (item.kind === SITE_SETTINGS_KIND) {
+    const payloadRow = await db.prepare(
+      "SELECT payload_json FROM content_revisions WHERE id = ?1 AND content_item_id = ?2",
+    ).bind(revisionId, id).first() as { payload_json: string } | null;
+    let valid = false;
+    try { valid = !!payloadRow && !!parseSiteSettings(JSON.parse(payloadRow.payload_json)); }
+    catch { /* invalid JSON is never publishable */ }
+    if (!valid) return json({ error: "invalid_site_settings" }, 400);
+  }
 
   const actor = principal.email || principal.sub || "unknown";
   await db.batch([

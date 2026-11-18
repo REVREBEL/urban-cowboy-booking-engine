@@ -17,6 +17,7 @@ export function contentSource(env: Env): ContentSource {
 /** Routes with an independent flag, so one collection can roll back alone. */
 export const ROUTE_SOURCE_ENV_KEYS = {
   policyLanguage: "CONTENT_SOURCE_POLICY_LANGUAGE",
+  siteSettings: "CONTENT_SOURCE_SITE_SETTINGS",
 } as const;
 export type RoutedContentCollection = keyof typeof ROUTE_SOURCE_ENV_KEYS;
 

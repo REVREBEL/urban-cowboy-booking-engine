@@ -7,6 +7,7 @@ import { SearchBarPromoDropdown } from "@/components/booking/search/SearchBarPro
 import { useBooking, DEFAULT_PROPERTIES } from "@/state/booking";
 import { fmtDate, nights } from "@/lib/format";
 import { api } from "@/lib/api";
+import { fetchPublishedSiteSettings } from "@/lib/siteSettingsClient";
 import type { DailyRate } from "@/components/booking/search/InlineDateRangePicker";
 
 const CALENDAR_CACHE_FRESH_MS = 2 * 60 * 1000;
@@ -95,8 +96,11 @@ export function Dates() {
 
   useEffect(() => {
     let active = true;
-    void api.locations().then((locations) => {
-      if (active) setShowQuickSelect(locations.hotel?.enableEventDatesQuickSelection === true);
+    void Promise.all([api.locations(), fetchPublishedSiteSettings()]).then(([locations, settings]) => {
+      if (!active) return;
+      setShowQuickSelect(settings
+        ? settings.settings.enableEventDatesQuickSelection
+        : locations.hotel?.enableEventDatesQuickSelection === true);
     });
     return () => { active = false; };
   }, []);

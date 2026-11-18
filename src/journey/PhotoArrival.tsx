@@ -14,6 +14,7 @@ import { SearchBarPromoDropdown } from "../components/booking/search/SearchBarPr
 import { DateSearchDropdown } from "../components/booking/search/DateSearchDropdown";
 import type { DailyRate } from "../components/booking/search/InlineDateRangePicker";
 import { api } from "../lib/api";
+import { fetchPublishedSiteSettings } from "../lib/siteSettingsClient";
 
 const HERO = ROOM_IMAGE_ASSETS.ALPINE_BATHING_SUITE;
 const label = "font-label text-[11px] uppercase tracking-[0.22em]";
@@ -68,15 +69,21 @@ export function PhotoArrival() {
 
   useEffect(() => {
     let active = true;
-    void api.locations().then((locations) => {
+    void Promise.all([api.locations(), fetchPublishedSiteSettings()]).then(([locations, settings]) => {
       if (!active) return;
       const locationContent = locations.hotel;
-      setShowQuickSelect(locationContent?.enableEventDatesQuickSelection === true);
+      const published = settings?.settings;
+      setShowQuickSelect(published
+        ? published.enableEventDatesQuickSelection
+        : locationContent?.enableEventDatesQuickSelection === true);
       if (!locationContent) {
         setStories(FALLBACK_PILLARS);
         return;
       }
-      if (!locationContent.featureSectionEnabled) {
+      const featureEnabled = published
+        ? published.enableFeatureSection
+        : locationContent.featureSectionEnabled === true;
+      if (!featureEnabled) {
         setStories([]);
         return;
       }

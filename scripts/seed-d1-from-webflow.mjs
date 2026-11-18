@@ -27,6 +27,10 @@ import {
   provenanceSeed,
 } from "../src/lib/content-provenance.ts";
 import { eventScheduleJson, parseVenue } from "../src/lib/event-recurrence.ts";
+import {
+  SITE_SETTINGS_KIND, SITE_SETTINGS_SLUG,
+  siteSettingsFromWebflow,
+} from "../src/types/site-settings.ts";
 
 const argv = process.argv.slice(2);
 const positional = argv.filter((a) => !a.startsWith("--"));
@@ -474,6 +478,31 @@ for (const { source, kind, fallbackSlug } of versioned) {
     ]);
   }
 }
+// COW-68: the five published Catskills property controls live in Webflow's
+// Locations item. Import them as a published site_settings content item so the
+// existing draft/publish editor and revision machinery can manage them.
+const siteSettingsLocation = collections.locations.rows.find(
+  (row) => val(row, "id") === CATSKILLS_ID && published(row),
+);
+if (!siteSettingsLocation) {
+  throw new Error("Missing published Catskills location for site settings import");
+}
+const importedSiteSettings = siteSettingsFromWebflow(siteSettingsLocation);
+if (!importedSiteSettings) {
+  throw new Error("Published Catskills location has incomplete site settings");
+}
+const siteSettingsId = `site-settings-${CATSKILLS_ID}`;
+const siteSettingsRevisionId = `${siteSettingsId}-r1`;
+contentRows.push([
+  siteSettingsId, TENANT_ID, CATSKILLS_ID, SITE_SETTINGS_KIND, SITE_SETTINGS_SLUG,
+  "published", siteSettingsRevisionId,
+]);
+revisionRows.push([
+  siteSettingsRevisionId, siteSettingsId, 1, JSON.stringify(importedSiteSettings),
+  val(siteSettingsLocation, "lastPublished") || null, IMPORT_ACTOR,
+]);
+note("Published Catskills site settings imported as a site_settings content item; draft edits cannot change guest behavior until publish.");
+
 addSection("content_items", buildInsert(
   "content_items",
   ["id", "tenant_id", "location_id", "kind", "slug", "status", "current_revision_id"],
@@ -522,6 +551,11 @@ for (const mapping of WEBFLOW_MAPPINGS) {
     }
   }
 }
+provenanceRows.push([
+  TENANT_ID, CATSKILLS_ID, "content_items", siteSettingsId, "webflow_cms",
+  "Locations", CATSKILLS_ID, collections.locations.hash, WEBFLOW_SNAPSHOT_DATE,
+]);
+
 const provenanceLines = buildInsert(
   "content_provenance",
   ["tenant_id", "location_id", "target_table", "target_id", "source_system", "source_collection", "source_id", "source_snapshot_date", "source_hash"],
