@@ -50,6 +50,47 @@ npm run deploy:d1
 
 **Important:** The seed contains source-derived editorial records. Running it again uses upserts and can overwrite edits made directly in D1. Establish the editorial source-of-truth policy before switching to D1-native editing.
 
+## Private admin routes and RBAC
+
+`/api/recovery` (guest PII) and `/api/analytics/summary` (aggregated metrics) now require a
+**verified Cloudflare Access JWT**, not a shared secret:
+
+- Set `CF_ACCESS_TEAM_DOMAIN` (e.g. `revrebel.cloudflareaccess.com`) and `CF_ACCESS_AUD`
+  (the Access application's AUD). Without them the gate returns 401. It fails closed.
+- The Worker accepts the JWT in `Cf-Access-Jwt-Assertion` or `Authorization: Bearer`, verifies
+  its RS256 signature against `https://<team>/cdn-cgi/access/certs`, and checks issuer,
+  audience, expiry and not-before. JWKS responses are cached for 10 minutes; fetch failures
+  fail closed.
+- Every verified principal gets the `viewer` role. `admin` is granted only when the token's
+  `email` matches `ADMIN_EMAILS` or one of its `groups` matches `ADMIN_GROUPS` (comma-separated
+  allowlists). Analytics requires `viewer`; recovery requires `admin`.
+- Both routes query only the tenant in `TENANT_ID`. A request with a `?tenant=` value that
+  differs gets 403 before D1 is touched. Without `TENANT_ID`, both routes return 503.
+  Cross-tenant data is never addressed by a query parameter.
+- The legacy `ADMIN_TOKEN` binding is no longer consulted for authorization. The role matrix
+  lives in `tests/auth.test.ts` and the tenant scope tests in `tests/tenantScope.test.ts`.
+
+## Apply D1 schema migrations
+
+Schema changes are separate from Worker deploys and content imports. Migration files are
+named `<4-digit-sequence>_<snake_case>.sql` and recorded with a SHA-256 checksum in
+`migrations/manifest.json`. An applied migration must never be edited — add a new numbered
+file instead. The runner rejects drift, sequence gaps and conflict markers.
+
+```bash
+npm run d1:migrate:plan     # ordered list + checksums; makes no changes
+npm run d1:migrate:check    # apply every migration twice to a fresh in-memory DB with FK enforcement
+npm run d1:migrate:record   # regenerate the manifest after adding and reviewing a migration
+npm run d1:migrate:remote   # guarded apply to the approved production D1
+```
+
+`d1:migrate:remote` shares the approved-account guard with `deploy:d1` (single source:
+`scripts/lib/d1-target.mjs`), renders the ignored Wrangler config, exports a dated
+`backups/d1/pre-migration-…sql` snapshot, then applies migrations with Wrangler, which owns
+the remote `d1_migrations` ledger and rolls back a failing migration. Verify remote state
+with `wrangler d1 migrations list urban-cowboy-content --remote --config .wrangler.generated.toml`.
+CI runs `npm run test:migrate` and `npm run d1:migrate:check` on every PR.
+
 ## CI and local development
 
 GitHub Actions test runs may use `wrangler dev --local` with the committed template and mocked backend data; **those are not production deployments**. For a local Worker with real project bindings, generate the config with `npm run deploy:render`, then use:

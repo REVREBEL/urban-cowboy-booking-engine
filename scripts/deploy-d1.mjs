@@ -10,12 +10,10 @@ import { existsSync, mkdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { parseEnv } from "node:util";
+import { assertApprovedTarget, D1_TARGET } from "./lib/d1-target.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const dbName = "urban-cowboy-content";
-const expectedAccount = "4c154709ffe87621073f9ecfa86a57dd";
-const expectedD1 = "0d09ca5a-74fe-4e83-a058-b8aa5fb21562";
+const dbName = D1_TARGET.dbName;
 const envPath = join(root, ".env");
 const configPath = join(root, ".wrangler.generated.toml");
 const seedPath = join(root, "seed.sql");
@@ -49,17 +47,13 @@ function run(bin, args, options = {}) {
 if (!existsSync(envPath)) fail("Missing project .env");
 if (!existsSync(seedPath)) fail("Missing seed.sql");
 if (!existsSync(cli)) fail("Install dependencies before running deploy:d1");
-const fromFile = parseEnv(readFileSync(envPath, "utf8"));
-const accountId = fromFile.CLOUDFLARE_ACCOUNT_ID?.trim();
-const activeShellAccount = process.env.CLOUDFLARE_ACCOUNT_ID;
-if (accountId !== expectedAccount) fail("Shared .env Cloudflare account does not own Urban Cowboy D1");
-if (activeShellAccount && activeShellAccount !== expectedAccount) {
-  fail("Shell CLOUDFLARE_ACCOUNT_ID conflicts with Urban Cowboy's account");
+let accountId, token;
+try {
+  ({ accountId, token } = assertApprovedTarget(envPath));
+} catch (error) {
+  fail(error.message);
 }
-const token = (process.env.CLOUDFLARE_API_TOKEN || fromFile.CLOUDFLARE_API_TOKEN || "")
-  .replace(/^Bearer\s+/i, "").trim();
-if (!token) fail("Missing Cloudflare API token for remote D1 access");
-const env = { ...process.env, CLOUDFLARE_API_TOKEN: token, CLOUDFLARE_ACCOUNT_ID: expectedAccount };
+const env = { ...process.env, CLOUDFLARE_API_TOKEN: token, CLOUDFLARE_ACCOUNT_ID: accountId };
 
 console.log("Validating seed against the real D1 schema and foreign keys...");
 run("npm", ["run", "test:seed"], { env });
@@ -67,8 +61,8 @@ console.log("Refreshing ignored Wrangler configuration from shared .env...");
 run(process.execPath, [join(root, "scripts/deploy-worker.mjs"), "--render-only"], { env });
 if (!existsSync(configPath)) fail("No rendered Wrangler configuration");
 const config = readFileSync(configPath, "utf8");
-if (!config.startsWith('account_id = "' + expectedAccount + '"\n') ||
-    !config.includes('database_id = "' + expectedD1 + '"')) {
+if (!config.startsWith('account_id = "' + accountId + '"\n') ||
+    !config.includes('database_id = "' + D1_TARGET.databaseId + '"')) {
   fail("Rendered Wrangler config does not match approved Cloudflare account/D1 database");
 }
 const seed = readFileSync(seedPath, "utf8");

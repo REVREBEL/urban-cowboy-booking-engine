@@ -33,6 +33,15 @@ WEBFLOW_AMENITY_COLLECTION_ID = "__ENV_WEBFLOW_AMENITY_COLLECTION_ID__"
 WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID = "__ENV_WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID__"
 WEBFLOW_LOCATION_ITEM_ID = "__ENV_WEBFLOW_LOCATION_ITEM_ID__"
 WEBHOOK_EVENTS = "__ENV_WEBHOOK_EVENTS__"
+# Cloudflare Access app that protects the private admin routes. Non-secret
+# identifiers; the JWT itself is verified against the team's Access JWKS.
+CF_ACCESS_TEAM_DOMAIN = "__ENV_CF_ACCESS_TEAM_DOMAIN__"
+CF_ACCESS_AUD = "__ENV_CF_ACCESS_AUD__"
+ADMIN_EMAILS = "__ENV_ADMIN_EMAILS__"
+ADMIN_GROUPS = "__ENV_ADMIN_GROUPS__"
+# Tenant served by the private analytics/recovery routes. Queries bind this
+# value; a caller's ?tenant= is rejected when it differs.
+TENANT_ID = "__ENV_TENANT_ID__"
 
 # Secret binding names are declared here; their values are loaded from .env
 # and passed to Wrangler through --secrets-file, never as plaintext vars.

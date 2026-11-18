@@ -36,6 +36,15 @@ export interface Env {
   // ★ UNIQUE endpoint de suivi → n8n → Supabase : reçoit TOUS les events du funnel
   // (chaque étape + paiement initié/validé). C'est LE endpoint du back-office.
   WEBHOOK_EVENTS?: string;
+  // Cloudflare Access configuration for verified private-route principals.
+  CF_ACCESS_TEAM_DOMAIN?: string;
+  CF_ACCESS_AUD?: string;
+  ADMIN_EMAILS?: string;
+  ADMIN_GROUPS?: string;
+  // Fixed tenant scope for private analytics/recovery routes.
+  TENANT_ID?: string;
+  // Legacy shared secret. Kept bound for backward compatibility only; no
+  // authorization decision reads it now that Access JWT verification is in place.
   ADMIN_TOKEN?: string;
 }
 

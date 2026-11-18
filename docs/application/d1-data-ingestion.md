@@ -64,9 +64,21 @@ companion to the generated [reconciliation report](../generated/d1-reconciliatio
   for `events`, matching the list queries in `worker/d1-modules.ts`. It is a
   separate migration because `0001_init.sql` is already applied in production.
   `tests/moduleIndexes.test.ts` verifies the query plans use the indexes.
-- `worker/auth.ts` now exports `requireAdmin(request, env)` instead of
-  `requireRole` with an unused role list. The two private endpoints call it
-  directly. `tests/auth.test.ts` covers the behavior and the honest contract.
+- Private routes are now gated by a verified Cloudflare Access JWT.
+  `worker/access.ts` verifies the RS256 signature against the team JWKS and
+  checks issuer/audience/expiry; `worker/auth.ts` derives `viewer`/`admin` roles
+  from bound email/group allowlists. Tenant scope comes from `TENANT_ID`, and a
+  caller's `?tenant=` is rejected when it differs. Analytics requires `viewer`,
+  recovery (PII) requires `admin`, and the legacy `ADMIN_TOKEN` is no longer an
+  authorization input. `tests/auth.test.ts` holds the role matrix and
+  `tests/tenantScope.test.ts` covers cross-tenant denial.
+- `scripts/migrate-d1.mjs` is the migration runner. It validates filename order
+  and checksums against `migrations/manifest.json` (so an applied SQL file cannot
+  be silently edited), applies every migration twice to a fresh in-memory SQLite
+  database with foreign keys enabled, and offers a guarded `--remote` apply that
+  reuses the approved-account check and captures a dated backup. `npm run
+  d1:migrate:check` and `tests/migrateD1.test.mjs` run in CI; the operational
+  workflow is documented in [cloudflare-env-deployment.md](../cloudflare-env-deployment.md).
 
 ## Decisions on collections and empty tables
 
@@ -111,8 +123,9 @@ this work; applying the regenerated seed is a separate, explicitly approved step
   importing hotspots so medallion order is preserved.
 - These fixes address **data ingestion and the two PR review findings**. The
   merge gate still requires a read-only health check of the deployed Worker's
-  `DB` binding, real session/role authentication (or disabling `/api/recovery`
-  and `/api/analytics/summary`) — `requireAdmin` is only a shared-token gate and
-  the deployed Worker had no `ADMIN_TOKEN` binding — typed content-service parity
+  `DB` binding and live verification of the Cloudflare Access JWT gate and its
+  `CF_ACCESS_*` / `ADMIN_EMAILS` / `ADMIN_GROUPS` bindings — the code no longer
+  trusts `ADMIN_TOKEN`, but the deployed Worker must be configured for Access
+  before the private routes are usable — typed content-service parity
   behind a feature flag, a rollback test, and CI/end-to-end smoke tests. Do not
   switch public reads from Webflow to D1 until those pass.
