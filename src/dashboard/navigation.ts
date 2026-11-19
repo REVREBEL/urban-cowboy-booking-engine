@@ -6,6 +6,7 @@
 
 export type DashboardRouteId =
   | "rooms"
+  | "amenities"
   | "media"
   | "rates"
   | "policies"
@@ -26,7 +27,8 @@ export interface DashboardNavItem {
 }
 
 export const DASHBOARD_NAV: readonly DashboardNavItem[] = [
-  { id: "rooms", label: "Rooms", description: "Room types, amenities and gallery order", group: "content" },
+  { id: "rooms", label: "Rooms", description: "Room types and gallery order", group: "content" },
+  { id: "amenities", label: "Amenities", description: "Room amenity assignments, content and order", group: "content" },
   { id: "media", label: "Media", description: "Media registry, aliases and versions", group: "content" },
   { id: "rates", label: "Rates", description: "Rate merchandising and snapshots", group: "commercial" },
   { id: "policies", label: "Policies", description: "Policy language and publication", group: "content" },

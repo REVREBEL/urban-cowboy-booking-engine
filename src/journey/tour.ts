@@ -56,14 +56,16 @@ export const PHOTO_HIGHLIGHTS: Record<string, PhotoHighlight[]> = {
 export function roomAmenities(room: JourneyRoom): { id?: string; title: string; icon: TourIcon; iconPath?: string | null; imageUrl?: string | null; note?: string | null; longNote?: string | null }[] {
   const features = ROOMS.find((r) => r.id === room.id)?.features ?? room.highlights;
 
-  if (room.cmsAmenities) return room.cmsAmenities.map((amenity) => ({
-    id: amenity.id,
-    title: amenity.shortName,
-    icon: tourIconForTitle(amenity.name),
-    iconPath: amenity.iconPath,
-    imageUrl: amenity.imageUrl,
-    note: amenity.shortDescription,
-    longNote: amenity.longDescription,
-  }));
+  if (room.cmsAmenities) return room.cmsAmenities
+    .filter((amenity) => amenity.restricted !== true)
+    .map((amenity) => ({
+      id: amenity.id,
+      title: amenity.shortName,
+      icon: tourIconForTitle(amenity.name),
+      iconPath: amenity.iconPath,
+      imageUrl: amenity.imageUrl,
+      note: amenity.shortDescription,
+      longNote: amenity.longDescription,
+    }));
   return features.map((title) => ({ title, icon: tourIconForTitle(title) }));
 }

@@ -16,6 +16,8 @@ function makeDb() {
   db.exec(read("migrations/0001_init.sql"));
   // 0003 creates the provenance/alias tables that the regenerated seed fills.
   db.exec(read("migrations/0003_property_scoped_contracts.sql"));
+  // COW-73: seed.sql now imports published amenity editorial values.
+  db.exec(read("migrations/0007_amenity_editorial.sql"));
   db.exec(read("seed.sql"));
   return db;
 }
@@ -36,6 +38,7 @@ test("per-table counts match the reconciliation plan", () => {
     buildings: 9,
     room_types: 22,
     amenities: 76,
+    amenity_editorial: 76,
     events: 8,
     offers: 8,
     add_ons: 9,
@@ -134,7 +137,7 @@ test("no fake foreign keys or placeholder media were introduced", () => {
 test("seed is idempotent", () => {
   const db = makeDb();
   const before = Object.fromEntries(
-    ["tenants", "locations", "buildings", "room_types", "events", "offers", "add_ons", "room_type_amenities", "content_items", "content_revisions"]
+    ["tenants", "locations", "buildings", "room_types", "amenities", "amenity_editorial", "events", "offers", "add_ons", "room_type_amenities", "content_items", "content_revisions"]
       .map((t) => [t, count(db, t)]),
   );
   db.exec(read("seed.sql"));
@@ -156,7 +159,7 @@ test("reconciliation report matches generated SQL and source scope", () => {
   assert.deepEqual(report.destinationRows.room_type_amenities, 253);
   assert.equal(
     Object.values(report.destinationRows).reduce((a, b) => a + b, 0),
-    445,
+    521,
   );
 });
 

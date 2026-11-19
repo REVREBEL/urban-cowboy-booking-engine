@@ -10,6 +10,7 @@ import type { Env } from "../mews/_lib.ts";
 import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../../src/types/photo-hotspot-cms.ts";
 import { normalizePublishedAmenities, normalizeRoomAmenityMap, normalizePhotoHotspots } from "./photo-hotspots.ts";
 import { json } from "../mews/_lib.ts";
+import { applyPublishedAmenities } from "../published-amenities.ts";
 
 interface WebflowOption {
   id?: unknown;
@@ -43,7 +44,7 @@ interface WebflowItemsResponse {
   };
 }
 
-interface CachedReviewPayload {
+export interface CachedReviewPayload {
   fetchedAt: number;
   reviews: RoomTypeCmsReviewMap;
   descriptions: RoomTypeCmsDescriptionMap;
@@ -363,17 +364,22 @@ async function refreshReviews(
   return payload;
 }
 
-function response(payload: CachedReviewPayload, stale: boolean): Response {
+async function response(env: Env, payload: CachedReviewPayload, stale: boolean): Promise<Response> {
+  // COW-73: guest values come from published D1 records where available.
+  // The overlay runs on every response (not inside the cache) so a publish is
+  // visible immediately and a draft never leaks into the cached Webflow payload.
+  const guest = await applyPublishedAmenities(env, env.TENANT_ID, payload);
   return json(
     {
-      reviews: payload.reviews,
-      descriptions: payload.descriptions,
-      galleries: payload.galleries,
-      amenities: payload.amenities,
-      hotspots: payload.hotspots,
-      hotspotSourceCount: payload.hotspotSourceCount ?? null,
-      generatedAt: new Date(payload.fetchedAt).toISOString(),
+      reviews: guest.reviews,
+      descriptions: guest.descriptions,
+      galleries: guest.galleries,
+      amenities: guest.amenities,
+      hotspots: guest.hotspots,
+      hotspotSourceCount: guest.hotspotSourceCount ?? null,
+      generatedAt: new Date(guest.fetchedAt).toISOString(),
       stale,
+      amenitySource: "d1-published",
     },
     200,
     BROWSER_CACHE_CONTROL,
@@ -412,16 +418,16 @@ export async function onRequestGet({
     // background refresh updates Webflow Cloud KV. Without the KV binding, the
     // module-memory fallback only avoids duplicate work within the same runtime
     // instance; Webflow's Content Delivery API CDN remains the upstream cache.
-    if (!stale || waitUntil) return response(cached, stale);
+    if (!stale || waitUntil) return await response(env, cached, stale);
   }
 
   try {
-    return response(await refreshReviews(env, collectionId), false);
+    return await response(env, await refreshReviews(env, collectionId), false);
   } catch (error) {
     const reason = error instanceof Error ? error.message : "webflow_unknown";
     console.warn("[webflow room-type reviews] content fetch failed", reason);
 
-    if (cached) return response(cached, true);
+    if (cached) return await response(env, cached, true);
 
     return json(
       { reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {}, generatedAt: null, stale: false },

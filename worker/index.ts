@@ -50,6 +50,7 @@ import { eventsList, addOnsList, offersList, upgradesList } from "./d1-modules";
 import { recoveryList } from "./d1-recovery";
 import { analyticsSummary } from "./d1-analytics";
 import { listRoomGallery, listRooms } from "./room-media.ts";
+import { getRoomAmenities, listAdminAmenities } from "./room-amenities.ts";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
 // waitUntil permet de lancer les webhooks en tâche de fond sans bloquer la réponse.
@@ -150,6 +151,20 @@ export default {
       return json({ error: "not_found" }, 404);
     }
     const adminCtx = { request, env, waitUntil: (p: Promise<unknown>) => ctx.waitUntil(p) };
+    // COW-73 amenity admin reads (writes use the admin-only content editor above).
+    if (url.pathname.match(/^\/api\/admin\/amenities\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return listAdminAmenities(adminCtx);
+    }
+    const roomAmenities = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/amenities\/?$/);
+    if (roomAmenities) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      let roomId: string;
+      try { roomId = decodeURIComponent(roomAmenities[1]); }
+      catch { return json({ error: "invalid_room_id" }, 400); }
+      if (!roomId) return json({ error: "invalid_room_id" }, 400);
+      return getRoomAmenities(adminCtx, roomId);
+    }
     if (url.pathname.match(/^\/api\/admin\/rooms\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
       return listRooms(adminCtx);

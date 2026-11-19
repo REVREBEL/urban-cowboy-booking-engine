@@ -13,7 +13,7 @@ import {
 
 test("navigation covers every requested admin section exactly once", () => {
   const expected = [
-    "Rooms", "Media", "Rates", "Policies", "Events",
+    "Rooms", "Amenities", "Media", "Rates", "Policies", "Events",
     "Add-ons", "Upgrades", "Recovery", "Analytics", "Settings",
   ];
   assert.deepEqual(DASHBOARD_NAV.map((item) => item.label), expected);

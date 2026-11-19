@@ -147,6 +147,58 @@ export const roomTypeAmenityRowSchema = z.object({
 }));
 export type RoomTypeAmenityContract = z.output<typeof roomTypeAmenityRowSchema>;
 
+/**
+ * COW-73: published editorial overlay for an Amenity. Identity, icon paths and
+ * global sort order stay in `amenities`; these are the CMS-backed prose/visibility
+ * values that the React admin edits through the COW-38 revision API.
+ */
+export const amenityEditorialRowSchema = z.object({
+  amenity_id: id,
+  tenant_id: id,
+  short_name: nullableText,
+  short_description: nullableText,
+  long_description: nullableText,
+  active: flag,
+  updated_at: timestamp,
+}).transform((row) => ({
+  amenityId: row.amenity_id,
+  tenantId: row.tenant_id,
+  shortName: row.short_name,
+  shortDescription: row.short_description,
+  longDescription: row.long_description,
+  active: row.active,
+  updatedAt: row.updated_at,
+}));
+export type AmenityEditorialContract = z.output<typeof amenityEditorialRowSchema>;
+
+/** Joined canonical + editorial row returned by the room amenity admin API. */
+export const roomAmenityAssignmentRowSchema = z.object({
+  amenity_id: id,
+  name: id,
+  image_name: nullableText,
+  image_path: nullableText,
+  sort_order: z.number().int(),
+  short_name: nullableText,
+  short_description: nullableText,
+  long_description: nullableText,
+  active: flag,
+  display_order: z.number().int(),
+  excluded: flag,
+}).transform((row) => ({
+  amenityId: row.amenity_id,
+  name: row.name,
+  imageName: row.image_name,
+  imagePath: row.image_path,
+  sortOrder: row.sort_order,
+  shortName: row.short_name,
+  shortDescription: row.short_description,
+  longDescription: row.long_description,
+  active: row.active,
+  displayOrder: row.display_order,
+  excluded: row.excluded,
+}));
+export type RoomAmenityAssignmentRow = z.output<typeof roomAmenityAssignmentRowSchema>;
+
 export const contentItemRowSchema = z.object({
   id,
   tenant_id: id,

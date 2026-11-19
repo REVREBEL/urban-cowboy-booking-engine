@@ -9,6 +9,8 @@ export interface CmsRoomAmenity {
   iconPath: string | null;
   /** Webflow Image field takes precedence over the local SVG fallback. */
   imageUrl?: string | null;
+  /** Restricted amenities stay eligible for photo hotspots but leave the general list. */
+  restricted?: boolean;
 }
 
 export type RoomTypeCmsAmenityMap = Record<string, CmsRoomAmenity[]>;

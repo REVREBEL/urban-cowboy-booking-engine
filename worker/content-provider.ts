@@ -9,8 +9,10 @@
  */
 import {
   getDb,
+  listRoomAmenityAssignments,
   listScopedAddOns,
   listScopedAmenities,
+  listScopedAmenityEditorial,
   listScopedBuildings,
   listScopedContentItems,
   listScopedEvents,
@@ -26,6 +28,7 @@ export const CONTENT_COLLECTIONS = [
   "buildings",
   "roomTypes",
   "amenities",
+  "roomAmenities",
   "addOns",
   "events",
   "contentItems",
@@ -87,13 +90,51 @@ async function loadAllRows(
           name: row.name, slug: row.slug, sortOrder: row.sortOrder,
         },
       }));
-    case "amenities":
-      return (await listScopedAmenities(db, scope)).map((row) => ({
-        id: row.id, collection, payload: {
-          name: row.name, imageName: row.imageName, imagePath: row.imagePath,
-          sortOrder: row.sortOrder,
-        },
-      }));
+    case "amenities": {
+      const amenities = await listScopedAmenities(db, scope);
+      const editorial = await listScopedAmenityEditorial(db, scope);
+      const editorialById = new Map(editorial.map((row) => [row.amenityId, row]));
+      return amenities.map((row) => {
+        const content = editorialById.get(row.id);
+        return {
+          id: row.id, collection, payload: {
+            name: row.name, imageName: row.imageName, imagePath: row.imagePath,
+            sortOrder: row.sortOrder,
+            shortName: content?.shortName ?? row.name,
+            shortDescription: content?.shortDescription ?? null,
+            longDescription: content?.longDescription ?? null,
+            active: content?.active ?? true,
+          },
+        };
+      });
+    }
+    case "roomAmenities": {
+      // One published document per room type, keyed by the canonical Webflow id.
+      // The payload carries the Mews category id so the guest adapter can map a
+      // room without trusting a client-supplied tenant or room identifier.
+      const rooms = await listScopedRoomTypes(db, scope);
+      const records: PublishedRecord[] = [];
+      for (const room of rooms) {
+        const amenities = await listRoomAmenityAssignments(db, scope.tenantId, room.id, true);
+        records.push({
+          id: room.id, collection, payload: {
+            mewsRoomCategoryId: room.mewsRoomCategoryId,
+            amenities: amenities.map((amenity) => ({
+              amenityId: amenity.amenityId,
+              name: amenity.name,
+              shortName: amenity.shortName,
+              shortDescription: amenity.shortDescription,
+              longDescription: amenity.longDescription,
+              imagePath: amenity.imagePath,
+              imageName: amenity.imageName,
+              displayOrder: amenity.displayOrder,
+              excluded: amenity.excluded,
+            })),
+          },
+        });
+      }
+      return records;
+    }
     case "addOns":
       return (await listScopedAddOns(db, scope)).map((row) => ({
         id: row.id, collection, payload: {
@@ -176,7 +217,7 @@ export async function buildSnapshot(
 
 /** Collections whose D1 table has no publication column; presence is publication. */
 const IMPLICITLY_PUBLISHED = new Set<ContentCollection>([
-  "locations", "buildings", "roomTypes", "amenities",
+  "locations", "buildings", "roomTypes", "amenities", "roomAmenities",
 ]);
 
 /** Small, comparable projection for structured parity reporting. */
