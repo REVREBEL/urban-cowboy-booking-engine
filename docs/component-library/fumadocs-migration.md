@@ -62,10 +62,10 @@ verified.
 
 - PRs run install, typecheck, control lint, static build and smoke checks only.
 - Main-branch publication is gated by repository variable `DOCS_PAGES_ENABLED == "true"`.
-- For this application the Pages base path is `/urban-cowboy-booking-engine`. The workflow
-  derives it from `github.event.repository.name`; `DOCS_BASE_PATH` can override it for a
-  custom domain. The published URL comes from `actions/deploy-pages` output, not from a
-  guessed value.
+- For this application the Pages base path is `/urban-cowboy-booking-engine`. It is the
+  default in `docs-app/next.config.mjs` and is reinforced by the workflow. Set
+  `DOCS_BASE_PATH=""` only when serving from a custom domain root. The published URL comes
+  from `actions/deploy-pages` output, not from a guessed value.
 - Deploy permissions are limited to `pages: write` and `id-token: write` in the deploy
   job. A `component-docs` concurrency group prevents overlapping publications.
 

@@ -38,4 +38,8 @@ for (const pattern of forbidden) {
 }
 const staticRoot = join(out, "_next", "static");
 if (!existsSync(staticRoot) || readdirSync(staticRoot).length === 0) fail("missing static assets");
+const basePath = process.env.DOCS_BASE_PATH;
+if (basePath && !html.includes(`${basePath}/_next/static/`)) {
+  fail(`static assets are missing base path ${basePath}`);
+}
 console.log(`docs smoke passed: ${pages.length} pages, static assets present`);

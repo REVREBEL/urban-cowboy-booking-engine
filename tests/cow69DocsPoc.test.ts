@@ -39,6 +39,7 @@ test("Fumadocs is configured for static export and subpath builds", () => {
   assert.match(nextConfig, /output: "export"/);
   assert.match(nextConfig, /trailingSlash: true/);
   assert.match(nextConfig, /process\.env\.DOCS_BASE_PATH/);
+  assert.match(nextConfig, /\?\? "\/urban-cowboy-booking-engine"/);
   assert.match(nextConfig, /createNextStory/);
   assert.match(nextConfig, /createMDX/);
   assert.match(source, /baseUrl: "\/"/);
