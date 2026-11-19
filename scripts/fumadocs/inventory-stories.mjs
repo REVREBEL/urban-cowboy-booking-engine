@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // COW-69 inventory of existing CSF stories and their planned Fumadocs pages.
-import { mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const root = process.cwd();
@@ -23,10 +23,19 @@ function kebabCase(value) {
     .replace(/^-|-$/g, "");
 }
 
-/** Explicit source-to-page mapping for pages that predate the generated naming scheme. */
+/**
+ * Explicit source-to-page mapping for every migrated story. Matching by
+ * basename alone conflates components with the same name in different folders,
+ * so documentation status is keyed on the canonical story source path.
+ */
 const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/ui/Pill.stories.tsx": "docs-app/content/docs/components/pill.mdx",
+  "src/stories/components/ui/Button.stories.tsx": "docs-app/content/docs/components/button.mdx",
+  "src/stories/components/ui/switch.stories.tsx": "docs-app/content/docs/components/switch.mdx",
   "src/stories/components/booking/discovery/PreferenceIconButton.stories.tsx": "docs-app/content/docs/components/preference-icon-button.mdx",
+  "src/stories/components/booking/discovery/DogToggleButton.stories.tsx": "docs-app/content/docs/components/dog-toggle-button.mdx",
+  "src/stories/components/booking/discovery/FindYourStayTravelPartyButton.stories.tsx": "docs-app/content/docs/components/travel-party-button.mdx",
+  "src/stories/components/booking/search/SearchButton.stories.tsx": "docs-app/content/docs/components/search-button.mdx",
 });
 
 const usedPlannedPaths = new Set();
@@ -129,12 +138,6 @@ for (const [storyPath, pagePath] of Object.entries(DOC_PAGE_OVERRIDES)) {
     throw new Error(`DOC_PAGE_OVERRIDES points at missing page ${pagePath} for ${storyPath}`);
   }
 }
-const pageBySlug = new Map();
-for (const page of docsPages) {
-  const slug = page.split("/").at(-1).replace(/\.mdx$/, "");
-  pageBySlug.set(slug, page);
-}
-
 // Heuristic: exported PascalCase declarations in component source files. This
 // deliberately over-reports helpers; the matrix records it as a candidate list
 // for human triage rather than claiming every entry is a public component.
@@ -155,8 +158,7 @@ const undocumentedProductionCandidates = walk(sourceRoot)
 
 const coverage = stories.map((story) => {
   const component = story.title.split("/").at(-1) ?? story.title;
-  const slug = kebabCase(component);
-  const existingPage = DOC_PAGE_OVERRIDES[story.source] ?? pageBySlug.get(slug) ?? null;
+  const existingPage = DOC_PAGE_OVERRIDES[story.source] ?? null;
   const plannedPage = story.newDoc;
   const docsPage = story.status === "skipped" ? null : existingPage ?? plannedPage;
   return {
@@ -190,6 +192,18 @@ const matrixText = JSON.stringify(coverageMatrix, null, 2) + "\n";
 // Generate and validate every output before replacing either tracked file.
 JSON.parse(manifestText);
 JSON.parse(matrixText);
+if (process.argv.includes("--check")) {
+  const stale = [
+    [out, manifestText],
+    [matrixPath, matrixText],
+  ].filter(([path, text]) => !existsSync(path) || readFileSync(path, "utf8") !== text);
+  if (stale.length) {
+    console.error(`Generated docs inventory is stale: ${stale.map(([path]) => relative(root, path)).join(", ")}. Run npm run docs:inventory.`);
+    process.exit(1);
+  }
+  console.log("docs inventory is current");
+  process.exit(0);
+}
 writeFileSync(`${out}.tmp`, manifestText);
 writeFileSync(`${matrixPath}.tmp`, matrixText);
 renameSync(`${out}.tmp`, out);

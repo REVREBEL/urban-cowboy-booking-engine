@@ -2,8 +2,8 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 4,
-    "planned": 132,
+    "documented": 7,
+    "planned": 129,
     "excluded": 6,
     "undocumentedProductionCandidates": 41
   },
@@ -66,27 +66,27 @@
       "component": "DogToggleButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/DogToggleButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/dog-toggle-button.mdx",
+      "docsPage": "docs-app/content/docs/components/dog-toggle-button.mdx",
       "demos": 2,
       "demoExports": [
         "Inactive",
         "Selected"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "FindYourStayTravelPartyButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/FindYourStayTravelPartyButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/find-your-stay-travel-party-button.mdx",
+      "docsPage": "docs-app/content/docs/components/travel-party-button.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "Selected"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "HelpMeChooseModal",
@@ -417,13 +417,13 @@
       "component": "SearchButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/search-button.mdx",
+      "docsPage": "docs-app/content/docs/components/search-button.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "CheckoutStep",

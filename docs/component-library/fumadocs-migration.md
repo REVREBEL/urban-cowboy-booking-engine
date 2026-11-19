@@ -13,6 +13,13 @@ the real source imports and interactive demos. The Button page carries the forme
 AllColors/TextCases/BorderColors/Clickable/Sizes variants into a deterministic grid; the
 Switch page uses a controlled docs-only harness with a paired `Label`.
 
+The coverage matrix is keyed on explicit story-source-to-MDX-page overrides, not basename
+matching; `npm run docs:inventory:check` fails CI when generated files are stale. A Playwright
+smoke test serves the exported site under the configured Pages base path and verifies that the
+DogToggleButton icons load before and after hydration-driven toggling, because rewriting static
+HTML alone cannot fix client-rendered image URLs. DogToggleButton accepts an optional
+`imageBaseUrl`, and the docs story passes `NEXT_PUBLIC_DOCS_BASE_PATH`.
+
 Second migrated group: search, date and party controls. `DogToggleButton`,
 `FindYourStayTravelPartyButton` and `SearchButton` have reference pages with controlled
 docs-only harnesses. The travel-party demo uses the real `TravelPartyGroup` for accessible

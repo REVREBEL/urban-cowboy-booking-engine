@@ -25,8 +25,19 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
   const preference = byComponent("PreferenceIconButton").find((entry) => entry.status === "documented");
   assert.ok(preference, "PreferenceIconButton story maps to its existing page");
   assert.equal(preference.docsPage, "docs-app/content/docs/components/preference-icon-button.mdx");
-  for (const name of ["Pill", "Button", "Switch"]) {
-    assert.ok(byComponent(name).some((entry) => entry.status === "documented"), `${name} documented`);
+  const expectedPaths = {
+    Pill: "docs-app/content/docs/components/pill.mdx",
+    Button: "docs-app/content/docs/components/button.mdx",
+    Switch: "docs-app/content/docs/components/switch.mdx",
+    PreferenceIconButton: "docs-app/content/docs/components/preference-icon-button.mdx",
+    DogToggleButton: "docs-app/content/docs/components/dog-toggle-button.mdx",
+    FindYourStayTravelPartyButton: "docs-app/content/docs/components/travel-party-button.mdx",
+    SearchButton: "docs-app/content/docs/components/search-button.mdx",
+  };
+  for (const [name, page] of Object.entries(expectedPaths)) {
+    const documented = byComponent(name).find((entry) => entry.status === "documented");
+    assert.ok(documented, `${name} documented`);
+    assert.equal(documented.docsPage, page, `${name} maps to its real page`);
   }
 
   for (const entry of matrix.components) {
@@ -40,4 +51,11 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     .filter((entry) => entry.status === "planned")
     .map((entry) => entry.docsPage);
   assert.equal(new Set(planned).size, planned.length, "planned page paths are unique");
+});
+
+test("checked-in inventory passes the docs CI freshness check", () => {
+  const check = spawnSync(process.execPath, ["scripts/fumadocs/inventory-stories.mjs", "--check"], {
+    cwd: new URL("..", import.meta.url), encoding: "utf8",
+  });
+  assert.equal(check.status, 0, check.stderr || check.stdout);
 });

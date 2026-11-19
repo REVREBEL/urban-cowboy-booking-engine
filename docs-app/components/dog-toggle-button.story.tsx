@@ -12,7 +12,11 @@ function DogToggleDemo({ selected }: DemoProps) {
   useEffect(() => setActive(selected), [selected]);
   return (
     <div className="w-full max-w-sm space-y-2">
-      <DogToggleButton selected={active} onToggle={() => setActive((value) => !value)} />
+      <DogToggleButton
+        selected={active}
+        onToggle={() => setActive((value) => !value)}
+        imageBaseUrl={process.env.NEXT_PUBLIC_DOCS_BASE_PATH ?? ""}
+      />
       <p className="text-sm text-muted-foreground" role="status">
         Docs-only state: {active ? "dog-friendly only" : "all rooms"}
       </p>

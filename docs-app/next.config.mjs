@@ -13,6 +13,8 @@ const config = {
   assetPrefix: basePath,
   images: { unoptimized: true },
   reactStrictMode: true,
+  // Client demos need the deployed base path for root-relative component assets.
+  env: { NEXT_PUBLIC_DOCS_BASE_PATH: basePath },
 };
 
 const withMDX = createMDX();
