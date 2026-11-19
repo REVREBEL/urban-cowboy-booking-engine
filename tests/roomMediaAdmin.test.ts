@@ -71,15 +71,18 @@ function makeDb() {
       ('media-2','${TENANT}','catskills','image','two.png',900,600,NULL),
       ('media-import','${TENANT}','catskills','image','imported.png',640,480,'Imported asset alt'),
       ('media-video','${TENANT}','catskills','video','clip.mp4',0,0,NULL),
+      ('media-bad','${TENANT}','catskills','image','broken.png',100,100,NULL),
       ('media-other','${OTHER}','other-loc','image','other.png',100,100,'Other');
     INSERT INTO media_versions (id, media_asset_id, version, squarespace_asset_id, squarespace_url, width, height) VALUES
       ('v-1','media-1',1,'sq-1','https://cdn/1',NULL,NULL),
       ('v-2','media-2',1,'sq-2','https://cdn/2',NULL,NULL),
-      ('v-import','media-import',1,'sqsp-imp','https://cdn/import',1920,1080);
+      ('v-import','media-import',1,'sqsp-imp','https://cdn/import',1920,1080),
+      ('v-bad','media-bad',1,'sqsp-bad','https://cdn/bad',NULL,NULL);
     INSERT INTO media_asset_metadata (media_asset_id, tenant_id, description, caption, tags, current_version_id) VALUES
       ('media-1','${TENANT}','Desc one','Caption one','["room","suite"]','v-1'),
       ('media-2','${TENANT}',NULL,NULL,NULL,'v-2'),
-      ('media-import','${TENANT}','Imported asset description','Imported asset caption','["import"]','v-import');
+      ('media-import','${TENANT}','Imported asset description','Imported asset caption','["import"]','v-import'),
+      ('media-bad','${TENANT}',NULL,NULL,'not-json','v-bad');
     INSERT INTO media_version_files (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version, sha256) VALUES
       ('v-1','${TENANT}','media-1','urban-cowboy/one','v1','hash-1'),
       ('v-2','${TENANT}','media-2','urban-cowboy/two','v2','hash-2');
@@ -90,6 +93,7 @@ function makeDb() {
       ('place-cover','${TENANT}','media-1','room_types','room-a','cover',NULL,NULL,NULL,0),
       ('place-imp','${TENANT}','media-import','room_types','room-a','room_gallery','Room-specific alt','Room-specific caption','Room-specific description',1),
       ('place-video','${TENANT}','media-video','room_types','room-b','room_gallery',NULL,NULL,NULL,1),
+      ('place-bad','${TENANT}','media-bad','room_types','room-a','room_gallery',NULL,NULL,NULL,8),
       ('place-cross','${OTHER}','media-other','room_types','room-a','room_gallery',NULL,NULL,NULL,9),
       ('place-other','${OTHER}','media-other','room_types','room-other','room_gallery',NULL,NULL,NULL,1);
   `);
@@ -201,6 +205,14 @@ test("listRoomGallery orders by display_order, parses rows and excludes non-gall
   assert.equal(body.items.some((item: any) => item.placementId === "place-cross"), false, "cross-tenant placement excluded");
 });
 
+test("listRoomGallery skips a malformed registry row instead of failing the endpoint", async () => {
+  const res = await listRoomGallery(ctx(makeDb()), "room-a", allowViewer);
+  assert.equal(res.status, 200);
+  const items = (await jsonBody(res)).items;
+  assert.equal(items.some((item: any) => item.mediaAssetId === "media-bad"), false);
+  assert.equal(items.length, 3, "one corrupt row does not hide the rest of the gallery");
+});
+
 test("listRoomGallery excludes non-image assets from the photo gallery", async () => {
   const res = await listRoomGallery(ctx(makeDb()), "room-b", allowViewer);
   assert.equal(res.status, 200);
@@ -244,6 +256,7 @@ test("worker admin routes guard malformed ids and never scope from the query", (
   assert.match(adminBlock, /\\\/photos/);
   assert.match(adminBlock, /decodeURIComponent\(roomPhotos\[1\]\)/);
   assert.match(adminBlock, /catch \{\s*return json\(\{ error: "invalid_room_id" \}, 400/);
+  assert.match(adminBlock, /if \(!roomId\) return json\(\{ error: "invalid_room_id" \}, 400\)/);
   assert.doesNotMatch(adminBlock, /searchParams\.get\("tenant"\)/);
   assert.match(adminBlock, /listRooms\(adminCtx\)/);
   assert.match(adminBlock, /listRoomGallery\(adminCtx/);

@@ -29,6 +29,7 @@ test("panel exposes loading, error and empty states for both resources", () => {
 
 test("panel drops stale gallery data on room change and while a request is pending or failed", () => {
   assert.match(panel, /<RoomGallery key=\{roomId\} api=\{api\} roomId=\{roomId\} \/>/);
+  assert.match(panel, /Only render when we have fresh data for the current room/);
   assert.match(panel, /const ready = !gallery\.loading && !gallery\.error/);
   assert.match(panel, /\{ready && \(\s*<ul/);
   assert.doesNotMatch(panel, /\{gallery\.data \?\? \[\]\)\.map/);

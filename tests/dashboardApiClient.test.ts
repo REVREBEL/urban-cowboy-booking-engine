@@ -124,5 +124,6 @@ test("dashboard requests carry a bounded deadline so stalled calls reach the err
   const source = readFileSync(new URL("../src/dashboard/api.ts", import.meta.url), "utf8");
   assert.match(source, /AbortSignal\.timeout\(REQUEST_TIMEOUT_MS\)/);
   assert.match(source, /AbortSignal\.any\(\[existing, deadline\]\)/);
+  assert.match(source, /new AbortController\(\)/, "older browsers get a fallback deadline");
   assert.match(source, /signal: requestSignal\(init\.signal\)/);
 });

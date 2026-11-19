@@ -81,6 +81,11 @@ export async function listRoomGallery(
   if (!room) return json({ error: "room_not_found" }, 404, "no-store");
 
   const result = await db.prepare(GALLERY_SQL).bind(scope, roomId).all();
-  const items: RoomGalleryRow[] = (result.results ?? []).map((row) => roomGalleryRowSchema.parse(row));
+  const items: RoomGalleryRow[] = [];
+  for (const row of result.results ?? []) {
+    const parsed = roomGalleryRowSchema.safeParse(row);
+    // One malformed registry row must not hide the rest of the room's gallery.
+    if (parsed.success) items.push(parsed.data);
+  }
   return json({ roomId, items }, 200, "no-store");
 }

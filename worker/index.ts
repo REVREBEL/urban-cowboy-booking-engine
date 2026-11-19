@@ -163,6 +163,7 @@ export default {
       } catch {
         return json({ error: "invalid_room_id" }, 400);
       }
+      if (!roomId) return json({ error: "invalid_room_id" }, 400);
       return listRoomGallery(adminCtx, roomId);
     }
     // Specific paths first: /snapshots/rollback must not be read as a collection.

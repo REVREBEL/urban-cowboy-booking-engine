@@ -83,7 +83,8 @@ function RoomGallery({ api, roomId }: { api: DashboardApi; roomId: string }) {
     [api, roomId],
   );
   const gallery = useDashboardResource(loadGallery);
-  // Never show cached data while the new request is pending or has failed.
+  // Only render when we have fresh data for the current room; hide the
+  // previous room's cached results while loading or after a failed request.
   const ready = !gallery.loading && !gallery.error && (gallery.data?.length ?? 0) > 0;
 
   return (

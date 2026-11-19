@@ -31,8 +31,22 @@ export interface DashboardApiOptions {
 const REQUEST_TIMEOUT_MS = 10_000;
 
 function requestSignal(existing?: AbortSignal | null): AbortSignal {
-  const deadline = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
-  return existing ? AbortSignal.any([existing, deadline]) : deadline;
+  // Preferred on Node 18+ and current browsers.
+  if (typeof AbortSignal.timeout === "function") {
+    const deadline = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
+    return existing && typeof AbortSignal.any === "function"
+      ? AbortSignal.any([existing, deadline])
+      : deadline;
+  }
+  // Fallback for older browsers without AbortSignal.timeout/any.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  if (existing) {
+    if (existing.aborted) controller.abort(existing.reason);
+    else existing.addEventListener("abort", () => controller.abort(existing.reason), { once: true });
+  }
+  controller.signal.addEventListener("abort", () => clearTimeout(timer), { once: true });
+  return controller.signal;
 }
 
 export interface DashboardApi {
