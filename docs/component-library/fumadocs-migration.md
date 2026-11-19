@@ -19,11 +19,15 @@ needs context), add a client wrapper in `story-controls.tsx`, write the MDX page
 variants, responsive notes and a source link, then add it to `components/meta.json` and the
 smoke page list. Regenerate the matrix and run `npm run docs:build && npm run docs:smoke`.
 
-## Status: proof of concept, no cutover
+## Status: Fumadocs live; historical runtime coverage retained
 
-This branch adds a Fumadocs static docs workspace and verifies the Story integration with
-real components. Storybook remains the current component environment. No Storybook package,
-script, workflow or Cloudflare build step is removed yet.
+COW-69 established the existing Fumadocs site and its GitHub Pages workflow. COW-83
+retired the legacy Scry Storybook production and PR-preview deployment workflows and
+the Chromatic deployment workflow. The historical Storybook build and Chromium story
+sweep **remain as a temporary main CI compatibility gate** while COW-70 migrates the
+remaining component demos and replaces their runtime checks. Storybook sources,
+`.storybook/`, scripts and packages remain available for the ongoing migration.
+No booking-engine or Cloudflare Worker cutover is part of this cleanup.
 
 ## Inventory
 
@@ -107,16 +111,19 @@ npm run docs:smoke
 and absence of API/token strings. A subpath build was also exercised with
 `DOCS_BASE_PATH=/urban-cowboy-booking-engine`.
 
-## Cutover gates before Storybook retirement
+## Remaining gates before removing the historical Storybook runtime sweep
 
-1. Convert the remaining 136 planned stories using the generated manifest, preserving
-   meaningful variants and controls.
+1. Convert the remaining 132 planned entries in the current coverage matrix (and triage
+   41 undocumented production candidates), preserving meaningful variants and controls.
 2. Add static-compatible search and source links across all pages.
 3. Replace Storybook-based runtime and visual tests with Vitest/Testing Library and
    Playwright checks that run independently.
 4. Verify published deep links, interactive controls, fonts, icons and images on the real
    Pages URL after the repository decision.
-5. Only then remove Storybook dependencies, `.storybook/`, Chromatic workflow and
-   Cloudflare-facing Storybook build coupling. Keep the application and Worker unchanged.
+5. Only then remove the temporary Storybook build/Chromium sweep/artifact upload from
+   `.github/workflows/ci.yml`, plus unused Storybook dependencies, `.storybook/`, scripts
+   and sources, with a regenerated lockfile. The Scry and Chromatic deploy workflows
+   have already been removed by COW-83. Keep the application and Worker unchanged.
 
-No production cutover happens in this PoC.
+The Fumadocs `Component docs` workflow is the active documentation publication path;
+retaining the historical runtime gate is solely a regression-coverage bridge.
