@@ -9,7 +9,9 @@ test("Canvas and Docs use one max-width setting", () => {
   const preview = read("../.storybook/preview.tsx");
   const head = read("../.storybook/preview-head.html");
 
-  assert.match(layout, /STORY_MAX_WIDTH = 1600/);
+  const shared = read("../src/styles/documentation-layout.ts");
+  assert.match(shared, /STORY_MAX_WIDTH = 1600/);
+  assert.match(layout, /export \{ STORY_MAX_WIDTH, STORY_MAX_WIDTH_CSS_VAR \}/);
   assert.match(layout, /maxWidth: STORY_MAX_WIDTH/);
   assert.match(layout, /style\.setProperty\(/);
   assert.match(layout, /STORY_MAX_WIDTH_CSS_VAR/);

@@ -1,0 +1,41 @@
+---
+title: Switch
+description: Radix-backed accessible switch with a shared Label pairing pattern.
+---
+
+import { SwitchStoryControl } from '~/components/story-controls';
+
+`Switch` is the shared binary control for admin settings and feature toggles. The example
+uses a docs-only controlled harness so it works without BookingProvider, D1 or Worker access.
+
+<SwitchStoryControl />
+
+## Props and states
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `checked` | boolean | Controlled state from the caller |
+| `onCheckedChange` | `(checked: boolean) => void` | Required for interactive use |
+| `disabled` | boolean | Removes pointer affordance and lowers opacity |
+| `id` | string | Pair with `Label htmlFor` for an accessible name |
+
+States covered: unchecked, checked, disabled and the paired-label presentation. The
+component keeps Radix's keyboard and screen-reader semantics; do not replace the thumb with
+a custom span.
+
+## Responsive behaviour
+
+The control is 36px wide and does not grow with its label. Labels wrap beside it on narrow
+screens rather than forcing horizontal scrolling.
+
+## Usage
+
+```tsx
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+
+<Switch id="dog" checked={dogFriendly} onCheckedChange={setDogFriendly} />
+<Label htmlFor="dog">Dog Friendly Room</Label>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/ui/switch.tsx)

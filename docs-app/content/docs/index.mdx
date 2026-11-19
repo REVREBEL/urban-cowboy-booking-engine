@@ -3,11 +3,21 @@ title: Urban Cowboy Component Library
 description: Interactive documentation built from the real booking-engine components.
 ---
 
-This static Fumadocs site is a proof of concept for the COW-69 migration. Pages import the
-same React components used by the booking application. No Mews, Worker, D1 or payment code
+This static Fumadocs site documents the booking engine's real React components. Pages import
+the same implementations used by the booking application; no Mews, Worker, D1 or payment code
 runs in this site.
 
 import Link from 'next/link';
 
-Start with <Link href="/components/pill/">shared controls</Link> or the
-<Link href="/components/preference-icon-button/">interactive preference example</Link>.
+Start with the <Link href="/components/button/">Button</Link>,
+<Link href="/components/pill/">Pill</Link> or
+<Link href="/components/switch/">Switch</Link> reference. The
+<Link href="/components/preference-icon-button/">interactive preference example</Link>
+shows a controlled docs-only harness.
+
+## Coverage
+
+The component catalog is tracked in the repository's
+[coverage matrix](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/docs/component-library/coverage-matrix.json).
+It lists every historical story, its Fumadocs page and demo status, plus undocumented
+production-component candidates.

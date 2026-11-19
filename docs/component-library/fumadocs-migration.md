@@ -1,5 +1,24 @@
 # COW-69 Storybook to Fumadocs migration
 
+## COW-70 catalog coverage
+
+`docs/component-library/coverage-matrix.json` is the tracked catalog matrix. Regenerate it
+with `npm run docs:inventory`; it maps each historical story to its canonical component,
+Fumadocs page, demo exports and status (`documented`, `planned` or `excluded`), and lists
+production components with no story as triage candidates. Exclusions carry a rationale
+(development-only tooling or Storybook scaffold), never a silent skip.
+
+First migrated group: shared controls. `Button` and `Switch` now have reference pages using
+the real source imports and interactive demos. The Button page carries the former
+AllColors/TextCases/BorderColors/Clickable/Sizes variants into a deterministic grid; the
+Switch page uses a controlled docs-only harness with a paired `Label`.
+
+To add a component page: create a `*.story.tsx` in `docs-app/components` importing the real
+component, expose a `defineStory` export (with a deterministic harness when the component
+needs context), add a client wrapper in `story-controls.tsx`, write the MDX page with props,
+variants, responsive notes and a source link, then add it to `components/meta.json` and the
+smoke page list. Regenerate the matrix and run `npm run docs:build && npm run docs:smoke`.
+
 ## Status: proof of concept, no cutover
 
 This branch adds a Fumadocs static docs workspace and verifies the Story integration with

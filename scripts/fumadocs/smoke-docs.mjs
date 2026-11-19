@@ -9,6 +9,8 @@ const out = process.argv[2] ?? "docs-app/out";
 const pages = [
   "index.html",
   "components/pill/index.html",
+  "components/button/index.html",
+  "components/switch/index.html",
   "components/preference-icon-button/index.html",
 ];
 const forbidden = [
@@ -31,7 +33,10 @@ for (const page of pages) {
   if (statSync(path).size < 1000) fail(`page too small ${page}`);
 }
 const html = pages.map((page) => readFileSync(join(out, page), "utf8")).join("\n");
-for (const marker of ["Urban Cowboy Component Library", "Dogs allowed", "Your Own Hideaway", "View source"]) {
+for (const marker of [
+  "Urban Cowboy Component Library", "Dogs allowed", "Book Your Stay",
+  "Dog Friendly Room (+ $75)", "Your Own Hideaway", "View source",
+]) {
   if (!html.includes(marker)) fail(`missing rendered marker: ${marker}`);
 }
 for (const pattern of forbidden) {
