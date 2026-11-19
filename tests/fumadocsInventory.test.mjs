@@ -33,6 +33,9 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     DogToggleButton: "docs-app/content/docs/components/dog-toggle-button.mdx",
     FindYourStayTravelPartyButton: "docs-app/content/docs/components/travel-party-button.mdx",
     SearchButton: "docs-app/content/docs/components/search-button.mdx",
+    BuildingIcon: "docs-app/content/docs/components/building-icon.mdx",
+    AmenityIcons: "docs-app/content/docs/components/amenity-icons.mdx",
+    ConfigurableRateCard: "docs-app/content/docs/components/configurable-rate-card.mdx",
   };
   for (const [name, page] of Object.entries(expectedPaths)) {
     const documented = byComponent(name).find((entry) => entry.status === "documented");

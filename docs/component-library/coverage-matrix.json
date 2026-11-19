@@ -2,8 +2,8 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 7,
-    "planned": 129,
+    "documented": 10,
+    "planned": 126,
     "excluded": 6,
     "undocumentedProductionCandidates": 41
   },
@@ -737,7 +737,7 @@
       "component": "ConfigurableRateCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/ConfigurableRateCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/configurable-rate-card.mdx",
+      "docsPage": "docs-app/content/docs/components/configurable-rate-card.mdx",
       "demos": 8,
       "demoExports": [
         "Vertical",
@@ -749,8 +749,8 @@
         "Disabled",
         "HorizontalExpanded"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "ConfigurableRateOffer",
@@ -990,15 +990,15 @@
       "component": "AmenityIcons",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/AmenityIcons.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/amenity-icons.mdx",
+      "docsPage": "docs-app/content/docs/components/amenity-icons.mdx",
       "demos": 3,
       "demoExports": [
         "Playground",
         "AllIcons",
         "ThemeContexts"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "BuildingExperienceList",
@@ -1023,15 +1023,15 @@
       "component": "BuildingIcon",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/BuildingIcon.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/building-icon.mdx",
+      "docsPage": "docs-app/content/docs/components/building-icon.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "AllFigmaVariants",
         "AllColors"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "FocusAmenity",

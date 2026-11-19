@@ -1,0 +1,51 @@
+---
+title: BuildingIcon
+description: Figma-derived building silhouettes used to illustrate room and lodging-family cards.
+---
+
+import {
+  BuildingIconStoryControl,
+  BuildingIconVariantsStoryControl,
+  BuildingIconColorsStoryControl,
+} from '~/components/story-controls';
+
+`BuildingIcon` renders one of ten building silhouettes as a CSS mask filled with a theme
+colour. It is decorative: the outer element carries a `role="img"` and an accessible label,
+while the coloured mask itself is hidden from assistive technology. The component is used
+across room cards and lodging-family merchandising to give each place a recognisable shape.
+
+<BuildingIconStoryControl />
+
+## Variants and colours
+
+The former Storybook `AllFigmaVariants` and `AllColors` states are collected below. Variant
+names intentionally preserve the source spelling `MountianViewHaus` from the Figma set.
+
+<BuildingIconVariantsStoryControl />
+
+<BuildingIconColorsStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `buildingName` | `Default`, `Alpine`, `SlideMountain`, `Ralphs`, `Chalet`, `ForestHaus`, `MountianViewHaus`, `EstonianSauna`, `Cabin`, `OpasCabin` | Selects the silhouette and its accessible label |
+| `color` | `Smoke`, `Snow`, `LakeForest`, `Ash`, `Alpine` | Fill colour applied through the mask |
+| `className` | string | Placement only; height is set per silhouette |
+| `imageBaseUrl` | string | Optional asset URL prefix for sites served under a base path |
+
+## Responsive behaviour
+
+Each silhouette has an intrinsic height that mirrors the Figma geometry; the icon keeps its
+aspect ratio and scales with the theme. The variants grid moves from two columns to four at
+the `sm` breakpoint, and the colours row wraps on narrow screens.
+
+## Usage
+
+```tsx
+import { BuildingIcon } from '@/components/rooms/BuildingIcon';
+
+<BuildingIcon buildingName="Alpine" color="LakeForest" />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/BuildingIcon.tsx)

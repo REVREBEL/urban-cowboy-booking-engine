@@ -26,6 +26,13 @@ docs-only harnesses. The travel-party demo uses the real `TravelPartyGroup` for 
 radio-group semantics, and root-relative component icons are copied and base-path prefixed
 during the static docs build.
 
+Third migrated group: rooms, rates and merchandising. `BuildingIcon`, `AmenityIcons` and
+`ConfigurableRateCard` have reference pages using the real source components with
+deterministic fixtures. `BuildingIcon` also accepts `imageBaseUrl` for its CSS-mask assets,
+and the docs build copies every checked-in building SVG so the runtime smoke can verify the
+masks resolve under the Pages base path. The rate-card harness keeps expand/confirm state
+local; it never creates a reservation or starts a payment.
+
 To add a component page: create a `*.story.tsx` in `docs-app/components` importing the real
 component, expose a `defineStory` export (with a deterministic harness when the component
 needs context), add a client wrapper in `story-controls.tsx`, write the MDX page with props,

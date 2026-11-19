@@ -1,4 +1,4 @@
 {
   "title": "Components",
-  "pages": ["pill", "button", "switch", "preference-icon-button", "dog-toggle-button", "travel-party-button", "search-button"]
+  "pages": ["pill", "button", "switch", "preference-icon-button", "dog-toggle-button", "travel-party-button", "search-button", "building-icon", "amenity-icons", "configurable-rate-card"]
 }

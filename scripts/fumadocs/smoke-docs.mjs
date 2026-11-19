@@ -15,6 +15,9 @@ const pages = [
   "components/dog-toggle-button/index.html",
   "components/travel-party-button/index.html",
   "components/search-button/index.html",
+  "components/building-icon/index.html",
+  "components/amenity-icons/index.html",
+  "components/configurable-rate-card/index.html",
 ];
 const forbidden = [
   /api\.mews\.com/i,
@@ -46,6 +49,9 @@ const markersByPage = {
   "components/dog-toggle-button/index.html": ["Bringing the dog"],
   "components/travel-party-button/index.html": ["Just the two of us"],
   "components/search-button/index.html": ["icon-circle"],
+  "components/building-icon/index.html": ["MountianViewHaus"],
+  "components/amenity-icons/index.html": ["outdoor-tub"],
+  "components/configurable-rate-card/index.html": ["STAY AWHILE"],
 };
 for (const [page, markers] of Object.entries(markersByPage)) {
   for (const marker of markers) {

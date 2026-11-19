@@ -80,3 +80,37 @@ test("dog-toggle icons load under the Pages base path before and after toggling"
     await new Promise((done) => server.close(done));
   }
 });
+
+test("building-icon mask assets use the Pages base path after hydration", async () => {
+  const server = await serve();
+  const browser = await chromium.launch();
+  const failedAssets = [];
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    const origin = `http://127.0.0.1:${address.port}`;
+    const page = await browser.newPage();
+    page.on("response", (response) => {
+      if (response.url().includes("/assets/icons/buildings/") && response.status() >= 400) {
+        failedAssets.push(`${response.status()} ${response.url()}`);
+      }
+    });
+
+    await page.goto(`${origin}${basePath}/components/building-icon/`, { waitUntil: "networkidle" });
+    const masks = await page.waitForFunction(() => {
+      const values = [...document.querySelectorAll('[role="img"] [aria-hidden="true"]')]
+        .map((node) => getComputedStyle(node).maskImage ?? getComputedStyle(node).WebkitMaskImage)
+        .filter((value) => value && value !== "none");
+      return values.length > 0 ? values : null;
+    });
+    const values = await masks.jsonValue();
+    assert.ok(
+      values.every((value) => value.includes(`${basePath}/assets/icons/buildings/`)),
+      `base-path building masks: ${values.join(", ")}`,
+    );
+    assert.deepEqual(failedAssets, []);
+  } finally {
+    await browser.close();
+    await new Promise((done) => server.close(done));
+  }
+});

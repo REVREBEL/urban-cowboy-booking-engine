@@ -36,6 +36,9 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/booking/discovery/DogToggleButton.stories.tsx": "docs-app/content/docs/components/dog-toggle-button.mdx",
   "src/stories/components/booking/discovery/FindYourStayTravelPartyButton.stories.tsx": "docs-app/content/docs/components/travel-party-button.mdx",
   "src/stories/components/booking/search/SearchButton.stories.tsx": "docs-app/content/docs/components/search-button.mdx",
+  "src/stories/components/rooms/BuildingIcon.stories.tsx": "docs-app/content/docs/components/building-icon.mdx",
+  "src/stories/components/rooms/AmenityIcons.stories.tsx": "docs-app/content/docs/components/amenity-icons.mdx",
+  "src/stories/components/rates/ConfigurableRateCard.stories.tsx": "docs-app/content/docs/components/configurable-rate-card.mdx",
 });
 
 const usedPlannedPaths = new Set();
