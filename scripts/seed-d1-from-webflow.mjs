@@ -313,14 +313,18 @@ const amenityEditorialRows = collections.amenities.rows
     val(r, "long-description") || null,
     isTrue(r, "active") ? 1 : 0,
   ]);
+// Reseeding must not overwrite editor-owned published values: an empty update
+// list produces ON CONFLICT DO NOTHING. The CMS export is a one-time baseline.
 addSection("amenity_editorial", buildInsert(
   "amenity_editorial",
   ["amenity_id", "tenant_id", "short_name", "short_description", "long_description", "active"],
   amenityEditorialRows,
   ["amenity_id"],
+  [],
 ));
 note(`${amenityEditorialRows.length} published amenities carry editorial descriptions/` +
-  "visibility into amenity_editorial; image paths remain admin-authored.");
+  "visibility into amenity_editorial; image paths remain admin-authored and " +
+  "reseeding preserves published edits.");
 
 // 5. Room types. All 22 source rows carry property-location = Catskills and a
 // non-empty Mews category ID; assert rather than assume.

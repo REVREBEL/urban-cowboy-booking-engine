@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-19T21:21:25.160Z",
+  "generatedAt": "2026-11-19T23:06:43.374Z",
   "sourceDirectory": "webflow_cms_export",
   "tenantId": "urban-cowboy",
   "policy": {
@@ -194,7 +194,7 @@
     },
     {
       "id": "F-03",
-      "message": "76 published amenities carry editorial descriptions/visibility into amenity_editorial; image paths remain admin-authored."
+      "message": "76 published amenities carry editorial descriptions/visibility into amenity_editorial; image paths remain admin-authored and reseeding preserves published edits."
     },
     {
       "id": "F-04",

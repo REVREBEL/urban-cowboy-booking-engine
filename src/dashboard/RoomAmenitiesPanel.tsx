@@ -197,7 +197,9 @@ function RoomAssignments({
   useEffect(() => {
     if (!room.data) return;
     const next = room.data.draft?.items ?? room.data.items;
-    setItems(next.map((item, index) => ({ ...item, displayOrder: index })));
+    // Preserve the server's displayOrder until an explicit reorder; change()
+    // then normalizes the sequence for the draft payload.
+    setItems([...next]);
     setRollbackId(room.data.revisions[0]?.id ?? "");
     setDirty(false);
   }, [room.data]);
@@ -268,8 +270,13 @@ function RoomAssignments({
     setSaving(true);
     setFeedback(null);
     try {
-      await api.publishEditorItem(room.data.itemId);
-      setFeedback({ tone: "success", message: "Published. Room cards and details now use these values." });
+      const result = await api.publishEditorItem<{
+        snapshotRefreshed?: boolean; amenitySnapshotsRefreshed?: boolean;
+      }>(room.data.itemId);
+      const refreshed = result.amenitySnapshotsRefreshed !== false && result.snapshotRefreshed !== false;
+      setFeedback(refreshed
+        ? { tone: "success", message: "Published. Room cards and details now use these values." }
+        : { tone: "error", message: "Published, but the published snapshot refresh failed. Guest values may be stale; please retry." });
       room.reload();
       onPublished();
     } catch (cause) {
@@ -287,8 +294,13 @@ function RoomAssignments({
     setSaving(true);
     setFeedback(null);
     try {
-      await api.rollbackEditorItem(room.data.itemId, rollbackId);
-      setFeedback({ tone: "success", message: "Rolled back to the selected revision." });
+      const result = await api.rollbackEditorItem<{
+        snapshotRefreshed?: boolean; amenitySnapshotsRefreshed?: boolean;
+      }>(room.data.itemId, rollbackId);
+      const refreshed = result.amenitySnapshotsRefreshed !== false && result.snapshotRefreshed !== false;
+      setFeedback(refreshed
+        ? { tone: "success", message: "Rolled back to the selected revision." }
+        : { tone: "error", message: "Rolled back, but the published snapshot refresh failed. Please retry." });
       room.reload();
       onPublished();
     } catch (cause) {
@@ -460,6 +472,7 @@ function AmenityContentEditor({
   const [rollbackId, setRollbackId] = useState("");
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [saving, setSaving] = useState(false);
+  const [contentDirty, setContentDirty] = useState(false);
 
   const selected = amenities.find((amenity) => amenity.id === selectedId) ?? null;
 
@@ -492,10 +505,12 @@ function AmenityContentEditor({
     setExpectedRevisionId(selected.workingRevisionId);
     setRevisions(selected.revisions);
     setRollbackId(selected.revisions[0]?.id ?? "");
+    setContentDirty(false);
     setFeedback(null);
   }, [selected]);
 
   const set = <K extends keyof AmenityContentPayload>(key: K, value: AmenityContentPayload[K]) => {
+    setContentDirty(true);
     setForm((current) => (current ? { ...current, [key]: value } : current));
   };
 
@@ -520,7 +535,15 @@ function AmenityContentEditor({
     setSaving(true);
     setFeedback(null);
     try {
-      const payload = { ...form, shortName: form.shortName.trim() };
+      // Keep raw text while typing; normalize only when the draft is saved.
+      const payload = {
+        ...form,
+        shortName: form.shortName.trim(),
+        shortDescription: form.shortDescription?.trim() || null,
+        longDescription: form.longDescription?.trim() || null,
+        imagePath: form.imagePath?.trim() || null,
+        imageName: form.imageName?.trim() || null,
+      };
       let itemId = editorItemId;
       if (itemId && expectedRevisionId) {
         const result = await api.saveEditorDraft<{ id: string; revisionId: string }>(itemId, {
@@ -544,6 +567,7 @@ function AmenityContentEditor({
           { id: result.revisionId, revision: current.length + 1, publishedAt: null, createdAt: "" },
         ]);
       }
+      setContentDirty(false);
       setFeedback({ tone: "success", message: "Draft saved. Publish to update guest content." });
       onSaved();
     } catch (cause) {
@@ -554,6 +578,10 @@ function AmenityContentEditor({
   };
 
   const publish = async () => {
+    if (contentDirty) {
+      setFeedback({ tone: "error", message: "Save your content changes before publishing." });
+      return;
+    }
     if (!editorItemId) {
       setFeedback({ tone: "error", message: "Save a draft before publishing." });
       return;
@@ -561,8 +589,13 @@ function AmenityContentEditor({
     setSaving(true);
     setFeedback(null);
     try {
-      await api.publishEditorItem(editorItemId);
-      setFeedback({ tone: "success", message: "Published. Descriptions and icons now use these values." });
+      const result = await api.publishEditorItem<{
+        snapshotRefreshed?: boolean; amenitySnapshotsRefreshed?: boolean;
+      }>(editorItemId);
+      const refreshed = result.amenitySnapshotsRefreshed !== false && result.snapshotRefreshed !== false;
+      setFeedback(refreshed
+        ? { tone: "success", message: "Published. Descriptions and icons now use these values." }
+        : { tone: "error", message: "Published, but the published snapshot refresh failed. Guest values may be stale; please retry." });
       onSaved();
     } catch (cause) {
       setFeedback({ tone: "error", message: cause instanceof Error ? cause.message : String(cause) });
@@ -579,8 +612,13 @@ function AmenityContentEditor({
     setSaving(true);
     setFeedback(null);
     try {
-      await api.rollbackEditorItem(editorItemId, rollbackId);
-      setFeedback({ tone: "success", message: "Rolled back to the selected revision." });
+      const result = await api.rollbackEditorItem<{
+        snapshotRefreshed?: boolean; amenitySnapshotsRefreshed?: boolean;
+      }>(editorItemId, rollbackId);
+      const refreshed = result.amenitySnapshotsRefreshed !== false && result.snapshotRefreshed !== false;
+      setFeedback(refreshed
+        ? { tone: "success", message: "Rolled back to the selected revision." }
+        : { tone: "error", message: "Rolled back, but the published snapshot refresh failed. Please retry." });
       onSaved();
     } catch (cause) {
       setFeedback({ tone: "error", message: cause instanceof Error ? cause.message : String(cause) });
@@ -635,14 +673,14 @@ function AmenityContentEditor({
                 <input className="rounded-md border border-border bg-background px-3 py-2"
                   placeholder="assets/icons/icons-simple/name.svg"
                   value={form.imagePath ?? ""}
-                  onChange={(event) => set("imagePath", event.target.value.trim() || null)} />
+                  onChange={(event) => set("imagePath", event.target.value || null)} />
               </label>
               <label className="flex flex-col gap-1 text-sm">
                 Icon name (used when path is blank)
                 <input className="rounded-md border border-border bg-background px-3 py-2"
                   placeholder="name.svg"
                   value={form.imageName ?? ""}
-                  onChange={(event) => set("imageName", event.target.value.trim() || null)} />
+                  onChange={(event) => set("imageName", event.target.value || null)} />
               </label>
               <label className="flex items-center gap-2 self-end text-sm">
                 <input type="checkbox" checked={form.active}
@@ -654,13 +692,13 @@ function AmenityContentEditor({
               Short description
               <textarea className="rounded-md border border-border bg-background px-3 py-2" rows={2}
                 value={form.shortDescription ?? ""}
-                onChange={(event) => set("shortDescription", event.target.value.trim() || null)} />
+                onChange={(event) => set("shortDescription", event.target.value || null)} />
             </label>
             <label className="flex flex-col gap-1 text-sm">
               Long description
               <textarea className="rounded-md border border-border bg-background px-3 py-2" rows={4}
                 value={form.longDescription ?? ""}
-                onChange={(event) => set("longDescription", event.target.value.trim() || null)} />
+                onChange={(event) => set("longDescription", event.target.value || null)} />
             </label>
             <div className="flex flex-wrap gap-3">
               <Button variant="outline" colorScheme="lake-forest" size="small" textCase="title"
@@ -668,7 +706,7 @@ function AmenityContentEditor({
                 Save draft
               </Button>
               <Button variant="filled" colorScheme="lake-forest" size="small" textCase="title"
-                isLoading={saving} disabled={!editorItemId} onClick={() => void publish()}>
+                isLoading={saving} disabled={!editorItemId || contentDirty} onClick={() => void publish()}>
                 Publish
               </Button>
             </div>

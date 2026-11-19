@@ -144,7 +144,13 @@ export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position
   }, [room.images, room.cmsAmenities, cmsHotspots]);
 
   const pins = photoHighlightsMap.get(room.images[photo]) ?? [];
-  const amenities = roomAmenities(room);
+  const hotspotAmenityIds = useMemo(
+    () => new Set([...photoHighlightsMap.values()].flat()
+      .map((highlight) => highlight.amenityId)
+      .filter((id): id is string => Boolean(id))),
+    [photoHighlightsMap],
+  );
+  const amenities = roomAmenities(room, hotspotAmenityIds);
   const unseenAmenities = amenities.filter((amenity) => !amenity.id || !pins.some((pin) => pin.amenityId === amenity.id));
   const sideAmenities = unseenAmenities.map((amenity) => ({
     id: amenity.id ?? `amenity:${amenity.title}`,

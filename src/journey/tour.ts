@@ -53,11 +53,16 @@ export const PHOTO_HIGHLIGHTS: Record<string, PhotoHighlight[]> = {
   ],
 };
 
-export function roomAmenities(room: JourneyRoom): { id?: string; title: string; icon: TourIcon; iconPath?: string | null; imageUrl?: string | null; note?: string | null; longNote?: string | null }[] {
+export function roomAmenities(
+  room: JourneyRoom,
+  hotspotAmenityIds?: ReadonlySet<string>,
+): { id?: string; title: string; icon: TourIcon; iconPath?: string | null; imageUrl?: string | null; note?: string | null; longNote?: string | null }[] {
   const features = ROOMS.find((r) => r.id === room.id)?.features ?? room.highlights;
 
   if (room.cmsAmenities) return room.cmsAmenities
-    .filter((amenity) => amenity.restricted !== true)
+    // Restricted amenities are hidden from the general list unless the same
+    // amenity is tagged on one of this room's published photo hotspots.
+    .filter((amenity) => amenity.restricted !== true || hotspotAmenityIds?.has(amenity.id) === true)
     .map((amenity) => ({
       id: amenity.id,
       title: amenity.shortName,

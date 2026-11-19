@@ -9,7 +9,8 @@
  */
 import {
   getDb,
-  listRoomAmenityAssignments,
+  listPublishedRoomAmenitySlugs,
+  listRoomAmenityAssignmentsForTenant,
   listScopedAddOns,
   listScopedAmenities,
   listScopedAmenityEditorial,
@@ -109,17 +110,28 @@ async function loadAllRows(
       });
     }
     case "roomAmenities": {
-      // One published document per room type, keyed by the canonical Webflow id.
-      // The payload carries the Mews category id so the guest adapter can map a
-      // room without trusting a client-supplied tenant or room identifier.
-      const rooms = await listScopedRoomTypes(db, scope);
-      const records: PublishedRecord[] = [];
-      for (const room of rooms) {
-        const amenities = await listRoomAmenityAssignments(db, scope.tenantId, room.id, true);
-        records.push({
+      // One document per room type, keyed by the canonical Webflow id. A room
+      // only becomes guest-facing here after its OWN room_amenities document is
+      // published; otherwise the guest keeps Webflow. This also keeps imported
+      // draft rooms (which D1 cannot flag) out of the published view.
+      const [rooms, migratedSlugs, allAssignments] = await Promise.all([
+        listScopedRoomTypes(db, scope),
+        listPublishedRoomAmenitySlugs(db, scope.tenantId),
+        listRoomAmenityAssignmentsForTenant(db, scope.tenantId, true),
+      ]);
+      const byRoom = new Map<string, typeof allAssignments>();
+      for (const assignment of allAssignments) {
+        const list = byRoom.get(assignment.roomTypeId) ?? [];
+        list.push(assignment);
+        byRoom.set(assignment.roomTypeId, list);
+      }
+      return rooms
+        .filter((room) => isPublishedSource("roomTypes", room.id))
+        .map((room) => ({
           id: room.id, collection, payload: {
             mewsRoomCategoryId: room.mewsRoomCategoryId,
-            amenities: amenities.map((amenity) => ({
+            migrated: migratedSlugs.has(room.id),
+            amenities: (byRoom.get(room.id) ?? []).map((amenity) => ({
               amenityId: amenity.amenityId,
               name: amenity.name,
               shortName: amenity.shortName,
@@ -131,9 +143,7 @@ async function loadAllRows(
               excluded: amenity.excluded,
             })),
           },
-        });
-      }
-      return records;
+        }));
     }
     case "addOns":
       return (await listScopedAddOns(db, scope)).map((row) => ({

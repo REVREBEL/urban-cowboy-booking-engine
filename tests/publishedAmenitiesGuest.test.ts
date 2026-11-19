@@ -55,7 +55,14 @@ function makeDb() {
     INSERT INTO tenants (id, slug, name) VALUES ('${TENANT}','${TENANT}','Urban Cowboy');
     INSERT INTO room_types (id, tenant_id, mews_room_category_id, name, slug, sort_order) VALUES
       ('room-a','${TENANT}','mews-a','Suite A','suite-a',1),
-      ('room-b','${TENANT}','mews-b','Suite B','suite-b',2);
+      ('room-b','${TENANT}','mews-b','Suite B','suite-b',2),
+      ('room-unmigrated','${TENANT}','mews-unmigrated','Unmigrated','unmigrated',3),
+      ('6abd4a1debcab0ea7e461c9a','${TENANT}','mews-draft','Draft Room','draft',4);
+    -- Only rooms with a published room_amenities document are guest-facing.
+    INSERT INTO content_items (id, tenant_id, kind, slug, status) VALUES
+      ('ci-a','${TENANT}','room_amenities','room-a','published'),
+      ('ci-b','${TENANT}','room_amenities','room-b','published'),
+      ('ci-draft','${TENANT}','room_amenities','6abd4a1debcab0ea7e461c9a','published');
     INSERT INTO amenities (id, tenant_id, name, image_name, image_path, sort_order) VALUES
       ('tub','${TENANT}','Copper Tub',NULL,NULL,1),
       ('speaker','${TENANT}','Marshall Speaker',NULL,NULL,2),
@@ -120,6 +127,52 @@ test("published D1 values drive order, content, icons and restriction", async ()
 
   assert.deepEqual(result.amenities["mews-b"].map((a) => a.id), ["tub"]);
   assert.deepEqual(result.amenities["mews-fallback"].map((a) => a.id), ["webflow-only"]);
+});
+
+test("unmigrated rooms keep Webflow amenities; an intentionally empty migrated room stays empty", async () => {
+  const db = makeDb();
+  const original = payload();
+  original.amenities["mews-unmigrated"] = [{
+    id: "webflow-only", name: "Webflow Amenity", shortName: "Webflow",
+    shortDescription: null, longDescription: null, iconPath: null, imageUrl: null,
+  }];
+  await publish(db);
+  const result = await applyPublishedAmenities(
+    { DB: d1(db), TENANT_ID: TENANT } as any, TENANT, original,
+  );
+  assert.deepEqual(result.amenities["mews-unmigrated"].map((a) => a.id), ["webflow-only"]);
+  assert.ok(!("mews-draft" in result.amenities));
+
+  // Deleting every assignment from a migrated room is a deliberate empty list.
+  db.prepare("DELETE FROM room_type_amenities WHERE room_type_id = 'room-b'").run();
+  await publish(db);
+  const emptied = await applyPublishedAmenities(
+    { DB: d1(db), TENANT_ID: TENANT } as any, TENANT, original,
+  );
+  assert.deepEqual(emptied.amenities["mews-b"], []);
+});
+
+test("a throwing D1 read never disrupts the Webflow room-content response", async () => {
+  const db = makeDb();
+  await publish(db);
+  const throwingDb = {
+    prepare() { throw new Error("D1 unavailable"); },
+  } as any;
+  const original = payload();
+  const result = await applyPublishedAmenities(
+    { DB: throwingDb, TENANT_ID: TENANT } as any, TENANT, original,
+  );
+  assert.deepEqual(result, original);
+});
+
+test("restricted amenities rejoin the general list when tagged on a room photo", () => {
+  // Source-contract style: the journey module uses directory imports that the
+  // node:test ESM loader cannot resolve, so assert the published behavior here.
+  const tour = read("src/journey/tour.ts");
+  const photoTour = read("src/journey/RoomPhotoTour.tsx");
+  assert.match(tour, /amenity\.restricted !== true \|\| hotspotAmenityIds\?\.has\(amenity\.id\) === true/);
+  assert.match(photoTour, /new Set\(\[\.\.\.photoHighlightsMap\.values\(\)\]\.flat\(\)/);
+  assert.match(photoTour, /roomAmenities\(room, hotspotAmenityIds\)/);
 });
 
 test("valid icon name resolves to a site-local asset when the path is blank", async () => {

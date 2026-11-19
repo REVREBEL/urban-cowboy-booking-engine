@@ -42,7 +42,15 @@ export async function applyPublishedAmenities(
   payload: CachedReviewPayload,
 ): Promise<CachedReviewPayload> {
   if (!env.DB || !tenantId?.trim()) return payload;
-  const snapshot = await getSnapshot(env.DB, { tenantId }, "roomAmenities");
+  let snapshot;
+  try {
+    snapshot = await getSnapshot(env.DB, { tenantId }, "roomAmenities");
+  } catch (error) {
+    // A D1 outage must never take down the existing Webflow room-content
+    // response (reviews, galleries, hotspots and descriptions included).
+    console.warn("[publishedAmenities] snapshot read failed; serving Webflow content", error);
+    return payload;
+  }
   if (!snapshot) return payload;
 
   let stored: unknown;
@@ -61,7 +69,10 @@ export async function applyPublishedAmenities(
   const overlay: RoomTypeCmsAmenityMap = {};
   for (const record of records) {
     const roomId = String(record.payload?.mewsRoomCategoryId ?? "");
-    if (!roomId) continue;
+    // Only rooms an editor explicitly migrated (published their own assignment
+    // document) may replace the Webflow list. An intentionally emptied migrated
+    // room still overlays with []; an unmigrated room keeps its Webflow fallback.
+    if (!roomId || record.payload?.migrated !== true) continue;
     const amenities = Array.isArray(record.payload?.amenities)
       ? record.payload.amenities as SnapshotAmenity[] : [];
     const mapped: CmsRoomAmenity[] = amenities

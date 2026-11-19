@@ -125,7 +125,28 @@ export async function listAdminAmenities(
   ]);
   const editorialById = new Map(editorial.map((row) => [row.amenityId, row]));
 
-  const items = await Promise.all(amenities.map(async (amenity) => {
+  // One query for every amenity's revision history instead of one per amenity.
+  const itemIds = [...new Set([...drafts.values()]
+    .map((row: any) => row.item_id as string | undefined).filter(Boolean))] as string[];
+  const revisionsByItem = new Map<string, { id: string; revision: number; publishedAt: string | null; createdAt: string }[]>();
+  if (itemIds.length) {
+    const placeholders = itemIds.map((_, index) => `?${index + 1}`).join(", ");
+    const rows = await db.prepare(
+      `SELECT id, content_item_id, revision, published_at, created_at FROM content_revisions
+        WHERE content_item_id IN (${placeholders}) ORDER BY content_item_id, revision`,
+    ).bind(...itemIds).all();
+    for (const row of rows.results ?? []) {
+      const entry = row as any;
+      const list = revisionsByItem.get(entry.content_item_id) ?? [];
+      list.push({
+        id: entry.id, revision: entry.revision,
+        publishedAt: entry.published_at, createdAt: entry.created_at,
+      });
+      revisionsByItem.set(entry.content_item_id, list);
+    }
+  }
+
+  const items = amenities.map((amenity) => {
     const content = editorialById.get(amenity.id);
     const draftRow = drafts.get(amenity.id);
     let draft: Record<string, unknown> | null = null;
@@ -137,17 +158,7 @@ export async function listAdminAmenities(
         }
       } catch { /* ignore malformed drafts */ }
     }
-    let revisions: { id: string; revision: number; publishedAt: string | null; createdAt: string }[] = [];
-    if (draftRow?.item_id) {
-      const rows = await db.prepare(
-        `SELECT id, revision, published_at, created_at FROM content_revisions
-          WHERE content_item_id = ?1 ORDER BY revision`,
-      ).bind(draftRow.item_id).all();
-      revisions = (rows.results ?? []).map((row: any) => ({
-        id: row.id, revision: row.revision,
-        publishedAt: row.published_at, createdAt: row.created_at,
-      }));
-    }
+    const revisions = draftRow?.item_id ? (revisionsByItem.get(draftRow.item_id) ?? []) : [];
     return {
       id: amenity.id,
       name: amenity.name,
@@ -167,7 +178,7 @@ export async function listAdminAmenities(
       revisions,
       draft,
     };
-  }));
+  });
   return json({ items }, 200, "no-store");
 }
 

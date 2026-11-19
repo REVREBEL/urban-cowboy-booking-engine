@@ -29,3 +29,7 @@ CREATE TABLE IF NOT EXISTS amenity_editorial (
 
 CREATE INDEX IF NOT EXISTS idx_amenity_editorial_tenant_active
   ON amenity_editorial (tenant_id, active);
+
+-- Ordered room assignments are read on every admin/guest snapshot refresh.
+CREATE INDEX IF NOT EXISTS idx_room_type_amenities_room_order
+  ON room_type_amenities (room_type_id, display_order);

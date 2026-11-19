@@ -173,6 +173,7 @@ export type AmenityEditorialContract = z.output<typeof amenityEditorialRowSchema
 
 /** Joined canonical + editorial row returned by the room amenity admin API. */
 export const roomAmenityAssignmentRowSchema = z.object({
+  room_type_id: id,
   amenity_id: id,
   name: id,
   image_name: nullableText,
@@ -185,6 +186,7 @@ export const roomAmenityAssignmentRowSchema = z.object({
   display_order: z.number().int(),
   excluded: flag,
 }).transform((row) => ({
+  roomTypeId: row.room_type_id,
   amenityId: row.amenity_id,
   name: row.name,
   imageName: row.image_name,

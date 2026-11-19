@@ -147,6 +147,17 @@ test("seed is idempotent", () => {
   db.close();
 });
 
+test("reseeding preserves editor-published amenity values", () => {
+  const db = makeDb();
+  const id = db.prepare("SELECT amenity_id FROM amenity_editorial LIMIT 1").get().amenity_id;
+  db.prepare("UPDATE amenity_editorial SET short_name = 'Editor owned', long_description = 'Published by an editor' WHERE amenity_id = ?").run(id);
+  db.exec(read("seed.sql"));
+  const row = db.prepare("SELECT short_name, long_description FROM amenity_editorial WHERE amenity_id = ?").get(id);
+  assert.equal(row.short_name, "Editor owned");
+  assert.equal(row.long_description, "Published by an editor");
+  db.close();
+});
+
 test("reconciliation report matches generated SQL and source scope", () => {
   const report = JSON.parse(read("docs/generated/d1-reconciliation.json"));
   assert.equal(report.totalSourceRecords, 398);

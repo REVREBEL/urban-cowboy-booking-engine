@@ -48,8 +48,10 @@ test("publish, rollback and feedback are explicit", () => {
   assert.match(panel, /Save draft/);
   assert.match(panel, /Publish/);
   assert.match(panel, /Roll back/);
-  assert.match(panel, /api\.publishEditorItem\(room\.data\.itemId\)/);
-  assert.match(panel, /api\.rollbackEditorItem\(room\.data\.itemId, rollbackId\)/);
+  assert.match(panel, /api\.publishEditorItem<[\s\S]*?>\(room\.data\.itemId\)/);
+  assert.match(panel, /api\.rollbackEditorItem<[\s\S]*?>\(room\.data\.itemId, rollbackId\)/);
+  assert.match(panel, /amenitySnapshotsRefreshed !== false/);
+  assert.match(panel, /snapshot refresh failed/);
   assert.match(panel, /role=\{feedback\.tone === "error" \? "alert" : "status"\}/);
   assert.match(panel, /hasUnpublishedDraft/);
 });
@@ -60,6 +62,10 @@ test("content tab validates local icon paths before saving", () => {
   assert.match(panel, /kind: "amenity_content", slug: selectedId, payload/);
   assert.match(panel, /role="tablist"/);
   assert.match(panel, /aria-selected=\{mode === "content"\}/);
+  assert.match(panel, /contentDirty/);
+  assert.match(panel, /disabled=\{!editorItemId \|\| contentDirty\}/);
+  assert.match(panel, /Keep raw text while typing; normalize only when the draft is saved/);
+  assert.doesNotMatch(panel, /set\("shortDescription", event\.target\.value\.trim\(\)/);
 });
 
 test("panel is wired into a protected dashboard route", () => {
