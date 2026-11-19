@@ -37,12 +37,6 @@ export function RoomPhotosPanel({ api }: { api: DashboardApi }) {
     if (!roomId && rooms.data?.length) setRoomId(rooms.data[0].id);
   }, [roomId, rooms.data]);
 
-  const loadGallery = useCallback(
-    () => (roomId ? api.getRoomGallery<GalleryItem>(roomId) : Promise.resolve([])),
-    [api, roomId],
-  );
-  const gallery = useDashboardResource(loadGallery);
-
   if (rooms.loading) return <LoadingPanel label="Loading room types" />;
   if (rooms.error) return <ErrorPanel message={rooms.error} onRetry={rooms.reload} />;
   if (!rooms.data?.length) return <EmptyPanel message="No room types are published in D1 yet." />;
@@ -72,47 +66,71 @@ export function RoomPhotosPanel({ api }: { api: DashboardApi }) {
         supplied by the Cloudinary contract once ingestion is enabled.
       </p>
 
+      {roomId ? (
+        // Remounting on room change resets the resource so the previous room's
+        // photos can never render under a new selection or alongside an error.
+        <RoomGallery key={roomId} api={api} roomId={roomId} />
+      ) : (
+        <EmptyPanel message="Select a room type to view its gallery." />
+      )}
+    </div>
+  );
+}
+
+function RoomGallery({ api, roomId }: { api: DashboardApi; roomId: string }) {
+  const loadGallery = useCallback(
+    () => api.getRoomGallery<GalleryItem>(roomId),
+    [api, roomId],
+  );
+  const gallery = useDashboardResource(loadGallery);
+  // Never show cached data while the new request is pending or has failed.
+  const ready = !gallery.loading && !gallery.error && (gallery.data?.length ?? 0) > 0;
+
+  return (
+    <>
       {gallery.loading && <LoadingPanel label="Loading gallery" />}
       {gallery.error && <ErrorPanel message={gallery.error} onRetry={gallery.reload} />}
       {!gallery.loading && !gallery.error && !gallery.data?.length && (
         <EmptyPanel message="No media placements are linked to this room yet." />
       )}
 
-      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {(gallery.data ?? []).map((item) => (
-          <li key={item.placementId} className="flex flex-col gap-3 rounded-lg border border-border p-4">
-            <div className="flex aspect-square items-center justify-center rounded-md bg-muted text-sm text-muted-foreground">
-              {item.altText || item.originalFilename || "Untitled image"}
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Pill size="small" textCase="title">#{item.displayOrder}</Pill>
-              {item.width && item.height && (
-                <Pill variant="outline" size="small">{item.width}×{item.height}</Pill>
-              )}
-            </div>
-            <dl className="space-y-1 text-sm">
-              <div className="flex justify-between gap-3">
-                <dt className="text-muted-foreground">Media ID</dt>
-                <dd className="truncate font-mono text-xs">{item.mediaAssetId}</dd>
+      {ready && (
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {(gallery.data ?? []).map((item) => (
+            <li key={item.placementId} className="flex flex-col gap-3 rounded-lg border border-border p-4">
+              <div className="flex aspect-square items-center justify-center rounded-md bg-muted text-sm text-muted-foreground">
+                {item.altText || item.originalFilename || "Untitled image"}
               </div>
-              <div className="flex justify-between gap-3">
-                <dt className="text-muted-foreground">Version</dt>
-                <dd className="truncate font-mono text-xs">{item.currentVersionId ?? "none"}</dd>
+              <div className="flex flex-wrap items-center gap-2">
+                <Pill size="small" textCase="title">#{item.displayOrder}</Pill>
+                {item.width && item.height && (
+                  <Pill variant="outline" size="small">{item.width}×{item.height}</Pill>
+                )}
               </div>
-              <div className="flex justify-between gap-3">
-                <dt className="text-muted-foreground">Cloudinary</dt>
-                <dd className="truncate font-mono text-xs">{item.cloudinaryPublicId ?? "not ingested"}</dd>
-              </div>
-              {item.caption && (
+              <dl className="space-y-1 text-sm">
                 <div className="flex justify-between gap-3">
-                  <dt className="text-muted-foreground">Caption</dt>
-                  <dd className="text-right">{item.caption}</dd>
+                  <dt className="text-muted-foreground">Media ID</dt>
+                  <dd className="truncate font-mono text-xs">{item.mediaAssetId}</dd>
                 </div>
-              )}
-            </dl>
-          </li>
-        ))}
-      </ul>
-    </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted-foreground">Version</dt>
+                  <dd className="truncate font-mono text-xs">{item.currentVersionId ?? "none"}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted-foreground">Cloudinary</dt>
+                  <dd className="truncate font-mono text-xs">{item.cloudinaryPublicId ?? "not ingested"}</dd>
+                </div>
+                {item.caption && (
+                  <div className="flex justify-between gap-3">
+                    <dt className="text-muted-foreground">Caption</dt>
+                    <dd className="text-right">{item.caption}</dd>
+                  </div>
+                )}
+              </dl>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   );
 }

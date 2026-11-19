@@ -27,6 +27,14 @@ test("panel exposes loading, error and empty states for both resources", () => {
   assert.match(panel, /No media placements are linked to this room yet/);
 });
 
+test("panel drops stale gallery data on room change and while a request is pending or failed", () => {
+  assert.match(panel, /<RoomGallery key=\{roomId\} api=\{api\} roomId=\{roomId\} \/>/);
+  assert.match(panel, /const ready = !gallery\.loading && !gallery\.error/);
+  assert.match(panel, /\{ready && \(\s*<ul/);
+  assert.doesNotMatch(panel, /\{gallery\.data \?\? \[\]\)\.map/);
+  assert.match(panel, /Select a room type to view its gallery/);
+});
+
 test("panel offers an accessible room picker and registry metadata", () => {
   assert.match(panel, /<label[^>]*>[\s\S]*?Room type/);
   assert.match(panel, /<select[\s\S]*?aria-label|<label/);

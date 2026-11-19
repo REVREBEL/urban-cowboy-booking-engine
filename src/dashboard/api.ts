@@ -26,6 +26,15 @@ export interface DashboardApiOptions {
   fetchImpl?: typeof fetch;
 }
 
+// Bound every dashboard network call so a stalled connection rejects into the
+// panel's existing error/retry state instead of leaving it loading forever.
+const REQUEST_TIMEOUT_MS = 10_000;
+
+function requestSignal(existing?: AbortSignal | null): AbortSignal {
+  const deadline = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
+  return existing ? AbortSignal.any([existing, deadline]) : deadline;
+}
+
 export interface DashboardApi {
   get<T>(path: string, params?: Record<string, string | number | undefined>, init?: RequestInit): Promise<T>;
   post<T>(path: string, body: unknown): Promise<T>;
@@ -76,6 +85,7 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
       ...init,
       headers,
       credentials: "same-origin",
+      signal: requestSignal(init.signal),
     });
     if (!response.ok) {
       const text = await response.text().catch(() => "");
@@ -92,6 +102,7 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
+        signal: requestSignal(),
         body: JSON.stringify(body),
       });
       if (!response.ok) {
@@ -106,6 +117,7 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
+        signal: requestSignal(),
         body: JSON.stringify(body),
       });
       if (!response.ok) {

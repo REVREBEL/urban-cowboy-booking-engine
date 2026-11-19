@@ -157,7 +157,13 @@ export default {
     const roomPhotos = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/photos\/?$/);
     if (roomPhotos) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
-      return listRoomGallery(adminCtx, decodeURIComponent(roomPhotos[1]));
+      let roomId: string;
+      try {
+        roomId = decodeURIComponent(roomPhotos[1]);
+      } catch {
+        return json({ error: "invalid_room_id" }, 400);
+      }
+      return listRoomGallery(adminCtx, roomId);
     }
     // Specific paths first: /snapshots/rollback must not be read as a collection.
     if (url.pathname.match(/^\/api\/content\/snapshots\/rollback\/?$/)) {
