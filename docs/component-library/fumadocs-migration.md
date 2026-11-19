@@ -33,8 +33,10 @@ Two static-build details are now part of the pattern:
 1. MDX rendered in a server component cannot access `.WithControl` on a client-module
    proxy. A small client wrapper component renders the story control instead.
 2. Fumadocs `baseUrl` must be `/` for the static routes emitted by the catch-all page.
-   `DOCS_BASE_PATH` is applied through Next `basePath`/`assetPrefix`; a build with a
-   project-style subpath was verified to prefix both assets and navigation links.
+   `resolveDocsBasePath()` in `scripts/fumadocs/base-path.mjs` is the single source for
+   Next `basePath`/`assetPrefix` and the smoke check. It defaults to
+   `/urban-cowboy-booking-engine`, treats `DOCS_BASE_PATH=/` as a custom-domain root, and
+   returns no prefix for `next dev` so local development stays at `/`.
 
 Search is disabled in the PoC because a static build has no search server. The bulk
 migration must add the documented static Orama search or a static-compatible provider.
@@ -62,10 +64,10 @@ verified.
 
 - PRs run install, typecheck, control lint, static build and smoke checks only.
 - Main-branch publication is gated by repository variable `DOCS_PAGES_ENABLED == "true"`.
-- For this application the Pages base path is `/urban-cowboy-booking-engine`. The workflow
-  derives it from `github.event.repository.name`; `DOCS_BASE_PATH` can override it for a
-  custom domain. The published URL comes from `actions/deploy-pages` output, not from a
-  guessed value.
+- For this application the Pages base path is `/urban-cowboy-booking-engine`. It is the
+  default in the shared resolver and is set as job-level env in both workflow jobs before
+  the build step. Set repository variable `DOCS_BASE_PATH=/` for a custom-domain root.
+  The published URL comes from `actions/deploy-pages` output, not from a guessed value.
 - Deploy permissions are limited to `pages: write` and `id-token: write` in the deploy
   job. A `component-docs` concurrency group prevents overlapping publications.
 

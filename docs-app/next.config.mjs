@@ -1,7 +1,11 @@
 import { createMDX } from "fumadocs-mdx/next";
 import { createNextStory } from "@fumadocs/story/next";
+import { resolveDocsBasePath } from "../scripts/fumadocs/base-path.mjs";
 
-const basePath = process.env.DOCS_BASE_PATH ?? "";
+// Pages builds use the project path by default. Local dev stays at `/` so the
+// usual dev-server root works; set DOCS_BASE_PATH=/ for custom-domain roots.
+const isDev = process.argv.includes("dev") || process.env.NODE_ENV === "development";
+const basePath = resolveDocsBasePath(process.env, { isDev });
 const config = {
   output: "export",
   trailingSlash: true,

@@ -3,6 +3,7 @@
 // component markers or safety constraints are missing from the export.
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { resolveDocsBasePath } from "./base-path.mjs";
 
 const out = process.argv[2] ?? "docs-app/out";
 const pages = [
@@ -38,4 +39,8 @@ for (const pattern of forbidden) {
 }
 const staticRoot = join(out, "_next", "static");
 if (!existsSync(staticRoot) || readdirSync(staticRoot).length === 0) fail("missing static assets");
+const basePath = resolveDocsBasePath();
+if (basePath && !html.includes(`${basePath}/_next/static/`)) {
+  fail(`static assets are missing base path ${basePath}`);
+}
 console.log(`docs smoke passed: ${pages.length} pages, static assets present`);

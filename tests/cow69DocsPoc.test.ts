@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { resolveDocsBasePath } from "../scripts/fumadocs/base-path.mjs";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -21,6 +22,7 @@ const pillMdx = read("docs-app/content/docs/components/pill.mdx");
 const preferenceMdx = read("docs-app/content/docs/components/preference-icon-button.mdx");
 const workflow = read(".github/workflows/docs-pages.yml");
 const migrationDoc = read("docs/component-library/fumadocs-migration.md");
+const smokeScript = read("scripts/fumadocs/smoke-docs.mjs");
 
 test("inventory maps every story with explicit exclusions", () => {
   assert.equal(inventory.totalStories, 142);
@@ -38,10 +40,21 @@ test("inventory maps every story with explicit exclusions", () => {
 test("Fumadocs is configured for static export and subpath builds", () => {
   assert.match(nextConfig, /output: "export"/);
   assert.match(nextConfig, /trailingSlash: true/);
-  assert.match(nextConfig, /process\.env\.DOCS_BASE_PATH/);
+  assert.match(nextConfig, /resolveDocsBasePath\(process\.env, \{ isDev \}\)/);
+  assert.match(nextConfig, /basePath,/);
+  assert.match(nextConfig, /assetPrefix: basePath/);
   assert.match(nextConfig, /createNextStory/);
   assert.match(nextConfig, /createMDX/);
   assert.match(source, /baseUrl: "\/"/);
+});
+
+test("base path resolver covers Pages, custom-domain roots and local dev", () => {
+  assert.equal(resolveDocsBasePath({}), "/urban-cowboy-booking-engine");
+  assert.equal(resolveDocsBasePath({ DOCS_BASE_PATH: "/custom-path" }), "/custom-path");
+  assert.equal(resolveDocsBasePath({ DOCS_BASE_PATH: "/" }), "");
+  assert.equal(resolveDocsBasePath({}, { isDev: true }), "");
+  assert.match(smokeScript, /resolveDocsBasePath\(\)/);
+  assert.match(smokeScript, /static assets are missing base path/);
 });
 
 test("docs and Storybook share one maximum-width token", () => {
@@ -67,6 +80,8 @@ test("Pages workflow validates PRs and gates publication behind an explicit vari
   assert.match(workflow, /npm run lint:controls/);
   assert.match(workflow, /npm run docs:build/);
   assert.match(workflow, /npm run docs:smoke/);
+  assert.match(workflow, /DOCS_BASE_PATH: \$\{\{ vars\.DOCS_BASE_PATH \|\| '\/urban-cowboy-booking-engine' \}\}/);
+  assert.doesNotMatch(workflow, /GITHUB_ENV/);
   assert.match(workflow, /vars\.DOCS_PAGES_ENABLED == 'true'/);
   assert.match(workflow, /steps\.deployment\.outputs\.page_url/);
   assert.doesNotMatch(workflow, /urbancowboy\.github\.io/);
