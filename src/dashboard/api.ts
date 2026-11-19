@@ -30,23 +30,54 @@ export interface DashboardApiOptions {
 // panel's existing error/retry state instead of leaving it loading forever.
 const REQUEST_TIMEOUT_MS = 10_000;
 
-function requestSignal(existing?: AbortSignal | null): AbortSignal {
-  // Preferred on Node 18+ and current browsers.
-  if (typeof AbortSignal.timeout === "function") {
+interface DeadlineSignal {
+  signal: AbortSignal;
+  /** Release timers and listeners once the fetch settles. */
+  dispose: () => void;
+}
+
+/**
+ * Combine the deadline with the caller's signal. A runtime can have timeout()
+ * but not any(), so composition must not depend on any() being present or the
+ * caller's cancellation would be silently dropped.
+ */
+function requestSignal(existing?: AbortSignal | null): DeadlineSignal {
+  if (typeof AbortSignal.timeout === "function" && typeof AbortSignal.any === "function") {
     const deadline = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
-    return existing && typeof AbortSignal.any === "function"
-      ? AbortSignal.any([existing, deadline])
-      : deadline;
+    return {
+      signal: AbortSignal.any(existing ? [existing, deadline] : [deadline]),
+      dispose: () => {},
+    };
   }
-  // Fallback for older browsers without AbortSignal.timeout/any.
+
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  if (existing) {
-    if (existing.aborted) controller.abort(existing.reason);
-    else existing.addEventListener("abort", () => controller.abort(existing.reason), { once: true });
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let deadline: AbortSignal | undefined;
+  if (typeof AbortSignal.timeout === "function") {
+    deadline = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
+  } else {
+    timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   }
-  controller.signal.addEventListener("abort", () => clearTimeout(timer), { once: true });
-  return controller.signal;
+
+  const abortFromDeadline = () => controller.abort(deadline?.reason);
+  if (deadline) {
+    if (deadline.aborted) abortFromDeadline();
+    else deadline.addEventListener("abort", abortFromDeadline, { once: true });
+  }
+  const abortFromCaller = () => controller.abort(existing?.reason);
+  if (existing) {
+    if (existing.aborted) abortFromCaller();
+    else existing.addEventListener("abort", abortFromCaller, { once: true });
+  }
+
+  return {
+    signal: controller.signal,
+    dispose: () => {
+      if (timer) clearTimeout(timer);
+      deadline?.removeEventListener("abort", abortFromDeadline);
+      existing?.removeEventListener("abort", abortFromCaller);
+    },
+  };
 }
 
 export interface DashboardApi {
@@ -95,50 +126,65 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     headers.set("accept", "application/json");
     // Same-origin credentials carry the Access cookie. Workers verify the JWT
     // that Cloudflare injects; the dashboard never fabricates that header.
-    const response = await doFetch(requestPath, {
-      ...init,
-      headers,
-      credentials: "same-origin",
-      signal: requestSignal(init.signal),
-    });
-    if (!response.ok) {
-      const text = await response.text().catch(() => "");
-      throw errorFrom(response.status, text);
+    const timed = requestSignal(init.signal);
+    try {
+      const response = await doFetch(requestPath, {
+        ...init,
+        headers,
+        credentials: "same-origin",
+        signal: timed.signal,
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw errorFrom(response.status, text);
+      }
+      return (await response.json()) as T;
+    } finally {
+      timed.dispose();
     }
-    return (await response.json()) as T;
   }
 
   return {
     get,
     async post<T>(path: string, body: unknown): Promise<T> {
       if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
-      const response = await doFetch(path, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        signal: requestSignal(),
-        body: JSON.stringify(body),
-      });
-      if (!response.ok) {
-        const text = await response.text().catch(() => "");
-        throw errorFrom(response.status, text);
+      const timed = requestSignal();
+      try {
+        const response = await doFetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          signal: timed.signal,
+          body: JSON.stringify(body),
+        });
+        if (!response.ok) {
+          const text = await response.text().catch(() => "");
+          throw errorFrom(response.status, text);
+        }
+        return (await response.json()) as T;
+      } finally {
+        timed.dispose();
       }
-      return (await response.json()) as T;
     },
     async patch<T>(path: string, body: unknown): Promise<T> {
       if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
-      const response = await doFetch(path, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        signal: requestSignal(),
-        body: JSON.stringify(body),
-      });
-      if (!response.ok) {
-        const text = await response.text().catch(() => "");
-        throw errorFrom(response.status, text);
+      const timed = requestSignal();
+      try {
+        const response = await doFetch(path, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          signal: timed.signal,
+          body: JSON.stringify(body),
+        });
+        if (!response.ok) {
+          const text = await response.text().catch(() => "");
+          throw errorFrom(response.status, text);
+        }
+        return (await response.json()) as T;
+      } finally {
+        timed.dispose();
       }
-      return (await response.json()) as T;
     },
     async getD1Module<T>(module: DashboardModule, tenant = DASHBOARD_TENANT): Promise<T[]> {
       // Only add-ons has a dedicated /api/d1 route. events, offers and upgrades

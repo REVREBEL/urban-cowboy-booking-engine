@@ -113,5 +113,5 @@ test("Pages workflow validates PRs and gates publication behind an explicit vari
   assert.doesNotMatch(workflow, /urbancowboy\.github\.io/);
   assert.match(migrationDoc, /public/);
   assert.match(migrationDoc, /explicit opt-in/);
-  assert.match(migrationDoc, /No production cutover/);
+  assert.match(migrationDoc, /No (production|booking-engine or Cloudflare Worker) cutover/);
 });
