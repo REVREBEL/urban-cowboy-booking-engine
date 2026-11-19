@@ -13,7 +13,7 @@
   "skipArtifactsUpdate": false,
   "constraints": {
     "npm": "^11.0.0"
-  }
+  },
   "packageRules": [
     {
       "description": "Automerge stable patch updates after a 14-day release age",
