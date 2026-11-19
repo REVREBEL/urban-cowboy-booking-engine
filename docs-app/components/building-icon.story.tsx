@@ -16,8 +16,10 @@ export const buildingIconStory = defineStory({
 });
 
 function BuildingIconVariants() {
+  // Each silhouette has a fixed 283px intrinsic width, so use one column on
+  // phones and two from `sm` up to give every icon enough horizontal room.
   return (
-    <div className="grid w-full grid-cols-2 gap-6 sm:grid-cols-4">
+    <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
       {names.map((buildingName) => (
         <div key={buildingName} className="flex flex-col items-center gap-2">
           <BuildingIcon buildingName={buildingName} color="Smoke" imageBaseUrl={imageBaseUrl} />

@@ -118,13 +118,23 @@ function RateCardVariants() {
           onBook={() => {}}
         />
       </div>
-      <ConfigurableRateCard
-        config={{ ...config }}
-        live={{ ...live }}
-        isExpanded
-        confirmLabel="Agree & Confirm"
-        onBook={() => {}}
-      />
+      <div className="grid gap-6 sm:grid-cols-2">
+        <ConfigurableRateCard
+          config={{ ...config }}
+          live={{ ...live }}
+          isExpanded
+          confirmLabel="Agree & Confirm"
+          onBook={() => {}}
+        />
+        <ConfigurableRateCard
+          config={{ ...config }}
+          live={{ ...live }}
+          layout="horizontal"
+          isExpanded
+          confirmLabel="Agree & Confirm"
+          onBook={() => {}}
+        />
+      </div>
     </div>
   );
 }

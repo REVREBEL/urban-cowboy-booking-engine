@@ -4,7 +4,11 @@ import { AmenityIcons } from "../../src/components/rooms/AmenityIcons";
 import type { TourIcon } from "../../src/journey/tour";
 import { defineStory } from "../lib/story";
 
-const icons: TourIcon[] = ["seat", "tub", "robes", "window", "stove", "desk", "outdoor-tub"];
+// All twelve fallback TourIcon values, matching the documented prop table.
+const icons: TourIcon[] = [
+  "bed", "tub", "outdoor-tub", "window", "seat", "stove",
+  "robes", "speaker", "shower", "floors", "desk", "balcony",
+];
 
 export const amenityIconStory = defineStory({
   Component: AmenityIcons,

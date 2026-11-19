@@ -36,9 +36,10 @@ names intentionally preserve the source spelling `MountianViewHaus` from the Fig
 
 ## Responsive behaviour
 
-Each silhouette has an intrinsic height that mirrors the Figma geometry; the icon keeps its
-aspect ratio and scales with the theme. The variants grid moves from two columns to four at
-the `sm` breakpoint, and the colours row wraps on narrow screens.
+Each silhouette has a fixed intrinsic width (283px) and a height that mirrors the Figma
+geometry; the icon keeps its aspect ratio and scales with the theme. Because of that fixed
+width, the variants grid uses one column on phones and two from the `sm` breakpoint up, so
+icons are never squeezed into narrow tracks. The colours row wraps on narrow screens.
 
 ## Usage
 
