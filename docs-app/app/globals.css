@@ -7,6 +7,32 @@
 
 :root {
   --storybook-story-max-width: 1600px;
+
+  /* Map Fumadocs UI tokens to the booking-engine brand palette. */
+  --fd-background: var(--paper-100);
+  --fd-foreground: var(--lake-forest);
+  --fd-card: var(--paper);
+  --fd-card-foreground: var(--lake-forest);
+  --fd-popover: var(--paper);
+  --fd-popover-foreground: var(--lake-forest);
+  --fd-muted: var(--alpine-linen-100);
+  --fd-muted-foreground: var(--lake-forest-muted, var(--smoke));
+  --fd-accent: var(--alpine-linen-200);
+  --fd-accent-foreground: var(--lake-forest);
+  --fd-primary: var(--lake-forest);
+  --fd-primary-foreground: var(--paper);
+  --fd-border: var(--paper-700);
+  --fd-ring: var(--copper);
+  --fd-sidebar: var(--paper-200);
+  --fd-sidebar-foreground: var(--lake-forest);
+}
+
+@media (min-width: 768px) {
+  /* Fumadocs sets a mobile 0px width on this element with a utility class. */
+  #nd-docs-layout {
+    --fd-sidebar-width: 268px;
+    --fd-toc-width: 260px;
+  }
 }
 
 html,

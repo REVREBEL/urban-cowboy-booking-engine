@@ -14,6 +14,7 @@ const inventory = JSON.parse(read("docs/component-library/inventory.json")) as {
   stories: Array<{ source: string; newDoc: string | null; status: string; rationale: string }>;
 };
 const nextConfig = read("docs-app/next.config.mjs");
+const globalCss = read("docs-app/app/globals.css");
 const source = read("docs-app/source.ts");
 const widthToken = read("src/styles/documentation-layout.ts");
 const storybookLayout = read(".storybook/StorybookLayout.tsx");
@@ -55,6 +56,15 @@ test("base path resolver covers Pages, custom-domain roots and local dev", () =>
   assert.equal(resolveDocsBasePath({}, { isDev: true }), "");
   assert.match(smokeScript, /resolveDocsBasePath\(\)/);
   assert.match(smokeScript, /static assets are missing base path/);
+});
+
+test("Fumadocs theme maps brand tokens and lays out the desktop sidebar", () => {
+  assert.match(globalCss, /--fd-background: var\(--paper-100\)/);
+  assert.match(globalCss, /--fd-foreground: var\(--lake-forest\)/);
+  assert.match(globalCss, /--fd-ring: var\(--copper\)/);
+  assert.match(globalCss, /#nd-docs-layout \{/);
+  assert.match(globalCss, /--fd-sidebar-width: 268px/);
+  assert.match(globalCss, /--fd-toc-width: 260px/);
 });
 
 test("docs and Storybook share one maximum-width token", () => {
