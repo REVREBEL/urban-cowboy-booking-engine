@@ -1,0 +1,2085 @@
+{
+  "generatedFrom": "src/stories + docs-app/content/docs",
+  "totals": {
+    "components": 142,
+    "documented": 4,
+    "planned": 132,
+    "excluded": 6,
+    "undocumentedProductionCandidates": 41
+  },
+  "components": [
+    {
+      "component": "ContactBar",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/chrome/contact-bar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/contact-bar.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Footer",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/chrome/footer.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/footer.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Header",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/chrome/header.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/header.mdx",
+      "demos": 3,
+      "demoExports": [
+        "DatesStep",
+        "ResultsStep",
+        "ExtrasStep"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Conversion",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/conversion.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/conversion.mdx",
+      "demos": 5,
+      "demoExports": [
+        "Rating",
+        "ScarcityBadgeVariant",
+        "UrgencyBannerVariant",
+        "SavingsBadgeVariant",
+        "TrustRowVariant"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "DogToggleButton",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/discovery/DogToggleButton.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/dog-toggle-button.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Inactive",
+        "Selected"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "FindYourStayTravelPartyButton",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/discovery/FindYourStayTravelPartyButton.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/find-your-stay-travel-party-button.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "Selected"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "HelpMeChooseModal",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/discovery/HelpMeChooseModal.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/help-me-choose-modal.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Open"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "MatchOrBrowseScreen",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/discovery/MatchOrBrowseScreen.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/match-or-browse-screen.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "PreferenceIconButton",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/discovery/PreferenceIconButton.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/preference-icon-button.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "Selected"
+      ],
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
+    },
+    {
+      "component": "RoomMatcherPage",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/discovery/RoomMatcherPage.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/room-matcher-page.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RoomMatcherProgress",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/discovery/RoomMatcherProgress.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/room-matcher-progress.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RusticLodgeSignboard",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/discovery/RusticLodgeSignboard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/rustic-lodge-signboard.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "AddonCard",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/extras/AddonCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/addon-card.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "Selected",
+        "Included"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "AddonCustomizerModal",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/extras/AddonCustomizerModal.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/addon-customizer-modal.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Open"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ExtrasStep",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/extras/ExtrasStep.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/extras-step.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "CreoleUpsellStories",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/extras/creole-upsell-stories.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/creole-upsell-stories.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "UpsellCard",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/extras/upsell-card.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/upsell-card.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "StepLayout",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/layout/step-layout.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/step-layout.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "StepProgress",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/layout/step-progress.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/step-progress.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ProgressBar",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/progress/ProgressBar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/progress-bar.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "StepComponent"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ProgressStep",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/progress/ProgressStep.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/progress-step.mdx",
+      "demos": 6,
+      "demoExports": [
+        "Default",
+        "Current",
+        "Complete",
+        "Disabled",
+        "Loading",
+        "Stepper"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "MatchBenefitsCard",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/results/MatchBenefitsCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/match-benefits-card.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "BestRateGuaranteedLabel",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/BestRateGuaranteedLabel.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/best-rate-guaranteed-label.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "DateSearchDropdown",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/DateSearchDropdown.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/date-search-dropdown.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "Unselected",
+        "ExternalActions"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "InlineDateRangePicker",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/InlineDateRangePicker.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/inline-date-range-picker.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "PropertyLocationLabel",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/PropertyLocationLabel.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/property-location-label.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "PropertyPropertyLabel",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/PropertyPropertyLabel.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/property-property-label.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "SearchBar",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/SearchBar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "SearchBarExpanded",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/SearchBarExpanded.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar-expanded.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "SearchBarGuestDropdown",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/SearchBarGuestsDropdown.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar-guests-dropdown.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "SearchBarLocationDropdown",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/SearchBarLocationDropdown.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar-location-dropdown.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "KeyboardNavigationAndEscape",
+        "SwitchingSectionPreservesNewFocus"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "SearchBarPromoDropdown",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/SearchBarPromoDropdown.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar-promo-dropdown.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "SearchButton",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/search/SearchButton.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/search-button.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "CheckoutStep",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/summary/CheckoutStep.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/checkout-step.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ExtrasStep",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/summary/ExtrasStep.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/summary-extras-step.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "BookingSummary",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/summary/booking-summary.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/booking-summary.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "StayBreakdown",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/summary/stay-breakdown.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/stay-breakdown.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "StaySummary",
+      "category": "Booking steps",
+      "storySource": "src/stories/components/booking/summary/stay-summary.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/booking/stay-summary.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Brand",
+      "category": "Brand",
+      "storySource": "src/stories/components/brand/Brand.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/brand/brand.mdx",
+      "demos": 4,
+      "demoExports": [
+        "Default",
+        "Subtle",
+        "Full",
+        "CustomColor"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "DataBadge",
+      "category": "Developer tooling",
+      "storySource": "src/stories/components/dev/data-badge.stories.tsx",
+      "docsPage": null,
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "SecureBadgeVariant"
+      ],
+      "status": "excluded",
+      "note": "Development-only tooling. Not part of the public component library."
+    },
+    {
+      "component": "DevPanel",
+      "category": "Developer tooling",
+      "storySource": "src/stories/components/dev/dev-panel.stories.tsx",
+      "docsPage": null,
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "excluded",
+      "note": "Development-only tooling. Not part of the public component library."
+    },
+    {
+      "component": "EmptyState",
+      "category": "Feedback",
+      "storySource": "src/stories/components/feedback/EmptyState.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/feedback/empty-state.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "WithAction"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ErrorState",
+      "category": "Feedback",
+      "storySource": "src/stories/components/feedback/ErrorState.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/feedback/error-state.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "WithRetry"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "LoadingState",
+      "category": "Feedback",
+      "storySource": "src/stories/components/feedback/LoadingState.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/feedback/loading-state.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "CustomMessage"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "DateRangePicker",
+      "category": "Forms",
+      "storySource": "src/stories/components/forms/DateRangePicker.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/forms/date-range-picker.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "Unselected",
+        "CheckInOnly"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "PhoneInput",
+      "category": "Forms",
+      "storySource": "src/stories/components/forms/PhoneInput.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/forms/phone-input.mdx",
+      "demos": 4,
+      "demoExports": [
+        "Default",
+        "Empty",
+        "FranceSelected",
+        "InvalidState"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "AmenityWoodcutIcon",
+      "category": "Icons",
+      "storySource": "src/stories/components/icons/AmenityWoodcutIcon.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/icons/amenity-woodcut-icon.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "BuildingWoodcut",
+      "category": "Icons",
+      "storySource": "src/stories/components/icons/BuildingWoodcut.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/icons/building-woodcut.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Alpine",
+        "Walden",
+        "Lodge"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "CowboyIcons",
+      "category": "Icons",
+      "storySource": "src/stories/components/icons/cowboy-icons.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/icons/cowboy-icons.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Disappear for a While",
+      "category": "Photo Journey",
+      "storySource": "src/stories/components/journey/PhotoArrival.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-arrival.mdx",
+      "demos": 4,
+      "demoExports": [
+        "Arrival",
+        "CalendarOpen",
+        "DatesSelected",
+        "FeaturesHidden"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Extras",
+      "category": "Photo Journey",
+      "storySource": "src/stories/components/journey/PhotoExtrasStep.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-extras-step.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Available",
+        "Selected",
+        "NoExtras"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Stay Journal",
+      "category": "Photo Journey",
+      "storySource": "src/stories/components/journey/PhotoJournal.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-journal.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Couple",
+        "Family",
+        "WithPreferences"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Rooms",
+      "category": "Photo Journey",
+      "storySource": "src/stories/components/journey/PhotoRooms.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-rooms.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Index",
+        "PhotoSpreads",
+        "WithPreferences"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Photo Tour Arrow",
+      "category": "Photo Journey",
+      "storySource": "src/stories/components/journey/PhotoTourArrow.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-tour-arrow.mdx",
+      "demos": 7,
+      "demoExports": [
+        "Arrow",
+        "Chevron",
+        "Back",
+        "Playground",
+        "ChevronDirections",
+        "AssetVsChevronComparison",
+        "Sizes"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Room Photo Tour",
+      "category": "Photo Journey",
+      "storySource": "src/stories/components/journey/RoomPhotoTour.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/journey/room-photo-tour.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "DetailsOpen"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Photo",
+      "category": "Media",
+      "storySource": "src/stories/components/media/Photo.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/media/photo.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "MissingSourceFallback",
+        "BrokenImageFallback"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ConfigurableRateCard",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/ConfigurableRateCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/configurable-rate-card.mdx",
+      "demos": 8,
+      "demoExports": [
+        "Vertical",
+        "Horizontal",
+        "SingleBorder",
+        "DoubleBorder",
+        "OutlineButton",
+        "Expanded",
+        "Disabled",
+        "HorizontalExpanded"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ConfigurableRateOffer",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/ConfigurableRateOffer.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/configurable-rate-offer.mdx",
+      "demos": 9,
+      "demoExports": [
+        "Collapsed",
+        "Expanded",
+        "CompactExpanded",
+        "PlanAheadThemeExpanded",
+        "CompactWithPaymentMilestones",
+        "RideEasyExpanded",
+        "StayAwhileExpanded",
+        "SunupExpanded",
+        "OutfitExpanded"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Figma Rate Card",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/FigmaRateComponents.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/figma-rate-components.mdx",
+      "demos": 8,
+      "demoExports": [
+        "Standard",
+        "MemberRate",
+        "PackageRate",
+        "Mobile",
+        "DetailsPopup",
+        "UnavailableDetails",
+        "DepositWithoutTimeline",
+        "PolicyTimeline"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "OutfitOffersCard",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/OutfitOffersCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/outfit-offers-card.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "Compact"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "PillarFeatures",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/PillarFeatures.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/pillar-features.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "PlanAheadOffersCard",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/PlanAheadOffersCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/plan-ahead-offers-card.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "PolicyDisplay",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/PolicyDisplay.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/policy-display.mdx",
+      "demos": 6,
+      "demoExports": [
+        "Horizontal",
+        "Vertical",
+        "VerticalWithAmounts",
+        "CustomTooltips",
+        "CowboyPaymentSchedule",
+        "TextOnlyFallback"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ProductionRateTray",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/ProductionRateTray.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/production-rate-tray.mdx",
+      "demos": 11,
+      "demoExports": [
+        "AllRateVariants",
+        "StandardRateCard",
+        "MemberRateCard",
+        "PackageRateCard",
+        "NonRefundableCard",
+        "RateDetailPopup",
+        "CancellationTimeline",
+        "StayPricing",
+        "MobileRateCards",
+        "MobileRateDetailPopup",
+        "MemberUnlockVerified"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RateCardLab",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/RateCardLab.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/rate-card-lab.mdx",
+      "demos": 7,
+      "demoExports": [
+        "SingleCard",
+        "SingleCardExpanded",
+        "DrawerOpen",
+        "FullWidthTray",
+        "LongLeadTime",
+        "DepositAtRisk",
+        "FullyLocked"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RateOfferCard",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/RateOfferCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/rate-offer-card.mdx",
+      "demos": 12,
+      "demoExports": [
+        "RideEasy",
+        "RideEasyExpanded",
+        "PlanAhead",
+        "PlanAheadExpanded",
+        "StayAwhile",
+        "StayAwhileExpanded",
+        "Sunup",
+        "SunupExpanded",
+        "Outfit",
+        "OutfitExpanded",
+        "CompactRideEasy",
+        "CompactOutfitExpanded"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RateOfferSidePanel",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/RateOfferSidePanel.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/rate-offer-side-panel.mdx",
+      "demos": 7,
+      "demoExports": [
+        "Default",
+        "Compact",
+        "RideEasy",
+        "PlanAhead",
+        "StayAwhile",
+        "Sunup",
+        "Submitting"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RateSelectionView",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/RateSelectionView.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/rate-selection-view.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RideEasyOffersCard",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/RideEasyOffersCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/ride-easy-offers-card.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RideEasySoloPage",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/RideEasySoloPage.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/ride-easy-solo-page.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "StayAwhileOffersCard",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/StayAwhileOffersCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/stay-awhile-offers-card.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "SunupOffersCard",
+      "category": "Rates",
+      "storySource": "src/stories/components/rates/SunupOffersCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rates/sunup-offers-card.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "AmenityIcons",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/AmenityIcons.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/amenity-icons.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Playground",
+        "AllIcons",
+        "ThemeContexts"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "BuildingExperienceList",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/BuildingExperienceList.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/building-experience-list.mdx",
+      "demos": 8,
+      "demoExports": [
+        "Default",
+        "AlpineBathingSuiteWithDen",
+        "AlpinePenthouse",
+        "WaldenKing",
+        "WaldenBathingSuiteWithDen",
+        "WaldenSunriseBathingSuite",
+        "SingleRoomAvailable",
+        "EmptyRoomList"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "BuildingIcon",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/BuildingIcon.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/building-icon.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "AllFigmaVariants",
+        "AllColors"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "FocusAmenity",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/FocusAmenity.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity.mdx",
+      "demos": 9,
+      "demoExports": [
+        "Playground",
+        "Default",
+        "Hover",
+        "Active",
+        "Inactive",
+        "AllStates",
+        "IconsDefault",
+        "IconsActive",
+        "ToneComparison"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "FocusAmenityAction",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/FocusAmenityAction.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-action.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "Hover",
+        "Active"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "FocusAmenityCard",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/FocusAmenityCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-card.mdx",
+      "demos": 3,
+      "demoExports": [
+        "FigmaReference",
+        "HeadlineOnly",
+        "WrappedCopy"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "FocusAmenityCount",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/FocusAmenityCount.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-count.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "Hover",
+        "Active"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "FocusAmenityIcon",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/FocusAmenityIcon.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-icon.mdx",
+      "demos": 6,
+      "demoExports": [
+        "Default",
+        "AllStates",
+        "Sizes",
+        "FeatureBadges",
+        "AllIconsByGroup",
+        "InteractiveExplorer"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "GuestReviewQuoteCard",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/GuestReviewQuoteCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/guest-review-quote-card.mdx",
+      "demos": 5,
+      "demoExports": [
+        "Default",
+        "SmallSize",
+        "LargeSize",
+        "QuoteOnly",
+        "WithAttributionNoLink"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "MultiRoomViewBuilding",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/MultiRoomViewBuilding.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-building.mdx",
+      "demos": 8,
+      "demoExports": [
+        "Row",
+        "RowWithIcon",
+        "RowReverse",
+        "RowReverseWithIcon",
+        "StackedCenter",
+        "StackedCenterWithIcon",
+        "StackedLeft",
+        "StackedLeftWithIcon"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "MultiRoomViewList",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/MultiRoomViewList.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-list.mdx",
+      "demos": 1,
+      "demoExports": [
+        "FigmaReference"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "MultiRoomViewListItem",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/MultiRoomViewListItem.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-list-item.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Default",
+        "Row",
+        "RowReverse"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "MultiRoomViewRoomTypeCard",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/MultiRoomViewRoomTypeCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-room-type-card.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "Focus"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RoomDetailModal",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/RoomDetailModal.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/room-detail-modal.mdx",
+      "demos": 4,
+      "demoExports": [
+        "Default",
+        "WithoutReview",
+        "OutdoorCedarTubRoom",
+        "ClosedState"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RoomsListBuilding",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/RoomsListBuilding.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/rooms-list-building.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RoomsListCard",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/RoomsListCard.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/rooms-list-card.mdx",
+      "demos": 11,
+      "demoExports": [
+        "Default",
+        "CopperTheme",
+        "LakeForestTheme",
+        "RightLayout",
+        "TopMatch",
+        "WithCustomImage",
+        "AlpineBathingSuiteWithDen",
+        "AlpinePenthouse",
+        "WaldenKing",
+        "WaldenBathingSuiteWithDen",
+        "WaldenSunriseBathingSuite"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Cabin King Bed + Bunk",
+      "category": "Rooms",
+      "storySource": "src/stories/components/rooms/SideFocusAmenityBar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/rooms/side-focus-amenity-bar.mdx",
+      "demos": 3,
+      "demoExports": [
+        "Collapsed",
+        "Expanded",
+        "Overflow"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Button",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/Button.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/button.mdx",
+      "demos": 15,
+      "demoExports": [
+        "Playground",
+        "Default",
+        "AllColors",
+        "TextCases",
+        "BorderColors",
+        "Clickable",
+        "Sizes",
+        "Interactive",
+        "States",
+        "Outline",
+        "Transparent",
+        "WithIcon",
+        "IconOnly",
+        "Loading",
+        "Disabled"
+      ],
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
+    },
+    {
+      "component": "Pill",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/Pill.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/pill.mdx",
+      "demos": 8,
+      "demoExports": [
+        "Playground",
+        "AllColors",
+        "TextCases",
+        "BorderColors",
+        "Clickable",
+        "Sizes",
+        "Selectable",
+        "ComparedWithButtons"
+      ],
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
+    },
+    {
+      "component": "ReservationSummaryBar",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/ReservationSummaryBar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/reservation-summary-bar.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Accordion",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/accordion.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/accordion.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "AlertDialog",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/alert-dialog.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/alert-dialog.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Alert",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/alert.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/alert.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "AspectRatio",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/aspect-ratio.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/aspect-ratio.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Avatar",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/avatar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/avatar.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Badge",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/badge.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/badge.mdx",
+      "demos": 4,
+      "demoExports": [
+        "Default",
+        "Secondary",
+        "Destructive",
+        "Outline"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Banner",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/banner.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/banner.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Breadcrumb",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/breadcrumb.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/breadcrumb.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Calendar",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/calendar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/calendar.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Card",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/card.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/card.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Carousel",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/carousel.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/carousel.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Chart",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/chart.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/chart.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Checkbox",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/checkbox.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/checkbox.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Collapsible",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/collapsible.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/collapsible.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Command",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/command.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/command.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ContextMenu",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/context-menu.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/context-menu.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Dialog",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/dialog.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/dialog.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Drawer",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/drawer.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/drawer.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "DropdownMenu",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/dropdown-menu.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/dropdown-menu.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Form",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/form.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/form.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "HoverCard",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/hover-card.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/hover-card.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "InputOTP",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/input-otp.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/input-otp.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Input",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/input.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/input.mdx",
+      "demos": 2,
+      "demoExports": [
+        "Default",
+        "Disabled"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Label",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/label.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/label.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Menubar",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/menubar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/menubar.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "NavigationMenu",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/navigation-menu.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/navigation-menu.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Pagination",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/pagination.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/pagination.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Popover",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/popover.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/popover.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Progress",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/progress.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/progress.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "RadioGroup",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/radio-group.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/radio-group.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Resizable",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/resizable.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/resizable.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ScrollArea",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/scroll-area.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/scroll-area.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Select",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/select.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/select.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Separator",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/separator.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/separator.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Sheet",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/sheet.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/sheet.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Sidebar",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/sidebar.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/sidebar.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Skeleton",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/skeleton.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/skeleton.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Slider",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/slider.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/slider.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Sonner",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/sonner.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/sonner.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Switch",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/switch.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/switch.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
+    },
+    {
+      "component": "Table",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/table.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/table.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Tabs",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/tabs.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/tabs.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Textarea",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/textarea.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/textarea.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "ToggleGroup",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/toggle-group.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/toggle-group.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Toggle",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/toggle.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/toggle.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Tooltip",
+      "category": "Shared controls",
+      "storySource": "src/stories/components/ui/tooltip.stories.tsx",
+      "docsPage": "docs-app/content/docs/components/ui/tooltip.mdx",
+      "demos": 1,
+      "demoExports": [
+        "Default"
+      ],
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
+    },
+    {
+      "component": "Party Template",
+      "category": "Legacy examples",
+      "storySource": "src/stories/examples/BookingPartyTemplate.stories.tsx",
+      "docsPage": null,
+      "demos": 1,
+      "demoExports": [
+        "Interactive"
+      ],
+      "status": "excluded",
+      "note": "Storybook scaffold or story-only harness, not a canonical component. Replaced by component stories or existing interaction tests."
+    },
+    {
+      "component": "Button",
+      "category": "Legacy examples",
+      "storySource": "src/stories/examples/Button.stories.ts",
+      "docsPage": null,
+      "demos": 4,
+      "demoExports": [
+        "Primary",
+        "Secondary",
+        "Large",
+        "Small"
+      ],
+      "status": "excluded",
+      "note": "Storybook scaffold or story-only harness, not a canonical component. Replaced by component stories or existing interaction tests."
+    },
+    {
+      "component": "Header",
+      "category": "Legacy examples",
+      "storySource": "src/stories/examples/Header.stories.ts",
+      "docsPage": null,
+      "demos": 2,
+      "demoExports": [
+        "LoggedIn",
+        "LoggedOut"
+      ],
+      "status": "excluded",
+      "note": "Storybook scaffold or story-only harness, not a canonical component. Replaced by component stories or existing interaction tests."
+    },
+    {
+      "component": "Page",
+      "category": "Legacy examples",
+      "storySource": "src/stories/examples/Page.stories.ts",
+      "docsPage": null,
+      "demos": 2,
+      "demoExports": [
+        "LoggedOut",
+        "LoggedIn"
+      ],
+      "status": "excluded",
+      "note": "Storybook scaffold or story-only harness, not a canonical component. Replaced by component stories or existing interaction tests."
+    }
+  ],
+  "undocumentedProductionCandidates": [
+    {
+      "name": "Stars",
+      "source": "src/components/booking/conversion.tsx"
+    },
+    {
+      "name": "HotBadge",
+      "source": "src/components/booking/conversion.tsx"
+    },
+    {
+      "name": "FavoriteBadge",
+      "source": "src/components/booking/conversion.tsx"
+    },
+    {
+      "name": "ViewersNudge",
+      "source": "src/components/booking/conversion.tsx"
+    },
+    {
+      "name": "SavingsLine",
+      "source": "src/components/booking/conversion.tsx"
+    },
+    {
+      "name": "HoldTimer",
+      "source": "src/components/booking/conversion.tsx"
+    },
+    {
+      "name": "InlineUpsell",
+      "source": "src/components/booking/extras/upsell-card.tsx"
+    },
+    {
+      "name": "ExpandedSearchButton",
+      "source": "src/components/booking/search/SearchBarExpanded.tsx"
+    },
+    {
+      "name": "IconBed",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconUsers",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconCalendar",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconCheck",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconCloche",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconCroissant",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconArrowRight",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconClose",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconSparkles",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconMinus",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconPlus",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconChevron",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconShield",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconMapPin",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconLeaf",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconPalm",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconWave",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconStairs",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconStar",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconClock",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconFlame",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconTag",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconHeart",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconLock",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconGift",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconSun",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconPhone",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconMail",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconShare",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "IconCopy",
+      "source": "src/components/icons/cowboy-icons.tsx"
+    },
+    {
+      "name": "HotspotEditor",
+      "source": "src/components/media/HotspotEditor.tsx"
+    },
+    {
+      "name": "CmsAmenityIcon",
+      "source": "src/components/rooms/CmsAmenityIcon.tsx"
+    },
+    {
+      "name": "RoomListCard",
+      "source": "src/components/rooms/RoomsListCard.tsx"
+    }
+  ]
+}

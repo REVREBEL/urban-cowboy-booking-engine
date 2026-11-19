@@ -2,6 +2,8 @@
 
 import { pillStory } from "./pill.story";
 import { preferenceIconButtonStory } from "./preference-icon-button.story";
+import { buttonStory, buttonVariantsStory } from "./button.story";
+import { switchStory } from "./switch.story";
 
 /** Client wrappers so MDX renders a component, not a member of a client proxy. */
 export function PillStoryControl() {
@@ -10,4 +12,16 @@ export function PillStoryControl() {
 
 export function PreferenceIconButtonStoryControl() {
   return <preferenceIconButtonStory.WithControl />;
+}
+
+export function ButtonStoryControl() {
+  return <buttonStory.WithControl />;
+}
+
+export function ButtonVariantsStoryControl() {
+  return <buttonVariantsStory.WithControl />;
+}
+
+export function SwitchStoryControl() {
+  return <switchStory.WithControl />;
 }

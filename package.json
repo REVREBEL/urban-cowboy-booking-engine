@@ -36,6 +36,7 @@
     "lint:controls": "node scripts/check-control-contract.mjs",
     "lint:controls:all": "node scripts/check-control-contract.mjs --all",
     "docs:inventory": "node scripts/fumadocs/inventory-stories.mjs",
+    "test:docs": "node --test tests/fumadocsInventory.test.mjs",
     "docs:dev": "npm run dev -w @urban-cowboy/docs",
     "docs:build": "npm run build -w @urban-cowboy/docs",
     "docs:smoke": "node scripts/fumadocs/smoke-docs.mjs docs-app/out",

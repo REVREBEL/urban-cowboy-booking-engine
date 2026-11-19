@@ -86,7 +86,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-chrome-contactbar.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/contact-bar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -98,7 +98,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-chrome-footer.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/footer.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -112,7 +112,7 @@
         "ResultsStep",
         "ExtrasStep"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-chrome-header.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/header.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -128,7 +128,7 @@
         "SavingsBadgeVariant",
         "TrustRowVariant"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-conversion.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/conversion.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -141,7 +141,7 @@
         "Inactive",
         "Selected"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-discovery-dogtogglebutton.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/dog-toggle-button.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -154,7 +154,7 @@
         "Default",
         "Selected"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-discovery-findyourstaytravelpartybutton.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/find-your-stay-travel-party-button.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -166,7 +166,7 @@
       "exportNames": [
         "Open"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-discovery-helpmechoosemodal.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/help-me-choose-modal.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -178,7 +178,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-discovery-matchorbrowsescreen.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/match-or-browse-screen.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -191,7 +191,7 @@
         "Default",
         "Selected"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-discovery-preferenceiconbutton.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/preference-icon-button.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -203,7 +203,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-discovery-roommatcherpage.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/room-matcher-page.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -215,7 +215,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-discovery-roommatcherprogress.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/room-matcher-progress.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -227,7 +227,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-discovery-rusticlodgesignboard.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/rustic-lodge-signboard.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -241,7 +241,7 @@
         "Selected",
         "Included"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-extras-addoncard.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/addon-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -253,7 +253,7 @@
       "exportNames": [
         "Open"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-extras-addoncustomizermodal.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/addon-customizer-modal.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -265,7 +265,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-extras-extrasstep.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/extras-step.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -277,7 +277,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-extras-creoleupsellstories.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/creole-upsell-stories.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -289,7 +289,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-extras-upsellcard.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/upsell-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -301,7 +301,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-layout-steplayout.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/step-layout.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -313,7 +313,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-layout-stepprogress.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/step-progress.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -326,7 +326,7 @@
         "Default",
         "StepComponent"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-progress-progressbar.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/progress-bar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -343,7 +343,7 @@
         "Loading",
         "Stepper"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-progress-progressstep.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/progress-step.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -355,7 +355,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-results-matchbenefitscard.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/match-benefits-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -367,7 +367,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-bestrateguaranteedlabel.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/best-rate-guaranteed-label.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -381,7 +381,7 @@
         "Unselected",
         "ExternalActions"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-datesearchdropdown.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/date-search-dropdown.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -393,7 +393,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-inlinedaterangepicker.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/inline-date-range-picker.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -405,7 +405,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-propertylocationlabel.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/property-location-label.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -417,7 +417,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-propertypropertylabel.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/property-property-label.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -429,7 +429,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-searchbar.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/search-bar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -441,7 +441,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-searchbarexpanded.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/search-bar-expanded.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -453,7 +453,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-searchbarguestdropdown.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/search-bar-guests-dropdown.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -467,7 +467,7 @@
         "KeyboardNavigationAndEscape",
         "SwitchingSectionPreservesNewFocus"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-searchbarlocationdropdown.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/search-bar-location-dropdown.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -479,7 +479,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-searchbarpromodropdown.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/search-bar-promo-dropdown.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -491,7 +491,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-search-searchbutton.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/search-button.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -503,7 +503,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-summary-checkoutstep.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/checkout-step.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -515,7 +515,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-summary-extrasstep.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/summary-extras-step.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -527,7 +527,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-summary-bookingsummary.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/booking-summary.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -539,7 +539,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-summary-staybreakdown.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/stay-breakdown.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -551,7 +551,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/booking/components-booking-summary-staysummary.mdx",
+      "newDoc": "docs-app/content/docs/components/booking/stay-summary.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -566,7 +566,7 @@
         "Full",
         "CustomColor"
       ],
-      "newDoc": "docs-app/content/docs/components/brand/components-brand-brand.mdx",
+      "newDoc": "docs-app/content/docs/components/brand/brand.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -604,7 +604,7 @@
         "Default",
         "WithAction"
       ],
-      "newDoc": "docs-app/content/docs/components/feedback/components-feedback-emptystate.mdx",
+      "newDoc": "docs-app/content/docs/components/feedback/empty-state.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -617,7 +617,7 @@
         "Default",
         "WithRetry"
       ],
-      "newDoc": "docs-app/content/docs/components/feedback/components-feedback-errorstate.mdx",
+      "newDoc": "docs-app/content/docs/components/feedback/error-state.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -630,7 +630,7 @@
         "Default",
         "CustomMessage"
       ],
-      "newDoc": "docs-app/content/docs/components/feedback/components-feedback-loadingstate.mdx",
+      "newDoc": "docs-app/content/docs/components/feedback/loading-state.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -644,7 +644,7 @@
         "Unselected",
         "CheckInOnly"
       ],
-      "newDoc": "docs-app/content/docs/components/forms/components-forms-daterangepicker.mdx",
+      "newDoc": "docs-app/content/docs/components/forms/date-range-picker.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -659,7 +659,7 @@
         "FranceSelected",
         "InvalidState"
       ],
-      "newDoc": "docs-app/content/docs/components/forms/components-forms-phoneinput.mdx",
+      "newDoc": "docs-app/content/docs/components/forms/phone-input.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -671,7 +671,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/icons/components-icons-amenitywoodcuticon.mdx",
+      "newDoc": "docs-app/content/docs/components/icons/amenity-woodcut-icon.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -685,7 +685,7 @@
         "Walden",
         "Lodge"
       ],
-      "newDoc": "docs-app/content/docs/components/icons/components-icons-buildingwoodcut.mdx",
+      "newDoc": "docs-app/content/docs/components/icons/building-woodcut.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -697,7 +697,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/icons/components-icons-cowboyicons.mdx",
+      "newDoc": "docs-app/content/docs/components/icons/cowboy-icons.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -712,7 +712,7 @@
         "DatesSelected",
         "FeaturesHidden"
       ],
-      "newDoc": "docs-app/content/docs/components/journey/disappear-for-a-while.mdx",
+      "newDoc": "docs-app/content/docs/components/journey/photo-arrival.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -726,7 +726,7 @@
         "Selected",
         "NoExtras"
       ],
-      "newDoc": "docs-app/content/docs/components/journey/journey-extras.mdx",
+      "newDoc": "docs-app/content/docs/components/journey/photo-extras-step.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -740,7 +740,7 @@
         "Family",
         "WithPreferences"
       ],
-      "newDoc": "docs-app/content/docs/components/journey/journey-stay-journal.mdx",
+      "newDoc": "docs-app/content/docs/components/journey/photo-journal.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -754,7 +754,7 @@
         "PhotoSpreads",
         "WithPreferences"
       ],
-      "newDoc": "docs-app/content/docs/components/journey/journey-rooms.mdx",
+      "newDoc": "docs-app/content/docs/components/journey/photo-rooms.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -772,7 +772,7 @@
         "AssetVsChevronComparison",
         "Sizes"
       ],
-      "newDoc": "docs-app/content/docs/components/journey/journey-photo-tour-arrow.mdx",
+      "newDoc": "docs-app/content/docs/components/journey/photo-tour-arrow.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -785,7 +785,7 @@
         "Default",
         "DetailsOpen"
       ],
-      "newDoc": "docs-app/content/docs/components/journey/journey-room-photo-tour.mdx",
+      "newDoc": "docs-app/content/docs/components/journey/room-photo-tour.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -799,7 +799,7 @@
         "MissingSourceFallback",
         "BrokenImageFallback"
       ],
-      "newDoc": "docs-app/content/docs/components/media/components-media-photo.mdx",
+      "newDoc": "docs-app/content/docs/components/media/photo.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -818,7 +818,7 @@
         "Disabled",
         "HorizontalExpanded"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-configurableratecard.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/configurable-rate-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -838,7 +838,7 @@
         "SunupExpanded",
         "OutfitExpanded"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-configurablerateoffer.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/configurable-rate-offer.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -857,7 +857,7 @@
         "DepositWithoutTimeline",
         "PolicyTimeline"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-figma-rate-card.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/figma-rate-components.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -870,7 +870,7 @@
         "Default",
         "Compact"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-outfitofferscard.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/outfit-offers-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -882,7 +882,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-pillarfeatures.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/pillar-features.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -894,7 +894,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-planaheadofferscard.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/plan-ahead-offers-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -911,7 +911,7 @@
         "CowboyPaymentSchedule",
         "TextOnlyFallback"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-policydisplay.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/policy-display.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -933,7 +933,7 @@
         "MobileRateDetailPopup",
         "MemberUnlockVerified"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/journey-rates-productionratetray.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/production-rate-tray.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -951,7 +951,7 @@
         "DepositAtRisk",
         "FullyLocked"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/journey-rates-ratecardlab.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/rate-card-lab.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -974,7 +974,7 @@
         "CompactRideEasy",
         "CompactOutfitExpanded"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-rateoffercard.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/rate-offer-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -992,7 +992,7 @@
         "Sunup",
         "Submitting"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-rateoffersidepanel.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/rate-offer-side-panel.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1004,7 +1004,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-rateselectionview.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/rate-selection-view.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1016,7 +1016,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-rideeasyofferscard.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/ride-easy-offers-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1028,7 +1028,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-rideeasysolopage.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/ride-easy-solo-page.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1040,7 +1040,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-stayawhileofferscard.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/stay-awhile-offers-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1052,7 +1052,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/rates/components-rates-sunupofferscard.mdx",
+      "newDoc": "docs-app/content/docs/components/rates/sunup-offers-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1066,7 +1066,7 @@
         "AllIcons",
         "ThemeContexts"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-amenityicons.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/amenity-icons.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1085,7 +1085,7 @@
         "SingleRoomAvailable",
         "EmptyRoomList"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-buildingexperiencelist.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/building-experience-list.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1099,7 +1099,7 @@
         "AllFigmaVariants",
         "AllColors"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-buildingicon.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/building-icon.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1119,7 +1119,7 @@
         "IconsActive",
         "ToneComparison"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-focusamenity-focusamenity.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/focus-amenity.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1133,7 +1133,7 @@
         "Hover",
         "Active"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-focusamenity-focusamenityaction.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/focus-amenity-action.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1147,7 +1147,7 @@
         "HeadlineOnly",
         "WrappedCopy"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-focusamenity-focusamenitycard.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/focus-amenity-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1161,7 +1161,7 @@
         "Hover",
         "Active"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-focusamenity-focusamenitycount.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/focus-amenity-count.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1178,7 +1178,7 @@
         "AllIconsByGroup",
         "InteractiveExplorer"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-focusamenity-focusamenityicon.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/focus-amenity-icon.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1194,7 +1194,7 @@
         "QuoteOnly",
         "WithAttributionNoLink"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-guestreviewquotecard.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/guest-review-quote-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1213,7 +1213,7 @@
         "StackedLeft",
         "StackedLeftWithIcon"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-multiroomviewlist-multiroomviewbuilding.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/multi-room-view-building.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1225,7 +1225,7 @@
       "exportNames": [
         "FigmaReference"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-multiroomviewlist-multiroomviewlist.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/multi-room-view-list.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1239,7 +1239,7 @@
         "Row",
         "RowReverse"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-multiroomviewlist-multiroomviewlistitem.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/multi-room-view-list-item.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1252,7 +1252,7 @@
         "Default",
         "Focus"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-multiroomviewlist-multiroomviewroomtypecard.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/multi-room-view-room-type-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1267,7 +1267,7 @@
         "OutdoorCedarTubRoom",
         "ClosedState"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-roomdetailmodal.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/room-detail-modal.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1279,7 +1279,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-roomslistbuilding.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/rooms-list-building.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1301,7 +1301,7 @@
         "WaldenBathingSuiteWithDen",
         "WaldenSunriseBathingSuite"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/components-rooms-roomslistcard.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/rooms-list-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1315,7 +1315,7 @@
         "Expanded",
         "Overflow"
       ],
-      "newDoc": "docs-app/content/docs/components/rooms/cabin-king-bed-bunk.mdx",
+      "newDoc": "docs-app/content/docs/components/rooms/side-focus-amenity-bar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1341,7 +1341,7 @@
         "Loading",
         "Disabled"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-button.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/button.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1360,7 +1360,7 @@
         "Selectable",
         "ComparedWithButtons"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-pill.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/pill.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1372,7 +1372,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-reservationsummarybar.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/reservation-summary-bar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1384,7 +1384,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-accordion.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/accordion.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1396,7 +1396,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-alertdialog.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/alert-dialog.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1408,7 +1408,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-alert.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/alert.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1420,7 +1420,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-aspectratio.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/aspect-ratio.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1432,7 +1432,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-avatar.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/avatar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1447,7 +1447,7 @@
         "Destructive",
         "Outline"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-badge.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/badge.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1459,7 +1459,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-banner.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/banner.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1471,7 +1471,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-breadcrumb.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/breadcrumb.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1483,7 +1483,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-calendar.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/calendar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1495,7 +1495,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-card.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1507,7 +1507,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-carousel.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/carousel.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1519,7 +1519,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-chart.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/chart.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1531,7 +1531,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-checkbox.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/checkbox.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1543,7 +1543,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-collapsible.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/collapsible.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1555,7 +1555,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-command.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/command.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1567,7 +1567,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-contextmenu.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/context-menu.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1579,7 +1579,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-dialog.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/dialog.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1591,7 +1591,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-drawer.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/drawer.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1603,7 +1603,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-dropdownmenu.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/dropdown-menu.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1615,7 +1615,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-form.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/form.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1627,7 +1627,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-hovercard.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/hover-card.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1639,7 +1639,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-inputotp.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/input-otp.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1652,7 +1652,7 @@
         "Default",
         "Disabled"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-input.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/input.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1664,7 +1664,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-label.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/label.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1676,7 +1676,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-menubar.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/menubar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1688,7 +1688,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-navigationmenu.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/navigation-menu.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1700,7 +1700,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-pagination.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/pagination.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1712,7 +1712,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-popover.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/popover.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1724,7 +1724,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-progress.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/progress.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1736,7 +1736,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-radiogroup.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/radio-group.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1748,7 +1748,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-resizable.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/resizable.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1760,7 +1760,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-scrollarea.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/scroll-area.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1772,7 +1772,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-select.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/select.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1784,7 +1784,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-separator.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/separator.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1796,7 +1796,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-sheet.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/sheet.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1808,7 +1808,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-sidebar.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/sidebar.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1820,7 +1820,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-skeleton.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/skeleton.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1832,7 +1832,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-slider.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/slider.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1844,7 +1844,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-sonner.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/sonner.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1856,7 +1856,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-switch.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/switch.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1868,7 +1868,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-table.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/table.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1880,7 +1880,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-tabs.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/tabs.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1892,7 +1892,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-textarea.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/textarea.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1904,7 +1904,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-togglegroup.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/toggle-group.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1916,7 +1916,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-toggle.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/toggle.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },
@@ -1928,7 +1928,7 @@
       "exportNames": [
         "Default"
       ],
-      "newDoc": "docs-app/content/docs/components/ui/components-ui-tooltip.mdx",
+      "newDoc": "docs-app/content/docs/components/ui/tooltip.mdx",
       "status": "planned",
       "rationale": "Convert CSF story exports to @fumadocs/story examples with real component imports."
     },

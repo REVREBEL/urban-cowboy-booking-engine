@@ -1,0 +1,52 @@
+---
+title: Button
+description: Shared booking-engine Button with palette, variants, sizes and interactive states.
+---
+
+import { ButtonStoryControl, ButtonVariantsStoryControl } from '~/components/story-controls';
+
+`Button` owns every part of its presentation. Callers control placement and the documented
+props only; do not override radius, padding, colour, hover, focus or pressed behaviour with
+local classes.
+
+## Interactive playground
+
+<ButtonStoryControl />
+
+## Variants, sizes and states
+
+The grid below migrates the former `AllColors`, `TextCases`, `BorderColors`, `Clickable`,
+`Sizes` and interactive Storybook stories. Palette colours render on both light and dark
+surfaces to verify contrast.
+
+<ButtonVariantsStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `variant` | `filled`, `outline`, `transparent` | Visual treatment |
+| `colorScheme` | keys of `COLOR_PALETTE` | Semantic colour token, not a raw CSS colour |
+| `borderColor` | `background`, `foreground`, `faded` | Only meaningful with a bordered variant |
+| `size` | `xsmall`, `small`, `default`, `medium`, `large`, `xlarge` | Utility-driven sizing |
+| `textCase` | `uppercase`, `title`, `lowercase` | Typography token |
+| `clickable` | boolean | Adds pointer affordance to otherwise static styling |
+| `hasIcon` / `iconPosition` | boolean / `left`, `right` | Icon child placement |
+| `isLoading` / `disabled` | boolean | Loading and disabled presentation |
+
+## Responsive behaviour
+
+Buttons keep their intrinsic width and wrap within a flex container. On narrow screens the
+variant grid stacks by row; no nested horizontal scrolling is introduced by the docs frame.
+
+## Usage
+
+```tsx
+import { Button } from '@/components/ui/Button';
+
+<Button variant="filled" colorScheme="lake-forest" onClick={continueBooking}>
+  Book Your Stay
+</Button>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/ui/Button.tsx)

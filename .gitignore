@@ -8,6 +8,9 @@ docs-app/out/
 docs-app/.source/
 docs-app/next-env.d.ts
 
+# Local D1 backups: never commit database snapshots
+backups/
+
 # Cloudflare / Wrangler
 .wrangler/
 .wrangler.generated.toml
