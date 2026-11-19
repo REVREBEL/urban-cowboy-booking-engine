@@ -32,6 +32,8 @@ export interface DashboardApi {
   patch<T>(path: string, body: unknown): Promise<T>;
   getD1Module<T>(module: DashboardModule, tenant?: string): Promise<T[]>;
   getContentItems<T>(kind?: string, tenant?: string, location?: string): Promise<T[]>;
+  getAdminRooms<T>(): Promise<T[]>;
+  getRoomGallery<T>(roomId: string): Promise<T[]>;
 }
 
 function errorFrom(status: number, text: string): DashboardApiError {
@@ -121,6 +123,14 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     },
     async getContentItems<T>(kind?: string, tenant = DASHBOARD_TENANT, location?: string): Promise<T[]> {
       const data = await get<{ items?: T[] }>("/api/content/items", { tenant, kind, location });
+      return data.items ?? [];
+    },
+    async getAdminRooms<T>(): Promise<T[]> {
+      const data = await get<{ items?: T[] }>("/api/admin/rooms");
+      return data.items ?? [];
+    },
+    async getRoomGallery<T>(roomId: string): Promise<T[]> {
+      const data = await get<{ items?: T[] }>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`);
       return data.items ?? [];
     },
   };

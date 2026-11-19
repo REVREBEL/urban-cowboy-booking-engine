@@ -98,3 +98,21 @@ test("module and content helpers use the centralized client", async () => {
   const policy = await api.getContentItems("policy", "urban-cowboy", "loc-1");
   assert.equal(policy[0].title, "/api/content/items?tenant=urban-cowboy&kind=policy&location=loc-1");
 });
+
+test("room gallery helpers call the admin routes without a client tenant scope", async () => {
+  const calls: Call[] = [];
+  const api = client(calls, (call) => new Response(
+    JSON.stringify({ roomId: "room-a", items: [{ placementId: "p1" }] }),
+    { status: 200, headers: { "content-type": "application/json" } },
+  ));
+
+  const rooms = await api.getAdminRooms<{ id: string }>();
+  assert.deepEqual(rooms, [{ placementId: "p1" }]);
+  assert.equal(calls[0].url, "/api/admin/rooms");
+  assert.equal(calls[0].url.includes("tenant="), false);
+  assert.equal(calls[0].init?.credentials, "same-origin");
+
+  await api.getRoomGallery<{ placementId: string }>("room/a");
+  assert.equal(calls[1].url, "/api/admin/rooms/room%2Fa/photos");
+  assert.equal(calls[1].url.includes("tenant="), false);
+});
