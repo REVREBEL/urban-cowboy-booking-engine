@@ -12,6 +12,9 @@ const pages = [
   "components/button/index.html",
   "components/switch/index.html",
   "components/preference-icon-button/index.html",
+  "components/dog-toggle-button/index.html",
+  "components/travel-party-button/index.html",
+  "components/search-button/index.html",
 ];
 const forbidden = [
   /api\.mews\.com/i,
@@ -40,6 +43,9 @@ const markersByPage = {
   "components/button/index.html": ["Book Your Stay"],
   "components/switch/index.html": ["Dog Friendly Room (+ $75)"],
   "components/preference-icon-button/index.html": ["Your Own Hideaway"],
+  "components/dog-toggle-button/index.html": ["Bringing the dog"],
+  "components/travel-party-button/index.html": ["Just the two of us"],
+  "components/search-button/index.html": ["icon-circle"],
 };
 for (const [page, markers] of Object.entries(markersByPage)) {
   for (const marker of markers) {
