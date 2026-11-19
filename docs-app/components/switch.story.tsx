@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch } from "../../src/components/ui/switch";
 import { Label } from "../../src/components/ui/label";
 import { defineStory } from "../lib/story";
@@ -14,6 +14,8 @@ interface SwitchDemoProps {
 /** Controlled docs-only harness; the real Radix Switch owns presentation and a11y. */
 function SwitchDemo({ label, initiallyChecked, disabled }: SwitchDemoProps) {
   const [checked, setChecked] = useState(initiallyChecked);
+  // Fumadocs controls can change args after mount; keep the demo in sync.
+  useEffect(() => setChecked(initiallyChecked), [initiallyChecked]);
   return (
     <div className="flex w-full max-w-md flex-col gap-2">
       <div className="flex items-center gap-3">

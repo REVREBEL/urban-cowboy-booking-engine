@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // COW-69 inventory of existing CSF stories and their planned Fumadocs pages.
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const root = process.cwd();
@@ -12,6 +12,24 @@ function walk(dir) {
     return entry.isDirectory() ? walk(path) : [path];
   });
 }
+
+/** One kebab-case implementation for story slugs, page lookups and planned paths. */
+function kebabCase(value) {
+  return value
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Explicit source-to-page mapping for pages that predate the generated naming scheme. */
+const DOC_PAGE_OVERRIDES = Object.freeze({
+  "src/stories/components/ui/Pill.stories.tsx": "docs-app/content/docs/components/pill.mdx",
+  "src/stories/components/booking/discovery/PreferenceIconButton.stories.tsx": "docs-app/content/docs/components/preference-icon-button.mdx",
+});
+
+const usedPlannedPaths = new Set();
 
 const CATEGORY_LABELS = {
   booking: "Booking steps",
@@ -42,19 +60,33 @@ const stories = walk(storiesRoot)
     const exports = [...source.matchAll(/export const (\w+)/g)].map((match) => match[1]);
     const skip = categoryKey === "dev" || categoryKey === "examples";
     const componentName = segments.at(-1)?.replace(/\.stories\.(tsx?|jsx?)$/, "") ?? title;
-    const slug = componentName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const slug = kebabCase(componentName);
     const rationale = categoryKey === "dev"
       ? "Development-only tooling. Not part of the public component library."
       : categoryKey === "examples"
         ? "Storybook scaffold or story-only harness, not a canonical component. Replaced by component stories or existing interaction tests."
         : "Convert CSF story exports to @fumadocs/story examples with real component imports.";
+    let plannedPath = null;
+    if (!skip) {
+      const directory = `docs-app/content/docs/components/${categoryKey}`;
+      plannedPath = `${directory}/${slug}.mdx`;
+      if (usedPlannedPaths.has(plannedPath)) {
+        // Distinct stories can share a filename (e.g. two ExtrasStep stories).
+        plannedPath = `${directory}/${kebabCase(segments.slice(-2, -1)[0] ?? "")}-${slug}.mdx`;
+        let suffix = 2;
+        while (usedPlannedPaths.has(plannedPath)) {
+          plannedPath = `${directory}/${kebabCase(segments.slice(-2, -1)[0] ?? "")}-${slug}-${suffix++}.mdx`;
+        }
+      }
+      usedPlannedPaths.add(plannedPath);
+    }
     return {
       source: rel,
       title,
       categoryKey,
       category: CATEGORY_LABELS[categoryKey] ?? (categoryKey === "examples" ? "Legacy examples" : categoryKey),
       exportNames: exports,
-      newDoc: skip ? null : `docs-app/content/docs/components/${categoryKey}/${slug}.mdx`,
+      newDoc: plannedPath,
       status: skip ? "skipped" : "planned",
       rationale,
     };
@@ -84,7 +116,7 @@ const manifest = {
 
 const out = join(root, "docs", "component-library", "inventory.json");
 mkdirSync(join(root, "docs", "component-library"), { recursive: true });
-writeFileSync(out, JSON.stringify(manifest, null, 2) + "\n");
+const manifestText = JSON.stringify(manifest, null, 2) + "\n";
 
 // COW-70 coverage matrix: every historical story mapped to a Fumadocs page and
 // its demo exports, plus production components with no story at all.
@@ -92,6 +124,11 @@ const docsRoot = join(root, "docs-app", "content", "docs");
 const docsPages = walk(docsRoot)
   .filter((path) => path.endsWith(".mdx"))
   .map((path) => relative(root, path).replaceAll("\\", "/"));
+for (const [storyPath, pagePath] of Object.entries(DOC_PAGE_OVERRIDES)) {
+  if (!docsPages.includes(pagePath)) {
+    throw new Error(`DOC_PAGE_OVERRIDES points at missing page ${pagePath} for ${storyPath}`);
+  }
+}
 const pageBySlug = new Map();
 for (const page of docsPages) {
   const slug = page.split("/").at(-1).replace(/\.mdx$/, "");
@@ -118,8 +155,8 @@ const undocumentedProductionCandidates = walk(sourceRoot)
 
 const coverage = stories.map((story) => {
   const component = story.title.split("/").at(-1) ?? story.title;
-  const slug = component.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const existingPage = pageBySlug.get(slug) ?? null;
+  const slug = kebabCase(component);
+  const existingPage = DOC_PAGE_OVERRIDES[story.source] ?? pageBySlug.get(slug) ?? null;
   const plannedPage = story.newDoc;
   const docsPage = story.status === "skipped" ? null : existingPage ?? plannedPage;
   return {
@@ -149,5 +186,12 @@ const coverageMatrix = {
   undocumentedProductionCandidates,
 };
 const matrixPath = join(root, "docs", "component-library", "coverage-matrix.json");
-writeFileSync(matrixPath, JSON.stringify(coverageMatrix, null, 2) + "\n");
+const matrixText = JSON.stringify(coverageMatrix, null, 2) + "\n";
+// Generate and validate every output before replacing either tracked file.
+JSON.parse(manifestText);
+JSON.parse(matrixText);
+writeFileSync(`${out}.tmp`, manifestText);
+writeFileSync(`${matrixPath}.tmp`, matrixText);
+renameSync(`${out}.tmp`, out);
+renameSync(`${matrixPath}.tmp`, matrixPath);
 console.log(`${coverage.length} components, ${coverageMatrix.totals.documented} documented, ${undocumentedProductionCandidates.length} undocumented candidates -> ${relative(root, matrixPath)}`);

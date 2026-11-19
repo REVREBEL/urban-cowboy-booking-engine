@@ -32,13 +32,21 @@ for (const page of pages) {
   if (!existsSync(path)) fail(`missing page ${page}`);
   if (statSync(path).size < 1000) fail(`page too small ${page}`);
 }
-const html = pages.map((page) => readFileSync(join(out, page), "utf8")).join("\n");
-for (const marker of [
-  "Urban Cowboy Component Library", "Dogs allowed", "Book Your Stay",
-  "Dog Friendly Room (+ $75)", "Your Own Hideaway", "View source",
-]) {
-  if (!html.includes(marker)) fail(`missing rendered marker: ${marker}`);
+const htmlByPage = new Map(pages.map((page) => [page, readFileSync(join(out, page), "utf8")]));
+const html = [...htmlByPage.values()].join("\n");
+const markersByPage = {
+  "index.html": ["Urban Cowboy Component Library"],
+  "components/pill/index.html": ["Dogs allowed"],
+  "components/button/index.html": ["Book Your Stay"],
+  "components/switch/index.html": ["Dog Friendly Room (+ $75)"],
+  "components/preference-icon-button/index.html": ["Your Own Hideaway"],
+};
+for (const [page, markers] of Object.entries(markersByPage)) {
+  for (const marker of markers) {
+    if (!htmlByPage.get(page).includes(marker)) fail(`missing rendered marker "${marker}" on ${page}`);
+  }
 }
+if (!html.includes("View source")) fail("missing rendered marker: View source");
 for (const pattern of forbidden) {
   if (pattern.test(html)) fail(`forbidden content in static HTML: ${pattern}`);
 }

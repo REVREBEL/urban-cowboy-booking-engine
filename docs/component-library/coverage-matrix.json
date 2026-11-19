@@ -2,8 +2,8 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 3,
-    "planned": 133,
+    "documented": 4,
+    "planned": 132,
     "excluded": 6,
     "undocumentedProductionCandidates": 41
   },
@@ -66,7 +66,7 @@
       "component": "DogToggleButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/DogToggleButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/dogtogglebutton.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/dog-toggle-button.mdx",
       "demos": 2,
       "demoExports": [
         "Inactive",
@@ -79,7 +79,7 @@
       "component": "FindYourStayTravelPartyButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/FindYourStayTravelPartyButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/findyourstaytravelpartybutton.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/find-your-stay-travel-party-button.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
@@ -92,7 +92,7 @@
       "component": "HelpMeChooseModal",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/HelpMeChooseModal.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/helpmechoosemodal.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/help-me-choose-modal.mdx",
       "demos": 1,
       "demoExports": [
         "Open"
@@ -104,7 +104,7 @@
       "component": "MatchOrBrowseScreen",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/MatchOrBrowseScreen.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/matchorbrowsescreen.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/match-or-browse-screen.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -116,20 +116,20 @@
       "component": "PreferenceIconButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/PreferenceIconButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/preferenceiconbutton.mdx",
+      "docsPage": "docs-app/content/docs/components/preference-icon-button.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "Selected"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "RoomMatcherPage",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/RoomMatcherPage.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/roommatcherpage.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/room-matcher-page.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -141,7 +141,7 @@
       "component": "RoomMatcherProgress",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/RoomMatcherProgress.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/roommatcherprogress.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/room-matcher-progress.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -153,7 +153,7 @@
       "component": "RusticLodgeSignboard",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/RusticLodgeSignboard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/rusticlodgesignboard.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/rustic-lodge-signboard.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -165,7 +165,7 @@
       "component": "AddonCard",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/extras/AddonCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/addoncard.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/addon-card.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
@@ -179,7 +179,7 @@
       "component": "AddonCustomizerModal",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/extras/AddonCustomizerModal.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/addoncustomizermodal.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/addon-customizer-modal.mdx",
       "demos": 1,
       "demoExports": [
         "Open"
@@ -191,7 +191,7 @@
       "component": "ExtrasStep",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/extras/ExtrasStep.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/extrasstep.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/extras-step.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -251,7 +251,7 @@
       "component": "ProgressBar",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/progress/ProgressBar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/progressbar.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/progress-bar.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
@@ -264,7 +264,7 @@
       "component": "ProgressStep",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/progress/ProgressStep.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/progressstep.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/progress-step.mdx",
       "demos": 6,
       "demoExports": [
         "Default",
@@ -281,7 +281,7 @@
       "component": "MatchBenefitsCard",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/results/MatchBenefitsCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/matchbenefitscard.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/match-benefits-card.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -293,7 +293,7 @@
       "component": "BestRateGuaranteedLabel",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/BestRateGuaranteedLabel.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/bestrateguaranteedlabel.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/best-rate-guaranteed-label.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -305,7 +305,7 @@
       "component": "DateSearchDropdown",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/DateSearchDropdown.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/datesearchdropdown.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/date-search-dropdown.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
@@ -319,7 +319,7 @@
       "component": "InlineDateRangePicker",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/InlineDateRangePicker.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/inlinedaterangepicker.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/inline-date-range-picker.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -331,7 +331,7 @@
       "component": "PropertyLocationLabel",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/PropertyLocationLabel.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/propertylocationlabel.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/property-location-label.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -343,7 +343,7 @@
       "component": "PropertyPropertyLabel",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/PropertyPropertyLabel.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/propertypropertylabel.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/property-property-label.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -355,7 +355,7 @@
       "component": "SearchBar",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/searchbar.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -367,7 +367,7 @@
       "component": "SearchBarExpanded",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBarExpanded.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/searchbarexpanded.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar-expanded.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -379,7 +379,7 @@
       "component": "SearchBarGuestDropdown",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBarGuestsDropdown.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/searchbarguestsdropdown.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar-guests-dropdown.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -391,7 +391,7 @@
       "component": "SearchBarLocationDropdown",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBarLocationDropdown.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/searchbarlocationdropdown.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar-location-dropdown.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
@@ -405,7 +405,7 @@
       "component": "SearchBarPromoDropdown",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBarPromoDropdown.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/searchbarpromodropdown.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/search-bar-promo-dropdown.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -417,7 +417,7 @@
       "component": "SearchButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/searchbutton.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/search-button.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -429,7 +429,7 @@
       "component": "CheckoutStep",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/summary/CheckoutStep.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/checkoutstep.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/checkout-step.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -441,7 +441,7 @@
       "component": "ExtrasStep",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/summary/ExtrasStep.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/extrasstep.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/summary-extras-step.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -529,7 +529,7 @@
       "component": "EmptyState",
       "category": "Feedback",
       "storySource": "src/stories/components/feedback/EmptyState.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/feedback/emptystate.mdx",
+      "docsPage": "docs-app/content/docs/components/feedback/empty-state.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
@@ -542,7 +542,7 @@
       "component": "ErrorState",
       "category": "Feedback",
       "storySource": "src/stories/components/feedback/ErrorState.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/feedback/errorstate.mdx",
+      "docsPage": "docs-app/content/docs/components/feedback/error-state.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
@@ -555,7 +555,7 @@
       "component": "LoadingState",
       "category": "Feedback",
       "storySource": "src/stories/components/feedback/LoadingState.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/feedback/loadingstate.mdx",
+      "docsPage": "docs-app/content/docs/components/feedback/loading-state.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
@@ -568,7 +568,7 @@
       "component": "DateRangePicker",
       "category": "Forms",
       "storySource": "src/stories/components/forms/DateRangePicker.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/forms/daterangepicker.mdx",
+      "docsPage": "docs-app/content/docs/components/forms/date-range-picker.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
@@ -582,7 +582,7 @@
       "component": "PhoneInput",
       "category": "Forms",
       "storySource": "src/stories/components/forms/PhoneInput.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/forms/phoneinput.mdx",
+      "docsPage": "docs-app/content/docs/components/forms/phone-input.mdx",
       "demos": 4,
       "demoExports": [
         "Default",
@@ -597,7 +597,7 @@
       "component": "AmenityWoodcutIcon",
       "category": "Icons",
       "storySource": "src/stories/components/icons/AmenityWoodcutIcon.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/icons/amenitywoodcuticon.mdx",
+      "docsPage": "docs-app/content/docs/components/icons/amenity-woodcut-icon.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -609,7 +609,7 @@
       "component": "BuildingWoodcut",
       "category": "Icons",
       "storySource": "src/stories/components/icons/BuildingWoodcut.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/icons/buildingwoodcut.mdx",
+      "docsPage": "docs-app/content/docs/components/icons/building-woodcut.mdx",
       "demos": 3,
       "demoExports": [
         "Alpine",
@@ -635,7 +635,7 @@
       "component": "Disappear for a While",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoArrival.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photoarrival.mdx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-arrival.mdx",
       "demos": 4,
       "demoExports": [
         "Arrival",
@@ -650,7 +650,7 @@
       "component": "Extras",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoExtrasStep.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photoextrasstep.mdx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-extras-step.mdx",
       "demos": 3,
       "demoExports": [
         "Available",
@@ -664,7 +664,7 @@
       "component": "Stay Journal",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoJournal.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photojournal.mdx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-journal.mdx",
       "demos": 3,
       "demoExports": [
         "Couple",
@@ -678,7 +678,7 @@
       "component": "Rooms",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoRooms.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photorooms.mdx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-rooms.mdx",
       "demos": 3,
       "demoExports": [
         "Index",
@@ -692,7 +692,7 @@
       "component": "Photo Tour Arrow",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoTourArrow.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/phototourarrow.mdx",
+      "docsPage": "docs-app/content/docs/components/journey/photo-tour-arrow.mdx",
       "demos": 7,
       "demoExports": [
         "Arrow",
@@ -710,7 +710,7 @@
       "component": "Room Photo Tour",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/RoomPhotoTour.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/roomphototour.mdx",
+      "docsPage": "docs-app/content/docs/components/journey/room-photo-tour.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
@@ -737,7 +737,7 @@
       "component": "ConfigurableRateCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/ConfigurableRateCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/configurableratecard.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/configurable-rate-card.mdx",
       "demos": 8,
       "demoExports": [
         "Vertical",
@@ -756,7 +756,7 @@
       "component": "ConfigurableRateOffer",
       "category": "Rates",
       "storySource": "src/stories/components/rates/ConfigurableRateOffer.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/configurablerateoffer.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/configurable-rate-offer.mdx",
       "demos": 9,
       "demoExports": [
         "Collapsed",
@@ -776,7 +776,7 @@
       "component": "Figma Rate Card",
       "category": "Rates",
       "storySource": "src/stories/components/rates/FigmaRateComponents.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/figmaratecomponents.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/figma-rate-components.mdx",
       "demos": 8,
       "demoExports": [
         "Standard",
@@ -795,7 +795,7 @@
       "component": "OutfitOffersCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/OutfitOffersCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/outfitofferscard.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/outfit-offers-card.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
@@ -808,7 +808,7 @@
       "component": "PillarFeatures",
       "category": "Rates",
       "storySource": "src/stories/components/rates/PillarFeatures.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/pillarfeatures.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/pillar-features.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -820,7 +820,7 @@
       "component": "PlanAheadOffersCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/PlanAheadOffersCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/planaheadofferscard.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/plan-ahead-offers-card.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -832,7 +832,7 @@
       "component": "PolicyDisplay",
       "category": "Rates",
       "storySource": "src/stories/components/rates/PolicyDisplay.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/policydisplay.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/policy-display.mdx",
       "demos": 6,
       "demoExports": [
         "Horizontal",
@@ -849,7 +849,7 @@
       "component": "ProductionRateTray",
       "category": "Rates",
       "storySource": "src/stories/components/rates/ProductionRateTray.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/productionratetray.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/production-rate-tray.mdx",
       "demos": 11,
       "demoExports": [
         "AllRateVariants",
@@ -871,7 +871,7 @@
       "component": "RateCardLab",
       "category": "Rates",
       "storySource": "src/stories/components/rates/RateCardLab.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/ratecardlab.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/rate-card-lab.mdx",
       "demos": 7,
       "demoExports": [
         "SingleCard",
@@ -889,7 +889,7 @@
       "component": "RateOfferCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/RateOfferCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/rateoffercard.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/rate-offer-card.mdx",
       "demos": 12,
       "demoExports": [
         "RideEasy",
@@ -912,7 +912,7 @@
       "component": "RateOfferSidePanel",
       "category": "Rates",
       "storySource": "src/stories/components/rates/RateOfferSidePanel.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/rateoffersidepanel.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/rate-offer-side-panel.mdx",
       "demos": 7,
       "demoExports": [
         "Default",
@@ -930,7 +930,7 @@
       "component": "RateSelectionView",
       "category": "Rates",
       "storySource": "src/stories/components/rates/RateSelectionView.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/rateselectionview.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/rate-selection-view.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -942,7 +942,7 @@
       "component": "RideEasyOffersCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/RideEasyOffersCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/rideeasyofferscard.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/ride-easy-offers-card.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -954,7 +954,7 @@
       "component": "RideEasySoloPage",
       "category": "Rates",
       "storySource": "src/stories/components/rates/RideEasySoloPage.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/rideeasysolopage.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/ride-easy-solo-page.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -966,7 +966,7 @@
       "component": "StayAwhileOffersCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/StayAwhileOffersCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/stayawhileofferscard.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/stay-awhile-offers-card.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -978,7 +978,7 @@
       "component": "SunupOffersCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/SunupOffersCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/sunupofferscard.mdx",
+      "docsPage": "docs-app/content/docs/components/rates/sunup-offers-card.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -990,7 +990,7 @@
       "component": "AmenityIcons",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/AmenityIcons.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/amenityicons.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/amenity-icons.mdx",
       "demos": 3,
       "demoExports": [
         "Playground",
@@ -1004,7 +1004,7 @@
       "component": "BuildingExperienceList",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/BuildingExperienceList.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/buildingexperiencelist.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/building-experience-list.mdx",
       "demos": 8,
       "demoExports": [
         "Default",
@@ -1023,7 +1023,7 @@
       "component": "BuildingIcon",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/BuildingIcon.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/buildingicon.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/building-icon.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
@@ -1037,7 +1037,7 @@
       "component": "FocusAmenity",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenity.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focusamenity.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity.mdx",
       "demos": 9,
       "demoExports": [
         "Playground",
@@ -1057,7 +1057,7 @@
       "component": "FocusAmenityAction",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenityAction.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focusamenityaction.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-action.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
@@ -1071,7 +1071,7 @@
       "component": "FocusAmenityCard",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenityCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focusamenitycard.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-card.mdx",
       "demos": 3,
       "demoExports": [
         "FigmaReference",
@@ -1085,7 +1085,7 @@
       "component": "FocusAmenityCount",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenityCount.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focusamenitycount.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-count.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
@@ -1099,7 +1099,7 @@
       "component": "FocusAmenityIcon",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenityIcon.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focusamenityicon.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-icon.mdx",
       "demos": 6,
       "demoExports": [
         "Default",
@@ -1116,7 +1116,7 @@
       "component": "GuestReviewQuoteCard",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/GuestReviewQuoteCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/guestreviewquotecard.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/guest-review-quote-card.mdx",
       "demos": 5,
       "demoExports": [
         "Default",
@@ -1132,7 +1132,7 @@
       "component": "MultiRoomViewBuilding",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/MultiRoomViewBuilding.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/multiroomviewbuilding.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-building.mdx",
       "demos": 8,
       "demoExports": [
         "Row",
@@ -1151,7 +1151,7 @@
       "component": "MultiRoomViewList",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/MultiRoomViewList.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/multiroomviewlist.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-list.mdx",
       "demos": 1,
       "demoExports": [
         "FigmaReference"
@@ -1163,7 +1163,7 @@
       "component": "MultiRoomViewListItem",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/MultiRoomViewListItem.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/multiroomviewlistitem.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-list-item.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
@@ -1177,7 +1177,7 @@
       "component": "MultiRoomViewRoomTypeCard",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/MultiRoomViewRoomTypeCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/multiroomviewroomtypecard.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-room-type-card.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
@@ -1190,7 +1190,7 @@
       "component": "RoomDetailModal",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/RoomDetailModal.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/roomdetailmodal.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/room-detail-modal.mdx",
       "demos": 4,
       "demoExports": [
         "Default",
@@ -1205,7 +1205,7 @@
       "component": "RoomsListBuilding",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/RoomsListBuilding.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/roomslistbuilding.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/rooms-list-building.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
@@ -1217,7 +1217,7 @@
       "component": "RoomsListCard",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/RoomsListCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/roomslistcard.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/rooms-list-card.mdx",
       "demos": 11,
       "demoExports": [
         "Default",
@@ -1239,7 +1239,7 @@
       "component": "Cabin King Bed + Bunk",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/SideFocusAmenityBar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/sidefocusamenitybar.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/side-focus-amenity-bar.mdx",
       "demos": 3,
       "demoExports": [
         "Collapsed",
@@ -1298,7 +1298,7 @@
       "component": "ReservationSummaryBar",
       "category": "Shared controls",
       "storySource": "src/stories/components/ui/ReservationSummaryBar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/ui/reservationsummarybar.mdx",
+      "docsPage": "docs-app/content/docs/components/ui/reservation-summary-bar.mdx",
       "demos": 1,
       "demoExports": [
         "Default"

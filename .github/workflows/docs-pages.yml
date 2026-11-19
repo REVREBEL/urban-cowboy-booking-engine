@@ -39,6 +39,9 @@ jobs:
       - name: Control contract
         run: npm run lint:controls
 
+      - name: Validate component coverage matrix
+        run: npm run test:docs
+
       - name: Build static docs
         run: npm run docs:build
 
