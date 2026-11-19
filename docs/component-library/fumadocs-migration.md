@@ -13,6 +13,12 @@ the real source imports and interactive demos. The Button page carries the forme
 AllColors/TextCases/BorderColors/Clickable/Sizes variants into a deterministic grid; the
 Switch page uses a controlled docs-only harness with a paired `Label`.
 
+Second migrated group: search, date and party controls. `DogToggleButton`,
+`FindYourStayTravelPartyButton` and `SearchButton` have reference pages with controlled
+docs-only harnesses. The travel-party demo uses the real `TravelPartyGroup` for accessible
+radio-group semantics, and root-relative component icons are copied and base-path prefixed
+during the static docs build.
+
 To add a component page: create a `*.story.tsx` in `docs-app/components` importing the real
 component, expose a `defineStory` export (with a deterministic harness when the component
 needs context), add a client wrapper in `story-controls.tsx`, write the MDX page with props,
