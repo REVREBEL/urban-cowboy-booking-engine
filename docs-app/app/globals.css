@@ -5,13 +5,82 @@
 @import "../../src/styles/index.css";
 @import "@fumadocs/story/css/preset.css";
 
+/* Fumadocs' generated preset requires a newer Tailwind than this workspace.
+   Define the color utilities used by these docs directly from the mapped tokens. */
+.text-fd-foreground { color: var(--color-fd-foreground); }
+.text-fd-muted-foreground { color: var(--color-fd-muted-foreground); }
+.text-fd-accent-foreground { color: var(--color-fd-accent-foreground); }
+.text-fd-primary { color: var(--color-fd-primary); }
+.text-fd-primary-foreground { color: var(--color-fd-primary-foreground); }
+.bg-fd-background { background-color: var(--color-fd-background); }
+.bg-fd-card { background-color: var(--color-fd-card); }
+.bg-fd-muted { background-color: var(--color-fd-muted); }
+.bg-fd-primary { background-color: var(--color-fd-primary); }
+.border-fd-border { border-color: var(--color-fd-border); }
+
 :root {
   --storybook-story-max-width: 1600px;
+
+  /* Fumadocs utilities read --color-fd-*, not --fd-*. Use the brand palette. */
+  --color-fd-background: var(--paper-100);
+  --color-fd-foreground: var(--lake-forest);
+  --color-fd-card: var(--paper);
+  --color-fd-card-foreground: var(--lake-forest);
+  --color-fd-popover: var(--paper);
+  --color-fd-popover-foreground: var(--lake-forest);
+  --color-fd-muted: var(--alpine-linen-100);
+  --color-fd-muted-foreground: var(--lake-forest-200);
+  --color-fd-accent: var(--alpine-linen-200);
+  --color-fd-accent-foreground: var(--lake-forest);
+  --color-fd-primary: var(--lake-forest);
+  --color-fd-primary-foreground: var(--paper);
+  --color-fd-secondary: var(--alpine-linen-200);
+  --color-fd-secondary-foreground: var(--lake-forest);
+  --color-fd-border: var(--paper-700);
+  --color-fd-ring: var(--copper);
+  --color-fd-success: var(--lake-forest-300);
+  --color-fd-warning: var(--lodge-yellow);
+  --color-fd-error: var(--bandana-red);
+  --color-fd-info: var(--oxidized-teal);
+  --color-fd-diff-add: var(--lake-forest-200);
+  --color-fd-diff-add-symbol: var(--lake-forest);
+  --color-fd-diff-remove: var(--nude-ember-500);
+  --color-fd-diff-remove-symbol: var(--cowboy-umber);
+  --color-fd-idea: var(--whiskey-sour);
+  --color-fd-overlay: var(--smoke-900);
+}
+
+/* Dark theme keeps the same brand families with sufficient contrast. */
+.dark {
+  --color-fd-background: var(--smoke-950);
+  --color-fd-foreground: var(--paper-100);
+  --color-fd-card: var(--smoke-900);
+  --color-fd-card-foreground: var(--paper-100);
+  --color-fd-popover: var(--smoke-900);
+  --color-fd-popover-foreground: var(--paper-100);
+  --color-fd-muted: var(--smoke-800);
+  --color-fd-muted-foreground: var(--paper-300);
+  --color-fd-accent: var(--smoke-800);
+  --color-fd-accent-foreground: var(--paper-100);
+  --color-fd-primary: var(--paper-100);
+  --color-fd-primary-foreground: var(--smoke-950);
+  --color-fd-border: var(--smoke-700);
+  --color-fd-ring: var(--lodge-yellow);
+}
+
+@media (min-width: 768px) {
+  /* Fumadocs sets a mobile 0px width on this element with a utility class. */
+  #nd-docs-layout {
+    --fd-sidebar-width: 268px;
+    --fd-toc-width: 260px;
+  }
 }
 
 html,
 body {
   min-width: 320px;
+  background-color: var(--color-fd-background);
+  color: var(--color-fd-foreground);
 }
 
 /* One shared canvas width across Docs and Story. No nested scrolling surface. */
