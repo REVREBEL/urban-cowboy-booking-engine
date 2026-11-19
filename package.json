@@ -38,7 +38,7 @@
     "docs:inventory": "node scripts/fumadocs/inventory-stories.mjs",
     "test:docs": "node --test tests/fumadocsInventory.test.mjs",
     "docs:dev": "npm run dev -w @urban-cowboy/docs",
-    "docs:build": "npm run build -w @urban-cowboy/docs",
+    "docs:build": "node scripts/fumadocs/prepare-docs-assets.mjs && npm run build -w @urban-cowboy/docs && node scripts/fumadocs/finalize-docs-assets.mjs docs-app/out",
     "docs:smoke": "node scripts/fumadocs/smoke-docs.mjs docs-app/out",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",

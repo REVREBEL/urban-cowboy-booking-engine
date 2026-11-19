@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   DEFAULT_TRAVEL_PARTY_OPTIONS,
-  FindYourStayTravelPartyButton,
+  TravelPartyGroup,
 } from "../../src/components/booking/discovery/FindYourStayTravelPartyButton";
 import { defineStory } from "../lib/story";
 
@@ -14,16 +14,11 @@ function TravelPartyDemo({ selectedId }: DemoProps) {
   const [selected, setSelected] = useState(selectedId);
   useEffect(() => setSelected(selectedId), [selectedId]);
   return (
-    <div className="grid w-full gap-3 sm:grid-cols-2">
-      {DEFAULT_TRAVEL_PARTY_OPTIONS.map((option) => (
-        <FindYourStayTravelPartyButton
-          key={option.id}
-          {...option}
-          isSelected={selected === option.id}
-          onSelect={(id) => setSelected(id)}
-        />
-      ))}
-    </div>
+    <TravelPartyGroup
+      options={DEFAULT_TRAVEL_PARTY_OPTIONS}
+      value={selected}
+      onChange={(id) => setSelected(id)}
+    />
   );
 }
 
