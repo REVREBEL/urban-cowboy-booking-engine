@@ -49,6 +49,7 @@ import {
 import { eventsList, addOnsList, offersList, upgradesList } from "./d1-modules";
 import { recoveryList } from "./d1-recovery";
 import { analyticsSummary } from "./d1-analytics";
+import { listRoomGallery, listRooms } from "./room-media.ts";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
 // waitUntil permet de lancer les webhooks en tâche de fond sans bloquer la réponse.
@@ -147,6 +148,23 @@ export default {
       if (request.method === "GET") return listEditorItems(editorCtx);
       if (request.method === "POST") return createEditorDraft(editorCtx);
       return json({ error: "not_found" }, 404);
+    }
+    const adminCtx = { request, env, waitUntil: (p: Promise<unknown>) => ctx.waitUntil(p) };
+    if (url.pathname.match(/^\/api\/admin\/rooms\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return listRooms(adminCtx);
+    }
+    const roomPhotos = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/photos\/?$/);
+    if (roomPhotos) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      let roomId: string;
+      try {
+        roomId = decodeURIComponent(roomPhotos[1]);
+      } catch {
+        return json({ error: "invalid_room_id" }, 400);
+      }
+      if (!roomId) return json({ error: "invalid_room_id" }, 400);
+      return listRoomGallery(adminCtx, roomId);
     }
     // Specific paths first: /snapshots/rollback must not be read as a collection.
     if (url.pathname.match(/^\/api\/content\/snapshots\/rollback\/?$/)) {

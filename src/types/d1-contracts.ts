@@ -588,3 +588,37 @@ export const mediaAssetViewRowSchema = z.object({
   mimeType: row.mime_type,
 }));
 export type MediaAssetView = z.output<typeof mediaAssetViewRowSchema>;
+
+/** Room gallery placement joined to its current media version metadata. */
+export const roomGalleryRowSchema = z.object({
+  placement_id: id,
+  media_asset_id: id,
+  display_order: z.number().int(),
+  original_filename: nullableText,
+  width: z.number().int().nullable(),
+  height: z.number().int().nullable(),
+  alt_text: nullableText,
+  caption: nullableText,
+  description: nullableText,
+  tags: tagsText.nullable(),
+  current_version_id: nullableText,
+  cloudinary_public_id: nullableText,
+  cloudinary_version: nullableText,
+  sha256: nullableText,
+}).transform((row) => ({
+  placementId: row.placement_id,
+  mediaAssetId: row.media_asset_id,
+  displayOrder: row.display_order,
+  originalFilename: row.original_filename,
+  width: row.width,
+  height: row.height,
+  altText: row.alt_text,
+  caption: row.caption,
+  description: row.description,
+  tags: row.tags,
+  currentVersionId: row.current_version_id,
+  cloudinaryPublicId: row.cloudinary_public_id,
+  cloudinaryVersion: row.cloudinary_version,
+  sha256: row.sha256,
+}));
+export type RoomGalleryRow = z.output<typeof roomGalleryRowSchema>;

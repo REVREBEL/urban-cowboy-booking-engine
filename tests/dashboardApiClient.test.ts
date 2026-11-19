@@ -1,5 +1,6 @@
 // COW-37 centralized dashboard API client contract.
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { createDashboardApi, DashboardApiError } from "../src/dashboard/api.ts";
 
@@ -97,4 +98,56 @@ test("module and content helpers use the centralized client", async () => {
 
   const policy = await api.getContentItems("policy", "urban-cowboy", "loc-1");
   assert.equal(policy[0].title, "/api/content/items?tenant=urban-cowboy&kind=policy&location=loc-1");
+});
+
+test("room gallery helpers call the admin routes without a client tenant scope", async () => {
+  const calls: Call[] = [];
+  const api = client(calls, (call) => new Response(
+    JSON.stringify({ roomId: "room-a", items: [{ placementId: "p1" }] }),
+    { status: 200, headers: { "content-type": "application/json" } },
+  ));
+
+  const rooms = await api.getAdminRooms<{ id: string }>();
+  assert.deepEqual(rooms, [{ placementId: "p1" }]);
+  assert.equal(calls[0].url, "/api/admin/rooms");
+  assert.equal(calls[0].url.includes("tenant="), false);
+  assert.equal(calls[0].init?.credentials, "same-origin");
+  assert.ok(calls[0].init?.signal instanceof AbortSignal);
+
+  await api.getRoomGallery<{ placementId: string }>("room/a");
+  assert.equal(calls[1].url, "/api/admin/rooms/room%2Fa/photos");
+  assert.equal(calls[1].url.includes("tenant="), false);
+  assert.ok(calls[1].init?.signal instanceof AbortSignal);
+});
+
+test("dashboard requests carry a bounded deadline so stalled calls reach the error state", () => {
+  const source = readFileSync(new URL("../src/dashboard/api.ts", import.meta.url), "utf8");
+  assert.match(source, /AbortSignal\.timeout\(REQUEST_TIMEOUT_MS\)/);
+  assert.match(source, /AbortSignal\.any\(existing \? \[existing, deadline\] : \[deadline\]\)/);
+  assert.match(source, /new AbortController\(\)/, "runtimes without any() get a composed fallback");
+  assert.match(source, /clearTimeout\(timer\)/, "the fallback timer is released on settle");
+  assert.match(source, /timed\.dispose\(\)/);
+  assert.match(source, /signal: timed\.signal/);
+});
+
+test("caller cancellation composes when timeout() exists but any() does not", async () => {
+  const originalAny = AbortSignal.any;
+  const calls: Call[] = [];
+  let timeoutAvailable = false;
+  try {
+    Object.defineProperty(AbortSignal, "any", { value: undefined, configurable: true, writable: true });
+    timeoutAvailable = typeof AbortSignal.timeout === "function";
+    const caller = new AbortController();
+    caller.abort();
+    const api = client(calls);
+    await api.get("/api/admin/rooms", undefined, { signal: caller.signal });
+  } finally {
+    Object.defineProperty(AbortSignal, "any", { value: originalAny, configurable: true, writable: true });
+  }
+
+  assert.equal(timeoutAvailable, true, "test must exercise the timeout-without-any runtime");
+  assert.equal(calls.length, 1);
+  const signal = calls[0].init?.signal;
+  assert.ok(signal instanceof AbortSignal);
+  assert.equal(signal.aborted, true, "an already-aborted caller signal must abort the request");
 });
