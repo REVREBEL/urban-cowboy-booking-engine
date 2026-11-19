@@ -54,6 +54,7 @@ test("Fumadocs is configured for static export and subpath builds", () => {
 test("base path resolver covers Pages, custom-domain roots and local dev", () => {
   assert.equal(resolveDocsBasePath({}), "/urban-cowboy-booking-engine");
   assert.equal(resolveDocsBasePath({ DOCS_BASE_PATH: "/custom-path" }), "/custom-path");
+  assert.equal(resolveDocsBasePath({ DOCS_BASE_PATH: "/custom-path/" }), "/custom-path");
   assert.equal(resolveDocsBasePath({ DOCS_BASE_PATH: "/" }), "");
   assert.equal(resolveDocsBasePath({}, { isDev: true }), "");
   assert.match(smokeScript, /resolveDocsBasePath\(\)/);

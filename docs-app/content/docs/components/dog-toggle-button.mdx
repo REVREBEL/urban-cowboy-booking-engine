@@ -18,6 +18,7 @@ states and accessible label.
 | `selected` | boolean | Drives the visual treatment and `aria-pressed` |
 | `onToggle` | `() => void` | Called on activation; the caller updates `selected` |
 | `className` | string | Placement only |
+| `imageBaseUrl` | string | Optional prefix for the two icon URLs when the host app is served under a base path |
 
 Former Storybook states `Inactive` and `Selected` are represented by the interactive
 control. Two icon assets are swapped by breakpoint; both are decorative and hidden from
@@ -34,6 +35,17 @@ The card fills its container up to the demo's narrow wrapper and grows in height
 import { DogToggleButton } from '@/components/booking/discovery/DogToggleButton';
 
 <DogToggleButton selected={dogFriendly} onToggle={() => setDogFriendly(v => !v)} />
+```
+
+When the booking app is deployed under a subpath, pass that prefix so the root-relative
+icon assets resolve there instead of at the domain root:
+
+```tsx
+<DogToggleButton
+  selected={dogFriendly}
+  onToggle={() => setDogFriendly(v => !v)}
+  imageBaseUrl="/booking"
+/>
 ```
 
 [View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/discovery/DogToggleButton.tsx)

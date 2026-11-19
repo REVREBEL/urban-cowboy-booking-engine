@@ -7,6 +7,15 @@ import test from "node:test";
 const root = new URL("../", import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), "utf8");
 
+// Run the freshness check first: the deterministic test below invokes the
+// generator in write mode, which would otherwise hide stale checked-in files.
+test("checked-in inventory passes the docs CI freshness check", () => {
+  const check = spawnSync(process.execPath, ["scripts/fumadocs/inventory-stories.mjs", "--check"], {
+    cwd: new URL("..", import.meta.url), encoding: "utf8",
+  });
+  assert.equal(check.status, 0, check.stderr || check.stdout);
+});
+
 test("inventory generation is deterministic and maps existing pages unambiguously", () => {
   const run = spawnSync(process.execPath, ["scripts/fumadocs/inventory-stories.mjs"], {
     cwd: new URL("..", import.meta.url), encoding: "utf8",
@@ -54,11 +63,4 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     .filter((entry) => entry.status === "planned")
     .map((entry) => entry.docsPage);
   assert.equal(new Set(planned).size, planned.length, "planned page paths are unique");
-});
-
-test("checked-in inventory passes the docs CI freshness check", () => {
-  const check = spawnSync(process.execPath, ["scripts/fumadocs/inventory-stories.mjs", "--check"], {
-    cwd: new URL("..", import.meta.url), encoding: "utf8",
-  });
-  assert.equal(check.status, 0, check.stderr || check.stdout);
 });

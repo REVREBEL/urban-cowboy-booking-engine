@@ -64,8 +64,10 @@ const stories = walk(storiesRoot)
   .sort()
   .map((path) => {
     const source = readFileSync(path, "utf8");
-    const rel = relative(root, path);
-    const segments = relative(storiesRoot, path).split("/");
+    // Normalize separators so DOC_PAGE_OVERRIDES (authored with forward slashes)
+    // resolves on Windows too; basename matching is intentionally not used.
+    const rel = relative(root, path).replaceAll("\\", "/");
+    const segments = relative(storiesRoot, path).replaceAll("\\", "/").split("/");
     const group = segments[0] ?? "uncategorized";
     const categoryKey = group === "components" ? (segments[1] ?? "uncategorized") : group;
     const title = /title:\s*["']([^"']+)["']/.exec(source)?.[1] ?? segments.join("/");

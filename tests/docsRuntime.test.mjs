@@ -81,34 +81,56 @@ test("dog-toggle icons load under the Pages base path before and after toggling"
   }
 });
 
-test("building-icon mask assets use the Pages base path after hydration", async () => {
+test("building-icon mask assets resolve under the Pages base path", async () => {
   const server = await serve();
   const browser = await chromium.launch();
-  const failedAssets = [];
+  const buildingResponses = [];
   try {
     const address = server.address();
     assert.ok(address && typeof address !== "string");
     const origin = `http://127.0.0.1:${address.port}`;
     const page = await browser.newPage();
     page.on("response", (response) => {
-      if (response.url().includes("/assets/icons/buildings/") && response.status() >= 400) {
-        failedAssets.push(`${response.status()} ${response.url()}`);
-      }
+      if (response.url().includes("/assets/icons/buildings/")) buildingResponses.push(response);
     });
 
     await page.goto(`${origin}${basePath}/components/building-icon/`, { waitUntil: "networkidle" });
-    const masks = await page.waitForFunction(() => {
-      const values = [...document.querySelectorAll('[role="img"] [aria-hidden="true"]')]
-        .map((node) => getComputedStyle(node).maskImage ?? getComputedStyle(node).WebkitMaskImage)
-        .filter((value) => value && value !== "none");
-      return values.length > 0 ? values : null;
+    const maskUrls = await page.waitForFunction(() => {
+      const urls = [...new Set([...document.querySelectorAll('[role="img"] [aria-hidden="true"]')]
+        .map((node) => {
+          const style = getComputedStyle(node);
+          const value = style.maskImage ?? style.WebkitMaskImage ?? "";
+          const match = value.match(/url\("?([^")]+)"?\)/);
+          return match?.[1] ?? null;
+        })
+        .filter(Boolean))];
+      return urls.length >= 10 ? urls : null;
     });
-    const values = await masks.jsonValue();
+    const urls = await maskUrls.jsonValue();
+    const paths = urls.map((url) => new URL(url).pathname);
     assert.ok(
-      values.every((value) => value.includes(`${basePath}/assets/icons/buildings/`)),
-      `base-path building masks: ${values.join(", ")}`,
+      paths.every((path) => path.startsWith(`${basePath}/assets/icons/buildings/`)),
+      `base-path building masks: ${paths.join(", ")}`,
     );
-    assert.deepEqual(failedAssets, []);
+
+    // `networkidle` in goto guarantees all mask requests settled, so the
+    // captured responses must cover every URL found in the computed styles.
+    const byUrl = new Map(buildingResponses.map((response) => [response.url(), response]));
+    for (const path of paths) {
+      const url = `${origin}${path}`;
+      const response = byUrl.get(url);
+      assert.ok(response, `mask asset requested ${url}`);
+      assert.equal(response.status(), 200, `mask asset status ${url}`);
+      assert.match(response.headers()["content-type"] ?? "", /image\/svg\+xml/, `mask content type ${url}`);
+      const body = await response.body();
+      assert.ok(body.length > 0, `mask body non-empty ${url}`);
+      assert.match(body.toString("utf8"), /<svg[\s>]/, `mask is an SVG ${url}`);
+    }
+    assert.ok(buildingResponses.length > 0, "building assets were requested");
+    assert.deepEqual(
+      buildingResponses.filter((response) => response.status() >= 400).map((response) => response.url()),
+      [],
+    );
   } finally {
     await browser.close();
     await new Promise((done) => server.close(done));
