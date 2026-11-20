@@ -9,6 +9,7 @@ import { DashboardShell } from "./DashboardShell";
 import { navItemFor, routeFromHash, type DashboardRouteId } from "./navigation";
 import { PanelErrorBoundary } from "./PanelErrorBoundary";
 import { RoomPhotosPanel } from "./RoomPhotosPanel";
+import { RoomHotspotsPanel } from "./RoomHotspotsPanel";
 import { RoomAmenitiesPanel } from "./RoomAmenitiesPanel";
 import { isConfigured, supabase } from "./supabase";
 import { EmptyPanel } from "./states";
@@ -60,6 +61,7 @@ export function DashboardApp() {
         {route === "events" && <EventsCalendarPanel api={api} />}
         {route === "settings" && <SiteSettingsPanel api={api} />}
         {route === "rooms" && <RoomPhotosPanel api={api} />}
+        {route === "hotspots" && <RoomHotspotsPanel api={api} />}
         {route === "amenities" && <RoomAmenitiesPanel api={api} />}
         {route !== "analytics" && route !== "events" && route !== "settings" && route !== "rooms" && route !== "amenities" && (
           <EmptyPanel message={`${current.label} panel is not wired yet. Navigation and route protection are available now.`} />

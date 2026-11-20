@@ -315,12 +315,13 @@ export async function rollbackMappings(
   mediaAssetId: string,
   toVersionId: string,
   actor?: string | null,
+  placementId?: string | null,
 ): Promise<RollbackResult> {
   const result = await db.prepare(
     `SELECT * FROM photo_hotspot_mapping_revisions
       WHERE tenant_id = ?1 AND media_asset_id = ?2 AND to_version_id = ?3
         AND action IN ('create','carry','remap','review')
-      ORDER BY created_at DESC, id DESC`,
+      ORDER BY created_at DESC, rowid DESC`,
   ).bind(tenantId, mediaAssetId, toVersionId).all();
   const snapshots = new Map<string, PhotoHotspotMappingRow>();
   for (const row of result.results ?? []) {
@@ -328,6 +329,9 @@ export async function rollbackMappings(
     if (!parsed.success || snapshots.has(parsed.data.mappingId)) continue;
     try {
       const restored = photoHotspotMappingSnapshotSchema.parse(JSON.parse(parsed.data.snapshotJson));
+      // A shared media asset can be placed in several rooms. Never restore a
+      // pin that belongs to a different placement than the requested one.
+      if (placementId && restored.placementId !== placementId) continue;
       snapshots.set(parsed.data.mappingId, restored);
     } catch { /* an unreadable snapshot is skipped, never applied */ }
   }

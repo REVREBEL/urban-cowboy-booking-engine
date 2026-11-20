@@ -72,6 +72,17 @@ Admin URL for this slice: `/dashboard.html#/rooms` (static dashboard served by t
 - `tests/roomGalleryEditing.test.ts` covers reorder, metadata, exclusion, unlink, parked-row
   preservation, validation, draft/publish snapshot separation and tenant-scoped media reads.
 
+## COW-84 hotspot slice
+
+This slice adds the admin surface for COW-34 durable pins on top of the published gallery.
+
+- `worker/hotspot-admin.ts` exposes `GET/POST /api/admin/rooms/:id/hotspots` (list/create), `PATCH .../hotspots/:mappingId`, and `POST .../hotspots/publish` and `.../hotspots/rollback`. Reads require `viewer`, mutations require `admin`, tenant scope comes from the verified principal, and a missing scope fails closed. Create validates the full room → placement → image asset → version relationship, so mismatched and cross-tenant ids are rejected. Amenity assignment is checked against `room_type_amenities` with tenant ownership proven by the room and amenity rows; coordinates are normalized `0..1` source-space values. Every create/update writes a `photo_hotspot_mapping_revisions` snapshot with the actor.
+- Edits to an already published pin are stored as a tenant-scoped draft snapshot (`0010_photo_hotspot_drafts.sql`) and merged into the admin read; the published guest row is untouched until publish. Publish rejects pending review, applies the draft geometry, then delegates to COW-34 `publishMappings`. Publish and rollback require a placement belonging to the requested room and asset, and are scoped to that placement even when the same media is placed in several rooms. Rollback delegates to `rollbackMappings` and restores the newest resulting geometry snapshot deterministically.
+- `src/dashboard/RoomHotspotsPanel.tsx` is the new `#/hotspots` dashboard route. It offers room/photo selection with stale-selection resets, click-to-place pins mapped through `containedRect`/`pointToSource` against the rendered image bounds (correct for portrait and non-16:9 photos), keyboard-editable X/Y inputs, room-eligible amenity selection, review approve/flag controls, and explicit publish/rollback feedback. No guest source or Mews behavior is changed.
+- `tests/hotspotAdmin.test.ts` (8 tests), `tests/hotspotsPanel.test.ts` (7 tests) and `tests/hotspotCanvas.test.ts` (4 tests) cover tenant scoping, role denial, relationship validation, draft isolation for published pins, placement-scoped publish/rollback, revision snapshots, letterbox geometry for portrait/wide images and the panel contract.
+
+**Still open for COW-84:** replacement planning/crop-remap endpoints that drive `planReplacement`/`applyReplacement`, pin deletion, guest Photo Journey cutover to published D1 hotspots, and browser verification of the admin and guest routes.
+
 ## Remaining slices (not in this PR)
 
 - Write actions (gallery reorder, link/unlink, alt text, replace, per-photo exclusion) in `worker/room-media.ts` and the panel, reusing `media_revisions` and editor draft/publish contracts.
