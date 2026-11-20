@@ -75,9 +75,11 @@ test("panel is wired into a protected dashboard route", () => {
   assert.ok(app.indexOf("if (!session)") < app.indexOf("<DashboardShell"));
 });
 
-test("reorder preserves server display_order gaps instead of re-indexing", () => {
+test("reorder swaps entries and order values, preserving gaps and naming the moved amenity", () => {
   assert.match(panel, /setItems\(next\);/);
-  assert.match(panel, /displayOrder: next\[destination\]\.displayOrder/);
+  assert.match(panel, /next\[index\] = \{ \.\.\.displaced, displayOrder: moved\.displayOrder \};/);
+  assert.match(panel, /next\[destination\] = \{ \.\.\.moved, displayOrder: displaced\.displayOrder \};/);
+  assert.match(panel, /Moved \$\{nameFor\(moved\.amenityId\)\}\./);
   assert.match(panel, /Math\.max\(max, item\.displayOrder\)/);
   assert.match(panel, /const payload = \{ items \};/);
   assert.doesNotMatch(panel, /displayOrder: index \}\)\)\);/);

@@ -219,10 +219,13 @@ function RoomAssignments({
     const destination = index + direction;
     if (destination < 0 || destination >= items.length) return;
     const next = [...items];
-    const movedOrder = next[index].displayOrder;
-    next[index] = { ...next[index], displayOrder: next[destination].displayOrder };
-    next[destination] = { ...next[destination], displayOrder: movedOrder };
-    change(next, `Moved ${nameFor(next[destination].amenityId)}.`);
+    const moved = next[index];
+    const displaced = next[destination];
+    // Swap the array entries so the rendered list changes immediately, and
+    // swap their stored order values so intentional gaps are preserved.
+    next[index] = { ...displaced, displayOrder: moved.displayOrder };
+    next[destination] = { ...moved, displayOrder: displaced.displayOrder };
+    change(next, `Moved ${nameFor(moved.amenityId)}.`);
   };
 
   const toggleRestricted = (index: number) => {
