@@ -49,7 +49,13 @@ import {
 import { eventsList, addOnsList, offersList, upgradesList } from "./d1-modules";
 import { recoveryList } from "./d1-recovery";
 import { analyticsSummary } from "./d1-analytics";
-import { listRoomGallery, listRooms } from "./room-media.ts";
+import {
+  linkGalleryAsset,
+  listRoomGallery,
+  listRooms,
+  unlinkGalleryItem,
+  updateRoomGalleryItem,
+} from "./room-media.ts";
 import { getRoomAmenities, listAdminAmenities } from "./room-amenities.ts";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
@@ -171,7 +177,10 @@ export default {
     }
     const roomPhotos = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/photos\/?$/);
     if (roomPhotos) {
-      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      if (request.method !== "GET" && request.method !== "POST") {
+        return json({ error: "not_found" }, 404);
+      }
+      const wantsLink = request.method === "POST";
       let roomId: string;
       try {
         roomId = decodeURIComponent(roomPhotos[1]);
@@ -179,7 +188,25 @@ export default {
         return json({ error: "invalid_room_id" }, 400);
       }
       if (!roomId) return json({ error: "invalid_room_id" }, 400);
+      if (wantsLink) return linkGalleryAsset(adminCtx, roomId);
       return listRoomGallery(adminCtx, roomId);
+    }
+    const roomPhotoItem = url.pathname.match(
+      /^\/api\/admin\/rooms\/([^/]+)\/photos\/([^/]+)\/?$/,
+    );
+    if (roomPhotoItem) {
+      let roomId: string;
+      let placementId: string;
+      try {
+        roomId = decodeURIComponent(roomPhotoItem[1]);
+        placementId = decodeURIComponent(roomPhotoItem[2]);
+      } catch {
+        return json({ error: "invalid_room_id" }, 400);
+      }
+      if (!roomId || !placementId) return json({ error: "invalid_room_id" }, 400);
+      if (request.method === "PATCH") return updateRoomGalleryItem(adminCtx, roomId, placementId);
+      if (request.method === "DELETE") return unlinkGalleryItem(adminCtx, roomId, placementId);
+      return json({ error: "not_found" }, 404);
     }
     // Specific paths first: /snapshots/rollback must not be read as a collection.
     if (url.pathname.match(/^\/api\/content\/snapshots\/rollback\/?$/)) {

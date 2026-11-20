@@ -5,7 +5,15 @@ import { generateKeyPairSync, sign } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { DatabaseSync } from "node:sqlite";
-import { listRoomGallery, listRooms, type RoomMediaAuthorize, type RoomMediaCtx } from "../worker/room-media.ts";
+import {
+  linkGalleryAsset,
+  listRoomGallery,
+  listRooms,
+  unlinkGalleryItem,
+  updateRoomGalleryItem,
+  type RoomMediaAuthorize,
+  type RoomMediaCtx,
+} from "../worker/room-media.ts";
 import { roomGalleryRowSchema } from "../src/types/d1-contracts.ts";
 
 const root = new URL("../", import.meta.url);
@@ -53,6 +61,10 @@ function makeDb() {
     "migrations/0003_property_scoped_contracts.sql",
     "migrations/0004_published_snapshots.sql",
     "migrations/0005_media_registry.sql",
+    "migrations/0006_working_revision_pointer.sql",
+    "migrations/0007_amenity_editorial.sql",
+    "migrations/0008_durable_hotspots.sql",
+    "migrations/0009_gallery_editorial.sql",
   ]) db.exec(read(file));
 
   db.exec(`
@@ -105,12 +117,20 @@ function d1(db: DatabaseSync): any {
   return {
     prepare(sql: string) {
       let params: unknown[] = [];
-      return {
-        bind(...values: unknown[]) { params = values; return this; },
+      const statement = {
+        __sql: sql,
+        __bind: [] as unknown[],
+        bind(...values: unknown[]) { statement.__bind = values; params = values; return statement; },
         async all() { return { results: db.prepare(sql).all(...params) }; },
         async first() { return db.prepare(sql).get(...params) ?? null; },
         async run() { return db.prepare(sql).run(...params); },
       };
+      return statement;
+    },
+    async batch(statements: any[]) {
+      return statements.map((statement) => ({
+        meta: { changes: db.prepare(statement.__sql).run(...statement.__bind).changes },
+      }));
     },
   };
 }
@@ -266,10 +286,122 @@ test("roomGalleryRowSchema transforms a stored row and rejects malformed tags", 
   const row = {
     placement_id: "p1", media_asset_id: "m1", display_order: 0,
     original_filename: "photo.png", width: 100, height: 80, alt_text: "A room",
-    caption: null, description: null, tags: '["room"]', current_version_id: "v1",
+    caption: null, description: null, source_url: "https://cdn/photo", is_excluded: 0,
+    tags: '["room"]', current_version_id: "v1",
     cloudinary_public_id: "cld/photo", cloudinary_version: "v1", sha256: "h",
   };
   assert.deepEqual(roomGalleryRowSchema.parse(row).tags, ["room"]);
   assert.equal(roomGalleryRowSchema.parse(row).displayOrder, 0);
   assert.equal(roomGalleryRowSchema.safeParse({ ...row, tags: "not-json" }).success, false);
+  assert.equal(roomGalleryRowSchema.parse(row).isExcluded, false);
+});
+
+// COW-84: authoring writes are admin-only, tenant scoped and audited.
+const adminPrincipal = { ...principal, roles: ["admin" as const] };
+const allowAdmin: RoomMediaAuthorize = async () => adminPrincipal;
+function writeCtx(db: DatabaseSync, body: unknown, path: string): RoomMediaCtx {
+  const base = ctx(db, TENANT, path);
+  return {
+    ...base,
+    request: new Request(`https://example.test${path}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+  };
+}
+
+test("listRoomGallery exposes the D1 source URL and exclusion state", async () => {
+  const db = makeDb();
+  db.exec("INSERT INTO gallery_editorial (placement_id, tenant_id, is_excluded, note) VALUES ('place-g1','urban-cowboy',1,'held for review')");
+  const res = await listRoomGallery(ctx(db), "room-a", allowViewer);
+  const body = await jsonBody(res);
+  assert.equal(res.status, 200, JSON.stringify(body));
+  const first = body.items.find((item: any) => item.placementId === "place-g1");
+  assert.equal(first.sourceUrl, "https://cdn/1");
+  assert.equal(first.isExcluded, true);
+  const second = body.items.find((item: any) => item.placementId === "place-g2");
+  assert.equal(second.sourceUrl, "https://cdn/2");
+  assert.equal(second.isExcluded, false);
+});
+
+test("updateRoomGalleryItem persists metadata, order and exclusion with an audit record", async () => {
+  const db = makeDb();
+  const res = await updateRoomGalleryItem(
+    writeCtx(db, {
+      displayOrder: 7,
+      altText: "Editor alt",
+      caption: "Editor caption",
+      description: "Editor description",
+      excluded: true,
+      note: "awaiting hotspot review",
+    }, "/api/admin/rooms/room-a/photos/place-g1"),
+    "room-a", "place-g1", allowAdmin,
+  );
+  assert.equal(res.status, 200);
+
+  const placement = db.prepare(
+    "SELECT display_order, alt_text_override, caption_override, description_override FROM media_placements WHERE id='place-g1'",
+  ).get() as any;
+  assert.equal(placement.display_order, 7);
+  assert.equal(placement.alt_text_override, "Editor alt");
+  assert.equal(placement.caption_override, "Editor caption");
+  assert.equal(placement.description_override, "Editor description");
+  const editorial = db.prepare("SELECT is_excluded, note FROM gallery_editorial WHERE placement_id='place-g1'").get() as any;
+  assert.equal(editorial.is_excluded, 1);
+  assert.equal(editorial.note, "awaiting hotspot review");
+  const revision = db.prepare("SELECT action, metadata_json FROM media_revisions WHERE target_id='room-a'").get() as any;
+  assert.equal(revision.action, "set_placement");
+  assert.match(revision.metadata_json, /place-g1/);
+
+  const gallery = await jsonBody(await listRoomGallery(ctx(db), "room-a", allowViewer));
+  const item = gallery.items.find((entry: any) => entry.placementId === "place-g1");
+  assert.equal(item.altText, "Editor alt");
+  assert.equal(item.displayOrder, 7);
+  assert.equal(item.isExcluded, true);
+});
+
+test("gallery writes reject viewer role, cross-tenant rooms and invalid input", async () => {
+  const db = makeDb();
+  const viewer = await updateRoomGalleryItem(
+    writeCtx(db, { excluded: true }, "/api/admin/rooms/room-a/photos/place-g1"),
+    "room-a", "place-g1", allowViewer,
+  );
+  assert.equal(viewer.status, 403);
+
+  const crossTenant = await updateRoomGalleryItem(
+    writeCtx(db, { excluded: true }, "/api/admin/rooms/room-other/photos/place-g1"),
+    "room-other", "place-g1", allowAdmin,
+  );
+  assert.equal(crossTenant.status, 404);
+
+  const invalid = await updateRoomGalleryItem(
+    writeCtx(db, { displayOrder: -1 }, "/api/admin/rooms/room-a/photos/place-g1"),
+    "room-a", "place-g1", allowAdmin,
+  );
+  assert.equal(invalid.status, 400);
+});
+
+test("unlink and restore round-trip a gallery placement with its identity", async () => {
+  const db = makeDb();
+  const unlinked = await unlinkGalleryItem(
+    ctx(db, TENANT, "/api/admin/rooms/room-a/photos/place-g1"),
+    "room-a", "place-g1", allowAdmin,
+  );
+  assert.equal(unlinked.status, 200);
+  assert.equal(db.prepare("SELECT id FROM media_placements WHERE id='place-g1'").get(), undefined);
+  const snapshot = db.prepare("SELECT metadata_json FROM media_revisions WHERE target_id='room-a'").get() as any;
+  assert.match(snapshot.metadata_json, /displayOrder/);
+
+  const restore = writeCtx(db, {
+    mediaAssetId: "media-1", placementId: "place-g1", displayOrder: 1,
+  }, "/api/admin/rooms/room-a/photos");
+  restore.request = new Request("https://example.test/api/admin/rooms/room-a/photos", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ mediaAssetId: "media-1", placementId: "place-g1", displayOrder: 1 }),
+  });
+  const restored = await linkGalleryAsset(restore, "room-a", allowAdmin);
+  assert.equal(restored.status, 200);
+  assert.equal(db.prepare("SELECT id FROM media_placements WHERE id='place-g1'").get() !== undefined, true);
 });

@@ -88,6 +88,10 @@ export interface DashboardApi {
   getContentItems<T>(kind?: string, tenant?: string, location?: string): Promise<T[]>;
   getAdminRooms<T>(): Promise<T[]>;
   getRoomGallery<T>(roomId: string): Promise<T[]>;
+  /** COW-84 gallery authoring: all writes are admin-scoped and audited server-side. */
+  updateRoomGalleryItem<T>(roomId: string, placementId: string, input: unknown): Promise<T>;
+  unlinkRoomGalleryItem<T>(roomId: string, placementId: string): Promise<T>;
+  linkRoomGalleryAsset<T>(roomId: string, input: unknown): Promise<T>;
   /** COW-73 amenity admin reads and the shared COW-38 editor writes. */
   getAdminAmenities<T>(): Promise<T[]>;
   getRoomAmenities<T>(roomId: string): Promise<T>;
@@ -193,6 +197,25 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     }
   }
 
+  async function del<T>(path: string): Promise<T> {
+    if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
+    const timed = requestSignal();
+    try {
+      const response = await doFetch(path, {
+        method: "DELETE",
+        credentials: "same-origin",
+        signal: timed.signal,
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw errorFrom(response.status, text);
+      }
+      return (await response.json()) as T;
+    } finally {
+      timed.dispose();
+    }
+  }
+
   return {
     get,
     post,
@@ -215,6 +238,20 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     async getRoomGallery<T>(roomId: string): Promise<T[]> {
       const data = await get<{ items?: T[] }>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`);
       return data.items ?? [];
+    },
+    async updateRoomGalleryItem<T>(roomId: string, placementId: string, input: unknown): Promise<T> {
+      return patch<T>(
+        `/api/admin/rooms/${encodeURIComponent(roomId)}/photos/${encodeURIComponent(placementId)}`,
+        input,
+      );
+    },
+    async unlinkRoomGalleryItem<T>(roomId: string, placementId: string): Promise<T> {
+      return del<T>(
+        `/api/admin/rooms/${encodeURIComponent(roomId)}/photos/${encodeURIComponent(placementId)}`,
+      );
+    },
+    async linkRoomGalleryAsset<T>(roomId: string, input: unknown): Promise<T> {
+      return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`, input);
     },
     async getAdminAmenities<T>(): Promise<T[]> {
       const data = await get<{ items?: T[] }>("/api/admin/amenities");

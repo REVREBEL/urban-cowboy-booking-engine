@@ -49,6 +49,18 @@ This slice lands the read path only, so production image sourcing and Mews behav
 
 Admin URL for this slice: `/dashboard.html#/rooms` (static dashboard served by the Worker).
 
+## COW-84 slice 1 (gallery authoring)
+
+This slice keeps guest reads unchanged and adds tenant-scoped gallery authoring to the React panel.
+
+- `worker/room-media.ts` now returns `sourceUrl` from `COALESCE(media_versions.squarespace_url, media_assets.squarespace_url)` and `isExcluded` from the new `gallery_editorial` overlay. No Cloudinary ingestion or rehosting is required to preview feed images.
+- Migration `0009_gallery_editorial.sql` adds an idempotent, tenant-scoped overlay for exclusion and notes. It does not alter importer-owned `media_placements`, so COW-67 reconciliation is unaffected.
+- Admin-only writes: `PATCH /api/admin/rooms/:id/photos/:placementId` (order, alt/caption/description, exclusion, note), `DELETE .../photos/:placementId` (unlink), and `POST .../photos` (link/restore by `mediaAssetId` and optional original `placementId`). Every mutation writes `media_revisions` (action `set_placement`) with the actor and a JSON snapshot; unlink/restore preserves the original placement identity. Viewer-role calls get 403, a missing tenant scope fails closed with 503, and cross-tenant rooms/placements are 404.
+- `src/dashboard/RoomPhotosPanel.tsx` renders live previews with an accessible fallback for missing/broken source URLs and edits metadata, order and exclusion through the shared `DashboardApi`. Saves are explicit, show success/failure feedback, reload from D1, and unlink requires a second confirming click. Unsaved state never reaches the worker.
+- `tests/roomMediaAdmin.test.ts` (17 tests) and `tests/roomPhotosPanel.test.ts` (9 tests) cover the source URL, exclusion, audit writes, role denial, cross-tenant rejection, round-trip unlink/restore, preview fallback and the write API contract.
+
+**Still open for COW-84:** hotspot placement/multi-tag/review UI and the COW-34 replacement gates; server-side draft/publish and rollback for gallery edits; responsive-variant rendering if the feed supplies srcset; published-D1 guest cutover; and browser verification of `/dashboard.html#/rooms`.
+
 ## Remaining slices (not in this PR)
 
 - Write actions (gallery reorder, link/unlink, alt text, replace, per-photo exclusion) in `worker/room-media.ts` and the panel, reusing `media_revisions` and editor draft/publish contracts.

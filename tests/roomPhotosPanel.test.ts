@@ -57,3 +57,28 @@ test("admin client declares tenant-independent gallery helpers", () => {
   assert.match(api, /get<\{ items\?: T\[\] \}>\("\/api\/admin\/rooms"\)/);
   assert.match(api, /encodeURIComponent\(roomId\)/);
 });
+
+test("panel previews D1 source URLs and shows an accessible fallback", () => {
+  assert.match(panel, /<img[\s\S]*?src=\{item\.sourceUrl\}/);
+  assert.match(panel, /alt=\{label\}/);
+  assert.match(panel, /onError=\{\(\) => setFailed\(true\)\}/);
+  assert.match(panel, /preview unavailable/);
+  assert.match(panel, /No source URL in D1/);
+});
+
+test("panel edits gallery metadata, order and exclusion with explicit confirmation", () => {
+  assert.match(panel, /api\.updateRoomGalleryItem\(roomId, item\.placementId/);
+  assert.match(panel, /excluded: draft\.isExcluded/);
+  assert.match(panel, /api\.unlinkRoomGalleryItem\(roomId, item\.placementId\)/);
+  assert.match(panel, /Confirm unlink/);
+  assert.match(panel, /disabled=\{!dirty \|\| busy\}/);
+  assert.match(panel, /role="status"/);
+  assert.match(panel, /Exclude from published gallery/);
+});
+
+test("admin client declares COW-84 gallery write helpers", () => {
+  assert.match(api, /updateRoomGalleryItem<T>\(roomId: string, placementId: string, input: unknown\)/);
+  assert.match(api, /unlinkRoomGalleryItem<T>\(roomId: string, placementId: string\)/);
+  assert.match(api, /linkRoomGalleryAsset<T>\(roomId: string, input: unknown\)/);
+  assert.match(api, /method: "DELETE"/);
+});
