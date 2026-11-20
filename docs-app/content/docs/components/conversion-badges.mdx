@@ -1,0 +1,33 @@
+---
+title: Conversion badges
+description: Stars, scarcity, viewer nudge, savings and hold-timer primitives.
+---
+
+import { ConversionBadgesStoryControl, ConversionBadgesCompactStoryControl } from '~/components/story-controls';
+
+These primitives render merchandising copy only. The docs harness toggles visibility and count
+values locally; nothing here creates a reservation, discount or hold.
+
+<ConversionBadgesStoryControl />
+
+## Compact state
+
+With no viewer or booked counts, `ViewersNudge` renders nothing and the hold timer uses a shorter
+value.
+
+<ConversionBadgesCompactStoryControl />
+
+| Export | Props | Notes |
+| --- | --- | --- |
+| `Stars` | `className` | Decorative rating stars |
+| `HotBadge` | `visible` | Hidden when `visible` is false |
+| `FavoriteBadge` | `visible` | Hidden when `visible` is false |
+| `ViewersNudge` | `viewers`, `booked` | Renders nothing when both are absent |
+| `SavingsLine` | `amount`, `currency` | Formatted with the shared money helper |
+| `HoldTimer` | `secondsLeft` | Presentation only; no countdown is started by the docs page |
+
+## Responsive behaviour
+
+Badges wrap on narrow screens and keep text contrast on the paper background.
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/conversion.tsx)

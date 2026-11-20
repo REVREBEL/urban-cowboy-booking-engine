@@ -8,6 +8,23 @@ import { dogToggleStory } from "./dog-toggle-button.story";
 import { travelPartyStory } from "./travel-party-button.story";
 import { searchButtonStory, searchButtonVariantsStory } from "./search-button.story";
 import {
+  searchBarCircleStory,
+  searchBarSquareStory,
+  searchBarLoadingStory,
+} from "./search-bar.story";
+import {
+  bookingChromeDatesStory,
+  bookingChromeResultsStory,
+  bookingChromeExtrasStory,
+} from "./booking-chrome.story";
+import { conversionBadgesStory, conversionBadgesCompactStory } from "./conversion-badges.story";
+import {
+  searchGuestsDropdownStory,
+  searchLocationDropdownStory,
+  searchPromoDropdownStory,
+} from "./search-dropdowns.story";
+import { inlineUpsellStory } from "./extras-upsell.story";
+import {
   buildingIconStory,
   buildingIconVariantsStory,
   buildingIconColorsStory,
@@ -285,4 +302,52 @@ export function ProgressBarStoryControl() {
 
 export function ProgressStepStatesStoryControl() {
   return <progressStepStatesStory.WithControl />;
+}
+
+export function SearchBarStoryControl() {
+  return <searchBarCircleStory.WithControl />;
+}
+
+export function SearchBarSquareStoryControl() {
+  return <searchBarSquareStory.WithControl />;
+}
+
+export function SearchBarLoadingStoryControl() {
+  return <searchBarLoadingStory.WithControl />;
+}
+
+export function BookingChromeDatesStoryControl() {
+  return <bookingChromeDatesStory.WithControl />;
+}
+
+export function BookingChromeResultsStoryControl() {
+  return <bookingChromeResultsStory.WithControl />;
+}
+
+export function BookingChromeExtrasStoryControl() {
+  return <bookingChromeExtrasStory.WithControl />;
+}
+
+export function ConversionBadgesStoryControl() {
+  return <conversionBadgesStory.WithControl />;
+}
+
+export function ConversionBadgesCompactStoryControl() {
+  return <conversionBadgesCompactStory.WithControl />;
+}
+
+export function InlineUpsellStoryControl() {
+  return <inlineUpsellStory.WithControl />;
+}
+
+export function SearchGuestsDropdownStoryControl() {
+  return <searchGuestsDropdownStory.WithControl />;
+}
+
+export function SearchLocationDropdownStoryControl() {
+  return <searchLocationDropdownStory.WithControl />;
+}
+
+export function SearchPromoDropdownStoryControl() {
+  return <searchPromoDropdownStory.WithControl />;
 }

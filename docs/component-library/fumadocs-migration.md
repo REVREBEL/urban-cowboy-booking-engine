@@ -1,5 +1,46 @@
 # COW-69 Storybook to Fumadocs migration
 
+## COW-85 follow-up coverage and live verification
+
+Coverage matrix after this slice: **142 stories — 43 documented, 93 planned, 6 excluded**;
+**41 production candidates — 0 deferred, 41 dispositioned** (32 excluded, 9 now family-covered or
+documented). The previous 9 deferred entries are resolved with evidence:
+
+| Candidate | Disposition | Evidence |
+| --- | --- | --- |
+| Stars, HotBadge, FavoriteBadge, ViewersNudge, SavingsLine, HoldTimer | family-covered | `docs-app/content/docs/components/conversion-badges.mdx` (interactive visibility/count/timer states) |
+| InlineUpsell, UpsellCard | family-covered | `docs-app/content/docs/components/extras-upsell.mdx` (deterministic `ShapedProduct` fixture) |
+| ExpandedSearchButton | family-covered | `docs-app/content/docs/components/search-bar.mdx` (date/party controls linked to their own pages) |
+| RoomListCard | family-covered | `docs-app/content/docs/components/journey-rooms.mdx` (room selection/detail actions) |
+
+New production-relevant pages: `search-bar`, `search-dropdowns` (guests, location, promo),
+`booking-chrome` (header + contact bar), `conversion-badges`, `extras-upsell`. Each uses the real source component with a docs-only
+harness, deterministic fixture, props/variants table, responsive notes and a source link. No page
+calls Mews, starts a booking or writes admin state. `BookingFooter` is intentionally not demoed:
+it calls `api.locations()` and reads live booking context.
+
+`npm run docs:inventory:check` now fails when a `documented` row points at a missing or unindexed
+page, when an `excluded` row has no rationale, or when a production candidate has an invalid
+category, no rationale, or a claimed `documented`/`family-covered` page that is missing or not in
+`components/meta.json`. Fresh generated files alone are no longer enough to pass.
+
+### Live published-site check
+
+Checked **2026-11-20T08:18Z** (UTC), before these new pages were merged/deployed:
+
+| Check | Result |
+| --- | --- |
+| `https://revrebel.github.io/urban-cowboy-booking-engine/` | 200, redirects to `http://resource-hub.revrebel.io/urban-cowboy-booking-engine/` |
+| Deep link `/components/button/` (custom domain) | 200, rendered marker `Book Your Stay` |
+| `/search-index.json` | 200, 252,398 bytes |
+| Asset URLs | base-path prefixed `/urban-cowboy-booking-engine/_next/static/...` |
+| `/components/search-bar/` | 404 — expected until main deploys this PR |
+
+Follow-ups: (1) the custom domain currently redirects to **http** and `https://resource-hub.revrebel.io`
+fails certificate validation (`SSL: no alternative certificate subject name matches`); the Pages
+custom-domain certificate needs fixing. (2) Re-run the live checks after merge/deploy to confirm the
+four new pages, static search entries and interactive demos are published.
+
 ## COW-70 catalog coverage
 
 `docs/component-library/coverage-matrix.json` is the tracked catalog matrix. Regenerate it
