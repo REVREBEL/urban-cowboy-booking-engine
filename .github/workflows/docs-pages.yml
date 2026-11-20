@@ -45,6 +45,9 @@ jobs:
       - name: Verify generated inventory is current
         run: npm run docs:inventory:check
 
+      - name: Clean-checkout docs dev regression
+        run: npm run test:docs:dev
+
       - name: Build static docs
         run: npm run docs:build
 

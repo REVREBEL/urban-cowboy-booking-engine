@@ -71,7 +71,10 @@ test("catalog search is static-export compatible", () => {
   assert.match(layout, /enabled: true/);
   assert.match(layout, /type: "static"/);
   assert.match(layout, /NEXT_PUBLIC_DOCS_BASE_PATH.*search-index\.json/);
-  assert.match(pkg.scripts["docs:build"], /build-search-index\.mjs/);
+  assert.match(pkg.scripts["docs:prepare"], /prepare-docs-assets\.mjs/);
+  assert.match(pkg.scripts["docs:prepare"], /build-search-index\.mjs/);
+  assert.match(pkg.scripts["docs:build"], /docs:prepare/);
+  assert.match(pkg.scripts["docs:dev"], /dev-docs\.mjs/);
   assert.match(smokeScript, /static search index/);
 });
 

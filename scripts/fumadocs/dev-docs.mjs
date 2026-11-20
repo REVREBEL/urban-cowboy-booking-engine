@@ -1,0 +1,65 @@
+#!/usr/bin/env node
+// Development entrypoint for the Fumadocs workspace. A clean checkout has no
+// generated assets or search index (both are gitignored), so prepare them
+// before starting Next and refresh the index whenever MDX files change.
+import { spawn } from "node:child_process";
+import { readdirSync, watch } from "node:fs";
+import { join } from "node:path";
+import { prepareDocsAssets } from "./prepare-docs-assets.mjs";
+import { buildSearchIndex } from "./build-search-index.mjs";
+
+const root = process.cwd();
+const contentRoot = join(root, "docs-app", "content", "docs");
+const assetsRoot = join(root, "public", "assets");
+
+prepareDocsAssets(root);
+await buildSearchIndex(root);
+
+const child = spawn("npm", ["run", "dev", "-w", "@urban-cowboy/docs"], {
+  cwd: root,
+  stdio: "inherit",
+  env: process.env,
+  shell: process.platform === "win32",
+});
+
+const watchers = new Map();
+function watchTree(directory, onChange) {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) watchTree(path, onChange);
+  }
+  if (!watchers.has(directory)) {
+    watchers.set(directory, watch(directory, () => {
+      // Re-walk so directories created after startup are watched too.
+      watchTree(directory, onChange);
+      onChange();
+    }));
+  }
+}
+
+let timer;
+function refresh(kind) {
+  clearTimeout(timer);
+  timer = setTimeout(async () => {
+    try {
+      if (kind === "assets") prepareDocsAssets(root);
+      await buildSearchIndex(root);
+    } catch (error) {
+      console.error(`[docs-dev] ${kind} refresh failed:`, error);
+    }
+  }, 150);
+}
+
+watchTree(contentRoot, () => refresh("content"));
+watchTree(assetsRoot, () => refresh("assets"));
+
+function shutdown(signal) {
+  if (!child.killed) child.kill(signal);
+}
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+
+child.on("exit", (code, signal) => {
+  for (const watcher of watchers.values()) watcher.close();
+  process.exit(code ?? (signal ? 1 : 0));
+});

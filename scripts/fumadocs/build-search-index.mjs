@@ -5,9 +5,6 @@ import { readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { createSearchAPI } from "fumadocs-core/search/server";
 
-const root = process.cwd();
-const docsRoot = join(root, "docs-app", "content", "docs");
-
 function walk(directory) {
   return readdirSync(directory).flatMap((entry) => {
     const path = join(directory, entry);
@@ -15,7 +12,7 @@ function walk(directory) {
   });
 }
 
-function parsePage(path) {
+function parsePage(docsRoot, path) {
   const text = readFileSync(path, "utf8");
   const frontmatter = /^---\n([\s\S]*?)\n---/.exec(text)?.[1] ?? "";
   const field = (name) => new RegExp(`^${name}:\\s*["']?(.+?)["']?\\s*$`, "m")
@@ -44,14 +41,19 @@ function parsePage(path) {
   };
 }
 
-const indexes = walk(docsRoot)
-  .filter((path) => path.endsWith(".mdx"))
-  .map(parsePage)
-  .filter((page) => page.title && page.content.length > 0);
+export async function buildSearchIndex(root = process.cwd()) {
+  const docsRoot = join(root, "docs-app", "content", "docs");
+  const indexes = walk(docsRoot)
+    .filter((path) => path.endsWith(".mdx"))
+    .map((path) => parsePage(docsRoot, path))
+    .filter((page) => page.title && page.content.length > 0);
 
-const api = createSearchAPI("simple", { indexes });
-const target = join(root, "docs-app", "public", "search-index.json");
-const response = await api.staticGET();
-const data = await response.json();
-writeFileSync(target, `${JSON.stringify(data)}\n`);
-console.log(`built static search index (${indexes.length} pages) -> ${relative(root, target)}`);
+  const api = createSearchAPI("simple", { indexes });
+  const target = join(root, "docs-app", "public", "search-index.json");
+  const data = await (await api.staticGET()).json();
+  writeFileSync(target, `${JSON.stringify(data)}\n`);
+  console.log(`built static search index (${indexes.length} pages) -> ${relative(root, target)}`);
+  return indexes.length;
+}
+
+if (process.argv[1]?.endsWith("build-search-index.mjs")) await buildSearchIndex();

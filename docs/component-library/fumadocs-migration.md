@@ -59,6 +59,13 @@ static build also copies the brand fonts into the docs export and rewrites root-
 `/urban-cowboy-booking-engine` and verifies search-and-navigate, deep links at desktop and
 mobile widths, and that no asset 404s occur.
 
+Both `docs:prepare` (assets plus search index) and `docs:build` share the same preparation
+step. `docs:dev` runs `dev-docs.mjs`, which performs that preparation on a clean checkout and
+watches `docs-app/content/docs` and the source asset tree, refreshing the search index and
+copied assets when files change. `npm run test:docs:dev` removes the generated outputs and
+verifies that search and representative assets are served by the dev server; the docs CI runs
+it on a clean checkout before the production build.
+
 Published site: `https://revrebel.github.io/urban-cowboy-booking-engine/` (redirects to
 `resource-hub.revrebel.io`). At this checkpoint the live deployment still serves the stage-1
 catalog; pages from stages 2–6 return 404 until the stacked PRs are merged and the docs
