@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { SearchBar, type SearchBarVariant } from "../../src/components/booking/search/SearchBar";
+import { SearchBarExpanded } from "../../src/components/booking/search/SearchBarExpanded";
 import { defineStory } from "../lib/story";
 
 function SearchBarDemo({ variant = "circle", loading = false }: {
@@ -43,4 +44,31 @@ export const searchBarSquareStory = defineStory({
 export const searchBarLoadingStory = defineStory({
   Component: SearchBarDemo,
   args: { initial: { loading: true } },
+});
+
+function ExpandedSearchDemo({ variant = "circle" }: { variant?: "circle" | "square" }) {
+  const [last, setLast] = useState("none");
+  return (
+    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+      <SearchBarExpanded
+        variant={variant}
+        initialValues={{
+          property: "catskills",
+          checkInDate: "2026-11-21",
+          checkOutDate: "2026-11-24",
+          guests: 2,
+          promoCode: "",
+        }}
+        onSectionClick={(section) => setLast(`section ${section ?? "closed"}`)}
+        onValuesChange={(values) => setLast(`guests ${values.guests}`)}
+        onSearch={(values) => setLast(`search ${values.property}`)}
+      />
+      <p className="sr-only" role="status">{`Last action: ${last}`}</p>
+    </div>
+  );
+}
+
+export const expandedSearchStory = defineStory({
+  Component: ExpandedSearchDemo,
+  args: { initial: {} },
 });

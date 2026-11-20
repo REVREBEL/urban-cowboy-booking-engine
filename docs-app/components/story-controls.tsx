@@ -11,6 +11,7 @@ import {
   searchBarCircleStory,
   searchBarSquareStory,
   searchBarLoadingStory,
+  expandedSearchStory,
 } from "./search-bar.story";
 import {
   bookingChromeDatesStory,
@@ -23,7 +24,8 @@ import {
   searchLocationDropdownStory,
   searchPromoDropdownStory,
 } from "./search-dropdowns.story";
-import { inlineUpsellStory } from "./extras-upsell.story";
+import { inlineUpsellStory, upsellCardStory } from "./extras-upsell.story";
+import { roomsListCardStory, roomsListCardCopperStory } from "./room-list-card.story";
 import {
   buildingIconStory,
   buildingIconVariantsStory,
@@ -316,6 +318,10 @@ export function SearchBarLoadingStoryControl() {
   return <searchBarLoadingStory.WithControl />;
 }
 
+export function ExpandedSearchStoryControl() {
+  return <expandedSearchStory.WithControl />;
+}
+
 export function BookingChromeDatesStoryControl() {
   return <bookingChromeDatesStory.WithControl />;
 }
@@ -338,6 +344,18 @@ export function ConversionBadgesCompactStoryControl() {
 
 export function InlineUpsellStoryControl() {
   return <inlineUpsellStory.WithControl />;
+}
+
+export function UpsellCardStoryControl() {
+  return <upsellCardStory.WithControl />;
+}
+
+export function RoomsListCardStoryControl() {
+  return <roomsListCardStory.WithControl />;
+}
+
+export function RoomsListCardCopperStoryControl() {
+  return <roomsListCardCopperStory.WithControl />;
 }
 
 export function SearchGuestsDropdownStoryControl() {

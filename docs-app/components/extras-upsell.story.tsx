@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { InlineUpsell } from "../../src/components/booking/extras/upsell-card";
+import { InlineUpsell, UpsellCard } from "../../src/components/booking/extras/upsell-card";
 import type { ShapedProduct } from "../../src/types/mews";
 import { defineStory } from "../lib/story";
 
@@ -29,5 +29,31 @@ function InlineUpsellDemo() {
 
 export const inlineUpsellStory = defineStory({
   Component: InlineUpsellDemo,
+  args: { initial: {} },
+});
+
+function UpsellCardDemo() {
+  const [selected, setSelected] = useState(false);
+  const [detail, setDetail] = useState("closed");
+  return (
+    <div className="w-full rounded-xl bg-paper p-4 sm:p-6">
+      <UpsellCard
+        product={breakfast}
+        imageBaseUrl={process.env.NEXT_PUBLIC_DOCS_BASE_PATH ?? ""}
+        selected={selected}
+        nightsCount={3}
+        guestsCount={2}
+        onToggle={() => setSelected((value) => !value)}
+      />
+      <button type="button" className="sr-only" onClick={() => setDetail("toggled")}>
+        Card action
+      </button>
+      <p className="sr-only" role="status">{`${selected ? "Selected" : "Not selected"} · ${detail}`}</p>
+    </div>
+  );
+}
+
+export const upsellCardStory = defineStory({
+  Component: UpsellCardDemo,
   args: { initial: {} },
 });

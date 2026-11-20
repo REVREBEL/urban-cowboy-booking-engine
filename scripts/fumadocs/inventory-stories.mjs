@@ -43,11 +43,10 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/booking/search/SearchBarPromoDropdown.stories.tsx": "docs-app/content/docs/components/search-dropdowns.mdx",
   "src/stories/components/booking/chrome/header.stories.tsx": "docs-app/content/docs/components/booking-chrome.mdx",
   "src/stories/components/booking/chrome/contact-bar.stories.tsx": "docs-app/content/docs/components/booking-chrome.mdx",
-  "src/stories/components/booking/chrome/footer.stories.tsx": "docs-app/content/docs/components/booking-chrome.mdx",
   "src/stories/components/booking/conversion.stories.tsx": "docs-app/content/docs/components/conversion-badges.mdx",
   "src/stories/components/booking/extras/upsell-card.stories.tsx": "docs-app/content/docs/components/extras-upsell.mdx",
   "src/stories/components/booking/extras/creole-upsell-stories.stories.tsx": "docs-app/content/docs/components/extras-upsell.mdx",
-  "src/stories/components/rooms/RoomsListCard.stories.tsx": "docs-app/content/docs/components/journey-rooms.mdx",
+  "src/stories/components/rooms/RoomsListCard.stories.tsx": "docs-app/content/docs/components/room-list-card.mdx",
   "src/stories/components/rooms/BuildingIcon.stories.tsx": "docs-app/content/docs/components/building-icon.mdx",
   "src/stories/components/rooms/AmenityIcons.stories.tsx": "docs-app/content/docs/components/amenity-icons.mdx",
   "src/stories/components/rates/ConfigurableRateCard.stories.tsx": "docs-app/content/docs/components/configurable-rate-card.mdx",
@@ -108,9 +107,9 @@ const CANDIDATE_TRIAGE = Object.freeze({
     rationale: "Internal asset resolver behind the documented AmenityIcons component.",
   },
   "src/components/rooms/RoomsListCard.tsx": {
-    category: "family-covered",
-    docsPage: "docs-app/content/docs/components/journey-rooms.mdx",
-    rationale: "Room list presentation is demonstrated on the Journey Rooms page; the family covers selection and detail actions.",
+    category: "documented",
+    docsPage: "docs-app/content/docs/components/room-list-card.mdx",
+    rationale: "RoomsListCard has its own reference page with theme variants and local selection actions.",
   },
 });
 

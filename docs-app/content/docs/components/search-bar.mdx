@@ -3,7 +3,7 @@ title: SearchBar
 description: Booking search summary with date, guest and offer controls.
 ---
 
-import { SearchBarStoryControl, SearchBarSquareStoryControl, SearchBarLoadingStoryControl } from '~/components/story-controls';
+import { SearchBarStoryControl, SearchBarSquareStoryControl, SearchBarLoadingStoryControl, ExpandedSearchStoryControl } from '~/components/story-controls';
 
 `SearchBar` composes the date, guest and offer selectors with the shared `SearchButton`.
 The demos keep click state in a docs-only harness; they do not call the Mews API or start a booking.
@@ -34,9 +34,24 @@ The `variant` prop switches between circle and square action buttons.
 The selector fields wrap on narrow screens and keep accessible labels. The search action does not
 shrink below its touch target.
 
-## Related
+## Expanded search panel
 
-`ExpandedSearchButton` is a composite search panel; its date and party controls are documented on
-the `DateRangePicker`, `TravelPartyButton` and `SearchButton` pages.
+`SearchBarExpanded` is the composite variant that keeps property, dates, guests and promo controls
+in one bar. The demo uses `initialValues` and local callbacks; it does not validate a promo code or
+start a search.
 
-[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBar.tsx)
+<ExpandedSearchStoryControl />
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `variant` | `circle`, `square` | Search action shape |
+| `initialValues` | `property`, `checkInDate`, `checkOutDate`, `guests`, `promoCode` | Uncontrolled starting values |
+| `onSectionClick` | `(section) => void` | Reports which dropdown is open (`property`, `dates`, `guests`, `promo` or `null`) |
+| `onValuesChange` | `(values) => void` | Reports edited values |
+| `onSearch` | `(values) => void` | Docs harness records the action only |
+| `dropdownPlacement` | `above`, `below` | Dropdown position relative to the bar |
+
+The individual dropdowns are documented on the `Search dropdowns`, `DateRangePicker`,
+`TravelPartyButton` and `SearchButton` pages.
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBar.tsx) · [View expanded source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBarExpanded.tsx)

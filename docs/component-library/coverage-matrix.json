@@ -2,15 +2,15 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 43,
-    "planned": 93,
+    "documented": 42,
+    "planned": 94,
     "excluded": 6,
     "undocumentedProductionCandidates": 41,
     "candidateTriage": {
       "deferred": 0,
       "excluded": 32,
-      "documented": 0,
-      "familyCovered": 9
+      "documented": 1,
+      "familyCovered": 8
     }
   },
   "components": [
@@ -30,13 +30,13 @@
       "component": "Footer",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/chrome/footer.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking-chrome.mdx",
+      "docsPage": "docs-app/content/docs/components/booking/footer.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "documented",
-      "note": "Historical story has a Fumadocs page; variants pending migration."
+      "status": "planned",
+      "note": "Awaiting Fumadocs page and interactive demos."
     },
     {
       "component": "Header",
@@ -1223,7 +1223,7 @@
       "component": "RoomsListCard",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/RoomsListCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey-rooms.mdx",
+      "docsPage": "docs-app/content/docs/components/room-list-card.mdx",
       "demos": 11,
       "demoExports": [
         "Default",
@@ -2255,9 +2255,9 @@
       "name": "RoomListCard",
       "source": "src/components/rooms/RoomsListCard.tsx",
       "triage": {
-        "category": "family-covered",
-        "docsPage": "docs-app/content/docs/components/journey-rooms.mdx",
-        "rationale": "Room list presentation is demonstrated on the Journey Rooms page; the family covers selection and detail actions."
+        "category": "documented",
+        "docsPage": "docs-app/content/docs/components/room-list-card.mdx",
+        "rationale": "RoomsListCard has its own reference page with theme variants and local selection actions."
       }
     }
   ]

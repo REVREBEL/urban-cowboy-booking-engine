@@ -2,16 +2,16 @@
 
 ## COW-85 follow-up coverage and live verification
 
-Coverage matrix after this slice: **142 stories — 43 documented, 93 planned, 6 excluded**;
+Coverage matrix after this slice: **142 stories — 42 documented, 94 planned, 6 excluded**;
 **41 production candidates — 0 deferred, 41 dispositioned** (32 excluded, 9 now family-covered or
 documented). The previous 9 deferred entries are resolved with evidence:
 
 | Candidate | Disposition | Evidence |
 | --- | --- | --- |
 | Stars, HotBadge, FavoriteBadge, ViewersNudge, SavingsLine, HoldTimer | family-covered | `docs-app/content/docs/components/conversion-badges.mdx` (interactive visibility/count/timer states) |
-| InlineUpsell, UpsellCard | family-covered | `docs-app/content/docs/components/extras-upsell.mdx` (deterministic `ShapedProduct` fixture) |
-| ExpandedSearchButton | family-covered | `docs-app/content/docs/components/search-bar.mdx` (date/party controls linked to their own pages) |
-| RoomListCard | family-covered | `docs-app/content/docs/components/journey-rooms.mdx` (room selection/detail actions) |
+| InlineUpsell, UpsellCard | family-covered | `docs-app/content/docs/components/extras-upsell.mdx` (deterministic `ShapedProduct` fixture, inline and card demos) |
+| ExpandedSearchButton | family-covered | `docs-app/content/docs/components/search-bar.mdx` (expanded panel demo with props and section/value callbacks) |
+| RoomListCard | documented | `docs-app/content/docs/components/room-list-card.mdx` (theme variants, deterministic `ShapedRoom` fixture) |
 
 New production-relevant pages: `search-bar`, `search-dropdowns` (guests, location, promo),
 `booking-chrome` (header + contact bar), `conversion-badges`, `extras-upsell`. Each uses the real source component with a docs-only
