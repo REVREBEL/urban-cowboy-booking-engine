@@ -1,0 +1,41 @@
+---
+title: Loading State
+description: Spinner and status message for in-flight booking work.
+---
+
+import { LoadingStateStoryControl, LoadingMessagesStoryControl } from '~/components/story-controls';
+
+`LoadingState` is a small presentational spinner with a caller-supplied status message. It does
+not own a timer or a fetch; the caller shows and hides it.
+
+<LoadingStateStoryControl />
+
+## Message variants
+
+<LoadingMessagesStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `message` | string | Defaults to “Finding your stay…” |
+
+## Accessibility
+
+The component is a status message: assistive technology announces it when inserted. The
+spinner itself is decorative.
+
+## Responsive behaviour
+
+The component has no intrinsic width beyond its content and adapts to any container, from a
+card to a full step.
+
+## Usage
+
+```tsx
+import LoadingState from '@/components/feedback/loading-state';
+
+{loading && <LoadingState message="Checking live rates…" />}
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/feedback/loading-state.tsx)

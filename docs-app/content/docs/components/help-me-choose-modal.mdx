@@ -1,0 +1,43 @@
+---
+title: Help Me Choose Modal
+description: Two-step preference dialog that gathers party, dog and interest signals.
+---
+
+import { HelpMeChooseModalStoryControl } from '~/components/story-controls';
+
+`HelpMeChooseModal` is the intent-first discovery dialog. It uses the shared
+`TravelPartyGroup`, dog toggle and preference buttons, and returns a structured
+`RecommendationPreferences` object. The docs instance is open with local callbacks; it does not
+start a search or write any state outside the demo.
+
+<HelpMeChooseModalStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `isOpen` | boolean | Controls dialog visibility |
+| `onClose` | callback | Called by the close control and Escape |
+| `onSubmit` | `(preferences) => void` | Receives party, dog and interests |
+| `initialPreferences` | `RecommendationPreferences` | Optional pre-filled values |
+
+## Accessibility
+
+The dialog labels itself with a generated id, traps focus and restores it on close. The party
+options use radio-group semantics through `TravelPartyGroup`, so assistive technology hears the
+grouping and keyboard arrows move between options.
+
+## Responsive behaviour
+
+The dialog fills the viewport on phones and is capped to a centered panel on wider screens.
+Interest chips wrap rather than scroll sideways.
+
+## Usage
+
+```tsx
+import { HelpMeChooseModal } from '@/components/booking/discovery/HelpMeChooseModal';
+
+<HelpMeChooseModal isOpen={open} onClose={close} onSubmit={startMatch} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/discovery/HelpMeChooseModal.tsx)

@@ -1,0 +1,58 @@
+---
+title: Room Photo Tour
+description: Full-bleed room photo carousel with hotspots, amenities and a details panel.
+---
+
+import {
+  RoomPhotoTourStoryControl,
+  RoomPhotoTourDetailsStoryControl,
+} from '~/components/story-controls';
+
+`RoomPhotoTour` is the centrepiece of the photo journey: a swipeable image carousel with
+per-photo amenity hotspots and an expandable detail panel. The docs demo uses a local editorial
+fixture with two checked-in images; it never reads Mews inventory, price or availability, and
+choosing a room only updates local text.
+
+<RoomPhotoTourStoryControl />
+
+## Details panel
+
+The former `DetailsOpen` state is shown below. Hotspots open amenity details without leaving
+the carousel.
+
+<RoomPhotoTourDetailsStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `room` | `JourneyRoom` | Editorial room data, including images and features |
+| `position` / `count` | number | Carousel position and total count supplied by the caller |
+| `score` | number | Optional recommendation score for merchandising copy |
+| `details` / `onDetails` | boolean / callback | Controls the detail panel |
+| `cmsHotspots` | `CmsPhotoHotspotMap` | Optional CMS hotspots; the demo uses the built-in editorial pins |
+| `onChoose` | callback | Invoked on the docs-only choice action |
+| `currency` | string | Defaults to `USD` |
+
+## Responsive behaviour
+
+The tour fills its container and uses a drag-aware carousel. On narrow screens the controls
+stack over the image; the detail panel becomes a scrollable sheet. The demo wrapper gives it a
+full-height surface so both behaviours are visible.
+
+## Usage
+
+```tsx
+import { RoomPhotoTour } from '@/journey/RoomPhotoTour';
+
+<RoomPhotoTour
+  room={room}
+  position={0}
+  count={1}
+  details={false}
+  onDetails={setDetails}
+  onChoose={chooseRoom}
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/journey/RoomPhotoTour.tsx)

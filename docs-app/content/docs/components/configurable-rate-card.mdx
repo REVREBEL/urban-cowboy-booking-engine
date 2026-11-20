@@ -1,0 +1,63 @@
+---
+title: ConfigurableRateCard
+description: CMS-configured rate artwork shell with live price overlay, layouts and an expandable booking action.
+---
+
+import {
+  ConfigurableRateCardStoryControl,
+  ConfigurableRateCardVariantsStoryControl,
+} from '~/components/story-controls';
+
+`ConfigurableRateCard` combines editor-controlled artwork and copy (`config`) with live
+pricing (`live`). The artwork is decorative; important words are rendered as semantic HTML
+over it. Its action follows a two-step pattern: the first press expands to a confirmation,
+and the second calls `onBook`. The docs harness keeps that state local and never creates a
+reservation or starts a payment.
+
+<ConfigurableRateCardStoryControl />
+
+## States and layouts
+
+The former Storybook `Vertical`, `Horizontal`, `SingleBorder`, `DoubleBorder`,
+`OutlineButton`, `Expanded`, `Disabled` and `HorizontalExpanded` states are collected in the
+grid below, using a deterministic fixture with no artwork so the semantic fallback is shown.
+
+<ConfigurableRateCardVariantsStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `config` | `RateCardConfig` | CMS fields: copy, colours, border/font presets, overlay positions, cancellation windows |
+| `live` | `RateCardLiveContent` | Already-formatted `price`, `priceUnit`, `taxLabel`, `cancellationText`, optional `ctaLabel` |
+| `layout` | `vertical`, `horizontal` | Horizontal uses a measured overlay layout |
+| `artworkMode` | `auto`, `desktop`, `mobile` | Which artwork source is preferred |
+| `isExpanded` / `onExpand` | boolean / callback | Drives the confirm step |
+| `onBook` | callback | Called on the confirmed action |
+| `confirmLabel` | string | Label shown in the expanded state |
+| `disabled` | boolean | Disables the action |
+| `className` | string | Placement only |
+
+When any artwork URL fails to load, the card falls back to its semantic copy. Both price and
+cancellation text are supplied by the caller; the component performs no pricing or policy
+calculation.
+
+## Responsive behaviour
+
+The vertical card is capped to a narrow column and the horizontal card uses a width-aware
+overlay scale. The variant grid goes from one column on phones to two or three at `sm`, so
+every state can be compared without horizontal scrolling.
+
+## Usage
+
+```tsx
+import { ConfigurableRateCard } from '@/components/rates/ConfigurableRateCard';
+
+<ConfigurableRateCard
+  config={rateConfig}
+  live={{ price: '$340', taxLabel: '+ $28 taxes & fees', cancellationText: 'Flexible cancellation' }}
+  onBook={() => continueToBooking()}
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rates/ConfigurableRateCard.tsx)

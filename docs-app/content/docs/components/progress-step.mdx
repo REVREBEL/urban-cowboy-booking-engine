@@ -1,0 +1,46 @@
+---
+title: Progress Step
+description: Individual progress marker and the composed ProgressStepper list.
+---
+
+import { ProgressStepStatesStoryControl } from '~/components/story-controls';
+
+`ProgressStep` is a single clickable marker with default, current, complete, loading and
+disabled states. `ProgressStepper` composes several of them from a `currentStep` value. The docs
+grid shows every state side by side.
+
+<ProgressStepStatesStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `step` | number | Step number shown in the marker |
+| `label` | string | Step name |
+| `state` | `default`, `current`, `complete` | Visual state |
+| `onClick` | callback | Optional navigation |
+| `showCheckOnComplete` | boolean | Replace the number with a check when complete |
+| `isLoading` / `disabled` | boolean | Busy and disabled states |
+
+`ProgressStepper` accepts `currentStep`, `steps` and `showCheckOnComplete` and derives the
+per-step state.
+
+## Accessibility
+
+State is conveyed by text and icons as well as colour. Disabled steps are not focusable, and a
+busy step announces its loading state.
+
+## Responsive behaviour
+
+The comparison grid goes from one column on phones to two at `sm`; individual step rows wrap
+within their card.
+
+## Usage
+
+```tsx
+import { ProgressStepper } from '@/components/booking/progress/ProgressStep';
+
+<ProgressStepper currentStep={2} showCheckOnComplete steps={steps} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/progress/ProgressStep.tsx)

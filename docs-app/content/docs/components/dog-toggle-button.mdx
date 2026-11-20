@@ -1,0 +1,51 @@
+---
+title: DogToggleButton
+description: Discovery control that narrows results to dog-friendly rooms.
+---
+
+import { DogToggleStoryControl } from '~/components/story-controls';
+
+`DogToggleButton` is a large pressable card used on the arrival screen. It is controlled:
+the caller owns `selected` and responds to `onToggle`. The component owns its own icons,
+states and accessible label.
+
+<DogToggleStoryControl />
+
+## Props and states
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `selected` | boolean | Drives the visual treatment and `aria-pressed` |
+| `onToggle` | `() => void` | Called on activation; the caller updates `selected` |
+| `className` | string | Placement only |
+| `imageBaseUrl` | string | Optional prefix for the two icon URLs when the host app is served under a base path |
+
+Former Storybook states `Inactive` and `Selected` are represented by the interactive
+control. Two icon assets are swapped by breakpoint; both are decorative and hidden from
+assistive technology, with a visually hidden label on the button.
+
+## Responsive behaviour
+
+The card fills its container up to the demo's narrow wrapper and grows in height at the
+`sm` breakpoint. Icons scale accordingly; no horizontal scrolling is introduced.
+
+## Usage
+
+```tsx
+import { DogToggleButton } from '@/components/booking/discovery/DogToggleButton';
+
+<DogToggleButton selected={dogFriendly} onToggle={() => setDogFriendly(v => !v)} />
+```
+
+When the booking app is deployed under a subpath, pass that prefix so the root-relative
+icon assets resolve there instead of at the domain root:
+
+```tsx
+<DogToggleButton
+  selected={dogFriendly}
+  onToggle={() => setDogFriendly(v => !v)}
+  imageBaseUrl="/booking"
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/discovery/DogToggleButton.tsx)

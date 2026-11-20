@@ -198,6 +198,8 @@ export function Arrive(props: {
   nights: number;
   stories: readonly ArrivalStory[] | null;
   showQuickSelect: boolean;
+  /** Optional prefix for root-relative icon URLs when hosted under a base path. */
+  imageBaseUrl?: string;
 }) {
   const promoTriggerRef = useRef<HTMLButtonElement>(null);
   const ready = props.nights > 0;
@@ -306,7 +308,7 @@ export function Arrive(props: {
                 colorScheme="light"
                 size="small"
                 hasIcon
-                icon={<span aria-hidden="true" className="inline-block size-4 shrink-0 bg-current" style={{ WebkitMask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat', mask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat' }} />}
+                icon={<span aria-hidden="true" className="inline-block size-4 shrink-0 bg-current" style={{ WebkitMask: `url("${props.imageBaseUrl ?? ""}/assets/icons/ui/arrow-right.svg") center / contain no-repeat`, mask: `url("${props.imageBaseUrl ?? ""}/assets/icons/ui/arrow-right.svg") center / contain no-repeat` }} />}
                 disabled={!ready}
                 onClick={() => ready && props.onMatch()}
               >

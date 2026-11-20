@@ -2,10 +2,14 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 4,
-    "planned": 132,
+    "documented": 31,
+    "planned": 105,
     "excluded": 6,
-    "undocumentedProductionCandidates": 41
+    "undocumentedProductionCandidates": 41,
+    "candidateTriage": {
+      "deferred": 9,
+      "excluded": 32
+    }
   },
   "components": [
     {
@@ -66,51 +70,51 @@
       "component": "DogToggleButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/DogToggleButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/dog-toggle-button.mdx",
+      "docsPage": "docs-app/content/docs/components/dog-toggle-button.mdx",
       "demos": 2,
       "demoExports": [
         "Inactive",
         "Selected"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "FindYourStayTravelPartyButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/FindYourStayTravelPartyButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/find-your-stay-travel-party-button.mdx",
+      "docsPage": "docs-app/content/docs/components/travel-party-button.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "Selected"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "HelpMeChooseModal",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/HelpMeChooseModal.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/help-me-choose-modal.mdx",
+      "docsPage": "docs-app/content/docs/components/help-me-choose-modal.mdx",
       "demos": 1,
       "demoExports": [
         "Open"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "MatchOrBrowseScreen",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/MatchOrBrowseScreen.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/match-or-browse-screen.mdx",
+      "docsPage": "docs-app/content/docs/components/match-or-browse-screen.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "PreferenceIconButton",
@@ -129,25 +133,25 @@
       "component": "RoomMatcherPage",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/RoomMatcherPage.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/room-matcher-page.mdx",
+      "docsPage": "docs-app/content/docs/components/room-matcher-page.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "RoomMatcherProgress",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/RoomMatcherProgress.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/room-matcher-progress.mdx",
+      "docsPage": "docs-app/content/docs/components/matcher-progress.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "RusticLodgeSignboard",
@@ -227,44 +231,44 @@
       "component": "StepLayout",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/layout/step-layout.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/step-layout.mdx",
+      "docsPage": "docs-app/content/docs/components/step-layout.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "StepProgress",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/layout/step-progress.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/step-progress.mdx",
+      "docsPage": "docs-app/content/docs/components/step-progress.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "ProgressBar",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/progress/ProgressBar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/progress-bar.mdx",
+      "docsPage": "docs-app/content/docs/components/progress-bar.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "StepComponent"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "ProgressStep",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/progress/ProgressStep.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/progress-step.mdx",
+      "docsPage": "docs-app/content/docs/components/progress-step.mdx",
       "demos": 6,
       "demoExports": [
         "Default",
@@ -274,20 +278,20 @@
         "Loading",
         "Stepper"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "MatchBenefitsCard",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/results/MatchBenefitsCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/match-benefits-card.mdx",
+      "docsPage": "docs-app/content/docs/components/match-benefits-card.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "BestRateGuaranteedLabel",
@@ -417,13 +421,13 @@
       "component": "SearchButton",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchButton.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/search-button.mdx",
+      "docsPage": "docs-app/content/docs/components/search-button.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "CheckoutStep",
@@ -529,60 +533,60 @@
       "component": "EmptyState",
       "category": "Feedback",
       "storySource": "src/stories/components/feedback/EmptyState.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/feedback/empty-state.mdx",
+      "docsPage": "docs-app/content/docs/components/empty-state.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "WithAction"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "ErrorState",
       "category": "Feedback",
       "storySource": "src/stories/components/feedback/ErrorState.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/feedback/error-state.mdx",
+      "docsPage": "docs-app/content/docs/components/error-state.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "WithRetry"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "LoadingState",
       "category": "Feedback",
       "storySource": "src/stories/components/feedback/LoadingState.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/feedback/loading-state.mdx",
+      "docsPage": "docs-app/content/docs/components/loading-state.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "CustomMessage"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "DateRangePicker",
       "category": "Forms",
       "storySource": "src/stories/components/forms/DateRangePicker.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/forms/date-range-picker.mdx",
+      "docsPage": "docs-app/content/docs/components/date-range-picker.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "Unselected",
         "CheckInOnly"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "PhoneInput",
       "category": "Forms",
       "storySource": "src/stories/components/forms/PhoneInput.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/forms/phone-input.mdx",
+      "docsPage": "docs-app/content/docs/components/phone-input.mdx",
       "demos": 4,
       "demoExports": [
         "Default",
@@ -590,8 +594,8 @@
         "FranceSelected",
         "InvalidState"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "AmenityWoodcutIcon",
@@ -635,7 +639,7 @@
       "component": "Disappear for a While",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoArrival.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-arrival.mdx",
+      "docsPage": "docs-app/content/docs/components/arrival.mdx",
       "demos": 4,
       "demoExports": [
         "Arrival",
@@ -643,56 +647,56 @@
         "DatesSelected",
         "FeaturesHidden"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Extras",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoExtrasStep.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-extras-step.mdx",
+      "docsPage": "docs-app/content/docs/components/journey-extras.mdx",
       "demos": 3,
       "demoExports": [
         "Available",
         "Selected",
         "NoExtras"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Stay Journal",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoJournal.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-journal.mdx",
+      "docsPage": "docs-app/content/docs/components/stay-journal.mdx",
       "demos": 3,
       "demoExports": [
         "Couple",
         "Family",
         "WithPreferences"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Rooms",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoRooms.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-rooms.mdx",
+      "docsPage": "docs-app/content/docs/components/journey-rooms.mdx",
       "demos": 3,
       "demoExports": [
         "Index",
         "PhotoSpreads",
         "WithPreferences"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Photo Tour Arrow",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoTourArrow.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-tour-arrow.mdx",
+      "docsPage": "docs-app/content/docs/components/photo-tour-arrow.mdx",
       "demos": 7,
       "demoExports": [
         "Arrow",
@@ -703,41 +707,41 @@
         "AssetVsChevronComparison",
         "Sizes"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Room Photo Tour",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/RoomPhotoTour.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/room-photo-tour.mdx",
+      "docsPage": "docs-app/content/docs/components/room-photo-tour.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "DetailsOpen"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Photo",
       "category": "Media",
       "storySource": "src/stories/components/media/Photo.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/media/photo.mdx",
+      "docsPage": "docs-app/content/docs/components/photo.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "MissingSourceFallback",
         "BrokenImageFallback"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "ConfigurableRateCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/ConfigurableRateCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/configurable-rate-card.mdx",
+      "docsPage": "docs-app/content/docs/components/configurable-rate-card.mdx",
       "demos": 8,
       "demoExports": [
         "Vertical",
@@ -749,8 +753,8 @@
         "Disabled",
         "HorizontalExpanded"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "ConfigurableRateOffer",
@@ -990,15 +994,15 @@
       "component": "AmenityIcons",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/AmenityIcons.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/amenity-icons.mdx",
+      "docsPage": "docs-app/content/docs/components/amenity-icons.mdx",
       "demos": 3,
       "demoExports": [
         "Playground",
         "AllIcons",
         "ThemeContexts"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "BuildingExperienceList",
@@ -1023,15 +1027,15 @@
       "component": "BuildingIcon",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/BuildingIcon.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/building-icon.mdx",
+      "docsPage": "docs-app/content/docs/components/building-icon.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "AllFigmaVariants",
         "AllColors"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "FocusAmenity",
@@ -1919,167 +1923,331 @@
   "undocumentedProductionCandidates": [
     {
       "name": "Stars",
-      "source": "src/components/booking/conversion.tsx"
+      "source": "src/components/booking/conversion.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+      }
     },
     {
       "name": "HotBadge",
-      "source": "src/components/booking/conversion.tsx"
+      "source": "src/components/booking/conversion.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+      }
     },
     {
       "name": "FavoriteBadge",
-      "source": "src/components/booking/conversion.tsx"
+      "source": "src/components/booking/conversion.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+      }
     },
     {
       "name": "ViewersNudge",
-      "source": "src/components/booking/conversion.tsx"
+      "source": "src/components/booking/conversion.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+      }
     },
     {
       "name": "SavingsLine",
-      "source": "src/components/booking/conversion.tsx"
+      "source": "src/components/booking/conversion.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+      }
     },
     {
       "name": "HoldTimer",
-      "source": "src/components/booking/conversion.tsx"
+      "source": "src/components/booking/conversion.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+      }
     },
     {
       "name": "InlineUpsell",
-      "source": "src/components/booking/extras/upsell-card.tsx"
+      "source": "src/components/booking/extras/upsell-card.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Extras upsell presentation; the Extras journey page documents the surrounding flow."
+      }
     },
     {
       "name": "ExpandedSearchButton",
-      "source": "src/components/booking/search/SearchBarExpanded.tsx"
+      "source": "src/components/booking/search/SearchBarExpanded.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Composite search panel; its date/party controls are documented individually."
+      }
     },
     {
       "name": "IconBed",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconUsers",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconCalendar",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconCheck",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconCloche",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconCroissant",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconArrowRight",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconClose",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconSparkles",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconMinus",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconPlus",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconChevron",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconShield",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconMapPin",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconLeaf",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconPalm",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconWave",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconStairs",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconStar",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconClock",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconFlame",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconTag",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconHeart",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconLock",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconGift",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconSun",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconPhone",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconMail",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconShare",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "IconCopy",
-      "source": "src/components/icons/cowboy-icons.tsx"
+      "source": "src/components/icons/cowboy-icons.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Inline SVG glyph set consumed as implementation details, not one public component per glyph."
+      }
     },
     {
       "name": "HotspotEditor",
-      "source": "src/components/media/HotspotEditor.tsx"
+      "source": "src/components/media/HotspotEditor.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Admin-only editor; interactive docs must not expose admin writes."
+      }
     },
     {
       "name": "CmsAmenityIcon",
-      "source": "src/components/rooms/CmsAmenityIcon.tsx"
+      "source": "src/components/rooms/CmsAmenityIcon.tsx",
+      "triage": {
+        "category": "excluded",
+        "rationale": "Internal asset resolver behind the documented AmenityIcons component."
+      }
     },
     {
       "name": "RoomListCard",
-      "source": "src/components/rooms/RoomsListCard.tsx"
+      "source": "src/components/rooms/RoomsListCard.tsx",
+      "triage": {
+        "category": "deferred",
+        "rationale": "Room list presentation covered by the Journey Rooms page until it has its own reference."
+      }
     }
   ]
 }

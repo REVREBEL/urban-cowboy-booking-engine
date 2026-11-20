@@ -1,0 +1,53 @@
+---
+title: Phone Input
+description: International phone field with country selection, formatting and E.164 validation.
+---
+
+import { PhoneInputStoryControl, PhoneInputInvalidStoryControl } from '~/components/story-controls';
+
+`PhoneInput` parses the initial value into a country and national number, formats input as it
+is typed and reports the E.164 value with a validity flag. The docs harness shows the reported
+value locally; it never submits a guest form.
+
+<PhoneInputStoryControl />
+
+## Invalid state
+
+<PhoneInputInvalidStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `value` | E.164 string | Controlled value |
+| `defaultCountry` | ISO code | Used when `value` has no country; defaults to `US` |
+| `onChange` | `(e164, valid) => void` | Reports the normalised value and validity |
+| `required`, `invalid` | boolean | Native required attribute and error styling |
+| `id`, `name`, `ariaDescribedBy` | string | Form wiring and accessible description |
+
+## Accessibility
+
+The country selector and number field are labelled separately, and the invalid state is
+exposed through `aria-invalid` so assistive technology announces the error.
+
+## Responsive behaviour
+
+The country flag and dial code keep a fixed width while the number field flexes, so no layout
+shift occurs when switching countries on a narrow screen.
+
+## Usage
+
+```tsx
+import { PhoneInput } from '@/components/forms/phone-input';
+
+<PhoneInput
+  value={phone}
+  defaultCountry="US"
+  onChange={(e164, valid) => {
+    setPhone(e164);
+    setValid(valid);
+  }}
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/forms/phone-input.tsx)

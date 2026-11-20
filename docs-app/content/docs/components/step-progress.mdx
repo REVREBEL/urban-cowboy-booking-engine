@@ -1,0 +1,35 @@
+---
+title: Step Progress
+description: Compact step navigation used inside the booking steps.
+---
+
+import { StepProgressStoryControl } from '~/components/story-controls';
+
+`StepProgress` renders the current step, its position and an optional confirmation state. The
+docs demo shows the three-step booking flow with “Rooms” active; selecting a step only updates
+a local status message.
+
+<StepProgressStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `steps` | `{ key, label }[]` | Ordered step definitions |
+| `currentKey` | string or `null` | Active key; `null` shows the confirmation state |
+| `onStepSelect` | callback | Optional step navigation |
+
+## Responsive behaviour
+
+A condensed summary is shown on phones and the full step list from `sm` up. Both forms convey
+the same current step, so no information is lost at narrow widths.
+
+## Usage
+
+```tsx
+import { StepProgress } from '@/components/booking/layout/step-progress';
+
+<StepProgress steps={steps} currentKey="results" onStepSelect={goToStep} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/layout/step-progress.tsx)

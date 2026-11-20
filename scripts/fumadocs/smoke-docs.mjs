@@ -12,6 +12,33 @@ const pages = [
   "components/button/index.html",
   "components/switch/index.html",
   "components/preference-icon-button/index.html",
+  "components/dog-toggle-button/index.html",
+  "components/travel-party-button/index.html",
+  "components/search-button/index.html",
+  "components/building-icon/index.html",
+  "components/amenity-icons/index.html",
+  "components/configurable-rate-card/index.html",
+  "components/photo/index.html",
+  "components/photo-tour-arrow/index.html",
+  "components/room-photo-tour/index.html",
+  "components/arrival/index.html",
+  "components/journey-extras/index.html",
+  "components/stay-journal/index.html",
+  "components/journey-rooms/index.html",
+  "components/help-me-choose-modal/index.html",
+  "components/match-or-browse-screen/index.html",
+  "components/room-matcher-page/index.html",
+  "components/matcher-progress/index.html",
+  "components/match-benefits-card/index.html",
+  "components/date-range-picker/index.html",
+  "components/phone-input/index.html",
+  "components/empty-state/index.html",
+  "components/error-state/index.html",
+  "components/loading-state/index.html",
+  "components/step-layout/index.html",
+  "components/step-progress/index.html",
+  "components/progress-bar/index.html",
+  "components/progress-step/index.html",
 ];
 const forbidden = [
   /api\.mews\.com/i,
@@ -40,6 +67,33 @@ const markersByPage = {
   "components/button/index.html": ["Book Your Stay"],
   "components/switch/index.html": ["Dog Friendly Room (+ $75)"],
   "components/preference-icon-button/index.html": ["Your Own Hideaway"],
+  "components/dog-toggle-button/index.html": ["Bringing the dog"],
+  "components/travel-party-button/index.html": ["Just the two of us"],
+  "components/search-button/index.html": ["icon-circle"],
+  "components/building-icon/index.html": ["MountianViewHaus"],
+  "components/amenity-icons/index.html": ["outdoor-tub"],
+  "components/configurable-rate-card/index.html": ["STAY AWHILE"],
+  "components/photo/index.html": ["Missing source"],
+  "components/photo-tour-arrow/index.html": ["Inline chevrons"],
+  "components/room-photo-tour/index.html": ["Alpine Bathing Suite"],
+  "components/arrival/index.html": ["Match me with a room", "assets/icons/icons-simple/hammock.svg"],
+  "components/journey-extras/index.html": ["Estonian Sauna Session"],
+  "components/stay-journal/index.html": ["No journal action"],
+  "components/journey-rooms/index.html": ["No room action"],
+  "components/help-me-choose-modal/index.html": ["Help"],
+  "components/match-or-browse-screen/index.html": ["browse"],
+  "components/room-matcher-page/index.html": ["Step 1"],
+  "components/matcher-progress/index.html": ["Step 1"],
+  "components/match-benefits-card/index.html": ["Private soaking tub"],
+  "components/date-range-picker/index.html": ["Selected:"],
+  "components/phone-input/index.html": ["valid E.164"],
+  "components/empty-state/index.html": ["Nothing available for these dates"],
+  "components/error-state/index.html": ["Something went wrong"],
+  "components/loading-state/index.html": ["Finding your stay"],
+  "components/step-layout/index.html": ["Select Accommodations"],
+  "components/step-progress/index.html": ["Rooms"],
+  "components/progress-bar/index.html": ["Room"],
+  "components/progress-step/index.html": ["Stepper"],
 };
 for (const [page, markers] of Object.entries(markersByPage)) {
   for (const marker of markers) {
@@ -47,6 +101,22 @@ for (const [page, markers] of Object.entries(markersByPage)) {
   }
 }
 if (!html.includes("View source")) fail("missing rendered marker: View source");
+const searchIndex = join(out, "search-index.json");
+if (!existsSync(searchIndex)) fail("missing static search index");
+const searchData = JSON.parse(readFileSync(searchIndex, "utf8"));
+const contentRoot = join(process.cwd(), "docs-app", "content", "docs");
+const countMdx = (directory) => readdirSync(directory, { withFileTypes: true })
+  .reduce((total, entry) => {
+    const path = join(directory, entry.name);
+    return total + (entry.isDirectory() ? countMdx(path) : Number(entry.name.endsWith(".mdx")));
+  }, 0);
+const expectedPages = countMdx(contentRoot);
+if (searchData.type !== "simple" || searchData.docs?.count !== expectedPages) {
+  fail(`static search index covers ${searchData.docs?.count} pages, expected ${expectedPages}`);
+}
+if (!html.includes(`${resolveDocsBasePath()}/search-index.json`)) {
+  fail("static search index is not referenced under the base path");
+}
 for (const pattern of forbidden) {
   if (pattern.test(html)) fail(`forbidden content in static HTML: ${pattern}`);
 }

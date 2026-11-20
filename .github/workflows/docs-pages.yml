@@ -42,11 +42,23 @@ jobs:
       - name: Validate component coverage matrix
         run: npm run test:docs
 
+      - name: Verify generated inventory is current
+        run: npm run docs:inventory:check
+
+      - name: Clean-checkout docs dev regression
+        run: npm run test:docs:dev
+
       - name: Build static docs
         run: npm run docs:build
 
       - name: Smoke check static output
         run: npm run docs:smoke
+
+      - name: Install Chromium for docs runtime smoke
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser smoke under Pages base path
+        run: npm run test:docs:runtime
 
   deploy:
     needs: validate
