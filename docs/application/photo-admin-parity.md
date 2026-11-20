@@ -72,6 +72,17 @@ Admin URL for this slice: `/dashboard.html#/rooms` (static dashboard served by t
 - `tests/roomGalleryEditing.test.ts` covers reorder, metadata, exclusion, unlink, parked-row
   preservation, validation, draft/publish snapshot separation and tenant-scoped media reads.
 
+## COW-84 hotspot slice
+
+This slice adds the admin surface for COW-34 durable pins on top of the published gallery.
+
+- `worker/hotspot-admin.ts` exposes `GET/POST /api/admin/rooms/:id/hotspots` (list/create), `PATCH .../hotspots/:mappingId`, and `POST .../hotspots/publish` and `.../hotspots/rollback`. Reads require `viewer`, mutations require `admin`, tenant scope comes from the verified principal, and a missing scope fails closed. Amenity assignment is checked against `room_type_amenities` with tenant ownership proven by the room and amenity rows; coordinates are normalized `0..1` source-space values. Every create/update writes a `photo_hotspot_mapping_revisions` snapshot with the actor.
+- `publishRoomHotspots` delegates to COW-34's `publishMappings`, so a `pending` review blocks publication until an editor approves; `rollbackRoomHotspots` delegates to `rollbackMappings` and restores prior geometry snapshots.
+- `src/dashboard/RoomHotspotsPanel.tsx` is the new `#/hotspots` dashboard route. It offers room/photo selection, click-to-place pins with number inputs for keyboard editing, room-eligible amenity selection, review approve/flag controls, and explicit publish/rollback feedback. No guest source or Mews behavior is changed.
+- `tests/hotspotAdmin.test.ts` (5 tests) and `tests/hotspotsPanel.test.ts` (5 tests) cover tenant scoping, role denial, eligibility validation, revision snapshots, review-gated publish, rollback and the panel contract.
+
+**Still open for COW-84:** replacement planning/crop-remap endpoints that drive `planReplacement`/`applyReplacement`, pin deletion, guest Photo Journey cutover to published D1 hotspots, and browser verification of the admin and guest routes.
+
 ## Remaining slices (not in this PR)
 
 - Write actions (gallery reorder, link/unlink, alt text, replace, per-photo exclusion) in `worker/room-media.ts` and the panel, reusing `media_revisions` and editor draft/publish contracts.
