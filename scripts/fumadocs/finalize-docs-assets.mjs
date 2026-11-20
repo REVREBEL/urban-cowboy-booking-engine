@@ -25,4 +25,16 @@ for (const path of walk(out).filter((file) => file.endsWith(".html"))) {
   }
   files += 1;
 }
+if (basePath) {
+  // Brand fonts are loaded from root-relative @font-face URLs in the imported
+  // CSS. Prefix them so they resolve from the deployed Pages subpath too.
+  for (const path of walk(out).filter((file) => file.endsWith(".css"))) {
+    const css = readFileSync(path, "utf8");
+    const next = css.replace(/url\((["']?)\/fonts\//g, `url($1${basePath}/fonts/`);
+    if (next !== css) {
+      writeFileSync(path, next);
+      replacements += 1;
+    }
+  }
+}
 console.log(`finalized ${files} pages, rewrote assets on ${replacements} pages (base ${basePath || "/"})`);

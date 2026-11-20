@@ -14,6 +14,8 @@ docs-app/public/assets/icons/icons-simple/
 docs-app/public/assets/icons/ui/
 docs-app/public/assets/illustrations/
 docs-app/public/assets/labels/
+docs-app/public/search-index.json
+docs-app/public/fonts/
 
 # Local D1 backups: never commit database snapshots
 backups/

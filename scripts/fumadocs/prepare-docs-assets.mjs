@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Copy the root-relative icon/illustration assets used by documented components
 // into the docs workspace so the static export publishes them under the base path.
-import { copyFileSync, mkdirSync, readdirSync } from "node:fs";
+import { copyFileSync, cpSync, mkdirSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 const root = process.cwd();
@@ -28,4 +28,6 @@ for (const asset of assets) {
   mkdirSync(dirname(target), { recursive: true });
   copyFileSync(join(root, "public", asset), target);
 }
-console.log(`prepared ${assets.length} docs icon assets`);
+// The imported typography CSS loads brand fonts from /fonts/... at runtime.
+cpSync(join(root, "public", "fonts"), join(root, "docs-app", "public", "fonts"), { recursive: true });
+console.log(`prepared ${assets.length} docs icon assets and brand fonts`);

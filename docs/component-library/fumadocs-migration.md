@@ -51,6 +51,20 @@ coverage matrix rather than listed as an unexplained backlog. Each candidate car
 `deferred` or `excluded` category with a rationale; the inventory generator fails if a new
 candidate has no decision, so the record cannot silently go stale.
 
+Sixth stage: static search and published-output verification. Catalog search is enabled in
+`RootProvider` with Fumadocs' `static` client and a build-time `search-index.json` generated
+from the MDX frontmatter and prose; there is no search API route or external service. The
+static build also copies the brand fonts into the docs export and rewrites root-relative
+`@font-face` URLs under the Pages base path. Playwright serves the export under
+`/urban-cowboy-booking-engine` and verifies search-and-navigate, deep links at desktop and
+mobile widths, and that no asset 404s occur.
+
+Published site: `https://revrebel.github.io/urban-cowboy-booking-engine/` (redirects to
+`resource-hub.revrebel.io`). At this checkpoint the live deployment still serves the stage-1
+catalog; pages from stages 2–6 return 404 until the stacked PRs are merged and the docs
+workflow redeploys from `main`. The local static export and all browser smoke results are
+recorded in CI; repeat the live checks after each upstream merge.
+
 To add a component page: create a `*.story.tsx` in `docs-app/components` importing the real
 component, expose a `defineStory` export (with a deterministic harness when the component
 needs context), add a client wrapper in `story-controls.tsx`, write the MDX page with props,

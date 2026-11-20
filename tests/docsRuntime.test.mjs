@@ -188,3 +188,77 @@ test("documented component images resolve under the Pages base path", async () =
     await new Promise((done) => server.close(done));
   }
 });
+
+test("static catalog search finds a documented component under the Pages base path", async () => {
+  const server = await serve();
+  const browser = await chromium.launch();
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    const origin = `http://127.0.0.1:${address.port}`;
+    const page = await browser.newPage();
+    const indexResponses = [];
+    page.on("response", (response) => {
+      if (response.url().endsWith("/search-index.json")) indexResponses.push(response);
+    });
+
+    await page.goto(`${origin}${basePath}/components/button/`, { waitUntil: "networkidle" });
+    await page.keyboard.press("Control+k");
+    const dialog = page.locator('[role="dialog"]');
+    await dialog.waitFor();
+    const input = dialog.locator('input[type="text"], input:not([type])').first();
+    await input.fill("dog");
+    const result = page.locator('[role="dialog"] [role="option"][id*="dog-toggle-button"]');
+    await result.waitFor();
+    assert.match(await result.innerText(), /DogToggleButton/);
+
+    // Activating the result must navigate to the base-path-prefixed deep link.
+    await result.click();
+    await page.waitForURL((url) => url.pathname === `${basePath}/components/dog-toggle-button/`);
+    assert.ok(indexResponses.some((response) => response.status() === 200), "search index loaded");
+  } finally {
+    await browser.close();
+    await new Promise((done) => server.close(done));
+  }
+});
+
+const deepLinks = [
+  { path: "/", heading: "Urban Cowboy Component Library" },
+  { path: "/components/button/", heading: "Button" },
+  { path: "/components/configurable-rate-card/", heading: "ConfigurableRateCard" },
+  { path: "/components/room-photo-tour/", heading: "Room Photo Tour" },
+  { path: "/components/date-range-picker/", heading: "Date Range Picker" },
+];
+
+test("documented deep links render at desktop and mobile widths", async () => {
+  const server = await serve();
+  const browser = await chromium.launch();
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    const origin = `http://127.0.0.1:${address.port}`;
+    for (const viewport of [{ width: 1280, height: 900 }, { width: 375, height: 812 }]) {
+      const page = await browser.newPage({ viewport });
+      const notFound = [];
+      page.on("response", (response) => {
+        if (response.status() === 404 && response.url().startsWith(origin)) notFound.push(response.url());
+      });
+      for (const { path, heading } of deepLinks) {
+        const response = await page.goto(`${origin}${basePath}${path}`, { waitUntil: "networkidle" });
+        assert.equal(response?.status(), 200, `${viewport.width}px ${path}`);
+        await page.waitForFunction(
+          (title) => [...document.querySelectorAll("h1")].some((node) => node.textContent?.includes(title)),
+          heading,
+        );
+        const overflow = await page.evaluate(() =>
+          document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        assert.ok(overflow <= 1, `${viewport.width}px ${path} has no horizontal overflow (${overflow}px)`);
+      }
+      assert.deepEqual(notFound, [], `${viewport.width}px no missing assets`);
+      await page.close();
+    }
+  } finally {
+    await browser.close();
+    await new Promise((done) => server.close(done));
+  }
+});

@@ -39,7 +39,7 @@
     "docs:inventory:check": "node scripts/fumadocs/inventory-stories.mjs --check",
     "test:docs": "node --test tests/fumadocsInventory.test.mjs",
     "docs:dev": "npm run dev -w @urban-cowboy/docs",
-    "docs:build": "node scripts/fumadocs/prepare-docs-assets.mjs && npm run build -w @urban-cowboy/docs && node scripts/fumadocs/finalize-docs-assets.mjs docs-app/out",
+    "docs:build": "node scripts/fumadocs/prepare-docs-assets.mjs && node scripts/fumadocs/build-search-index.mjs && npm run build -w @urban-cowboy/docs && node scripts/fumadocs/finalize-docs-assets.mjs docs-app/out",
     "docs:smoke": "node scripts/fumadocs/smoke-docs.mjs docs-app/out",
     "test:docs:runtime": "node --test tests/docsRuntime.test.mjs",
     "storybook": "storybook dev -p 6006",

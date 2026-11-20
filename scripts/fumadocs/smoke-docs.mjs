@@ -101,6 +101,15 @@ for (const [page, markers] of Object.entries(markersByPage)) {
   }
 }
 if (!html.includes("View source")) fail("missing rendered marker: View source");
+const searchIndex = join(out, "search-index.json");
+if (!existsSync(searchIndex)) fail("missing static search index");
+const searchData = JSON.parse(readFileSync(searchIndex, "utf8"));
+if (searchData.type !== "simple" || (searchData.docs?.count ?? 0) < 30) {
+  fail("static search index does not cover the catalog");
+}
+if (!html.includes(`${resolveDocsBasePath()}/search-index.json`)) {
+  fail("static search index is not referenced under the base path");
+}
 for (const pattern of forbidden) {
   if (pattern.test(html)) fail(`forbidden content in static HTML: ${pattern}`);
 }

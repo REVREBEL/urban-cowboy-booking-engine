@@ -51,6 +51,16 @@ test("Fumadocs is configured for static export and subpath builds", () => {
   assert.match(source, /baseUrl: "\/"/);
 });
 
+test("catalog search is static-export compatible", () => {
+  const layout = read("docs-app/app/layout.tsx");
+  const pkg = JSON.parse(read("package.json"));
+  assert.match(layout, /enabled: true/);
+  assert.match(layout, /type: "static"/);
+  assert.match(layout, /NEXT_PUBLIC_DOCS_BASE_PATH.*search-index\.json/);
+  assert.match(pkg.scripts["docs:build"], /build-search-index\.mjs/);
+  assert.match(smokeScript, /static search index/);
+});
+
 test("base path resolver covers Pages, custom-domain roots and local dev", () => {
   assert.equal(resolveDocsBasePath({}), "/urban-cowboy-booking-engine");
   assert.equal(resolveDocsBasePath({ DOCS_BASE_PATH: "/custom-path" }), "/custom-path");
