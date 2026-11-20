@@ -87,7 +87,9 @@ export interface DashboardApi {
   getD1Module<T>(module: DashboardModule, tenant?: string): Promise<T[]>;
   getContentItems<T>(kind?: string, tenant?: string, location?: string): Promise<T[]>;
   getAdminRooms<T>(): Promise<T[]>;
-  getRoomGallery<T>(roomId: string): Promise<T[]>;
+  getRoomGallery<T>(roomId: string): Promise<T>;
+  /** COW-84 image catalog for linking room gallery photos. */
+  getAdminMedia<T>(): Promise<T[]>;
   /** COW-73 amenity admin reads and the shared COW-38 editor writes. */
   getAdminAmenities<T>(): Promise<T[]>;
   getRoomAmenities<T>(roomId: string): Promise<T>;
@@ -212,8 +214,11 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
       const data = await get<{ items?: T[] }>("/api/admin/rooms");
       return data.items ?? [];
     },
-    async getRoomGallery<T>(roomId: string): Promise<T[]> {
-      const data = await get<{ items?: T[] }>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`);
+    async getRoomGallery<T>(roomId: string): Promise<T> {
+      return get<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`);
+    },
+    async getAdminMedia<T>(): Promise<T[]> {
+      const data = await get<{ items?: T[] }>("/api/admin/media");
       return data.items ?? [];
     },
     async getAdminAmenities<T>(): Promise<T[]> {

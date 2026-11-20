@@ -8,17 +8,19 @@
  */
 import type { Env } from "./mews/_lib.ts";
 import { authorizeScopedRequest, type Principal } from "./auth.ts";
-import { buildSnapshot, loadPublishedCollection } from "./content-provider.ts";
+import { buildSnapshot, loadPublishedCollection, type ContentCollection } from "./content-provider.ts";
 import { saveSnapshot } from "./published-snapshots.ts";
 import { parseSiteSettings, SITE_SETTINGS_KIND } from "../src/types/site-settings.ts";
 import {
   AMENITY_CONTENT_KIND,
   ROOM_AMENITIES_KIND,
+  ROOM_GALLERY_KIND,
   amenityContentPayloadSchema,
   createDraftSchema,
   publishSchema,
   rollbackSchema,
   roomAmenitiesPayloadSchema,
+  roomGalleryPayloadSchema,
   saveDraftSchema,
 } from "../src/types/editor-contracts.ts";
 import {
@@ -26,6 +28,7 @@ import {
   amenityWriteThrough,
   refreshAmenitySnapshots,
 } from "./amenity-publication.ts";
+import { gallerySnapshotCollections, galleryWriteThrough } from "./gallery-publication.ts";
 
 export type EditorCtx = { request: Request; env: Env; waitUntil: (promise: Promise<unknown>) => void };
 
@@ -55,8 +58,8 @@ function hasForbiddenKeys(value: unknown): boolean {
   return false;
 }
 
-/** COW-73: validate amenity documents before they can be published. */
-function amenityPayloadError(kind: string, payload: unknown): string | null {
+/** COW-73/84: validate typed documents before they can be published. */
+function typedPayloadError(kind: string, payload: unknown): string | null {
   try {
     if (kind === AMENITY_CONTENT_KIND) {
       return amenityContentPayloadSchema.safeParse(payload).success ? null : "invalid_amenity_content";
@@ -64,10 +67,24 @@ function amenityPayloadError(kind: string, payload: unknown): string | null {
     if (kind === ROOM_AMENITIES_KIND) {
       return roomAmenitiesPayloadSchema.safeParse(payload).success ? null : "invalid_room_amenities";
     }
+    if (kind === ROOM_GALLERY_KIND) {
+      return roomGalleryPayloadSchema.safeParse(payload).success ? null : "invalid_room_gallery";
+    }
     return null;
   } catch {
     return "invalid_payload";
   }
+}
+
+/** Routes a typed document to its canonical write-through and snapshot sets. */
+function writeThroughFor(db: D1Database, tenantId: string, kind: string, slug: string, payloadJson: string) {
+  return kind === ROOM_GALLERY_KIND
+    ? galleryWriteThrough(db, tenantId, slug, payloadJson)
+    : amenityWriteThrough(db, tenantId, kind, slug, payloadJson);
+}
+
+function snapshotsFor(kind: string): ContentCollection[] {
+  return [...amenitySnapshotCollections(kind), ...gallerySnapshotCollections(kind)];
 }
 
 async function readBody<T>(request: Request, schema: { parse(value: unknown): T }): Promise<T | Response> {
@@ -211,7 +228,7 @@ export async function createEditorDraft(
   if (input.kind === SITE_SETTINGS_KIND && !parseSiteSettings(input.payload)) {
     return json({ error: "invalid_site_settings" }, 400);
   }
-  const amenityError = amenityPayloadError(input.kind, input.payload);
+  const amenityError = typedPayloadError(input.kind, input.payload);
   if (amenityError) return json({ error: amenityError }, 400);
   const duplicate = await db.prepare(
     "SELECT id FROM content_items WHERE tenant_id = ?1 AND kind = ?2 AND slug = ?3 AND location_id IS ?4",
@@ -259,7 +276,7 @@ export async function saveEditorDraft(
   if (item.kind === SITE_SETTINGS_KIND && !parseSiteSettings(input.payload)) {
     return json({ error: "invalid_site_settings" }, 400);
   }
-  const amenityError = amenityPayloadError(item.kind, input.payload);
+  const amenityError = typedPayloadError(item.kind, input.payload);
   if (amenityError) return json({ error: amenityError }, 400);
   const working = await workingRevisionId(db, principal.tenantId, item);
   // Seeded items were created before migration 0006, so their pointer row may
@@ -336,9 +353,9 @@ export async function publishEditorItem(
   if (item.kind === SITE_SETTINGS_KIND && !parseSiteSettings(payload)) {
     return json({ error: "invalid_site_settings" }, 400);
   }
-  const amenityError = amenityPayloadError(item.kind, payload);
+  const amenityError = typedPayloadError(item.kind, payload);
   if (amenityError) return json({ error: amenityError }, 400);
-  const writeThrough = await amenityWriteThrough(
+  const writeThrough = await writeThroughFor(
     db, principal.tenantId, item.kind, item.slug, revision.payload_json,
   );
   if ("error" in writeThrough) return json({ error: writeThrough.error }, writeThrough.status);
@@ -359,7 +376,7 @@ export async function publishEditorItem(
   ]);
   const refreshed = await refreshPublishedSnapshot(db, ctx.env, principal.tenantId, item.location_id);
   const amenityRefreshed = await refreshAmenitySnapshots(
-    db, principal.tenantId, amenitySnapshotCollections(item.kind),
+    db, principal.tenantId, snapshotsFor(item.kind),
   );
   return json({
     id, revisionId, status: "published",
@@ -384,7 +401,7 @@ export async function rollbackEditorItem(
     "SELECT id, payload_json FROM content_revisions WHERE id = ?1 AND content_item_id = ?2",
   ).bind(input.revisionId, id).first() as { id: string; payload_json: string } | null;
   if (!revision) return json({ error: "revision_not_found" }, 404);
-  const writeThrough = await amenityWriteThrough(
+  const writeThrough = await writeThroughFor(
     db, principal.tenantId, item.kind, item.slug, revision.payload_json,
   );
   if ("error" in writeThrough) return json({ error: writeThrough.error }, writeThrough.status);
@@ -407,7 +424,7 @@ export async function rollbackEditorItem(
   ]);
   const refreshed = await refreshPublishedSnapshot(db, ctx.env, principal.tenantId, item.location_id);
   const amenityRefreshed = await refreshAmenitySnapshots(
-    db, principal.tenantId, amenitySnapshotCollections(item.kind),
+    db, principal.tenantId, snapshotsFor(item.kind),
   );
   return json({
     id, revisionId: input.revisionId, status: "published",

@@ -40,6 +40,11 @@
       "id": 8,
       "file": "0008_durable_hotspots.sql",
       "sha256": "8ac80f56cfe1fa4e84bb0b3d29a6fc37ca2a697d243c760297d0bb0a8e00d6ba"
+    },
+    {
+      "id": 9,
+      "file": "0009_media_placement_flags.sql",
+      "sha256": "f678db65b86abd023b29a380624a12e4bb54a2039e335c1aebc91046d0a7ffe3"
     }
   ]
 }

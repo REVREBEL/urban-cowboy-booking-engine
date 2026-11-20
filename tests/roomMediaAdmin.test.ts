@@ -53,6 +53,8 @@ function makeDb() {
     "migrations/0003_property_scoped_contracts.sql",
     "migrations/0004_published_snapshots.sql",
     "migrations/0005_media_registry.sql",
+    "migrations/0008_durable_hotspots.sql",
+    "migrations/0009_media_placement_flags.sql",
   ]) db.exec(read(file));
 
   db.exec(`
@@ -265,7 +267,10 @@ test("worker admin routes guard malformed ids and never scope from the query", (
 test("roomGalleryRowSchema transforms a stored row and rejects malformed tags", () => {
   const row = {
     placement_id: "p1", media_asset_id: "m1", display_order: 0,
-    original_filename: "photo.png", width: 100, height: 80, alt_text: "A room",
+    original_filename: "photo.png",
+    source_url: "https://images.squarespace-cdn.com/room.jpg",
+    source_asset_id: "sqsp-1", excluded: 0,
+    width: 100, height: 80, alt_text: "A room",
     caption: null, description: null, tags: '["room"]', current_version_id: "v1",
     cloudinary_public_id: "cld/photo", cloudinary_version: "v1", sha256: "h",
   };
