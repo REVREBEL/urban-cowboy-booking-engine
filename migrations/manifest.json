@@ -35,6 +35,11 @@
       "id": 7,
       "file": "0007_amenity_editorial.sql",
       "sha256": "ac075771f9e2983f5a978ca74fe005b451f731bd1e28af5a0c27230ef0e5babc"
+    },
+    {
+      "id": 8,
+      "file": "0008_durable_hotspots.sql",
+      "sha256": "8ac80f56cfe1fa4e84bb0b3d29a6fc37ca2a697d243c760297d0bb0a8e00d6ba"
     }
   ]
 }

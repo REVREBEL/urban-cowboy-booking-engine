@@ -676,3 +676,147 @@ export const roomGalleryRowSchema = z.object({
   sha256: row.sha256,
 }));
 export type RoomGalleryRow = z.output<typeof roomGalleryRowSchema>;
+
+// ---------------------------------------------------------------------------
+// COW-34 durable hotspot mappings
+// ---------------------------------------------------------------------------
+
+const optionalCoordinate = z.number().min(0).max(1);
+const orientation = z.number().int().min(1).max(8);
+
+export const mediaVersionFingerprintRowSchema = z.object({
+  version_id: id,
+  tenant_id: id,
+  media_asset_id: id,
+  sha256: nullableText,
+  phash: nullableText,
+  width: z.number().int().nullable(),
+  height: z.number().int().nullable(),
+  exif_orientation: orientation,
+  created_at: timestamp,
+}).transform((row) => ({
+  versionId: row.version_id,
+  tenantId: row.tenant_id,
+  mediaAssetId: row.media_asset_id,
+  sha256: row.sha256,
+  phash: row.phash,
+  width: row.width,
+  height: row.height,
+  exifOrientation: row.exif_orientation,
+  createdAt: row.created_at,
+}));
+export type MediaVersionFingerprintRow = z.output<typeof mediaVersionFingerprintRowSchema>;
+
+export const photoHotspotMappingRowSchema = z.object({
+  id,
+  tenant_id: id,
+  media_asset_id: id,
+  placement_id: nullableText,
+  target_table: nullableText,
+  target_id: nullableText,
+  amenity_id: id,
+  source_x: optionalCoordinate,
+  source_y: optionalCoordinate,
+  source_version_id: id,
+  source_width: z.number().int().nullable(),
+  source_height: z.number().int().nullable(),
+  exif_orientation: orientation,
+  crop_left: z.number().nullable(),
+  crop_top: z.number().nullable(),
+  crop_width: z.number().nullable(),
+  crop_height: z.number().nullable(),
+  display_order: z.number().int(),
+  status: z.enum(["draft", "published"]),
+  review_state: z.enum(["none", "pending", "approved"]),
+  review_reason: nullableText,
+  derived_from: nullableText,
+  duplicate_of: nullableText,
+  created_at: timestamp,
+  updated_at: timestamp,
+}).transform((row) => ({
+  id: row.id,
+  tenantId: row.tenant_id,
+  mediaAssetId: row.media_asset_id,
+  placementId: row.placement_id,
+  targetTable: row.target_table,
+  targetId: row.target_id,
+  amenityId: row.amenity_id,
+  sourceX: row.source_x,
+  sourceY: row.source_y,
+  sourceVersionId: row.source_version_id,
+  sourceWidth: row.source_width,
+  sourceHeight: row.source_height,
+  exifOrientation: row.exif_orientation,
+  cropLeft: row.crop_left,
+  cropTop: row.crop_top,
+  cropWidth: row.crop_width,
+  cropHeight: row.crop_height,
+  displayOrder: row.display_order,
+  status: row.status,
+  reviewState: row.review_state,
+  reviewReason: row.review_reason,
+  derivedFrom: row.derived_from,
+  duplicateOf: row.duplicate_of,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+}));
+export type PhotoHotspotMappingRow = z.output<typeof photoHotspotMappingRowSchema>;
+
+/** Revision snapshots store the transformed row, not the raw D1 shape. */
+export const photoHotspotMappingSnapshotSchema = z.object({
+  id,
+  tenantId: id,
+  mediaAssetId: id,
+  placementId: nullableText,
+  targetTable: nullableText,
+  targetId: nullableText,
+  amenityId: id,
+  sourceX: z.number().min(0).max(1),
+  sourceY: z.number().min(0).max(1),
+  sourceVersionId: id,
+  sourceWidth: z.number().int().nullable(),
+  sourceHeight: z.number().int().nullable(),
+  exifOrientation: orientation,
+  cropLeft: z.number().nullable(),
+  cropTop: z.number().nullable(),
+  cropWidth: z.number().nullable(),
+  cropHeight: z.number().nullable(),
+  displayOrder: z.number().int(),
+  status: z.enum(["draft", "published"]),
+  reviewState: z.enum(["none", "pending", "approved"]),
+  reviewReason: nullableText,
+  derivedFrom: nullableText,
+  duplicateOf: nullableText,
+  createdAt: timestamp,
+  updatedAt: timestamp,
+});
+
+export const photoHotspotMappingRevisionRowSchema = z.object({
+  id,
+  tenant_id: id,
+  mapping_id: id,
+  media_asset_id: id,
+  from_version_id: nullableText,
+  to_version_id: id,
+  action: z.enum(["create", "carry", "remap", "review", "publish", "rollback"]),
+  snapshot_json: z.string().min(1).refine((value) => {
+    try { JSON.parse(value); return true; } catch { return false; }
+  }, "snapshot_json must be valid JSON"),
+  actor: nullableText,
+  note: nullableText,
+  created_at: timestamp,
+}).transform((row) => ({
+  id: row.id,
+  tenantId: row.tenant_id,
+  mappingId: row.mapping_id,
+  mediaAssetId: row.media_asset_id,
+  fromVersionId: row.from_version_id,
+  toVersionId: row.to_version_id,
+  action: row.action,
+  snapshotJson: row.snapshot_json,
+  actor: row.actor,
+  note: row.note,
+  createdAt: row.created_at,
+}));
+export type PhotoHotspotMappingRevisionRow = z.output<typeof photoHotspotMappingRevisionRowSchema>;
+
