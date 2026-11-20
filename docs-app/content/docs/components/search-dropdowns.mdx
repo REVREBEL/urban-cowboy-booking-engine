@@ -1,0 +1,34 @@
+---
+title: Search dropdowns
+description: Guest, location and promo panels used by the booking search bar.
+---
+
+import { SearchGuestsDropdownStoryControl, SearchLocationDropdownStoryControl, SearchPromoDropdownStoryControl } from '~/components/story-controls';
+
+These panels are the interactive controls behind `SearchBar`. Each demo keeps its value in a
+docs-only harness and reports the last action locally; no offer is validated or applied.
+
+## Guests
+
+<SearchGuestsDropdownStoryControl />
+
+## Location
+
+<SearchLocationDropdownStoryControl />
+
+## Promo
+
+<SearchPromoDropdownStoryControl />
+
+| Component | Key props | Notes |
+| --- | --- | --- |
+| `SearchBarGuestDropdown` | `initialCounts`, `onChange`, `onClose` | Adults/children steppers with accessible labels |
+| `SearchBarLocationDropdown` | `initialValue`, `onChange`, `focusOnOpen` | Uses the canonical location ids from `DEFAULT_LOCATIONS` |
+| `SearchBarPromoDropdown` | `initialValue`, `onChange`, `onApply`, `closeOnApply` | `onApply` is a docs-only callback here |
+
+## Responsive behaviour
+
+Panels open below their trigger and stay within the viewport on narrow screens. Focus is returned
+to the trigger on close via the component's own keyboard handling.
+
+[Guests source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBarGuestsDropdown.tsx) · [Location source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBarLocationDropdown.tsx) · [Promo source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBarPromoDropdown.tsx)

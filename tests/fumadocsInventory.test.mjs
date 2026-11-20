@@ -1,6 +1,6 @@
 // COW-70: the generated coverage matrix must map stories to real docs pages.
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
 
@@ -66,6 +66,16 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     StepProgress: "docs-app/content/docs/components/step-progress.mdx",
     ProgressBar: "docs-app/content/docs/components/progress-bar.mdx",
     ProgressStep: "docs-app/content/docs/components/progress-step.mdx",
+    SearchBar: "docs-app/content/docs/components/search-bar.mdx",
+    SearchBarExpanded: "docs-app/content/docs/components/search-bar.mdx",
+    SearchBarGuestDropdown: "docs-app/content/docs/components/search-dropdowns.mdx",
+    SearchBarLocationDropdown: "docs-app/content/docs/components/search-dropdowns.mdx",
+    SearchBarPromoDropdown: "docs-app/content/docs/components/search-dropdowns.mdx",
+    Header: "docs-app/content/docs/components/booking-chrome.mdx",
+    ContactBar: "docs-app/content/docs/components/booking-chrome.mdx",
+    Conversion: "docs-app/content/docs/components/conversion-badges.mdx",
+    UpsellCard: "docs-app/content/docs/components/extras-upsell.mdx",
+    RoomsListCard: "docs-app/content/docs/components/room-list-card.mdx",
   };
   for (const [name, page] of Object.entries(expectedPaths)) {
     const documented = byComponent(name).find((entry) => entry.status === "documented");
@@ -92,9 +102,39 @@ test("every undocumented production candidate has an explicit triage decision", 
   assert.ok(candidates.length > 0, "candidate list is present");
   for (const candidate of candidates) {
     assert.ok(candidate.name && candidate.source, `candidate identity ${JSON.stringify(candidate)}`);
-    assert.ok(["deferred", "excluded"].includes(candidate.triage?.category), `triage category for ${candidate.name}`);
+    assert.ok(
+      ["deferred", "excluded", "documented", "family-covered"].includes(candidate.triage?.category),
+      `triage category for ${candidate.name}`,
+    );
     assert.ok((candidate.triage?.rationale ?? "").length > 20, `triage rationale for ${candidate.name}`);
   }
   const summary = matrix.totals.candidateTriage;
-  assert.equal(summary.deferred + summary.excluded, candidates.length, "triage summary covers every candidate");
+  assert.equal(
+    summary.deferred + summary.excluded + summary.documented + summary.familyCovered,
+    candidates.length,
+    "triage summary covers every candidate",
+  );
+  assert.equal(summary.deferred, 0, "no production candidate is left deferred");
+});
+
+test("inventory check rejects documented pages missing from the component index", () => {
+  const metaUrl = new URL("../docs-app/content/docs/components/meta.json", import.meta.url);
+  const original = readFileSync(metaUrl, "utf8");
+  const meta = JSON.parse(original);
+  try {
+    writeFileSync(metaUrl, JSON.stringify({
+      ...meta, pages: meta.pages.filter((slug) => slug !== "button"),
+    }, null, 2) + "\n");
+    const check = spawnSync(process.execPath, ["scripts/fumadocs/inventory-stories.mjs", "--check"], {
+      cwd: new URL("..", import.meta.url), encoding: "utf8",
+    });
+    assert.equal(check.status, 1);
+    assert.match(check.stderr, /not listed in components\/meta\.json/);
+  } finally {
+    writeFileSync(metaUrl, original);
+  }
+  const restored = spawnSync(process.execPath, ["scripts/fumadocs/inventory-stories.mjs", "--check"], {
+    cwd: new URL("..", import.meta.url), encoding: "utf8",
+  });
+  assert.equal(restored.status, 0, restored.stderr);
 });
