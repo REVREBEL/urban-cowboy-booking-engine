@@ -30,6 +30,7 @@ function makeDb() {
     "migrations/0004_published_snapshots.sql",
     "migrations/0005_media_registry.sql",
     "migrations/0006_working_revision_pointer.sql",
+    "migrations/0007_amenity_editorial.sql",
   ]) db.exec(read(file));
   db.exec("INSERT INTO tenants (id, slug, name) VALUES ('urban-cowboy','urban-cowboy','Urban Cowboy')");
   db.exec("INSERT INTO locations (id, tenant_id, slug, name) VALUES ('catskills','urban-cowboy','catskills','Catskills')");

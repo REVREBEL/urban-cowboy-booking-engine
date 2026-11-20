@@ -5,6 +5,7 @@
 import type { Env } from "./mews/_lib";
 import {
   addOnRowSchema,
+  amenityEditorialRowSchema,
   amenityRowSchema,
   buildingRowSchema,
   contentItemRowSchema,
@@ -14,8 +15,10 @@ import {
   mediaAliasRowSchema,
   mediaAssetRowSchema,
   roomTypeRowSchema,
+  roomAmenityAssignmentRowSchema,
   type AddOnContract,
   type AmenityContract,
+  type AmenityEditorialContract,
   type BuildingContract,
   type ContentItemContract,
   type ContentProvenanceContract,
@@ -25,6 +28,7 @@ import {
   type MediaAssetContract,
   type MediaAliasType,
   type RoomTypeContract,
+  type RoomAmenityAssignmentRow,
 } from "../src/types/d1-contracts.ts";
 
 export interface TenantScope {
@@ -295,6 +299,105 @@ export function listScopedAmenities(db: D1Database, scope: TenantScope): Promise
     `${AMENITIES_SELECT} WHERE tenant_id = ?1 ORDER BY sort_order, id`,
     [scope.tenantId],
     amenityRowSchema,
+  );
+}
+
+/** COW-73: published editorial overlay rows for amenities in this tenant. */
+export function listScopedAmenityEditorial(
+  db: D1Database,
+  scope: TenantScope,
+): Promise<AmenityEditorialContract[]> {
+  return allScoped(
+    db,
+    "SELECT amenity_id, tenant_id, short_name, short_description, long_description, active, updated_at FROM amenity_editorial WHERE tenant_id = ?1",
+    [scope.tenantId],
+    amenityEditorialRowSchema,
+  );
+}
+
+/**
+ * COW-73: a room only opts into D1-sourced guest amenities once an editor has
+ * published its own `room_amenities` document. Without that explicit per-room
+ * decision the guest must keep the Webflow list, even if other rooms migrated.
+ */
+export async function hasPublishedRoomAmenities(
+  db: D1Database,
+  tenantId: string,
+  roomTypeId: string,
+): Promise<boolean> {
+  const row = await db.prepare(
+    `SELECT 1 FROM content_items
+      WHERE tenant_id = ?1 AND kind = 'room_amenities' AND slug = ?2
+        AND status = 'published'`,
+  ).bind(tenantId, roomTypeId).first();
+  return row !== null;
+}
+
+/** Slugs of rooms whose own assignment document has been published. */
+export async function listPublishedRoomAmenitySlugs(
+  db: D1Database,
+  tenantId: string,
+): Promise<Set<string>> {
+  const result = await db.prepare(
+    `SELECT slug FROM content_items
+      WHERE tenant_id = ?1 AND kind = 'room_amenities' AND status = 'published'`,
+  ).bind(tenantId).all();
+  return new Set((result.results ?? []).map((row: any) => row.slug as string));
+}
+
+/** Tenant-wide ordered assignments in one query, grouped by the caller. */
+export function listRoomAmenityAssignmentsForTenant(
+  db: D1Database,
+  tenantId: string,
+  publishedOnly = false,
+): Promise<RoomAmenityAssignmentRow[]> {
+  const activeClause = publishedOnly ? " AND (e.active IS NULL OR e.active = 1)" : "";
+  return allScoped(
+    db,
+    `SELECT ra.room_type_id, a.id AS amenity_id, a.name, a.image_name, a.image_path, a.sort_order,
+            COALESCE(e.short_name, a.name) AS short_name,
+            e.short_description, e.long_description,
+            COALESCE(e.active, 1) AS active,
+            ra.display_order, ra.excluded
+       FROM room_type_amenities ra
+       JOIN room_types rt ON rt.id = ra.room_type_id AND rt.tenant_id = ?1
+       JOIN amenities a ON a.id = ra.amenity_id AND a.tenant_id = ?1
+       LEFT JOIN amenity_editorial e ON e.amenity_id = a.id AND e.tenant_id = ?1
+      WHERE 1 = 1${activeClause}
+      ORDER BY ra.room_type_id, ra.display_order, a.sort_order, a.id`,
+    [tenantId],
+    roomAmenityAssignmentRowSchema,
+  );
+}
+
+/**
+ * COW-73: ordered amenities assigned to one room, joined to the published
+ * editorial overlay. Tenant ownership is proven by both the room and the
+ * amenity rows. `publishedOnly` hides inactive amenities from guest snapshots
+ * while the admin keeps seeing them so they can be re-enabled.
+ */
+export function listRoomAmenityAssignments(
+  db: D1Database,
+  tenantId: string,
+  roomTypeId: string,
+  publishedOnly = false,
+): Promise<RoomAmenityAssignmentRow[]> {
+  const activeClause = publishedOnly ? " AND (e.active IS NULL OR e.active = 1)" : "";
+  return allScoped(
+    db,
+    `SELECT ra.room_type_id, a.id AS amenity_id, a.name, a.image_name, a.image_path, a.sort_order,
+            COALESCE(e.short_name, a.name) AS short_name,
+            e.short_description, e.long_description,
+            COALESCE(e.active, 1) AS active,
+            ra.display_order, ra.excluded
+       FROM room_type_amenities ra
+       JOIN room_types rt ON rt.id = ra.room_type_id AND rt.tenant_id = ?2
+       JOIN amenities a ON a.id = ra.amenity_id AND a.tenant_id = ?2
+       LEFT JOIN amenity_editorial e ON e.amenity_id = a.id AND e.tenant_id = ?2
+      WHERE ra.room_type_id = ?1${activeClause}
+      ORDER BY ra.display_order, a.sort_order, a.id`,
+    [roomTypeId, tenantId],
+    roomAmenityAssignmentRowSchema,
   );
 }
 

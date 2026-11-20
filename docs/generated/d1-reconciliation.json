@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-18T10:21:48.178Z",
+  "generatedAt": "2026-11-19T23:06:43.374Z",
   "sourceDirectory": "webflow_cms_export",
   "tenantId": "urban-cowboy",
   "policy": {
@@ -129,6 +129,7 @@
     "locations": 4,
     "buildings": 9,
     "amenities": 76,
+    "amenity_editorial": 76,
     "room_types": 22,
     "room_type_amenities": 253,
     "events": 8,
@@ -193,66 +194,70 @@
     },
     {
       "id": "F-03",
-      "message": "253 room-to-amenity references resolved into 253 relationship rows (21 restricted-amenity flags, all subsets of features-amenities)."
+      "message": "76 published amenities carry editorial descriptions/visibility into amenity_editorial; image paths remain admin-authored and reseeding preserves published edits."
     },
     {
       "id": "F-04",
-      "message": "1 of 22 room types are drafts in the export. room_types has no status column, so D1 cannot filter them; record IDs for editorial review."
+      "message": "253 room-to-amenity references resolved into 253 relationship rows (21 restricted-amenity flags, all subsets of features-amenities)."
     },
     {
       "id": "F-05",
-      "message": "5 of 8 events are recurring and used recurring-start as starts_at. Times are stored verbatim (source Z suffix); confirm the America/New_York interpretation before cutover."
+      "message": "1 of 22 room types are drafts in the export. room_types has no status column, so D1 cannot filter them; record IDs for editorial review."
     },
     {
       "id": "F-06",
-      "message": "3 of 8 offers have no Mews rate product ID; they are imported as draft/editorial-only (not bookable) and should be confirmed with Mews."
+      "message": "5 of 8 events are recurring and used recurring-start as starts_at. Times are stored verbatim (source Z suffix); confirm the America/New_York interpretation before cutover."
     },
     {
       "id": "F-07",
-      "message": "9 add-ons retained their non-empty Mews product IDs; validate them against Mews as the system of record."
+      "message": "3 of 8 offers have no Mews rate product ID; they are imported as draft/editorial-only (not bookable) and should be confirmed with Mews."
     },
     {
       "id": "F-08",
-      "message": "Published Catskills site settings imported as a site_settings content item; draft edits cannot change guest behavior until publish."
+      "message": "9 add-ons retained their non-empty Mews product IDs; validate them against Mews as the system of record."
     },
     {
       "id": "F-09",
-      "message": "190 provenance rows link imported records to the 2026-11-15 export and its source file hashes."
+      "message": "Published Catskills site settings imported as a site_settings content item; draft edits cannot change guest behavior until publish."
     },
     {
       "id": "F-10",
-      "message": "238 photo hotspots were NOT imported: the export has no photo-file-id/photo-url, so there is no legitimate media_asset_id. No placeholder FKs or FK-disabling were used. Re-export with media identity, then import hotspots and media_assets."
+      "message": "190 provenance rows link imported records to the 2026-11-15 export and its source file hashes."
     },
     {
       "id": "F-11",
-      "message": "photo_hotspots.display-order has no column in the current D1 schema; add it in a migration before importing hotspots so editorial medallion order is preserved."
+      "message": "238 photo hotspots were NOT imported: the export has no photo-file-id/photo-url, so there is no legitimate media_asset_id. No placeholder FKs or FK-disabling were used. Re-export with media identity, then import hotspots and media_assets."
     },
     {
       "id": "F-12",
-      "message": "Duplicate export(s) skipped for buildings: 2026-11-15 - Buildings 2.csv (byte-identical after BOM normalization)."
+      "message": "photo_hotspots.display-order has no column in the current D1 schema; add it in a migration before importing hotspots so editorial medallion order is preserved."
     },
     {
       "id": "F-13",
-      "message": "Duplicate export(s) skipped for outlets: 2026-11-15 - Outlets 2.csv (byte-identical after BOM normalization)."
+      "message": "Duplicate export(s) skipped for buildings: 2026-11-15 - Buildings 2.csv (byte-identical after BOM normalization)."
     },
     {
       "id": "F-14",
-      "message": "Menu Items export is empty; no import required."
+      "message": "Duplicate export(s) skipped for outlets: 2026-11-15 - Outlets 2.csv (byte-identical after BOM normalization)."
     },
     {
       "id": "F-15",
-      "message": "instagrams: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = instagram)."
+      "message": "Menu Items export is empty; no import required."
     },
     {
       "id": "F-16",
-      "message": "outlets: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = outlet)."
+      "message": "instagrams: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = instagram)."
     },
     {
       "id": "F-17",
-      "message": "contentSettings: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = policy)."
+      "message": "outlets: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = outlet)."
     },
     {
       "id": "F-18",
+      "message": "contentSettings: no dedicated D1 table; imported into content_items/content_revisions as a versioned content model (kind = policy)."
+    },
+    {
+      "id": "F-19",
       "message": "content_settings is a draft in the export (isDraft=true, no lastPublished); its content_item status is 'draft' and will not appear in published APIs until approved."
     }
   ],

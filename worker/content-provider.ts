@@ -9,8 +9,11 @@
  */
 import {
   getDb,
+  listPublishedRoomAmenitySlugs,
+  listRoomAmenityAssignmentsForTenant,
   listScopedAddOns,
   listScopedAmenities,
+  listScopedAmenityEditorial,
   listScopedBuildings,
   listScopedContentItems,
   listScopedEvents,
@@ -26,6 +29,7 @@ export const CONTENT_COLLECTIONS = [
   "buildings",
   "roomTypes",
   "amenities",
+  "roomAmenities",
   "addOns",
   "events",
   "contentItems",
@@ -87,13 +91,60 @@ async function loadAllRows(
           name: row.name, slug: row.slug, sortOrder: row.sortOrder,
         },
       }));
-    case "amenities":
-      return (await listScopedAmenities(db, scope)).map((row) => ({
-        id: row.id, collection, payload: {
-          name: row.name, imageName: row.imageName, imagePath: row.imagePath,
-          sortOrder: row.sortOrder,
-        },
-      }));
+    case "amenities": {
+      const amenities = await listScopedAmenities(db, scope);
+      const editorial = await listScopedAmenityEditorial(db, scope);
+      const editorialById = new Map(editorial.map((row) => [row.amenityId, row]));
+      return amenities.map((row) => {
+        const content = editorialById.get(row.id);
+        return {
+          id: row.id, collection, payload: {
+            name: row.name, imageName: row.imageName, imagePath: row.imagePath,
+            sortOrder: row.sortOrder,
+            shortName: content?.shortName ?? row.name,
+            shortDescription: content?.shortDescription ?? null,
+            longDescription: content?.longDescription ?? null,
+            active: content?.active ?? true,
+          },
+        };
+      });
+    }
+    case "roomAmenities": {
+      // One document per room type, keyed by the canonical Webflow id. A room
+      // only becomes guest-facing here after its OWN room_amenities document is
+      // published; otherwise the guest keeps Webflow. This also keeps imported
+      // draft rooms (which D1 cannot flag) out of the published view.
+      const [rooms, migratedSlugs, allAssignments] = await Promise.all([
+        listScopedRoomTypes(db, scope),
+        listPublishedRoomAmenitySlugs(db, scope.tenantId),
+        listRoomAmenityAssignmentsForTenant(db, scope.tenantId, true),
+      ]);
+      const byRoom = new Map<string, typeof allAssignments>();
+      for (const assignment of allAssignments) {
+        const list = byRoom.get(assignment.roomTypeId) ?? [];
+        list.push(assignment);
+        byRoom.set(assignment.roomTypeId, list);
+      }
+      return rooms
+        .filter((room) => isPublishedSource("roomTypes", room.id))
+        .map((room) => ({
+          id: room.id, collection, payload: {
+            mewsRoomCategoryId: room.mewsRoomCategoryId,
+            migrated: migratedSlugs.has(room.id),
+            amenities: (byRoom.get(room.id) ?? []).map((amenity) => ({
+              amenityId: amenity.amenityId,
+              name: amenity.name,
+              shortName: amenity.shortName,
+              shortDescription: amenity.shortDescription,
+              longDescription: amenity.longDescription,
+              imagePath: amenity.imagePath,
+              imageName: amenity.imageName,
+              displayOrder: amenity.displayOrder,
+              excluded: amenity.excluded,
+            })),
+          },
+        }));
+    }
     case "addOns":
       return (await listScopedAddOns(db, scope)).map((row) => ({
         id: row.id, collection, payload: {
@@ -176,7 +227,7 @@ export async function buildSnapshot(
 
 /** Collections whose D1 table has no publication column; presence is publication. */
 const IMPLICITLY_PUBLISHED = new Set<ContentCollection>([
-  "locations", "buildings", "roomTypes", "amenities",
+  "locations", "buildings", "roomTypes", "amenities", "roomAmenities",
 ]);
 
 /** Small, comparable projection for structured parity reporting. */

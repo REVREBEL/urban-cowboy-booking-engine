@@ -30,6 +30,11 @@
       "id": 6,
       "file": "0006_working_revision_pointer.sql",
       "sha256": "d295efccbc8cb6d7e76bef4fbf1bcd6ffebe5161c8da8978a56981a629597974"
+    },
+    {
+      "id": 7,
+      "file": "0007_amenity_editorial.sql",
+      "sha256": "ac075771f9e2983f5a978ca74fe005b451f731bd1e28af5a0c27230ef0e5babc"
     }
   ]
 }

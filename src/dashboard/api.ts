@@ -88,6 +88,13 @@ export interface DashboardApi {
   getContentItems<T>(kind?: string, tenant?: string, location?: string): Promise<T[]>;
   getAdminRooms<T>(): Promise<T[]>;
   getRoomGallery<T>(roomId: string): Promise<T[]>;
+  /** COW-73 amenity admin reads and the shared COW-38 editor writes. */
+  getAdminAmenities<T>(): Promise<T[]>;
+  getRoomAmenities<T>(roomId: string): Promise<T>;
+  createEditorItem<T>(input: { kind: string; slug: string; payload: unknown }): Promise<T>;
+  saveEditorDraft<T>(itemId: string, input: { payload: unknown; expectedRevisionId: string }): Promise<T>;
+  publishEditorItem<T>(itemId: string): Promise<T>;
+  rollbackEditorItem<T>(itemId: string, revisionId: string): Promise<T>;
 }
 
 function errorFrom(status: number, text: string): DashboardApiError {
@@ -144,48 +151,52 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     }
   }
 
+  async function post<T>(path: string, body: unknown): Promise<T> {
+    if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
+    const timed = requestSignal();
+    try {
+      const response = await doFetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        signal: timed.signal,
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw errorFrom(response.status, text);
+      }
+      return (await response.json()) as T;
+    } finally {
+      timed.dispose();
+    }
+  }
+
+  async function patch<T>(path: string, body: unknown): Promise<T> {
+    if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
+    const timed = requestSignal();
+    try {
+      const response = await doFetch(path, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        signal: timed.signal,
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw errorFrom(response.status, text);
+      }
+      return (await response.json()) as T;
+    } finally {
+      timed.dispose();
+    }
+  }
+
   return {
     get,
-    async post<T>(path: string, body: unknown): Promise<T> {
-      if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
-      const timed = requestSignal();
-      try {
-        const response = await doFetch(path, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "same-origin",
-          signal: timed.signal,
-          body: JSON.stringify(body),
-        });
-        if (!response.ok) {
-          const text = await response.text().catch(() => "");
-          throw errorFrom(response.status, text);
-        }
-        return (await response.json()) as T;
-      } finally {
-        timed.dispose();
-      }
-    },
-    async patch<T>(path: string, body: unknown): Promise<T> {
-      if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
-      const timed = requestSignal();
-      try {
-        const response = await doFetch(path, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "same-origin",
-          signal: timed.signal,
-          body: JSON.stringify(body),
-        });
-        if (!response.ok) {
-          const text = await response.text().catch(() => "");
-          throw errorFrom(response.status, text);
-        }
-        return (await response.json()) as T;
-      } finally {
-        timed.dispose();
-      }
-    },
+    post,
+    patch,
     async getD1Module<T>(module: DashboardModule, tenant = DASHBOARD_TENANT): Promise<T[]> {
       // Only add-ons has a dedicated /api/d1 route. events, offers and upgrades
       // are served by /api/content/<module> in worker/index.ts.
@@ -204,6 +215,28 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     async getRoomGallery<T>(roomId: string): Promise<T[]> {
       const data = await get<{ items?: T[] }>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`);
       return data.items ?? [];
+    },
+    async getAdminAmenities<T>(): Promise<T[]> {
+      const data = await get<{ items?: T[] }>("/api/admin/amenities");
+      return data.items ?? [];
+    },
+    async getRoomAmenities<T>(roomId: string): Promise<T> {
+      return get<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/amenities`);
+    },
+    async createEditorItem<T>(input: { kind: string; slug: string; payload: unknown }): Promise<T> {
+      return post<T>("/api/content/editor/items", input);
+    },
+    async saveEditorDraft<T>(
+      itemId: string,
+      input: { payload: unknown; expectedRevisionId: string },
+    ): Promise<T> {
+      return patch<T>(`/api/content/editor/items/${encodeURIComponent(itemId)}`, input);
+    },
+    async publishEditorItem<T>(itemId: string): Promise<T> {
+      return post<T>(`/api/content/editor/items/${encodeURIComponent(itemId)}/publish`, {});
+    },
+    async rollbackEditorItem<T>(itemId: string, revisionId: string): Promise<T> {
+      return post<T>(`/api/content/editor/items/${encodeURIComponent(itemId)}/rollback`, { revisionId });
     },
   };
 }

@@ -301,6 +301,31 @@ addSection("amenities", buildInsert(
 note(`${collections.amenities.rows.length} amenities have no image-name/image-path columns in ` +
   "this export; image_name/image_path are NULL (no fabricated icon filenames).");
 
+// 4b. COW-73 amenity editorial overlay. The Amenities export carries the prose
+// and visibility fields that guest rendering needs but `amenities` never stored.
+// Only published CMS rows are imported; drafts never reach the canonical table.
+const amenityEditorialRows = collections.amenities.rows
+  .filter((r) => published(r))
+  .map((r) => [
+    val(r, "id"), TENANT_ID,
+    val(r, "short-name") || null,
+    val(r, "short-description") || null,
+    val(r, "long-description") || null,
+    isTrue(r, "active") ? 1 : 0,
+  ]);
+// Reseeding must not overwrite editor-owned published values: an empty update
+// list produces ON CONFLICT DO NOTHING. The CMS export is a one-time baseline.
+addSection("amenity_editorial", buildInsert(
+  "amenity_editorial",
+  ["amenity_id", "tenant_id", "short_name", "short_description", "long_description", "active"],
+  amenityEditorialRows,
+  ["amenity_id"],
+  [],
+));
+note(`${amenityEditorialRows.length} published amenities carry editorial descriptions/` +
+  "visibility into amenity_editorial; image paths remain admin-authored and " +
+  "reseeding preserves published edits.");
+
 // 5. Room types. All 22 source rows carry property-location = Catskills and a
 // non-empty Mews category ID; assert rather than assume.
 const roomIds = new Set(collections.roomTypes.rows.map((r) => val(r, "id")));
