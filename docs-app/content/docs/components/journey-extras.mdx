@@ -1,0 +1,50 @@
+---
+title: Journey Extras Step
+description: Add-on selection step with local totals and scheduling preferences.
+---
+
+import {
+  ExtrasAvailableStoryControl,
+  ExtrasSelectedStoryControl,
+  ExtrasEmptyStoryControl,
+} from '~/components/story-controls';
+
+`PhotoExtrasStep` presents merchandised add-ons for the selected room. It is fully controlled:
+the caller owns selection, preferences and the running total. The docs harness keeps all of
+that in local state and uses a single fixed-price fixture, with no Mews product lookup.
+
+<ExtrasAvailableStoryControl />
+
+## Former Storybook states
+
+`Selected` and `NoExtras` are shown below; toggling an add-on updates the total immediately.
+
+<ExtrasSelectedStoryControl />
+
+<ExtrasEmptyStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `products` | `MerchandisedAddOn[]` | Deterministic fixture in docs |
+| `selectedProductIds` / `lockedProductIds` | string[] / `Set<string>` | Controlled selection and locked items |
+| `preferences` / `onSavePreference` | record / callback | Per-add-on scheduling choice |
+| `total` | number | Caller-computed total including add-ons |
+| `guestsCount`, `nights`, `checkIn`, `checkOut` | number / string | Stay context shown in the header |
+| `imageBaseUrl` | string | Optional prefix for add-on artwork |
+
+## Responsive behaviour
+
+The add-on row becomes a single column on phones and expands at `sm`. The artwork fills its
+card without overflow, and the action bar stays within the step wrapper.
+
+## Usage
+
+```tsx
+import { PhotoExtrasStep } from '@/journey/PhotoExtrasStep';
+
+<PhotoExtrasStep {...extrasState} onToggle={toggle} onNext={continueToReview} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/journey/PhotoExtrasStep.tsx)

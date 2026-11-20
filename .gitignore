@@ -10,6 +10,10 @@ docs-app/next-env.d.ts
 
 # Generated docs copies of root-relative component assets (produced by prepare-docs-assets)
 docs-app/public/assets/icons/buildings/
+docs-app/public/assets/icons/icons-simple/
+docs-app/public/assets/icons/ui/
+docs-app/public/assets/illustrations/
+docs-app/public/assets/labels/
 
 # Local D1 backups: never commit database snapshots
 backups/

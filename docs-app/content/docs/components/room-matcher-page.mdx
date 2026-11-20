@@ -1,0 +1,39 @@
+---
+title: Room Matcher Page
+description: Step-by-step matcher that collects party, dog and interests before recommending.
+---
+
+import { RoomMatcherPageStoryControl } from '~/components/story-controls';
+
+`RoomMatcherPage` hosts the two matching steps and assembles the final
+`RecommendationPreferences` for the recommendation layer. The docs instance supplies local
+callbacks and an `imageBaseUrl` so its illustration and dog icons resolve under the Pages base
+path. Submitting does not run a search.
+
+<RoomMatcherPageStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `criteria` | `SearchCriteria` | Optional stay context |
+| `initialPreferences` | `RecommendationPreferences` | Pre-fill the steps |
+| `onBack` | callback | Leave the matcher |
+| `onSubmit` | `(preferences) => void` | Receives the completed profile |
+| `onViewAllRooms` | callback | Optional browse escape hatch |
+| `imageBaseUrl` | string | Prefix for illustration and dog icons |
+
+## Responsive behaviour
+
+The step content keeps a narrow reading column on phones and spreads to two columns at `md`.
+Interest and party choices wrap; the illustration scales with its container.
+
+## Usage
+
+```tsx
+import { RoomMatcherPage } from '@/components/booking/discovery/RoomMatcherPage';
+
+<RoomMatcherPage onBack={goBack} onSubmit={showRecommendations} imageBaseUrl={basePath} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/discovery/RoomMatcherPage.tsx)

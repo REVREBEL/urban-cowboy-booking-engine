@@ -1,0 +1,59 @@
+---
+title: Stay Journal
+description: Preference questionnaire that scores the studio room catalogue for a stay.
+---
+
+import {
+  JournalCoupleStoryControl,
+  JournalFamilyStoryControl,
+  JournalPreferencesStoryControl,
+} from '~/components/story-controls';
+
+`PhotoJournal` asks about occasion, party, must-haves, quiet and budget, then ranks the rooms it
+is given. The docs fixture is the deterministic studio catalogue — never live Mews inventory —
+and completing the journal only updates a local status message.
+
+<JournalCoupleStoryControl />
+
+## Former Storybook states
+
+`Family` and `WithPreferences` are shown below; the latter starts from a pre-filled romance
+profile.
+
+<JournalFamilyStoryControl />
+
+<JournalPreferencesStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `adults` / `children` | number | Party composition carried into scoring |
+| `rooms` | `ShapedRoom[]` | Studio fixture in docs |
+| `imageBaseUrl` | string | Prefix used to build room photo URLs |
+| `galleries` | CMS gallery map | Empty in docs; editorial images are used |
+| `initial` | `MatchProfile` or `null` | Pre-fill the questionnaire |
+| `onDone` / `onSkip` | callbacks | Recorded locally in docs |
+
+## Responsive behaviour
+
+Question cards stack on phones and form a grid at wider breakpoints. The catalogue preview
+uses the same image sizing as the real journey, so a narrow viewport never clips a card.
+
+## Usage
+
+```tsx
+import { PhotoJournal } from '@/journey/PhotoJournal';
+
+<PhotoJournal
+  adults={2}
+  children={0}
+  rooms={studioRooms}
+  imageBaseUrl={basePath}
+  galleries={{}}
+  onDone={saveProfile}
+  onSkip={skip}
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/journey/PhotoJournal.tsx)

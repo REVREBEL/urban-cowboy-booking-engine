@@ -1,0 +1,45 @@
+---
+title: Photo Tour Arrow
+description: Directional control for the room photo carousel, with an inline chevron fallback.
+---
+
+import { PhotoTourArrowStoryControl, PhotoTourArrowVariantsStoryControl } from '~/components/story-controls';
+
+`PhotoTourArrow` renders a small arrow image rotated for the four cardinal directions. It
+switches to an inline SVG chevron when `chevron` is set or when the asset fails to load, so a
+missing icon never leaves a blank control. Both modes are decorative and hidden from assistive
+technology; the surrounding button supplies the accessible action.
+
+<PhotoTourArrowStoryControl />
+
+## Migrated states
+
+The former `Arrow`, `Chevron`, `Back`, `Playground`, `ChevronDirections`,
+`AssetVsChevronComparison` and `Sizes` stories are represented in the grid below.
+
+<PhotoTourArrowVariantsStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `direction` | `up`, `down`, `left`, `right` | `left`/`right` rotate the image; `up`/`down` select the asset |
+| `size` | number | Icon bounding box in pixels |
+| `chevron` | boolean | Force the inline SVG chevron instead of the image asset |
+| `imageBaseUrl` | string | Optional URL prefix for the arrow asset under a base path |
+
+## Responsive behaviour
+
+The arrow has no layout of its own beyond the requested pixel size. The comparison grid wraps
+from a single column on phones to multiple columns at `sm`, so all directions and sizes remain
+visible without horizontal scrolling.
+
+## Usage
+
+```tsx
+import { PhotoTourArrow } from '@/journey/PhotoTourArrow';
+
+<PhotoTourArrow direction="right" size={24} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/journey/PhotoTourArrow.tsx)

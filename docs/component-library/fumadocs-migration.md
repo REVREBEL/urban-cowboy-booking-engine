@@ -33,6 +33,14 @@ and the docs build copies every checked-in building SVG so the runtime smoke can
 masks resolve under the Pages base path. The rate-card harness keeps expand/confirm state
 local; it never creates a reservation or starts a payment.
 
+Fourth migrated group: journey, media and recommendation/compare. The six photo-journey
+stories, `Photo`, and the five discovery/results stories have reference pages using the real
+source components with deterministic studio fixtures and local icon assets. Journey flows keep
+date, guest and selection state in docs-only harnesses; `loadCalendar` is a no-op and no
+reservation, payment or admin write is triggered. `PhotoTourArrow`, `RoomMatcherPage` and
+`MatchBenefitsCard` gained an optional `imageBaseUrl` for their root-relative assets, and the
+docs build copies those icons/illustrations for the static export.
+
 To add a component page: create a `*.story.tsx` in `docs-app/components` importing the real
 component, expose a `defineStory` export (with a deterministic harness when the component
 needs context), add a client wrapper in `story-controls.tsx`, write the MDX page with props,

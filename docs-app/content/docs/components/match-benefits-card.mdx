@@ -1,0 +1,49 @@
+---
+title: Match Benefits Card
+description: Recommendation card that explains why a room fits and offers compare actions.
+---
+
+import {
+  MatchBenefitsCardStoryControl,
+  MatchBenefitsVariantsStoryControl,
+} from '~/components/story-controls';
+
+`MatchBenefitsCard` is the explanation surface for a recommended room: it pairs the room summary
+with ordered reasons and optional save/choose actions. The badge and pointing-hand assets are
+root-relative, so the docs instance passes `imageBaseUrl` to resolve them under the Pages base
+path. No reservation is created by the demo.
+
+<MatchBenefitsCardStoryControl />
+
+## Variants
+
+The compact variant hides actions and adds custom headings and intro copy.
+
+<MatchBenefitsVariantsStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `room` | `MatchRoomSummary` | Name, headline, blurb and feature labels |
+| `reasons` | string[] | Ordered explanation bullets |
+| `intro` | string | Optional override for the recommendation sentence |
+| `reasonHeadings` | `[string, string]` | Headings for the two reason groups |
+| `compact` | boolean | Denser layout for comparison rows |
+| `showActions` | boolean | Hide save/choose actions in comparison contexts |
+| `imageBaseUrl` | string | Prefix for badge and hand assets |
+
+## Responsive behaviour
+
+The card uses a narrow reading column on phones and two columns at `lg` in the comparison grid.
+Feature chips wrap instead of scrolling horizontally.
+
+## Usage
+
+```tsx
+import { MatchBenefitsCard } from '@/components/booking/results/MatchBenefitsCard';
+
+<MatchBenefitsCard room={match} reasons={reasons} imageBaseUrl={basePath} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/results/MatchBenefitsCard.tsx)

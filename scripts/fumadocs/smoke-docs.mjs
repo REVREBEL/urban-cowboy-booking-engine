@@ -18,6 +18,18 @@ const pages = [
   "components/building-icon/index.html",
   "components/amenity-icons/index.html",
   "components/configurable-rate-card/index.html",
+  "components/photo/index.html",
+  "components/photo-tour-arrow/index.html",
+  "components/room-photo-tour/index.html",
+  "components/arrival/index.html",
+  "components/journey-extras/index.html",
+  "components/stay-journal/index.html",
+  "components/journey-rooms/index.html",
+  "components/help-me-choose-modal/index.html",
+  "components/match-or-browse-screen/index.html",
+  "components/room-matcher-page/index.html",
+  "components/matcher-progress/index.html",
+  "components/match-benefits-card/index.html",
 ];
 const forbidden = [
   /api\.mews\.com/i,
@@ -52,6 +64,18 @@ const markersByPage = {
   "components/building-icon/index.html": ["MountianViewHaus"],
   "components/amenity-icons/index.html": ["outdoor-tub"],
   "components/configurable-rate-card/index.html": ["STAY AWHILE"],
+  "components/photo/index.html": ["Missing source"],
+  "components/photo-tour-arrow/index.html": ["Inline chevrons"],
+  "components/room-photo-tour/index.html": ["Alpine Bathing Suite"],
+  "components/arrival/index.html": ["Match me with a room", "assets/icons/icons-simple/hammock.svg"],
+  "components/journey-extras/index.html": ["Estonian Sauna Session"],
+  "components/stay-journal/index.html": ["No journal action"],
+  "components/journey-rooms/index.html": ["No room action"],
+  "components/help-me-choose-modal/index.html": ["Help"],
+  "components/match-or-browse-screen/index.html": ["browse"],
+  "components/room-matcher-page/index.html": ["Step 1"],
+  "components/matcher-progress/index.html": ["Step 1"],
+  "components/match-benefits-card/index.html": ["Private soaking tub"],
 };
 for (const [page, markers] of Object.entries(markersByPage)) {
   for (const marker of markers) {

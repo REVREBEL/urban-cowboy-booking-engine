@@ -17,6 +17,39 @@ import {
   configurableRateCardStory,
   configurableRateCardVariantsStory,
 } from "./configurable-rate-card.story";
+import { photoStory, photoStatesStory } from "./media-photo.story";
+import { photoTourArrowStory, photoTourArrowVariantsStory } from "./journey-arrow.story";
+import { roomPhotoTourStory, roomPhotoTourDetailsStory } from "./journey-room-tour.story";
+import {
+  arrivalStory,
+  arrivalCalendarStory,
+  arrivalDatesStory,
+  arrivalNoEditorialStory,
+} from "./journey-arrival.story";
+import {
+  extrasAvailableStory,
+  extrasSelectedStory,
+  extrasEmptyStory,
+} from "./journey-extras.story";
+import {
+  journalCoupleStory,
+  journalFamilyStory,
+  journalPreferencesStory,
+} from "./journey-journal.story";
+import {
+  journeyRoomsIndexStory,
+  journeyRoomsSpreadsStory,
+  journeyRoomsPreferencesStory,
+} from "./journey-rooms.story";
+import {
+  helpMeChooseModalStory,
+  matchOrBrowseStory,
+  roomMatcherPageStory,
+  matcherProgressStory,
+  matcherProgressStepsStory,
+  matchBenefitsCardStory,
+  matchBenefitsVariantsStory,
+} from "./recommendation.story";
 
 /** Client wrappers so MDX renders a component, not a member of a client proxy. */
 export function PillStoryControl() {
@@ -81,4 +114,108 @@ export function ConfigurableRateCardStoryControl() {
 
 export function ConfigurableRateCardVariantsStoryControl() {
   return <configurableRateCardVariantsStory.WithControl />;
+}
+
+export function PhotoStoryControl() {
+  return <photoStory.WithControl />;
+}
+
+export function PhotoStatesStoryControl() {
+  return <photoStatesStory.WithControl />;
+}
+
+export function PhotoTourArrowStoryControl() {
+  return <photoTourArrowStory.WithControl />;
+}
+
+export function PhotoTourArrowVariantsStoryControl() {
+  return <photoTourArrowVariantsStory.WithControl />;
+}
+
+export function RoomPhotoTourStoryControl() {
+  return <roomPhotoTourStory.WithControl />;
+}
+
+export function RoomPhotoTourDetailsStoryControl() {
+  return <roomPhotoTourDetailsStory.WithControl />;
+}
+
+export function ArrivalStoryControl() {
+  return <arrivalStory.WithControl />;
+}
+
+export function ArrivalCalendarStoryControl() {
+  return <arrivalCalendarStory.WithControl />;
+}
+
+export function ArrivalDatesStoryControl() {
+  return <arrivalDatesStory.WithControl />;
+}
+
+export function ArrivalNoEditorialStoryControl() {
+  return <arrivalNoEditorialStory.WithControl />;
+}
+
+export function ExtrasAvailableStoryControl() {
+  return <extrasAvailableStory.WithControl />;
+}
+
+export function ExtrasSelectedStoryControl() {
+  return <extrasSelectedStory.WithControl />;
+}
+
+export function ExtrasEmptyStoryControl() {
+  return <extrasEmptyStory.WithControl />;
+}
+
+export function JournalCoupleStoryControl() {
+  return <journalCoupleStory.WithControl />;
+}
+
+export function JournalFamilyStoryControl() {
+  return <journalFamilyStory.WithControl />;
+}
+
+export function JournalPreferencesStoryControl() {
+  return <journalPreferencesStory.WithControl />;
+}
+
+export function JourneyRoomsIndexStoryControl() {
+  return <journeyRoomsIndexStory.WithControl />;
+}
+
+export function JourneyRoomsSpreadsStoryControl() {
+  return <journeyRoomsSpreadsStory.WithControl />;
+}
+
+export function JourneyRoomsPreferencesStoryControl() {
+  return <journeyRoomsPreferencesStory.WithControl />;
+}
+
+export function HelpMeChooseModalStoryControl() {
+  return <helpMeChooseModalStory.WithControl />;
+}
+
+export function MatchOrBrowseStoryControl() {
+  return <matchOrBrowseStory.WithControl />;
+}
+
+export function RoomMatcherPageStoryControl() {
+  return <roomMatcherPageStory.WithControl />;
+}
+
+export function MatcherProgressStoryControl() {
+  return <matcherProgressStory.WithControl />;
+}
+
+export function MatcherProgressStepsStoryControl() {
+  return <matcherProgressStepsStory.WithControl />;
+}
+
+export function MatchBenefitsCardStoryControl() {
+  return <matchBenefitsCardStory.WithControl />;
+}
+
+export function MatchBenefitsVariantsStoryControl() {
+  return <matchBenefitsVariantsStory.WithControl />;
 }

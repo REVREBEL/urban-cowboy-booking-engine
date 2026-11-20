@@ -11,6 +11,7 @@ export function MatchBenefitsCard({
   reasonHeadings,
   compact = false,
   showActions = true,
+  imageBaseUrl = "",
 }: {
   room: MatchRoomSummary;
   reasons: string[];
@@ -18,6 +19,8 @@ export function MatchBenefitsCard({
   reasonHeadings?: [string, string];
   compact?: boolean;
   showActions?: boolean;
+  /** Optional prefix for root-relative asset URLs when hosted under a base path. */
+  imageBaseUrl?: string;
 }) {
   const [saved, setSaved] = useState(false);
   const recommendationIntro =
@@ -43,7 +46,7 @@ export function MatchBenefitsCard({
       }`}
     >
       <img
-        src="/assets/labels/top_match.svg"
+        src={`${imageBaseUrl}/assets/labels/top_match.svg`}
         alt="Top Match"
         className={`h-auto w-full text-oxblood object-contain ${compact ? "max-w-28" : "max-w-60"}`}
       />
@@ -55,7 +58,7 @@ export function MatchBenefitsCard({
       <div className={`${compact ? "mt-4 pt-4" : "mt-9 pt-7"} border-t border-oxblood`}>
         <div className={`flex items-center ${compact ? "gap-2" : "gap-4"}`}>
           <img
-            src="/assets/icons/ui/left_hand_pointing.svg"
+            src={`${imageBaseUrl}/assets/icons/ui/left_hand_pointing.svg`}
             alt=""
             aria-hidden="true"
             className={`${compact ? "h-6 w-12" : "h-10 w-20.5"} text-oxblood shrink-0 object-contain`}

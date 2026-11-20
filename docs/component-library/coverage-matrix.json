@@ -2,8 +2,8 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 10,
-    "planned": 126,
+    "documented": 22,
+    "planned": 114,
     "excluded": 6,
     "undocumentedProductionCandidates": 41
   },
@@ -92,25 +92,25 @@
       "component": "HelpMeChooseModal",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/HelpMeChooseModal.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/help-me-choose-modal.mdx",
+      "docsPage": "docs-app/content/docs/components/help-me-choose-modal.mdx",
       "demos": 1,
       "demoExports": [
         "Open"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "MatchOrBrowseScreen",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/MatchOrBrowseScreen.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/match-or-browse-screen.mdx",
+      "docsPage": "docs-app/content/docs/components/match-or-browse-screen.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "PreferenceIconButton",
@@ -129,25 +129,25 @@
       "component": "RoomMatcherPage",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/RoomMatcherPage.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/room-matcher-page.mdx",
+      "docsPage": "docs-app/content/docs/components/room-matcher-page.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "RoomMatcherProgress",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/RoomMatcherProgress.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/room-matcher-progress.mdx",
+      "docsPage": "docs-app/content/docs/components/matcher-progress.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "RusticLodgeSignboard",
@@ -281,13 +281,13 @@
       "component": "MatchBenefitsCard",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/results/MatchBenefitsCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/match-benefits-card.mdx",
+      "docsPage": "docs-app/content/docs/components/match-benefits-card.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "BestRateGuaranteedLabel",
@@ -635,7 +635,7 @@
       "component": "Disappear for a While",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoArrival.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-arrival.mdx",
+      "docsPage": "docs-app/content/docs/components/arrival.mdx",
       "demos": 4,
       "demoExports": [
         "Arrival",
@@ -643,56 +643,56 @@
         "DatesSelected",
         "FeaturesHidden"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Extras",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoExtrasStep.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-extras-step.mdx",
+      "docsPage": "docs-app/content/docs/components/journey-extras.mdx",
       "demos": 3,
       "demoExports": [
         "Available",
         "Selected",
         "NoExtras"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Stay Journal",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoJournal.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-journal.mdx",
+      "docsPage": "docs-app/content/docs/components/stay-journal.mdx",
       "demos": 3,
       "demoExports": [
         "Couple",
         "Family",
         "WithPreferences"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Rooms",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoRooms.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-rooms.mdx",
+      "docsPage": "docs-app/content/docs/components/journey-rooms.mdx",
       "demos": 3,
       "demoExports": [
         "Index",
         "PhotoSpreads",
         "WithPreferences"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Photo Tour Arrow",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/PhotoTourArrow.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/photo-tour-arrow.mdx",
+      "docsPage": "docs-app/content/docs/components/photo-tour-arrow.mdx",
       "demos": 7,
       "demoExports": [
         "Arrow",
@@ -703,35 +703,35 @@
         "AssetVsChevronComparison",
         "Sizes"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Room Photo Tour",
       "category": "Photo Journey",
       "storySource": "src/stories/components/journey/RoomPhotoTour.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/journey/room-photo-tour.mdx",
+      "docsPage": "docs-app/content/docs/components/room-photo-tour.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "DetailsOpen"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Photo",
       "category": "Media",
       "storySource": "src/stories/components/media/Photo.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/media/photo.mdx",
+      "docsPage": "docs-app/content/docs/components/photo.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "MissingSourceFallback",
         "BrokenImageFallback"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "ConfigurableRateCard",

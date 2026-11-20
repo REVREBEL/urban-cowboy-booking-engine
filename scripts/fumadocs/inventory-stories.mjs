@@ -39,6 +39,18 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/rooms/BuildingIcon.stories.tsx": "docs-app/content/docs/components/building-icon.mdx",
   "src/stories/components/rooms/AmenityIcons.stories.tsx": "docs-app/content/docs/components/amenity-icons.mdx",
   "src/stories/components/rates/ConfigurableRateCard.stories.tsx": "docs-app/content/docs/components/configurable-rate-card.mdx",
+  "src/stories/components/journey/PhotoArrival.stories.tsx": "docs-app/content/docs/components/arrival.mdx",
+  "src/stories/components/journey/PhotoExtrasStep.stories.tsx": "docs-app/content/docs/components/journey-extras.mdx",
+  "src/stories/components/journey/PhotoJournal.stories.tsx": "docs-app/content/docs/components/stay-journal.mdx",
+  "src/stories/components/journey/PhotoRooms.stories.tsx": "docs-app/content/docs/components/journey-rooms.mdx",
+  "src/stories/components/journey/PhotoTourArrow.stories.tsx": "docs-app/content/docs/components/photo-tour-arrow.mdx",
+  "src/stories/components/journey/RoomPhotoTour.stories.tsx": "docs-app/content/docs/components/room-photo-tour.mdx",
+  "src/stories/components/media/Photo.stories.tsx": "docs-app/content/docs/components/photo.mdx",
+  "src/stories/components/booking/discovery/HelpMeChooseModal.stories.tsx": "docs-app/content/docs/components/help-me-choose-modal.mdx",
+  "src/stories/components/booking/discovery/MatchOrBrowseScreen.stories.tsx": "docs-app/content/docs/components/match-or-browse-screen.mdx",
+  "src/stories/components/booking/discovery/RoomMatcherPage.stories.tsx": "docs-app/content/docs/components/room-matcher-page.mdx",
+  "src/stories/components/booking/discovery/RoomMatcherProgress.stories.tsx": "docs-app/content/docs/components/matcher-progress.mdx",
+  "src/stories/components/booking/results/MatchBenefitsCard.stories.tsx": "docs-app/content/docs/components/match-benefits-card.mdx",
 });
 
 const usedPlannedPaths = new Set();

@@ -31,6 +31,8 @@ export type RoomMatcherPageProps = {
   onBack: () => void;
   onSubmit: (preferences: RecommendationPreferences) => void;
   onViewAllRooms?: () => void;
+  /** Optional prefix for root-relative asset URLs when hosted under a base path. */
+  imageBaseUrl?: string;
 };
 
 const PARTY_CARDS: Array<{
@@ -72,6 +74,7 @@ export function RoomMatcherPage({
   initialPreferences,
   onBack,
   onSubmit,
+  imageBaseUrl = "",
 }: RoomMatcherPageProps) {
   const [step, setStep] = useState<1 | 2>(1);
   const [party, setParty] = useState<PartyType | null>(
@@ -186,13 +189,13 @@ export function RoomMatcherPage({
                 <div className="flex min-w-0 items-center gap-4 sm:gap-6">
                   <div className="flex h-20 w-20 shrink-0 items-center justify-center sm:h-28 sm:w-28">
                     <img
-                      src={SIMPLE_DOG_ICON}
+                      src={`${imageBaseUrl}${SIMPLE_DOG_ICON}`}
                       alt=""
                       aria-hidden="true"
                       className="h-16 w-16 object-contain sm:hidden"
                     />
                     <img
-                      src={DETAILED_DOG_ICON}
+                      src={`${imageBaseUrl}${DETAILED_DOG_ICON}`}
                       alt=""
                       aria-hidden="true"
                       className="hidden h-28 w-28 object-contain sm:block"
@@ -317,7 +320,7 @@ export function RoomMatcherPage({
                     ].join(" ")}
                   >
                     <img
-                      src={"/assets/illustrations/interaction/find-your-stay/" + option.artwork}
+                      src={`${imageBaseUrl}/assets/illustrations/interaction/find-your-stay/${option.artwork}`}
                       alt={option.label}
                       className="h-full w-full select-none object-contain contrast-125 transition-transform duration-200 group-hover:scale-105"
                     />

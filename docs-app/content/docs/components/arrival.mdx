@@ -1,0 +1,55 @@
+---
+title: Arrival (Photo Journey)
+description: Opening screen that collects dates, party and intent before matching a room.
+---
+
+import {
+  ArrivalStoryControl,
+  ArrivalCalendarStoryControl,
+  ArrivalDatesStoryControl,
+  ArrivalNoEditorialStoryControl,
+} from '~/components/story-controls';
+
+`Arrive` is the first step of the photo journey. It presents editorial intent cards and a
+date/party selector, then hands the caller a `Match` or `Browse` action. The docs harness owns
+all state locally; `loadCalendar` is a no-op, so no Mews availability or pricing request is
+made.
+
+<ArrivalStoryControl />
+
+## Former Storybook states
+
+`CalendarOpen`, `DatesSelected` and `FeaturesHidden` are shown below.
+
+<ArrivalCalendarStoryControl />
+
+<ArrivalDatesStoryControl />
+
+<ArrivalNoEditorialStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `checkIn` / `checkOut` / `setRange` | string / callback | Controlled date range |
+| `adults`, `children`, `infants` and their setters | number / callback | Controlled party composition |
+| `activeSection` / `setActiveSection` | dropdown section / callback | Which selector panel is open |
+| `dailyRates` / `loadCalendar` | record / async callback | Calendar pricing; empty and no-op in docs |
+| `stories` | editorial cards or `null` | Pass `null` or `[]` to hide the features row |
+| `onMatch` / `onBrowse` | callbacks | Intent actions; recorded locally in docs |
+| `imageBaseUrl` | string | Optional prefix for icon assets under a base path |
+
+## Responsive behaviour
+
+The editorial cards and search controls wrap on narrow screens; the calendar panel opens in
+place rather than as a modal. The demo keeps the full-screen layout of the real journey step.
+
+## Usage
+
+```tsx
+import { Arrive } from '@/journey/PhotoArrival';
+
+<Arrive {...journeyState} stories={editorialStories} onMatch={startMatch} onBrowse={browseAll} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/journey/PhotoArrival.tsx)

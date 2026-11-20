@@ -45,6 +45,18 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     BuildingIcon: "docs-app/content/docs/components/building-icon.mdx",
     AmenityIcons: "docs-app/content/docs/components/amenity-icons.mdx",
     ConfigurableRateCard: "docs-app/content/docs/components/configurable-rate-card.mdx",
+    Photo: "docs-app/content/docs/components/photo.mdx",
+    "Photo Tour Arrow": "docs-app/content/docs/components/photo-tour-arrow.mdx",
+    "Room Photo Tour": "docs-app/content/docs/components/room-photo-tour.mdx",
+    "Disappear for a While": "docs-app/content/docs/components/arrival.mdx",
+    Extras: "docs-app/content/docs/components/journey-extras.mdx",
+    "Stay Journal": "docs-app/content/docs/components/stay-journal.mdx",
+    Rooms: "docs-app/content/docs/components/journey-rooms.mdx",
+    HelpMeChooseModal: "docs-app/content/docs/components/help-me-choose-modal.mdx",
+    MatchOrBrowseScreen: "docs-app/content/docs/components/match-or-browse-screen.mdx",
+    RoomMatcherPage: "docs-app/content/docs/components/room-matcher-page.mdx",
+    RoomMatcherProgress: "docs-app/content/docs/components/matcher-progress.mdx",
+    MatchBenefitsCard: "docs-app/content/docs/components/match-benefits-card.mdx",
   };
   for (const [name, page] of Object.entries(expectedPaths)) {
     const documented = byComponent(name).find((entry) => entry.status === "documented");

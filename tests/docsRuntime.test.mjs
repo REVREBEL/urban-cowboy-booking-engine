@@ -136,3 +136,54 @@ test("building-icon mask assets resolve under the Pages base path", async () => 
     await new Promise((done) => server.close(done));
   }
 });
+
+const stageFourAssets = [
+  { page: "photo-tour-arrow", fragments: ["/assets/icons/ui/ui-arrow-"] },
+  {
+    page: "match-benefits-card",
+    fragments: ["/assets/labels/top_match.svg", "/assets/icons/ui/left_hand_pointing.svg"],
+  },
+  {
+    page: "room-matcher-page",
+    // Step 1 renders the dog-toggle artwork; step-2 illustrations are not in the initial view.
+    fragments: ["/assets/icons/detailed/dog_friendly.svg"],
+  },
+];
+
+test("stage 4 component images resolve under the Pages base path", async () => {
+  const server = await serve();
+  const browser = await chromium.launch();
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    const origin = `http://127.0.0.1:${address.port}`;
+    const page = await browser.newPage();
+    const failedAssets = [];
+    page.on("response", (response) => {
+      if (response.url().includes("/assets/") && response.status() >= 400) {
+        failedAssets.push(`${response.status()} ${response.url()}`);
+      }
+    });
+
+    for (const { page: slug, fragments } of stageFourAssets) {
+      await page.goto(`${origin}${basePath}/components/${slug}/`, { waitUntil: "networkidle" });
+      const sources = await page.$$eval("img", (images) =>
+        images.map((image) => image.getAttribute("src")).filter(Boolean));
+      const relevant = sources.filter((src) => fragments.some((fragment) => src.includes(fragment)));
+      assert.ok(relevant.length > 0, `${slug} rendered expected assets`);
+      assert.ok(
+        relevant.every((src) => src.startsWith(`${basePath}/assets/`)),
+        `${slug} assets are base-path prefixed: ${relevant.join(", ")}`,
+      );
+      await page.waitForFunction((expected) => expected.every((fragment) =>
+        [...document.querySelectorAll("img")].some((image) => {
+          const src = image.getAttribute("src") ?? "";
+          return src.includes(fragment) && image.complete && image.naturalWidth > 0;
+        })), fragments);
+    }
+    assert.deepEqual(failedAssets, []);
+  } finally {
+    await browser.close();
+    await new Promise((done) => server.close(done));
+  }
+});
