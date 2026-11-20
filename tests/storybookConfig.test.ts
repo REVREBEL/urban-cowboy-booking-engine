@@ -14,9 +14,10 @@ test("booking URL synchronization retains Storybook story selection and controls
   assert.match(booking, /q\.append\(key, value\)/);
 });
 
-test("storybook docgen includes inherited public React and HTML props", () => {
-  assert.match(storybook, /reactDocgen: "react-docgen-typescript"/);
-  assert.match(storybook, /propFilter: \(\) => true/);
+test("historical Storybook avoids the TS7-incompatible docgen TypeScript plugin", () => {
+  assert.match(storybook, /reactDocgen: "react-docgen"/);
+  assert.doesNotMatch(storybook, /reactDocgen: "react-docgen-typescript"/);
+  assert.doesNotMatch(storybook, /reactDocgenTypescriptOptions/);
 });
 
 test("Storybook uses the supported TypeScript compiler with react-docgen", () => {
@@ -28,5 +29,5 @@ test("Storybook uses the supported TypeScript compiler with react-docgen", () =>
   // bump. Require the manifest and lockfile to agree on a real release instead.
   assert.match(declared, /^\d+\.\d+\.\d+$/);
   assert.equal(installed, declared, "lockfile TypeScript version must match the manifest");
-  assert.match(storybook, /reactDocgen: "react-docgen-typescript"/);
+  assert.match(storybook, /reactDocgen: "react-docgen"/);
 });
