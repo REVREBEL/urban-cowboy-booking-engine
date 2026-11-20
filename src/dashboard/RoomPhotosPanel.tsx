@@ -239,6 +239,82 @@ function GalleryCard({
   );
 }
 
+interface UnlinkedItem {
+  placementId: string;
+  mediaAssetId: string;
+  placementType: string;
+  displayOrder: number;
+  altText: string | null;
+  caption: string | null;
+  description: string | null;
+  excluded: boolean;
+  note: string | null;
+}
+
+function UnlinkedGallery({
+  api,
+  roomId,
+  onRestored,
+}: {
+  api: DashboardApi;
+  roomId: string;
+  onRestored: () => void;
+}) {
+  const load = useCallback(() => api.getUnlinkedRoomGallery<UnlinkedItem>(roomId), [api, roomId]);
+  const unlinked = useDashboardResource(load);
+  const [busyId, setBusyId] = useState("");
+  const [message, setMessage] = useState("");
+
+  if (unlinked.loading) return <LoadingPanel label="Loading unlinked photos" />;
+  if (unlinked.error) return <ErrorPanel message={unlinked.error} onRetry={unlinked.reload} />;
+  if (!unlinked.data?.length) return null;
+
+  const restore = async (placementId: string) => {
+    setBusyId(placementId);
+    setMessage("");
+    try {
+      await api.restoreRoomGalleryItem(roomId, placementId);
+      setMessage("Placement restored with its original metadata");
+      unlinked.reload();
+      onRestored();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Restore failed");
+    } finally {
+      setBusyId("");
+    }
+  };
+
+  return (
+    <section className="space-y-3 rounded-lg border border-dashed border-border p-4">
+      <h2 className="text-sm font-semibold">Unlinked photos</h2>
+      <p className="text-sm text-muted-foreground">
+        Unlinking keeps a D1 snapshot of the placement and its editorial state so it can be restored.
+      </p>
+      <ul className="space-y-2">
+        {unlinked.data.map((item) => (
+          <li key={item.placementId} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+            <span className="truncate font-mono text-xs">{item.mediaAssetId}</span>
+            <span className="text-muted-foreground">#{item.displayOrder} · {item.placementType}</span>
+            <Button
+              type="button"
+              variant="outline"
+              colorScheme="lake-forest"
+              size="small"
+              textCase="title"
+              isLoading={busyId === item.placementId}
+              disabled={Boolean(busyId)}
+              onClick={() => restore(item.placementId)}
+            >
+              Restore
+            </Button>
+          </li>
+        ))}
+      </ul>
+      <p className="text-sm text-muted-foreground" role="status">{message}</p>
+    </section>
+  );
+}
+
 export function RoomPhotosPanel({ api }: { api: DashboardApi }) {
   const loadRooms = useCallback(() => api.getAdminRooms<Room>(), [api]);
   const rooms = useDashboardResource(loadRooms);
@@ -320,6 +396,8 @@ function RoomGallery({ api, roomId }: { api: DashboardApi; roomId: string }) {
           ))}
         </ul>
       )}
+
+      <UnlinkedGallery api={api} roomId={roomId} onRestored={gallery.reload} />
     </>
   );
 }

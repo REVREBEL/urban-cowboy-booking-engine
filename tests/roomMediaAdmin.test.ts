@@ -9,6 +9,7 @@ import {
   linkGalleryAsset,
   listRoomGallery,
   listRooms,
+  listUnlinkedGallery,
   unlinkGalleryItem,
   updateRoomGalleryItem,
   type RoomMediaAuthorize,
@@ -343,7 +344,9 @@ test("updateRoomGalleryItem persists metadata, order and exclusion with an audit
   const placement = db.prepare(
     "SELECT display_order, alt_text_override, caption_override, description_override FROM media_placements WHERE id='place-g1'",
   ).get() as any;
-  assert.equal(placement.display_order, 7);
+  // Reordering produces a collision-free sequence within the placement type,
+  // so an out-of-range target is clamped to the last position (index 1 here).
+  assert.equal(placement.display_order, 1);
   assert.equal(placement.alt_text_override, "Editor alt");
   assert.equal(placement.caption_override, "Editor caption");
   assert.equal(placement.description_override, "Editor description");
@@ -357,7 +360,7 @@ test("updateRoomGalleryItem persists metadata, order and exclusion with an audit
   const gallery = await jsonBody(await listRoomGallery(ctx(db), "room-a", allowViewer));
   const item = gallery.items.find((entry: any) => entry.placementId === "place-g1");
   assert.equal(item.altText, "Editor alt");
-  assert.equal(item.displayOrder, 7);
+  assert.equal(item.displayOrder, 1);
   assert.equal(item.isExcluded, true);
 });
 
@@ -404,4 +407,106 @@ test("unlink and restore round-trip a gallery placement with its identity", asyn
   const restored = await linkGalleryAsset(restore, "room-a", allowAdmin);
   assert.equal(restored.status, 200);
   assert.equal(db.prepare("SELECT id FROM media_placements WHERE id='place-g1'").get() !== undefined, true);
+});
+
+function postCtx(db: DatabaseSync, body: unknown, path: string): RoomMediaCtx {
+  const base = ctx(db, TENANT, path);
+  return {
+    ...base,
+    request: new Request(`https://example.test${path}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+  };
+}
+
+test("a metadata-only PATCH creates the overlay with a default exclusion value", async () => {
+  const db = makeDb();
+  assert.equal(db.prepare("SELECT placement_id FROM gallery_editorial WHERE placement_id='place-g2'").get(), undefined);
+  const res = await updateRoomGalleryItem(
+    writeCtx(db, { altText: "Only alt" }, "/api/admin/rooms/room-a/photos/place-g2"),
+    "room-a", "place-g2", allowAdmin,
+  );
+  assert.equal(res.status, 200);
+  const overlay = db.prepare("SELECT is_excluded FROM gallery_editorial WHERE placement_id='place-g2'").get() as any;
+  assert.equal(overlay.is_excluded, 0);
+  const gallery = await jsonBody(await listRoomGallery(ctx(db), "room-a", allowViewer));
+  const item = gallery.items.find((entry: any) => entry.placementId === "place-g2");
+  assert.equal(item.altText, "Only alt");
+  assert.equal(item.isExcluded, false);
+});
+
+test("explicit nulls clear editorial text and note on reload", async () => {
+  const db = makeDb();
+  await updateRoomGalleryItem(
+    writeCtx(db, {
+      altText: "Alt", caption: "Caption", description: "Description", note: "Note", excluded: true,
+    }, "/api/admin/rooms/room-a/photos/place-g2"),
+    "room-a", "place-g2", allowAdmin,
+  );
+  const cleared = await updateRoomGalleryItem(
+    writeCtx(db, { altText: null, caption: null, description: null, note: null }, "/api/admin/rooms/room-a/photos/place-g2"),
+    "room-a", "place-g2", allowAdmin,
+  );
+  assert.equal(cleared.status, 200);
+  const overlay = db.prepare("SELECT is_excluded, note FROM gallery_editorial WHERE placement_id='place-g2'").get() as any;
+  assert.equal(overlay.note, null);
+  assert.equal(overlay.is_excluded, 1, "clearing text must not clear exclusion");
+  const gallery = await jsonBody(await listRoomGallery(ctx(db), "room-a", allowViewer));
+  const item = gallery.items.find((entry: any) => entry.placementId === "place-g2");
+  assert.equal(item.altText, null);
+  assert.equal(item.caption, null);
+  assert.equal(item.description, null);
+});
+
+test("reordering into an occupied position is collision-free", async () => {
+  const db = makeDb();
+  const res = await updateRoomGalleryItem(
+    writeCtx(db, { displayOrder: 1 }, "/api/admin/rooms/room-a/photos/place-g2"),
+    "room-a", "place-g2", allowAdmin,
+  );
+  assert.equal(res.status, 200);
+  const orders = db.prepare(
+    "SELECT id, display_order FROM media_placements WHERE tenant_id='urban-cowboy' AND target_id='room-a' AND placement_type='gallery' ORDER BY display_order",
+  ).all() as Array<{ id: string; display_order: number }>;
+  assert.deepEqual(orders.map((row) => row.display_order), [0, 1]);
+  assert.equal(new Set(orders.map((row) => row.display_order)).size, 2);
+});
+
+test("unlink and restore preserve placement type, metadata, exclusion and note", async () => {
+  const db = makeDb();
+  await updateRoomGalleryItem(
+    writeCtx(db, {
+      altText: "Kept alt", caption: "Kept caption", description: "Kept description",
+      note: "Hold for review", excluded: true,
+    }, "/api/admin/rooms/room-a/photos/place-imp"),
+    "room-a", "place-imp", allowAdmin,
+  );
+  const unlinked = await unlinkGalleryItem(
+    ctx(db, TENANT, "/api/admin/rooms/room-a/photos/place-imp"),
+    "room-a", "place-imp", allowAdmin,
+  );
+  assert.equal(unlinked.status, 200);
+  const listed = await jsonBody(await listUnlinkedGallery(ctx(db), "room-a", allowViewer));
+  assert.equal(listed.items[0].placementId, "place-imp");
+
+  const restored = await linkGalleryAsset(
+    postCtx(db, { restorePlacementId: "place-imp" }, "/api/admin/rooms/room-a/photos"),
+    "room-a", allowAdmin,
+  );
+  assert.equal(restored.status, 200);
+  const placement = db.prepare(
+    "SELECT placement_type, display_order, alt_text_override, caption_override, description_override FROM media_placements WHERE id='place-imp'",
+  ).get() as any;
+  assert.equal(placement.placement_type, "room_gallery");
+  assert.equal(placement.display_order, 1);
+  assert.equal(placement.alt_text_override, "Kept alt");
+  assert.equal(placement.caption_override, "Kept caption");
+  assert.equal(placement.description_override, "Kept description");
+  const overlay = db.prepare("SELECT is_excluded, note FROM gallery_editorial WHERE placement_id='place-imp'").get() as any;
+  assert.equal(overlay.is_excluded, 1);
+  assert.equal(overlay.note, "Hold for review");
+  const listedAfter = await jsonBody(await listUnlinkedGallery(ctx(db), "room-a", allowViewer));
+  assert.equal(listedAfter.items.length, 0);
 });

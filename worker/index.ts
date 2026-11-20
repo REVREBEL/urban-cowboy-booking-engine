@@ -53,6 +53,7 @@ import {
   linkGalleryAsset,
   listRoomGallery,
   listRooms,
+  listUnlinkedGallery,
   unlinkGalleryItem,
   updateRoomGalleryItem,
 } from "./room-media.ts";
@@ -190,6 +191,15 @@ export default {
       if (!roomId) return json({ error: "invalid_room_id" }, 400);
       if (wantsLink) return linkGalleryAsset(adminCtx, roomId);
       return listRoomGallery(adminCtx, roomId);
+    }
+    const unlinkedPhotos = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/photos\/unlinked\/?$/);
+    if (unlinkedPhotos) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      let roomId: string;
+      try { roomId = decodeURIComponent(unlinkedPhotos[1]); }
+      catch { return json({ error: "invalid_room_id" }, 400); }
+      if (!roomId) return json({ error: "invalid_room_id" }, 400);
+      return listUnlinkedGallery(adminCtx, roomId);
     }
     const roomPhotoItem = url.pathname.match(
       /^\/api\/admin\/rooms\/([^/]+)\/photos\/([^/]+)\/?$/,

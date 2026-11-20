@@ -81,4 +81,16 @@ test("admin client declares COW-84 gallery write helpers", () => {
   assert.match(api, /unlinkRoomGalleryItem<T>\(roomId: string, placementId: string\)/);
   assert.match(api, /linkRoomGalleryAsset<T>\(roomId: string, input: unknown\)/);
   assert.match(api, /method: "DELETE"/);
+  assert.match(api, /getUnlinkedRoomGallery<T>\(roomId: string\)/);
+  assert.match(api, /restoreRoomGalleryItem<T>\(roomId: string, placementId: string\)/);
+  assert.match(api, /restorePlacementId: placementId/);
+});
+
+test("panel offers a restore workflow for unlinked placements", () => {
+  assert.match(panel, /UnlinkedGallery/);
+  assert.match(panel, /api\.getUnlinkedRoomGallery<UnlinkedItem>\(roomId\)/);
+  assert.match(panel, /api\.restoreRoomGalleryItem\(roomId, placementId\)/);
+  assert.match(panel, /Restore\s*<\/Button>/);
+  assert.match(panel, /unlinked\.reload\(\)/);
+  assert.match(panel, /onRestored=\{gallery\.reload\}/);
 });

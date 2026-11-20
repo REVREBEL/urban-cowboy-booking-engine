@@ -92,6 +92,8 @@ export interface DashboardApi {
   updateRoomGalleryItem<T>(roomId: string, placementId: string, input: unknown): Promise<T>;
   unlinkRoomGalleryItem<T>(roomId: string, placementId: string): Promise<T>;
   linkRoomGalleryAsset<T>(roomId: string, input: unknown): Promise<T>;
+  getUnlinkedRoomGallery<T>(roomId: string): Promise<T[]>;
+  restoreRoomGalleryItem<T>(roomId: string, placementId: string): Promise<T>;
   /** COW-73 amenity admin reads and the shared COW-38 editor writes. */
   getAdminAmenities<T>(): Promise<T[]>;
   getRoomAmenities<T>(roomId: string): Promise<T>;
@@ -252,6 +254,17 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     },
     async linkRoomGalleryAsset<T>(roomId: string, input: unknown): Promise<T> {
       return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`, input);
+    },
+    async getUnlinkedRoomGallery<T>(roomId: string): Promise<T[]> {
+      const data = await get<{ items?: T[] }>(
+        `/api/admin/rooms/${encodeURIComponent(roomId)}/photos/unlinked`,
+      );
+      return data.items ?? [];
+    },
+    async restoreRoomGalleryItem<T>(roomId: string, placementId: string): Promise<T> {
+      return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`, {
+        restorePlacementId: placementId,
+      });
     },
     async getAdminAmenities<T>(): Promise<T[]> {
       const data = await get<{ items?: T[] }>("/api/admin/amenities");
