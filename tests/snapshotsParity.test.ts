@@ -33,7 +33,10 @@ function makeDb() {
     "migrations/0002_module_list_indexes.sql",
     "migrations/0003_property_scoped_contracts.sql",
     "migrations/0004_published_snapshots.sql",
+    "migrations/0005_media_registry.sql",
     "migrations/0007_amenity_editorial.sql",
+    "migrations/0008_durable_hotspots.sql",
+    "migrations/0009_media_placement_flags.sql",
     "tests/fixtures/d1-contracts-fixture.sql",
     "tests/fixtures/snapshots-fixture.sql",
   ]) db.exec(read(file));

@@ -49,7 +49,7 @@ import {
 import { eventsList, addOnsList, offersList, upgradesList } from "./d1-modules";
 import { recoveryList } from "./d1-recovery";
 import { analyticsSummary } from "./d1-analytics";
-import { listRoomGallery, listRooms } from "./room-media.ts";
+import { listAdminMedia, listRoomGallery, listRooms } from "./room-media.ts";
 import { getRoomAmenities, listAdminAmenities } from "./room-amenities.ts";
 
 // Les handlers gardent la signature Pages ({ request, env, waitUntil }) — on les adapte ici.
@@ -151,6 +151,11 @@ export default {
       return json({ error: "not_found" }, 404);
     }
     const adminCtx = { request, env, waitUntil: (p: Promise<unknown>) => ctx.waitUntil(p) };
+    // COW-84 image catalog for linking room gallery photos.
+    if (url.pathname.match(/^\/api\/admin\/media\/?$/)) {
+      if (request.method !== "GET") return json({ error: "not_found" }, 404);
+      return listAdminMedia(adminCtx);
+    }
     // COW-73 amenity admin reads (writes use the admin-only content editor above).
     if (url.pathname.match(/^\/api\/admin\/amenities\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);

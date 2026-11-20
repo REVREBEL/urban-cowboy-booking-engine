@@ -15,6 +15,7 @@ import {
   mediaAliasRowSchema,
   mediaAssetRowSchema,
   roomTypeRowSchema,
+  roomGalleryRowSchema,
   roomAmenityAssignmentRowSchema,
   type AddOnContract,
   type AmenityContract,
@@ -28,6 +29,7 @@ import {
   type MediaAssetContract,
   type MediaAliasType,
   type RoomTypeContract,
+  type RoomGalleryRow,
   type RoomAmenityAssignmentRow,
 } from "../src/types/d1-contracts.ts";
 
@@ -331,6 +333,49 @@ export async function hasPublishedRoomAmenities(
         AND status = 'published'`,
   ).bind(tenantId, roomTypeId).first();
   return row !== null;
+}
+
+/** Ordered gallery rows for one room, with per-photo exclusion and source URL. */
+const GALLERY_SQL = `
+  SELECT p.id AS placement_id, p.media_asset_id, p.display_order,
+         a.original_filename,
+         COALESCE(v.squarespace_url, a.squarespace_url) AS source_url,
+         a.squarespace_asset_id AS source_asset_id,
+         COALESCE(mf.excluded, 0) AS excluded,
+         COALESCE(v.width, a.width) AS width,
+         COALESCE(v.height, a.height) AS height,
+         COALESCE(p.alt_text_override, a.alt_text) AS alt_text,
+         COALESCE(p.caption_override, md.caption) AS caption,
+         COALESCE(p.description_override, md.description) AS description,
+         md.tags, md.current_version_id,
+         vf.cloudinary_public_id, vf.cloudinary_version, vf.sha256
+    FROM media_placements p
+    JOIN room_types rt ON rt.id = p.target_id AND rt.tenant_id = p.tenant_id
+    JOIN media_assets a ON a.id = p.media_asset_id AND a.tenant_id = p.tenant_id AND a.kind = 'image'
+    LEFT JOIN media_asset_metadata md
+      ON md.media_asset_id = a.id AND md.tenant_id = a.tenant_id
+    LEFT JOIN media_versions v ON v.id = md.current_version_id
+    LEFT JOIN media_version_files vf
+      ON vf.version_id = v.id AND vf.tenant_id = a.tenant_id
+    LEFT JOIN media_placement_flags mf
+      ON mf.placement_id = p.id AND mf.tenant_id = p.tenant_id
+   WHERE p.tenant_id = ?1 AND p.target_table = 'room_types'
+     AND p.target_id = ?2 AND p.placement_type IN ('room_gallery', 'gallery')
+   ORDER BY p.display_order, p.id`;
+
+export async function listRoomGallery(
+  db: D1Database,
+  tenantId: string,
+  roomTypeId: string,
+): Promise<RoomGalleryRow[]> {
+  const result = await db.prepare(GALLERY_SQL).bind(tenantId, roomTypeId).all();
+  const items: RoomGalleryRow[] = [];
+  for (const row of result.results ?? []) {
+    const parsed = roomGalleryRowSchema.safeParse(row);
+    // One malformed registry row must not hide the rest of the room's gallery.
+    if (parsed.success) items.push(parsed.data);
+  }
+  return items;
 }
 
 /** Slugs of rooms whose own assignment document has been published. */

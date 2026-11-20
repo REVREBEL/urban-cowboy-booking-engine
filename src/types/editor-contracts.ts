@@ -5,8 +5,28 @@ export const EDITOR_KINDS = [
   "rate_card", "add_on", "event", "offer", "upgrade", "policy", "instagram", "outlet", "site_settings",
   // COW-73: amenity editorial and per-room assignment documents.
   "amenity_content", "room_amenities",
+  // COW-84: ordered room gallery document (link/unlink, order, metadata, flags).
+  "room_gallery",
 ] as const;
 export type EditorKind = (typeof EDITOR_KINDS)[number];
+
+export const ROOM_GALLERY_KIND = "room_gallery" as const;
+
+/** One ordered room gallery document. Squarespace URLs are registry facts, not payload. */
+export const roomGalleryPayloadSchema = z.object({
+  items: z.array(z.object({
+    mediaAssetId: z.string().min(1),
+    displayOrder: z.number().int().min(1).max(999_999),
+    excluded: z.boolean().default(false),
+    altText: z.string().trim().max(500).nullable().default(null),
+    caption: z.string().trim().max(1000).nullable().default(null),
+    description: z.string().trim().max(4000).nullable().default(null),
+  })).max(500).refine(
+    (items) => new Set(items.map((item) => item.mediaAssetId)).size === items.length,
+    "a photo can only appear once per room",
+  ),
+});
+export type RoomGalleryPayload = z.infer<typeof roomGalleryPayloadSchema>;
 
 export const AMENITY_CONTENT_KIND = "amenity_content" as const;
 export const ROOM_AMENITIES_KIND = "room_amenities" as const;

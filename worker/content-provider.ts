@@ -11,6 +11,7 @@ import {
   getDb,
   listPublishedRoomAmenitySlugs,
   listRoomAmenityAssignmentsForTenant,
+  listRoomGallery,
   listScopedAddOns,
   listScopedAmenities,
   listScopedAmenityEditorial,
@@ -30,6 +31,7 @@ export const CONTENT_COLLECTIONS = [
   "roomTypes",
   "amenities",
   "roomAmenities",
+  "roomGallery",
   "addOns",
   "events",
   "contentItems",
@@ -145,6 +147,29 @@ async function loadAllRows(
           },
         }));
     }
+    case "roomGallery": {
+      // Published room galleries for guest Photo Journey. Excluded photos and
+      // COW-67-parked rows stay out of the guest view.
+      const rooms = await listScopedRoomTypes(db, scope);
+      return Promise.all(rooms.map(async (room) => {
+        const items = await listRoomGallery(db, scope.tenantId, room.id);
+        return {
+          id: room.id, collection, payload: {
+            mewsRoomCategoryId: room.mewsRoomCategoryId,
+            items: items
+              .filter((item) => !item.excluded && item.displayOrder < 1_000_000)
+              .map((item) => ({
+                mediaAssetId: item.mediaAssetId,
+                sourceUrl: item.sourceUrl,
+                altText: item.altText,
+                caption: item.caption,
+                description: item.description,
+                displayOrder: item.displayOrder,
+              })),
+          },
+        };
+      }));
+    }
     case "addOns":
       return (await listScopedAddOns(db, scope)).map((row) => ({
         id: row.id, collection, payload: {
@@ -227,7 +252,7 @@ export async function buildSnapshot(
 
 /** Collections whose D1 table has no publication column; presence is publication. */
 const IMPLICITLY_PUBLISHED = new Set<ContentCollection>([
-  "locations", "buildings", "roomTypes", "amenities", "roomAmenities",
+  "locations", "buildings", "roomTypes", "amenities", "roomAmenities", "roomGallery",
 ]);
 
 /** Small, comparable projection for structured parity reporting. */

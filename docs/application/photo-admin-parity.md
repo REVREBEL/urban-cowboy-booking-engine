@@ -31,7 +31,7 @@ Source documentation reviewed: `HOTSPOT_ARCHITECTURE_REF.md`, `PHOTO_HOTSPOTS_RO
 
 ## Current gaps
 
-- `photo_hotspots` in `0001_init.sql` has no `tenant_id`, `display_order`, `active`, `source_url` or `last_seen` columns. COW-34 hotspot identity and re-crop policy must land before hotspot writes.
+- The legacy `photo_hotspots` table in `0001_init.sql` still has no `tenant_id`, `display_order`, `active`, `source_url` or `last_seen` columns. COW-34 supplied durable hotspot mappings and the re-crop policy in migration `0008`; hotspot UI writes are the next slice.
 - `media_placements` in `0005_media_registry.sql` already carries tenant, media asset, target, placement type and display order, so gallery ordering can be migrated first.
 - COW-35 Cloudinary ingestion is not complete. This first slice reads registry metadata and does not upload files.
 
@@ -48,6 +48,29 @@ This slice lands the read path only, so production image sourcing and Mews behav
 - `tests/roomPhotosPanel.test.ts` and `tests/dashboardApiClient.test.ts` assert the panel states and stale-data guards, the admin endpoint paths, room-ID encoding, request deadlines and the absence of client-supplied tenant scope.
 
 Admin URL for this slice: `/dashboard.html#/rooms` (static dashboard served by the Worker).
+
+## COW-84 gallery editing slice
+
+- Migration `0009_media_placement_flags.sql` adds tenant-scoped per-photo exclusion without an
+  `ALTER TABLE`, so the twice-applied migration check stays valid. Absence of a flag row means
+  "not excluded".
+- `worker/d1.ts` owns the gallery query once (`listRoomGallery`). It returns the canonical
+  Squarespace source URL and asset id from the COW-33 registry, applies placement/asset metadata
+  precedence, reads the exclusion flag, and skips malformed rows rather than hiding the gallery.
+- `GET /api/admin/media` returns the tenant image catalog for linking; the gallery endpoint now
+  also returns the working `room_gallery` draft, revision ids and hasUnpublishedDraft so the panel
+  can show unsaved state without leaking it to guests.
+- `worker/gallery-publication.ts` writes a published gallery document through to canonical
+  `media_placements` and flags. Ordering is two-phase (temporary park, then 1..N) so reorders never
+  hit the `(room, display_order)` UNIQUE constraint. Images parked by COW-67 above `PARK_OFFSET`
+  are left untouched, and unlinking removes only editor-selected active placements.
+- `src/dashboard/RoomPhotosPanel.tsx` now renders source-URL previews with an image error fallback,
+  accessible reorder/exclude/unlink/link controls, inline alt text/caption/description editing,
+  and save/publish/rollback feedback. All controls use the shared `Button`/`Pill` contract.
+- A published `roomGallery` snapshot feeds guest reads; excluded and parked photos are filtered
+  there. No guest source flag is flipped by this slice.
+- `tests/roomGalleryEditing.test.ts` covers reorder, metadata, exclusion, unlink, parked-row
+  preservation, validation, draft/publish snapshot separation and tenant-scoped media reads.
 
 ## Remaining slices (not in this PR)
 
