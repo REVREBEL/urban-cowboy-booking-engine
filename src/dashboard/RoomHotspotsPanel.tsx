@@ -1,7 +1,8 @@
 // COW-84 hotspot editor: durable pins on D1 room photos. Geometry is normalized
 // source-space X/Y; the Worker validates room and amenity eligibility and
 // writes COW-34 revision snapshots. No guest cutover happens here.
-import { useCallback, useEffect, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
+import { containedRect, pointToSource, type ImageRect, type Size } from "@/lib/hotspotCanvas";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import type { DashboardApi } from "./api";
@@ -196,17 +197,43 @@ function PhotoCanvas({
   onPlace: (x: number, y: number) => void;
 }) {
   const [failed, setFailed] = useState(false);
-  useEffect(() => setFailed(false), [photo.sourceUrl]);
+  const [natural, setNatural] = useState<Size | null>(null);
+  const [container, setContainer] = useState<Size>({ width: 0, height: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    setFailed(false);
+    setNatural(null);
+  }, [photo.sourceUrl]);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const measure = () => {
+      const rect = node.getBoundingClientRect();
+      setContainer({ width: rect.width, height: rect.height });
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  const imageRect: ImageRect = natural
+    ? containedRect(container, natural)
+    : { left: 0, top: 0, width: container.width, height: container.height };
   const place = (event: MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    onPlace(
-      clamp((event.clientX - rect.left) / rect.width),
-      clamp((event.clientY - rect.top) / rect.height),
+    const source = pointToSource(
+      { x: event.clientX - rect.left, y: event.clientY - rect.top },
+      imageRect,
     );
+    if (source) onPlace(source.x, source.y);
   };
 
   return (
     <div
+      ref={containerRef}
       className="relative aspect-video w-full overflow-hidden rounded-lg border border-border bg-muted"
       onClick={place}
       data-hotspot-canvas=""
@@ -215,6 +242,10 @@ function PhotoCanvas({
         <img
           src={photo.sourceUrl}
           alt={photo.altText || "Room photo"}
+          onLoad={(event) => setNatural({
+            width: event.currentTarget.naturalWidth,
+            height: event.currentTarget.naturalHeight,
+          })}
           onError={() => setFailed(true)}
           className="size-full object-contain"
         />
@@ -228,7 +259,10 @@ function PhotoCanvas({
           key={pin.id}
           aria-hidden="true"
           className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-paper bg-oxblood"
-          style={{ left: `${pin.sourceX * 100}%`, top: `${pin.sourceY * 100}%` }}
+          style={{
+            left: `${imageRect.left + pin.sourceX * imageRect.width}px`,
+            top: `${imageRect.top + pin.sourceY * imageRect.height}px`,
+          }}
         />
       ))}
     </div>
@@ -262,9 +296,21 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
     [api, roomId],
   ));
   const photos = (gallery.data?.items ?? []).filter((item) => !item.excluded);
+  // Room and photo changes must never carry a stale selection or version.
   useEffect(() => {
-    if (!placementId && photos.length) setPlacementId(photos[0].placementId);
-  }, [placementId, photos]);
+    setPlacementId("");
+    setPlacement(null);
+    setAmenityId("");
+    setVersionId("");
+    setFeedback(null);
+  }, [roomId]);
+  useEffect(() => {
+    if (!photos.some((item) => item.placementId === placementId)) {
+      setPlacementId(photos[0]?.placementId ?? "");
+      setPlacement(null);
+      setVersionId("");
+    }
+  }, [photos, placementId]);
   const photo = photos.find((item) => item.placementId === placementId);
   const pins = (hotspots.data?.items ?? []).filter(
     (pin) => pin.mediaAssetId === photo?.mediaAssetId && pin.placementId === photo?.placementId,

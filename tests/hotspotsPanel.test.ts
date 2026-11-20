@@ -21,9 +21,11 @@ test("hotspot panel reads rooms, photos and pins through the centralized client"
 
 test("hotspot placement uses normalized source coordinates and eligible amenities", () => {
   assert.match(panel, /clamp = \(value: number\) => Math\.min\(1, Math\.max\(0, value\)\)/);
-  assert.match(panel, /getBoundingClientRect\(\)/);
-  assert.match(panel, /clientX - rect\.left\) \/ rect\.width/);
-  assert.match(panel, /clientY - rect\.top\) \/ rect\.height/);
+  assert.match(panel, /containedRect\(container, natural\)/);
+  assert.match(panel, /pointToSource\(/);
+  assert.match(panel, /ResizeObserver/);
+  assert.match(panel, /onLoad=\{\(event\) => setNatural/);
+  assert.match(panel, /imageRect\.left \+ pin\.sourceX \* imageRect\.width/);
   assert.match(panel, /sourceX: placement\?\.x \?\? 0\.5/);
   assert.match(panel, /sourceY: placement\?\.y \?\? 0\.5/);
   assert.match(panel, /sourceVersionId: photo\.currentVersionId \?\? versionId/);
@@ -38,6 +40,19 @@ test("hotspot panel exposes review, publish and rollback controls", () => {
   assert.match(panel, /Publish pins/);
   assert.match(panel, /Rollback/);
   assert.match(panel, /role="status"/);
+});
+
+test("room and photo changes reset stale selections", () => {
+  assert.match(panel, /setPlacementId\(""\)/);
+  assert.match(panel, /setPlacement\(null\)/);
+  assert.match(panel, /setVersionId\(""\)/);
+  assert.match(panel, /\[roomId\]/);
+  assert.match(panel, /!photos\.some\(\(item\) => item\.placementId === placementId\)/);
+});
+
+test("publish and rollback always pass the room placement", () => {
+  assert.match(panel, /mediaAssetId: photo\.mediaAssetId,\s*placementId: photo\.placementId/);
+  assert.match(panel, /toVersionId: versionId/);
 });
 
 test("hotspot route is registered and gated with the other dashboard panels", () => {

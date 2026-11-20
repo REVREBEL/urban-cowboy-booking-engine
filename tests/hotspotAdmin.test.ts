@@ -22,7 +22,7 @@ const OTHER = "other-tenant";
 function makeDb() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
-  for (let id = 1; id <= 8; id += 1) {
+  for (let id = 1; id <= 10; id += 1) {
     const name = readdirSync(new URL("../migrations/", import.meta.url))
       .find((file) => file.startsWith(`${String(id).padStart(4, "0")}_`) && file.endsWith(".sql"));
     if (name) db.exec(read(`migrations/${name}`));
@@ -34,23 +34,28 @@ function makeDb() {
       ('catskills','${TENANT}','catskills','Catskills');
     INSERT INTO room_types (id, tenant_id, mews_room_category_id, name, slug, sort_order) VALUES
       ('room-a','${TENANT}','mews-a','Suite A','suite-a',1),
+      ('room-b','${TENANT}','mews-b','Suite B','suite-b',2),
       ('room-other','${OTHER}','mews-other','Other Suite','other-suite',1);
     INSERT INTO amenities (id, tenant_id, name, sort_order) VALUES
       ('tub','${TENANT}','Soaking tub',1),
       ('view','${TENANT}','Forest view',2),
       ('other-amenity','${OTHER}','Other amenity',1);
     INSERT INTO room_type_amenities (room_type_id, amenity_id, display_order, excluded) VALUES
-      ('room-a','tub',1,0), ('room-a','view',2,0);
+      ('room-a','tub',1,0), ('room-a','view',2,0), ('room-b','tub',1,0);
     INSERT INTO media_assets (id, tenant_id, location_id, kind, original_filename, squarespace_url) VALUES
-      ('media-1','${TENANT}','catskills','image','one.jpg','https://cdn/one');
+      ('media-1','${TENANT}','catskills','image','one.jpg','https://cdn/one'),
+      ('media-other','${OTHER}',NULL,'image','other.jpg','https://cdn/other');
     INSERT INTO media_versions (id, media_asset_id, version, squarespace_asset_id, squarespace_url, width, height) VALUES
       ('v-1','media-1',1,'sq-1','https://cdn/one',1200,800),
       ('v-2','media-1',2,'sq-2','https://cdn/one?width=1600',1200,800);
     INSERT INTO media_asset_metadata (media_asset_id, tenant_id, current_version_id) VALUES
       ('media-1','${TENANT}','v-2');
+    INSERT INTO media_versions (id, media_asset_id, version, squarespace_asset_id, squarespace_url) VALUES
+      ('v-other','media-other',1,'sq-other','https://cdn/other');
     INSERT INTO media_placements
       (id, tenant_id, media_asset_id, target_table, target_id, placement_type, display_order) VALUES
-      ('place-1','${TENANT}','media-1','room_types','room-a','gallery',1);
+      ('place-1','${TENANT}','media-1','room_types','room-a','gallery',1),
+      ('place-2','${TENANT}','media-1','room_types','room-b','gallery',1);
   `);
   return db;
 }
@@ -163,8 +168,8 @@ test("updateRoomHotspot persists source-space coordinates and review state with 
   assert.deepEqual(revisions.map((row) => row.action).sort(), ["create", "review"]);
   const reviewRevision = revisions.find((row) => row.action === "review");
   assert.ok(reviewRevision);
-  const before = JSON.parse(reviewRevision.snapshot_json);
-  assert.equal(before.sourceX, 0.42);
+  const resulting = JSON.parse(reviewRevision.snapshot_json);
+  assert.equal(resulting.sourceX, 0.7, "snapshots store the resulting geometry for rollback");
 });
 
 test("publish blocks pending geometry and succeeds after approval", async () => {
@@ -196,10 +201,95 @@ test("rollback restores an earlier geometry snapshot", async () => {
   const id = created.mapping.id;
   await updateRoomHotspot(ctx(db, { sourceX: 0.9 }), "room-a", id, allowAdmin);
   const rolled = await rollbackRoomHotspots(
-    ctx(db, { mediaAssetId: "media-1", toVersionId: "v-1" }), "room-a", allowAdmin,
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1", toVersionId: "v-1" }), "room-a", allowAdmin,
   );
   assert.equal(rolled.status, 200);
   assert.equal((await jsonBody(rolled)).restored, 1);
   const mapping = db.prepare("SELECT source_x FROM photo_hotspot_mappings WHERE id = ?").get(id) as any;
-  assert.equal(mapping.source_x, 0.42);
+  assert.equal(mapping.source_x, 0.9);
+});
+
+test("edits to a published pin stay in a draft until publish", async () => {
+  const db = makeDb();
+  const created = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  const id = created.mapping.id;
+  const published = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(published.status, 200);
+
+  const edited = await updateRoomHotspot(
+    ctx(db, { sourceX: 0.8, reviewState: "pending" }), "room-a", id, allowAdmin,
+  );
+  assert.equal((await jsonBody(edited)).draftOnly, true);
+  const guestRow = db.prepare("SELECT source_x, review_state FROM photo_hotspot_mappings WHERE id = ?").get(id) as any;
+  assert.equal(guestRow.source_x, 0.42);
+  assert.equal(guestRow.review_state, "approved");
+
+  const listed = await jsonBody(await listRoomHotspots(ctx(db), "room-a", allowViewer));
+  assert.equal(listed.items[0].hasDraft, true);
+  assert.equal(listed.items[0].sourceX, 0.8);
+
+  const blocked = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(blocked.status, 409);
+
+  await updateRoomHotspot(ctx(db, { reviewState: "approved" }), "room-a", id, allowAdmin);
+  const applied = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(applied.status, 200);
+  const finalRow = db.prepare("SELECT source_x FROM photo_hotspot_mappings WHERE id = ?").get(id) as any;
+  assert.equal(finalRow.source_x, 0.8);
+  assert.equal(db.prepare("SELECT mapping_id FROM photo_hotspot_drafts").all().length, 0);
+});
+
+test("publish and rollback never touch pins on another room's placement", async () => {
+  const db = makeDb();
+  const a = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  const b = await jsonBody(await createRoomHotspot(ctx(db, createInput({ placementId: "place-2" })), "room-b", allowAdmin));
+  await updateRoomHotspot(ctx(db, { reviewState: "pending" }), "room-a", a.mapping.id, allowAdmin);
+
+  const blocked = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(blocked.status, 409);
+  const bStatus = db.prepare("SELECT status FROM photo_hotspot_mappings WHERE id = ?").get(b.mapping.id) as any;
+  assert.equal(bStatus.status, "draft");
+
+  await updateRoomHotspot(ctx(db, { reviewState: "approved" }), "room-a", a.mapping.id, allowAdmin);
+  const published = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(published.status, 200);
+  const statuses = db.prepare("SELECT id, status FROM photo_hotspot_mappings").all() as Array<{ id: string; status: string }>;
+  assert.equal(statuses.find((row) => row.id === a.mapping.id)?.status, "published");
+  assert.equal(statuses.find((row) => row.id === b.mapping.id)?.status, "draft");
+
+  const rolled = await rollbackRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1", toVersionId: "v-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(rolled.status, 200);
+  assert.equal((await jsonBody(rolled)).restored, 1);
+});
+
+test("create rejects mismatched and cross-tenant asset relationships", async () => {
+  const db = makeDb();
+  const mismatched = await createRoomHotspot(
+    ctx(db, createInput({ mediaAssetId: "media-other", sourceVersionId: "v-other" })), "room-a", allowAdmin,
+  );
+  assert.equal(mismatched.status, 400);
+  assert.equal((await jsonBody(mismatched)).error, "placement_asset_mismatch");
+
+  const crossTenantPlacement = await createRoomHotspot(
+    ctx(db, createInput({ placementId: "place-1", mediaAssetId: "media-other", sourceVersionId: "v-other" })),
+    "room-other", allowAdmin,
+  );
+  assert.equal(crossTenantPlacement.status, 404);
+
+  const crossTenantVersion = await createRoomHotspot(
+    ctx(db, createInput({ mediaAssetId: "media-1", sourceVersionId: "v-other" })), "room-a", allowAdmin,
+  );
+  assert.equal(crossTenantVersion.status, 404);
 });
