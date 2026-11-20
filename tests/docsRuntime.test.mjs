@@ -203,7 +203,7 @@ test("static catalog search finds a documented component under the Pages base pa
     });
 
     await page.goto(`${origin}${basePath}/components/button/`, { waitUntil: "networkidle" });
-    await page.keyboard.press("Control+k");
+    await page.locator('button[data-search-full]').click();
     const dialog = page.locator('[role="dialog"]');
     await dialog.waitFor();
     const input = dialog.locator('input[type="text"], input:not([type])').first();

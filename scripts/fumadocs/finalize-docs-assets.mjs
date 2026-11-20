@@ -3,6 +3,7 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { resolveDocsBasePath } from "./base-path.mjs";
+import { prefixFontUrls } from "./prefix-font-urls.mjs";
 
 const out = process.argv[2] ?? "docs-app/out";
 const basePath = resolveDocsBasePath();
@@ -30,7 +31,7 @@ if (basePath) {
   // CSS. Prefix them so they resolve from the deployed Pages subpath too.
   for (const path of walk(out).filter((file) => file.endsWith(".css"))) {
     const css = readFileSync(path, "utf8");
-    const next = css.replace(/url\((["']?)\/fonts\//g, `url($1${basePath}/fonts/`);
+    const next = prefixFontUrls(css, basePath);
     if (next !== css) {
       writeFileSync(path, next);
       replacements += 1;

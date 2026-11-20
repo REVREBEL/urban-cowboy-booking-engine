@@ -28,9 +28,9 @@ function parsePage(path) {
     .replace(/<[^>]+>/g, "")
     .replace(/^\|.*$/gm, (line) => line.replace(/\|/g, " "))
     .replace(/^#{1,6}\s*/gm, "")
-    // Inline-code backticks would otherwise become part of the indexed token,
-    // so exact component-name searches such as "DogToggleButton" would miss.
-    .replace(/`/g, "")
+    // Strip inline-code delimiters (but leave stray literal backticks alone)
+    // so component names are indexed as plain tokens.
+    .replace(/`([^`\n]+)`/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
   const rel = relative(docsRoot, path).replace(/\.mdx$/, "").replaceAll("\\", "/");

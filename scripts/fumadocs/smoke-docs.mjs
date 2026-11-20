@@ -104,8 +104,15 @@ if (!html.includes("View source")) fail("missing rendered marker: View source");
 const searchIndex = join(out, "search-index.json");
 if (!existsSync(searchIndex)) fail("missing static search index");
 const searchData = JSON.parse(readFileSync(searchIndex, "utf8"));
-if (searchData.type !== "simple" || (searchData.docs?.count ?? 0) < 30) {
-  fail("static search index does not cover the catalog");
+const contentRoot = join(process.cwd(), "docs-app", "content", "docs");
+const countMdx = (directory) => readdirSync(directory, { withFileTypes: true })
+  .reduce((total, entry) => {
+    const path = join(directory, entry.name);
+    return total + (entry.isDirectory() ? countMdx(path) : Number(entry.name.endsWith(".mdx")));
+  }, 0);
+const expectedPages = countMdx(contentRoot);
+if (searchData.type !== "simple" || searchData.docs?.count !== expectedPages) {
+  fail(`static search index covers ${searchData.docs?.count} pages, expected ${expectedPages}`);
 }
 if (!html.includes(`${resolveDocsBasePath()}/search-index.json`)) {
   fail("static search index is not referenced under the base path");

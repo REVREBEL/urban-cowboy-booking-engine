@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { resolveDocsBasePath } from "../scripts/fumadocs/base-path.mjs";
 import { contrastForTokens } from "../scripts/fumadocs/contrast.mjs";
+import { prefixFontUrls } from "../scripts/fumadocs/prefix-font-urls.mjs";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -49,6 +50,19 @@ test("Fumadocs is configured for static export and subpath builds", () => {
   assert.match(nextConfig, /createNextStory/);
   assert.match(nextConfig, /createMDX/);
   assert.match(source, /baseUrl: "\/"/);
+});
+
+test("font URLs are prefixed for quoted, unquoted and spaced url() forms", () => {
+  const css = [
+    'src: url("/fonts/DesertRain/Regular.woff2")',
+    "src: url('/fonts/Brothers/Bold.woff2')",
+    "src: url(/fonts/LeagueSpartan/Variable.woff2)",
+    "src: url(  /fonts/Bianco%20Sans/Regular.woff2)",
+  ].join("\n");
+  const prefixed = prefixFontUrls(css, "/urban-cowboy-booking-engine");
+  assert.equal((prefixed.match(/\/urban-cowboy-booking-engine\/fonts\//g) ?? []).length, 4);
+  assert.doesNotMatch(prefixed, /url\(["' ]?\/fonts\//);
+  assert.equal(prefixFontUrls(css, ""), css);
 });
 
 test("catalog search is static-export compatible", () => {
