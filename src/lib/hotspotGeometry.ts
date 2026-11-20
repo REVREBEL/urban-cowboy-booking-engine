@@ -170,7 +170,11 @@ export function hammingDistance(a: string, b: string): number {
   if (a.length !== b.length) return Number.POSITIVE_INFINITY;
   let distance = 0;
   for (let i = 0; i < a.length; i++) {
-    if (parseInt(a[i], 16) !== parseInt(b[i], 16)) distance++;
+    let xor = parseInt(a[i], 16) ^ parseInt(b[i], 16);
+    while (xor > 0) {
+      distance += xor & 1;
+      xor >>= 1;
+    }
   }
   return distance;
 }

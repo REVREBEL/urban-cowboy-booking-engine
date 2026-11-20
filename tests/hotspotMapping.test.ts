@@ -186,6 +186,57 @@ test("an out-of-bounds crop and a different-angle replacement block publishing",
   assert.equal((await publishMappings(d1(angleDb), TENANT, "m1")).ok, false);
 });
 
+test("a pending review survives an exact reupload until explicitly approved", async () => {
+  const db = makeDb();
+  const first = await planReplacement(d1(db), baseInput);
+  assert.equal(first.decision, "replacement_review");
+  await applyReplacement(d1(db), first, [row(db)], { fromVersionId: "m1:v1" });
+  assert.equal(row(db).reviewState, "pending");
+  // An unverified replacement must not be readable as a published row.
+  assert.equal(row(db).status, "draft");
+  assert.equal((await publishMappings(d1(db), TENANT, "m1")).ok, false);
+
+  // The exact reupload of that unverified version is still unverified.
+  const second = await planReplacement(d1(db), {
+    ...baseInput,
+    fromVersionId: "m1:v2", toVersionId: "m1:v3",
+    fromFingerprint: v2, toFingerprint: { ...v2, sha256: SHA_V2 },
+  });
+  assert.equal(second.decision, "exact_reupload");
+  await applyReplacement(d1(db), second, [row(db)], { fromVersionId: "m1:v2" });
+  assert.equal(row(db).reviewState, "pending");
+  assert.equal(row(db).status, "draft");
+  assert.equal((await publishMappings(d1(db), TENANT, "m1")).ok, false);
+
+  // Only explicit approval clears it.
+  const approved = await planReplacement(d1(db), {
+    ...baseInput,
+    fromVersionId: "m1:v3", toVersionId: "m1:v3",
+    fromFingerprint: v2, toFingerprint: v2, approveReview: true,
+  });
+  await applyReplacement(d1(db), approved, [row(db)], { fromVersionId: "m1:v3" });
+  assert.equal(row(db).reviewState, "none");
+  assert.equal((await publishMappings(d1(db), TENANT, "m1")).ok, true);
+});
+
+test("a crop that excludes a pin is pending even though the overall change is a remap", async () => {
+  const db = makeDb();
+  const plan = await planReplacement(d1(db), {
+    ...baseInput,
+    toFingerprint: { ...v1, sha256: SHA_V1 },
+    cropBefore: { left: 0, top: 0, width: 2000, height: 1000 },
+    cropAfter: { left: 0, top: 0, width: 100, height: 100 },
+  });
+  assert.equal(plan.decision, "crop_remap");
+  assert.equal(plan.mappings[0].reviewState, "pending");
+  assert.equal(plan.mappings[0].reviewReason, "crop_point_outside");
+  assert.equal(plan.mappings[0].status, "draft");
+  assert.equal((await publishMappings(d1(db), TENANT, "m1")).ok, true); // nothing applied yet
+
+  await applyReplacement(d1(db), plan, [row(db)], { fromVersionId: "m1:v1" });
+  assert.equal((await publishMappings(d1(db), TENANT, "m1")).ok, false);
+});
+
 test("URL-only changes are a no-op even when stale hash facts are supplied", async () => {
   const db = makeDb();
   const plan = await planReplacement(d1(db), {

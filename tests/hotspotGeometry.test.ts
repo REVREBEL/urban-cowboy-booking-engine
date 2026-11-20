@@ -94,6 +94,15 @@ test("sha256 and perceptual hash classify exact and candidate duplicates", async
   assert.equal(classifyDuplicate({ sha256: null, phash: null }, { sha256: null, phash: null }), "none");
 });
 
+test("hamming distance counts bits, not hex characters", () => {
+  assert.equal(hammingDistance("0", "f"), 4);
+  assert.equal(hammingDistance("0", "8"), 1);
+  assert.equal(hammingDistance("f", "7"), 1);
+  assert.equal(hammingDistance("0000000000000000", "000000000000000f"), 4);
+  assert.equal(hammingDistance("abcd", "abce"), 2);
+  assert.equal(hammingDistance("abcd", "abc"), Number.POSITIVE_INFINITY);
+});
+
 const baseFacts = {
   exactFile: true,
   orientationBefore: 1 as ExifOrientation,

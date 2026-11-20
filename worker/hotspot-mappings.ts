@@ -52,6 +52,8 @@ export interface PlanInput {
   sameHashOnOtherMedia?: boolean;
   duplicateOfMediaId?: string | null;
   phashDistance?: number | null;
+  /** Explicit operator approval is required to clear an existing pending review. */
+  approveReview?: boolean;
 }
 
 async function loadMappings(
@@ -98,6 +100,18 @@ export async function planReplacement(
 
   const reviewRequired = !AUTO_PUBLISH_DECISIONS.has(decision);
   const reviewReason = reviewRequired ? decision : null;
+  // A pending review is sticky: only an explicit approval may clear it, and no
+  // safely-classified follow-up (e.g. an exact reupload) may launder it.
+  const locked = (mapping: PhotoHotspotMappingRow) =>
+    mapping.reviewState === "pending" && input.approveReview !== true;
+  const nextState = (mapping: PhotoHotspotMappingRow, safe: "none" | "pending") =>
+    locked(mapping) ? "pending" as const : safe;
+  const nextReason = (mapping: PhotoHotspotMappingRow, safe: string | null) =>
+    locked(mapping) ? (mapping.reviewReason ?? "pending_override") : safe;
+  // Unverified geometry must not be readable as a published row.
+  const nextStatus = (mapping: PhotoHotspotMappingRow) =>
+    locked(mapping) || reviewRequired ? "draft" as const : mapping.status;
+
   const mappings = current.map((mapping) => {
     const base = {
       ...mapping,
@@ -106,31 +120,40 @@ export async function planReplacement(
       derivedFrom: mapping.derivedFrom ?? mapping.id,
       duplicateOf: decision.startsWith("duplicate")
         ? (input.duplicateOfMediaId ?? null) : mapping.duplicateOf,
+      status: nextStatus(mapping),
       updatedAt: new Date().toISOString(),
     };
-    if (decision === "crop_remap" && input.cropBefore && input.cropAfter &&
-        from?.width && from.height && to?.width && to?.height) {
+    if (decision === "crop_remap" && input.cropAfter && to?.width && to.height) {
+      // Source coordinates stay canonical; validate each point against the NEW
+      // crop. A pin excluded by the new crop needs review even though the
+      // overall decision is otherwise auto-publishable.
       const remapped = remapCrop(
         { x: mapping.sourceX, y: mapping.sourceY },
-        { width: from.width, height: from.height },
-        input.cropBefore,
+        { width: to.width, height: to.height },
+        input.cropAfter,
       );
-      // Source coordinates are canonical; the crop rectangle carries display
-      // framing. We verify the old-to-new remap is computable, then store the
-      // unchanged source point with the new crop context and current size.
+      const cropped = {
+        ...base,
+        cropLeft: input.cropAfter.left,
+        cropTop: input.cropAfter.top,
+        cropWidth: input.cropAfter.width,
+        cropHeight: input.cropAfter.height,
+        sourceWidth: to.width,
+        sourceHeight: to.height,
+      };
       if (remapped) {
         return {
-          ...base,
-          cropLeft: input.cropAfter.left,
-          cropTop: input.cropAfter.top,
-          cropWidth: input.cropAfter.width,
-          cropHeight: input.cropAfter.height,
-          sourceWidth: to.width,
-          sourceHeight: to.height,
-          reviewState: "none" as const,
-          reviewReason: null,
+          ...cropped,
+          reviewState: nextState(mapping, "none"),
+          reviewReason: nextReason(mapping, null),
         };
       }
+      return {
+        ...cropped,
+        status: "draft" as const,
+        reviewState: "pending" as const,
+        reviewReason: "crop_point_outside",
+      };
     }
     if (decision === "exact_reupload") {
       return {
@@ -138,8 +161,8 @@ export async function planReplacement(
         sourceWidth: to?.width ?? mapping.sourceWidth,
         sourceHeight: to?.height ?? mapping.sourceHeight,
         exifOrientation: to?.exifOrientation ?? mapping.exifOrientation,
-        reviewState: "none" as const,
-        reviewReason: null,
+        reviewState: nextState(mapping, "none"),
+        reviewReason: nextReason(mapping, null),
       };
     }
     if (decision === "crop_review" && from && to && from.exifOrientation !== to.exifOrientation) {
@@ -154,7 +177,7 @@ export async function planReplacement(
         sourceY: point.y,
         exifOrientation: to.exifOrientation,
         reviewState: "pending" as const,
-        reviewReason,
+        reviewReason: nextReason(mapping, reviewReason),
       };
     }
     return {
@@ -162,8 +185,8 @@ export async function planReplacement(
       sourceWidth: to?.width ?? mapping.sourceWidth,
       sourceHeight: to?.height ?? mapping.sourceHeight,
       exifOrientation: to?.exifOrientation ?? mapping.exifOrientation,
-      reviewState: reviewRequired ? ("pending" as const) : ("none" as const),
-      reviewReason,
+      reviewState: nextState(mapping, reviewRequired ? "pending" : "none"),
+      reviewReason: nextReason(mapping, reviewReason),
     };
   });
   return { decision, reviewRequired, mappings };
