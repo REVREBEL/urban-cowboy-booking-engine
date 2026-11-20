@@ -49,9 +49,13 @@ async function draftFor(
   kind: string,
   slug: string,
 ): Promise<DraftLookup> {
+  // Amenity documents are tenant-level by contract. Prefer a tenant-wide row
+  // if a location-scoped variant is ever introduced rather than silently
+  // missing the document.
   const item = await db.prepare(
     `SELECT id, status, current_revision_id FROM content_items
-      WHERE tenant_id = ?1 AND kind = ?2 AND slug = ?3 AND location_id IS NULL`,
+      WHERE tenant_id = ?1 AND kind = ?2 AND slug = ?3
+      ORDER BY (location_id IS NULL) DESC, id`,
   ).bind(tenantId, kind, slug).first() as
     | { id: string; status: string; current_revision_id: string | null }
     | null;
@@ -116,10 +120,15 @@ export async function listAdminAmenities(
            LEFT JOIN content_revisions r
              ON r.id = COALESCE(p.working_revision_id, ci.current_revision_id)
             AND r.content_item_id = ci.id
-          WHERE ci.tenant_id = ?1 AND ci.kind = ?2 AND ci.location_id IS NULL`,
+          WHERE ci.tenant_id = ?1 AND ci.kind = ?2
+          ORDER BY (ci.location_id IS NULL) DESC, ci.id`,
       ).bind(scope, AMENITY_CONTENT_KIND).all();
+      // Tenant-wide rows win over any future location-scoped variant.
       const byId = new Map<string, any>();
-      for (const row of result.results ?? []) byId.set((row as any).amenity_id, row as any);
+      for (const row of result.results ?? []) {
+        const amenityId = (row as any).amenity_id as string;
+        if (!byId.has(amenityId)) byId.set(amenityId, row as any);
+      }
       return byId;
     })(),
   ]);

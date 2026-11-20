@@ -328,7 +328,7 @@ export async function hasPublishedRoomAmenities(
   const row = await db.prepare(
     `SELECT 1 FROM content_items
       WHERE tenant_id = ?1 AND kind = 'room_amenities' AND slug = ?2
-        AND status = 'published' AND location_id IS NULL`,
+        AND status = 'published'`,
   ).bind(tenantId, roomTypeId).first();
   return row !== null;
 }
@@ -340,8 +340,7 @@ export async function listPublishedRoomAmenitySlugs(
 ): Promise<Set<string>> {
   const result = await db.prepare(
     `SELECT slug FROM content_items
-      WHERE tenant_id = ?1 AND kind = 'room_amenities'
-        AND status = 'published' AND location_id IS NULL`,
+      WHERE tenant_id = ?1 AND kind = 'room_amenities' AND status = 'published'`,
   ).bind(tenantId).all();
   return new Set((result.results ?? []).map((row: any) => row.slug as string));
 }

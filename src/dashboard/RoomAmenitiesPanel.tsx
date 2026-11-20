@@ -209,7 +209,8 @@ function RoomAssignments({
   const available = amenities.filter((amenity) => !assigned.has(amenity.id));
 
   const change = (next: Assignment[], message: string) => {
-    setItems(next.map((item, index) => ({ ...item, displayOrder: index })));
+    // Keep the server's display_order values; only an explicit move swaps them.
+    setItems(next);
     setDirty(true);
     setFeedback({ tone: "success", message });
   };
@@ -218,7 +219,9 @@ function RoomAssignments({
     const destination = index + direction;
     if (destination < 0 || destination >= items.length) return;
     const next = [...items];
-    [next[index], next[destination]] = [next[destination], next[index]];
+    const movedOrder = next[index].displayOrder;
+    next[index] = { ...next[index], displayOrder: next[destination].displayOrder };
+    next[destination] = { ...next[destination], displayOrder: movedOrder };
     change(next, `Moved ${nameFor(next[destination].amenityId)}.`);
   };
 
@@ -232,7 +235,9 @@ function RoomAssignments({
 
   const add = (amenityId: string) => {
     if (assigned.has(amenityId)) return;
-    change([...items, { amenityId, displayOrder: items.length, excluded: false }],
+    // Append after the highest existing order so intentional gaps survive.
+    const nextOrder = items.reduce((max, item) => Math.max(max, item.displayOrder), -1) + 1;
+    change([...items, { amenityId, displayOrder: nextOrder, excluded: false }],
       `Added ${nameFor(amenityId)}.`);
   };
 
@@ -244,7 +249,7 @@ function RoomAssignments({
     setSaving(true);
     setFeedback(null);
     try {
-      const payload = { items: items.map((item, index) => ({ ...item, displayOrder: index })) };
+      const payload = { items };
       if (room.data?.itemId && room.data.workingRevisionId) {
         await api.saveEditorDraft(room.data.itemId, {
           payload, expectedRevisionId: room.data.workingRevisionId,

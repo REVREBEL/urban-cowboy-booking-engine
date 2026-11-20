@@ -10,6 +10,7 @@ const panel = read("src/dashboard/RoomAmenitiesPanel.tsx");
 const app = read("src/dashboard/DashboardApp.tsx");
 const api = read("src/dashboard/api.ts");
 const nav = read("src/dashboard/navigation.ts");
+const adminApi = read("worker/room-amenities.ts");
 
 test("panel loads rooms, catalog and assignments through the centralized client", () => {
   assert.match(panel, /api\.getAdminRooms<Room>\(\)/);
@@ -72,6 +73,20 @@ test("panel is wired into a protected dashboard route", () => {
   assert.match(app, /route === "amenities" && <RoomAmenitiesPanel api=\{api\} \/>/);
   assert.match(nav, /id: "amenities"/);
   assert.ok(app.indexOf("if (!session)") < app.indexOf("<DashboardShell"));
+});
+
+test("reorder preserves server display_order gaps instead of re-indexing", () => {
+  assert.match(panel, /setItems\(next\);/);
+  assert.match(panel, /displayOrder: next\[destination\]\.displayOrder/);
+  assert.match(panel, /Math\.max\(max, item\.displayOrder\)/);
+  assert.match(panel, /const payload = \{ items \};/);
+  assert.doesNotMatch(panel, /displayOrder: index \}\)\)\);/);
+});
+
+test("admin reads do not assume location-less amenity documents", () => {
+  assert.match(adminApi, /ORDER BY \(location_id IS NULL\) DESC, id/);
+  assert.match(adminApi, /ORDER BY \(ci\.location_id IS NULL\) DESC, ci\.id/);
+  assert.doesNotMatch(adminApi, /kind = \?2 AND slug = \?3 AND location_id IS NULL/);
 });
 
 test("admin client exposes editor helpers without a tenant parameter", () => {
