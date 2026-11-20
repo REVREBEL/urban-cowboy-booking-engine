@@ -22,15 +22,12 @@ const config: StorybookConfig = {
   features: {
     componentsManifest: true,
   },
-  // Provide complete TS prop signatures to Docs/Controls and the MCP manifest.
+  // Temporary historical Storybook gate (COW-70): TypeScript 7 removed
+  // ts.sys.fileExists, which the react-docgen-typescript Vite plugin requires.
+  // Use the Babel/AST-based react-docgen parser until Fumadocs completely
+  // replaces the historical Storybook runtime. Keep TypeScript 7 for the app.
   typescript: {
-    reactDocgen: "react-docgen-typescript",
-    reactDocgenTypescriptOptions: {
-      shouldExtractLiteralValuesFromEnum: true,
-      // Keep inherited HTML/React props (e.g. disabled, onClick) visible
-      // in Docs, Controls and the MCP component manifest.
-      propFilter: () => true,
-    },
+    reactDocgen: "react-docgen",
   },
   async viteFinal(config) {
     // Match the application build: Tailwind v4 directives are processed by
