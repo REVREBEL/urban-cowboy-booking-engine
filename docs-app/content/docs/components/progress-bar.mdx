@@ -19,13 +19,14 @@ list. It is presentational; advancing the booking is the caller's responsibility
 
 ## Accessibility
 
-The current step is marked for assistive technology, and completed steps expose a check icon
-in addition to colour so the state is not conveyed by colour alone.
+The current step is marked for assistive technology. Completed steps show a number by default;
+pass `showCheckOnComplete` to render a check icon as well, so state is not conveyed by colour
+alone.
 
 ## Responsive behaviour
 
-Steps wrap on narrow screens instead of compressing labels; the connector line follows the
-wrapped layout.
+The steps keep a fixed width in a horizontally scrollable row on narrow screens rather than
+wrapping or compressing labels. The connector line stays aligned with the row.
 
 ## Usage
 

@@ -41,7 +41,8 @@ interface PhoneDemoProps {
 
 function PhoneDemo({ value, defaultCountry, invalid, required }: PhoneDemoProps) {
   const [current, setCurrent] = useState(value);
-  const [valid, setValid] = useState(true);
+  // An empty required input starts unvalidated, not as a valid E.164 number.
+  const [valid, setValid] = useState(!invalid && Boolean(value));
   return (
     <div className="w-full max-w-sm space-y-2">
       <PhoneInput
@@ -52,7 +53,7 @@ function PhoneDemo({ value, defaultCountry, invalid, required }: PhoneDemoProps)
         onChange={(e164, isValid) => { setCurrent(e164); setValid(isValid); }}
       />
       <p className="text-sm text-muted-foreground" role="status">
-        {current || "—"} · {valid ? "valid E.164" : "invalid"}
+        {current || "—"} · {!current ? "not validated" : valid ? "valid E.164" : "invalid"}
       </p>
     </div>
   );

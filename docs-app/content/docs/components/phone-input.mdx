@@ -40,7 +40,14 @@ shift occurs when switching countries on a narrow screen.
 ```tsx
 import { PhoneInput } from '@/components/forms/phone-input';
 
-<PhoneInput value={phone} defaultCountry="US" onChange={(e164, valid) => setPhone(e164, valid)} />
+<PhoneInput
+  value={phone}
+  defaultCountry="US"
+  onChange={(e164, valid) => {
+    setPhone(e164);
+    setValid(valid);
+  }}
+/>
 ```
 
 [View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/forms/phone-input.tsx)
