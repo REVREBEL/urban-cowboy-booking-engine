@@ -1,0 +1,45 @@
+---
+title: FindYourStayTravelPartyButton
+description: Party-type selector used by the intent-first "Find your stay" step.
+---
+
+import { TravelPartyStoryControl } from '~/components/story-controls';
+
+The travel party button renders a title, subtitle and selection state. The demo uses the
+component's exported `DEFAULT_TRAVEL_PARTY_OPTIONS` and a docs-only selection state.
+
+<TravelPartyStoryControl />
+
+## Props and states
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `id` | `partner`, `friends`, `family`, `solo` or a custom string | Stable option identifier passed to `onSelect` |
+| `title` / `subtitle` | string | Editorial copy for the option |
+| `isSelected` | boolean | Selected presentation |
+| `onSelect` | `(id: string) => void \| Promise<void>` | Supports asynchronous callers |
+| `isLoading` / `disabled` | boolean | Busy and unavailable states |
+
+The former `Default` and `Selected` stories are represented by the four-option grid; the
+selected card updates immediately on click.
+
+## Responsive behaviour
+
+Options stack on small screens and form a two-column grid from `sm` upward. Buttons keep
+their intrinsic height and wrap text rather than introducing horizontal scrolling.
+
+## Usage
+
+```tsx
+import { FindYourStayTravelPartyButton } from '@/components/booking/discovery/FindYourStayTravelPartyButton';
+
+<FindYourStayTravelPartyButton
+  id="partner"
+  title="PARTNER"
+  subtitle="Just the two of us"
+  isSelected={party === 'partner'}
+  onSelect={setParty}
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/discovery/FindYourStayTravelPartyButton.tsx)

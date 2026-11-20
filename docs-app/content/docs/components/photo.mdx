@@ -1,0 +1,44 @@
+---
+title: Photo
+description: Image with a deterministic gradient fallback for missing or broken sources.
+---
+
+import { PhotoStoryControl, PhotoStatesStoryControl } from '~/components/story-controls';
+
+`Photo` renders an `<img>` or, when the source is absent or fails to load, a gradient-filled
+`role="img"` placeholder with the same accessible label. It is used across room and journey
+cards so a broken asset never leaves an empty box. The docs demo uses a checked-in local SVG
+instead of a remote photograph, so it works offline and under the Pages base path.
+
+<PhotoStoryControl />
+
+## Former Storybook states
+
+<PhotoStatesStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `src` | string, `null` or `undefined` | Absent source renders the gradient fallback |
+| `alt` | string | Accessible label for both the image and the fallback |
+| `className` | string | Sizing and shape; applied to both states |
+| `gradient` | string | Tailwind gradient classes for the fallback |
+
+The component is lazy-loaded (`loading="lazy"`) and resets its error state whenever `src`
+changes, so swapping in a valid source recovers the image.
+
+## Responsive behaviour
+
+Sizing is entirely caller-controlled through `className`; the component adds no intrinsic
+dimensions. The fallback fills the same box, so layouts do not shift when an image fails.
+
+## Usage
+
+```tsx
+import { Photo } from '@/components/media/photo';
+
+<Photo src={photoUrl} alt="Alpine Bathing Suite" className="size-64 object-cover" />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/media/photo.tsx)

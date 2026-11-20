@@ -51,6 +51,8 @@ export interface PhotoTourArrowProps {
   direction: "up" | "down" | "left" | "right";
   size?: number;
   chevron?: boolean;
+  /** Optional prefix for the arrow asset URL when hosted under a base path. */
+  imageBaseUrl?: string;
 }
 
 /** Use existing photo tour arrow assets, with an inline custom SVG chevron fallback. */
@@ -58,10 +60,11 @@ export function PhotoTourArrow({
   direction,
   size = 18,
   chevron = false,
+  imageBaseUrl = "",
 }: PhotoTourArrowProps) {
   const [fallback, setFallback] = useState(false);
   const isUp = direction !== "down";
-  const src = `/assets/icons/ui/ui-arrow-${isUp ? "up" : "down"}.svg`;
+  const src = `${imageBaseUrl}/assets/icons/ui/ui-arrow-${isUp ? "up" : "down"}.svg`;
   const rotation = direction === "left" ? -90 : direction === "right" ? 90 : 0;
 
   // Render inline custom SVG chevron if chevron mode is active or img fails to load

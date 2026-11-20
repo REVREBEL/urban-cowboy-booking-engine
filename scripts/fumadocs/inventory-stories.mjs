@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // COW-69 inventory of existing CSF stories and their planned Fumadocs pages.
-import { mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const root = process.cwd();
@@ -23,10 +23,79 @@ function kebabCase(value) {
     .replace(/^-|-$/g, "");
 }
 
-/** Explicit source-to-page mapping for pages that predate the generated naming scheme. */
+/**
+ * Explicit source-to-page mapping for every migrated story. Matching by
+ * basename alone conflates components with the same name in different folders,
+ * so documentation status is keyed on the canonical story source path.
+ */
 const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/ui/Pill.stories.tsx": "docs-app/content/docs/components/pill.mdx",
+  "src/stories/components/ui/Button.stories.tsx": "docs-app/content/docs/components/button.mdx",
+  "src/stories/components/ui/switch.stories.tsx": "docs-app/content/docs/components/switch.mdx",
   "src/stories/components/booking/discovery/PreferenceIconButton.stories.tsx": "docs-app/content/docs/components/preference-icon-button.mdx",
+  "src/stories/components/booking/discovery/DogToggleButton.stories.tsx": "docs-app/content/docs/components/dog-toggle-button.mdx",
+  "src/stories/components/booking/discovery/FindYourStayTravelPartyButton.stories.tsx": "docs-app/content/docs/components/travel-party-button.mdx",
+  "src/stories/components/booking/search/SearchButton.stories.tsx": "docs-app/content/docs/components/search-button.mdx",
+  "src/stories/components/rooms/BuildingIcon.stories.tsx": "docs-app/content/docs/components/building-icon.mdx",
+  "src/stories/components/rooms/AmenityIcons.stories.tsx": "docs-app/content/docs/components/amenity-icons.mdx",
+  "src/stories/components/rates/ConfigurableRateCard.stories.tsx": "docs-app/content/docs/components/configurable-rate-card.mdx",
+  "src/stories/components/journey/PhotoArrival.stories.tsx": "docs-app/content/docs/components/arrival.mdx",
+  "src/stories/components/journey/PhotoExtrasStep.stories.tsx": "docs-app/content/docs/components/journey-extras.mdx",
+  "src/stories/components/journey/PhotoJournal.stories.tsx": "docs-app/content/docs/components/stay-journal.mdx",
+  "src/stories/components/journey/PhotoRooms.stories.tsx": "docs-app/content/docs/components/journey-rooms.mdx",
+  "src/stories/components/journey/PhotoTourArrow.stories.tsx": "docs-app/content/docs/components/photo-tour-arrow.mdx",
+  "src/stories/components/journey/RoomPhotoTour.stories.tsx": "docs-app/content/docs/components/room-photo-tour.mdx",
+  "src/stories/components/media/Photo.stories.tsx": "docs-app/content/docs/components/photo.mdx",
+  "src/stories/components/booking/discovery/HelpMeChooseModal.stories.tsx": "docs-app/content/docs/components/help-me-choose-modal.mdx",
+  "src/stories/components/booking/discovery/MatchOrBrowseScreen.stories.tsx": "docs-app/content/docs/components/match-or-browse-screen.mdx",
+  "src/stories/components/booking/discovery/RoomMatcherPage.stories.tsx": "docs-app/content/docs/components/room-matcher-page.mdx",
+  "src/stories/components/booking/discovery/RoomMatcherProgress.stories.tsx": "docs-app/content/docs/components/matcher-progress.mdx",
+  "src/stories/components/booking/results/MatchBenefitsCard.stories.tsx": "docs-app/content/docs/components/match-benefits-card.mdx",
+  "src/stories/components/forms/DateRangePicker.stories.tsx": "docs-app/content/docs/components/date-range-picker.mdx",
+  "src/stories/components/forms/PhoneInput.stories.tsx": "docs-app/content/docs/components/phone-input.mdx",
+  "src/stories/components/feedback/EmptyState.stories.tsx": "docs-app/content/docs/components/empty-state.mdx",
+  "src/stories/components/feedback/ErrorState.stories.tsx": "docs-app/content/docs/components/error-state.mdx",
+  "src/stories/components/feedback/LoadingState.stories.tsx": "docs-app/content/docs/components/loading-state.mdx",
+  "src/stories/components/booking/layout/step-layout.stories.tsx": "docs-app/content/docs/components/step-layout.mdx",
+  "src/stories/components/booking/layout/step-progress.stories.tsx": "docs-app/content/docs/components/step-progress.mdx",
+  "src/stories/components/booking/progress/ProgressBar.stories.tsx": "docs-app/content/docs/components/progress-bar.mdx",
+  "src/stories/components/booking/progress/ProgressStep.stories.tsx": "docs-app/content/docs/components/progress-step.mdx",
+});
+
+/**
+ * Stage 5 triage for production components that have no Storybook story.
+ * Candidates are not silently dropped: each source file gets an explicit
+ * category and rationale so the matrix can explain why it has no docs page.
+ */
+const CANDIDATE_TRIAGE = Object.freeze({
+  "src/components/booking/conversion.tsx": {
+    category: "deferred",
+    rationale: "Conversion merchandising primitives; a dedicated page follows the core booking flow pages.",
+  },
+  "src/components/booking/extras/upsell-card.tsx": {
+    category: "deferred",
+    rationale: "Extras upsell presentation; the Extras journey page documents the surrounding flow.",
+  },
+  "src/components/booking/search/SearchBarExpanded.tsx": {
+    category: "deferred",
+    rationale: "Composite search panel; its date/party controls are documented individually.",
+  },
+  "src/components/icons/cowboy-icons.tsx": {
+    category: "excluded",
+    rationale: "Inline SVG glyph set consumed as implementation details, not one public component per glyph.",
+  },
+  "src/components/media/HotspotEditor.tsx": {
+    category: "excluded",
+    rationale: "Admin-only editor; interactive docs must not expose admin writes.",
+  },
+  "src/components/rooms/CmsAmenityIcon.tsx": {
+    category: "excluded",
+    rationale: "Internal asset resolver behind the documented AmenityIcons component.",
+  },
+  "src/components/rooms/RoomsListCard.tsx": {
+    category: "deferred",
+    rationale: "Room list presentation covered by the Journey Rooms page until it has its own reference.",
+  },
 });
 
 const usedPlannedPaths = new Set();
@@ -52,8 +121,10 @@ const stories = walk(storiesRoot)
   .sort()
   .map((path) => {
     const source = readFileSync(path, "utf8");
-    const rel = relative(root, path);
-    const segments = relative(storiesRoot, path).split("/");
+    // Normalize separators so DOC_PAGE_OVERRIDES (authored with forward slashes)
+    // resolves on Windows too; basename matching is intentionally not used.
+    const rel = relative(root, path).replaceAll("\\", "/");
+    const segments = relative(storiesRoot, path).replaceAll("\\", "/").split("/");
     const group = segments[0] ?? "uncategorized";
     const categoryKey = group === "components" ? (segments[1] ?? "uncategorized") : group;
     const title = /title:\s*["']([^"']+)["']/.exec(source)?.[1] ?? segments.join("/");
@@ -129,12 +200,6 @@ for (const [storyPath, pagePath] of Object.entries(DOC_PAGE_OVERRIDES)) {
     throw new Error(`DOC_PAGE_OVERRIDES points at missing page ${pagePath} for ${storyPath}`);
   }
 }
-const pageBySlug = new Map();
-for (const page of docsPages) {
-  const slug = page.split("/").at(-1).replace(/\.mdx$/, "");
-  pageBySlug.set(slug, page);
-}
-
 // Heuristic: exported PascalCase declarations in component source files. This
 // deliberately over-reports helpers; the matrix records it as a candidate list
 // for human triage rather than claiming every entry is a public component.
@@ -150,13 +215,19 @@ const undocumentedProductionCandidates = walk(sourceRoot)
     ];
     return [...new Set(names)]
       .filter((name) => !storyText.includes(name))
-      .map((name) => ({ name, source: relative(root, path).replaceAll("\\", "/") }));
+      .map((name) => {
+        const sourcePath = relative(root, path).replaceAll("\\", "/");
+        const triage = CANDIDATE_TRIAGE[sourcePath];
+        if (!triage) {
+          throw new Error(`Undocumented production candidate has no triage decision: ${sourcePath} (${name})`);
+        }
+        return { name, source: sourcePath, triage };
+      });
   });
 
 const coverage = stories.map((story) => {
   const component = story.title.split("/").at(-1) ?? story.title;
-  const slug = kebabCase(component);
-  const existingPage = DOC_PAGE_OVERRIDES[story.source] ?? pageBySlug.get(slug) ?? null;
+  const existingPage = DOC_PAGE_OVERRIDES[story.source] ?? null;
   const plannedPage = story.newDoc;
   const docsPage = story.status === "skipped" ? null : existingPage ?? plannedPage;
   return {
@@ -181,6 +252,10 @@ const coverageMatrix = {
     planned: coverage.filter((entry) => entry.status === "planned").length,
     excluded: coverage.filter((entry) => entry.status === "excluded").length,
     undocumentedProductionCandidates: undocumentedProductionCandidates.length,
+    candidateTriage: {
+      deferred: undocumentedProductionCandidates.filter((c) => c.triage.category === "deferred").length,
+      excluded: undocumentedProductionCandidates.filter((c) => c.triage.category === "excluded").length,
+    },
   },
   components: coverage,
   undocumentedProductionCandidates,
@@ -190,6 +265,18 @@ const matrixText = JSON.stringify(coverageMatrix, null, 2) + "\n";
 // Generate and validate every output before replacing either tracked file.
 JSON.parse(manifestText);
 JSON.parse(matrixText);
+if (process.argv.includes("--check")) {
+  const stale = [
+    [out, manifestText],
+    [matrixPath, matrixText],
+  ].filter(([path, text]) => !existsSync(path) || readFileSync(path, "utf8") !== text);
+  if (stale.length) {
+    console.error(`Generated docs inventory is stale: ${stale.map(([path]) => relative(root, path)).join(", ")}. Run npm run docs:inventory.`);
+    process.exit(1);
+  }
+  console.log("docs inventory is current");
+  process.exit(0);
+}
 writeFileSync(`${out}.tmp`, manifestText);
 writeFileSync(`${matrixPath}.tmp`, matrixText);
 renameSync(`${out}.tmp`, out);

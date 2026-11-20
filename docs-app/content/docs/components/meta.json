@@ -1,4 +1,4 @@
 {
   "title": "Components",
-  "pages": ["pill", "button", "switch", "preference-icon-button"]
+  "pages": ["pill", "button", "switch", "preference-icon-button", "dog-toggle-button", "travel-party-button", "search-button", "building-icon", "amenity-icons", "configurable-rate-card", "photo", "photo-tour-arrow", "room-photo-tour", "arrival", "journey-extras", "stay-journal", "journey-rooms", "help-me-choose-modal", "match-or-browse-screen", "room-matcher-page", "matcher-progress", "match-benefits-card", "date-range-picker", "phone-input", "empty-state", "error-state", "loading-state", "step-layout", "step-progress", "progress-bar", "progress-step"]
 }

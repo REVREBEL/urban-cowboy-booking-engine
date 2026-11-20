@@ -13,7 +13,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <RootProvider search={{ enabled: false }}>
+        <RootProvider
+          search={{
+            enabled: true,
+            options: {
+              type: "static",
+              api: `${process.env.NEXT_PUBLIC_DOCS_BASE_PATH ?? ""}/search-index.json`,
+            },
+          }}
+        >
           <DocsLayout
             tree={source.pageTree}
             nav={{ title: "Urban Cowboy" }}

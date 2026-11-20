@@ -21,6 +21,8 @@ export interface BuildingIconProps {
   className?: string;
   buildingName?: BuildingIconName;
   color?: BuildingIconColor;
+  /** Optional prefix for icon asset URLs when hosted under a base path. */
+  imageBaseUrl?: string;
 }
 
 const BUILDING_ICON_CONFIG: Record<
@@ -102,9 +104,11 @@ export function BuildingIcon({
   className = "",
   buildingName = "Default",
   color = "Smoke",
+  imageBaseUrl = "",
 }: BuildingIconProps) {
   const config = BUILDING_ICON_CONFIG[buildingName];
   const colorClass = BUILDING_ICON_COLOR_CLASS[color];
+  const iconUrl = `${imageBaseUrl}${config.src}`;
 
   return (
     <div
@@ -124,8 +128,8 @@ export function BuildingIcon({
           aria-hidden="true"
           className={["absolute inset-0 block size-full", colorClass].join(" ")}
           style={{
-            WebkitMask: `url("${config.src}") center / contain no-repeat`,
-            mask: `url("${config.src}") center / contain no-repeat`,
+            WebkitMask: `url("${iconUrl}") center / contain no-repeat`,
+            mask: `url("${iconUrl}") center / contain no-repeat`,
           }}
         />
       </div>

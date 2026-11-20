@@ -1,0 +1,39 @@
+---
+title: Progress Bar
+description: Step-by-step booking progress with automatic step states.
+---
+
+import { ProgressBarStoryControl } from '~/components/story-controls';
+
+`ProgressBar` derives complete/current/default states from a numeric `currentStep` and a step
+list. It is presentational; advancing the booking is the caller's responsibility.
+
+<ProgressBarStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `currentStep` | number | One-based index of the active step |
+| `steps` | `{ step, label }[]` | Ordered steps to display |
+
+## Accessibility
+
+The current step is marked for assistive technology. Completed steps show a number by default;
+pass `showCheckOnComplete` to render a check icon as well, so state is not conveyed by colour
+alone.
+
+## Responsive behaviour
+
+The steps keep a fixed width in a horizontally scrollable row on narrow screens rather than
+wrapping onto a second line or compressing labels.
+
+## Usage
+
+```tsx
+import { ProgressBar } from '@/components/booking/progress/ProgressBar';
+
+<ProgressBar currentStep={2} steps={DEFAULT_BOOKING_STEPS} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/progress/ProgressBar.tsx)

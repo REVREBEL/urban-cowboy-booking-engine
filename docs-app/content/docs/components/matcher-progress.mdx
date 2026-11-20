@@ -1,0 +1,39 @@
+---
+title: Matcher Progress
+description: Compact two-step progress indicator for the room matcher.
+---
+
+import {
+  MatcherProgressStoryControl,
+  MatcherProgressStepsStoryControl,
+} from '~/components/story-controls';
+
+`MatcherProgress` shows which step of the room matcher is active. It is presentational: the
+caller owns the current step. The docs demo displays all three states side by side.
+
+<MatcherProgressStoryControl />
+
+## Steps
+
+<MatcherProgressStepsStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `step` | `1`, `2`, `3` | Highlights the active step; later steps stay muted |
+
+## Responsive behaviour
+
+The indicator is inline and wraps only when its container is very narrow. The comparison grid
+uses one column on phones and three from `sm` up.
+
+## Usage
+
+```tsx
+import { MatcherProgress } from '@/components/booking/discovery/RoomMatcherProgress';
+
+<MatcherProgress step={2} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/discovery/RoomMatcherProgress.tsx)

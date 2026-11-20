@@ -4,12 +4,14 @@ type Props = {
   selected: boolean;
   onToggle: () => void;
   className?: string;
+  /** Optional prefix for icon URLs, used when the host site is served under a base path. */
+  imageBaseUrl?: string;
 };
 
 const DETAILED_DOG_ICON = "/assets/icons/detailed/dog_friendly.svg";
 const SIMPLE_DOG_ICON = "/assets/icons/badges/features/dog_friendly.svg";
 
-export function DogToggleButton({ selected, onToggle, className = "" }: Props) {
+export function DogToggleButton({ selected, onToggle, className = "", imageBaseUrl = "" }: Props) {
   return (
     <button
       type="button"
@@ -23,7 +25,7 @@ export function DogToggleButton({ selected, onToggle, className = "" }: Props) {
       )}
     >
       <img
-        src={SIMPLE_DOG_ICON}
+        src={`${imageBaseUrl}${SIMPLE_DOG_ICON}`}
         alt=""
         aria-hidden="true"
         className={cn(
@@ -33,7 +35,7 @@ export function DogToggleButton({ selected, onToggle, className = "" }: Props) {
       />
 
       <img
-        src={DETAILED_DOG_ICON}
+        src={`${imageBaseUrl}${DETAILED_DOG_ICON}`}
         alt=""
         aria-hidden="true"
         className={cn(

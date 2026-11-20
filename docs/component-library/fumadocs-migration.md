@@ -13,6 +13,58 @@ the real source imports and interactive demos. The Button page carries the forme
 AllColors/TextCases/BorderColors/Clickable/Sizes variants into a deterministic grid; the
 Switch page uses a controlled docs-only harness with a paired `Label`.
 
+The coverage matrix is keyed on explicit story-source-to-MDX-page overrides, not basename
+matching; `npm run docs:inventory:check` fails CI when generated files are stale. A Playwright
+smoke test serves the exported site under the configured Pages base path and verifies that the
+DogToggleButton icons load before and after hydration-driven toggling, because rewriting static
+HTML alone cannot fix client-rendered image URLs. DogToggleButton accepts an optional
+`imageBaseUrl`, and the docs story passes `NEXT_PUBLIC_DOCS_BASE_PATH`.
+
+Second migrated group: search, date and party controls. `DogToggleButton`,
+`FindYourStayTravelPartyButton` and `SearchButton` have reference pages with controlled
+docs-only harnesses. The travel-party demo uses the real `TravelPartyGroup` for accessible
+radio-group semantics, and root-relative component icons are copied and base-path prefixed
+during the static docs build.
+
+Third migrated group: rooms, rates and merchandising. `BuildingIcon`, `AmenityIcons` and
+`ConfigurableRateCard` have reference pages using the real source components with
+deterministic fixtures. `BuildingIcon` also accepts `imageBaseUrl` for its CSS-mask assets,
+and the docs build copies every checked-in building SVG so the runtime smoke can verify the
+masks resolve under the Pages base path. The rate-card harness keeps expand/confirm state
+local; it never creates a reservation or starts a payment.
+
+Fourth migrated group: journey, media and recommendation/compare. The six photo-journey
+stories, `Photo`, and the five discovery/results stories have reference pages using the real
+source components with deterministic studio fixtures and local icon assets. Journey flows keep
+date, guest and selection state in docs-only harnesses; `loadCalendar` is a no-op and no
+reservation, payment or admin write is triggered. `PhotoTourArrow`, `RoomMatcherPage` and
+`MatchBenefitsCard` gained an optional `imageBaseUrl` for their root-relative assets, and the
+docs build copies those icons/illustrations for the static export.
+
+Fifth migrated group: forms, feedback and booking layout. `DateRangePicker`, `PhoneInput`,
+`EmptyState`, `ErrorState`, `LoadingState`, `StepLayout`, `StepProgress`, `ProgressBar` and
+`ProgressStep` have reference pages with local-only state and the real `BookingProvider` where
+the layout needs it. `EmptyState` gained an optional `imageBaseUrl` for its illustration.
+
+The 41 production components with no historical story are now triaged explicitly in the
+coverage matrix rather than listed as an unexplained backlog. Each candidate carries a
+`deferred` or `excluded` category with a rationale; the inventory generator fails if a new
+candidate has no decision, so the record cannot silently go stale.
+
+Sixth stage: static search and published-output verification. Catalog search is enabled in
+`RootProvider` with Fumadocs' `static` client and a build-time `search-index.json` generated
+from the MDX frontmatter and prose; there is no search API route or external service. The
+static build also copies the brand fonts into the docs export and rewrites root-relative
+`@font-face` URLs under the Pages base path. Playwright serves the export under
+`/urban-cowboy-booking-engine` and verifies search-and-navigate, deep links at desktop and
+mobile widths, and that no asset 404s occur.
+
+Published site: `https://revrebel.github.io/urban-cowboy-booking-engine/` (redirects to
+`resource-hub.revrebel.io`). At this checkpoint the live deployment still serves the stage-1
+catalog; pages from stages 2–6 return 404 until the stacked PRs are merged and the docs
+workflow redeploys from `main`. The local static export and all browser smoke results are
+recorded in CI; repeat the live checks after each upstream merge.
+
 To add a component page: create a `*.story.tsx` in `docs-app/components` importing the real
 component, expose a `defineStory` export (with a deterministic harness when the component
 needs context), add a client wrapper in `story-controls.tsx`, write the MDX page with props,

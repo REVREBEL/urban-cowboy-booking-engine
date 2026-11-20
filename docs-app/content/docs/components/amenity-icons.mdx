@@ -1,0 +1,50 @@
+---
+title: AmenityIcons
+description: CMS-driven amenity icons with a checked-in SVG and inline TourIcon fallback chain.
+---
+
+import { AmenityIconStoryControl, AmenityIconGridStoryControl } from '~/components/story-controls';
+
+`AmenityIcons` resolves an amenity glyph in three steps: a Webflow image URL first, a
+checked-in SVG path second, and an inline `TourIcon` last. It is decorative (`aria-hidden`)
+and inherits its colour from the parent so it reads correctly on both light and dark
+surfaces. The docs demos exercise the inline fallback path only; no CMS or network request
+is made.
+
+<AmenityIconStoryControl />
+
+## All fallback icons
+
+The former Storybook `AllIcons` and `ThemeContexts` states are represented here: every
+supported fallback glyph, shown inheriting the current text colour.
+
+<AmenityIconGridStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `icon` | `bed`, `tub`, `outdoor-tub`, `window`, `seat`, `stove`, `robes`, `speaker`, `shower`, `floors`, `desk`, `balcony` | Fallback `TourIcon` used when no asset resolves |
+| `iconPath` | CMS asset path or `null` | Checked-in SVG path, resolved under `assets/icons/` |
+| `imageUrl` | HTTPS URL or `null` | Webflow-hosted image, attempted first |
+| `className` | string | Applied to the wrapper; fills its parent by default |
+
+The icon fills its parent container fluidly, so provide a sized wrapper. Icon assets are
+monochrome masks tinted with `currentColor`.
+
+## Responsive behaviour
+
+The grid moves from two columns to four at the `sm` breakpoint. Each glyph scales with its
+wrapper, so the same component serves compact photo hotspots and larger amenity lists.
+
+## Usage
+
+```tsx
+import { AmenityIcons } from '@/components/rooms/AmenityIcons';
+
+<span className="size-10 text-primary">
+  <AmenityIcons icon="tub" />
+</span>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/AmenityIcons.tsx)

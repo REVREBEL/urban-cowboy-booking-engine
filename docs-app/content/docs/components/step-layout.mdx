@@ -1,0 +1,38 @@
+---
+title: Step Layout
+description: Shared two-column layout for guest, extras and payment booking steps.
+---
+
+import { StepLayoutStoryControl } from '~/components/story-controls';
+
+`StepLayout` gives every late-stage booking step a consistent heading, optional back link and a
+sticky summary column. The docs demo wraps it in the real `BookingProvider` so the summary
+renders exactly as it does in the app; the step content is a static placeholder.
+
+<StepLayoutStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `title` | string | Step heading |
+| `subtitle` | string | Optional supporting line |
+| `onBack` / `backLabel` | callback / string | Optional back link |
+| `children` | ReactNode | Main step content; the summary is rendered by the layout |
+
+## Responsive behaviour
+
+The summary column moves below the main content on phones and becomes sticky from the `lg`
+breakpoint. The wrapper keeps reading width bounded on large screens.
+
+## Usage
+
+```tsx
+import { StepLayout } from '@/components/booking/layout/step-layout';
+
+<StepLayout title="Your details" onBack={goBack}>
+  <GuestForm />
+</StepLayout>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/layout/step-layout.tsx)
