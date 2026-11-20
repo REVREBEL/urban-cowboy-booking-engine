@@ -149,6 +149,21 @@ test("unlinking removes only the editor-selected active placement", async () => 
   assert.equal(orderOf(db, "m2"), 1);
 });
 
+test("a legacy 'gallery' placement updates in place without a primary-key conflict", async () => {
+  const db = makeDb();
+  db.prepare("UPDATE media_placements SET placement_type = 'gallery' WHERE id = 'p2'").run();
+  await applyPayload(db, [
+    { mediaAssetId: "m2", displayOrder: 1, excluded: false,
+      altText: "Legacy alt", caption: null, description: null },
+  ]);
+  const row = db.prepare(
+    "SELECT placement_type, display_order, alt_text_override FROM media_placements WHERE id = 'p2'",
+  ).get() as any;
+  assert.equal(row.placement_type, "gallery");
+  assert.equal(row.display_order, 1);
+  assert.equal(row.alt_text_override, "Legacy alt");
+});
+
 test("foreign media and duplicate ids are rejected before any write", async () => {
   const db = makeDb();
   const foreign = await galleryWriteThrough(d1(db), TENANT, "room-a", JSON.stringify({

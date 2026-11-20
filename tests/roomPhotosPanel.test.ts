@@ -34,6 +34,7 @@ test("panel exposes loading, error and empty states for every resource", () => {
 test("panel remounts on room change and never reuses another room's gallery", () => {
   assert.match(panel, /<RoomGallery[\s\S]*?key=\{roomId\}[\s\S]*?roomId=\{roomId\}[\s\S]*?catalog=\{media\.data \?\? \[\]\}/);
   assert.match(panel, /still see the published version/);
+  assert.match(panel, /gallery\.data\.draft\?\.items[\s\S]*?filter\(\(item\) => item\.displayOrder < GALLERY_PARK_OFFSET\)/);
   assert.match(panel, /You have unsaved edits\. Save the draft before publishing/);
 });
 

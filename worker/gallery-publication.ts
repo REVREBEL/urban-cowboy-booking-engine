@@ -87,22 +87,27 @@ export async function galleryWriteThrough(
         ORDER BY CASE WHEN placement_type = 'room_gallery' THEN 0 ELSE 1 END LIMIT 1`,
     ).bind(tenantId, roomTypeId, item.mediaAssetId).first() as { id: string } | null;
     const placementId = existing?.id ?? crypto.randomUUID();
-    statements.push(db.prepare(
-      `INSERT INTO media_placements
-        (id, tenant_id, media_asset_id, target_table, target_id, placement_type,
-         alt_text_override, caption_override, description_override, display_order)
-       VALUES (?1,?2,?3,'room_types',?4,'room_gallery',?5,?6,?7,?8)
-       ON CONFLICT (tenant_id, target_table, target_id, placement_type, media_asset_id)
-       DO UPDATE SET
-         alt_text_override = excluded.alt_text_override,
-         caption_override = excluded.caption_override,
-         description_override = excluded.description_override,
-         display_order = excluded.display_order,
-         updated_at = datetime('now')`,
-    ).bind(
-      placementId, tenantId, item.mediaAssetId, roomTypeId,
-      item.altText ?? null, item.caption ?? null, item.description ?? null, item.displayOrder,
-    ));
+    // Update an existing row in place so a legacy 'gallery' placement keeps its
+    // type. Re-inserting it as 'room_gallery' would collide on the primary key.
+    statements.push(existing
+      ? db.prepare(
+        `UPDATE media_placements
+            SET alt_text_override = ?1, caption_override = ?2, description_override = ?3,
+                display_order = ?4, updated_at = datetime('now')
+          WHERE id = ?5 AND tenant_id = ?6`,
+      ).bind(
+        item.altText ?? null, item.caption ?? null, item.description ?? null,
+        item.displayOrder, placementId, tenantId,
+      )
+      : db.prepare(
+        `INSERT INTO media_placements
+          (id, tenant_id, media_asset_id, target_table, target_id, placement_type,
+           alt_text_override, caption_override, description_override, display_order)
+         VALUES (?1,?2,?3,'room_types',?4,'room_gallery',?5,?6,?7,?8)`,
+      ).bind(
+        placementId, tenantId, item.mediaAssetId, roomTypeId,
+        item.altText ?? null, item.caption ?? null, item.description ?? null, item.displayOrder,
+      ));
     statements.push(db.prepare(
       `INSERT INTO media_placement_flags (placement_id, tenant_id, excluded, updated_at)
        VALUES (?1, ?2, ?3, datetime('now'))

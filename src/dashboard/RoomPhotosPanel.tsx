@@ -73,6 +73,9 @@ interface MediaItem {
 
 type Feedback = { tone: "success" | "error"; message: string } | null;
 
+/** COW-67 parks removed images above this offset; editors must not silently restore them. */
+const GALLERY_PARK_OFFSET = 1_000_000;
+
 export function RoomPhotosPanel({ api }: { api: DashboardApi }) {
   const loadRooms = useCallback(() => api.getAdminRooms<Room>(), [api]);
   const loadMedia = useCallback(() => api.getAdminMedia<MediaItem>(), [api]);
@@ -146,7 +149,8 @@ function RoomGallery({ api, roomId, catalog }: {
 
   useEffect(() => {
     if (!gallery.data) return;
-    const source = gallery.data.draft?.items ?? gallery.data.items;
+    const source = gallery.data.draft?.items
+      ?? gallery.data.items.filter((item) => item.displayOrder < GALLERY_PARK_OFFSET);
     setItems(source.map((item, index) => ({
       mediaAssetId: item.mediaAssetId,
       displayOrder: index + 1,
