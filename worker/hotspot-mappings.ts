@@ -10,7 +10,6 @@ import {
   photoHotspotMappingRevisionRowSchema,
   photoHotspotMappingRowSchema,
   photoHotspotMappingSnapshotSchema,
-  type PhotoHotspotMappingRevisionRow,
   type PhotoHotspotMappingRow,
 } from "../src/types/d1-contracts.ts";
 import {
@@ -190,10 +189,6 @@ export async function planReplacement(
     };
   });
   return { decision, reviewRequired, mappings };
-}
-
-function snapshot(mapping: PhotoHotspotMappingRow): string {
-  return JSON.stringify(mapping);
 }
 
 function upsertStatement(db: D1Database, mapping: PhotoHotspotMappingRow): D1PreparedStatement {
