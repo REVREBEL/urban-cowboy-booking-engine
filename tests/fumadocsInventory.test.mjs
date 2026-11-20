@@ -57,6 +57,15 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     RoomMatcherPage: "docs-app/content/docs/components/room-matcher-page.mdx",
     RoomMatcherProgress: "docs-app/content/docs/components/matcher-progress.mdx",
     MatchBenefitsCard: "docs-app/content/docs/components/match-benefits-card.mdx",
+    DateRangePicker: "docs-app/content/docs/components/date-range-picker.mdx",
+    PhoneInput: "docs-app/content/docs/components/phone-input.mdx",
+    EmptyState: "docs-app/content/docs/components/empty-state.mdx",
+    ErrorState: "docs-app/content/docs/components/error-state.mdx",
+    LoadingState: "docs-app/content/docs/components/loading-state.mdx",
+    StepLayout: "docs-app/content/docs/components/step-layout.mdx",
+    StepProgress: "docs-app/content/docs/components/step-progress.mdx",
+    ProgressBar: "docs-app/content/docs/components/progress-bar.mdx",
+    ProgressStep: "docs-app/content/docs/components/progress-step.mdx",
   };
   for (const [name, page] of Object.entries(expectedPaths)) {
     const documented = byComponent(name).find((entry) => entry.status === "documented");
@@ -75,4 +84,17 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     .filter((entry) => entry.status === "planned")
     .map((entry) => entry.docsPage);
   assert.equal(new Set(planned).size, planned.length, "planned page paths are unique");
+});
+
+test("every undocumented production candidate has an explicit triage decision", () => {
+  const matrix = JSON.parse(read("docs/component-library/coverage-matrix.json"));
+  const candidates = matrix.undocumentedProductionCandidates;
+  assert.ok(candidates.length > 0, "candidate list is present");
+  for (const candidate of candidates) {
+    assert.ok(candidate.name && candidate.source, `candidate identity ${JSON.stringify(candidate)}`);
+    assert.ok(["deferred", "excluded"].includes(candidate.triage?.category), `triage category for ${candidate.name}`);
+    assert.ok((candidate.triage?.rationale ?? "").length > 20, `triage rationale for ${candidate.name}`);
+  }
+  const summary = matrix.totals.candidateTriage;
+  assert.equal(summary.deferred + summary.excluded, candidates.length, "triage summary covers every candidate");
 });

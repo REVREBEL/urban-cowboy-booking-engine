@@ -41,6 +41,16 @@ reservation, payment or admin write is triggered. `PhotoTourArrow`, `RoomMatcher
 `MatchBenefitsCard` gained an optional `imageBaseUrl` for their root-relative assets, and the
 docs build copies those icons/illustrations for the static export.
 
+Fifth migrated group: forms, feedback and booking layout. `DateRangePicker`, `PhoneInput`,
+`EmptyState`, `ErrorState`, `LoadingState`, `StepLayout`, `StepProgress`, `ProgressBar` and
+`ProgressStep` have reference pages with local-only state and the real `BookingProvider` where
+the layout needs it. `EmptyState` gained an optional `imageBaseUrl` for its illustration.
+
+The 41 production components with no historical story are now triaged explicitly in the
+coverage matrix rather than listed as an unexplained backlog. Each candidate carries a
+`deferred` or `excluded` category with a rationale; the inventory generator fails if a new
+candidate has no decision, so the record cannot silently go stale.
+
 To add a component page: create a `*.story.tsx` in `docs-app/components` importing the real
 component, expose a `defineStory` export (with a deterministic harness when the component
 needs context), add a client wrapper in `story-controls.tsx`, write the MDX page with props,

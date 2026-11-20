@@ -51,6 +51,51 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/booking/discovery/RoomMatcherPage.stories.tsx": "docs-app/content/docs/components/room-matcher-page.mdx",
   "src/stories/components/booking/discovery/RoomMatcherProgress.stories.tsx": "docs-app/content/docs/components/matcher-progress.mdx",
   "src/stories/components/booking/results/MatchBenefitsCard.stories.tsx": "docs-app/content/docs/components/match-benefits-card.mdx",
+  "src/stories/components/forms/DateRangePicker.stories.tsx": "docs-app/content/docs/components/date-range-picker.mdx",
+  "src/stories/components/forms/PhoneInput.stories.tsx": "docs-app/content/docs/components/phone-input.mdx",
+  "src/stories/components/feedback/EmptyState.stories.tsx": "docs-app/content/docs/components/empty-state.mdx",
+  "src/stories/components/feedback/ErrorState.stories.tsx": "docs-app/content/docs/components/error-state.mdx",
+  "src/stories/components/feedback/LoadingState.stories.tsx": "docs-app/content/docs/components/loading-state.mdx",
+  "src/stories/components/booking/layout/step-layout.stories.tsx": "docs-app/content/docs/components/step-layout.mdx",
+  "src/stories/components/booking/layout/step-progress.stories.tsx": "docs-app/content/docs/components/step-progress.mdx",
+  "src/stories/components/booking/progress/ProgressBar.stories.tsx": "docs-app/content/docs/components/progress-bar.mdx",
+  "src/stories/components/booking/progress/ProgressStep.stories.tsx": "docs-app/content/docs/components/progress-step.mdx",
+});
+
+/**
+ * Stage 5 triage for production components that have no Storybook story.
+ * Candidates are not silently dropped: each source file gets an explicit
+ * category and rationale so the matrix can explain why it has no docs page.
+ */
+const CANDIDATE_TRIAGE = Object.freeze({
+  "src/components/booking/conversion.tsx": {
+    category: "deferred",
+    rationale: "Conversion merchandising primitives; a dedicated page follows the core booking flow pages.",
+  },
+  "src/components/booking/extras/upsell-card.tsx": {
+    category: "deferred",
+    rationale: "Extras upsell presentation; the Extras journey page documents the surrounding flow.",
+  },
+  "src/components/booking/search/SearchBarExpanded.tsx": {
+    category: "deferred",
+    rationale: "Composite search panel; its date/party controls are documented individually.",
+  },
+  "src/components/icons/cowboy-icons.tsx": {
+    category: "excluded",
+    rationale: "Inline SVG glyph set consumed as implementation details, not one public component per glyph.",
+  },
+  "src/components/media/HotspotEditor.tsx": {
+    category: "excluded",
+    rationale: "Admin-only editor; interactive docs must not expose admin writes.",
+  },
+  "src/components/rooms/CmsAmenityIcon.tsx": {
+    category: "excluded",
+    rationale: "Internal asset resolver behind the documented AmenityIcons component.",
+  },
+  "src/components/rooms/RoomsListCard.tsx": {
+    category: "deferred",
+    rationale: "Room list presentation covered by the Journey Rooms page until it has its own reference.",
+  },
 });
 
 const usedPlannedPaths = new Set();
@@ -170,7 +215,14 @@ const undocumentedProductionCandidates = walk(sourceRoot)
     ];
     return [...new Set(names)]
       .filter((name) => !storyText.includes(name))
-      .map((name) => ({ name, source: relative(root, path).replaceAll("\\", "/") }));
+      .map((name) => {
+        const sourcePath = relative(root, path).replaceAll("\\", "/");
+        const triage = CANDIDATE_TRIAGE[sourcePath];
+        if (!triage) {
+          throw new Error(`Undocumented production candidate has no triage decision: ${sourcePath} (${name})`);
+        }
+        return { name, source: sourcePath, triage };
+      });
   });
 
 const coverage = stories.map((story) => {
@@ -200,6 +252,10 @@ const coverageMatrix = {
     planned: coverage.filter((entry) => entry.status === "planned").length,
     excluded: coverage.filter((entry) => entry.status === "excluded").length,
     undocumentedProductionCandidates: undocumentedProductionCandidates.length,
+    candidateTriage: {
+      deferred: undocumentedProductionCandidates.filter((c) => c.triage.category === "deferred").length,
+      excluded: undocumentedProductionCandidates.filter((c) => c.triage.category === "excluded").length,
+    },
   },
   components: coverage,
   undocumentedProductionCandidates,

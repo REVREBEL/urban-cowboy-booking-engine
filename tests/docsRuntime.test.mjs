@@ -137,8 +137,9 @@ test("building-icon mask assets resolve under the Pages base path", async () => 
   }
 });
 
-const stageFourAssets = [
+const docsAssetPages = [
   { page: "photo-tour-arrow", fragments: ["/assets/icons/ui/ui-arrow-"] },
+  { page: "empty-state", fragments: ["/assets/icons/icons-simple/hammock.svg"] },
   {
     page: "match-benefits-card",
     fragments: ["/assets/labels/top_match.svg", "/assets/icons/ui/left_hand_pointing.svg"],
@@ -150,7 +151,7 @@ const stageFourAssets = [
   },
 ];
 
-test("stage 4 component images resolve under the Pages base path", async () => {
+test("documented component images resolve under the Pages base path", async () => {
   const server = await serve();
   const browser = await chromium.launch();
   try {
@@ -165,7 +166,7 @@ test("stage 4 component images resolve under the Pages base path", async () => {
       }
     });
 
-    for (const { page: slug, fragments } of stageFourAssets) {
+    for (const { page: slug, fragments } of docsAssetPages) {
       await page.goto(`${origin}${basePath}/components/${slug}/`, { waitUntil: "networkidle" });
       const sources = await page.$$eval("img", (images) =>
         images.map((image) => image.getAttribute("src")).filter(Boolean));

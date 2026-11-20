@@ -50,6 +50,21 @@ import {
   matchBenefitsCardStory,
   matchBenefitsVariantsStory,
 } from "./recommendation.story";
+import { dateRangePickerStory, phoneInputStory, phoneInputInvalidStory } from "./forms.story";
+import {
+  emptyStateStory,
+  emptyStateWithActionStory,
+  errorStateStory,
+  errorStateWithRetryStory,
+  loadingStateStory,
+  loadingMessagesStory,
+} from "./feedback.story";
+import {
+  stepLayoutStory,
+  stepProgressStory,
+  progressBarStory,
+  progressStepStatesStory,
+} from "./booking-layout.story";
 
 /** Client wrappers so MDX renders a component, not a member of a client proxy. */
 export function PillStoryControl() {
@@ -218,4 +233,56 @@ export function MatchBenefitsCardStoryControl() {
 
 export function MatchBenefitsVariantsStoryControl() {
   return <matchBenefitsVariantsStory.WithControl />;
+}
+
+export function DateRangePickerStoryControl() {
+  return <dateRangePickerStory.WithControl />;
+}
+
+export function PhoneInputStoryControl() {
+  return <phoneInputStory.WithControl />;
+}
+
+export function PhoneInputInvalidStoryControl() {
+  return <phoneInputInvalidStory.WithControl />;
+}
+
+export function EmptyStateStoryControl() {
+  return <emptyStateStory.WithControl />;
+}
+
+export function EmptyStateWithActionStoryControl() {
+  return <emptyStateWithActionStory.WithControl />;
+}
+
+export function ErrorStateStoryControl() {
+  return <errorStateStory.WithControl />;
+}
+
+export function ErrorStateWithRetryStoryControl() {
+  return <errorStateWithRetryStory.WithControl />;
+}
+
+export function LoadingStateStoryControl() {
+  return <loadingStateStory.WithControl />;
+}
+
+export function LoadingMessagesStoryControl() {
+  return <loadingMessagesStory.WithControl />;
+}
+
+export function StepLayoutStoryControl() {
+  return <stepLayoutStory.WithControl />;
+}
+
+export function StepProgressStoryControl() {
+  return <stepProgressStory.WithControl />;
+}
+
+export function ProgressBarStoryControl() {
+  return <progressBarStory.WithControl />;
+}
+
+export function ProgressStepStatesStoryControl() {
+  return <progressStepStatesStory.WithControl />;
 }

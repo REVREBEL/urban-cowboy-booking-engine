@@ -1,0 +1,42 @@
+---
+title: Error State
+description: Inline error message with an optional retry action.
+---
+
+import { ErrorStateStoryControl, ErrorStateWithRetryStoryControl } from '~/components/story-controls';
+
+`ErrorState` presents a recoverable failure without exposing upstream details. The docs retry
+button only increments a local counter; it does not call any API.
+
+<ErrorStateStoryControl />
+
+## With retry
+
+<ErrorStateWithRetryStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `message` | string | User-facing error copy |
+| `onRetry` | callback | When present, renders the retry button |
+
+## Accessibility
+
+The message is plain text in the reading order and the retry control is a native button, so it
+is reachable by keyboard and announced correctly.
+
+## Responsive behaviour
+
+The centered column adapts to phone widths; both the message and button wrap rather than
+overflowing.
+
+## Usage
+
+```tsx
+import ErrorState from '@/components/feedback/error-state';
+
+<ErrorState message="Unable to load live rates." onRetry={reload} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/feedback/error-state.tsx)

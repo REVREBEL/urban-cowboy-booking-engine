@@ -30,6 +30,15 @@ const pages = [
   "components/room-matcher-page/index.html",
   "components/matcher-progress/index.html",
   "components/match-benefits-card/index.html",
+  "components/date-range-picker/index.html",
+  "components/phone-input/index.html",
+  "components/empty-state/index.html",
+  "components/error-state/index.html",
+  "components/loading-state/index.html",
+  "components/step-layout/index.html",
+  "components/step-progress/index.html",
+  "components/progress-bar/index.html",
+  "components/progress-step/index.html",
 ];
 const forbidden = [
   /api\.mews\.com/i,
@@ -76,6 +85,15 @@ const markersByPage = {
   "components/room-matcher-page/index.html": ["Step 1"],
   "components/matcher-progress/index.html": ["Step 1"],
   "components/match-benefits-card/index.html": ["Private soaking tub"],
+  "components/date-range-picker/index.html": ["Selected:"],
+  "components/phone-input/index.html": ["valid E.164"],
+  "components/empty-state/index.html": ["Nothing available for these dates"],
+  "components/error-state/index.html": ["Something went wrong"],
+  "components/loading-state/index.html": ["Finding your stay"],
+  "components/step-layout/index.html": ["Select Accommodations"],
+  "components/step-progress/index.html": ["Rooms"],
+  "components/progress-bar/index.html": ["Room"],
+  "components/progress-step/index.html": ["Stepper"],
 };
 for (const [page, markers] of Object.entries(markersByPage)) {
   for (const marker of markers) {

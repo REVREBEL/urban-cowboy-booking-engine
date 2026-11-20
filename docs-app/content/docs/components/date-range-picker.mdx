@@ -1,0 +1,41 @@
+---
+title: Date Range Picker
+description: Accessible check-in/check-out picker with a popover calendar and night counter.
+---
+
+import { DateRangePickerStoryControl } from '~/components/story-controls';
+
+`DateRangePicker` owns the calendar popover but leaves the selected range to its caller. It
+supports month navigation, a minimum date and a live night count. The docs harness keeps the
+range in local state; it does not load rates from Mews.
+
+<DateRangePickerStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `checkIn` / `checkOut` | ISO date strings | Controlled range |
+| `minDate` | ISO date string | Earliest selectable day; defaults to today |
+| `onChange` | `(checkIn, checkOut) => void` | Called when a range is chosen |
+
+## Accessibility
+
+The trigger is a button that opens a labelled calendar dialog. Days are keyboard navigable,
+and the currently focused day is announced. Selection never closes the popover until the
+range is complete.
+
+## Responsive behaviour
+
+The calendar is a constrained popover that stays inside a narrow wrapper on phones; the docs
+reserve vertical space so the open state does not overlap following content.
+
+## Usage
+
+```tsx
+import { DateRangePicker } from '@/components/forms/date-range-picker';
+
+<DateRangePicker checkIn={checkIn} checkOut={checkOut} onChange={setRange} />
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/forms/date-range-picker.tsx)
