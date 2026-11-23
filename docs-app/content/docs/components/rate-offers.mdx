@@ -25,15 +25,17 @@ fixtures; confirming a selection only flips local state and never calls Mews or 
 
 `ConfigurableRateOffer` takes a `RateCardConfig`, published `RateCardLiveContent` and a deterministic
 pricing object. The config demonstrates the CMS-backed fields (eyebrow, headline, artwork positions,
-policy windows) without a CMS token. The fixture uses a $1,080 room subtotal with a 50% deposit of
-$540.00; the $632.40 remainder includes $92.40 of taxes and fees on a $1,172.40 total, so every
-amount matches the deposit copy.
+policy windows) without a CMS token. The fixture uses 50% of the full $1,172.40 total: $586.20 due
+at booking and $586.20 remaining. That matches the booking engine's own split — the
+`RateSelectionView` fallback halves `subtotal + taxes + resort fee`, and the live Mews path uses
+`totalGross * settlement.value`.
 
 ## Side panel
 
 <RateOfferSidePanelStoryControl />
 
-The panel shows the same stay numbers in a compact breakdown with deposit/remaining notes.
+The panel shows the same stay numbers in a compact breakdown with deposit/remaining notes. The demo
+has local open state: its close button hides the panel and a local reopen control restores it.
 
 ## Policy display
 
