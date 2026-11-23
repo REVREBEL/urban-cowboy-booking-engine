@@ -48,6 +48,8 @@ function makeDb() {
     INSERT INTO media_assets (id, tenant_id, location_id, kind, original_filename, squarespace_url) VALUES
       ('media-1','${TENANT}','catskills','image','one.jpg','https://cdn/one'),
       ('media-other','${OTHER}',NULL,'image','other.jpg','https://cdn/other');
+    INSERT INTO media_assets (id, tenant_id, location_id, kind, original_filename, squarespace_url) VALUES
+      ('media-dup','${TENANT}','catskills','image','dup.jpg','https://cdn/dup');
     INSERT INTO media_versions (id, media_asset_id, version, squarespace_asset_id, squarespace_url, width, height) VALUES
       ('v-1','media-1',1,'sq-1','https://cdn/one',1200,800),
       ('v-2','media-1',2,'sq-2','https://cdn/one?width=1600',1200,800);
@@ -55,6 +57,17 @@ function makeDb() {
       ('media-1','${TENANT}','v-2');
     INSERT INTO media_versions (id, media_asset_id, version, squarespace_asset_id, squarespace_url) VALUES
       ('v-other','media-other',1,'sq-other','https://cdn/other');
+    INSERT INTO media_version_files (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version) VALUES
+      ('v-1','${TENANT}','media-1','cld/one','v1'),
+      ('v-2','${TENANT}','media-1','cld/one','v2'),
+      ('v-other','${OTHER}','media-other','cld/other','v1');
+    -- Authoritative per-version facts. v-1 and v-2 differ by default, so a
+    -- replacement is replacement_review unless a test updates v-2 to match.
+    INSERT INTO media_version_fingerprints
+      (version_id, tenant_id, media_asset_id, sha256, phash, width, height, exif_orientation) VALUES
+      ('v-1','${TENANT}','media-1','hash-1',NULL,1200,800,1),
+      ('v-2','${TENANT}','media-1','hash-2',NULL,1200,800,1),
+      ('v-other','${OTHER}','media-other','hash-other',NULL,100,100,1);
     INSERT INTO media_placements
       (id, tenant_id, media_asset_id, target_table, target_id, placement_type, display_order) VALUES
       ('place-1','${TENANT}','media-1','room_types','room-a','gallery',1),
@@ -363,13 +376,9 @@ test("ambiguous replacement stages a reviewed draft and cannot silently publish"
 
 test("crop remap is classified from validated crop rectangles", async () => {
   const db = makeDb();
+  db.exec("UPDATE media_version_fingerprints SET sha256 = 'hash-1' WHERE version_id = 'v-2'");
   await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin);
-  const sameHash = {
-    sha256: "hash-1", phash: null, width: 1200, height: 800, exifOrientation: 1 as const,
-  };
   const planned = await planHotspotReplacement(ctx(db, replacementInput({
-    fromFingerprint: sameHash,
-    toFingerprint: sameHash,
     cropBefore: { left: 0, top: 0, width: 1, height: 1 },
     cropAfter: { left: 0.1, top: 0.1, width: 0.8, height: 0.8 },
   })), "room-a", allowAdmin);
@@ -420,10 +429,9 @@ test("a published pin's safe replacement is staged until publish", async () => {
   const db = makeDb();
   const created = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
   await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
-  const sameHash = { sha256: "hash-1", phash: null, width: 1200, height: 800, exifOrientation: 1 as const };
+  db.exec("UPDATE media_version_fingerprints SET sha256 = 'hash-1' WHERE version_id = 'v-2'");
 
   const applied = await jsonBody(await applyHotspotReplacement(ctx(db, replacementInput({
-    fromFingerprint: sameHash, toFingerprint: sameHash,
     cropBefore: { left: 0, top: 0, width: 1, height: 1 },
     cropAfter: { left: 0, top: 0, width: 1, height: 1 },
   })), "room-a", allowAdmin));
@@ -551,13 +559,122 @@ test("URL-only replacement is a strict no-op even for a published pin", async ()
 
 test("crop remap with one excluded pending pin reports reviewRequired", async () => {
   const db = makeDb();
+  db.exec("UPDATE media_version_fingerprints SET sha256 = 'hash-1' WHERE version_id = 'v-2'");
   await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin);
-  const sameHash = { sha256: "hash-1", phash: null, width: 1200, height: 800, exifOrientation: 1 as const };
   const result = await jsonBody(await applyHotspotReplacement(ctx(db, replacementInput({
-    fromFingerprint: sameHash, toFingerprint: sameHash,
     cropBefore: { left: 0, top: 0, width: 1, height: 1 },
     cropAfter: { left: 0.5, top: 0.5, width: 0.4, height: 0.4 },
   })), "room-a", allowAdmin));
   assert.equal(result.decision, "crop_remap");
   assert.equal(result.reviewRequired, true, "an individually pending pin forces review even when the decision is crop_remap");
+});
+
+test("forged caller fingerprint facts cannot turn a replacement into auto-publish", async () => {
+  const db = makeDb();
+  await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin);
+  // A caller tries to claim identical hashes for two different stored versions.
+  // The schema no longer accepts these fields (strict), and classification uses
+  // authoritative D1 facts (hash-1 vs hash-2) regardless.
+  const forged = ctx(db, replacementInput({
+    fromFingerprint: { sha256: "same" },
+    toFingerprint: { sha256: "same" },
+    sameHashOnOtherMedia: false,
+    phashDistance: 0,
+  }), "/api/admin/rooms/room-a/hotspots/apply");
+  const rejected = await applyHotspotReplacement(forged, "room-a", allowAdmin);
+  assert.equal(rejected.status, 400, "forged fact fields are rejected by the strict schema");
+  assert.equal((await jsonBody(rejected)).error, "invalid_input");
+
+  // With authoritative facts the differing versions remain a review-gated
+  // replacement, never exact_reupload/crop_remap.
+  const plan = await planHotspotReplacement(
+    ctx(db, replacementInput()), "room-a", allowAdmin,
+  );
+  const body = await jsonBody(plan);
+  assert.equal(body.decision, "replacement_review");
+  assert.equal(body.reviewRequired, true);
+});
+
+test("a duplicate fingerprint found in D1 blocks auto-publish", async () => {
+  const db = makeDb();
+  // Put the target version's hash on another asset in the same tenant.
+  // Seed a same-tenant asset whose stored fingerprint matches the target
+  // version's hash; duplicate classification must derive this from D1.
+  db.exec(`INSERT INTO media_versions (id, media_asset_id, version, squarespace_asset_id, squarespace_url)
+           VALUES ('v-dup','media-dup',1,'sq-dup','https://cdn/dup')`);
+  db.exec(`INSERT INTO media_version_files (version_id, tenant_id, media_asset_id, cloudinary_public_id, cloudinary_version)
+           VALUES ('v-dup','urban-cowboy','media-dup','cld/dup','v1')`);
+  db.exec(`INSERT INTO media_version_fingerprints (version_id, tenant_id, media_asset_id, sha256, phash, width, height, exif_orientation)
+           VALUES ('v-dup','urban-cowboy','media-dup','hash-2',NULL,1200,800,1)`);
+  await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin);
+  const plan = await jsonBody(await planHotspotReplacement(
+    ctx(db, replacementInput()), "room-a", allowAdmin,
+  ));
+  assert.equal(plan.decision, "duplicate_exact");
+  assert.equal(plan.reviewRequired, true);
+});
+
+test("replacement rejects a stale source version that differs from the pins", async () => {
+  const db = makeDb();
+  await createRoomHotspot(ctx(db, createInput({ sourceVersionId: "v-1" })), "room-a", allowAdmin);
+  // Pins are authored on v-1 but the operator selects v-other as the source.
+  const stale = await planHotspotReplacement(ctx(db, replacementInput({
+    fromVersionId: "v-2", toVersionId: "v-1",
+  })), "room-a", allowAdmin);
+  assert.equal(stale.status, 409);
+  assert.equal((await jsonBody(stale)).error, "source_version_mismatch");
+});
+
+test("replacement rejects mixed source versions within one placement", async () => {
+  const db = makeDb();
+  await createRoomHotspot(ctx(db, createInput({ sourceVersionId: "v-1" })), "room-a", allowAdmin);
+  await createRoomHotspot(ctx(db, createInput({
+    sourceVersionId: "v-2", sourceX: 0.7, displayOrder: 1,
+  })), "room-a", allowAdmin);
+  const mixed = await applyHotspotReplacement(
+    ctx(db, replacementInput()), "room-a", allowAdmin,
+  );
+  assert.equal(mixed.status, 409);
+  assert.equal((await jsonBody(mixed)).error, "source_version_mismatch");
+});
+
+test("a pending pin introduced before the publish batch blocks it atomically", async () => {
+  const db = makeDb();
+  const first = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
+  await deleteRoomHotspot(ctx(db), "room-a", first.mapping.id, allowAdmin);
+
+  // Simulate a concurrent create that commits after preflight but before the
+  // guarded publish batch runs: inject a pending base row at batch time.
+  let injected = false;
+  const baseAdapter = d1(db);
+  const racingAdapter = {
+    ...baseAdapter,
+    async batch(statements: any[]) {
+      if (!injected) {
+        injected = true;
+        db.exec(`INSERT INTO photo_hotspot_mappings
+          (id, tenant_id, media_asset_id, placement_id, target_table, target_id, amenity_id,
+           source_x, source_y, source_version_id, display_order, status, review_state, created_at, updated_at)
+          VALUES ('racer','${TENANT}','media-1','place-1','room_types','room-a','tub',
+                  0.2,0.2,'v-1',5,'draft','pending',datetime('now'),datetime('now'))`);
+      }
+      return baseAdapter.batch(statements);
+    },
+  };
+  const racingCtx: HotspotAdminCtx = {
+    request: new Request("https://example.test/api/admin/rooms/room-a/hotspots/publish", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ mediaAssetId: "media-1", placementId: "place-1" }),
+    }),
+    env: { DB: racingAdapter, TENANT_ID: TENANT } as any,
+    waitUntil: () => {},
+  };
+  const blocked = await publishRoomHotspots(racingCtx, "room-a", allowAdmin);
+  assert.equal(blocked.status, 409, "a concurrent pending pin must block the whole publish");
+  const firstRow = db.prepare("SELECT status, review_reason FROM photo_hotspot_mappings WHERE id = ?").get(first.mapping.id) as any;
+  assert.equal(firstRow.status, "published", "deletion must not be applied on a blocked publish");
+  assert.notEqual(firstRow.review_reason, "deleted");
+  assert.ok(db.prepare("SELECT mapping_id FROM photo_hotspot_deletions WHERE mapping_id = ?").get(first.mapping.id), "deletion overlay intact");
 });

@@ -12,11 +12,10 @@ import {
 import {
   applyReplacement,
   planReplacement,
-  publishMappings,
   rollbackMappings,
   type Fingerprint,
 } from "./hotspot-mappings.ts";
-import type { CropRect, ExifOrientation } from "../src/lib/hotspotGeometry.ts";
+import { hammingDistance, type CropRect } from "../src/lib/hotspotGeometry.ts";
 import { z } from "zod";
 
 export interface HotspotAdminCtx {
@@ -66,14 +65,6 @@ const rollbackSchema = z.object({
   toVersionId: z.string().min(1),
 }).strict();
 
-const fingerprintSchema = z.object({
-  sha256: z.string().nullable().optional(),
-  phash: z.string().nullable().optional(),
-  width: z.number().int().nullable().optional(),
-  height: z.number().int().nullable().optional(),
-  exifOrientation: z.number().int().min(1).max(8).optional(),
-}).strict();
-
 const cropSchema = z.object({
   left: z.number().min(0).max(1),
   top: z.number().min(0).max(1),
@@ -81,6 +72,8 @@ const cropSchema = z.object({
   height: z.number().min(0).max(1),
 }).strict();
 
+// Fingerprint and duplicate facts are NEVER accepted from the caller: they
+// decide auto-publish eligibility and must come from tenant-scoped D1 rows.
 const replacementSchema = z.object({
   mediaAssetId: z.string().min(1),
   placementId: z.string().min(1),
@@ -89,11 +82,6 @@ const replacementSchema = z.object({
   urlOnly: z.boolean().optional(),
   cropBefore: cropSchema.nullable().optional(),
   cropAfter: cropSchema.nullable().optional(),
-  fromFingerprint: fingerprintSchema.nullable().optional(),
-  toFingerprint: fingerprintSchema.nullable().optional(),
-  sameHashOnOtherMedia: z.boolean().optional(),
-  duplicateOfMediaId: z.string().min(1).nullable().optional(),
-  phashDistance: z.number().int().min(0).max(64).nullable().optional(),
   approveReview: z.boolean().optional(),
 }).strict();
 
@@ -249,6 +237,49 @@ function revision(
     // Store the resulting state: rollback must restore geometry that was in
     // force, not the superseded pending state captured before an approval.
     JSON.stringify(mapping), actor, action,
+  );
+}
+
+interface BatchChange { meta: { changes: number } }
+
+/**
+ * Guard that re-asserts, at write time, that no pin in the placement has
+ * pending review. Every statement in the publish batch carries it so a
+ * concurrent create/edit cannot slip a pending pin between preflight and
+ * mutation (TOCTOU). D1 batches are transactional; the test D1 adapter
+ * evaluates each guarded statement against current state too.
+ */
+function pendingGuard(tenant: string, mediaAssetId: string, placementId: string) {
+  return {
+    sql: `NOT EXISTS (SELECT 1 FROM photo_hotspot_mappings pg
+            WHERE pg.tenant_id = ? AND pg.media_asset_id = ? AND pg.placement_id = ?
+              AND (pg.review_reason IS NULL OR pg.review_reason != 'deleted')
+              AND pg.review_state = 'pending')
+          AND NOT EXISTS (SELECT 1 FROM photo_hotspot_drafts pd
+            WHERE pd.tenant_id = ? AND pd.media_asset_id = ?
+              AND json_extract(pd.snapshot_json, '$.placementId') = ?
+              AND json_extract(pd.snapshot_json, '$.reviewState') = 'pending')`,
+    params: [tenant, mediaAssetId, placementId, tenant, mediaAssetId, placementId],
+  };
+}
+
+/** Revision insert guarded by the same publish preconditions. */
+function guardedRevision(
+  db: D1Database,
+  mapping: PhotoHotspotMappingRow,
+  actor: string,
+  guard: { sql: string; params: unknown[] },
+): D1PreparedStatement {
+  return db.prepare(
+    `INSERT INTO photo_hotspot_mapping_revisions
+      (id, tenant_id, mapping_id, media_asset_id, from_version_id, to_version_id,
+       action, snapshot_json, actor, note, created_at)
+     SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, datetime('now')
+      WHERE ${guard.sql}`,
+  ).bind(
+    crypto.randomUUID(), mapping.tenantId, mapping.id, mapping.mediaAssetId,
+    mapping.sourceVersionId, mapping.sourceVersionId, "publish",
+    JSON.stringify(mapping), actor, "publish", ...guard.params,
   );
 }
 
@@ -462,60 +493,102 @@ export async function publishRoomHotspots(
     return json({ error: "placement_asset_mismatch" }, 400, "no-store");
   }
   const actor = principal.email || principal.sub || "unknown";
-  const drafts = await loadDrafts(db, tenant, input.mediaAssetId);
-  const scoped = [...drafts.values()].filter((draft) => draft.placementId === input.placementId);
-  // Preflight the entire resulting placement before any write. A newly created
-  // pin can be pending on the base row rather than in the draft overlay; if we
-  // applied staged deletions first, a 409 from the publisher would leave a
-  // partially committed publish.
-  const baseRows = parseRows((await db.prepare(
-    `SELECT ${MAPPING_COLUMNS} FROM photo_hotspot_mappings
-      WHERE tenant_id = ?1 AND media_asset_id = ?2 AND placement_id = ?3`,
-  ).bind(tenant, input.mediaAssetId, input.placementId).all()).results ?? []);
+  const { mediaAssetId, placementId } = input;
+  const guard = pendingGuard(tenant, mediaAssetId, placementId);
+
+  const [drafts, deletions, baseRows] = await Promise.all([
+    loadDrafts(db, tenant, mediaAssetId),
+    loadDeletions(db, tenant, mediaAssetId),
+    db.prepare(
+      `SELECT ${MAPPING_COLUMNS} FROM photo_hotspot_mappings
+        WHERE tenant_id = ?1 AND media_asset_id = ?2 AND placement_id = ?3
+        ORDER BY display_order, id`,
+    ).bind(tenant, mediaAssetId, placementId).all()
+      .then((r) => parseRows(r.results ?? [])),
+  ]);
+  const scoped = [...drafts.values()].filter((draft) => draft.placementId === placementId);
+  const removed = [...deletions.values()].filter((snapshot) => snapshot.placementId === placementId);
+  const removedIds = new Set(removed.map((snapshot) => snapshot.id));
+
+  // Early response for clarity. The authoritative check is the guarded batch
+  // below, which protects against a concurrent pending pin added after this.
   const pendingBase = baseRows.filter((row) =>
     row.reviewReason !== "deleted" && row.reviewState === "pending").length;
   const pendingDraft = scoped.filter((draft) => draft.reviewState === "pending").length;
   if (pendingBase || pendingDraft) {
     return json({ ok: false, error: "review_pending", pending: pendingBase + pendingDraft }, 409, "no-store");
   }
-  const deletions = await loadDeletions(db, tenant, input.mediaAssetId);
-  const removed = [...deletions.values()].filter((snapshot) => snapshot.placementId === input.placementId);
-  if (scoped.length || removed.length) {
-    const statements: D1PreparedStatement[] = [];
-    for (const draft of scoped) {
-      statements.push(insertMapping(db, { ...draft, status: "published", updatedAt: new Date().toISOString() }));
-      statements.push(
-        db.prepare("DELETE FROM photo_hotspot_drafts WHERE mapping_id = ?1 AND tenant_id = ?2")
-          .bind(draft.id, tenant),
-      );
-    }
-    for (const snapshot of removed) {
-      // Soft delete keeps the audit chain intact and removes the pin from
-      // guest reads (which only accept published rows).
-      statements.push(db.prepare(
-        `UPDATE photo_hotspot_mappings
-            SET status = 'draft', review_reason = 'deleted', updated_at = datetime('now')
-          WHERE id = ?1 AND tenant_id = ?2`,
-      ).bind(snapshot.id, tenant));
-      statements.push(
-        db.prepare("DELETE FROM photo_hotspot_deletions WHERE mapping_id = ?1 AND tenant_id = ?2")
-          .bind(snapshot.id, tenant),
-      );
-    }
-    await db.batch(statements);
+
+  const now = new Date().toISOString();
+  const statements: D1PreparedStatement[] = [];
+  // Sentinel: proves the no-pending precondition still holds when the batch
+  // actually runs. A zero-change sentinel means a concurrent pending pin won
+  // the race, and the whole transactional batch applies nothing.
+  statements.push(db.prepare(
+    `UPDATE room_types SET name = name WHERE id = ?1 AND tenant_id = ?2 AND ${guard.sql}`,
+  ).bind(roomId, tenant, ...guard.params));
+
+  for (const draft of scoped) {
+    if (removedIds.has(draft.id)) continue;
+    statements.push(db.prepare(
+      `UPDATE photo_hotspot_mappings
+          SET source_x = ?1, source_y = ?2, amenity_id = ?3, display_order = ?4,
+              source_version_id = ?5, review_state = 'approved', review_reason = NULL,
+              status = 'published', updated_at = ?6
+        WHERE id = ?7 AND tenant_id = ?8 AND ${guard.sql}`,
+    ).bind(
+      draft.sourceX, draft.sourceY, draft.amenityId, draft.displayOrder,
+      draft.sourceVersionId, now, draft.id, tenant, ...guard.params,
+    ));
+    statements.push(db.prepare(
+      `DELETE FROM photo_hotspot_drafts WHERE mapping_id = ?1 AND tenant_id = ?2 AND ${guard.sql}`,
+    ).bind(draft.id, tenant, ...guard.params));
+    const publishedDraft: PhotoHotspotMappingRow = {
+      ...draft, status: "published", reviewState: "approved", reviewReason: null, updatedAt: now,
+    };
+    statements.push(guardedRevision(db, publishedDraft, actor, guard));
   }
-  // A deletion-only publish has no rows left to publish; calling the shared
-  // publisher would report no_mappings after the removal already committed.
-  const remaining = await db.prepare(
-    `SELECT COUNT(*) AS count FROM photo_hotspot_mappings
-      WHERE tenant_id = ?1 AND media_asset_id = ?2 AND placement_id = ?3
-        AND (review_reason IS NULL OR review_reason != 'deleted')`,
-  ).bind(tenant, input.mediaAssetId, input.placementId).first() as { count: number } | null;
-  if (removed.length && !remaining?.count) {
-    return json({ ok: true, published: 0, deletionsApplied: removed.length }, 200, "no-store");
+
+  for (const snapshot of removed) {
+    statements.push(db.prepare(
+      `UPDATE photo_hotspot_mappings
+          SET status = 'draft', review_reason = 'deleted', updated_at = ?1
+        WHERE id = ?2 AND tenant_id = ?3 AND ${guard.sql}`,
+    ).bind(now, snapshot.id, tenant, ...guard.params));
+    statements.push(db.prepare(
+      `DELETE FROM photo_hotspot_deletions WHERE mapping_id = ?1 AND tenant_id = ?2 AND ${guard.sql}`,
+    ).bind(snapshot.id, tenant, ...guard.params));
   }
-  const result = await publishMappings(db, tenant, input.mediaAssetId, input.placementId, actor);
-  return json(result, result.ok ? 200 : 409, "no-store");
+
+  // Publish remaining active base rows (the shared publisher's behavior),
+  // inlined here so there is no second read/check after the mutations.
+  for (const row of baseRows) {
+    if (removedIds.has(row.id) || scoped.some((draft) => draft.id === row.id)) continue;
+    if (row.reviewReason === "deleted") continue;
+    if (row.status === "published" && row.reviewState === "approved") continue;
+    const published: PhotoHotspotMappingRow = {
+      ...row, status: "published", reviewState: "approved", updatedAt: now,
+    };
+    statements.push(db.prepare(
+      `UPDATE photo_hotspot_mappings
+          SET status = 'published', review_state = 'approved', updated_at = ?1
+        WHERE id = ?2 AND tenant_id = ?3 AND ${guard.sql}`,
+    ).bind(now, row.id, tenant, ...guard.params));
+    statements.push(guardedRevision(db, published, actor, guard));
+  }
+
+  const results = await db.batch(statements);
+  if ((results[0] as BatchChange).meta.changes !== 1) {
+    return json({ ok: false, error: "review_pending" }, 409, "no-store");
+  }
+  const published = baseRows.filter((row) =>
+    !removedIds.has(row.id) && row.reviewReason !== "deleted").length + scoped.filter(
+    (draft) => !removedIds.has(draft.id)).length;
+  return json({
+    ok: true,
+    published,
+    deletionsApplied: removed.length,
+  }, 200, "no-store");
 }
 
 export async function rollbackRoomHotspots(
@@ -559,16 +632,75 @@ export async function rollbackRoomHotspots(
   return json(result, result.ok ? 200 : 409, "no-store");
 }
 
-/** Fingerprints are optional for URL-only imports; orientation defaults to 1. */
-function toFingerprint(value: z.infer<typeof fingerprintSchema> | null | undefined): Fingerprint | null {
-  if (!value) return null;
+interface DuplicateFacts {
+  sameHashOnOtherMedia: boolean;
+  duplicateOfMediaId: string | null;
+  phashDistance: number | null;
+}
+
+/** Authoritative per-version facts from the tenant-scoped media registry. */
+async function loadVersionFacts(
+  db: D1Database, tenant: string, mediaAssetId: string, versionId: string,
+): Promise<Fingerprint | null> {
+  const row = await db.prepare(
+    `SELECT sha256, phash, width, height, exif_orientation
+       FROM media_version_fingerprints
+      WHERE tenant_id = ?1 AND media_asset_id = ?2 AND version_id = ?3`,
+  ).bind(tenant, mediaAssetId, versionId).first() as {
+    sha256: string | null; phash: string | null; width: number | null;
+    height: number | null; exif_orientation: number;
+  } | null;
+  if (!row) return null;
   return {
-    sha256: value.sha256 ?? null,
-    phash: value.phash ?? null,
-    width: value.width ?? null,
-    height: value.height ?? null,
-    exifOrientation: (value.exifOrientation ?? 1) as ExifOrientation,
+    sha256: row.sha256, phash: row.phash, width: row.width, height: row.height,
+    exifOrientation: row.exif_orientation as Fingerprint["exifOrientation"],
   };
+}
+
+/** Duplicate classification is derived from stored fingerprints, never the request. */
+async function deriveDuplicateFacts(
+  db: D1Database, tenant: string, mediaAssetId: string, to: Fingerprint | null,
+): Promise<DuplicateFacts> {
+  const none: DuplicateFacts = { sameHashOnOtherMedia: false, duplicateOfMediaId: null, phashDistance: null };
+  if (!to) return none;
+  if (to.sha256) {
+    const exact = await db.prepare(
+      `SELECT media_asset_id FROM media_version_fingerprints
+        WHERE tenant_id = ?1 AND sha256 = ?2 AND media_asset_id != ?3 LIMIT 1`,
+    ).bind(tenant, to.sha256, mediaAssetId).first() as { media_asset_id: string } | null;
+    if (exact) {
+      return { sameHashOnOtherMedia: true, duplicateOfMediaId: exact.media_asset_id, phashDistance: null };
+    }
+  }
+  if (to.phash) {
+    const rows = await db.prepare(
+      `SELECT media_asset_id, phash FROM media_version_fingerprints
+        WHERE tenant_id = ?1 AND media_asset_id != ?2 AND phash IS NOT NULL`,
+    ).bind(tenant, mediaAssetId).all();
+    let best: number | null = null;
+    let bestId: string | null = null;
+    for (const row of (rows.results ?? []) as Array<{ media_asset_id: string; phash: string }>) {
+      const distance = hammingDistance(to.phash, row.phash);
+      if (distance != null && (best === null || distance < best)) {
+        best = distance;
+        bestId = row.media_asset_id;
+      }
+    }
+    if (best !== null) return { sameHashOnOtherMedia: false, duplicateOfMediaId: bestId, phashDistance: best };
+  }
+  return none;
+}
+
+/** Every pin in a placement must be authored on the selected source version. */
+async function sourceVersionMatches(
+  db: D1Database, tenant: string, mediaAssetId: string, placementId: string, fromVersionId: string,
+): Promise<boolean> {
+  const rows = await db.prepare(
+    `SELECT DISTINCT source_version_id FROM photo_hotspot_mappings
+      WHERE tenant_id = ?1 AND media_asset_id = ?2 AND placement_id = ?3
+        AND (review_reason IS NULL OR review_reason != 'deleted')`,
+  ).bind(tenant, mediaAssetId, placementId).all();
+  return (rows.results ?? []).every((row: any) => row.source_version_id === fromVersionId);
 }
 
 /** Admin crop entry is normalized 0..1; COW-34 geometry works in source pixels. */
@@ -627,6 +759,20 @@ async function runReplacement(
     ? { width: versionRow.width, height: versionRow.height }
     : null;
 
+  // A plan applies one source coordinate system to every pin in the placement.
+  // Reject a stale or mixed source version instead of remapping bad geometry.
+  if (!await sourceVersionMatches(
+    db, tenant, input.mediaAssetId, input.placementId, input.fromVersionId,
+  )) {
+    return json({ error: "source_version_mismatch" }, 409, "no-store");
+  }
+
+  const [fromFacts, toFacts] = await Promise.all([
+    loadVersionFacts(db, tenant, input.mediaAssetId, input.fromVersionId),
+    loadVersionFacts(db, tenant, input.mediaAssetId, input.toVersionId),
+  ]);
+  const duplicates = await deriveDuplicateFacts(db, tenant, input.mediaAssetId, toFacts);
+
   const planInput = {
     tenantId: tenant,
     mediaAssetId: input.mediaAssetId,
@@ -636,11 +782,11 @@ async function runReplacement(
     urlOnly: input.urlOnly,
     cropBefore: toPixelCrop(input.cropBefore, cropSize),
     cropAfter: toPixelCrop(input.cropAfter, cropSize),
-    fromFingerprint: toFingerprint(input.fromFingerprint),
-    toFingerprint: toFingerprint(input.toFingerprint),
-    sameHashOnOtherMedia: input.sameHashOnOtherMedia,
-    duplicateOfMediaId: input.duplicateOfMediaId ?? null,
-    phashDistance: input.phashDistance ?? null,
+    fromFingerprint: fromFacts,
+    toFingerprint: toFacts,
+    sameHashOnOtherMedia: duplicates.sameHashOnOtherMedia,
+    duplicateOfMediaId: duplicates.duplicateOfMediaId,
+    phashDistance: duplicates.phashDistance,
     approveReview: input.approveReview,
   };
   const plan = await planReplacement(db, planInput);
