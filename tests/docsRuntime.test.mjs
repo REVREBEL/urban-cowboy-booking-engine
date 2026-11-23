@@ -151,6 +151,24 @@ const docsAssetPages = [
   },
 ];
 
+test("COW-85 inline mask URLs are base-path prefixed and their assets are copied", async () => {
+  const cases = [
+    { page: "booking-chrome", asset: "assets/brand/logos/Cowboy.svg" },
+    { page: "search-bar", asset: "assets/icons/ui/arrow-right.svg" },
+    { page: "focus-amenity", asset: "assets/icons/badges/features/wifi_badge.svg" },
+    { page: "booking-details", asset: "assets/decoration/backgrounds/background.png" },
+  ];
+  for (const { page: slug, asset } of cases) {
+    const html = await readFile(join(out, "components", slug, "index.html"), "utf8");
+    assert.ok(
+      html.includes(`${basePath}/${asset}`),
+      `${slug} inline URL uses the base path: ${asset}`,
+    );
+    assert.ok(!html.includes(`url(&quot;/${asset}`), `${slug} has no unprefixed inline URL: ${asset}`);
+    assert.equal((await stat(join(out, asset))).isFile(), true, `${asset} copied into the export`);
+  }
+});
+
 test("documented component images resolve under the Pages base path", async () => {
   const server = await serve();
   const browser = await chromium.launch();

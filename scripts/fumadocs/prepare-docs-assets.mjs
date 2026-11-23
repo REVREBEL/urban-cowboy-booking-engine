@@ -12,7 +12,12 @@ export function prepareDocsAssets(root = process.cwd()) {
     "assets/icons/ui/ui-arrow-down.svg",
     "assets/icons/ui/arrow-right.svg",
     "assets/icons/ui/left_hand_pointing.svg",
+    "assets/brand/logos/Cowboy.svg",
+    "assets/icons/badges/features/wifi_badge.svg",
     "assets/labels/top_match.svg",
+    // Discovery signboard artwork used by the booking-details demo.
+    "assets/decoration/backgrounds/background.png",
+    "assets/decoration/backgrounds/backboard.png",
   ];
   for (const directory of [
     "assets/icons/buildings",
