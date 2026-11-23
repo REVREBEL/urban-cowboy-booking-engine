@@ -71,7 +71,7 @@ tests/adminAppFoundation.test.ts
 
 | Name | Scope | Default | Validation |
 | --- | --- | --- | --- |
-| `API_BASE_URL` | server | empty → same-origin | absolute `http(s)` URL when set; trailing slashes stripped |
+| `API_BASE_URL` | server | empty → same-origin | parsed with `URL`; must be an absolute `http(s)` origin with no credentials, path, query or fragment; trailing slashes normalised |
 | `API_REQUEST_TIMEOUT_MS` | server | `8000` | integer 1000–60000 |
 
 Declared string bindings appear on `process.env` in the Worker because `nodejs_compat` and a

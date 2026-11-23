@@ -17,11 +17,27 @@ const DEFAULT_TIMEOUT_MS = 8_000;
 
 export function getAdminRuntimeConfig(): AdminRuntimeConfig {
   const rawBase = process.env.API_BASE_URL?.trim() ?? "";
-  const apiBaseUrl = rawBase.replace(/\/+$/, "");
-  if (apiBaseUrl && !/^https?:\/\//i.test(apiBaseUrl)) {
-    throw new Error(
-      "API_BASE_URL must be an absolute http(s) URL or empty for same-origin requests",
-    );
+  let apiBaseUrl = "";
+  if (rawBase) {
+    let parsed: URL;
+    try {
+      parsed = new URL(rawBase);
+    } catch {
+      throw new Error("API_BASE_URL must be an absolute http(s) origin or empty for same-origin requests");
+    }
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+      throw new Error("API_BASE_URL must use http or https");
+    }
+    if (parsed.username || parsed.password) {
+      throw new Error("API_BASE_URL must not contain credentials");
+    }
+    if (parsed.search || parsed.hash) {
+      throw new Error("API_BASE_URL must not contain a query string or fragment");
+    }
+    if (!/^\/+$/.test(parsed.pathname)) {
+      throw new Error("API_BASE_URL must be an origin without a path");
+    }
+    apiBaseUrl = parsed.origin;
   }
 
   const rawTimeout = process.env.API_REQUEST_TIMEOUT_MS?.trim();

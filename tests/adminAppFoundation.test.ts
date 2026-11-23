@@ -57,8 +57,21 @@ test("admin runtime config fails closed on malformed environment", () => {
 
   assert.throws(
     () => withEnv("API_BASE_URL", "api.example.com", () => getAdminRuntimeConfig()),
-    /absolute http\(s\) URL/,
+    /absolute http\(s\) origin/,
   );
+  for (const invalid of [
+    "https://user:pass@api.example.com",
+    "https://api.example.com/v1",
+    "https://api.example.com?tenant=x",
+    "https://api.example.com/#fragment",
+    "ftp://api.example.com",
+  ]) {
+    assert.throws(
+      () => withEnv("API_BASE_URL", invalid, () => getAdminRuntimeConfig()),
+      undefined,
+      `${invalid} must be rejected`,
+    );
+  }
   assert.throws(
     () => withEnv("API_REQUEST_TIMEOUT_MS", "5", () => getAdminRuntimeConfig()),
     /between 1000 and 60000/,
