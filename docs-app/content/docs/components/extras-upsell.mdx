@@ -1,0 +1,40 @@
+---
+title: Extras upsell
+description: Inline upsell presentation for the extras booking step.
+---
+
+import { InlineUpsellStoryControl, UpsellCardStoryControl } from '~/components/story-controls';
+
+`InlineUpsell` renders an add-on suggestion with its price and an add/remove toggle. The demo uses a
+deterministic `ShapedProduct` fixture and keeps selection in local state; it never calls the mews
+pricing API or changes a cart.
+
+<InlineUpsellStoryControl />
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `product` | `ShapedProduct` | `name`, `description`, `price` and `currency` are displayed |
+| `added` | boolean | Controls the added/remove presentation |
+| `onToggle` | callback | Docs harness flips local state only |
+
+## Larger card
+
+`UpsellCard` is the larger gallery variant of the same add-on data. Its detail expansion and
+selection state stay local in the docs harness.
+
+<UpsellCardStoryControl />
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `product` | `ShapedProduct` | Same deterministic fixture as the inline demo |
+| `imageBaseUrl` | string | Base path for the card image asset |
+| `selected`, `onToggle` | boolean / callback | Local selection state |
+| `nightsCount`, `guestsCount` | number | Used by the shared line-total helper |
+| `locked` | boolean | Disables changes when true |
+
+## Responsive behaviour
+
+The icon, copy and action wrap into a column on narrow screens while retaining a full-width touch
+target.
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/extras/upsell-card.tsx)

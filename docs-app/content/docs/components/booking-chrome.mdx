@@ -1,0 +1,31 @@
+---
+title: Booking chrome
+description: Header progress and persistent contact bar across booking steps.
+---
+
+import { BookingChromeDatesStoryControl, BookingChromeResultsStoryControl, BookingChromeExtrasStoryControl } from '~/components/story-controls';
+
+`BookingHeader` renders the five-step progress rail and navigation callbacks. `ContactBar` is the
+persistent reception action (call, email, share). The docs harness changes only local state.
+
+<BookingChromeDatesStoryControl />
+
+## Other steps
+
+Progress and navigation state for later steps:
+
+<BookingChromeResultsStoryControl />
+
+<BookingChromeExtrasStoryControl />
+
+| Component | Props | Notes |
+| --- | --- | --- |
+| `BookingHeader` | `step`, `onNavigate`, `onHome`, `canNavigate` | Step is one of `dates`, `results`, `rates`, `guest`, `upgrade`, `extras`, `payment`, `confirmation` |
+| `ContactBar` | `preview?: boolean` | Local open/copy state only; uses demo contact values |
+
+## Responsive behaviour
+
+The progress labels collapse on small screens while the step circles remain visible. The contact
+action stays reachable at every width without covering the current step.
+
+[View header source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/chrome/header.tsx) · [View contact source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/chrome/contact-bar.tsx)

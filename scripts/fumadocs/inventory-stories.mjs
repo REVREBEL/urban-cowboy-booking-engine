@@ -36,6 +36,17 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/booking/discovery/DogToggleButton.stories.tsx": "docs-app/content/docs/components/dog-toggle-button.mdx",
   "src/stories/components/booking/discovery/FindYourStayTravelPartyButton.stories.tsx": "docs-app/content/docs/components/travel-party-button.mdx",
   "src/stories/components/booking/search/SearchButton.stories.tsx": "docs-app/content/docs/components/search-button.mdx",
+  "src/stories/components/booking/search/SearchBar.stories.tsx": "docs-app/content/docs/components/search-bar.mdx",
+  "src/stories/components/booking/search/SearchBarExpanded.stories.tsx": "docs-app/content/docs/components/search-bar.mdx",
+  "src/stories/components/booking/search/SearchBarGuestsDropdown.stories.tsx": "docs-app/content/docs/components/search-dropdowns.mdx",
+  "src/stories/components/booking/search/SearchBarLocationDropdown.stories.tsx": "docs-app/content/docs/components/search-dropdowns.mdx",
+  "src/stories/components/booking/search/SearchBarPromoDropdown.stories.tsx": "docs-app/content/docs/components/search-dropdowns.mdx",
+  "src/stories/components/booking/chrome/header.stories.tsx": "docs-app/content/docs/components/booking-chrome.mdx",
+  "src/stories/components/booking/chrome/contact-bar.stories.tsx": "docs-app/content/docs/components/booking-chrome.mdx",
+  "src/stories/components/booking/conversion.stories.tsx": "docs-app/content/docs/components/conversion-badges.mdx",
+  "src/stories/components/booking/extras/upsell-card.stories.tsx": "docs-app/content/docs/components/extras-upsell.mdx",
+  "src/stories/components/booking/extras/creole-upsell-stories.stories.tsx": "docs-app/content/docs/components/extras-upsell.mdx",
+  "src/stories/components/rooms/RoomsListCard.stories.tsx": "docs-app/content/docs/components/room-list-card.mdx",
   "src/stories/components/rooms/BuildingIcon.stories.tsx": "docs-app/content/docs/components/building-icon.mdx",
   "src/stories/components/rooms/AmenityIcons.stories.tsx": "docs-app/content/docs/components/amenity-icons.mdx",
   "src/stories/components/rates/ConfigurableRateCard.stories.tsx": "docs-app/content/docs/components/configurable-rate-card.mdx",
@@ -69,16 +80,19 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
  */
 const CANDIDATE_TRIAGE = Object.freeze({
   "src/components/booking/conversion.tsx": {
-    category: "deferred",
-    rationale: "Conversion merchandising primitives; a dedicated page follows the core booking flow pages.",
+    category: "family-covered",
+    docsPage: "docs-app/content/docs/components/conversion-badges.mdx",
+    rationale: "Conversion merchandising primitives have interactive state variants on the Conversion badges family page.",
   },
   "src/components/booking/extras/upsell-card.tsx": {
-    category: "deferred",
-    rationale: "Extras upsell presentation; the Extras journey page documents the surrounding flow.",
+    category: "family-covered",
+    docsPage: "docs-app/content/docs/components/extras-upsell.mdx",
+    rationale: "InlineUpsell has a reference page; UpsellCard is the larger gallery variant documented through Journey extras.",
   },
   "src/components/booking/search/SearchBarExpanded.tsx": {
-    category: "deferred",
-    rationale: "Composite search panel; its date/party controls are documented individually.",
+    category: "family-covered",
+    docsPage: "docs-app/content/docs/components/search-bar.mdx",
+    rationale: "The composite search panel is documented through SearchBar; its date and party controls have their own pages.",
   },
   "src/components/icons/cowboy-icons.tsx": {
     category: "excluded",
@@ -93,9 +107,25 @@ const CANDIDATE_TRIAGE = Object.freeze({
     rationale: "Internal asset resolver behind the documented AmenityIcons component.",
   },
   "src/components/rooms/RoomsListCard.tsx": {
-    category: "deferred",
-    rationale: "Room list presentation covered by the Journey Rooms page until it has its own reference.",
+    category: "documented",
+    docsPage: "docs-app/content/docs/components/room-list-card.mdx",
+    rationale: "RoomsListCard has its own reference page with theme variants and local selection actions.",
   },
+});
+
+/**
+ * COW-85: an explicit rationale for a story that stays planned. The canonical
+ * matrix should explain WHY, not just say that documentation is pending.
+ */
+const PLANNED_NOTES = Object.freeze({
+  "src/stories/components/booking/chrome/footer.stories.tsx":
+    "Planned: BookingFooter reads live booking context and calls api.locations(); a safe docs-only fixture is needed before it can be demoed.",
+});
+
+/** Documented rows likewise state what the page actually covers. */
+const DOCUMENTED_NOTES = Object.freeze({
+  "src/stories/components/booking/search/SearchBarExpanded.stories.tsx":
+    "Documented on the SearchBar page with its own interactive demo, props table and section/value callback behaviour.",
 });
 
 const usedPlannedPaths = new Set();
@@ -240,7 +270,9 @@ const coverage = stories.map((story) => {
     status: story.status === "skipped" ? "excluded" : existingPage ? "documented" : "planned",
     note: story.status === "skipped"
       ? story.rationale
-      : existingPage ? "Historical story has a Fumadocs page; variants pending migration." : "Awaiting Fumadocs page and interactive demos.",
+      : existingPage
+        ? (DOCUMENTED_NOTES[story.source] ?? "Historical story has a Fumadocs page; variants pending migration.")
+        : (PLANNED_NOTES[story.source] ?? "Awaiting Fumadocs page and interactive demos."),
   };
 });
 
@@ -255,16 +287,63 @@ const coverageMatrix = {
     candidateTriage: {
       deferred: undocumentedProductionCandidates.filter((c) => c.triage.category === "deferred").length,
       excluded: undocumentedProductionCandidates.filter((c) => c.triage.category === "excluded").length,
+      documented: undocumentedProductionCandidates.filter((c) => c.triage.category === "documented").length,
+      familyCovered: undocumentedProductionCandidates.filter((c) => c.triage.category === "family-covered").length,
     },
   },
   components: coverage,
   undocumentedProductionCandidates,
 };
+const VALID_TRIAGE = new Set(["deferred", "excluded", "documented", "family-covered"]);
+
+/**
+ * COW-85: the generated files can be fresh yet still claim coverage that does
+ * not exist. Enforce that every documented page is real and indexed, and that
+ * every production candidate carries a decision with evidence.
+ */
+function assertStatusConsistency(matrix) {
+  const metaPath = join(root, "docs-app", "content", "docs", "components", "meta.json");
+  const meta = JSON.parse(readFileSync(metaPath, "utf8"));
+  const indexed = new Set(
+    (meta.pages ?? []).map((slug) => `docs-app/content/docs/components/${slug}.mdx`),
+  );
+  const errors = [];
+  for (const entry of matrix.components) {
+    if (entry.status === "documented") {
+      if (!entry.docsPage || !existsSync(join(root, entry.docsPage))) {
+        errors.push(`${entry.component}: documented but page is missing`);
+      } else if (!indexed.has(entry.docsPage)) {
+        errors.push(`${entry.component}: page is not listed in components/meta.json`);
+      }
+    }
+    if (entry.status === "excluded" && !entry.note) {
+      errors.push(`${entry.component}: exclusion has no rationale`);
+    }
+  }
+  for (const candidate of matrix.undocumentedProductionCandidates) {
+    const { category, rationale, docsPage } = candidate.triage ?? {};
+    if (!VALID_TRIAGE.has(category)) errors.push(`${candidate.name}: invalid triage category ${category}`);
+    if (!rationale?.trim()) errors.push(`${candidate.name}: triage has no rationale`);
+    if (category === "documented" || category === "family-covered") {
+      if (!docsPage || !existsSync(join(root, docsPage))) {
+        errors.push(`${candidate.name}: ${category} but page is missing`);
+      } else if (!indexed.has(docsPage)) {
+        errors.push(`${candidate.name}: ${docsPage} is not listed in components/meta.json`);
+      }
+    }
+  }
+  if (errors.length) {
+    console.error(`Docs status inconsistencies:\n- ${errors.join("\n- ")}`);
+    process.exit(1);
+  }
+}
+
 const matrixPath = join(root, "docs", "component-library", "coverage-matrix.json");
 const matrixText = JSON.stringify(coverageMatrix, null, 2) + "\n";
 // Generate and validate every output before replacing either tracked file.
 JSON.parse(manifestText);
 JSON.parse(matrixText);
+assertStatusConsistency(coverageMatrix);
 if (process.argv.includes("--check")) {
   const stale = [
     [out, manifestText],

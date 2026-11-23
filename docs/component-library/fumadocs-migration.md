@@ -1,5 +1,47 @@
 # COW-69 Storybook to Fumadocs migration
 
+## COW-85 follow-up coverage and live verification
+
+Coverage matrix after this slice: **142 stories — 42 documented, 94 planned, 6 excluded**;
+**41 production candidates — 0 deferred, 41 dispositioned** (32 excluded, 9 now family-covered or
+documented). The previous 9 deferred entries are resolved with evidence:
+
+| Candidate | Disposition | Evidence |
+| --- | --- | --- |
+| Stars, HotBadge, FavoriteBadge, ViewersNudge, SavingsLine, HoldTimer | family-covered | `docs-app/content/docs/components/conversion-badges.mdx` (interactive visibility/count/timer states) |
+| InlineUpsell, UpsellCard | family-covered | `docs-app/content/docs/components/extras-upsell.mdx` (deterministic `ShapedProduct` fixture, inline and card demos) |
+| ExpandedSearchButton | family-covered | `docs-app/content/docs/components/search-bar.mdx` (expanded panel demo with props and section/value callbacks) |
+| RoomListCard | documented | `docs-app/content/docs/components/room-list-card.mdx` (theme variants, deterministic `ShapedRoom` fixture) |
+
+New production-relevant pages (six): `search-bar`, `search-dropdowns` (guests, location, promo),
+`booking-chrome` (header + contact bar), `conversion-badges`, `extras-upsell`, `room-list-card`.
+Each uses the real source component with a docs-only
+harness, deterministic fixture, props/variants table, responsive notes and a source link. No page
+calls Mews, starts a booking or writes admin state. `BookingFooter` is intentionally not demoed:
+it calls `api.locations()` and reads live booking context.
+
+`npm run docs:inventory:check` now fails when a `documented` row points at a missing or unindexed
+page, when an `excluded` row has no rationale, or when a production candidate has an invalid
+category, no rationale, or a claimed `documented`/`family-covered` page that is missing or not in
+`components/meta.json`. Fresh generated files alone are no longer enough to pass.
+
+### Live published-site check
+
+Checked **2026-11-20T08:18Z** (UTC), before these new pages were merged/deployed:
+
+| Check | Result |
+| --- | --- |
+| `https://revrebel.github.io/urban-cowboy-booking-engine/` | 200, redirects to `http://resource-hub.revrebel.io/urban-cowboy-booking-engine/` |
+| Deep link `/components/button/` (custom domain) | 200, rendered marker `Book Your Stay` |
+| `/search-index.json` | 200, 252,398 bytes |
+| Asset URLs | base-path prefixed `/urban-cowboy-booking-engine/_next/static/...` |
+| `/components/search-bar/` | 404 — expected until main deploys this PR |
+
+Follow-ups: (1) the custom domain currently redirects to **http** and `https://resource-hub.revrebel.io`
+fails certificate validation (`SSL: no alternative certificate subject name matches`); the Pages
+custom-domain certificate needs fixing. (2) Re-run the live checks after merge/deploy to confirm the
+six new pages, static search entries and interactive demos are published.
+
 ## COW-70 catalog coverage
 
 `docs/component-library/coverage-matrix.json` is the tracked catalog matrix. Regenerate it
@@ -46,10 +88,13 @@ Fifth migrated group: forms, feedback and booking layout. `DateRangePicker`, `Ph
 `ProgressStep` have reference pages with local-only state and the real `BookingProvider` where
 the layout needs it. `EmptyState` gained an optional `imageBaseUrl` for its illustration.
 
-The 41 production components with no historical story are now triaged explicitly in the
-coverage matrix rather than listed as an unexplained backlog. Each candidate carries a
-`deferred` or `excluded` category with a rationale; the inventory generator fails if a new
-candidate has no decision, so the record cannot silently go stale.
+The 41 production components with no historical story are triaged explicitly in the coverage
+matrix rather than listed as an unexplained backlog. Candidate categories are `excluded`,
+`deferred`, `documented` and `family-covered` (COW-85 added the last two), each with a rationale
+and, for documented/family-covered rows, a page in `components/meta.json`. Current totals are
+32 excluded, 0 deferred, 1 documented and 8 family-covered. The inventory generator fails if a
+new candidate has no decision or claims coverage that does not exist, so the record cannot
+silently go stale.
 
 Sixth stage: static search and published-output verification. Catalog search is enabled in
 `RootProvider` with Fumadocs' `static` client and a build-time `search-index.json` generated
@@ -67,10 +112,12 @@ verifies that search and representative assets are served by the dev server; the
 it on a clean checkout before the production build.
 
 Published site: `https://revrebel.github.io/urban-cowboy-booking-engine/` (redirects to
-`resource-hub.revrebel.io`). At this checkpoint the live deployment still serves the stage-1
-catalog; pages from stages 2–6 return 404 until the stacked PRs are merged and the docs
-workflow redeploys from `main`. The local static export and all browser smoke results are
-recorded in CI; repeat the live checks after each upstream merge.
+`resource-hub.revrebel.io`). COW-70's consolidated PR #351 merged and the docs workflow
+redeployed from `main`, so the six-stage catalog is published. An earlier COW-70 checkpoint
+recorded that the live deployment served only the stage-1 catalog and that stages 2–6
+returned 404 until the stacked PRs merged; that was a historical rollout state, not current.
+The dated live check for this COW-85 slice and its known follow-ups are recorded in the
+COW-85 section above; post-merge verification remains an explicit acceptance item.
 
 To add a component page: create a `*.story.tsx` in `docs-app/components` importing the real
 component, expose a `defineStory` export (with a deterministic harness when the component
@@ -80,12 +127,14 @@ smoke page list. Regenerate the matrix and run `npm run docs:build && npm run do
 
 ## Status: Fumadocs live; historical runtime coverage retained
 
-COW-69 established the existing Fumadocs site and its GitHub Pages workflow. COW-83
-retired the legacy Scry Storybook production and PR-preview deployment workflows and
-the Chromatic deployment workflow. The historical Storybook build and Chromium story
-sweep **remain as a temporary main CI compatibility gate** while COW-70 migrates the
-remaining component demos and replaces their runtime checks. Storybook sources,
-`.storybook/`, scripts and packages remain available for the ongoing migration.
+COW-69 established the existing Fumadocs site and its GitHub Pages workflow. COW-70
+merged its consolidated catalog (PR #351) and is closed; COW-85 is the follow-up that
+continues migrating eligible historical demos and dispositions the remaining candidates.
+COW-83 retired the legacy Scry Storybook production and PR-preview deployment workflows
+and the Chromatic deployment workflow. The historical Storybook build and Chromium story
+sweep **remain as a temporary main CI compatibility gate** until the remaining runtime
+checks are replaced with Fumadocs-native coverage. Storybook sources, `.storybook/`,
+scripts and packages remain available for that migration.
 No booking-engine or Cloudflare Worker cutover is part of this cleanup.
 
 ## Inventory
@@ -138,9 +187,10 @@ It never touches booking state, Mews, payments or admin APIs.
 ## Publication constraints
 
 `REVREBEL/urban-cowboy-booking-engine` is **public** (`private: false`). GitHub Pages
-publication is still an explicit opt-in here: this branch does not enable publication or
-guess a public URL until the sanitized fixtures, deep links and interactive controls are
-verified.
+publication is an explicit opt-in on `main` through the gated workflow described below; PRs run
+build and smoke checks only. The published URL comes from `actions/deploy-pages` output rather
+than being guessed. The sanitized fixtures, deep links and interactive controls are verified by
+the static build and browser smoke checks before publication.
 
 `.github/workflows/docs-pages.yml`:
 
@@ -172,13 +222,15 @@ and absence of API/token strings. A subpath build was also exercised with
 
 ## Remaining gates before removing the historical Storybook runtime sweep
 
-1. Convert the remaining 132 planned entries in the current coverage matrix (and triage
-   41 undocumented production candidates), preserving meaningful variants and controls.
-2. Add static-compatible search and source links across all pages.
+1. Convert the remaining **94 planned** entries in the current coverage matrix, preserving
+   meaningful variants and controls. All 41 production candidates are already dispositioned
+   (32 excluded, 0 deferred, 1 documented, 8 family-covered).
+2. Keep static search and source links current as pages are added (both are in place today).
 3. Replace Storybook-based runtime and visual tests with Vitest/Testing Library and
    Playwright checks that run independently.
-4. Verify published deep links, interactive controls, fonts, icons and images on the real
-   Pages URL after the repository decision.
+4. Complete the post-merge live verification of deep links, interactive controls, fonts, icons
+   and images on the real Pages URL, and resolve the custom-domain HTTPS certificate/redirect
+   follow-up recorded in the COW-85 section.
 5. Only then remove the temporary Storybook build/Chromium sweep/artifact upload from
    `.github/workflows/ci.yml`, plus unused Storybook dependencies, `.storybook/`, scripts
    and sources, with a regenerated lockfile. The Scry and Chromatic deploy workflows

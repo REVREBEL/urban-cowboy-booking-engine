@@ -2,13 +2,15 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 31,
-    "planned": 105,
+    "documented": 42,
+    "planned": 94,
     "excluded": 6,
     "undocumentedProductionCandidates": 41,
     "candidateTriage": {
-      "deferred": 9,
-      "excluded": 32
+      "deferred": 0,
+      "excluded": 32,
+      "documented": 1,
+      "familyCovered": 8
     }
   },
   "components": [
@@ -16,13 +18,13 @@
       "component": "ContactBar",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/chrome/contact-bar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/contact-bar.mdx",
+      "docsPage": "docs-app/content/docs/components/booking-chrome.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Footer",
@@ -34,27 +36,27 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: BookingFooter reads live booking context and calls api.locations(); a safe docs-only fixture is needed before it can be demoed."
     },
     {
       "component": "Header",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/chrome/header.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/header.mdx",
+      "docsPage": "docs-app/content/docs/components/booking-chrome.mdx",
       "demos": 3,
       "demoExports": [
         "DatesStep",
         "ResultsStep",
         "ExtrasStep"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Conversion",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/conversion.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/conversion.mdx",
+      "docsPage": "docs-app/content/docs/components/conversion-badges.mdx",
       "demos": 5,
       "demoExports": [
         "Rating",
@@ -63,8 +65,8 @@
         "SavingsBadgeVariant",
         "TrustRowVariant"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "DogToggleButton",
@@ -207,25 +209,25 @@
       "component": "CreoleUpsellStories",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/extras/creole-upsell-stories.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/creole-upsell-stories.mdx",
+      "docsPage": "docs-app/content/docs/components/extras-upsell.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "UpsellCard",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/extras/upsell-card.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/upsell-card.mdx",
+      "docsPage": "docs-app/content/docs/components/extras-upsell.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "StepLayout",
@@ -359,63 +361,63 @@
       "component": "SearchBar",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/search-bar.mdx",
+      "docsPage": "docs-app/content/docs/components/search-bar.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "SearchBarExpanded",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBarExpanded.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/search-bar-expanded.mdx",
+      "docsPage": "docs-app/content/docs/components/search-bar.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the SearchBar page with its own interactive demo, props table and section/value callback behaviour."
     },
     {
       "component": "SearchBarGuestDropdown",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBarGuestsDropdown.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/search-bar-guests-dropdown.mdx",
+      "docsPage": "docs-app/content/docs/components/search-dropdowns.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "SearchBarLocationDropdown",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBarLocationDropdown.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/search-bar-location-dropdown.mdx",
+      "docsPage": "docs-app/content/docs/components/search-dropdowns.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "KeyboardNavigationAndEscape",
         "SwitchingSectionPreservesNewFocus"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "SearchBarPromoDropdown",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/SearchBarPromoDropdown.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/search-bar-promo-dropdown.mdx",
+      "docsPage": "docs-app/content/docs/components/search-dropdowns.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "SearchButton",
@@ -1221,7 +1223,7 @@
       "component": "RoomsListCard",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/RoomsListCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/rooms-list-card.mdx",
+      "docsPage": "docs-app/content/docs/components/room-list-card.mdx",
       "demos": 11,
       "demoExports": [
         "Default",
@@ -1236,8 +1238,8 @@
         "WaldenBathingSuiteWithDen",
         "WaldenSunriseBathingSuite"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "Cabin King Bed + Bunk",
@@ -1925,64 +1927,72 @@
       "name": "Stars",
       "source": "src/components/booking/conversion.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+        "category": "family-covered",
+        "docsPage": "docs-app/content/docs/components/conversion-badges.mdx",
+        "rationale": "Conversion merchandising primitives have interactive state variants on the Conversion badges family page."
       }
     },
     {
       "name": "HotBadge",
       "source": "src/components/booking/conversion.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+        "category": "family-covered",
+        "docsPage": "docs-app/content/docs/components/conversion-badges.mdx",
+        "rationale": "Conversion merchandising primitives have interactive state variants on the Conversion badges family page."
       }
     },
     {
       "name": "FavoriteBadge",
       "source": "src/components/booking/conversion.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+        "category": "family-covered",
+        "docsPage": "docs-app/content/docs/components/conversion-badges.mdx",
+        "rationale": "Conversion merchandising primitives have interactive state variants on the Conversion badges family page."
       }
     },
     {
       "name": "ViewersNudge",
       "source": "src/components/booking/conversion.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+        "category": "family-covered",
+        "docsPage": "docs-app/content/docs/components/conversion-badges.mdx",
+        "rationale": "Conversion merchandising primitives have interactive state variants on the Conversion badges family page."
       }
     },
     {
       "name": "SavingsLine",
       "source": "src/components/booking/conversion.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+        "category": "family-covered",
+        "docsPage": "docs-app/content/docs/components/conversion-badges.mdx",
+        "rationale": "Conversion merchandising primitives have interactive state variants on the Conversion badges family page."
       }
     },
     {
       "name": "HoldTimer",
       "source": "src/components/booking/conversion.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Conversion merchandising primitives; a dedicated page follows the core booking flow pages."
+        "category": "family-covered",
+        "docsPage": "docs-app/content/docs/components/conversion-badges.mdx",
+        "rationale": "Conversion merchandising primitives have interactive state variants on the Conversion badges family page."
       }
     },
     {
       "name": "InlineUpsell",
       "source": "src/components/booking/extras/upsell-card.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Extras upsell presentation; the Extras journey page documents the surrounding flow."
+        "category": "family-covered",
+        "docsPage": "docs-app/content/docs/components/extras-upsell.mdx",
+        "rationale": "InlineUpsell has a reference page; UpsellCard is the larger gallery variant documented through Journey extras."
       }
     },
     {
       "name": "ExpandedSearchButton",
       "source": "src/components/booking/search/SearchBarExpanded.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Composite search panel; its date/party controls are documented individually."
+        "category": "family-covered",
+        "docsPage": "docs-app/content/docs/components/search-bar.mdx",
+        "rationale": "The composite search panel is documented through SearchBar; its date and party controls have their own pages."
       }
     },
     {
@@ -2245,8 +2255,9 @@
       "name": "RoomListCard",
       "source": "src/components/rooms/RoomsListCard.tsx",
       "triage": {
-        "category": "deferred",
-        "rationale": "Room list presentation covered by the Journey Rooms page until it has its own reference."
+        "category": "documented",
+        "docsPage": "docs-app/content/docs/components/room-list-card.mdx",
+        "rationale": "RoomsListCard has its own reference page with theme variants and local selection actions."
       }
     }
   ]
