@@ -399,6 +399,17 @@ export async function listPublishedRoomAmenitySlugs(
   return new Set((result.results ?? []).map((row: any) => row.slug as string));
 }
 
+/** Room IDs with an explicitly published gallery document (W3.4 migration gate). */
+export async function listPublishedRoomGallerySlugs(
+  db: D1Database,
+  tenantId: string,
+): Promise<Set<string>> {
+  const result = await db.prepare(
+    `SELECT slug FROM content_items WHERE tenant_id = ?1 AND kind = 'room_gallery' AND status = 'published'`,
+  ).bind(tenantId).all();
+  return new Set((result.results ?? []).map((row: any) => row.slug as string));
+}
+
 /** Tenant-wide ordered assignments in one query, grouped by the caller. */
 export function listRoomAmenityAssignmentsForTenant(
   db: D1Database,

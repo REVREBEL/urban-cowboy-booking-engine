@@ -90,6 +90,14 @@ in D1. Mews remains authoritative for every value they might be associated with;
 | `rate_merchandising.rate_product_id` | `src/types/d1-contracts.ts:383,394` (`rateProductId`) | No current reader; fields seeded NULL | `content_provenance` rows | same |
 | `media_aliases.alias_type='mews_asset_id'` | `src/types/d1-contracts.ts:22-29` (`MediaAliasType`) | Editorial media resolution (`worker/d1.ts:486`) | `created_at` only | same |
 
+W2 added an explicit selective reference-sync contract
+(`mewsReferenceSyncRowSchema`, `src/types/d1-contracts.ts:527-550`) whose
+`mewsReferenceTypeSchema` enum allows only `hotel`, `rate_group`, `product`,
+`room_category` and `age_category`. It stores stable IDs, a Mews payload and
+`source_system`/`synced_at`/`reconciled_at` provenance — never availability,
+inventory, restrictions or rates. The enforcing test asserts both the exact enum
+and the absence of ARI reference types.
+
 `content_provenance` records `source_system`, `source_collection`, `source_id`,
 `source_snapshot_date`, `source_hash` and `imported_at`
 (`migrations/0003_property_scoped_contracts.sql:44-60`). The current import is a

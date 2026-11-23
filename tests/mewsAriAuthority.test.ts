@@ -336,6 +336,10 @@ test("D1 contracts expose only an explicit allowlist of Mews reference fields", 
       "mews_product_id", "mewsProductId",
       "rate_product_id", "rateProductId",
       "mews_asset_id", "mews",
+      // W2 selective reference-sync contract (COW-100): stable IDs plus
+      // provenance only. Verified below to exclude ARI reference types.
+      "mewsReferenceTypeSchema", "mewsReferenceType",
+      "mewsReferenceSyncRowSchema", "mewsReferenceSyncContract",
     ].map((token) => token.toLowerCase()),
   );
 
@@ -375,6 +379,16 @@ test("D1 contracts expose only an explicit allowlist of Mews reference fields", 
     [],
     "No ARI-named field or type may be declared in D1 contracts",
   );
+
+  // The W2 reference-sync allowlist may hold IDs and provenance only. Its type
+  // enum must never include availability, inventory, restriction or live rate.
+  const referenceEnum = /mewsReferenceTypeSchema\s*=\s*z\.enum\(\[([\s\S]*?)\]\)/.exec(src);
+  assert.ok(referenceEnum, "mewsReferenceTypeSchema enum must exist");
+  const referenceTypes = [...referenceEnum[1].matchAll(/"([^"]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(referenceTypes, ["hotel", "rate_group", "product", "room_category", "age_category"]);
+  for (const banned of ["availability", "inventory", "restriction", "price", "quote", "reservation", "daily_rate"]) {
+    assert.ok(!referenceTypes.some((type) => type.includes(banned)), `ARI reference type leaked into D1: ${banned}`);
+  }
 
   // Every allowed reference concept must actually be present in the contract.
   for (const token of [
