@@ -47,9 +47,11 @@ function decodeBase64Url(value: string): string {
   return atob(padded);
 }
 
-function decodeBytes(value: string): Uint8Array {
+function decodeBytes(value: string): Uint8Array<ArrayBuffer> {
   const text = decodeBase64Url(value);
-  const bytes = new Uint8Array(text.length);
+  // Allocate an ArrayBuffer-backed view so the signature is a valid BufferSource
+  // under both the Worker and DOM TypeScript lib configurations.
+  const bytes = new Uint8Array(new ArrayBuffer(text.length));
   for (let i = 0; i < text.length; i++) bytes[i] = text.charCodeAt(i);
   return bytes;
 }

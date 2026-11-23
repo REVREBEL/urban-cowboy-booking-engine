@@ -8,6 +8,7 @@ The goal is to preserve not only what the application does, but why particular i
 
 - [Cloudflare Next.js Admin Portal foundation](./admin-portal-nextjs-foundation.md) — COW-90 W1.2 application boundary, runtime choices, environment contract and deployment steps.
 - [Admin Portal parity matrix](../application/admin-portal-parity-matrix.md) — COW-89 W1.1 capability-by-capability source → destination matrix and migration sequence.
+- [Admin Portal auth, sessions and RBAC](./admin-portal-auth-rbac.md) — COW-91 W1.3 Access verifier reuse, capability matrix, protected layout and CSRF.
 
 - [Calendar Availability & Rate Snapshot Architecture](./calendar-availability-rate-snapshot.md) — how calendar rates, restrictions, caching, adaptive Mews polling, reservation-triggered refreshes, and the future Connector API migration work.
 

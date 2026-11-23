@@ -31,8 +31,9 @@ committed.
 - Rendered response cache: **none**. Data cache: **none**. Image optimization: **none**.
   Prerendering: **none**. These fit an authenticated admin app that must not share cached HTML.
 - `proxy.ts` (Next.js 16 proxy convention) marks every non-build response
-  `Cache-Control: no-store, private`. W1.3 replaces it with real session/role verification;
-  the comment in the file states the boundary.
+  `Cache-Control: no-store, private`. W1.3 added a cheap unauthenticated-page redirect;
+  authoritative session/role verification lives in the protected layout and API handlers
+  (see the W1.3 document).
 - Cloudflare config keeps `nodejs_compat`, `ASSETS`, and the `runWorkerFirst` patterns required
   for middleware to run before static assets (build output stays excluded).
 
@@ -108,8 +109,9 @@ decision about the preview Worker name/route. Before deploying:
 
 ## 8. Deferred to later W1 issues
 
-- W1.3 (COW-91): real Cloudflare Access session verification, logout, expiry, role matrix, CSRF
-  and unauthorized states; keep Booking Studio enablement separate from admin auth.
+- W1.3 (COW-91): delivered — see [admin-portal-auth-rbac.md](./admin-portal-auth-rbac.md).
+  Cloudflare Access session verification, logout, expiry, role matrix, CSRF and unauthorized
+  states are in place; Booking Studio enablement remains separate.
 - W1.4 (COW-92): App Router routes for the parity matrix, API client, and reuse of the domain
   panels. Fix the destination wiring defect `D-01` recorded in the parity audit.
 - W1.5/W1.7: sync gates; no post-gate integration until gate peers complete.

@@ -1,17 +1,33 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Foundation policy for admin routes (Next.js 16 `proxy` convention). W1.3
- * replaces this with real session and role verification at the edge; UI hiding
- * is never an authorization boundary. Until then every admin response is
- * private and non-cacheable.
+ * Edge UX guard only: redirects obviously unauthenticated page requests before
+ * they render. It does NOT verify the JWT — the protected (admin) layout and
+ * every API handler call getAdminSession()/require capability server-side.
+ * Cloudflare Access performs the real sign-in and injects the assertion.
  */
 export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   const response = NextResponse.next();
-  if (!request.nextUrl.pathname.startsWith("/_next/")) {
-    response.headers.set("Cache-Control", "no-store, private");
+  response.headers.set("Cache-Control", "no-store, private");
+
+  if (
+    pathname === "/login" ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/_next/")
+  ) {
+    return response;
   }
-  return response;
+
+  const assertion = request.headers.get("cf-access-jwt-assertion")?.trim();
+  const bearer = /^Bearer\s+(.+)$/i.exec(request.headers.get("authorization") ?? "")?.[1];
+  if (assertion || bearer?.trim()) return response;
+
+  const login = request.nextUrl.clone();
+  login.pathname = "/login";
+  login.search = "";
+  login.searchParams.set("next", pathname);
+  return NextResponse.redirect(login);
 }
 
 export default proxy;
