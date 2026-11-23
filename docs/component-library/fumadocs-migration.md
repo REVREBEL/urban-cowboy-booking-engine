@@ -95,9 +95,29 @@ default base path, fixed in PR #364 by passing the docs `basePath`; and (2) the 
 HTTPS downgrade. The verifier now enforces an explicit host allowlist and HTTPS protocol policy
 (`DOCS_ALLOW_HTTP=1` only for the documented deviation).
 
-**Post-deploy acceptance (open):** merge PR #364, wait for the Pages deployment from `main`, rerun
-`node scripts/fumadocs/verify-live-site.mjs`, and record a passing result here. The custom-domain HTTPS
-certificate/redirect remains a separate infrastructure follow-up; the canonical URL must use valid HTTPS.
+**Final verification — 2026-11-23T20:02Z**, after PR #364 merged (deployment
+`45252599901`). Tested URL: `https://revrebel.github.io/urban-cowboy-booking-engine/` (301 →
+`http://resource-hub.revrebel.io/urban-cowboy-booking-engine/`).
+
+| Check | Result |
+| --- | --- |
+| 10 M1/M3 pages + home, desktop 1280×900 and mobile 375×812 | PASS |
+| Deep-link refresh at both widths | PASS |
+| Static search finds `focus-amenity` and navigates to it | PASS |
+| Amenity rail toggle and rate-panel close/reopen | PASS |
+| Console errors, network 404s, broken images | PASS — none |
+| Strict HTTPS policy | **FAIL** — 22 downgrade findings (`http://resource-hub.revrebel.io`), same certificate issue |
+| `DOCS_ALLOW_HTTP=1` documented-deviation run | **PASS** — `LIVE VERIFICATION PASSED`, 0 failures |
+
+Verifier reports are retained as evidence:
+`docs/component-library/live-verification-2026-11-23.json` (0 failures, deviation run) and
+`docs/component-library/live-verification-https-strict-2026-11-23.json` (22 downgrade findings).
+
+Conclusion: every content, asset, search, navigation, responsive and interaction check passes on the
+actual published site. The only unmet M4 item is the canonical HTTPS URL: the custom domain still
+presents a `*.github.io` certificate and redirects to `http://`. Fix the Pages custom-domain
+certificate/redirect, then rerun `node scripts/fumadocs/verify-live-site.mjs` **without**
+`DOCS_ALLOW_HTTP=1` to close the remaining acceptance item.
 
 ## COW-70 catalog coverage
 
