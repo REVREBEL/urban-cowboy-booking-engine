@@ -379,7 +379,7 @@
         "Default"
       ],
       "status": "documented",
-      "note": "Historical story has a Fumadocs page; variants pending migration."
+      "note": "Documented on the SearchBar page with its own interactive demo, props table and section/value callback behaviour."
     },
     {
       "component": "SearchBarGuestDropdown",

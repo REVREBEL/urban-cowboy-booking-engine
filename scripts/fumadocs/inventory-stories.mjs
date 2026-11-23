@@ -122,6 +122,12 @@ const PLANNED_NOTES = Object.freeze({
     "Planned: BookingFooter reads live booking context and calls api.locations(); a safe docs-only fixture is needed before it can be demoed.",
 });
 
+/** Documented rows likewise state what the page actually covers. */
+const DOCUMENTED_NOTES = Object.freeze({
+  "src/stories/components/booking/search/SearchBarExpanded.stories.tsx":
+    "Documented on the SearchBar page with its own interactive demo, props table and section/value callback behaviour.",
+});
+
 const usedPlannedPaths = new Set();
 
 const CATEGORY_LABELS = {
@@ -265,7 +271,7 @@ const coverage = stories.map((story) => {
     note: story.status === "skipped"
       ? story.rationale
       : existingPage
-        ? "Historical story has a Fumadocs page; variants pending migration."
+        ? (DOCUMENTED_NOTES[story.source] ?? "Historical story has a Fumadocs page; variants pending migration.")
         : (PLANNED_NOTES[story.source] ?? "Awaiting Fumadocs page and interactive demos."),
   };
 });

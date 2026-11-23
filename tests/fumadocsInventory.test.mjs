@@ -105,6 +105,16 @@ test("planned rows carry an explicit reason, not just a generic pending note", (
   assert.match(footer.note, /safe docs-only fixture/);
 });
 
+test("documented rows describe the coverage they actually provide", () => {
+  const matrix = JSON.parse(read("docs/component-library/coverage-matrix.json"));
+  const expanded = matrix.components.find((entry) => entry.storySource?.includes("SearchBarExpanded"));
+  assert.ok(expanded, "SearchBarExpanded story is tracked");
+  assert.equal(expanded.status, "documented");
+  assert.match(expanded.note, /interactive demo/);
+  assert.match(expanded.note, /props table/);
+  assert.doesNotMatch(expanded.note, /variants pending migration/);
+});
+
 test("every undocumented production candidate has an explicit triage decision", () => {
   const matrix = JSON.parse(read("docs/component-library/coverage-matrix.json"));
   const candidates = matrix.undocumentedProductionCandidates;

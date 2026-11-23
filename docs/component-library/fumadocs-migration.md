@@ -13,8 +13,9 @@ documented). The previous 9 deferred entries are resolved with evidence:
 | ExpandedSearchButton | family-covered | `docs-app/content/docs/components/search-bar.mdx` (expanded panel demo with props and section/value callbacks) |
 | RoomListCard | documented | `docs-app/content/docs/components/room-list-card.mdx` (theme variants, deterministic `ShapedRoom` fixture) |
 
-New production-relevant pages: `search-bar`, `search-dropdowns` (guests, location, promo),
-`booking-chrome` (header + contact bar), `conversion-badges`, `extras-upsell`. Each uses the real source component with a docs-only
+New production-relevant pages (six): `search-bar`, `search-dropdowns` (guests, location, promo),
+`booking-chrome` (header + contact bar), `conversion-badges`, `extras-upsell`, `room-list-card`.
+Each uses the real source component with a docs-only
 harness, deterministic fixture, props/variants table, responsive notes and a source link. No page
 calls Mews, starts a booking or writes admin state. `BookingFooter` is intentionally not demoed:
 it calls `api.locations()` and reads live booking context.
@@ -39,7 +40,7 @@ Checked **2026-11-20T08:18Z** (UTC), before these new pages were merged/deployed
 Follow-ups: (1) the custom domain currently redirects to **http** and `https://resource-hub.revrebel.io`
 fails certificate validation (`SSL: no alternative certificate subject name matches`); the Pages
 custom-domain certificate needs fixing. (2) Re-run the live checks after merge/deploy to confirm the
-four new pages, static search entries and interactive demos are published.
+six new pages, static search entries and interactive demos are published.
 
 ## COW-70 catalog coverage
 
