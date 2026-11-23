@@ -387,59 +387,6 @@ export async function listRoomGallery(
   return items;
 }
 
-/**
- * All published gallery placements for a tenant, with the stable Mews room
- * category ID of the room they belong to. Used by the guest overlay so a photo
- * URL can change without changing media identity, room links or hotspot IDs.
- */
-const GALLERY_MAP_SQL = `
-  SELECT rt.mews_room_category_id,
-         p.id AS placement_id, p.media_asset_id, p.display_order,
-         a.original_filename,
-         COALESCE(v.squarespace_url, a.squarespace_url) AS source_url,
-         a.squarespace_asset_id AS source_asset_id,
-         COALESCE(mf.excluded, 0) AS excluded,
-         COALESCE(v.width, a.width) AS width,
-         COALESCE(v.height, a.height) AS height,
-         COALESCE(p.alt_text_override, a.alt_text) AS alt_text,
-         COALESCE(p.caption_override, md.caption) AS caption,
-         COALESCE(p.description_override, md.description) AS description,
-         md.tags, md.current_version_id,
-         vf.cloudinary_public_id, vf.cloudinary_version, vf.sha256
-    FROM media_placements p
-    JOIN room_types rt ON rt.id = p.target_id AND rt.tenant_id = p.tenant_id
-    JOIN media_assets a ON a.id = p.media_asset_id AND a.tenant_id = p.tenant_id AND a.kind = 'image'
-    LEFT JOIN media_asset_metadata md
-      ON md.media_asset_id = a.id AND md.tenant_id = a.tenant_id
-    LEFT JOIN media_versions v ON v.id = md.current_version_id
-    LEFT JOIN media_version_files vf
-      ON vf.version_id = v.id AND vf.tenant_id = a.tenant_id
-    LEFT JOIN media_placement_flags mf
-      ON mf.placement_id = p.id AND mf.tenant_id = p.tenant_id
-   WHERE p.tenant_id = ?1 AND p.target_table = 'room_types'
-     AND p.placement_type IN ('room_gallery', 'gallery')
-   ORDER BY p.target_id, p.display_order, p.id`;
-
-export interface PublishedGalleryRow extends RoomGalleryRow {
-  mewsRoomCategoryId: string;
-}
-
-export async function listPublishedGalleryRows(
-  db: D1Database,
-  tenantId: string,
-): Promise<PublishedGalleryRow[]> {
-  const result = await db.prepare(GALLERY_MAP_SQL).bind(tenantId).all();
-  const rows: PublishedGalleryRow[] = [];
-  for (const raw of result.results ?? []) {
-    const parsed = roomGalleryRowSchema.safeParse(raw);
-    if (!parsed.success) continue;
-    const roomId = (raw as { mews_room_category_id?: unknown }).mews_room_category_id;
-    if (typeof roomId !== "string" || !roomId.trim()) continue;
-    rows.push({ ...parsed.data, mewsRoomCategoryId: roomId });
-  }
-  return rows;
-}
-
 /** Slugs of rooms whose own assignment document has been published. */
 export async function listPublishedRoomAmenitySlugs(
   db: D1Database,
@@ -448,6 +395,17 @@ export async function listPublishedRoomAmenitySlugs(
   const result = await db.prepare(
     `SELECT slug FROM content_items
       WHERE tenant_id = ?1 AND kind = 'room_amenities' AND status = 'published'`,
+  ).bind(tenantId).all();
+  return new Set((result.results ?? []).map((row: any) => row.slug as string));
+}
+
+/** Room IDs with an explicitly published gallery document (W3.4 migration gate). */
+export async function listPublishedRoomGallerySlugs(
+  db: D1Database,
+  tenantId: string,
+): Promise<Set<string>> {
+  const result = await db.prepare(
+    `SELECT slug FROM content_items WHERE tenant_id = ?1 AND kind = 'room_gallery' AND status = 'published'`,
   ).bind(tenantId).all();
   return new Set((result.results ?? []).map((row: any) => row.slug as string));
 }
