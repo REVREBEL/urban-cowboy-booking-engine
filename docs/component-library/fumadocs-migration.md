@@ -88,7 +88,14 @@ not copy. The local `docs:smoke` check could not catch them because it only insp
 `prepare-docs-assets.mjs` copies the missing assets. The verifier itself now fails on broken images
 and missing demo controls instead of silently skipping them.
 
-**Post-deploy acceptance (open):** merge PR #363, wait for the Pages deployment from `main`, rerun
+After PR #363 merged and deployed, the verifier was rerun on 2026-11-23: all 10 pages returned 200
+at desktop and mobile, all deep links refreshed, static search and its navigation worked, and both
+demo interactions passed. Two findings remained: (1) one `wifi_badge.svg` 404 from `AmenityIcon`'s
+default base path, fixed in PR #364 by passing the docs `basePath`; and (2) the known custom-domain
+HTTPS downgrade. The verifier now enforces an explicit host allowlist and HTTPS protocol policy
+(`DOCS_ALLOW_HTTP=1` only for the documented deviation).
+
+**Post-deploy acceptance (open):** merge PR #364, wait for the Pages deployment from `main`, rerun
 `node scripts/fumadocs/verify-live-site.mjs`, and record a passing result here. The custom-domain HTTPS
 certificate/redirect remains a separate infrastructure follow-up; the canonical URL must use valid HTTPS.
 
