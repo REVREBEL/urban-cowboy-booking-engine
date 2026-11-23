@@ -1,0 +1,4 @@
+[
+  { "id": "rt-alpine", "name": "Alpine Bathing Suite", "slug": "alpine-bathing-suite", "mewsRoomCategoryId": "mews-alpine" },
+  { "id": "rt-walden", "name": "Walden King", "slug": "walden-king", "mewsRoomCategoryId": "mews-walden" }
+]

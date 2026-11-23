@@ -34,7 +34,7 @@ test("final URL checks reject foreign hosts, path changes and HTTPS downgrades",
     checkFinalUrl(`https://revrebel.github.io${path}`, path).ok, true,
   );
   assert.equal(
-    checkFinalUrl(`https://resource-hub.revrebel.io${path}`, path).ok, true,
+    checkFinalUrl(`https://cowboy-components.revrebel.io${path}`, path).ok, true,
   );
   assert.match(
     checkFinalUrl(`https://evil.example${path}`, path).detail, /unexpected host/,
@@ -43,10 +43,10 @@ test("final URL checks reject foreign hosts, path changes and HTTPS downgrades",
     checkFinalUrl(`https://revrebel.github.io/wrong`, path).detail, /path changed/,
   );
   assert.match(
-    checkFinalUrl(`http://resource-hub.revrebel.io${path}`, path).detail, /HTTPS downgrade/,
+    checkFinalUrl(`http://cowboy-components.revrebel.io${path}`, path).detail, /HTTPS downgrade/,
   );
   assert.equal(
-    checkFinalUrl(`http://resource-hub.revrebel.io${path}`, path, { requireHttps: false }).ok, true,
+    checkFinalUrl(`http://cowboy-components.revrebel.io${path}`, path, { requireHttps: false }).ok, true,
   );
 });
 

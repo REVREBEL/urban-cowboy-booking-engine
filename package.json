@@ -36,6 +36,7 @@
     "icons:build": "node scripts/build-icons.mjs",
     "icons:clean": "node scripts/build-icons.mjs --clean",
     "sync:room-photos": "node scripts/sync-mews-room-photos.mjs",
+    "sync:webflow-photos": "node scripts/sync-webflow-photos.mjs",
     "room-ids": "node scripts/fetch-room-category-ids.mjs",
     "tokens:audit": "node scripts/tokenize-design-system.mjs",
     "tokens:fix": "node scripts/tokenize-design-system.mjs --write",

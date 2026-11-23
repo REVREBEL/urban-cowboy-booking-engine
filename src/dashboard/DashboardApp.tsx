@@ -63,7 +63,7 @@ export function DashboardApp() {
         {route === "rooms" && <RoomPhotosPanel api={api} />}
         {route === "hotspots" && <RoomHotspotsPanel api={api} />}
         {route === "amenities" && <RoomAmenitiesPanel api={api} />}
-        {route !== "analytics" && route !== "events" && route !== "settings" && route !== "rooms" && route !== "amenities" && (
+        {route !== "analytics" && route !== "events" && route !== "settings" && route !== "rooms" && route !== "hotspots" && route !== "amenities" && (
           <EmptyPanel message={`${current.label} panel is not wired yet. Navigation and route protection are available now.`} />
         )}
       </PanelErrorBoundary>

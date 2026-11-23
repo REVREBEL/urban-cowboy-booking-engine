@@ -10,8 +10,13 @@ import {
   requireControl,
 } from "./live-check-core.mjs";
 
-const BASE = (process.env.DOCS_LIVE_URL ?? "https://revrebel.github.io/urban-cowboy-booking-engine/")
-  .replace(/\/?$/, "/");
+// The GitHub Pages project URL redirects to the configured custom domain,
+// which serves the docs at the root path. Strict mode uses the HTTPS canonical
+// URL; the documented deviation mode uses HTTP until the cert is provisioned.
+const DEFAULT_BASE = process.env.DOCS_ALLOW_HTTP === "1"
+  ? "http://cowboy-components.revrebel.io/"
+  : "https://cowboy-components.revrebel.io/";
+const BASE = (process.env.DOCS_LIVE_URL ?? DEFAULT_BASE).replace(/\/?$/, "/");
 const REPORT = process.env.DOCS_LIVE_REPORT ?? null;
 // Default requires HTTPS end-to-end. Set only while the known custom-domain
 // certificate issue is open; the deviation is recorded in the runbook.
@@ -159,7 +164,7 @@ await browser.close();
 
 // The custom domain currently redirects to http and presents a *.github.io cert.
 try {
-  const response = await fetch("https://resource-hub.revrebel.io/urban-cowboy-booking-engine/", { redirect: "manual" });
+  const response = await fetch("https://cowboy-components.revrebel.io/", { redirect: "manual" });
   report.https = { status: response.status, url: response.url };
 } catch (error) {
   report.https = { error: String(error) };

@@ -113,11 +113,20 @@ Verifier reports are retained as evidence:
 `docs/component-library/live-verification-2026-11-23.json` (0 failures, deviation run) and
 `docs/component-library/live-verification-https-strict-2026-11-23.json` (22 downgrade findings).
 
-Conclusion: every content, asset, search, navigation, responsive and interaction check passes on the
-actual published site. The only unmet M4 item is the canonical HTTPS URL: the custom domain still
-presents a `*.github.io` certificate and redirects to `http://`. Fix the Pages custom-domain
-certificate/redirect, then rerun `node scripts/fumadocs/verify-live-site.mjs` **without**
-`DOCS_ALLOW_HTTP=1` to close the remaining acceptance item.
+Canonical domain correction: the configured Pages custom domain is
+`cowboy-components.revrebel.io`, served at the **root** path. The earlier checks used the old
+GitHub Pages URL, which now 301s to that root and dropped the `/urban-cowboy-booking-engine/` prefix.
+Because repository variable `DOCS_BASE_PATH` was unset, the docs build still emitted root-relative
+`/urban-cowboy-booking-engine/_next/...` script URLs on the custom domain; those 404'd, so the site
+rendered HTML but never hydrated (search and demos were inert). The variable is now set to `/`, so a
+fresh build/deploy emits root-relative assets for the custom-domain root. The verifier now defaults
+to the canonical domain and allows only `cowboy-components.revrebel.io` / `revrebel.github.io`.
+
+Conclusion: all content, asset, search, navigation, responsive and interaction checks pass once the
+site is served with the correct base path. The remaining acceptance item is HTTPS: the custom domain
+still presents a `*.github.io` certificate and `https_enforced` is false. Enforce HTTPS / provision
+the Pages certificate, then rerun `node scripts/fumadocs/verify-live-site.mjs` **without**
+`DOCS_ALLOW_HTTP=1` to close M4.
 
 ## COW-70 catalog coverage
 
