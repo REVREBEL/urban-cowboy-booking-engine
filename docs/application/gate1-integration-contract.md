@@ -45,12 +45,28 @@ presentation refactor is part of Gate 1.
 | `/api/content/room-type-reviews` (hotspots overlay) | `{ …, hotspotsByRoom }` | `PHOTO_HOTSPOT_SOURCE` (webflow) | published, approved, non-deleted hotspot mappings |
 | `/api/content/events/occurrences` | `{ source, occurrences, duringStay, note }` | unconditional D1 | displayed events, schedule only |
 
-- `webflow` calls the legacy handler unchanged; `shadow` keeps the Webflow
-  response and writes a parity summary only when it changes; `d1` serves
-  published data and falls back to Webflow with `X-Content-Source: webflow-fallback`
-  and `Cache-Control: no-store` on any incomplete/missing/failed read.
-- Reads are tenant and location scoped. More than one matching published row is
-  ambiguous and fails closed to Webflow.
+The flag and fallback paragraph below describes **current behavior of the
+full-route adapters only**. It is not a uniform requirement for every row in the
+table; overlays and unconditional D1 reads have different semantics:
+
+- **Full-route adapters** (policy language, site settings, add-ons): `webflow`
+  calls the legacy handler unchanged; `shadow` keeps the Webflow response and
+  writes a parity summary only when it changes; `d1` serves published data and,
+  on any incomplete/missing/ambiguous/failed read, returns the Webflow response
+  with `X-Content-Source: webflow-fallback` and `Cache-Control: no-store`.
+- **Overlays** (room galleries, hotspots): a two-state flag with `webflow`
+  (default) and `d1` only — no `shadow` mode and no separate fallback response.
+  They are applied inside the existing Webflow room-content response. When the
+  flag is off, or published data is missing/empty/unreadable, the original
+  Webflow `galleries` / `hotspots` are preserved unchanged (no `webflow-fallback`
+  header). In `d1` mode galleries are merged per migrated room; hotspots are
+  replaced by published `hotspotsByRoom`.
+- **Unconditional D1** (events occurrences): no source flag; the response is a
+  D1 schedule only and asserts no availability or price.
+
+All published reads are tenant and location scoped. More than one matching
+published row is ambiguous and fails closed to Webflow (or preserves the
+Webflow overlay payload).
 - Full route/consumer/source map:
   [`booking-runtime-webflow-dependency-inventory.md`](./booking-runtime-webflow-dependency-inventory.md).
 
