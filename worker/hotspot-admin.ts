@@ -16,7 +16,7 @@ import {
   rollbackMappings,
   type Fingerprint,
 } from "./hotspot-mappings.ts";
-import type { ExifOrientation } from "../src/lib/hotspotGeometry.ts";
+import type { CropRect, ExifOrientation } from "../src/lib/hotspotGeometry.ts";
 import { z } from "zod";
 
 export interface HotspotAdminCtx {
@@ -493,6 +493,16 @@ export async function publishRoomHotspots(
     }
     await db.batch(statements);
   }
+  // A deletion-only publish has no rows left to publish; calling the shared
+  // publisher would report no_mappings after the removal already committed.
+  const remaining = await db.prepare(
+    `SELECT COUNT(*) AS count FROM photo_hotspot_mappings
+      WHERE tenant_id = ?1 AND media_asset_id = ?2 AND placement_id = ?3
+        AND (review_reason IS NULL OR review_reason != 'deleted')`,
+  ).bind(tenant, input.mediaAssetId, input.placementId).first() as { count: number } | null;
+  if (removed.length && !remaining?.count) {
+    return json({ ok: true, published: 0, deletionsApplied: removed.length }, 200, "no-store");
+  }
   const result = await publishMappings(db, tenant, input.mediaAssetId, input.placementId, actor);
   return json(result, result.ok ? 200 : 409, "no-store");
 }
@@ -550,6 +560,20 @@ function toFingerprint(value: z.infer<typeof fingerprintSchema> | null | undefin
   };
 }
 
+/** Admin crop entry is normalized 0..1; COW-34 geometry works in source pixels. */
+function toPixelCrop(
+  crop: { left: number; top: number; width: number; height: number } | null | undefined,
+  size: { width: number; height: number } | null,
+): CropRect | null {
+  if (!crop || !size) return null;
+  return {
+    left: crop.left * size.width,
+    top: crop.top * size.height,
+    width: crop.width * size.width,
+    height: crop.height * size.height,
+  };
+}
+
 async function versionBelongsToAsset(
   db: D1Database, tenant: string, mediaAssetId: string, versionId: string,
 ): Promise<boolean> {
@@ -585,6 +609,13 @@ async function runReplacement(
     return json({ error: "version_asset_mismatch" }, 400, "no-store");
   }
 
+  const versionRow = await db.prepare(
+    "SELECT width, height FROM media_versions WHERE id = ?1 AND media_asset_id = ?2",
+  ).bind(input.toVersionId, input.mediaAssetId).first() as { width: number | null; height: number | null } | null;
+  const cropSize = versionRow?.width && versionRow?.height
+    ? { width: versionRow.width, height: versionRow.height }
+    : null;
+
   const planInput = {
     tenantId: tenant,
     mediaAssetId: input.mediaAssetId,
@@ -592,8 +623,8 @@ async function runReplacement(
     fromVersionId: input.fromVersionId,
     toVersionId: input.toVersionId,
     urlOnly: input.urlOnly,
-    cropBefore: input.cropBefore ?? null,
-    cropAfter: input.cropAfter ?? null,
+    cropBefore: toPixelCrop(input.cropBefore, cropSize),
+    cropAfter: toPixelCrop(input.cropAfter, cropSize),
     fromFingerprint: toFingerprint(input.fromFingerprint),
     toFingerprint: toFingerprint(input.toFingerprint),
     sameHashOnOtherMedia: input.sameHashOnOtherMedia,
@@ -602,10 +633,12 @@ async function runReplacement(
     approveReview: input.approveReview,
   };
   const plan = await planReplacement(db, planInput);
+  // A single pin can be flagged pending even when the overall decision is
+  // auto-publishable (for example a pin outside a new crop rectangle).
+  const reviewRequired = plan.reviewRequired
+    || plan.mappings.some((mapping) => mapping.reviewState === "pending");
 
-  // Ambiguous geometry can never be published: the COW-34 planner marks it
-  // draft/pending. Applying a planned change writes those draft states only.
-  if (!commit) return json(plan, 200, "no-store");
+  if (!commit) return json({ ...plan, reviewRequired }, 200, "no-store");
 
   const previousRows = await db.prepare(
     `SELECT ${MAPPING_COLUMNS} FROM photo_hotspot_mappings
@@ -613,12 +646,46 @@ async function runReplacement(
       ORDER BY display_order, id`,
   ).bind(tenant, input.mediaAssetId, input.placementId).all();
   const previous = parseRows(previousRows.results ?? []);
+  const byId = new Map(previous.map((row) => [row.id, row]));
   const actor = principal.email || principal.sub || "unknown";
-  const result = await applyReplacement(db, plan, previous, {
-    fromVersionId: input.fromVersionId,
-    actor,
-  });
-  return json({ ...result, reviewRequired: plan.reviewRequired, decision: plan.decision }, 200, "no-store");
+
+  // Published pins keep serving guests until an explicit publish. Their
+  // proposed replacement is staged in the draft overlay exactly like an edit.
+  const stageStatements: D1PreparedStatement[] = [];
+  const draftMappings = plan.mappings.filter((mapping) => byId.get(mapping.id)?.status !== "published");
+  for (const mapping of plan.mappings) {
+    if (byId.get(mapping.id)?.status !== "published") {
+      stageStatements.push(db.prepare(
+        "DELETE FROM photo_hotspot_drafts WHERE mapping_id = ?1 AND tenant_id = ?2",
+      ).bind(mapping.id, tenant));
+      continue;
+    }
+    stageStatements.push(db.prepare(
+      `INSERT INTO photo_hotspot_drafts (mapping_id, tenant_id, media_asset_id, snapshot_json, updated_at)
+       VALUES (?1, ?2, ?3, ?4, datetime('now'))
+       ON CONFLICT(mapping_id) DO UPDATE SET snapshot_json = excluded.snapshot_json,
+         updated_at = datetime('now')`,
+    ).bind(mapping.id, tenant, input.mediaAssetId, JSON.stringify(mapping)));
+    stageStatements.push(revision(db, mapping, "review", actor, byId.get(mapping.id) ?? null));
+  }
+  if (stageStatements.length) await db.batch(stageStatements);
+
+  let written = plan.mappings.length;
+  if (draftMappings.length && plan.decision !== "url_only") {
+    const result = await applyReplacement(
+      db,
+      { ...plan, mappings: draftMappings },
+      previous.filter((row) => draftMappings.some((mapping) => mapping.id === row.id)),
+      { fromVersionId: input.fromVersionId, actor },
+    );
+    written = result.written + (plan.mappings.length - draftMappings.length);
+  }
+  return json({
+    written,
+    decision: plan.decision,
+    reviewRequired,
+    stagedPublished: plan.mappings.length - draftMappings.length,
+  }, 200, "no-store");
 }
 
 export function planHotspotReplacement(

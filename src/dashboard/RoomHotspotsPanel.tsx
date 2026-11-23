@@ -339,6 +339,7 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [busy, setBusy] = useState(false);
   const [versionId, setVersionId] = useState("");
+  const [fromVersionId, setFromVersionId] = useState("");
   const [toVersionId, setToVersionId] = useState("");
   const [urlOnly, setUrlOnly] = useState(false);
   const [approveReview, setApproveReview] = useState(false);
@@ -367,6 +368,7 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
     setPlacement(null);
     setAmenityId("");
     setVersionId("");
+    setFromVersionId("");
     setToVersionId("");
     setReplacementPlan(null);
     setFeedback(null);
@@ -386,7 +388,8 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
   );
   useEffect(() => {
     if (!versionId && photo?.currentVersionId) setVersionId(photo.currentVersionId);
-  }, [versionId, photo?.currentVersionId]);
+    if (!fromVersionId && photo?.currentVersionId) setFromVersionId(photo.currentVersionId);
+  }, [versionId, fromVersionId, photo?.currentVersionId]);
 
   if (rooms.loading) return <LoadingPanel label="Loading room types" />;
   if (rooms.error) return <ErrorPanel message={rooms.error} onRetry={rooms.reload} />;
@@ -465,14 +468,14 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
   const replacementInput = () => ({
     mediaAssetId: photo?.mediaAssetId,
     placementId: photo?.placementId,
-    fromVersionId: versionId,
+    fromVersionId,
     toVersionId,
     urlOnly,
     approveReview,
   });
 
   const plan = async () => {
-    if (!photo || !versionId || !toVersionId) return;
+    if (!photo || !fromVersionId || !toVersionId) return;
     setBusy(true);
     setFeedback(null);
     try {
@@ -494,7 +497,7 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
   };
 
   const apply = async () => {
-    if (!photo || !versionId || !toVersionId) return;
+    if (!photo || !fromVersionId || !toVersionId) return;
     setBusy(true);
     setFeedback(null);
     try {
@@ -649,7 +652,7 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="flex flex-col gap-1 text-sm">
               From version
-              <input value={versionId} onChange={(event) => setVersionId(event.target.value)} className="rounded-md border border-border bg-background px-3 py-2" />
+              <input value={fromVersionId} onChange={(event) => setFromVersionId(event.target.value)} className="rounded-md border border-border bg-background px-3 py-2" />
             </label>
             <label className="flex flex-col gap-1 text-sm">
               To version (same asset)
@@ -667,8 +670,8 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
             </label>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" colorScheme="lake-forest" size="small" textCase="title" disabled={busy || !versionId || !toVersionId} onClick={plan}>Plan replacement</Button>
-            <Button type="button" colorScheme="copper" size="small" textCase="title" disabled={busy || !versionId || !toVersionId} onClick={apply}>Apply plan</Button>
+            <Button type="button" variant="outline" colorScheme="lake-forest" size="small" textCase="title" disabled={busy || !fromVersionId || !toVersionId} onClick={plan}>Plan replacement</Button>
+            <Button type="button" colorScheme="copper" size="small" textCase="title" disabled={busy || !fromVersionId || !toVersionId} onClick={apply}>Apply plan</Button>
           </div>
           {replacementPlan && (
             <p className="text-sm text-muted-foreground" role="status">

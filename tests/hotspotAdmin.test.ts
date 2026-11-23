@@ -415,3 +415,93 @@ test("rollback cancels a pending deletion on the same placement", async () => {
   assert.equal(rolled.status, 200);
   assert.equal(db.prepare("SELECT mapping_id FROM photo_hotspot_deletions").all().length, 0);
 });
+
+test("a published pin's safe replacement is staged until publish", async () => {
+  const db = makeDb();
+  const created = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
+  const sameHash = { sha256: "hash-1", phash: null, width: 1200, height: 800, exifOrientation: 1 as const };
+
+  const applied = await jsonBody(await applyHotspotReplacement(ctx(db, replacementInput({
+    fromFingerprint: sameHash, toFingerprint: sameHash,
+    cropBefore: { left: 0, top: 0, width: 1, height: 1 },
+    cropAfter: { left: 0, top: 0, width: 1, height: 1 },
+  })), "room-a", allowAdmin));
+  assert.equal(applied.decision, "exact_reupload");
+  assert.equal(applied.reviewRequired, false);
+  assert.equal(applied.stagedPublished, 1);
+
+  const beforePublish = db.prepare("SELECT source_version_id FROM photo_hotspot_mappings WHERE id = ?").get(created.mapping.id) as any;
+  assert.equal(beforePublish.source_version_id, "v-1", "guest row is unchanged before publish");
+  const list = await jsonBody(await listRoomHotspots(ctx(db), "room-a", allowViewer));
+  assert.equal(list.items.find((item: any) => item.id === created.mapping.id)?.hasDraft, true);
+
+  const published = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(published.status, 200);
+  const afterPublish = db.prepare("SELECT source_version_id FROM photo_hotspot_mappings WHERE id = ?").get(created.mapping.id) as any;
+  assert.equal(afterPublish.source_version_id, "v-2");
+});
+
+test("a published pin's review-required replacement cannot publish until approved", async () => {
+  const db = makeDb();
+  const created = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
+
+  const applied = await jsonBody(await applyHotspotReplacement(ctx(db, replacementInput()), "room-a", allowAdmin));
+  assert.equal(applied.decision, "replacement_review");
+  assert.equal(applied.reviewRequired, true);
+  const before = db.prepare("SELECT source_version_id, status FROM photo_hotspot_mappings WHERE id = ?").get(created.mapping.id) as any;
+  assert.equal(before.source_version_id, "v-1");
+  assert.equal(before.status, "published");
+
+  const blocked = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(blocked.status, 409);
+
+  await updateRoomHotspot(ctx(db, { reviewState: "approved" }), "room-a", created.mapping.id, allowAdmin);
+  const published = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(published.status, 200);
+  const after = db.prepare("SELECT source_version_id FROM photo_hotspot_mappings WHERE id = ?").get(created.mapping.id) as any;
+  assert.equal(after.source_version_id, "v-2");
+});
+
+test("a deletion-only publish succeeds and commits the removal", async () => {
+  const db = makeDb();
+  const created = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
+  await deleteRoomHotspot(ctx(db), "room-a", created.mapping.id, allowAdmin);
+
+  const published = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(published.status, 200);
+  const body = await jsonBody(published);
+  assert.equal(body.ok, true);
+  assert.equal(body.deletionsApplied, 1);
+  const mapping = db.prepare("SELECT status, review_reason FROM photo_hotspot_mappings WHERE id = ?").get(created.mapping.id) as any;
+  assert.equal(mapping.status, "draft");
+  assert.equal(mapping.review_reason, "deleted");
+});
+
+test("rollback after a published deletion cannot resurrect the pin", async () => {
+  const db = makeDb();
+  const created = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
+  await deleteRoomHotspot(ctx(db), "room-a", created.mapping.id, allowAdmin);
+  await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
+
+  const rolled = await rollbackRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1", toVersionId: "v-1" }), "room-a", allowAdmin,
+  );
+  const mapping = db.prepare("SELECT status, review_reason FROM photo_hotspot_mappings WHERE id = ?").get(created.mapping.id) as any;
+  assert.equal(mapping.status, "draft");
+  assert.equal(mapping.review_reason, "deleted");
+  const listed = await jsonBody(await listRoomHotspots(ctx(db), "room-a", allowViewer));
+  assert.equal(listed.items.some((item: any) => item.id === created.mapping.id), false);
+  assert.ok(rolled.status === 200 || rolled.status === 409);
+});

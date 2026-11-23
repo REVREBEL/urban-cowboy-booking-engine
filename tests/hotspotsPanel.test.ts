@@ -105,3 +105,11 @@ test("panel exposes staged deletion and reviewed replacement planning", () => {
   assert.match(panel, /Source replacement and crop review/);
   assert.match(panel, /approveReview/);
 });
+
+test("replacement source version is independent of the rollback target", () => {
+  assert.match(panel, /const \[fromVersionId, setFromVersionId\] = useState\(""\)/);
+  assert.match(panel, /fromVersionId,[\s\S]{0,120}toVersionId,[\s\S]{0,80}urlOnly,/);
+  assert.match(panel, /value=\{fromVersionId\} onChange=\{\(event\) => setFromVersionId/);
+  assert.match(panel, /value=\{versionId\} onChange=\{\(event\) => setVersionId/);
+  assert.match(panel, /setFromVersionId\(photo\.currentVersionId\)/);
+});
