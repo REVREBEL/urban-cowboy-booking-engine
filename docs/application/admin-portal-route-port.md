@@ -79,6 +79,12 @@ tests/adminRoutes.test.ts                  5 tests
 Interaction-level verification with a real Access identity and the booking-engine Worker APIs
 requires the deployed environment; it is not claimed here.
 
+**PR CI note:** the `validate` check on the PR fails in `tests/mewsAriAuthority.test.ts` because
+`src/types/d1-contracts.ts` exposes `mewsReference*` fields that are not in that test's allowlist.
+That test and the failing contract state arrived on `main` in PR #398 after this branch was
+created; `main`'s own CI is failing for the same reason. This is unrelated to the W1.4 changes
+(no files in this PR touch those two paths) and is reported rather than silently patched here.
+
 ## 6. Deferred to W1.6 / sync gates
 
 - Missing panels and the generic field editor from the parity matrix (SRC-08/09/10/34/35/44/45).
