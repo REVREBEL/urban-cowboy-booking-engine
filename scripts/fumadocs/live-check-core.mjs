@@ -20,7 +20,7 @@ export function requireControl(count, name) {
 }
 
 /** Hosts the docs are allowed to redirect to. Anything else fails the check. */
-export const ALLOWED_DOCS_HOSTS = Object.freeze(["revrebel.github.io", "resource-hub.revrebel.io"]);
+export const ALLOWED_DOCS_HOSTS = Object.freeze(["cowboy-components.revrebel.io", "revrebel.github.io"]);
 
 /**
  * A deep link must keep its path, stay on an approved host and (by default)
