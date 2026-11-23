@@ -164,7 +164,11 @@ test("COW-85 inline mask URLs are base-path prefixed and their assets are copied
       html.includes(`${basePath}/${asset}`),
       `${slug} inline URL uses the base path: ${asset}`,
     );
-    assert.ok(!html.includes(`url(&quot;/${asset}`), `${slug} has no unprefixed inline URL: ${asset}`);
+    // At the root base path, `/${asset}` IS the correctly prefixed URL. The
+    // unprefixed check only applies when a Pages subpath is configured.
+    if (basePath) {
+      assert.ok(!html.includes(`url(&quot;/${asset}`), `${slug} has no unprefixed inline URL: ${asset}`);
+    }
     assert.equal((await stat(join(out, asset))).isFile(), true, `${asset} copied into the export`);
   }
 });
