@@ -26,3 +26,6 @@ export interface CmsPhotoHotspot {
 }
 
 export type CmsPhotoHotspotMap = Record<string, CmsPhotoHotspot[]>;
+
+/** Published D1 hotspots grouped by the room (placement target) they belong to. */
+export type CmsPhotoHotspotMapByRoom = Record<string, CmsPhotoHotspotMap>;

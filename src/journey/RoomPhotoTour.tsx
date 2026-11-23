@@ -8,7 +8,7 @@ import { Pill } from '@/components/ui/Pill';
 import type { JourneyRoom } from './data';
 import { PHOTO_HIGHLIGHTS, roomAmenities, type PhotoHighlight } from '@/journey/tour';
 import { cmsHighlightsForPhoto } from '@/journey/cmsTour';
-import type { CmsPhotoHotspotMap } from '@/types/photo-hotspot-cms';
+import type { CmsPhotoHotspotMap, CmsPhotoHotspotMapByRoom } from '@/types/photo-hotspot-cms';
 import { CmsAmenityIcon } from '@/components/rooms/CmsAmenityIcon';
 import { FocusAmenity } from '@/components/rooms/FocusAmenity';
 import { SideBarFocusAmenity } from '@/components/rooms/SideBarFocusAmenity';
@@ -26,8 +26,8 @@ const FX_LABEL: Record<string, string> = {
 };
 
 
-export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position, count, score, details, onDetails, onChoose, onPrevious, onNext, sideAmenitiesHost, currency = "USD" }: {
-  room: JourneyRoom; cmsHotspots?: CmsPhotoHotspotMap; position: number; count: number; score?: number;
+export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, cmsHotspotsByRoom = {}, position, count, score, details, onDetails, onChoose, onPrevious, onNext, sideAmenitiesHost, currency = "USD" }: {
+  room: JourneyRoom; cmsHotspots?: CmsPhotoHotspotMap; cmsHotspotsByRoom?: CmsPhotoHotspotMapByRoom; position: number; count: number; score?: number;
   details: boolean; onDetails: (open: boolean) => void; onChoose: () => void; currency?: string;
   onPrevious?: () => void; onNext?: () => void; sideAmenitiesHost?: HTMLElement | null;
 }) {
@@ -134,14 +134,17 @@ export function RoomPhotoTour({ room, cmsHotspots = EMPTY_CMS_HOTSPOTS, position
   // Prevents re-running cmsHighlightsForPhoto and map allocations on every state update or active pin hover.
   const photoHighlightsMap = useMemo(() => {
     const map = new Map<string, PhotoHighlight[]>();
+    // Published D1 hotspots are room scoped; a photo placed in two rooms must
+    // not show the other room's pins. Webflow's flat map remains the fallback.
+    const roomHotspots = cmsHotspotsByRoom[room.id] ?? cmsHotspots;
     for (const src of room.images) {
       const highlights = room.cmsAmenities
-        ? cmsHighlightsForPhoto(src, room.cmsAmenities, cmsHotspots)
+        ? cmsHighlightsForPhoto(src, room.cmsAmenities, roomHotspots)
         : PHOTO_HIGHLIGHTS[src] ?? [];
       map.set(src, highlights);
     }
     return map;
-  }, [room.images, room.cmsAmenities, cmsHotspots]);
+  }, [room.id, room.images, room.cmsAmenities, cmsHotspots, cmsHotspotsByRoom]);
 
   const pins = photoHighlightsMap.get(room.images[photo]) ?? [];
   const hotspotAmenityIds = useMemo(

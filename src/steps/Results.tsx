@@ -35,7 +35,11 @@ import type {
   RoomTypeCmsGalleryMap,
 } from "../types/room-type-cms";
 import type { BuildingCmsMap } from "../types/building-cms";
-import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
+import type {
+  RoomTypeCmsAmenityMap,
+  CmsPhotoHotspotMap,
+  CmsPhotoHotspotMapByRoom,
+} from "../types/photo-hotspot-cms";
 import { ROOM_IMAGE_ASSETS } from "@/data/roomImagePlaceholders";
 import { roomTypeGroupName } from "@/data/roomTypeGroups";
 import { roomDetailTags } from "@/lib/roomTags";
@@ -139,6 +143,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
   const [roomTypeGalleries, setRoomTypeGalleries] = useState<RoomTypeCmsGalleryMap>({});
   const [roomCmsAmenities, setRoomCmsAmenities] = useState<RoomTypeCmsAmenityMap>({});
   const [photoHotspots, setPhotoHotspots] = useState<CmsPhotoHotspotMap>({});
+  const [photoHotspotsByRoom, setPhotoHotspotsByRoom] = useState<CmsPhotoHotspotMapByRoom>({});
   const [roomCmsLoaded, setRoomCmsLoaded] = useState(false);
   const photoSource = photoSourceFromUrl();
   const [roomTypeDescriptions, setRoomTypeDescriptions] =
@@ -196,6 +201,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
       setRoomTypeGalleries(content.galleries);
       setRoomCmsAmenities(content.amenities ?? {});
       setPhotoHotspots(content.hotspots ?? {});
+      setPhotoHotspotsByRoom(content.hotspotsByRoom ?? {});
       savePhotoGalleries(content.galleries);
       setRoomCmsLoaded(true);
     }).catch(() => { if (alive) setRoomCmsLoaded(true); });
@@ -471,6 +477,7 @@ export function Results({ roomLayout = "card" }: { roomLayout?: RoomResultsLayou
             galleries={roomTypeGalleries}
             cmsAmenities={roomCmsAmenities}
             cmsHotspots={photoHotspots}
+            cmsHotspotsByRoom={photoHotspotsByRoom}
             photoSource={photoSource}
             studioCatalog={studioPhoto}
             guests={adults + children + infants}

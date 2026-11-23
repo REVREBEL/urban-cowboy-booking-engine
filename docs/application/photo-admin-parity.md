@@ -88,14 +88,40 @@ This slice adds the admin surface for COW-34 durable pins on top of the publishe
 - The `#/hotspots` panel adds a reviewed replacement planning section (from/to version, URL-only flag, explicit review approval), decision/review feedback, and a two-step delete action with pending-deletion and unpublished-edit indicators.
 - `tests/hotspotAdmin.test.ts` (13 tests) and `tests/hotspotsPanel.test.ts` (10 tests) cover server-side planning scoping, read-only plan behavior, foreign-version rejection, review-gated apply/publish, crop classification, staged deletion, rollback cancellation and the matching UI contract.
 
-**Still open:** guest Photo Journey cutover to published D1 hotspots and deployed admin/guest browser verification are Phase 4 (COW-82), not part of this phase.
+## Phase 4 — guest cutover verification (COW-82)
 
-## Remaining slices (not in this PR)
+### Published-only D1 guest hotspot read path
 
-- Write actions (gallery reorder, link/unlink, alt text, replace, per-photo exclusion) in `worker/room-media.ts` and the panel, reusing `media_revisions` and editor draft/publish contracts.
-- Hotspot placement, multi-tag, review and re-crop safeguards, gated on the COW-34 `photo_hotspots` schema and identity policy and the COW-35 Cloudinary ingestion contract.
-- Guest Photo Journey cutover only after published D1 state passes parity, auth/RBAC and rollback checks.
+- `worker/published-hotspots.ts` loads hotspots from `photo_hotspot_mappings` only when `status='published'`, `review_state='approved'` and `review_reason != 'deleted'`. It joins the tenant-scoped placement and `media_assets` rows, derives canonical photo keys with `cmsPhotoKeys` (stable across resize variants), and groups pins **by room** so a photo placed in two rooms never mixes their pins. Stored source coordinates are remapped through the published crop rectangle and EXIF orientation before conversion to the guest's `0..100` display percentages, so cropped/rotated photos show pins in the right place.
+- `worker/webflow/room-type-reviews.ts` applies the overlay on **every** response (not inside the Webflow cache), so a publish is visible immediately and a draft/pending edit never reaches a guest through cached content. The response carries a room-scoped `hotspotsByRoom` map; the flat `hotspots` map is intentionally left empty on the D1 path so a legacy client cannot render a cross-room merge. `PHOTO_HOTSPOT_SOURCE` defaults to `webflow`; only the explicit `d1` value enables the D1 path, and a D1 read failure falls back to the Webflow hotspot map. No guest request fetches the Squarespace image feed live. The journey selects `hotspotsByRoom[room.id]` in `RoomPhotoTour`, falling back to the flat Webflow map only when no room-scoped map is present.
+- `PHOTO_HOTSPOT_SOURCE` is declared in `worker/mews/_lib.ts`, `wrangler.toml` and `.dev.vars.example`; an unset value is omitted by the deploy renderer and fails safe to Webflow.
 
-## Cutover gates
+### Verification evidence (local, reproducible)
 
-No production flag is changed in this issue. Guest Photo Journey reads stay on their current source until published D1 state passes parity, auth/RBAC, and rollback checks. No Mews booking, pricing or availability code is touched.
+Run from the repo root on the merged `main`:
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Full application suite | `npm test` | 524/524 pass |
+| Published-only guest hotspots | `node --test tests/publishedHotspots.test.ts` | 9/9 pass |
+| Hotspot admin lifecycle | `node --test tests/hotspotAdmin.test.ts` | 26/26 pass |
+| Hotspot dashboard panel | `node --test tests/hotspotsPanel.test.ts` | 12/12 pass |
+| Hotspot geometry/replacement | `node --test tests/hotspotGeometry.test.ts tests/hotspotMapping.test.ts tests/hotspotCanvas.test.ts` | pass |
+| Room gallery import (failure never deletes) | `node --test tests/roomGallery.test.ts` | pass; missing gallery reports removals but writes nothing |
+| Published gallery guest reads | `node --test tests/roomGalleryEditing.test.ts snapshotsParity.test.ts` | pass |
+| Mews pricing/availability unchanged | `node --test tests/mewsPricing.test.ts tests/catskillsMewsIds.test.ts` | pass |
+| Typecheck / control contract | `npm run typecheck` / `npm run lint:controls` | pass |
+| D1 migration integrity | `npm run d1:migrate:check` | 11 migrations applied twice, FK/integrity pass |
+
+Verified properties from the checks above: draft, pending-review and soft-deleted mappings never appear in the guest hotspot map; a D1 outage preserves the Webflow payload; a failed/empty image-feed import never deletes previously published gallery media; URL resize variants and source replacement keep a stable canonical photo identity; and Mews transactional tests remain green.
+
+### Live deployed verification (owner action — not yet executed here)
+
+The following require the deployed Worker/admin environment and a browser; they are **not** claimed as complete by this local run:
+
+- Deployed admin URL: `<DEPLOYED_WORKER_ORIGIN>/dashboard.html#/rooms` and `#/hotspots` (exact origin is environment-provided; confirm before the check).
+- Guest Photo Journey URL: `<DEPLOYED_WORKER_ORIGIN>/` with `?photoSource=mews` and the default editorial source.
+- Set `PHOTO_HOTSPOT_SOURCE=d1` only after confirming the published D1 snapshot on staging; verify pins appear on the correct photos at desktop and mobile widths, no console/network errors, and rollback restores the prior published state.
+- Capture screenshots and a dated test record here before closing COW-84.
+
+No production flag is changed by this phase. Guest reads default to Webflow; Mews booking, pricing and availability code is untouched.
