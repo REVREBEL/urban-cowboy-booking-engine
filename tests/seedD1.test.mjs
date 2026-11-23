@@ -132,6 +132,14 @@ test("field mapping report classifies every exported field", () => {
   ]) {
     assert.equal(siteSettings.keys.has(field), false, `${field} is not in the site_settings payload`);
   }
+  assert.deepEqual(
+    [...siteSettings.keys].sort(),
+    [
+      "demoLayout", "enableDemoEngine", "enableEventDatesQuickSelection",
+      "enableFeatureSection", "productionLayout",
+    ],
+    "site_settings contains exactly the five published behavior controls",
+  );
   assert.ok(locations.d1Targets.includes("content_provenance"));
   db.close();
 });
