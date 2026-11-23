@@ -1,4 +1,4 @@
-// COW-104 same-shaped D1 add-ons adapter, flags, scoping and safe fallback.
+// COW-104 same-shaped D1 add-ons adapter: full CMS fields, cutover marker, flags.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
@@ -41,27 +41,43 @@ function d1(db: DatabaseSync): any {
 
 interface Seed {
   id: string;
-  name?: string;
-  description?: string | null;
-  mewsProductId?: string | null;
-  tenant?: string;
-  location?: string | null;
+  kind: string;
+  slug: string;
+  payload: Record<string, unknown>;
   status?: "published" | "draft";
+  location?: string | null;
+  tenant?: string;
 }
 
-function seedAddOn(db: DatabaseSync, row: Seed) {
+function seedContent(db: DatabaseSync, row: Seed) {
+  const revision = `${row.id}-r1`;
   db.prepare(
-    `INSERT INTO add_ons (id, tenant_id, location_id, name, description, mews_product_id, sort_order, status)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, 0, ?7)`,
-  ).run(
-    row.id,
-    row.tenant ?? TENANT,
-    row.location === undefined ? LOCATION : row.location,
-    row.name ?? `Name ${row.id}`,
-    row.description === undefined ? `Description ${row.id}` : row.description,
-    row.mewsProductId === undefined ? `mews-${row.id}` : row.mewsProductId,
-    row.status ?? "published",
-  );
+    `INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status, current_revision_id)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
+  ).run(row.id, row.tenant ?? TENANT, row.location === undefined ? LOCATION : row.location,
+    row.kind, row.slug, row.status ?? "published", revision);
+  db.prepare(
+    `INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by)
+     VALUES (?1, ?2, 1, ?3, 'test')`,
+  ).run(revision, row.id, JSON.stringify(row.payload));
+}
+
+const addOnPayload = (overrides: Record<string, unknown> = {}) => ({
+  id: "wf-extra",
+  name: "Display name",
+  itemName: "Distinct item name",
+  shortDescription: "Short card copy",
+  longDescription: "Longer description that differs from short copy",
+  mewsProductId: "mews-product-1",
+  imageUrl: "https://cdn.example.com/extra.png",
+  ...overrides,
+});
+
+function seedMarker(db: DatabaseSync, expectedCount: number, overrides: Partial<Seed> = {}) {
+  seedContent(db, {
+    id: "add-on-sync", kind: "add_on_sync", slug: "complete",
+    payload: { expectedCount }, ...overrides,
+  });
 }
 
 const scope = { tenantId: TENANT, locationId: LOCATION };
@@ -109,59 +125,88 @@ test.after(() => {
   globalThis.fetch = originalFetch;
 });
 
-test("published D1 add-ons normalize to the AddOnCmsItem contract; drafts are excluded", async () => {
+test("a complete published CMS collection preserves every distinct display field", async () => {
   const db = makeDb();
   try {
-    seedAddOn(db, { id: "add-on-1", name: "Late checkout", description: "Stay longer", mewsProductId: "mews-1" });
-    seedAddOn(db, { id: "add-on-draft", status: "draft" });
+    seedMarker(db, 1);
+    seedContent(db, { id: "add-on-1", kind: "add_on", slug: "wf-extra", payload: addOnPayload() });
     const result = await loadAddOnsFromD1(d1(db) as D1Database, scope);
-    assert.ok(result);
-    assert.equal(result.length, 1);
-    assert.deepEqual(result[0], {
-      id: "add-on-1",
-      name: "Late checkout",
-      itemName: "Late checkout",
-      shortDescription: "Stay longer",
-      longDescription: "Stay longer",
-      mewsProductId: "mews-1",
-      imageUrl: null,
-    });
+    assert.deepEqual(result, [{
+      id: "wf-extra",
+      name: "Display name",
+      itemName: "Distinct item name",
+      shortDescription: "Short card copy",
+      longDescription: "Longer description that differs from short copy",
+      mewsProductId: "mews-product-1",
+      imageUrl: "https://cdn.example.com/extra.png",
+    }]);
   } finally {
     db.close();
   }
 });
 
-test("tenant and location scoping are enforced for published rows", async () => {
+test("a partial collection falls back even when published rows exist", async () => {
   const db = makeDb();
   try {
-    seedAddOn(db, { id: "local" });
-    seedAddOn(db, { id: "other-location-row", location: SECOND_LOCATION });
-    seedAddOn(db, { id: "other-tenant-row", tenant: "other-tenant", location: "other-location" });
-
-    const local = await loadAddOnsFromD1(d1(db) as D1Database, scope);
-    assert.deepEqual(local?.map((item) => item.id), ["local"]);
-
-    const tenantWide = await loadAddOnsFromD1(d1(db) as D1Database, { tenantId: TENANT });
-    assert.deepEqual(tenantWide?.map((item) => item.id), ["local", "other-location-row"]);
+    seedMarker(db, 2);
+    seedContent(db, { id: "add-on-1", kind: "add_on", slug: "wf-extra", payload: addOnPayload() });
+    assert.equal(await loadAddOnsFromD1(d1(db) as D1Database, scope), null);
   } finally {
     db.close();
   }
 });
 
-test("missing or unnameable published rows fall back safely", async () => {
-  const empty = makeDb();
-  try {
-    assert.equal(await loadAddOnsFromD1(d1(empty) as D1Database, scope), null);
-  } finally {
-    empty.close();
+test("a missing, draft or malformed cutover marker keeps Webflow authoritative", async () => {
+  const cases: Array<[string, (db: DatabaseSync) => void]> = [
+    ["no marker", () => undefined],
+    ["draft marker", (db) => seedMarker(db, 1, { status: "draft" })],
+    ["malformed marker", (db) => seedContent(db, {
+      id: "add-on-sync", kind: "add_on_sync", slug: "complete", payload: { expectedCount: "1" },
+    })],
+    ["zero count", (db) => seedMarker(db, 0)],
+  ];
+  for (const [name, setup] of cases) {
+    const db = makeDb();
+    try {
+      setup(db);
+      seedContent(db, { id: "add-on-1", kind: "add_on", slug: "wf-extra", payload: addOnPayload() });
+      assert.equal(await loadAddOnsFromD1(d1(db) as D1Database, scope), null, name);
+    } finally {
+      db.close();
+    }
   }
+});
 
-  const blank = makeDb();
+test("an incomplete CMS payload falls back rather than filling fields with null", async () => {
+  const variants: Array<[string, Record<string, unknown>]> = [
+    ["missing imageUrl", { imageUrl: undefined }],
+    ["missing itemName", { itemName: undefined }],
+    ["missing longDescription", { longDescription: undefined }],
+    ["wrong image type", { imageUrl: 42 }],
+    ["empty name", { name: "   " }],
+  ];
+  for (const [name, overrides] of variants) {
+    const db = makeDb();
+    try {
+      seedMarker(db, 1);
+      seedContent(db, { id: "add-on-1", kind: "add_on", slug: "wf-extra", payload: addOnPayload(overrides) });
+      assert.equal(await loadAddOnsFromD1(d1(db) as D1Database, scope), null, name);
+    } finally {
+      db.close();
+    }
+  }
+});
+
+test("tenant and location scoping are enforced for the marker and the collection", async () => {
+  const db = makeDb();
   try {
-    seedAddOn(blank, { id: "blank-name", name: "   " });
-    assert.equal(await loadAddOnsFromD1(d1(blank) as D1Database, scope), null);
+    seedMarker(db, 1);
+    seedContent(db, { id: "add-on-1", kind: "add_on", slug: "wf-extra", payload: addOnPayload() });
+    seedMarker(db, 1, { id: "other-sync", location: SECOND_LOCATION });
+    assert.equal(await loadAddOnsFromD1(d1(db) as D1Database, { tenantId: TENANT, locationId: SECOND_LOCATION }), null);
+    assert.equal(await loadAddOnsFromD1(d1(db) as D1Database, { tenantId: "other-tenant" }), null);
   } finally {
-    blank.close();
+    db.close();
   }
 });
 
@@ -180,29 +225,24 @@ test("per-route flag overrides the global source and fails safe on invalid value
   );
 });
 
-test("parity reports changed fields without changing values", () => {
-  const base = {
-    id: WEBFLOW_ID,
-    itemName: null,
-    shortDescription: null,
-    longDescription: null,
-    mewsProductId: "mews-wf",
-    imageUrl: null,
-  };
+test("parity detects unequal descriptions and images, not just ids", () => {
+  const base = addOnPayload();
   const summary = addOnsParity(
-    [{ ...base, name: "Webflow extra" }],
-    [{ ...base, name: "D1 extra" }],
+    [{ ...base, id: "a", itemName: "A title", shortDescription: "A short", longDescription: "A long", imageUrl: "https://cdn/a.png" }],
+    [{ ...base, id: "a", itemName: "B title", shortDescription: "B short", longDescription: "B long", imageUrl: "https://cdn/b.png" }],
   );
-  assert.equal(summary.collection, "addOns");
-  assert.equal(summary.changed.length, 1);
-  assert.equal(summary.changed[0].id, WEBFLOW_ID);
+  const changed = summary.changed.map((entry: { id: string }) => entry.id).sort();
+  assert.deepEqual(changed, [
+    "a:imageUrl", "a:itemName", "a:longDescription", "a:shortDescription",
+  ]);
 });
 
-test("d1 mode serves published D1 data with an explicit source header and no Webflow call", async () => {
+test("d1 mode serves complete D1 data with a source header and no Webflow call", async () => {
   stubWebflow([webflowItem]);
   const db = makeDb();
   try {
-    seedAddOn(db, { id: "d1-add-on", name: "D1 extra" });
+    seedMarker(db, 1);
+    seedContent(db, { id: "add-on-1", kind: "add_on", slug: "wf-extra", payload: addOnPayload() });
     const response = await addOnsRead({
       request: new Request(`https://example.com/api/content/add-ons?location=${LOCATION}`),
       env: envFor("d1", d1(db) as D1Database),
@@ -212,17 +252,19 @@ test("d1 mode serves published D1 data with an explicit source header and no Web
     assert.equal(response.headers.get("X-Content-Source"), "d1");
     assert.equal(fetchCalls, 0);
     const body = await response.json() as { addOns: Array<Record<string, unknown>> };
-    assert.deepEqual(body.addOns.map((item) => item.id), ["d1-add-on"]);
-    assert.equal(body.addOns[0].name, "D1 extra");
+    assert.equal(body.addOns[0].itemName, "Distinct item name");
+    assert.equal(body.addOns[0].imageUrl, "https://cdn.example.com/extra.png");
   } finally {
     db.close();
   }
 });
 
-test("d1 mode falls back to Webflow when no published D1 rows exist", async () => {
+test("d1 mode falls back to Webflow for a partial collection", async () => {
   stubWebflow([webflowItem]);
   const db = makeDb();
   try {
+    seedMarker(db, 2);
+    seedContent(db, { id: "add-on-1", kind: "add_on", slug: "wf-extra", payload: addOnPayload() });
     const response = await addOnsRead({
       request: new Request(`https://example.com/api/content/add-ons?location=${LOCATION}`),
       env: envFor("d1", d1(db) as D1Database),
@@ -242,7 +284,8 @@ test("webflow and shadow modes return Webflow content; shadow persists parity on
   stubWebflow([webflowItem]);
   const db = makeDb();
   try {
-    seedAddOn(db, { id: "d1-add-on", name: "D1 extra" });
+    seedMarker(db, 1);
+    seedContent(db, { id: "add-on-1", kind: "add_on", slug: "wf-extra", payload: addOnPayload() });
     const waits: Promise<unknown>[] = [];
     const webflow = await addOnsRead({
       request: new Request(`https://example.com/api/content/add-ons?location=${LOCATION}`),

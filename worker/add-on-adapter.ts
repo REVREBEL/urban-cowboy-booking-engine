@@ -3,7 +3,7 @@
 import type { AddOnCmsItem } from "../src/types/add-on-cms.ts";
 import type { Env } from "./mews/_lib.ts";
 import { dbForContent } from "./content-provider.ts";
-import { listScopedAddOns, type TenantScope } from "./d1.ts";
+import { listScopedContentItems, publishedRevisionPayload, type TenantScope } from "./d1.ts";
 import { routeContentSource } from "./content-source.ts";
 import { diffParity } from "./shadow-read.ts";
 import { latestParityReport, recordParityReport } from "./published-snapshots.ts";
@@ -12,7 +12,13 @@ import { onRequestGet as webflowAddOns } from "./webflow/add-ons.ts";
 type Ctx = { request: Request; env: Env; waitUntil: (promise: Promise<unknown>) => void };
 
 const PARITY_COLLECTION = "addOns";
+const ADD_ON_KIND = "add_on";
+const SYNC_KIND = "add_on_sync";
+const SYNC_SLUG = "complete";
 const CACHE_HEADERS = "public, max-age=60, s-maxage=300";
+const DISPLAY_FIELDS = [
+  "id", "name", "itemName", "shortDescription", "longDescription", "mewsProductId", "imageUrl",
+] as const;
 
 function scopeFor(request: Request, env: Env): TenantScope {
   return {
@@ -27,44 +33,88 @@ function withHeaders(response: Response, headers: Record<string, string>): Respo
   return next;
 }
 
+/** A nullable CMS display field must be present, even when its value is null. */
+function nullableString(value: unknown): string | null | undefined {
+  if (value === null || typeof value === "string") return value;
+  return undefined;
+}
+
 /**
- * Maps published, tenant/location-scoped D1 add_ons rows to the existing
- * AddOnCmsItem contract. D1 has no separate item-name or image-URL column:
- * itemName reuses name and imageUrl is null (icon media URL resolution is a
- * separate W3.4 wiring step). A single unnameable published row invalidates the
- * whole collection so guests never receive a partial extras list.
+ * Parses one published CMS-shaped payload. Unlike the flat add_ons table, a
+ * published revision carries every display field separately, so itemName, short
+ * and long descriptions and the image URL are preserved exactly as authored.
  */
+function parseAddOn(raw: string): AddOnCmsItem | null {
+  let source: unknown;
+  try {
+    source = JSON.parse(raw);
+  } catch {
+    return null;
+  }
+  if (!source || typeof source !== "object" || Array.isArray(source)) return null;
+  const payload = source as Record<string, unknown>;
+  const id = typeof payload.id === "string" ? payload.id.trim() : "";
+  const name = typeof payload.name === "string" ? payload.name.trim() : "";
+  if (!id || !name) return null;
+
+  const itemName = nullableString(payload.itemName);
+  const shortDescription = nullableString(payload.shortDescription);
+  const longDescription = nullableString(payload.longDescription);
+  const mewsProductId = nullableString(payload.mewsProductId);
+  const imageUrl = nullableString(payload.imageUrl);
+  if ([itemName, shortDescription, longDescription, mewsProductId, imageUrl].some((v) => v === undefined)) {
+    return null;
+  }
+  return { id, name, itemName: itemName!, shortDescription: shortDescription!, longDescription: longDescription!, mewsProductId: mewsProductId!, imageUrl: imageUrl! };
+}
+
+/**
+ * Property-scoped cutover marker. The published `add_on_sync/complete` revision
+ * declares how many add-ons are expected for this property. D1 is only eligible
+ * when exactly one marker exists and its expected count matches the published
+ * collection; a partial migration always keeps Webflow authoritative.
+ */
+async function expectedCount(db: D1Database, scope: TenantScope): Promise<number | null> {
+  const markers = (await listScopedContentItems(db, scope, SYNC_KIND))
+    .filter((item) => item.slug === SYNC_SLUG);
+  if (markers.length !== 1) return null;
+  const raw = await publishedRevisionPayload(db, scope, markers[0].id);
+  if (!raw) return null;
+  try {
+    const payload = JSON.parse(raw) as Record<string, unknown>;
+    const count = payload.expectedCount;
+    return typeof count === "number" && Number.isInteger(count) && count > 0 ? count : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Published, complete, property-scoped CMS add-ons, or null to fall back. */
 export async function loadAddOnsFromD1(
   db: D1Database,
   scope: TenantScope,
 ): Promise<AddOnCmsItem[] | null> {
-  const rows = await listScopedAddOns(db, scope); // published only, scoped
-  if (!rows.length) return null;
-  const items: AddOnCmsItem[] = [];
-  for (const row of rows) {
-    const name = row.name?.trim();
-    if (!name) return null;
-    const description = row.description?.trim() || null;
-    items.push({
-      id: row.id,
-      name,
-      itemName: name,
-      shortDescription: description,
-      longDescription: description,
-      mewsProductId: row.mewsProductId?.trim() || null,
-      imageUrl: null,
-    });
-  }
-  return items;
+  const count = await expectedCount(db, scope);
+  if (count === null) return null;
+
+  const items = await listScopedContentItems(db, scope, ADD_ON_KIND);
+  if (items.length !== count) return null;
+
+  const parsed = await Promise.all(items.map(async (item) => {
+    const raw = await publishedRevisionPayload(db, scope, item.id);
+    return raw ? parseAddOn(raw) : null;
+  }));
+  return parsed.some((item) => item === null) ? null : parsed as AddOnCmsItem[];
 }
 
+/** Per-field parity so missing descriptions or images are visible in shadow mode. */
 export function addOnsParity(webflow: AddOnCmsItem[], d1: AddOnCmsItem[]) {
-  const items = (list: AddOnCmsItem[]) => list.map((item) => ({
-    id: item.id,
-    slug: item.mewsProductId,
-    name: item.name,
-    published: true,
-  }));
+  const items = (list: AddOnCmsItem[]) => list.flatMap((item) =>
+    DISPLAY_FIELDS.map((field) => {
+      const value = String(item[field] ?? "");
+      return { id: `${item.id}:${field}`, slug: value, name: value, published: true };
+    }),
+  );
   return diffParity(PARITY_COLLECTION, items(webflow), items(d1));
 }
 
