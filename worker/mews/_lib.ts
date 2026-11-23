@@ -50,6 +50,9 @@ export interface Env {
   ADMIN_TOKEN?: string;
   // COW-32 cutover flag: webflow (default) | shadow | d1.
   CONTENT_SOURCE?: string;
+  // COW-82 guest hotspot flag: webflow (default) | d1. Draft/pending pins are
+  // never served; only published, approved and non-deleted mappings are read.
+  PHOTO_HOTSPOT_SOURCE?: string;
   // Per-route overrides for the CMS read migration (COW-39). Blank means use
   // CONTENT_SOURCE, which defaults to webflow until each route is verified.
   CONTENT_SOURCE_POLICY_LANGUAGE?: string;

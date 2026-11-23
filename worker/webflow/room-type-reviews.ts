@@ -11,6 +11,7 @@ import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../../src/types/
 import { normalizePublishedAmenities, normalizeRoomAmenityMap, normalizePhotoHotspots } from "./photo-hotspots.ts";
 import { json } from "../mews/_lib.ts";
 import { applyPublishedAmenities } from "../published-amenities.ts";
+import { applyPublishedHotspots } from "../published-hotspots.ts";
 
 interface WebflowOption {
   id?: unknown;
@@ -368,7 +369,8 @@ async function response(env: Env, payload: CachedReviewPayload, stale: boolean):
   // COW-73: guest values come from published D1 records where available.
   // The overlay runs on every response (not inside the cache) so a publish is
   // visible immediately and a draft never leaks into the cached Webflow payload.
-  const guest = await applyPublishedAmenities(env, env.TENANT_ID, payload);
+  let guest = await applyPublishedAmenities(env, env.TENANT_ID, payload);
+  guest = await applyPublishedHotspots(env, env.TENANT_ID, guest);
   return json(
     {
       reviews: guest.reviews,
