@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminNav } from "../../components/AdminNav.tsx";
 import { SignOutButton } from "../../components/SignOutButton";
 import { can, getAdminSession, publicSession } from "../../lib/session";
 
@@ -41,6 +42,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
           </div>
         </div>
       </header>
+      <AdminNav />
       <main id="admin-main" tabIndex={-1} className="mx-auto max-w-5xl px-4 py-8">
         {children}
       </main>
