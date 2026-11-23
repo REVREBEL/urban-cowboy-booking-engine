@@ -113,6 +113,15 @@ const CANDIDATE_TRIAGE = Object.freeze({
   },
 });
 
+/**
+ * COW-85: an explicit rationale for a story that stays planned. The canonical
+ * matrix should explain WHY, not just say that documentation is pending.
+ */
+const PLANNED_NOTES = Object.freeze({
+  "src/stories/components/booking/chrome/footer.stories.tsx":
+    "Planned: BookingFooter reads live booking context and calls api.locations(); a safe docs-only fixture is needed before it can be demoed.",
+});
+
 const usedPlannedPaths = new Set();
 
 const CATEGORY_LABELS = {
@@ -255,7 +264,9 @@ const coverage = stories.map((story) => {
     status: story.status === "skipped" ? "excluded" : existingPage ? "documented" : "planned",
     note: story.status === "skipped"
       ? story.rationale
-      : existingPage ? "Historical story has a Fumadocs page; variants pending migration." : "Awaiting Fumadocs page and interactive demos.",
+      : existingPage
+        ? "Historical story has a Fumadocs page; variants pending migration."
+        : (PLANNED_NOTES[story.source] ?? "Awaiting Fumadocs page and interactive demos."),
   };
 });
 

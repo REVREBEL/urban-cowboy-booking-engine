@@ -96,6 +96,15 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
   assert.equal(new Set(planned).size, planned.length, "planned page paths are unique");
 });
 
+test("planned rows carry an explicit reason, not just a generic pending note", () => {
+  const matrix = JSON.parse(read("docs/component-library/coverage-matrix.json"));
+  const footer = matrix.components.find((entry) => entry.storySource?.includes("footer.stories"));
+  assert.ok(footer, "Footer story is tracked");
+  assert.equal(footer.status, "planned");
+  assert.match(footer.note, /api\.locations\(\)/);
+  assert.match(footer.note, /safe docs-only fixture/);
+});
+
 test("every undocumented production candidate has an explicit triage decision", () => {
   const matrix = JSON.parse(read("docs/component-library/coverage-matrix.json"));
   const candidates = matrix.undocumentedProductionCandidates;

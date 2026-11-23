@@ -36,7 +36,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: BookingFooter reads live booking context and calls api.locations(); a safe docs-only fixture is needed before it can be demoed."
     },
     {
       "component": "Header",
