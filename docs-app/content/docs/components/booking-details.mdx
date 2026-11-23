@@ -1,0 +1,33 @@
+---
+title: Booking details
+description: Rate guarantee, property labels and the discovery signboard.
+---
+
+import { BookingLabelsStoryControl, LodgeSignboardStoryControl } from '~/components/story-controls';
+
+Presentational details from search and discovery. All interactions record local state only and do
+not navigate or change a selection in the real booking flow.
+
+## Labels
+
+<BookingLabelsStoryControl />
+
+| Component | Key props | Notes |
+| --- | --- | --- |
+| `BestRateGuaranteedLabel` | `text`, `color`, `tooltipText` | Sheriff-badge guarantee label |
+| `PropertyLocationLabel` | `location`, `selected`, `interactive`, `onClick` | Canonical location ids (`catskills`, `nashville`, `denver`) |
+| `PropertyPropertyLabel` | `property`, `selected`, `interactive`, `onClick` | Full property display name for the same location keys |
+
+## Signboard
+
+<LodgeSignboardStoryControl />
+
+`LodgeSignboard` layers approved background/backboard artwork and takes `textSlot`, `buttonSlotTop`
+and `buttonSlotBottom` slots. The docs harness passes base-path-prefixed asset URLs and local
+buttons.
+
+## Responsive behaviour
+
+Labels wrap on narrow screens; the signboard slots stack while the artwork keeps its aspect ratio.
+
+[Guarantee source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/BestRateGuaranteedLabel.tsx) · [Location source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/PropertyLocationLabel.tsx) · [Signboard source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/discovery/RusticLodgeSignboard.tsx)

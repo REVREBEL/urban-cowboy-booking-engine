@@ -1,0 +1,47 @@
+---
+title: Focus amenity family
+description: Photo hotspot pin, state controls, detail card and amenity rail.
+---
+
+import { FocusAmenityStatesStoryControl, FocusAmenityPrimitivesStoryControl, SideBarFocusAmenityStoryControl } from '~/components/story-controls';
+
+The Focus Amenity family renders CMS-backed photo hotspots. `FocusAmenity` is the map pin; the
+action, count, card and icon components are its state primitives. All demos keep selection and
+rail state local — they do not change booking state or write amenities.
+
+## Pin states
+
+<FocusAmenityStatesStoryControl />
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `state` | `Default`, `Hover`, `Active`, `Inactive`, `Disabled` | Figma design state |
+| `icon` | `TourIcon` | One of the booking-engine icon keys |
+| `count`, `totalCount` | number/string | Badge count and sequential position |
+| `title`, `description` | string | Detail-card copy |
+| `onSelect`, `onPreviousAmenity`, `onNextAmenity` | callbacks | Docs harness records clicks only |
+
+## Primitives
+
+<FocusAmenityPrimitivesStoryControl />
+
+| Component | Key props | Notes |
+| --- | --- | --- |
+| `FocusAmenityAction` | `state` (`Default`, `Hover`, `Active`), `tone` | +/- control badge |
+| `FocusAmenityCount` | `count`, `state`, `tone` | Sequential pin number |
+| `FocusAmenityCard` | `headline`, `description` | Expanded detail card |
+| `AmenityIcon` | `name`, `state`, `group`, `size` | Validates names against the checked-in icon registry; never injects SVG markup |
+
+## Amenity rail
+
+<SideBarFocusAmenityStoryControl />
+
+`SideBarFocusAmenity` takes `amenities: SideFocusAmenityItem[]` plus `open`/`onOpenChange`; the demo
+uses two local items and a toggle button.
+
+## Responsive behaviour
+
+Pins keep a fixed touch target; the state grid wraps on narrow screens and the rail collapses to a
+control rather than overlaying content.
+
+[Pin source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/FocusAmenity.tsx) · [Icon source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/FocusAmenityIcon.tsx) · [Rail source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/SideBarFocusAmenity.tsx)

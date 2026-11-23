@@ -47,6 +47,22 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/booking/extras/upsell-card.stories.tsx": "docs-app/content/docs/components/extras-upsell.mdx",
   "src/stories/components/booking/extras/creole-upsell-stories.stories.tsx": "docs-app/content/docs/components/extras-upsell.mdx",
   "src/stories/components/rooms/RoomsListCard.stories.tsx": "docs-app/content/docs/components/room-list-card.mdx",
+  "src/stories/components/rooms/FocusAmenity.stories.tsx": "docs-app/content/docs/components/focus-amenity.mdx",
+  "src/stories/components/rooms/FocusAmenityAction.stories.tsx": "docs-app/content/docs/components/focus-amenity.mdx",
+  "src/stories/components/rooms/FocusAmenityCard.stories.tsx": "docs-app/content/docs/components/focus-amenity.mdx",
+  "src/stories/components/rooms/FocusAmenityCount.stories.tsx": "docs-app/content/docs/components/focus-amenity.mdx",
+  "src/stories/components/rooms/FocusAmenityIcon.stories.tsx": "docs-app/content/docs/components/focus-amenity.mdx",
+  "src/stories/components/rooms/SideFocusAmenityBar.stories.tsx": "docs-app/content/docs/components/focus-amenity.mdx",
+  "src/stories/components/rates/RateOfferCard.stories.tsx": "docs-app/content/docs/components/rate-offers.mdx",
+  "src/stories/components/rates/ConfigurableRateOffer.stories.tsx": "docs-app/content/docs/components/rate-offers.mdx",
+  "src/stories/components/rates/RateOfferSidePanel.stories.tsx": "docs-app/content/docs/components/rate-offers.mdx",
+  "src/stories/components/rates/PolicyDisplay.stories.tsx": "docs-app/content/docs/components/rate-offers.mdx",
+  "src/stories/components/booking/summary/stay-summary.stories.tsx": "docs-app/content/docs/components/booking-summary.mdx",
+  "src/stories/components/ui/ReservationSummaryBar.stories.tsx": "docs-app/content/docs/components/booking-summary.mdx",
+  "src/stories/components/booking/search/BestRateGuaranteedLabel.stories.tsx": "docs-app/content/docs/components/booking-details.mdx",
+  "src/stories/components/booking/search/PropertyLocationLabel.stories.tsx": "docs-app/content/docs/components/booking-details.mdx",
+  "src/stories/components/booking/search/PropertyPropertyLabel.stories.tsx": "docs-app/content/docs/components/booking-details.mdx",
+  "src/stories/components/booking/discovery/RusticLodgeSignboard.stories.tsx": "docs-app/content/docs/components/booking-details.mdx",
   "src/stories/components/rooms/BuildingIcon.stories.tsx": "docs-app/content/docs/components/building-icon.mdx",
   "src/stories/components/rooms/AmenityIcons.stories.tsx": "docs-app/content/docs/components/amenity-icons.mdx",
   "src/stories/components/rates/ConfigurableRateCard.stories.tsx": "docs-app/content/docs/components/configurable-rate-card.mdx",
@@ -120,13 +136,71 @@ const CANDIDATE_TRIAGE = Object.freeze({
 const PLANNED_NOTES = Object.freeze({
   "src/stories/components/booking/chrome/footer.stories.tsx":
     "Planned: BookingFooter reads live booking context and calls api.locations(); a safe docs-only fixture is needed before it can be demoed.",
+  "src/stories/components/booking/summary/CheckoutStep.stories.tsx":
+    "Planned: CheckoutStep embeds BookingSummary, which reads the live BookingProvider; a side-effect-free fixture is required.",
+  "src/stories/components/booking/summary/booking-summary.stories.tsx":
+    "Planned: BookingSummary reads the live BookingProvider (hotel data, geolocation, tracking); a side-effect-free fixture is required.",
+  "src/stories/components/booking/summary/stay-breakdown.stories.tsx":
+    "Planned: StayBreakdown reads the live BookingProvider and Mews rate totals; a side-effect-free fixture is required.",
 });
 
 /** Documented rows likewise state what the page actually covers. */
 const DOCUMENTED_NOTES = Object.freeze({
   "src/stories/components/booking/search/SearchBarExpanded.stories.tsx":
     "Documented on the SearchBar page with its own interactive demo, props table and section/value callback behaviour.",
+  "src/stories/components/rooms/FocusAmenity.stories.tsx":
+    "Documented on the Focus amenity family page with all five pin states and select callbacks.",
+  "src/stories/components/rooms/FocusAmenityAction.stories.tsx":
+    "Documented on the Focus amenity family page with state variants and tone notes.",
+  "src/stories/components/rooms/FocusAmenityCard.stories.tsx":
+    "Documented on the Focus amenity family page with headline and description copy.",
+  "src/stories/components/rooms/FocusAmenityCount.stories.tsx":
+    "Documented on the Focus amenity family page with count and state variants.",
+  "src/stories/components/rooms/FocusAmenityIcon.stories.tsx":
+    "Documented on the Focus amenity family page with registry-validated names and icon states.",
+  "src/stories/components/rooms/SideFocusAmenityBar.stories.tsx":
+    "Documented on the Focus amenity family page as the SideBarFocusAmenity rail with local items.",
+  "src/stories/components/rates/RateOfferCard.stories.tsx":
+    "Documented on the Rate offers page with variant/theme props and local-only booking callbacks.",
+  "src/stories/components/rates/ConfigurableRateOffer.stories.tsx":
+    "Documented on the Rate offers page with a deterministic RateCardConfig, live content and pricing fixture.",
+  "src/stories/components/rates/RateOfferSidePanel.stories.tsx":
+    "Documented on the Rate offers page with a static stay breakdown and policy copy.",
+  "src/stories/components/rates/PolicyDisplay.stories.tsx":
+    "Documented on the Rate offers page with horizontal/vertical layout and tooltip props.",
+  "src/stories/components/booking/summary/stay-summary.stories.tsx":
+    "Documented on the Booking summary page with a deterministic stay and nightly-rate fixture.",
+  "src/stories/components/ui/ReservationSummaryBar.stories.tsx":
+    "Documented on the Booking summary page with a local action callback and static totals.",
+  "src/stories/components/booking/search/BestRateGuaranteedLabel.stories.tsx":
+    "Documented on the Booking details page with tooltip and theme props.",
+  "src/stories/components/booking/search/PropertyLocationLabel.stories.tsx":
+    "Documented on the Booking details page with canonical location keys and local click callback.",
+  "src/stories/components/booking/search/PropertyPropertyLabel.stories.tsx":
+    "Documented on the Booking details page with property display names and local click callback.",
+  "src/stories/components/booking/discovery/RusticLodgeSignboard.stories.tsx":
+    "Documented on the Booking details page with base-path-prefixed artwork and local slot buttons.",
 });
+
+/** Category-level rationale for planned rows without an entry-specific note. */
+function plannedNoteFor(category) {
+  switch (category) {
+    case "Shared controls":
+      return "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior.";
+    case "Rates":
+      return "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API.";
+    case "Rooms":
+      return "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs.";
+    case "Booking steps":
+      return "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists.";
+    case "Icons":
+      return "Planned: icon set is consumed as implementation detail inside documented components; a separate page would duplicate the registry documentation.";
+    case "Brand":
+      return "Planned: brand presentation story has no interactive state beyond the documented brand tokens.";
+    default:
+      return "Awaiting Fumadocs page and interactive demos.";
+  }
+}
 
 const usedPlannedPaths = new Set();
 
@@ -272,7 +346,7 @@ const coverage = stories.map((story) => {
       ? story.rationale
       : existingPage
         ? (DOCUMENTED_NOTES[story.source] ?? "Historical story has a Fumadocs page; variants pending migration.")
-        : (PLANNED_NOTES[story.source] ?? "Awaiting Fumadocs page and interactive demos."),
+        : (PLANNED_NOTES[story.source] ?? plannedNoteFor(story.category)),
   };
 });
 

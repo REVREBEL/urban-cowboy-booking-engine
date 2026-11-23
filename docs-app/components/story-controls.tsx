@@ -27,6 +27,22 @@ import {
 import { inlineUpsellStory, upsellCardStory } from "./extras-upsell.story";
 import { roomsListCardStory, roomsListCardCopperStory } from "./room-list-card.story";
 import {
+  focusAmenityStatesStory,
+  focusAmenityPrimitivesStory,
+  sideBarFocusAmenityStory,
+} from "./focus-amenity.story";
+import {
+  rateOfferCardStory,
+  configurableRateOfferStory,
+  rateOfferSidePanelStory,
+  policyDisplayStory,
+} from "./rate-offers.story";
+import {
+  staySummaryStory,
+  reservationSummaryBarStory,
+} from "./booking-summary.story";
+import { bookingLabelsStory, lodgeSignboardStory } from "./booking-details.story";
+import {
   buildingIconStory,
   buildingIconVariantsStory,
   buildingIconColorsStory,
@@ -356,6 +372,50 @@ export function RoomsListCardStoryControl() {
 
 export function RoomsListCardCopperStoryControl() {
   return <roomsListCardCopperStory.WithControl />;
+}
+
+export function FocusAmenityStatesStoryControl() {
+  return <focusAmenityStatesStory.WithControl />;
+}
+
+export function FocusAmenityPrimitivesStoryControl() {
+  return <focusAmenityPrimitivesStory.WithControl />;
+}
+
+export function SideBarFocusAmenityStoryControl() {
+  return <sideBarFocusAmenityStory.WithControl />;
+}
+
+export function RateOfferCardStoryControl() {
+  return <rateOfferCardStory.WithControl />;
+}
+
+export function ConfigurableRateOfferStoryControl() {
+  return <configurableRateOfferStory.WithControl />;
+}
+
+export function RateOfferSidePanelStoryControl() {
+  return <rateOfferSidePanelStory.WithControl />;
+}
+
+export function PolicyDisplayStoryControl() {
+  return <policyDisplayStory.WithControl />;
+}
+
+export function StaySummaryStoryControl() {
+  return <staySummaryStory.WithControl />;
+}
+
+export function ReservationSummaryBarStoryControl() {
+  return <reservationSummaryBarStory.WithControl />;
+}
+
+export function BookingLabelsStoryControl() {
+  return <bookingLabelsStory.WithControl />;
+}
+
+export function LodgeSignboardStoryControl() {
+  return <lodgeSignboardStory.WithControl />;
 }
 
 export function SearchGuestsDropdownStoryControl() {
