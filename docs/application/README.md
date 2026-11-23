@@ -14,6 +14,7 @@ The goal is to preserve not only what the application does, but why particular i
 - [Saved Room Match Email Placeholder](./email-templates/room-match-saved-v1.md) — data contract and implementation TODO for emailing saved matcher results through the cart-recovery/n8n pipeline.
 - [Room Discovery & Matcher Flow](./discovery-room-matcher.md) — how the signboard landing screen, full matcher, room-list modal, matched results, sharing, and saved-match tracking fit together.
 - [Webflow Room Type Reviews](./webflow-room-type-reviews.md) — published Room Type review fields, Mews ID matching, blank-review behavior, and Webflow Cloud KV caching.
+- [Booking Runtime Webflow Dependency Inventory (COW-103)](./booking-runtime-webflow-dependency-inventory.md) — route/consumer/source ownership map, Webflow runtime dependencies and required D1 replacements, Mews ARI authority proof, and wire-up gaps for W3.
 - [CMS-Driven Booking Footer](./cms-booking-footer.md) — Mews-property-to-Webflow-Location binding, dynamic location/copyright copy, optional legal links, and footer cache behavior.
 
 - [Catskills Mews Identifiers](../catskills-mews-ids.md#deferred-add-on-delivery-tasks) — includes the deferred Connector API task-creation plan for scheduled add-ons and the certification prerequisite.
