@@ -343,12 +343,37 @@ test("D1 contracts expose only an explicit allowlist of Mews reference fields", 
   const tokens = new Set(
     [...src.matchAll(/[A-Za-z0-9_]*mews[A-Za-z0-9_]*/gi)].map((match) => match[0].toLowerCase()),
   );
-  const unexpected = [...tokens].filter((token) => !allowedTokens.has(token));
+  // W2.2 adds type/schema declarations for selectively mirrored stable Mews
+  // reference data. These are named declarations, not D1 data fields or ARI
+  // values, so they are allowed only when declared as an export.
+  const allowedDeclarationTokens = new Set([
+    "mewsreferencetypeschema",
+    "mewsreferencetype",
+    "mewsreferencesyncrowschema",
+    "mewsreferencesynccontract",
+  ]);
+  const unexpected = [...tokens].filter(
+    (token) => !allowedTokens.has(token) && !allowedDeclarationTokens.has(token),
+  );
   assert.deepEqual(
     unexpected,
     [],
     `Unexpected Mews-named field(s) in d1-contracts.ts: ${unexpected.join(", ")}. ` +
       `Permitted references: ${allowedReferenceFields.join(", ")}`,
+  );
+  for (const token of allowedDeclarationTokens) {
+    assert.match(
+      src,
+      new RegExp(`export\\s+(?:const|type)\\s+${token}\\b`, "i"),
+      `${token} must be a named type/schema declaration, not a data field`,
+    );
+  }
+  // Keeping the declaration allowlist must not open the door to ARI concepts.
+  const ariToken = /availab|inventor(y|ies)|restriction|pric(e|ing)|quote|reservation|booking/i;
+  assert.deepEqual(
+    [...tokens].filter((token) => ariToken.test(token)),
+    [],
+    "No ARI-named field or type may be declared in D1 contracts",
   );
 
   // Every allowed reference concept must actually be present in the contract.
