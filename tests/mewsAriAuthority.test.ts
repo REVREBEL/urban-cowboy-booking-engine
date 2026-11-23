@@ -336,6 +336,11 @@ test("D1 contracts expose only an explicit allowlist of Mews reference fields", 
       "mews_product_id", "mewsProductId",
       "rate_product_id", "rateProductId",
       "mews_asset_id", "mews",
+      // COW-97 contracts mirror stable Mews identifiers (hotel, rate group,
+      // product, room category, age category) for reconciliation only. They are
+      // not ARI fields and never resolve to price or availability.
+      "mewsReferenceTypeSchema", "mewsReferenceType",
+      "mewsReferenceSyncRowSchema", "mewsReferenceSyncContract",
     ].map((token) => token.toLowerCase()),
   );
 
