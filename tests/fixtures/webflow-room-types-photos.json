@@ -1,0 +1,83 @@
+{
+  "items": [
+    {
+      "id": "wf-alpine",
+      "isDraft": false,
+      "isArchived": false,
+      "fieldData": {
+        "mews-room-type-id": "mews-alpine",
+        "images": [
+          {
+            "fileId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+            "url": "https://cdn.prod.website-files.com/site/aaaaaaaaaaaaaaaaaaaaaaaa_alpine.jpg",
+            "alt": "Alpine suite",
+            "width": 1600,
+            "height": 1000
+          },
+          {
+            "fileId": "bbbbbbbbbbbbbbbbbbbbbbbb",
+            "url": "https://cdn.prod.website-files.com/site/bbbbbbbbbbbbbbbbbbbbbbbb_bath.jpg",
+            "alt": "Soaking tub"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wf-walden",
+      "isDraft": false,
+      "isArchived": false,
+      "fieldData": {
+        "mews-room-type-id": "mews-walden",
+        "images": [
+          {
+            "fileId": "cccccccccccccccccccccccc",
+            "url": "https://cdn.prod.website-files.com/site/cccccccccccccccccccccccc_walden.jpg",
+            "alt": "Walden king"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wf-draft",
+      "isDraft": true,
+      "isArchived": false,
+      "fieldData": {
+        "mews-room-type-id": "mews-draft",
+        "images": [
+          {
+            "fileId": "dddddddddddddddddddddddd",
+            "url": "https://cdn.prod.website-files.com/site/dddddddddddddddddddddddd_draft.jpg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wf-unmatched",
+      "isDraft": false,
+      "isArchived": false,
+      "fieldData": {
+        "mews-room-type-id": "mews-unknown",
+        "images": [
+          {
+            "fileId": "eeeeeeeeeeeeeeeeeeeeeeee",
+            "url": "https://cdn.prod.website-files.com/site/eeeeeeeeeeeeeeeeeeeeeeee_unknown.jpg"
+          }
+        ]
+      }
+    },
+    {
+      "id": "wf-alpine",
+      "isDraft": false,
+      "isArchived": false,
+      "fieldData": {
+        "mews-room-type-id": "mews-alpine",
+        "images": [
+          {
+            "fileId": "ffffffffffffffffffffffff",
+            "url": "not-an-https-url.jpg"
+          }
+        ]
+      }
+    }
+  ]
+}
