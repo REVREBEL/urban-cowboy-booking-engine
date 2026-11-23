@@ -25,7 +25,8 @@ fixtures; confirming a selection only flips local state and never calls Mews or 
 
 `ConfigurableRateOffer` takes a `RateCardConfig`, published `RateCardLiveContent` and a deterministic
 pricing object. The config demonstrates the CMS-backed fields (eyebrow, headline, artwork positions,
-policy windows) without a CMS token.
+policy windows) without a CMS token. The fixture uses a $1,172.40 total with a 50% deposit of
+$586.20 and a $586.20 remaining balance, so every amount matches the deposit copy.
 
 ## Side panel
 
@@ -45,6 +46,8 @@ The panel shows the same stay numbers in a compact breakdown with deposit/remain
 
 ## Responsive behaviour
 
-Cards and panels stack on narrow screens; price and CTA remain visible without horizontal scrolling.
+The rate card keeps its designed fixed width; on narrow screens its preview scrolls inside a bounded
+container. The side panel and policy display stack their content. No demo overflows the document
+itself.
 
 [Rate card source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rates/RateOfferCard.tsx) · [Configurable offer source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rates/ConfigurableRateOffer.tsx) · [Policy source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rates/PolicyDisplay.tsx)

@@ -28,6 +28,8 @@ buttons.
 
 ## Responsive behaviour
 
-Labels wrap on narrow screens; the signboard slots stack while the artwork keeps its aspect ratio.
+Labels wrap on narrow screens. The signboard absolutely positions its slots over the artwork and
+changes the image aspect ratio at small widths; it does not stack them, so read it as a composed
+hero preview rather than a reflowing layout.
 
 [Guarantee source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/BestRateGuaranteedLabel.tsx) · [Location source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/PropertyLocationLabel.tsx) · [Signboard source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/discovery/RusticLodgeSignboard.tsx)

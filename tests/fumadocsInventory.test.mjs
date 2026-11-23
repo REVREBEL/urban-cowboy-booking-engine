@@ -90,7 +90,7 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     BestRateGuaranteedLabel: "docs-app/content/docs/components/booking-details.mdx",
     PropertyLocationLabel: "docs-app/content/docs/components/booking-details.mdx",
     PropertyPropertyLabel: "docs-app/content/docs/components/booking-details.mdx",
-    LodgeSignboard: "docs-app/content/docs/components/booking-details.mdx",
+    RusticLodgeSignboard: "docs-app/content/docs/components/booking-details.mdx",
   };
   for (const [name, page] of Object.entries(expectedPaths)) {
     const documented = byComponent(name).find((entry) => entry.status === "documented");

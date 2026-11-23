@@ -28,20 +28,31 @@ const live: RateCardLiveContent = {
 
 const pricing = {
   nightly: "$360.00", subtotal: "$1,080.00", taxesAndFees: "$92.40",
-  total: "$1,172.40", dueToday: "$360.00", remaining: "$812.40",
+  // 50% of the $1,172.40 total, matching the deposit copy below.
+  total: "$1,172.40", dueToday: "$586.20", remaining: "$586.20",
+};
+
+const cardPricing = {
+  nightly: 145, subtotal: 435, taxesAndFees: 38.06,
+  total: 473.06, dueToday: 236.53, remaining: 236.53,
 };
 
 function RateCardDemo() {
+  const [expanded, setExpanded] = useState(false);
   const [last, setLast] = useState("none");
   return (
     <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
-      <RateOfferCard
-        theme="ride-easy" headline="Ride Easy" eyebrow="FLEXIBLE"
-        description="Free cancellation up to 14 days before arrival."
-        price="$145" priceUnit="NIGHTLY" taxDisclaimer="Excluding taxes & fees"
-        onToggleExpand={() => setLast("expanded")}
-        onBook={() => setLast("book clicked")}
-      />
+      <div className="w-full overflow-x-auto">
+        <RateOfferCard
+          theme="ride-easy" headline="Ride Easy" eyebrow="FLEXIBLE"
+          description="Free cancellation up to 14 days before arrival."
+          price="$145" priceUnit="NIGHTLY" taxDisclaimer="Excluding taxes & fees"
+          isExpanded={expanded}
+          pricingDetails={cardPricing}
+          onToggleExpand={() => { setExpanded((value) => !value); setLast("toggled details"); }}
+          onBook={() => setLast("book clicked")}
+        />
+      </div>
       <p className="sr-only" role="status">{last}</p>
     </div>
   );
@@ -60,8 +71,8 @@ function ConfigurableOfferDemo() {
         onToggleExpand={() => setExpanded((value) => !value)}
         onConfirmBooking={() => setExpanded(false)}
         pricing={pricing}
-        depositNote="50% deposit charged once the reservation is confirmed."
-        remainingNote="Remaining balance charged 5 days before arrival."
+        depositNote="50% deposit ($586.20) charged once the reservation is confirmed."
+        remainingNote="Remaining balance ($586.20) charged 5 days before arrival."
         fullPolicyText="Free cancellation through 14 days before arrival."
         checkIn="2027-06-20"
       />
@@ -71,17 +82,19 @@ function ConfigurableOfferDemo() {
 }
 
 function SidePanelDemo() {
+  const [last, setLast] = useState("none");
   return (
     <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
       <RateOfferSidePanel
         variant="default" theme="plan-ahead" rateTitle="Plan Ahead"
-        onClose={() => {}}
+        onClose={() => setLast("panel closed")}
         nightlyRate="$360" stayTotal="$1,080" taxesAndFees="$92.40"
-        totalStay="$1,172.40" dueAtBooking="$360" remaining="$812.40"
-        depositNote="50% deposit charged on confirmation."
-        remainingNote="Remaining balance charged before arrival."
+        totalStay="$1,172.40" dueAtBooking="$586.20" remaining="$586.20"
+        depositNote="50% deposit ($586.20) charged on confirmation."
+        remainingNote="Remaining balance ($586.20) charged before arrival."
         policyText="Free cancellation through 14 days before arrival."
       />
+      <p className="sr-only" role="status">{last}</p>
     </div>
   );
 }
@@ -91,7 +104,7 @@ function PolicyDemo() {
     <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
       <PolicyDisplay
         title="Payment schedule" orientation="horizontal"
-        initialAmount="$360" remainingAmount="$812"
+        initialAmount="$586" remainingAmount="$586"
         text="Free cancellation until 14 days before arrival."
         showTooltips
       />

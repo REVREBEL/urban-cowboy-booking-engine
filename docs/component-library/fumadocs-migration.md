@@ -44,8 +44,8 @@ six new pages, static search entries and interactive demos are published.
 
 ## COW-85 M3 — remaining historical catalog audit
 
-Five family pages were added, covering 16 previously planned stories with real source imports and
-docs-only deterministic harnesses:
+Four family pages were added in this M3 slice, covering 16 previously planned stories with real
+source imports and docs-only deterministic harnesses:
 
 | Page | Stories covered |
 | --- | --- |
@@ -53,7 +53,7 @@ docs-only deterministic harnesses:
 | `rate-offers.mdx` | `RateOfferCard`, `ConfigurableRateOffer`, `RateOfferSidePanel`, `PolicyDisplay` |
 | `booking-summary.mdx` | `StaySummary`, `ReservationSummaryBar` |
 | `booking-details.mdx` | `BestRateGuaranteedLabel`, `PropertyLocationLabel`, `PropertyPropertyLabel`, `RusticLodgeSignboard` |
-| `room-list-card.mdx`, `extras-upsell.mdx`, `search-bar.mdx` (M1) | `RoomsListCard`, `UpsellCard`, `SearchBarExpanded` — completed earlier |
+| M1 context (not added here) | `room-list-card.mdx`, `extras-upsell.mdx`, `search-bar.mdx` — already merged in PR #355 |
 
 `CheckoutStep`, `BookingSummary` and `StayBreakdown` remain planned: they embed `BookingSummary` or
 read the live `BookingProvider`, which loads hotel data, geolocation and tracking. Demoing them

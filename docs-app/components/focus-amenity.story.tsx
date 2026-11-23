@@ -69,7 +69,9 @@ function FocusAmenityPrimitives() {
 }
 
 function SidebarDemo() {
-  const [open, setOpen] = useState(true);
+  // Start closed: the production rail is viewport-fixed and would otherwise
+  // cover the documentation before the reader opts in.
+  const [open, setOpen] = useState(false);
   return (
     <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
       <button type="button" onClick={() => setOpen((value) => !value)} className="rounded-md border border-border px-3 py-2 text-sm">
