@@ -3,11 +3,19 @@
 // Playwright checks desktop/mobile pages, deep-link refresh, static search,
 // assets, console/network errors and representative interactive demos.
 import { chromium } from "@playwright/test";
-import { brokenImages as findBrokenImages, recordCheck, requireControl } from "./live-check-core.mjs";
+import {
+  brokenImages as findBrokenImages,
+  checkFinalUrl,
+  recordCheck,
+  requireControl,
+} from "./live-check-core.mjs";
 
 const BASE = (process.env.DOCS_LIVE_URL ?? "https://revrebel.github.io/urban-cowboy-booking-engine/")
   .replace(/\/?$/, "/");
 const REPORT = process.env.DOCS_LIVE_REPORT ?? null;
+// Default requires HTTPS end-to-end. Set only while the known custom-domain
+// certificate issue is open; the deviation is recorded in the runbook.
+const requireHttps = process.env.DOCS_ALLOW_HTTP !== "1";
 
 const pages = [
   { path: "", marker: "Urban Cowboy Component Library" },
@@ -36,6 +44,7 @@ const report = {
   checkedAt: new Date().toISOString(),
   url: BASE,
   viewports: viewports.map((v) => v.name),
+  httpsPolicy: requireHttps ? "required" : "deviation-allowed (DOCS_ALLOW_HTTP=1)",
   pages: [],
   search: {},
   demos: {},
@@ -63,7 +72,11 @@ for (const viewport of viewports) {
     const markerOk = body.includes(entry.marker);
     // Refreshable deep link: reloading must land on the same URL and still render.
     await page.reload({ waitUntil: "networkidle" });
-    const deepLinkOk = page.url() === url && (await page.locator("body").innerText()).includes(entry.marker);
+    // The GitHub Pages URL redirects to the custom domain, so compare paths,
+    // not origins, when checking that a deep link survives refresh.
+    const expectedPath = new URL(url).pathname;
+    const finalUrl = checkFinalUrl(page.url(), expectedPath, { requireHttps });
+    const deepLinkOk = finalUrl.ok && (await page.locator("body").innerText()).includes(entry.marker);
     const images = await page.locator("img").evaluateAll((nodes) =>
       nodes.map((node) => ({ src: node.getAttribute("src"), ok: node.complete && node.naturalWidth > 0 })),
     );
@@ -74,7 +87,8 @@ for (const viewport of viewports) {
       path: entry.path || "/",
       status: response?.status() ?? 0,
       marker: record(`${viewport.name}/${entry.path || "root"}`, markerOk, `missing marker ${entry.marker}`),
-      deepLink: record(`${viewport.name}/${entry.path || "root"} refresh`, deepLinkOk, "deep link did not survive refresh"),
+      deepLink: record(`${viewport.name}/${entry.path || "root"} refresh`, deepLinkOk,
+        finalUrl.ok ? "deep link marker missing after refresh" : finalUrl.detail),
       brokenImages: broken,
     });
     record(`${viewport.name}/${entry.path || "root"} images`, broken.length === 0,

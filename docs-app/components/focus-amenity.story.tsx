@@ -60,8 +60,8 @@ function FocusAmenityPrimitives() {
       </div>
       <FocusAmenityCard headline="Copper soaking tub" description="Hand-finished copper, fed by the mountain spring." />
       <div className="flex flex-wrap items-center gap-3">
-        <AmenityIcon name="wifi_badge" state="Default" />
-        <AmenityIcon name="wifi_badge" state="Active" />
+        <AmenityIcon name="wifi_badge" state="Default" basePath={process.env.NEXT_PUBLIC_DOCS_BASE_PATH ?? "/"} />
+        <AmenityIcon name="wifi_badge" state="Active" basePath={process.env.NEXT_PUBLIC_DOCS_BASE_PATH ?? "/"} />
         <span className="text-xs">wifi badge · default / active</span>
       </div>
     </div>
