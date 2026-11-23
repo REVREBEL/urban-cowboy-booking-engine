@@ -55,6 +55,11 @@
       "id": 11,
       "file": "0011_photo_hotspot_deletions.sql",
       "sha256": "86c31c433ce077c1c19d3318cfd07968f3719c6bbf39a5ae944ef0a672b5c74c"
+    },
+    {
+      "id": 12,
+      "file": "0012_editorial_publication_state.sql",
+      "sha256": "804419bba6f4a030068e61bec9c7c578e6fbc2911ebbd2b4f6e57d618c028397"
     }
   ]
 }

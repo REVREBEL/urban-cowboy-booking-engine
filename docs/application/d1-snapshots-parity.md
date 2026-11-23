@@ -29,9 +29,9 @@ Rollback SQL lives in `scripts/d1-rollback/0004_published_snapshots_down.sql`, o
 
 ## Typed provider
 
-`worker/content-provider.ts` loads published, tenant-scoped rows for `locations`, `buildings`, `roomTypes`, `amenities`, `addOns`, `events` and `contentItems` through the contract-validated scoped helpers from COW-30. Publication is respected at the query level: draft add-ons and content items are excluded, and only displayed events are read. Collections whose D1 table has no status column (`locations`, `buildings`, `roomTypes`, `amenities`) are published by presence; for every other collection the snapshot requires an explicit published/displayed signal. Mews IDs are carried as references, never resolved into prices.
+`worker/content-provider.ts` loads published, tenant-scoped rows for `locations`, `buildings`, `roomTypes`, `amenities`, `addOns`, `events` and `contentItems` through the contract-validated scoped helpers from COW-30. Publication is respected at the query level: draft add-ons and content items are excluded, and only displayed events are read. Collections whose D1 table has no status column (`buildings`, `amenities`) are published by presence; for every other collection the snapshot requires an explicit published/displayed signal. Mews IDs are carried as references, never resolved into prices.
 
-`worker/publication-gate.ts` is the authoritative deny-list for source records whose D1 table has no status column. COW-29 finding F-04 identified one draft Room Type (`6abd4a1debcab0ea7e461c9a`) in the export; the provider excludes it from snapshots and parity until a status column and backfill exist. This is why `roomTypes` is not yet described as fully published-only — the gate is explicit, not assumed.
+COW-97 added extension-table publication state for `roomTypes` and `locations`. The provider now filters both collections through `publishedRoomTypeIds` / `publishedLocationIds`, so the draft Room Type (`6abd4a1debcab0ea7e461c9a`, COW-29 F-04) is excluded by its D1 status rather than by a hardcoded ID. `worker/publication-gate.ts` remains only as the fallback deny-list for collections without a publication contract. See [W2.2 editorial publication contracts](w2-2-editorial-publication-contracts.md).
 
 ## Snapshot behavior
 
