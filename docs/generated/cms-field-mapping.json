@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T22:26:27.432Z",
+  "generatedAt": "2026-11-23T22:41:19.975Z",
   "snapshotDate": "2026-11-15",
   "sourceDirectory": "webflow_cms_export",
   "tenantId": "urban-cowboy",
@@ -12,7 +12,8 @@
         "locations",
         "location_publication",
         "content_items",
-        "content_revisions"
+        "content_revisions",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -63,227 +64,221 @@
           "field": "full-location-name",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "short-location-name",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "street-address-line-1",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "street-address-line-2",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "city",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "state",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "postal-code",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "primary-phone",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "front-desk-operations-emails",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "reservations-email",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "sales-email",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "general-email",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "website",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "instagram",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "facebook",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "trip-advisor",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "short-description",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "long-description",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "location-details",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "google-maps-link",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "instagram-handle",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "privacy-policy",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "terms-conditions",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "accessibility",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "enable-demo-engine",
           "status": "mapped",
           "targets": [
-            "content_items.payload_json (site_settings)"
+            "content_revisions.payload_json (site_settings.enableDemoEngine)"
           ]
         },
         {
           "field": "production-layout",
           "status": "mapped",
           "targets": [
-            "content_items.payload_json (site_settings)"
+            "content_revisions.payload_json (site_settings.productionLayout)"
           ]
         },
         {
           "field": "demo-layout",
           "status": "mapped",
           "targets": [
-            "content_items.payload_json (site_settings)"
+            "content_revisions.payload_json (site_settings.demoLayout)"
           ]
         },
         {
           "field": "enable-feature-section",
           "status": "mapped",
           "targets": [
-            "content_items.payload_json (site_settings)"
+            "content_revisions.payload_json (site_settings.enableFeatureSection)"
           ]
         },
         {
           "field": "feature-headline-1",
-          "status": "mapped",
-          "targets": [
-            "content_items.payload_json (site_settings)"
-          ]
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "feature-paragraph-1",
-          "status": "mapped",
-          "targets": [
-            "content_items.payload_json (site_settings)"
-          ]
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "feature-headline-2",
-          "status": "mapped",
-          "targets": [
-            "content_items.payload_json (site_settings)"
-          ]
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "feature-paragraph-2",
-          "status": "mapped",
-          "targets": [
-            "content_items.payload_json (site_settings)"
-          ]
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "feature-headline-3",
-          "status": "mapped",
-          "targets": [
-            "content_items.payload_json (site_settings)"
-          ]
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "feature-paragraph-3",
-          "status": "mapped",
-          "targets": [
-            "content_items.payload_json (site_settings)"
-          ]
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "youtube",
           "status": "unmapped",
           "targets": [],
-          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+          "reason": "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
         },
         {
           "field": "enable-event-dates-quick-selection",
           "status": "mapped",
           "targets": [
-            "content_items.payload_json (site_settings)"
+            "content_revisions.payload_json (site_settings.enableEventDatesQuickSelection)"
           ]
         },
         {
@@ -307,7 +302,8 @@
       "sourceFile": "2026-11-15 - Buildings.csv",
       "sourceRows": 9,
       "d1Targets": [
-        "buildings"
+        "buildings",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -420,7 +416,8 @@
       "d1Targets": [
         "room_types",
         "room_type_amenities",
-        "room_type_publication"
+        "room_type_publication",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -663,7 +660,8 @@
       "sourceRows": 76,
       "d1Targets": [
         "amenities",
-        "amenity_editorial"
+        "amenity_editorial",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -813,7 +811,8 @@
       "sourceFile": "2026-11-15 - Events.csv",
       "sourceRows": 8,
       "d1Targets": [
-        "events"
+        "events",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -997,7 +996,8 @@
       "sourceRows": 8,
       "d1Targets": [
         "offers",
-        "rate_merchandising"
+        "rate_merchandising",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -1277,7 +1277,8 @@
       "sourceFile": "2026-11-15 - Add Ons.csv",
       "sourceRows": 9,
       "d1Targets": [
-        "add_ons"
+        "add_ons",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -1484,7 +1485,8 @@
       "sourceRows": 20,
       "d1Targets": [
         "content_items",
-        "content_revisions"
+        "content_revisions",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -1601,7 +1603,8 @@
       "sourceRows": 3,
       "d1Targets": [
         "content_items",
-        "content_revisions"
+        "content_revisions",
+        "content_provenance"
       ],
       "fields": [
         {
@@ -1809,7 +1812,8 @@
       "sourceRows": 1,
       "d1Targets": [
         "content_items",
-        "content_revisions"
+        "content_revisions",
+        "content_provenance"
       ],
       "fields": [
         {

@@ -27,30 +27,25 @@ const SYSTEM_FIELDS = ["cmsLocaleId", "createdOn", "lastUpdated", "lastPublished
 export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   {
     sourceCollection: "locations",
-    d1Targets: ["locations", "location_publication", "content_items", "content_revisions"],
+    d1Targets: ["locations", "location_publication", "content_items", "content_revisions", "content_provenance"],
     fieldTargets: {
       id: ["locations.id", "content_provenance.source_id"],
       slug: ["locations.slug"],
       name: ["locations.name"],
-      // Documented non-secret Mews reference; editorial metadata only, never a Mews call input.
-      "enable-demo-engine": ["content_items.payload_json (site_settings)"],
-      "production-layout": ["content_items.payload_json (site_settings)"],
-      "demo-layout": ["content_items.payload_json (site_settings)"],
-      "enable-feature-section": ["content_items.payload_json (site_settings)"],
-      "enable-event-dates-quick-selection": ["content_items.payload_json (site_settings)"],
-      "feature-headline-1": ["content_items.payload_json (site_settings)"],
-      "feature-paragraph-1": ["content_items.payload_json (site_settings)"],
-      "feature-headline-2": ["content_items.payload_json (site_settings)"],
-      "feature-paragraph-2": ["content_items.payload_json (site_settings)"],
-      "feature-headline-3": ["content_items.payload_json (site_settings)"],
-      "feature-paragraph-3": ["content_items.payload_json (site_settings)"],
+      // Only these five controls are actually written to the site_settings
+      // revision payload, under their camelCase SiteSettings keys.
+      "enable-demo-engine": ["content_revisions.payload_json (site_settings.enableDemoEngine)"],
+      "production-layout": ["content_revisions.payload_json (site_settings.productionLayout)"],
+      "demo-layout": ["content_revisions.payload_json (site_settings.demoLayout)"],
+      "enable-feature-section": ["content_revisions.payload_json (site_settings.enableFeatureSection)"],
+      "enable-event-dates-quick-selection": ["content_revisions.payload_json (site_settings.enableEventDatesQuickSelection)"],
     },
-    metadataFields: [...SYSTEM_FIELDS, "location-publication-state"],
-    unmappedReason: "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred.",
+    metadataFields: SYSTEM_FIELDS,
+    unmappedReason: "Public business contact, address, social, policy and feature-story copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred.",
   },
   {
     sourceCollection: "buildings",
-    d1Targets: ["buildings"],
+    d1Targets: ["buildings", "content_provenance"],
     fieldTargets: {
       id: ["buildings.id"], name: ["buildings.name"], slug: ["buildings.slug"],
       sort: ["buildings.sort_order"], location: ["buildings.location_id"],
@@ -60,7 +55,7 @@ export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   },
   {
     sourceCollection: "roomTypes",
-    d1Targets: ["room_types", "room_type_amenities", "room_type_publication"],
+    d1Targets: ["room_types", "room_type_amenities", "room_type_publication", "content_provenance"],
     fieldTargets: {
       id: ["room_types.id"],
       name: ["room_types.name"],
@@ -78,7 +73,7 @@ export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   },
   {
     sourceCollection: "amenities",
-    d1Targets: ["amenities", "amenity_editorial"],
+    d1Targets: ["amenities", "amenity_editorial", "content_provenance"],
     fieldTargets: {
       id: ["amenities.id", "amenity_editorial.amenity_id"],
       name: ["amenities.name"],
@@ -92,7 +87,7 @@ export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   },
   {
     sourceCollection: "events",
-    d1Targets: ["events"],
+    d1Targets: ["events", "content_provenance"],
     fieldTargets: {
       id: ["events.id"], name: ["events.title"],
       "short-description": ["events.description"], "long-description": ["events.description (fallback)"],
@@ -113,7 +108,7 @@ export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   },
   {
     sourceCollection: "offers",
-    d1Targets: ["offers", "rate_merchandising"],
+    d1Targets: ["offers", "rate_merchandising", "content_provenance"],
     fieldTargets: {
       id: ["offers.id", "rate_merchandising.id"],
       name: ["offers.name"], headline: ["offers.headline"],
@@ -128,7 +123,7 @@ export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   },
   {
     sourceCollection: "addOns",
-    d1Targets: ["add_ons"],
+    d1Targets: ["add_ons", "content_provenance"],
     fieldTargets: {
       id: ["add_ons.id"], name: ["add_ons.name"],
       "long-description": ["add_ons.description"],
@@ -143,7 +138,7 @@ export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   },
   {
     sourceCollection: "instagrams",
-    d1Targets: ["content_items", "content_revisions"],
+    d1Targets: ["content_items", "content_revisions", "content_provenance"],
     fieldTargets: {},
     metadataFields: SYSTEM_FIELDS,
     allFieldsToPayload: "content_revisions.payload_json (kind=instagram)",
@@ -151,7 +146,7 @@ export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   },
   {
     sourceCollection: "outlets",
-    d1Targets: ["content_items", "content_revisions"],
+    d1Targets: ["content_items", "content_revisions", "content_provenance"],
     fieldTargets: {
       location: ["content_items.location_id"],
     },
@@ -161,7 +156,7 @@ export const CMS_FIELD_MAPS: readonly CollectionFieldMapping[] = [
   },
   {
     sourceCollection: "contentSettings",
-    d1Targets: ["content_items", "content_revisions"],
+    d1Targets: ["content_items", "content_revisions", "content_provenance"],
     fieldTargets: {
       location: ["content_items.location_id"],
     },

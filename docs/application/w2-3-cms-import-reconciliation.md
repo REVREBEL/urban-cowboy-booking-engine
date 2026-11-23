@@ -37,13 +37,13 @@ Idempotency, dry-run, deduplication, parent-before-child ordering and provenance
 
 - **F-01 (partial):** `locations.mews_hotel_id` is now populated for Catskills from the documented non-secret Hotel ID in `docs/catskills-mews-ids.md`. The other three locations stay NULL — no per-property ID is documented, and the importer does not infer one. This field is editorial reference metadata; the Worker never uses it to call Mews.
 - **F-06:** recurring events use their property time zone and a DST-safe `recurrence_rule` (COW-40), not a hard-coded Catskills offset.
-- **Field-level mapping:** the acceptance report is now generated, deterministic and explicit about unmapped fields. Unmapped never means silently dropped.
+- **Field-level mapping:** the acceptance report is now generated, deterministic and explicit about unmapped fields. Unmapped never means silently dropped. A test verifies every claimed `payload_json` target against the actual generated revision payloads, so the report cannot claim a field was imported when it was not.
 
 ## Still open (require live/editorial verification, not a code change)
 
 - Add-on Mews product IDs (9) must be validated against Mews as the system of record.
 - Three offers without a Mews rate product remain draft/editorial-only.
-- Location address/contact and policy copy have no D1 column; Webflow remains the source until a publication workflow is agreed.
+- Location address/contact, policy and feature-story copy have no D1 column; Webflow remains the source until a publication workflow is agreed. The `site_settings` revision deliberately contains only the five published behavior controls, and the field map tests assert that no other location field is claimed as imported.
 - The 238 photo hotspots need stable media identity from the W2.4 source adapter.
 
 ## Verification
