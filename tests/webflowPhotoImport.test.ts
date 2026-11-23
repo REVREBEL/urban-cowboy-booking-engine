@@ -301,6 +301,16 @@ test("an existing arbitrary v1 and current v2 are preserved on URL reimport", as
   await applyPhotoImport(executor(db), plan);
 
   assert.equal(db.prepare("SELECT squarespace_url FROM media_assets WHERE id=?").get(mediaId)?.squarespace_url, changedUrl);
+  assert.equal(
+    (db.prepare("SELECT squarespace_url FROM media_versions WHERE id='legacy-v1-custom'").get() as { squarespace_url: string }).squarespace_url,
+    "https://legacy/v1.jpg",
+    "historical v1 URL is untouched",
+  );
+  assert.equal(
+    (db.prepare("SELECT squarespace_url FROM media_versions WHERE id='legacy-v2-custom'").get() as { squarespace_url: string }).squarespace_url,
+    changedUrl,
+    "current version URL is updated for published gallery reads",
+  );
   assert.deepEqual(
     (db.prepare("SELECT id FROM media_versions WHERE media_asset_id=? ORDER BY version").all(mediaId) as Array<{ id: string }>).map((row) => row.id),
     ["legacy-v1-custom", "legacy-v2-custom"],
