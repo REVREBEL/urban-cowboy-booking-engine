@@ -109,6 +109,10 @@ HTTPS downgrade. The verifier now enforces an explicit host allowlist and HTTPS 
 | Strict HTTPS policy | **FAIL** — 22 downgrade findings (`http://resource-hub.revrebel.io`), same certificate issue |
 | `DOCS_ALLOW_HTTP=1` documented-deviation run | **PASS** — `LIVE VERIFICATION PASSED`, 0 failures |
 
+Verifier reports are retained as evidence:
+`docs/component-library/live-verification-2026-11-23.json` (0 failures, deviation run) and
+`docs/component-library/live-verification-https-strict-2026-11-23.json` (22 downgrade findings).
+
 Conclusion: every content, asset, search, navigation, responsive and interaction check passes on the
 actual published site. The only unmet M4 item is the canonical HTTPS URL: the custom domain still
 presents a `*.github.io` certificate and redirects to `http://`. Fix the Pages custom-domain

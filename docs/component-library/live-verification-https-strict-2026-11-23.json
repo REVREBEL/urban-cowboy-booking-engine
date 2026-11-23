@@ -1,0 +1,378 @@
+{
+  "checkedAt": "2026-11-23T20:14:55.183Z",
+  "url": "https://revrebel.github.io/urban-cowboy-booking-engine/",
+  "viewports": [
+    "desktop",
+    "mobile"
+  ],
+  "httpsPolicy": "required",
+  "pages": [
+    {
+      "viewport": "desktop",
+      "path": "/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Urban Cowboy Component Library"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/search-bar/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker SearchBar"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/search-dropdowns/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Search dropdowns"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/booking-chrome/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Booking chrome"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/conversion-badges/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Conversion badges"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/extras-upsell/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Extras upsell"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/room-list-card/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Room list card"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/focus-amenity/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Focus amenity family"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/rate-offers/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Rate offers"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/booking-summary/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Booking summary"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/booking-details/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Booking details"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Urban Cowboy Component Library"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/search-bar/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker SearchBar"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/search-dropdowns/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Search dropdowns"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/booking-chrome/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Booking chrome"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/conversion-badges/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Conversion badges"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/extras-upsell/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Extras upsell"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/room-list-card/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Room list card"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/focus-amenity/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Focus amenity family"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/rate-offers/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Rate offers"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/booking-summary/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Booking summary"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/booking-details/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "missing marker Booking details"
+      },
+      "deepLink": {
+        "ok": false,
+        "detail": "HTTPS downgrade: http://resource-hub.revrebel.io"
+      },
+      "brokenImages": []
+    }
+  ],
+  "search": {
+    "indexResult": {
+      "ok": true,
+      "detail": "focus-amenity search result present"
+    },
+    "navigate": {
+      "ok": true,
+      "detail": "landed on http://resource-hub.revrebel.io/urban-cowboy-booking-engine/components/focus-amenity/"
+    }
+  },
+  "demos": {
+    "amenityRail": {
+      "ok": true,
+      "detail": "amenity rail toggle present"
+    },
+    "amenityRailState": {
+      "ok": true,
+      "detail": "rail state did not change"
+    },
+    "ratePanelClose": {
+      "ok": true,
+      "detail": "rate panel close present"
+    },
+    "ratePanel": {
+      "ok": true,
+      "detail": "reopen control not visible after close"
+    }
+  },
+  "https": {
+    "error": "TypeError: fetch failed"
+  },
+  "failures": [
+    "desktop/root refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/search-bar/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/search-dropdowns/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/booking-chrome/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/conversion-badges/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/extras-upsell/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/room-list-card/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/focus-amenity/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/rate-offers/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/booking-summary/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "desktop/components/booking-details/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/root refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/search-bar/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/search-dropdowns/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/booking-chrome/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/conversion-badges/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/extras-upsell/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/room-list-card/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/focus-amenity/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/rate-offers/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/booking-summary/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io",
+    "mobile/components/booking-details/ refresh: HTTPS downgrade: http://resource-hub.revrebel.io"
+  ],
+  "console_desktop": [],
+  "bad_responses_desktop": [],
+  "console_mobile": [],
+  "bad_responses_mobile": []
+}
