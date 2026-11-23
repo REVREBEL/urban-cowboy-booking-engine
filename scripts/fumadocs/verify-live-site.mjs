@@ -72,7 +72,14 @@ for (const viewport of viewports) {
 
   for (const entry of pages) {
     const url = new URL(entry.path, BASE).href;
-    const response = await page.goto(url, { waitUntil: "networkidle" });
+    let response;
+    try {
+      response = await page.goto(url, { waitUntil: "networkidle" });
+    } catch (error) {
+      // A TLS/certificate failure is a real verification failure, not a crash.
+      record(`${viewport.name}/${entry.path || "root"} navigation`, false, String(error).slice(0, 200));
+      continue;
+    }
     const body = await page.locator("body").innerText();
     const markerOk = body.includes(entry.marker);
     // Refreshable deep link: reloading must land on the same URL and still render.
@@ -102,6 +109,7 @@ for (const viewport of viewports) {
   }
 
   if (viewport.name === "desktop") {
+   try {
     await page.goto(BASE, { waitUntil: "networkidle" });
     await page.locator("button").filter({ hasText: "Search" }).first().click();
     await page.getByRole("combobox", { name: "Search" }).fill("Focus");
@@ -151,6 +159,9 @@ for (const viewport of viewports) {
         "reopen control not visible after close",
       );
     }
+   } catch (error) {
+    record("desktop search/demo interactions", false, String(error).slice(0, 200));
+   }
   }
 
   report[`console_${viewport.name}`] = consoleErrors;
