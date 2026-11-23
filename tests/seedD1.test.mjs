@@ -75,6 +75,38 @@ test("location and Mews mappings are populated, not NULL", () => {
   db.close();
 });
 
+test("only the documented Catskills Mews hotel ID is mapped", () => {
+  const db = makeDb();
+  assert.equal(
+    db.prepare("SELECT mews_hotel_id FROM locations WHERE slug='catskills'").get().mews_hotel_id,
+    "8bd38131-c371-4625-9c29-b10600705d34",
+  );
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM locations WHERE mews_hotel_id IS NOT NULL AND slug != 'catskills'").get().n,
+    0,
+  );
+  db.close();
+});
+
+test("field mapping report classifies every exported field", () => {
+  const map = JSON.parse(read("docs/generated/cms-field-mapping.json"));
+  assert.equal(map.snapshotDate, "2026-11-15");
+  assert.equal(map.collections.length, 12);
+  for (const collection of map.collections) {
+    assert.ok(collection.fields.length > 0, `${collection.sourceCollection} has fields`);
+    for (const field of collection.fields) {
+      assert.ok(["mapped", "metadata", "unmapped"].includes(field.status), `${field.field} status`);
+      if (field.status === "mapped") assert.ok(field.targets.length > 0, `${field.field} has a target`);
+      if (field.status === "unmapped") assert.ok(field.reason, `${field.field} has a reason`);
+    }
+  }
+  const locations = map.collections.find((c) => c.sourceCollection === "locations");
+  assert.equal(locations.fields.find((f) => f.field === "id").targets[0], "locations.id");
+  const hotspots = map.collections.find((c) => c.sourceCollection === "photoHotspots");
+  assert.deepEqual(hotspots.d1Targets, []);
+  assert.ok(hotspots.fields.every((f) => f.status !== "mapped"));
+});
+
 test("events satisfy NOT NULL starts_at and publication flags", () => {
   const db = makeDb();
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE starts_at IS NULL").get().n, 0);

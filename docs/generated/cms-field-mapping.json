@@ -1,0 +1,2014 @@
+{
+  "generatedAt": "2026-11-23T22:26:27.432Z",
+  "snapshotDate": "2026-11-15",
+  "sourceDirectory": "webflow_cms_export",
+  "tenantId": "urban-cowboy",
+  "collections": [
+    {
+      "sourceCollection": "locations",
+      "sourceFile": "2026-11-15 - Locations.csv",
+      "sourceRows": 4,
+      "d1Targets": [
+        "locations",
+        "location_publication",
+        "content_items",
+        "content_revisions"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "locations.id",
+            "content_provenance.source_id"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "full-location-name",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "short-location-name",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "street-address-line-1",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "street-address-line-2",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "city",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "state",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "postal-code",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "primary-phone",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "front-desk-operations-emails",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "reservations-email",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "sales-email",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "general-email",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "website",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "instagram",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "facebook",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "trip-advisor",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "short-description",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "long-description",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "location-details",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "google-maps-link",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "instagram-handle",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "privacy-policy",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "terms-conditions",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "accessibility",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "enable-demo-engine",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "production-layout",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "demo-layout",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "enable-feature-section",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "feature-headline-1",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "feature-paragraph-1",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "feature-headline-2",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "feature-paragraph-2",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "feature-headline-3",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "feature-paragraph-3",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "youtube",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Public business contact, address, social and policy copy: Webflow remains the source until a publication workflow is agreed (COW-29 §7 A). Not stored, never inferred."
+        },
+        {
+          "field": "enable-event-dates-quick-selection",
+          "status": "mapped",
+          "targets": [
+            "content_items.payload_json (site_settings)"
+          ]
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "locations.name"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "mapped",
+          "targets": [
+            "locations.slug"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceCollection": "buildings",
+      "sourceFile": "2026-11-15 - Buildings.csv",
+      "sourceRows": 9,
+      "d1Targets": [
+        "buildings"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "buildings.id"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "location",
+          "status": "mapped",
+          "targets": [
+            "buildings.location_id"
+          ]
+        },
+        {
+          "field": "subheadline",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No D1 column; editorial copy stays in Webflow."
+        },
+        {
+          "field": "short-description",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No D1 column; editorial copy stays in Webflow."
+        },
+        {
+          "field": "long-description",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No D1 column; editorial copy stays in Webflow."
+        },
+        {
+          "field": "feature-benefits",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No D1 column; editorial copy stays in Webflow."
+        },
+        {
+          "field": "sort",
+          "status": "mapped",
+          "targets": [
+            "buildings.sort_order"
+          ]
+        },
+        {
+          "field": "policy-2",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No D1 column; editorial copy stays in Webflow."
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "buildings.name"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "mapped",
+          "targets": [
+            "buildings.slug"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceCollection": "roomTypes",
+      "sourceFile": "2026-11-15 - Room Types.csv",
+      "sourceRows": 22,
+      "d1Targets": [
+        "room_types",
+        "room_type_amenities",
+        "room_type_publication"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "room_types.id"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "full-name",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "short-name",
+          "status": "mapped",
+          "targets": [
+            "room_types.name (fallback)"
+          ]
+        },
+        {
+          "field": "long-description",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "short-description",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "building",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "property-location",
+          "status": "mapped",
+          "targets": [
+            "room_types.location_id"
+          ]
+        },
+        {
+          "field": "square-feet",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "features-amenities",
+          "status": "mapped",
+          "targets": [
+            "room_type_amenities.amenity_id"
+          ]
+        },
+        {
+          "field": "policies",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "benefits-statment",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "number-of-bedrooms",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "number-of-beds",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "suite",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "room",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "bed-type",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "sort",
+          "status": "mapped",
+          "targets": [
+            "room_types.sort_order"
+          ]
+        },
+        {
+          "field": "number-of-units",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "component-room",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "mews-room-type-id",
+          "status": "mapped",
+          "targets": [
+            "room_types.mews_room_category_id"
+          ]
+        },
+        {
+          "field": "review",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "review-source",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "review-url",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "review-date",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "reviewer-name-or-handle",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "name-split-2",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "active",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Room prose, review copy and bed/suite metadata have no typed D1 column yet; Webflow remains the source. Not inferred from names."
+        },
+        {
+          "field": "amenity-display-order",
+          "status": "mapped",
+          "targets": [
+            "room_type_amenities.display_order"
+          ]
+        },
+        {
+          "field": "restricted-amenity-ids",
+          "status": "mapped",
+          "targets": [
+            "room_type_amenities.excluded"
+          ]
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "room_types.name"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "mapped",
+          "targets": [
+            "room_types.slug"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceCollection": "amenities",
+      "sourceFile": "2026-11-15 - Amenities.csv",
+      "sourceRows": 76,
+      "d1Targets": [
+        "amenities",
+        "amenity_editorial"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "amenities.id",
+            "amenity_editorial.amenity_id"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "active",
+          "status": "mapped",
+          "targets": [
+            "amenity_editorial.active"
+          ]
+        },
+        {
+          "field": "full-name",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "short-name",
+          "status": "mapped",
+          "targets": [
+            "amenity_editorial.short_name",
+            "amenities.name (fallback)"
+          ]
+        },
+        {
+          "field": "type",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "marketing-headline",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "marketing-subheadline",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "short-description",
+          "status": "mapped",
+          "targets": [
+            "amenity_editorial.short_description"
+          ]
+        },
+        {
+          "field": "long-description",
+          "status": "mapped",
+          "targets": [
+            "amenity_editorial.long_description"
+          ]
+        },
+        {
+          "field": "key-benefit-or-selling-point-headline",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "key-benefit-or-selling-point-description",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "category",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "location",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "global-amenity",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "amenities.name"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "The export has no image-name/image-path columns; icons are admin-authored from checked-in SVGs. Other marketing fields stay in Webflow."
+        }
+      ]
+    },
+    {
+      "sourceCollection": "events",
+      "sourceFile": "2026-11-15 - Events.csv",
+      "sourceRows": 8,
+      "d1Targets": [
+        "events"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "events.id"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "property-location",
+          "status": "mapped",
+          "targets": [
+            "events.location_id"
+          ]
+        },
+        {
+          "field": "datetime",
+          "status": "mapped",
+          "targets": [
+            "events.starts_at"
+          ]
+        },
+        {
+          "field": "read-more",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No dedicated column; not required for the displayed event contract."
+        },
+        {
+          "field": "short-description",
+          "status": "mapped",
+          "targets": [
+            "events.description"
+          ]
+        },
+        {
+          "field": "long-description",
+          "status": "mapped",
+          "targets": [
+            "events.description (fallback)"
+          ]
+        },
+        {
+          "field": "onsite-event-location",
+          "status": "mapped",
+          "targets": [
+            "events.venue"
+          ]
+        },
+        {
+          "field": "offsite-event",
+          "status": "mapped",
+          "targets": [
+            "events.venue"
+          ]
+        },
+        {
+          "field": "offsite-event-location",
+          "status": "mapped",
+          "targets": [
+            "events.venue"
+          ]
+        },
+        {
+          "field": "onsite",
+          "status": "mapped",
+          "targets": [
+            "events.venue"
+          ]
+        },
+        {
+          "field": "onsite-custom-location",
+          "status": "mapped",
+          "targets": [
+            "events.venue"
+          ]
+        },
+        {
+          "field": "datetime-end",
+          "status": "mapped",
+          "targets": [
+            "events.ends_at"
+          ]
+        },
+        {
+          "field": "recurrence-type",
+          "status": "mapped",
+          "targets": [
+            "events.recurrence_rule"
+          ]
+        },
+        {
+          "field": "repeat-every",
+          "status": "mapped",
+          "targets": [
+            "events.recurrence_rule"
+          ]
+        },
+        {
+          "field": "repeat-on",
+          "status": "mapped",
+          "targets": [
+            "events.recurrence_rule"
+          ]
+        },
+        {
+          "field": "recurring-start",
+          "status": "mapped",
+          "targets": [
+            "events.starts_at (fallback)"
+          ]
+        },
+        {
+          "field": "recurring-end",
+          "status": "mapped",
+          "targets": [
+            "events.recurrence_rule"
+          ]
+        },
+        {
+          "field": "adults-only-21",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No dedicated column; not required for the displayed event contract."
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "events.title"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No dedicated column; not required for the displayed event contract."
+        }
+      ]
+    },
+    {
+      "sourceCollection": "offers",
+      "sourceFile": "2026-11-15 - Offers.csv",
+      "sourceRows": 8,
+      "d1Targets": [
+        "offers",
+        "rate_merchandising"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "offers.id",
+            "rate_merchandising.id"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "mews-rate-id",
+          "status": "mapped",
+          "targets": [
+            "offers.rate_product_id",
+            "rate_merchandising.rate_product_id"
+          ]
+        },
+        {
+          "field": "cancellation-penalty-window",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "cancellation-penalty-window-period",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "button-color",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "text-color",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "card-fill",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "active",
+          "status": "mapped",
+          "targets": [
+            "offers.status"
+          ]
+        },
+        {
+          "field": "member-only",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "miles-from-center",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "postal-code",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "geo-fencing-active",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "exclude-from-us",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "exclude-from-north-america",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "europe",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "asia",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "mexico",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "canada",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "description",
+          "status": "mapped",
+          "targets": [
+            "offers.description"
+          ]
+        },
+        {
+          "field": "international-fencing-active",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "rate-font",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "long-description",
+          "status": "mapped",
+          "targets": [
+            "offers.description (fallback)"
+          ]
+        },
+        {
+          "field": "call-to-action",
+          "status": "mapped",
+          "targets": [
+            "offers.cta_label"
+          ]
+        },
+        {
+          "field": "headline",
+          "status": "mapped",
+          "targets": [
+            "offers.headline"
+          ]
+        },
+        {
+          "field": "eyebrow",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "rate-starting-from",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "desktop-overlay-position",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "mobile-overlay-position",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "default-card",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "sort-order",
+          "status": "mapped",
+          "targets": [
+            "rate_merchandising.position"
+          ]
+        },
+        {
+          "field": "cancellation-full-forfeit-window",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "cancellation-full-forfeit-window-period",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "border-options",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "accent-color-2",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        },
+        {
+          "field": "location",
+          "status": "mapped",
+          "targets": [
+            "offers.location_id"
+          ]
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "offers.name"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Rate-card artwork, overlay positions, styling, geo-fencing and cancellation-window fields are editorial presentation or Mews-owned rules; no D1 column yet."
+        }
+      ]
+    },
+    {
+      "sourceCollection": "addOns",
+      "sourceFile": "2026-11-15 - Add Ons.csv",
+      "sourceRows": 9,
+      "d1Targets": [
+        "add_ons"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "add_ons.id"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "item-name",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No dedicated column; Mews owns product identity and price."
+        },
+        {
+          "field": "short-description",
+          "status": "mapped",
+          "targets": [
+            "add_ons.description (fallback only)"
+          ]
+        },
+        {
+          "field": "long-description",
+          "status": "mapped",
+          "targets": [
+            "add_ons.description"
+          ]
+        },
+        {
+          "field": "mews-product-id",
+          "status": "mapped",
+          "targets": [
+            "add_ons.mews_product_id"
+          ]
+        },
+        {
+          "field": "sort",
+          "status": "mapped",
+          "targets": [
+            "add_ons.sort_order"
+          ]
+        },
+        {
+          "field": "enable-quantity",
+          "status": "mapped",
+          "targets": [
+            "add_ons.quantity_cap"
+          ]
+        },
+        {
+          "field": "max-quantity-per-stay",
+          "status": "mapped",
+          "targets": [
+            "add_ons.quantity_cap"
+          ]
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "add_ons.name"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "No dedicated column; Mews owns product identity and price."
+        }
+      ]
+    },
+    {
+      "sourceCollection": "photoHotspots",
+      "sourceFile": "2026-11-15 - Photo Hotspots.csv",
+      "sourceRows": 238,
+      "d1Targets": [],
+      "fields": [
+        {
+          "field": "id",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: export has no photo-file-id/photo-url, so there is no stable media ID. W2.4 resolves identity through a source adapter."
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "amenity",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: export has no photo-file-id/photo-url, so there is no stable media ID. W2.4 resolves identity through a source adapter."
+        },
+        {
+          "field": "x-percent",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: export has no photo-file-id/photo-url, so there is no stable media ID. W2.4 resolves identity through a source adapter."
+        },
+        {
+          "field": "y-percent",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: export has no photo-file-id/photo-url, so there is no stable media ID. W2.4 resolves identity through a source adapter."
+        },
+        {
+          "field": "display-order",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: export has no photo-file-id/photo-url, so there is no stable media ID. W2.4 resolves identity through a source adapter."
+        },
+        {
+          "field": "active",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: export has no photo-file-id/photo-url, so there is no stable media ID. W2.4 resolves identity through a source adapter."
+        },
+        {
+          "field": "name",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: export has no photo-file-id/photo-url, so there is no stable media ID. W2.4 resolves identity through a source adapter."
+        },
+        {
+          "field": "slug",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: export has no photo-file-id/photo-url, so there is no stable media ID. W2.4 resolves identity through a source adapter."
+        }
+      ]
+    },
+    {
+      "sourceCollection": "instagrams",
+      "sourceFile": "2026-11-15 - Instagrams.csv",
+      "sourceRows": 20,
+      "d1Targets": [
+        "content_items",
+        "content_revisions"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "media-type",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "caption",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "instagram-url",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "shortcode",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "instagram-username",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "sort",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "caption-rich-text",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=instagram)"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceCollection": "outlets",
+      "sourceFile": "2026-11-15 - Outlets.csv",
+      "sourceRows": 3,
+      "d1Targets": [
+        "content_items",
+        "content_revisions"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "outlet-name",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "outlet-type",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "street-address-line-1",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "street-address-line-2",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "city",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "state",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "postal-code",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "outlet-short-name",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "short-description",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "long-description",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "website",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "instrgram",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "facebook",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "yelp",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "hours-of-operation",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "email-address",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "location",
+          "status": "mapped",
+          "targets": [
+            "content_items.location_id"
+          ]
+        },
+        {
+          "field": "reservations-url",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "main-phone",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "google-maps-link",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=outlet)"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceCollection": "contentSettings",
+      "sourceFile": "2026-11-15 - Content Settings.csv",
+      "sourceRows": 1,
+      "d1Targets": [
+        "content_items",
+        "content_revisions"
+      ],
+      "fields": [
+        {
+          "field": "id",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "refundable-language",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "non-refundable-language",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "partially-refundable-language",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "refundable-language-sub-title",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "non-refundable-language-sub-title",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "partially-refundable-language-sub-title",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "location",
+          "status": "mapped",
+          "targets": [
+            "content_items.location_id"
+          ]
+        },
+        {
+          "field": "at-time-of-booking",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "at-time-of-booking-sub-title",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "next-due-date",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "next-due-date-sub-title",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "name",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        },
+        {
+          "field": "slug",
+          "status": "mapped",
+          "targets": [
+            "content_revisions.payload_json (kind=policy)"
+          ]
+        }
+      ]
+    },
+    {
+      "sourceCollection": "menuItems",
+      "sourceFile": "2026-11-15 - Menu Items.csv",
+      "sourceRows": 0,
+      "d1Targets": [],
+      "fields": [
+        {
+          "field": "id",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: source collection is empty."
+        },
+        {
+          "field": "cmsLocaleId",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "createdOn",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastUpdated",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "lastPublished",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isArchived",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "isDraft",
+          "status": "metadata",
+          "targets": [],
+          "reason": "Import metadata or publication state; not stored as its own column"
+        },
+        {
+          "field": "name",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: source collection is empty."
+        },
+        {
+          "field": "slug",
+          "status": "unmapped",
+          "targets": [],
+          "reason": "Excluded: source collection is empty."
+        }
+      ]
+    }
+  ]
+}

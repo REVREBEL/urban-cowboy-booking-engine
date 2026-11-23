@@ -112,8 +112,10 @@ this work; applying the regenerated seed is a separate, explicitly approved step
 
 ## Remaining gates (not resolved by this code change)
 
-- `locations.mews_hotel_id` is NULL for all 4 locations: the export has no Mews
-  hotel field. Confirm the per-location Mews mapping.
+- `locations.mews_hotel_id` is mapped only for Catskills, from the documented
+  Hotel ID in `docs/catskills-mews-ids.md` (W2.3). The other three remain NULL
+  because no per-property ID is documented; it is editorial metadata, never a
+  Mews call input. See `docs/application/w2-3-cms-import-reconciliation.md`.
 - 1 of 22 room types is a draft in Webflow but `room_types` has no status column,
   so D1 cannot filter it. Add editorial status or resolve the draft before
   cutover. The draft ID is recorded in the reconciliation report.

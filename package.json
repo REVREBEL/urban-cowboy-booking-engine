@@ -28,6 +28,8 @@
     "test:seed": "node --test tests/seedD1.test.mjs",
     "test:migrate": "node --test tests/migrateD1.test.mjs",
     "seed:d1": "node scripts/seed-d1-from-webflow.mjs webflow_cms_export --write",
+    "seed:check": "node scripts/seed-d1-from-webflow.mjs webflow_cms_export --check",
+    "seed:diff": "node scripts/seed-d1-from-webflow.mjs webflow_cms_export --diff",
     "normalize:svgs": "node scripts/normalize-svg-assets.mjs --write",
     "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs",
     "mews:smoke": "bash scripts/test-mews-booking-api.sh",
