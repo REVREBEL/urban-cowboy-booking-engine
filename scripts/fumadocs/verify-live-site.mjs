@@ -63,7 +63,11 @@ for (const viewport of viewports) {
     const markerOk = body.includes(entry.marker);
     // Refreshable deep link: reloading must land on the same URL and still render.
     await page.reload({ waitUntil: "networkidle" });
-    const deepLinkOk = page.url() === url && (await page.locator("body").innerText()).includes(entry.marker);
+    // The GitHub Pages URL redirects to the custom domain, so compare paths,
+    // not origins, when checking that a deep link survives refresh.
+    const expectedPath = new URL(url).pathname;
+    const deepLinkOk = new URL(page.url()).pathname === expectedPath &&
+      (await page.locator("body").innerText()).includes(entry.marker);
     const images = await page.locator("img").evaluateAll((nodes) =>
       nodes.map((node) => ({ src: node.getAttribute("src"), ok: node.complete && node.naturalWidth > 0 })),
     );
