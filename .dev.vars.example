@@ -41,6 +41,7 @@ WEBFLOW_CMS_API_TOKEN=<Webflow CMS API token — DO NOT commit the real value>
 # Webflow without serving it; d1 serves published D1 rows and falls back safely.
 # CONTENT_SOURCE=webflow
 # CONTENT_SOURCE_POLICY_LANGUAGE=webflow
+# CONTENT_SOURCE_ADD_ONS=webflow
 
 # COW-82 guest hotspot cutover. webflow (default) keeps the existing source;
 # d1 serves only published, approved, non-deleted hotspots from D1.

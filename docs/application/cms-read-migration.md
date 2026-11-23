@@ -57,8 +57,32 @@ shadow parity, D1-mode responses and the Webflow fallback header. Manual parity
 review of rendered cards and the Photo Journey is still required before switching
 any production route to `d1`.
 
+## Add-ons adapter (COW-104)
+
+`/api/content/add-ons` now routes through `addOnsRead` in `worker/add-on-adapter.ts`.
+It follows the same contract as the policy adapter: `webflow` (default) calls the
+existing handler unchanged, `shadow` keeps the Webflow response and records a
+`addOns` parity summary only when it changes, and `d1` serves published,
+tenant/location-scoped `add_ons` rows with `X-Content-Source: d1`. Missing,
+draft-only or unnameable rows fall back to Webflow with
+`X-Content-Source: webflow-fallback` and `Cache-Control: no-store`.
+
+The D1 rows map to the existing `AddOnCmsItem` shape. D1 has no distinct
+`item-name` or image-URL column, so `itemName` reuses `name` and `imageUrl` is
+`null`; the icon media URL wiring is deferred to W3.4. `mewsProductId` remains a
+reference ID for the Mews product overlay, never a price or availability source.
+
+| Env var | Effect |
+| --- | --- |
+| `CONTENT_SOURCE_ADD_ONS` | Per-route override. `webflow`, `shadow` or `d1`; unset inherits `CONTENT_SOURCE`; invalid explicit values fail safe to `webflow`. |
+
+Verification: `node --test tests/addOnAdapter.test.ts` covers the response shape,
+published-only reads, tenant/location scoping, flag precedence, shadow parity
+storage, D1 mode and Webflow fallback.
+
 ## Deferred routes
 
-Rooms, rate cards, buildings, add-ons, amenities, hotspot associations and property
-settings keep their Webflow handlers. Each needs its own same-shaped adapter,
-parity report and flag before it can move behind `d1`.
+Rooms, rate cards, buildings, amenities and hotspot associations keep their
+Webflow handlers. Each needs its own same-shaped adapter, parity report and flag
+before it can move behind `d1`. Add-ons now has one; property settings and
+policy language already do.

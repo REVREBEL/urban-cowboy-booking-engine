@@ -24,7 +24,7 @@ import { onRequestGet as productsDebug } from "./mews/products-debug";
 import { runScheduledCalendarRefresh } from "./mews/calendar-engine";
 import { onRequestGet as rateCards } from "./webflow/rate-cards";
 import { policyLanguageRead } from "./content-adapters.ts";
-import { onRequestGet as addOns } from "./webflow/add-ons";
+import { addOnsRead } from "./add-on-adapter.ts";
 import { onRequestGet as roomTypeReviews } from "./webflow/room-type-reviews";
 import { onRequestGet as locations, onRequestStudioConfig } from "./webflow/locations";
 import { onRequestGet as buildings } from "./webflow/buildings";
@@ -112,7 +112,7 @@ export default {
     }
     if (url.pathname.match(/^\/api\/content\/add-ons\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
-      return addOns({ env });
+      return addOnsRead({ request, env, waitUntil: (p) => ctx.waitUntil(p) });
     }
     if (url.pathname.match(/^\/api\/content\/room-type-reviews\/?$/)) {
       if (request.method !== "GET") return json({ error: "not_found" }, 404);
