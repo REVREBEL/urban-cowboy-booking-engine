@@ -88,6 +88,12 @@ export interface DashboardApi {
   getContentItems<T>(kind?: string, tenant?: string, location?: string): Promise<T[]>;
   getAdminRooms<T>(): Promise<T[]>;
   getRoomGallery<T>(roomId: string): Promise<T>;
+  /** COW-84 durable hotspot editor; writes are COW-34 revisioned and admin-scoped. */
+  getRoomHotspots<T>(roomId: string): Promise<T>;
+  createRoomHotspot<T>(roomId: string, input: unknown): Promise<T>;
+  updateRoomHotspot<T>(roomId: string, mappingId: string, input: unknown): Promise<T>;
+  publishRoomHotspots<T>(roomId: string, input: unknown): Promise<T>;
+  rollbackRoomHotspots<T>(roomId: string, input: unknown): Promise<T>;
   /** COW-84 image catalog for linking room gallery photos. */
   getAdminMedia<T>(): Promise<T[]>;
   /** COW-73 amenity admin reads and the shared COW-38 editor writes. */
@@ -216,6 +222,24 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     },
     async getRoomGallery<T>(roomId: string): Promise<T> {
       return get<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/photos`);
+    },
+    async getRoomHotspots<T>(roomId: string): Promise<T> {
+      return get<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots`);
+    },
+    async createRoomHotspot<T>(roomId: string, input: unknown): Promise<T> {
+      return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots`, input);
+    },
+    async updateRoomHotspot<T>(roomId: string, mappingId: string, input: unknown): Promise<T> {
+      return patch<T>(
+        `/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots/${encodeURIComponent(mappingId)}`,
+        input,
+      );
+    },
+    async publishRoomHotspots<T>(roomId: string, input: unknown): Promise<T> {
+      return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots/publish`, input);
+    },
+    async rollbackRoomHotspots<T>(roomId: string, input: unknown): Promise<T> {
+      return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots/rollback`, input);
     },
     async getAdminMedia<T>(): Promise<T[]> {
       const data = await get<{ items?: T[] }>("/api/admin/media");
