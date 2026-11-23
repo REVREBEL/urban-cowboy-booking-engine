@@ -28,8 +28,8 @@ const live: RateCardLiveContent = {
 
 const pricing = {
   nightly: "$360.00", subtotal: "$1,080.00", taxesAndFees: "$92.40",
-  // 50% of the $1,172.40 total, matching the deposit copy below.
-  total: "$1,172.40", dueToday: "$586.20", remaining: "$586.20",
+  // 50% of the $1,080 room subtotal, with taxes in the remaining balance.
+  total: "$1,172.40", dueToday: "$540.00", remaining: "$632.40",
 };
 
 const cardPricing = {
@@ -71,8 +71,8 @@ function ConfigurableOfferDemo() {
         onToggleExpand={() => setExpanded((value) => !value)}
         onConfirmBooking={() => setExpanded(false)}
         pricing={pricing}
-        depositNote="50% deposit ($586.20) charged once the reservation is confirmed."
-        remainingNote="Remaining balance ($586.20) charged 5 days before arrival."
+        depositNote="50% deposit ($540.00) charged once the reservation is confirmed."
+        remainingNote="Remaining balance ($632.40, including taxes) charged 5 days before arrival."
         fullPolicyText="Free cancellation through 14 days before arrival."
         checkIn="2027-06-20"
       />
@@ -89,9 +89,9 @@ function SidePanelDemo() {
         variant="default" theme="plan-ahead" rateTitle="Plan Ahead"
         onClose={() => setLast("panel closed")}
         nightlyRate="$360" stayTotal="$1,080" taxesAndFees="$92.40"
-        totalStay="$1,172.40" dueAtBooking="$586.20" remaining="$586.20"
-        depositNote="50% deposit ($586.20) charged on confirmation."
-        remainingNote="Remaining balance ($586.20) charged before arrival."
+        totalStay="$1,172.40" dueAtBooking="$540.00" remaining="$632.40"
+        depositNote="50% deposit ($540.00) charged on confirmation."
+        remainingNote="Remaining balance ($632.40, including taxes) charged before arrival."
         policyText="Free cancellation through 14 days before arrival."
       />
       <p className="sr-only" role="status">{last}</p>
@@ -104,7 +104,7 @@ function PolicyDemo() {
     <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
       <PolicyDisplay
         title="Payment schedule" orientation="horizontal"
-        initialAmount="$586" remainingAmount="$586"
+        initialAmount="$540" remainingAmount="$632"
         text="Free cancellation until 14 days before arrival."
         showTooltips
       />
