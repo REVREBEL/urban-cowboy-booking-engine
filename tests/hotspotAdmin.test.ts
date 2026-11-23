@@ -505,3 +505,59 @@ test("rollback after a published deletion cannot resurrect the pin", async () =>
   assert.equal(listed.items.some((item: any) => item.id === created.mapping.id), false);
   assert.ok(rolled.status === 200 || rolled.status === 409);
 });
+
+test("publish is atomic when a base-row pin is pending alongside a staged deletion", async () => {
+  const db = makeDb();
+  const first = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
+  const second = await jsonBody(await createRoomHotspot(ctx(db, createInput({
+    sourceX: 0.3, sourceY: 0.4, reviewState: "pending", displayOrder: 1,
+  })), "room-a", allowAdmin));
+  await deleteRoomHotspot(ctx(db), "room-a", first.mapping.id, allowAdmin);
+
+  const blocked = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(blocked.status, 409, "pending base pin must block before any deletion is applied");
+  const firstRow = db.prepare("SELECT status, review_reason FROM photo_hotspot_mappings WHERE id = ?").get(first.mapping.id) as any;
+  assert.equal(firstRow.status, "published");
+  assert.notEqual(firstRow.review_reason, "deleted");
+  assert.equal(db.prepare("SELECT mapping_id FROM photo_hotspot_deletions WHERE mapping_id = ?").get(first.mapping.id) !== undefined, true);
+
+  await updateRoomHotspot(ctx(db, { reviewState: "approved" }), "room-a", second.mapping.id, allowAdmin);
+  const published = await publishRoomHotspots(
+    ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin,
+  );
+  assert.equal(published.status, 200);
+  const after = db.prepare("SELECT status, review_reason FROM photo_hotspot_mappings WHERE id = ?").get(first.mapping.id) as any;
+  assert.equal(after.status, "draft");
+  assert.equal(after.review_reason, "deleted");
+});
+
+test("URL-only replacement is a strict no-op even for a published pin", async () => {
+  const db = makeDb();
+  const created = await jsonBody(await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin));
+  await publishRoomHotspots(ctx(db, { mediaAssetId: "media-1", placementId: "place-1" }), "room-a", allowAdmin);
+  const before = db.prepare("SELECT source_version_id FROM photo_hotspot_mappings WHERE id = ?").get(created.mapping.id) as any;
+  const applied = await jsonBody(await applyHotspotReplacement(
+    ctx(db, replacementInput({ urlOnly: true })), "room-a", allowAdmin,
+  ));
+  assert.equal(applied.written, 0);
+  assert.equal(applied.stagedPublished, 0);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM photo_hotspot_drafts").get()?.n, 0);
+  const after = db.prepare("SELECT source_version_id FROM photo_hotspot_mappings WHERE id = ?").get(created.mapping.id) as any;
+  assert.equal(after.source_version_id, before.source_version_id);
+});
+
+test("crop remap with one excluded pending pin reports reviewRequired", async () => {
+  const db = makeDb();
+  await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin);
+  const sameHash = { sha256: "hash-1", phash: null, width: 1200, height: 800, exifOrientation: 1 as const };
+  const result = await jsonBody(await applyHotspotReplacement(ctx(db, replacementInput({
+    fromFingerprint: sameHash, toFingerprint: sameHash,
+    cropBefore: { left: 0, top: 0, width: 1, height: 1 },
+    cropAfter: { left: 0.5, top: 0.5, width: 0.4, height: 0.4 },
+  })), "room-a", allowAdmin));
+  assert.equal(result.decision, "crop_remap");
+  assert.equal(result.reviewRequired, true, "an individually pending pin forces review even when the decision is crop_remap");
+});

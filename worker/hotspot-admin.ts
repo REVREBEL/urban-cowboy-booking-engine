@@ -464,8 +464,19 @@ export async function publishRoomHotspots(
   const actor = principal.email || principal.sub || "unknown";
   const drafts = await loadDrafts(db, tenant, input.mediaAssetId);
   const scoped = [...drafts.values()].filter((draft) => draft.placementId === input.placementId);
-  if (scoped.some((draft) => draft.reviewState === "pending")) {
-    return json({ ok: false, error: "review_pending", pending: scoped.length }, 409, "no-store");
+  // Preflight the entire resulting placement before any write. A newly created
+  // pin can be pending on the base row rather than in the draft overlay; if we
+  // applied staged deletions first, a 409 from the publisher would leave a
+  // partially committed publish.
+  const baseRows = parseRows((await db.prepare(
+    `SELECT ${MAPPING_COLUMNS} FROM photo_hotspot_mappings
+      WHERE tenant_id = ?1 AND media_asset_id = ?2 AND placement_id = ?3`,
+  ).bind(tenant, input.mediaAssetId, input.placementId).all()).results ?? []);
+  const pendingBase = baseRows.filter((row) =>
+    row.reviewReason !== "deleted" && row.reviewState === "pending").length;
+  const pendingDraft = scoped.filter((draft) => draft.reviewState === "pending").length;
+  if (pendingBase || pendingDraft) {
+    return json({ ok: false, error: "review_pending", pending: pendingBase + pendingDraft }, 409, "no-store");
   }
   const deletions = await loadDeletions(db, tenant, input.mediaAssetId);
   const removed = [...deletions.values()].filter((snapshot) => snapshot.placementId === input.placementId);
@@ -638,6 +649,11 @@ async function runReplacement(
   const reviewRequired = plan.reviewRequired
     || plan.mappings.some((mapping) => mapping.reviewState === "pending");
 
+  // URL-only changes never alter geometry: stay a strict no-op.
+  if (plan.decision === "url_only") {
+    return json({ written: 0, stagedPublished: 0, decision: plan.decision, reviewRequired }, 200, "no-store");
+  }
+
   if (!commit) return json({ ...plan, reviewRequired }, 200, "no-store");
 
   const previousRows = await db.prepare(
@@ -671,7 +687,7 @@ async function runReplacement(
   if (stageStatements.length) await db.batch(stageStatements);
 
   let written = plan.mappings.length;
-  if (draftMappings.length && plan.decision !== "url_only") {
+  if (draftMappings.length) {
     const result = await applyReplacement(
       db,
       { ...plan, mappings: draftMappings },

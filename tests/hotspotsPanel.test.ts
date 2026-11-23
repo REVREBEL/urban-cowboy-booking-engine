@@ -113,3 +113,11 @@ test("replacement source version is independent of the rollback target", () => {
   assert.match(panel, /value=\{versionId\} onChange=\{\(event\) => setVersionId/);
   assert.match(panel, /setFromVersionId\(photo\.currentVersionId\)/);
 });
+
+test("plan feedback is driven by the response review flag, never the decision alone", () => {
+  // The worker derives reviewRequired from decision + pending mappings; the
+  // panel must key its safe/blocked messaging off that returned flag.
+  assert.match(panel, /result\.reviewRequired \? "error" : "success"/);
+  assert.match(panel, /requires review before publishing/);
+  assert.match(panel, /safe to publish/);
+});
