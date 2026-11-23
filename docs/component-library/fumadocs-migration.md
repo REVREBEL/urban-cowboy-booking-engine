@@ -66,6 +66,32 @@ All planned rows now have a specific note; the inventory generator and `docs:inv
 that documented rows point at real indexed pages and that exclusions/candidate dispositions carry
 evidence.
 
+## COW-85 M4 — live published-site verification
+
+Dated baseline: **2026-11-23T16:44Z** against `https://revrebel.github.io/urban-cowboy-booking-engine/`
+(which 301s to `http://resource-hub.revrebel.io/urban-cowboy-booking-engine/`). Reproduce with
+`node scripts/fumadocs/verify-live-site.mjs`.
+
+| Check | Result |
+| --- | --- |
+| All 10 M1/M3 component pages + home | 200 at desktop (1280×900) and mobile (375×812) |
+| Refreshable deep links | All 10 pages survive reload at the same URL |
+| Static search | `Focus` finds `focus-amenity`; selecting the result navigates to that page |
+| Interactive demos | Amenity rail toggle changes state; rate-panel close/reopen works |
+| Console / network errors | **FAILED** — repeated 404s for inline mask/background assets |
+| Custom-domain HTTPS | **FAILED** — `resource-hub.revrebel.io` serves a `*.github.io` certificate (`subjectAltName` mismatch) and the redirect targets `http://` |
+
+The 404s are root-relative `url(/assets/...)` references inside inline component styles (the booking
+header logo, expanded-search arrow and amenity badge) plus signboard artwork that the docs build did
+not copy. The local `docs:smoke` check could not catch them because it only inspects static HTML
+`src`/`href`. Fixes are in PR #363: `finalize-docs-assets.mjs` now prefixes inline URLs and
+`prepare-docs-assets.mjs` copies the missing assets. The verifier itself now fails on broken images
+and missing demo controls instead of silently skipping them.
+
+**Post-deploy acceptance (open):** merge PR #363, wait for the Pages deployment from `main`, rerun
+`node scripts/fumadocs/verify-live-site.mjs`, and record a passing result here. The custom-domain HTTPS
+certificate/redirect remains a separate infrastructure follow-up; the canonical URL must use valid HTTPS.
+
 ## COW-70 catalog coverage
 
 `docs/component-library/coverage-matrix.json` is the tracked catalog matrix. Regenerate it

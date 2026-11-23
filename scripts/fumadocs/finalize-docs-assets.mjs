@@ -19,7 +19,15 @@ function walk(dir) {
 
 for (const path of walk(out).filter((file) => file.endsWith(".html"))) {
   const html = readFileSync(path, "utf8");
-  const next = html.replace(/(src|href)="\/assets\//g, `$1="${basePath}/assets/`);
+  let next = html.replace(/(src|href)="\/assets\//g, `$1="${basePath}/assets/`);
+  // Production components emit root-relative mask/background URLs inside
+  // inline styles. HTML escapes the quotes as &quot;; prefix those too so the
+  // images resolve under the Pages subpath instead of the domain root.
+  next = next
+    .replace(/(url\(&quot;)\/assets\//g, `$1${basePath}/assets/`)
+    .replace(/(url\(&#39;)\/assets\//g, `$1${basePath}/assets/`)
+    .replace(/(url\(")\/assets\//g, `$1${basePath}/assets/`)
+    .replace(/(url\(')\/assets\//g, `$1${basePath}/assets/`);
   if (next !== html) {
     writeFileSync(path, next);
     replacements += 1;
