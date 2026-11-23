@@ -56,6 +56,8 @@ export interface Env {
   // Per-route overrides for the CMS read migration (COW-39). Blank means use
   // CONTENT_SOURCE, which defaults to webflow until each route is verified.
   CONTENT_SOURCE_POLICY_LANGUAGE?: string;
+  // COW-104 per-route flag for the guest add-ons adapter.
+  CONTENT_SOURCE_ADD_ONS?: string;
 }
 
 // POST best-effort d'un JSON vers une URL de webhook. No-op si l'URL est absente/invalide.

@@ -57,8 +57,50 @@ shadow parity, D1-mode responses and the Webflow fallback header. Manual parity
 review of rendered cards and the Photo Journey is still required before switching
 any production route to `d1`.
 
+## Add-ons adapter (COW-104)
+
+`/api/content/add-ons` now routes through `addOnsRead` in `worker/add-on-adapter.ts`.
+It follows the same contract as the policy adapter: `webflow` (default) calls the
+existing handler unchanged, `shadow` keeps the Webflow response and records a
+`addOns` parity summary only when it changes, and `d1` serves published,
+tenant/location-scoped D1 content with `X-Content-Source: d1`. Anything incomplete
+falls back to Webflow with `X-Content-Source: webflow-fallback` and
+`Cache-Control: no-store`.
+
+### Source and cutover marker
+
+The flat `add_ons` table cannot represent the Webflow display fields: it has one
+`description`, no distinct `item-name`, and only a media asset ID. The adapter
+therefore reads published `content_items` of kind `add_on`, whose current revision
+carries the **full CMS-shaped payload** (`id`, `name`, `itemName`,
+`shortDescription`, `longDescription`, `mewsProductId`, `imageUrl`). Every display
+field must be present with the correct type — including a nullable `imageUrl` — or
+the whole collection falls back. Values are never collapsed or defaulted, so D1
+mode cannot silently change extras presentation.
+
+D1 is only eligible once a property-scoped cutover marker is published: a single
+`content_items` row of kind `add_on_sync`, slug `complete`, whose revision declares
+`expectedCount`. The count must match the number of published `add_on` items in the
+same tenant/location. A missing, draft, ambiguous, malformed or mismatched marker
+keeps Webflow authoritative, so a partially migrated collection cannot hide
+merchandising. `mewsProductId` remains a reference ID for the Mews product overlay,
+never a price or availability source.
+
+Shadow parity compares every display field per item, so missing descriptions or
+different image URLs are visible before any flag is flipped.
+
+| Env var | Effect |
+| --- | --- |
+| `CONTENT_SOURCE_ADD_ONS` | Per-route override. `webflow`, `shadow` or `d1`; unset inherits `CONTENT_SOURCE`; invalid explicit values fail safe to `webflow`. |
+
+Verification: `node --test tests/addOnAdapter.test.ts` (10 tests) covers distinct
+field preservation, partial collections, missing/draft/malformed markers,
+incomplete payloads, tenant/location scoping, flag precedence, per-field parity,
+D1 mode and Webflow fallback.
+
 ## Deferred routes
 
-Rooms, rate cards, buildings, add-ons, amenities, hotspot associations and property
-settings keep their Webflow handlers. Each needs its own same-shaped adapter,
-parity report and flag before it can move behind `d1`.
+Rooms, rate cards, buildings, amenities and hotspot associations keep their
+Webflow handlers. Each needs its own same-shaped adapter, parity report and flag
+before it can move behind `d1`. Add-ons now has one; property settings and
+policy language already do.
