@@ -5,13 +5,18 @@
   "type": "module",
   "description": "Urban Cowboy (Mews Booking Engine API) — Cloudflare Workers + Static Assets",
   "workspaces": [
-    "docs-app"
+    "docs-app",
+    "admin-app"
   ],
   "engines": {
     "node": ">=22.5.0"
   },
   "scripts": {
     "dev": "npm run build && concurrently -k -n worker,web -c magenta,cyan \"npm:dev:worker\" \"npm:dev:web\"",
+    "admin:dev": "npm run dev -w admin-app",
+    "admin:build": "npm run build -w admin-app",
+    "admin:typecheck": "npm run typecheck -w admin-app",
+    "admin:deploy": "npm run deploy -w admin-app",
     "dev:worker": "VITE_SHOW_API_DEBUGGER=true vite build && wrangler dev --port 8787",
     "dev:web": "vite",
     "components": "vite --open /components.html",
