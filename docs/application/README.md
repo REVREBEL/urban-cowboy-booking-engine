@@ -10,6 +10,7 @@ The goal is to preserve not only what the application does, but why particular i
 - [Admin Portal parity matrix](../application/admin-portal-parity-matrix.md) — COW-89 W1.1 capability-by-capability source → destination matrix and migration sequence.
 - [Admin Portal auth, sessions and RBAC](./admin-portal-auth-rbac.md) — COW-91 W1.3 Access verifier reuse, capability matrix, protected layout and CSRF.
 - [Admin Portal route and workflow port](./admin-portal-route-port.md) — COW-92 W1.4 route parity, panel reuse, capability gates and legacy defect fix.
+- [W1.5 Sync Gate 1 readiness](./admin-portal-gate1-readiness.md) — COW-93 evidence, route/API/auth contract, and open cross-workstream decisions.
 
 - [Calendar Availability & Rate Snapshot Architecture](./calendar-availability-rate-snapshot.md) — how calendar rates, restrictions, caching, adaptive Mews polling, reservation-triggered refreshes, and the future Connector API migration work.
 
