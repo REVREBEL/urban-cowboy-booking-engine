@@ -1,0 +1,9 @@
+/* Reuse the booking engine's Tailwind v4 design system rather than defining a
+   second token set for the admin app. */
+@import "../../src/styles/index.css";
+
+/* Tailwind's automatic source detection starts at the workspace that owns this
+   stylesheet. Include the shared component tree so its utility classes are
+   emitted here as well. */
+@source "../../src";
+@source ".";

@@ -1,0 +1,106 @@
+// COW-90: the standalone Cloudflare Next.js (vinext) admin foundation.
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+import { getAdminRuntimeConfig } from "../admin-app/lib/env.ts";
+
+const root = new URL("../", import.meta.url);
+const read = (path: string) => readFileSync(new URL(path, root), "utf8");
+const json = (path: string) => JSON.parse(read(path)) as Record<string, unknown>;
+const withEnv = <T>(key: string, value: string | undefined, run: () => T): T => {
+  const previous = process.env[key];
+  if (value === undefined) delete process.env[key];
+  else process.env[key] = value;
+  try {
+    return run();
+  } finally {
+    if (previous === undefined) delete process.env[key];
+    else process.env[key] = previous;
+  }
+};
+
+test("admin app is an npm workspace with delegation scripts", () => {
+  const rootPkg = json("package.json");
+  const workspaces = rootPkg.workspaces as string[];
+  assert.ok(workspaces.includes("admin-app"));
+  for (const script of ["admin:dev", "admin:build", "admin:typecheck", "admin:deploy"]) {
+    assert.match(String((rootPkg.scripts as Record<string, string>)[script]), /-w admin-app/);
+  }
+});
+
+test("admin app dependencies are pinned, not floating on latest", () => {
+  const pkg = json("admin-app/package.json");
+  for (const group of ["dependencies", "devDependencies"]) {
+    const deps = pkg[group] as Record<string, string>;
+    assert.ok(deps && Object.keys(deps).length > 0, `${group} is populated`);
+    for (const [name, version] of Object.entries(deps)) {
+      assert.notEqual(version, "latest", `${name} must be pinned`);
+    }
+  }
+  assert.equal(pkg.type, "module");
+  assert.equal(pkg.private, true);
+});
+
+test("admin runtime config fails closed on malformed environment", () => {
+  withEnv("API_BASE_URL", undefined, () => {
+    withEnv("API_REQUEST_TIMEOUT_MS", undefined, () => {
+      assert.deepEqual(getAdminRuntimeConfig(), {
+        apiBaseUrl: "",
+        requestTimeoutMs: 8_000,
+      });
+    });
+  });
+
+  withEnv("API_BASE_URL", "https://api.example.com///", () => {
+    assert.equal(getAdminRuntimeConfig().apiBaseUrl, "https://api.example.com");
+  });
+
+  assert.throws(
+    () => withEnv("API_BASE_URL", "api.example.com", () => getAdminRuntimeConfig()),
+    /absolute http\(s\) origin/,
+  );
+  for (const invalid of [
+    "https://user:pass@api.example.com",
+    "https://api.example.com/v1",
+    "https://api.example.com?tenant=x",
+    "https://api.example.com/#fragment",
+    "ftp://api.example.com",
+  ]) {
+    assert.throws(
+      () => withEnv("API_BASE_URL", invalid, () => getAdminRuntimeConfig()),
+      undefined,
+      `${invalid} must be rejected`,
+    );
+  }
+  assert.throws(
+    () => withEnv("API_REQUEST_TIMEOUT_MS", "5", () => getAdminRuntimeConfig()),
+    /between 1000 and 60000/,
+  );
+});
+
+test("Cloudflare worker config stays cache-free and keeps proxy ahead of assets", () => {
+  const config = read("admin-app/cloudflare.config.ts");
+  assert.match(config, /name: "urban-cowboy-admin"/);
+  assert.match(config, /compatibilityFlags: \["nodejs_compat"\]/);
+  assert.match(config, /runWorkerFirst: \["\/\*", "!\/_next\/static\/\*", "!\/\*\/_next\/static\/\*"\]/);
+  assert.doesNotMatch(config, /bindings\.secret\(/);
+});
+
+test("admin route group owns error, loading and not-found boundaries", () => {
+  for (const file of ["layout.tsx", "page.tsx", "loading.tsx", "error.tsx", "not-found.tsx"]) {
+    assert.ok(read(`admin-app/app/(admin)/${file}`).length > 0, `${file} exists`);
+  }
+  assert.match(read("admin-app/app/(admin)/error.tsx"), /"use client"/);
+  assert.match(read("admin-app/proxy.ts"), /no-store, private/);
+  assert.match(read("admin-app/app/api/health/route.ts"), /no-store, private/);
+});
+
+test("admin app reuses the shared design system instead of a second token set", () => {
+  assert.match(read("admin-app/app/globals.css"), /@import "\.\.\/\.\.\/src\/styles\/index\.css"/);
+  assert.match(read("admin-app/app/globals.css"), /@source "\.\.\/\.\.\/src"/);
+  assert.match(read("admin-app/vite.config.ts"), /new URL\("\.\.\/src", import\.meta\.url\)/);
+  const paths = (json("admin-app/tsconfig.json").compilerOptions as {
+    paths: Record<string, string[]>;
+  }).paths;
+  assert.deepEqual(paths, { "@/*": ["../src/*"] });
+});

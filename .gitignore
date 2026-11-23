@@ -7,6 +7,7 @@ docs-app/.next/
 docs-app/out/
 docs-app/.source/
 docs-app/next-env.d.ts
+*.tsbuildinfo
 
 # Generated docs copies of root-relative component assets (produced by prepare-docs-assets)
 docs-app/public/assets/icons/buildings/
