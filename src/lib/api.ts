@@ -29,7 +29,11 @@ import type {
 } from "../types/room-type-cms";
 import type { BookingLocationCmsMap } from "../types/location-cms";
 import type { BuildingCmsMap } from "../types/building-cms";
-import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
+import type {
+  RoomTypeCmsAmenityMap,
+  CmsPhotoHotspotMap,
+  CmsPhotoHotspotMapByRoom,
+} from "../types/photo-hotspot-cms";
 
 export class ApiError extends Error {
   status: number;
@@ -224,6 +228,7 @@ export const api = {
       galleries: RoomTypeCmsGalleryMap;
       amenities: RoomTypeCmsAmenityMap;
       hotspots: CmsPhotoHotspotMap;
+      hotspotsByRoom?: CmsPhotoHotspotMapByRoom | null;
       generatedAt?: string | null;
       stale?: boolean;
     }>("room-type-reviews?cmsVersion=6", {
@@ -235,6 +240,7 @@ export const api = {
       galleries: {} as RoomTypeCmsGalleryMap,
       amenities: {} as RoomTypeCmsAmenityMap,
       hotspots: {} as CmsPhotoHotspotMap,
+      hotspotsByRoom: {},
     })),
 
   roomTypeReviews: () =>

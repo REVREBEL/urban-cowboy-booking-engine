@@ -7,7 +7,11 @@ import type {
   RoomTypeCmsGalleryMap,
 } from "../../src/types/room-type-cms.ts";
 import type { Env } from "../mews/_lib.ts";
-import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../../src/types/photo-hotspot-cms.ts";
+import type {
+  RoomTypeCmsAmenityMap,
+  CmsPhotoHotspotMap,
+  CmsPhotoHotspotMapByRoom,
+} from "../../src/types/photo-hotspot-cms.ts";
 import { normalizePublishedAmenities, normalizeRoomAmenityMap, normalizePhotoHotspots } from "./photo-hotspots.ts";
 import { json } from "../mews/_lib.ts";
 import { applyPublishedAmenities } from "../published-amenities.ts";
@@ -52,6 +56,7 @@ export interface CachedReviewPayload {
   galleries: RoomTypeCmsGalleryMap;
   amenities: RoomTypeCmsAmenityMap;
   hotspots: CmsPhotoHotspotMap;
+  hotspotsByRoom?: CmsPhotoHotspotMapByRoom;
   hotspotSourceCount?: number;
   hotspotFetchError?: string | null;
 }
@@ -378,6 +383,7 @@ async function response(env: Env, payload: CachedReviewPayload, stale: boolean):
       galleries: guest.galleries,
       amenities: guest.amenities,
       hotspots: guest.hotspots,
+      hotspotsByRoom: guest.hotspotsByRoom ?? null,
       hotspotSourceCount: guest.hotspotSourceCount ?? null,
       generatedAt: new Date(guest.fetchedAt).toISOString(),
       stale,

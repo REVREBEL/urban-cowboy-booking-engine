@@ -92,8 +92,8 @@ This slice adds the admin surface for COW-34 durable pins on top of the publishe
 
 ### Published-only D1 guest hotspot read path
 
-- `worker/published-hotspots.ts` loads hotspots from `photo_hotspot_mappings` only when `status='published'`, `review_state='approved'` and `review_reason != 'deleted'`. It joins the tenant-scoped `media_assets` row and derives canonical photo keys with `cmsPhotoKeys`, so pins match the displayed Squarespace source URL across resize variants without depending on a transient URL. Coordinates are converted from normalized `0..1` source space to the guest's `0..100` percentages.
-- `worker/webflow/room-type-reviews.ts` applies the overlay on **every** response (not inside the Webflow cache), so a publish is visible immediately and a draft/pending edit never reaches a guest through cached content. `PHOTO_HOTSPOT_SOURCE` defaults to `webflow`; only the explicit `d1` value enables the D1 path, and a D1 read failure falls back to the Webflow hotspot map. No guest request fetches the Squarespace image feed live.
+- `worker/published-hotspots.ts` loads hotspots from `photo_hotspot_mappings` only when `status='published'`, `review_state='approved'` and `review_reason != 'deleted'`. It joins the tenant-scoped placement and `media_assets` rows, derives canonical photo keys with `cmsPhotoKeys` (stable across resize variants), and groups pins **by room** so a photo placed in two rooms never mixes their pins. Stored source coordinates are remapped through the published crop rectangle and EXIF orientation before conversion to the guest's `0..100` display percentages, so cropped/rotated photos show pins in the right place.
+- `worker/webflow/room-type-reviews.ts` applies the overlay on **every** response (not inside the Webflow cache), so a publish is visible immediately and a draft/pending edit never reaches a guest through cached content. The response carries a room-scoped `hotspotsByRoom` map; the flat `hotspots` map is intentionally left empty on the D1 path so a legacy client cannot render a cross-room merge. `PHOTO_HOTSPOT_SOURCE` defaults to `webflow`; only the explicit `d1` value enables the D1 path, and a D1 read failure falls back to the Webflow hotspot map. No guest request fetches the Squarespace image feed live. The journey selects `hotspotsByRoom[room.id]` in `RoomPhotoTour`, falling back to the flat Webflow map only when no room-scoped map is present.
 - `PHOTO_HOTSPOT_SOURCE` is declared in `worker/mews/_lib.ts`, `wrangler.toml` and `.dev.vars.example`; an unset value is omitted by the deploy renderer and fails safe to Webflow.
 
 ### Verification evidence (local, reproducible)
@@ -102,8 +102,8 @@ Run from the repo root on the merged `main`:
 
 | Check | Command | Result |
 | --- | --- | --- |
-| Full application suite | `npm test` | 521/521 pass |
-| Published-only guest hotspots | `node --test tests/publishedHotspots.test.ts` | 6/6 pass |
+| Full application suite | `npm test` | 524/524 pass |
+| Published-only guest hotspots | `node --test tests/publishedHotspots.test.ts` | 9/9 pass |
 | Hotspot admin lifecycle | `node --test tests/hotspotAdmin.test.ts` | 26/26 pass |
 | Hotspot dashboard panel | `node --test tests/hotspotsPanel.test.ts` | 12/12 pass |
 | Hotspot geometry/replacement | `node --test tests/hotspotGeometry.test.ts tests/hotspotMapping.test.ts tests/hotspotCanvas.test.ts` | pass |

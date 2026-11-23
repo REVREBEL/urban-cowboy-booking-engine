@@ -12,7 +12,11 @@ import { Pill, PillButton } from "@/components/ui/Pill";
 import { toPhotoTourRoom } from "../data/photoTourRooms";
 import type { ShapedRoom } from "../types/mews";
 import type { RoomTypeCmsGalleryMap } from "../types/room-type-cms";
-import type { RoomTypeCmsAmenityMap, CmsPhotoHotspotMap } from "../types/photo-hotspot-cms";
+import type {
+  RoomTypeCmsAmenityMap,
+  CmsPhotoHotspotMap,
+  CmsPhotoHotspotMapByRoom,
+} from "../types/photo-hotspot-cms";
 import { photoGalleryForRoom, studioEditorialRoomTypeId, type PhotoSource } from "@/data/photoGalleries";
 import type { Feature, MatchProfile } from "../journey/data";
 import { money as formatMoney } from "@/lib/format";
@@ -71,7 +75,7 @@ function useHorizontalFilterStrip(itemsKey: string) {
 }
 
 
-export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, photoSource = "webflow", studioCatalog = false, children, onChoose, onEditJournal, onChangeDates }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; photoSource?: PhotoSource; studioCatalog?: boolean; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void; onChangeDates: () => void }) {
+export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmenities = {}, cmsHotspots = {}, cmsHotspotsByRoom = {}, photoSource = "webflow", studioCatalog = false, children, onChoose, onEditJournal, onChangeDates }: { profile: MatchProfile | null; rooms: ShapedRoom[]; imageBaseUrl: string; galleries: RoomTypeCmsGalleryMap; cmsAmenities?: RoomTypeCmsAmenityMap; cmsHotspots?: CmsPhotoHotspotMap; cmsHotspotsByRoom?: CmsPhotoHotspotMapByRoom; photoSource?: PhotoSource; studioCatalog?: boolean; guests: number; children: number; onChoose: (r: ShapedRoom) => void; onEditJournal: () => void; onChangeDates: () => void }) {
   const [building, setBuilding] = useState<string>("all");
   const [features, setFeatures] = useState<Feature[]>([]);
   const [sort, setSort] = useState<Sort>("price-asc");
@@ -398,7 +402,7 @@ export function PhotoRooms({ profile, rooms, imageBaseUrl, galleries, cmsAmeniti
       {view === "spreads" ? (
         <div className="j-room-spreads">
           {list.map((m, i) => (
-            <RoomPhotoTour key={m.room.id} room={m.room} cmsHotspots={cmsHotspots} position={i} count={list.length}
+            <RoomPhotoTour key={m.room.id} room={m.room} cmsHotspots={cmsHotspots} cmsHotspotsByRoom={cmsHotspotsByRoom} position={i} count={list.length}
               currency={m.source.rates[0]?.currency ?? "USD"}
               details={detail === m.room.id} sideAmenitiesHost={sideAmenitiesHost}
               onDetails={(open) => setDetail(open ? m.room.id : null)} onChoose={() => onChoose(m.source)}
