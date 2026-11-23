@@ -1,7 +1,11 @@
 // COW-99: provider-neutral Webflow photo import and master media identity.
 // Run with: node --test tests/webflowPhotoImport.test.ts
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { DatabaseSync } from "node:sqlite";
 import {
@@ -241,6 +245,92 @@ test("an alias owned by another tenant is never reused", async () => {
   db.close();
 });
 
+test("one source image can be placed in two rooms with a single master asset", async () => {
+  const db = makeDb();
+  const base = snapshot().photos[0];
+  const shared = snapshot({
+    photos: [
+      base,
+      { ...base, roomTypeRef: "rt-walden", position: 2 },
+    ],
+    roomTypeRefs: ["rt-alpine", "rt-walden"],
+  });
+  const plan = await planPhotoImport(d1(db), input(shared));
+  assert.equal(plan.summary.duplicate, 0);
+  assert.equal(plan.summary.create, 1);
+  assert.equal(plan.summary.update, 1);
+  assert.equal(plan.decisions[0].mediaId === plan.decisions[1].mediaId, true);
+  await applyPhotoImport(executor(db), plan);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_assets").get().n, 1);
+  const placements = db.prepare("SELECT target_id FROM media_placements ORDER BY target_id").all() as Array<{ target_id: string }>;
+  assert.deepEqual(placements.map((p) => p.target_id), ["rt-alpine", "rt-walden"]);
+  db.close();
+});
+
+test("an existing arbitrary v1 and current v2 are preserved on URL reimport", async () => {
+  const db = makeDb();
+  const original = snapshot();
+  await applyPhotoImport(executor(db), await planPhotoImport(d1(db), input(original)));
+  const mediaId = (db.prepare(
+    "SELECT media_asset_id FROM media_aliases WHERE alias_value='aaaaaaaaaaaaaaaaaaaaaaaa'",
+  ).get() as { media_asset_id: string }).media_asset_id;
+
+  // Simulate a registry asset whose v1 has a different primary key and whose
+  // current version is a replacement (v2), with real hotspot revision history.
+  db.exec(`
+    DELETE FROM media_asset_metadata WHERE media_asset_id='${mediaId}';
+    DELETE FROM media_versions WHERE media_asset_id='${mediaId}';
+    INSERT INTO media_versions (id, media_asset_id, version, squarespace_asset_id, squarespace_url)
+      VALUES ('legacy-v1-custom','${mediaId}',1,'legacy','https://legacy/v1.jpg'),
+             ('legacy-v2-custom','${mediaId}',2,'legacy','https://legacy/v2.jpg');
+    INSERT INTO media_asset_metadata (media_asset_id, tenant_id, current_version_id)
+      VALUES ('${mediaId}','${TENANT}','legacy-v2-custom');
+  `);
+
+  const changedUrl = "https://cdn.prod.website-files.com/site/aaaaaaaaaaaaaaaaaaaaaaaa_v3.jpg";
+  const changed = snapshot({
+    photos: original.photos.map((photo) =>
+      photo.sourceAssetId === "webflow_file_id:aaaaaaaaaaaaaaaaaaaaaaaa"
+        ? { ...photo, url: changedUrl }
+        : photo),
+  });
+  const plan = await planPhotoImport(d1(db), input(changed));
+  assert.equal(plan.decisions.some((d) => d.kind === "update" && d.mediaId === mediaId), true);
+  assert.equal(plan.statements.some((s) => s.sql.includes("INSERT INTO media_versions")), false);
+  assert.equal(plan.statements.some((s) => s.sql.includes("media_asset_metadata")), false);
+  await applyPhotoImport(executor(db), plan);
+
+  assert.equal(db.prepare("SELECT squarespace_url FROM media_assets WHERE id=?").get(mediaId)?.squarespace_url, changedUrl);
+  assert.deepEqual(
+    (db.prepare("SELECT id FROM media_versions WHERE media_asset_id=? ORDER BY version").all(mediaId) as Array<{ id: string }>).map((row) => row.id),
+    ["legacy-v1-custom", "legacy-v2-custom"],
+  );
+  assert.equal(
+    (db.prepare("SELECT current_version_id FROM media_asset_metadata WHERE media_asset_id=?").get(mediaId) as { current_version_id: string }).current_version_id,
+    "legacy-v2-custom",
+  );
+  assert.equal(db.prepare("PRAGMA foreign_key_check").all().length, 0);
+  db.close();
+});
+
+test("repeating the same import is idempotent", async () => {
+  const db = makeDb();
+  const snap = snapshot();
+  const first = await planPhotoImport(d1(db), input(snap));
+  await applyPhotoImport(executor(db), first);
+  const second = await planPhotoImport(d1(db), input(snap));
+  assert.equal(second.summary.create, 0);
+  assert.equal(second.summary.update, 3);
+  assert.equal(second.summary.duplicate, 0);
+  assert.equal(second.statements.some((s) => s.sql.includes("INSERT INTO media_versions")), false);
+  assert.equal(second.statements.some((s) => s.sql.startsWith("UPDATE media_placements")), false);
+  await applyPhotoImport(executor(db), second);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_assets").get().n, 3);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_placements").get().n, 3);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_aliases").get().n, 3);
+  db.close();
+});
+
 test("live Webflow fetch is paginated and uses the injected fetch function", async () => {
   const pages = [
     { items: [{ id: "a" }] },
@@ -257,4 +347,33 @@ test("live Webflow fetch is paginated and uses the injected fetch function", asy
   });
   assert.deepEqual(items.map((item) => item.id), ["a", "b"]);
   await assert.rejects(() => fetchWebflowRoomTypeItems({ siteId: "", collectionId: "c", token: "t" }));
+});
+
+test("a dry run opens --db read-only and leaves the export unchanged", () => {
+  const dir = mkdtempSync(join(tmpdir(), "wf-photos-"));
+  const dbPath = join(dir, "d1-export.sqlite");
+  const db = new DatabaseSync(dbPath);
+  db.exec("PRAGMA foreign_keys = ON");
+  for (const file of MIGRATIONS) db.exec(read(file));
+  db.exec(`
+    INSERT INTO tenants (id, slug, name) VALUES ('urban-cowboy','urban-cowboy','UC');
+    INSERT INTO locations (id, tenant_id, slug, name, time_zone) VALUES ('6abc9142d98b325b2821ca23','urban-cowboy','catskills','Catskills','America/New_York');
+    INSERT INTO room_types (id, tenant_id, location_id, mews_room_category_id, name, slug, sort_order) VALUES
+      ('rt-alpine','urban-cowboy','6abc9142d98b325b2821ca23','mews-alpine','Alpine','alpine',1),
+      ('rt-walden','urban-cowboy','6abc9142d98b325b2821ca23','mews-walden','Walden','walden',2);
+  `);
+  db.close();
+
+  const digest = (path: string) => createHash("sha256").update(readFileSync(path)).digest("hex");
+  const before = digest(dbPath);
+  const output = execFileSync(process.execPath, [
+    "scripts/sync-webflow-photos.mjs",
+    "--file", "tests/fixtures/webflow-room-types-photos.json",
+    "--room-types", "tests/fixtures/webflow-photo-room-types.json",
+    "--db", dbPath,
+    "--now", NOW,
+  ], { cwd: new URL("../", import.meta.url).pathname, encoding: "utf8" });
+  assert.match(output, /created\s+:\s+3/);
+  assert.equal(digest(dbPath), before, "dry run must not modify the supplied database file");
+  rmSync(dir, { recursive: true, force: true });
 });

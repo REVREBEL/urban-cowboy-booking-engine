@@ -119,11 +119,14 @@ export const webflowPhotoSourceAdapter: PhotoSourceAdapter = {
           return;
         }
         const sourceAssetId = `${aliases[0].aliasType}:${aliases[0].aliasValue}`;
-        if (seen.has(sourceAssetId)) {
+        // The same image may legitimately appear in more than one room gallery.
+        // Only a duplicate inside the same room is an error.
+        const seenKey = `${room.id}|${sourceAssetId}`;
+        if (seen.has(seenKey)) {
           issues.push({ kind: "duplicate-source-id", detail: `${room.id}: duplicate source asset ${sourceAssetId}` });
           return;
         }
-        seen.add(sourceAssetId);
+        seen.add(seenKey);
         photos.push({
           sourceAssetId,
           url,
@@ -133,7 +136,9 @@ export const webflowPhotoSourceAdapter: PhotoSourceAdapter = {
           width: numberOrNull(image.width),
           height: numberOrNull(image.height),
           aliases,
-          logicalKey: `${room.id}|${sourceAssetId}`,
+          // Room-independent: the same source image always derives the same
+          // master ID, regardless of which gallery first imports it.
+          logicalKey: sourceAssetId,
         });
       });
     }

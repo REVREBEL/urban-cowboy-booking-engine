@@ -50,7 +50,25 @@ function loadRoomTypes(raw) {
 }
 
 function makeDb(path, roomTypes) {
-  const db = new DatabaseSync(path ?? ":memory:");
+  if (path) {
+    // A supplied export is read-only: a dry run must never migrate or mutate it.
+    const db = new DatabaseSync(path, { readOnly: true });
+    db.exec("PRAGMA foreign_keys = ON");
+    const required = [
+      "tenants", "locations", "room_types", "media_assets", "media_aliases",
+      "media_versions", "media_asset_metadata", "media_placements",
+    ];
+    const tables = new Set(
+      db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map((row) => row.name),
+    );
+    const missing = required.filter((table) => !tables.has(table));
+    if (missing.length) {
+      db.close();
+      throw new Error(`--db is missing required tables: ${missing.join(", ")}`);
+    }
+    return db;
+  }
+  const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = ON");
   for (const migration of MIGRATIONS) db.exec(readFileSync(new URL(`../${migration}`, import.meta.url), "utf8"));
   if (!path) {

@@ -17,8 +17,9 @@ This importer uses the existing Webflow photo/CMS functionality as a temporary i
 - New IDs are derived deterministically from `(tenant, provider-neutral logical key)` and use the neutral `mm-` prefix. URLs and provider names never become identity.
 - `media_aliases` holds stable source identifiers (`webflow_file_id`, `webflow_cdn_url`, and any future provider alias). Resolution is tenant-scoped and joins `media_assets` on both tenant and ID, so another tenant's alias is never reused.
 - A re-import resolves the same aliases, updates `squarespace_url`/`squarespace_url`-backed version URL, dimensions and alt text on the **same** `media_assets.id`, and upserts the same placement ID (`pl-<roomTypeId>-<mediaId>`). Hotspot mappings keyed on media/placement IDs survive.
-- Reordering changes only `media_placements.display_order`. Room remapping adds a placement; the old placement is never deleted.
-- `media_asset_metadata.current_version_id` stays on `<mediaId>:v1` for a URL-only import — a URL change is not a new binary version.
+- Reordering changes only `media_placements.display_order`. Room remapping adds a placement; the old placement is never deleted. A single source image may be placed in several rooms: one master asset, one placement per room, one `update` decision after the first `create`.
+- New assets get version 1 (`<mediaId>:v1`) and a matching `media_asset_metadata.current_version_id`. An existing asset keeps its real version IDs and current pointer: a URL-only re-import never creates a version row and never rewinds a replacement (e.g. an arbitrary v1 key with an active v2).
+- `--db <sqlite-file>` is opened **read-only** and validated against the required schema; a dry run never migrates or mutates the supplied export.
 
 ## Safety properties
 
@@ -62,7 +63,7 @@ npm run lint:controls
 npm run d1:migrate:check
 ```
 
-The test suite covers explicit room resolution, deterministic IDs, ordered placements, URL changes, provider switch, duplicate aliases, tenant isolation, room remapping, empty-source safety, non-deletion and paginated live fetch.
+The test suite covers explicit room resolution, deterministic IDs, ordered placements, URL changes, provider switch, duplicate aliases, tenant isolation, room remapping, shared images across rooms, arbitrary v1/current-v2 preservation, repeated idempotent import, read-only `--db`, empty-source safety, non-deletion and paginated live fetch.
 
 ## Next
 

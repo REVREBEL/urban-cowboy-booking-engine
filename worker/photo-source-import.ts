@@ -139,11 +139,16 @@ async function existingPlacements(
   return results;
 }
 
-function assetStatements(input: PhotoImportInput, photo: SourcePhoto, mediaId: string): SqlStatement[] {
+function assetStatements(
+  input: PhotoImportInput,
+  photo: SourcePhoto,
+  mediaId: string,
+  isNew: boolean,
+): SqlStatement[] {
   const now = input.now ?? "";
   const sourceAssetId = `${photo.aliases[0].aliasType}:${photo.aliases[0].aliasValue}`;
   const filename = filenameFrom(photo.url);
-  return [
+  const statements: SqlStatement[] = [
     {
       sql: `INSERT INTO media_assets
               (id, tenant_id, location_id, kind, original_filename, squarespace_asset_id,
@@ -158,33 +163,35 @@ function assetStatements(input: PhotoImportInput, photo: SourcePhoto, mediaId: s
       params: [mediaId, input.tenantId, input.locationId, filename, sourceAssetId, photo.url,
         photo.width, photo.height, photo.altText, now],
     },
-    {
+  ];
+  // An existing registry asset may have an arbitrary v1 primary key and a
+  // newer current version (a replacement/hotspot revision). A URL-only import
+  // must not invent a version row or rewind current_version_id: only the
+  // mutable URL/dimension fields on media_assets are updated.
+  if (isNew) {
+    statements.push({
       sql: `INSERT INTO media_versions
               (id, media_asset_id, version, squarespace_asset_id, squarespace_url,
                width, height, created_at)
-            VALUES (?1, ?2, 1, ?3, ?4, ?5, ?6, ?7)
-            ON CONFLICT(media_asset_id, version) DO UPDATE SET
-              squarespace_url = excluded.squarespace_url,
-              width = excluded.width,
-              height = excluded.height`,
+            VALUES (?1, ?2, 1, ?3, ?4, ?5, ?6, ?7)`,
       params: [`${mediaId}:v1`, mediaId, sourceAssetId, photo.url, photo.width, photo.height, now],
-    },
-    {
+    });
+    statements.push({
       sql: `INSERT INTO media_asset_metadata
               (media_asset_id, tenant_id, current_version_id, created_at, updated_at)
-            VALUES (?1, ?2, ?3, ?4, ?4)
-            ON CONFLICT(media_asset_id) DO UPDATE SET
-              current_version_id = excluded.current_version_id,
-              updated_at = excluded.updated_at`,
+            VALUES (?1, ?2, ?3, ?4, ?4)`,
       params: [mediaId, input.tenantId, `${mediaId}:v1`, now],
-    },
-    ...photo.aliases.map((alias) => ({
+    });
+  }
+  for (const alias of photo.aliases) {
+    statements.push({
       sql: `INSERT INTO media_aliases (id, tenant_id, media_asset_id, alias_type, alias_value, created_at)
             VALUES (?1, ?2, ?3, ?4, ?5, ?6) ON CONFLICT DO NOTHING`,
       params: [aliasId(input.tenantId, alias), input.tenantId, mediaId,
         alias.aliasType, alias.aliasValue, now],
-    })),
-  ];
+    });
+  }
+  return statements;
 }
 
 function placementId(roomTypeId: string, mediaId: string): string {
@@ -199,7 +206,12 @@ export async function planPhotoImport(
   const decisions: PhotoDecision[] = [];
   const statements: SqlStatement[] = [];
   const removed: RemovedPlacement[] = [];
-  const claimed = new Map<string, string>();
+  // One master asset may be placed in many rooms; the claim is per (asset, room).
+  const claimed = new Set<string>();
+  const plannedByRoom = new Map<string, Set<string>>();
+  // The first room to import a shared image creates its version rows; later
+  // rooms in the same plan must not try to create them again.
+  const createdInPlan = new Set<string>();
   const parked = new Set<string>();
 
   for (const photo of input.snapshot.photos) {
@@ -224,24 +236,28 @@ export async function planPhotoImport(
     }
     if (!mediaId) mediaId = mediaIdFor(input.tenantId, photo.logicalKey);
 
-    const previous = claimed.get(mediaId);
-    if (previous && previous !== `${photo.roomTypeRef}|${photo.position}`) {
+    const claimKey = `${mediaId}|${photo.roomTypeRef}`;
+    if (claimed.has(claimKey)) {
       decisions.push({
         kind: "duplicate", mediaId, photo,
-        detail: `master media ${mediaId} is already used by ${previous} in this import`,
+        detail: `master media ${mediaId} is already placed in room ${photo.roomTypeRef} in this import`,
       });
       continue;
     }
-    claimed.set(mediaId, `${photo.roomTypeRef}|${photo.position}`);
+    claimed.add(claimKey);
+    const roomAssets = plannedByRoom.get(photo.roomTypeRef) ?? new Set<string>();
+    roomAssets.add(mediaId);
+    plannedByRoom.set(photo.roomTypeRef, roomAssets);
 
-    const exists = state.assets.has(mediaId);
+    const exists = state.assets.has(mediaId) || createdInPlan.has(mediaId);
     const urlChanged = exists && state.assets.get(mediaId) !== photo.url;
     if (exists) {
       decisions.push({ kind: "update", mediaId, photo, urlChanged, matchedAlias });
     } else {
       decisions.push({ kind: "create", mediaId, photo });
+      createdInPlan.add(mediaId);
     }
-    statements.push(...assetStatements(input, photo, mediaId));
+    statements.push(...assetStatements(input, photo, mediaId, !exists));
 
     const existing = await existingPlacements(db, input.tenantId, photo.roomTypeRef);
     const targetId = placementId(photo.roomTypeRef, mediaId);
@@ -280,13 +296,6 @@ export async function planPhotoImport(
   }
 
   // Removed source images are reported, never deleted.
-  const plannedByRoom = new Map<string, Set<string>>();
-  for (const [mediaId, key] of claimed) {
-    const [roomTypeId] = key.split("|");
-    const set = plannedByRoom.get(roomTypeId) ?? new Set<string>();
-    set.add(mediaId);
-    plannedByRoom.set(roomTypeId, set);
-  }
   for (const roomTypeId of input.snapshot.roomTypeRefs ?? []) {
     for (const placement of await existingPlacements(db, input.tenantId, roomTypeId)) {
       if (!plannedByRoom.get(roomTypeId)?.has(placement.media_asset_id)) {
