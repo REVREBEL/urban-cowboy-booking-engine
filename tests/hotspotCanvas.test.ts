@@ -1,7 +1,7 @@
 // COW-84: pin coordinates must survive object-fit letterboxing for any aspect ratio.
 import assert from "node:assert/strict";
 import test from "node:test";
-import { containedRect, pointToSource } from "../src/lib/hotspotCanvas.ts";
+import { containedRect, nudgePoint, pointToSource } from "../src/lib/hotspotCanvas.ts";
 
 test("a 16:9 image fills a 16:9 container without offsets", () => {
   const rect = containedRect({ width: 1600, height: 900 }, { width: 1600, height: 900 });
@@ -31,4 +31,15 @@ test("a wide image is centred vertically inside a tall container", () => {
 test("empty dimensions never produce a divide-by-zero result", () => {
   const rect = containedRect({ width: 0, height: 0 }, { width: 100, height: 100 });
   assert.equal(pointToSource({ x: 0, y: 0 }, rect), null);
+});
+
+test("arrow keys nudge the placement crosshair and clamp at the edges", () => {
+  const centre = { x: 0.5, y: 0.5 };
+  assert.deepEqual(nudgePoint(centre, "ArrowRight"), { x: 0.51, y: 0.5 });
+  assert.deepEqual(nudgePoint(centre, "ArrowLeft"), { x: 0.49, y: 0.5 });
+  assert.deepEqual(nudgePoint(centre, "ArrowUp"), { x: 0.5, y: 0.49 });
+  assert.deepEqual(nudgePoint(centre, "ArrowDown"), { x: 0.5, y: 0.51 });
+  assert.deepEqual(nudgePoint({ x: 0, y: 0 }, "ArrowLeft"), { x: 0, y: 0 });
+  assert.deepEqual(nudgePoint({ x: 1, y: 1 }, "ArrowUp"), { x: 1, y: 0.99 });
+  assert.equal(nudgePoint(centre, "Enter"), null);
 });

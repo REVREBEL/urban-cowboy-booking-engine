@@ -26,6 +26,22 @@ export function containedRect(container: Size, natural: Size): ImageRect {
   };
 }
 
+/** Keyboard nudging for the placement crosshair in normalized source space. */
+export function nudgePoint(
+  point: { x: number; y: number },
+  key: string,
+  step = 0.01,
+): { x: number; y: number } | null {
+  const clamp = (value: number) => Math.min(1, Math.max(0, value));
+  switch (key) {
+    case "ArrowLeft": return { x: clamp(point.x - step), y: point.y };
+    case "ArrowRight": return { x: clamp(point.x + step), y: point.y };
+    case "ArrowUp": return { x: point.x, y: clamp(point.y - step) };
+    case "ArrowDown": return { x: point.x, y: clamp(point.y + step) };
+    default: return null;
+  }
+}
+
 /** Converts a click inside the container to normalized source-space coordinates. */
 export function pointToSource(point: { x: number; y: number }, rect: ImageRect): { x: number; y: number } | null {
   if (rect.width <= 0 || rect.height <= 0) return null;

@@ -51,8 +51,25 @@ test("room and photo changes reset stale selections", () => {
 });
 
 test("publish and rollback always pass the room placement", () => {
-  assert.match(panel, /mediaAssetId: photo\.mediaAssetId,\s*placementId: photo\.placementId/);
-  assert.match(panel, /toVersionId: versionId/);
+  const publish = panel.indexOf("api.publishRoomHotspots");
+  const rollback = panel.indexOf("api.rollbackRoomHotspots");
+  assert.ok(publish >= 0 && rollback > publish);
+  for (const call of [panel.slice(publish, rollback), panel.slice(rollback, rollback + 600)]) {
+    assert.match(call, /mediaAssetId: photo\.mediaAssetId/);
+    assert.match(call, /placementId: photo\.placementId/);
+  }
+  assert.match(panel.slice(rollback, rollback + 600), /toVersionId: versionId/);
+});
+
+test("pin placement is keyboard and pointer accessible", () => {
+  assert.match(panel, /role="button"/);
+  assert.match(panel, /tabIndex=\{0\}/);
+  assert.match(panel, /aria-label="Photo pin placement/);
+  assert.match(panel, /onKeyDown=\{onKeyDown\}/);
+  assert.match(panel, /event\.key === "Enter" \|\| event\.key === " "/);
+  assert.match(panel, /nudgePoint\(preview \?\? \{ x: 0\.5, y: 0\.5 \}, event\.key\)/);
+  assert.match(panel, /New pin source X/);
+  assert.match(panel, /New pin source Y/);
 });
 
 test("hotspot route is registered and gated with the other dashboard panels", () => {

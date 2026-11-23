@@ -1,8 +1,8 @@
 // COW-84 hotspot editor: durable pins on D1 room photos. Geometry is normalized
 // source-space X/Y; the Worker validates room and amenity eligibility and
 // writes COW-34 revision snapshots. No guest cutover happens here.
-import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
-import { containedRect, pointToSource, type ImageRect, type Size } from "@/lib/hotspotCanvas";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import { containedRect, nudgePoint, pointToSource, type ImageRect, type Size } from "@/lib/hotspotCanvas";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import type { DashboardApi } from "./api";
@@ -190,10 +190,14 @@ function HotspotEditorCard({
 function PhotoCanvas({
   photo,
   pins,
+  preview,
+  onPreview,
   onPlace,
 }: {
   photo: GalleryPhoto;
   pins: Hotspot[];
+  preview: { x: number; y: number } | null;
+  onPreview: (point: { x: number; y: number }) => void;
   onPlace: (x: number, y: number) => void;
 }) {
   const [failed, setFailed] = useState(false);
@@ -230,12 +234,29 @@ function PhotoCanvas({
     );
     if (source) onPlace(source.x, source.y);
   };
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      const point = preview ?? { x: 0.5, y: 0.5 };
+      event.preventDefault();
+      onPlace(point.x, point.y);
+      return;
+    }
+    const next = nudgePoint(preview ?? { x: 0.5, y: 0.5 }, event.key);
+    if (next) {
+      event.preventDefault();
+      onPreview(next);
+    }
+  };
 
   return (
     <div
       ref={containerRef}
-      className="relative aspect-video w-full overflow-hidden rounded-lg border border-border bg-muted"
+      className="relative aspect-video w-full overflow-hidden rounded-lg border border-border bg-muted focus-visible:ring-2 focus-visible:ring-fd-ring"
       onClick={place}
+      onKeyDown={onKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label="Photo pin placement. Click, or use arrow keys to move the crosshair then press Enter to place a pin."
       data-hotspot-canvas=""
     >
       {photo.sourceUrl && !failed ? (
@@ -265,6 +286,16 @@ function PhotoCanvas({
           }}
         />
       ))}
+      {preview && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-dashed border-paper bg-copper/40"
+          style={{
+            left: `${imageRect.left + preview.x * imageRect.width}px`,
+            top: `${imageRect.top + preview.y * imageRect.height}px`,
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -379,6 +410,7 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
     try {
       const result = await api.rollbackRoomHotspots<{ ok: boolean; error?: string; restored?: number }>(roomId, {
         mediaAssetId: photo.mediaAssetId,
+        placementId: photo.placementId,
         toVersionId: versionId,
       });
       setFeedback(result.ok
@@ -432,7 +464,13 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
       {photo && (
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="space-y-4">
-            <PhotoCanvas photo={photo} pins={pins} onPlace={(x, y) => setPlacement({ x, y })} />
+            <PhotoCanvas
+              photo={photo}
+              pins={pins}
+              preview={placement}
+              onPreview={setPlacement}
+              onPlace={(x, y) => setPlacement({ x, y })}
+            />
             <label className="flex flex-col gap-1 text-sm">
               Amenity
               <select value={amenityId} onChange={(event) => setAmenityId(event.target.value)} className="rounded-md border border-border bg-background px-3 py-2">
@@ -442,8 +480,30 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
                 ))}
               </select>
             </label>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="flex flex-col gap-1 text-sm">
+                New pin source X
+                <input
+                  type="number" min={0} max={1} step={0.01}
+                  value={placement?.x ?? 0.5}
+                  onChange={(event) => setPlacement({ x: clamp(Number(event.target.value)), y: placement?.y ?? 0.5 })}
+                  className="rounded-md border border-border bg-background px-3 py-2"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                New pin source Y
+                <input
+                  type="number" min={0} max={1} step={0.01}
+                  value={placement?.y ?? 0.5}
+                  onChange={(event) => setPlacement({ x: placement?.x ?? 0.5, y: clamp(Number(event.target.value)) })}
+                  className="rounded-md border border-border bg-background px-3 py-2"
+                />
+              </label>
+            </div>
             <p className="text-sm text-muted-foreground" aria-live="polite">
-              {placement ? `Pin at ${placement.x.toFixed(3)}, ${placement.y.toFixed(3)}` : "Click the photo to place a pin"}
+              {placement
+                ? `Pin at ${placement.x.toFixed(3)}, ${placement.y.toFixed(3)}`
+                : "Click the photo, use arrow keys then Enter, or enter X/Y above"}
             </p>
             <Button type="button" colorScheme="copper" size="small" textCase="title" disabled={busy} onClick={addPin}>
               Add pin
