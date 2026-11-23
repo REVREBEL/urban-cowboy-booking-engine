@@ -20,6 +20,8 @@ This milestone closes the one schema change W2.1 justified before content import
 
 - State lives in extension tables, not a physical column. The migration runner applies every SQL file twice and SQLite has no `ALTER TABLE ADD COLUMN IF NOT EXISTS`; extension tables follow the `amenity_editorial` and `0006_working_revision_pointer` pattern.
 - `status` is one of `draft`, `published`, `archived`. A record **with no publication row keeps the historical published behavior**, so databases seeded before 0012 do not lose content. The backfill writes `published` for existing rows with `INSERT OR IGNORE`.
+- `state_source` distinguishes `backfill` (migration placeholder), `import` (source-derived) and `editor` (explicit D1 decision). The importer upserts only where `state_source IN ('backfill', 'import')`; an `editor` row is never overwritten by a migration re-application or a reseed. This matters when 0012 is applied to an already-seeded database: the backfill's published placeholder must not mask a source draft.
+- Source mapping preserves all three states: `isArchived → archived`, otherwise `isDraft`/unpublished `→ draft`, else `published`.
 - `PRIMARY KEY (tenant_id, <entity>_id)` plus a composite FK `(tenant_id, <entity>_id) → <table>(tenant_id, id)` prevents a tenant from claiming another tenant's publication state. Read helpers join the source row on both tenant and ID, so the rule holds even for legacy rows that predate the constraint.
 - `source_snapshot_date` records the export that supplied the state.
 
@@ -32,8 +34,8 @@ This milestone closes the one schema change W2.1 justified before content import
 This was an open gate in the W2.1 assessment. The decision for the migration window is:
 
 1. **Webflow remains the editorial source until the W2.6 cutover.** Guest reads stay on the Webflow path by default; D1 snapshots are behind the existing per-route flags.
-2. The CMS export supplies publication state **once**, at import. The seed uses `ON CONFLICT DO NOTHING` for publication rows, so a later reseed cannot revert a decision made in D1.
-3. After import, the publication row is **editor-owned**: it changes through the COW-38 draft/publish flow (`publishRoomHotspots` is the established precedent for publish-time write-through), not through a CMS re-export.
+2. The CMS export supplies publication state at import, including `archived` where the source is archived. The seed upserts backfill/import rows but never an `editor` row, so a decision made in D1 survives reseeding.
+3. After import, the publication row is **editor-owned**: `setRoomTypePublication` / `setLocationPublication` stamp `state_source='editor'`, and the COW-38 draft/publish flow (`publishRoomHotspots` is the established precedent) is the intended caller. A CMS re-export cannot revert that decision.
 4. Published-only reads use `listPublishedRoomTypes` / `listPublishedLocations` (and the provider's filtered collections). Draft/archived records never reach a published snapshot.
 
 The old hardcoded deny-list in `worker/publication-gate.ts` remains the fallback for collections without a publication contract; it is no longer the source of truth for room types or locations in D1 reads.
@@ -45,7 +47,7 @@ npm run d1:migrate:check
 node --test tests/editorialPublicationState.test.ts
 npm run test:seed
 node --test tests/snapshotsParity.test.ts tests/roomAmenitiesAdmin.test.ts tests/publishedAmenitiesGuest.test.ts
-npm test                 # 537 tests pass
+npm test                 # 539 tests pass
 npm run typecheck
 npm run lint:controls
 ```

@@ -27,6 +27,10 @@ export type ContentStatusValue = z.infer<typeof contentStatusSchema>;
 export const editorialStatusSchema = z.enum(["draft", "published", "archived"]);
 export type EditorialStatus = z.infer<typeof editorialStatusSchema>;
 
+/** Where a publication row came from. Only `editor` is immune to reseeding. */
+export const publicationStateSourceSchema = z.enum(["backfill", "import", "editor"]);
+export type PublicationStateSource = z.infer<typeof publicationStateSourceSchema>;
+
 export const mediaAliasTypeSchema = z.enum([
   "webflow_file_id",
   "webflow_cdn_url",
@@ -128,12 +132,14 @@ export const roomTypePublicationRowSchema = z.object({
   tenant_id: id,
   room_type_id: id,
   status: editorialStatusSchema,
+  state_source: publicationStateSourceSchema,
   source_snapshot_date: nullableText,
   updated_at: timestamp,
 }).transform((row) => ({
   tenantId: row.tenant_id,
   roomTypeId: row.room_type_id,
   status: row.status,
+  stateSource: row.state_source,
   sourceSnapshotDate: row.source_snapshot_date,
   updatedAt: row.updated_at,
 }));
@@ -144,12 +150,14 @@ export const locationPublicationRowSchema = z.object({
   tenant_id: id,
   location_id: id,
   status: editorialStatusSchema,
+  state_source: publicationStateSourceSchema,
   source_snapshot_date: nullableText,
   updated_at: timestamp,
 }).transform((row) => ({
   tenantId: row.tenant_id,
   locationId: row.location_id,
   status: row.status,
+  stateSource: row.state_source,
   sourceSnapshotDate: row.source_snapshot_date,
   updatedAt: row.updated_at,
 }));

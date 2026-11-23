@@ -180,6 +180,9 @@ const integer = (row, key, fallback = 0) => {
 };
 const published = (row) =>
   !isTrue(row, "isDraft") && !isTrue(row, "isArchived") && val(row, "lastPublished") !== "";
+// COW-97: preserve archived separately from draft in the publication contract.
+const editorialStatus = (row) =>
+  isTrue(row, "isArchived") ? "archived" : published(row) ? "published" : "draft";
 
 function lit(value) {
   if (value === null || value === undefined || value === "") return "NULL";
@@ -187,11 +190,12 @@ function lit(value) {
   return `'${String(value).replace(/'/g, "''")}'`;
 }
 
-function buildInsert(table, columns, rows, conflict = ["id"], updates) {
+function buildInsert(table, columns, rows, conflict = ["id"], updates, conflictWhere) {
   const updateCols = updates ?? columns.filter((c) => !conflict.includes(c));
   const clause = updateCols.length
     ? ` ON CONFLICT (${conflict.join(", ")}) DO UPDATE SET ` +
-      updateCols.map((c) => `${c} = excluded.${c}`).join(", ")
+      updateCols.map((c) => `${c} = excluded.${c}`).join(", ") +
+      (conflictWhere ? ` WHERE ${conflictWhere}` : "")
     : " ON CONFLICT DO NOTHING";
   return rows.map(
     (values) =>
@@ -280,12 +284,14 @@ note(`${collections.locations.rows.length} locations have no Mews hotel ID in th
 // keeps editor-owned D1 state on reseed; the CMS export is the one-time baseline.
 addSection("location_publication", buildInsert(
   "location_publication",
-  ["tenant_id", "location_id", "status", "source_snapshot_date"],
+  ["tenant_id", "location_id", "status", "state_source", "source_snapshot_date", "updated_at"],
   collections.locations.rows.map((r) => [
-    TENANT_ID, val(r, "id"), published(r) ? "published" : "draft", WEBFLOW_SNAPSHOT_DATE,
+    TENANT_ID, val(r, "id"), editorialStatus(r), "import",
+    WEBFLOW_SNAPSHOT_DATE, `${WEBFLOW_SNAPSHOT_DATE}T00:00:00Z`,
   ]),
   ["tenant_id", "location_id"],
-  [],
+  ["status", "state_source", "source_snapshot_date", "updated_at"],
+  "location_publication.state_source IN ('backfill', 'import')",
 ));
 
 // 3. Buildings. The old seed left location_id NULL for all 9 even though the
@@ -401,12 +407,14 @@ if (draftRoomTypes) {
 }
 addSection("room_type_publication", buildInsert(
   "room_type_publication",
-  ["tenant_id", "room_type_id", "status", "source_snapshot_date"],
+  ["tenant_id", "room_type_id", "status", "state_source", "source_snapshot_date", "updated_at"],
   collections.roomTypes.rows.map((r) => [
-    TENANT_ID, val(r, "id"), published(r) ? "published" : "draft", WEBFLOW_SNAPSHOT_DATE,
+    TENANT_ID, val(r, "id"), editorialStatus(r), "import",
+    WEBFLOW_SNAPSHOT_DATE, `${WEBFLOW_SNAPSHOT_DATE}T00:00:00Z`,
   ]),
   ["tenant_id", "room_type_id"],
-  [],
+  ["status", "state_source", "source_snapshot_date", "updated_at"],
+  "room_type_publication.state_source IN ('backfill', 'import')",
 ));
 note(`Publication state for ${collections.roomTypes.rows.length} room types and ` +
   `${collections.locations.rows.length} locations is imported into extension tables; ` +

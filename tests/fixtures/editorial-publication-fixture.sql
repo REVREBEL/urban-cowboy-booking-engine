@@ -16,15 +16,15 @@ INSERT INTO room_types (id, tenant_id, location_id, mews_room_category_id, name,
   ('pub-room-archived', 'pub-fixture', 'pub-location-2', 'mews-archived', 'Archived Room', 'archived', 3),
   ('pub-room-other', 'other-tenant', 'other-location', 'mews-other', 'Other Room', 'other', 1);
 
-INSERT INTO room_type_publication (tenant_id, room_type_id, status, source_snapshot_date) VALUES
-  ('pub-fixture', 'pub-room-live', 'published', '2026-11-15'),
-  ('pub-fixture', 'pub-room-draft', 'draft', '2026-11-15'),
-  ('pub-fixture', 'pub-room-archived', 'archived', '2026-11-15'),
-  ('other-tenant', 'pub-room-other', 'published', '2026-11-15');
+INSERT INTO room_type_publication (tenant_id, room_type_id, status, state_source, source_snapshot_date, updated_at) VALUES
+  ('pub-fixture', 'pub-room-live', 'published', 'import', '2026-11-15', '2026-11-15T00:00:00Z'),
+  ('pub-fixture', 'pub-room-draft', 'draft', 'import', '2026-11-15', '2026-11-15T00:00:00Z'),
+  ('pub-fixture', 'pub-room-archived', 'archived', 'import', '2026-11-15', '2026-11-15T00:00:00Z'),
+  ('other-tenant', 'pub-room-other', 'published', 'editor', '2026-11-15', '2026-11-15T00:00:00Z');
 
-INSERT INTO location_publication (tenant_id, location_id, status, source_snapshot_date) VALUES
-  ('pub-fixture', 'pub-location', 'published', '2026-11-15'),
-  ('pub-fixture', 'pub-location-2', 'draft', '2026-11-15');
+INSERT INTO location_publication (tenant_id, location_id, status, state_source, source_snapshot_date, updated_at) VALUES
+  ('pub-fixture', 'pub-location', 'published', 'import', '2026-11-15', '2026-11-15T00:00:00Z'),
+  ('pub-fixture', 'pub-location-2', 'draft', 'import', '2026-11-15', '2026-11-15T00:00:00Z');
 
 INSERT INTO mews_reference_sync
   (id, tenant_id, location_id, reference_type, reference_id, payload_json, source_system, synced_at, reconciled_at)

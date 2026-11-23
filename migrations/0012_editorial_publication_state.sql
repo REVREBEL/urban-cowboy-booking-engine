@@ -8,8 +8,11 @@
 -- `amenity_editorial` / `0006_working_revision_pointer` pattern.
 --
 -- Rows without a publication row keep today's published behavior. The backfill
--- is INSERT OR IGNORE so an editor-owned status set by a later import is never
--- overwritten by a re-applied migration.
+-- is INSERT OR IGNORE and is tagged `backfill`: it is a neutral placeholder for
+-- databases that predate this migration, not an editorial decision. The seed
+-- importer replaces backfill/import rows with source-derived state but never
+-- overwrites an `editor` row, so an explicit D1 decision survives both a
+-- re-applied migration and a reseed.
 --
 -- `mews_reference_sync` stores only stable reference identity and reconciliation
 -- metadata. The reference_type CHECK deliberately excludes availability,
@@ -30,6 +33,8 @@ CREATE TABLE IF NOT EXISTS room_type_publication (
   room_type_id TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'published'
     CHECK (status IN ('draft', 'published', 'archived')),
+  state_source TEXT NOT NULL DEFAULT 'import'
+    CHECK (state_source IN ('backfill', 'import', 'editor')),
   source_snapshot_date TEXT,
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (tenant_id, room_type_id),
@@ -43,6 +48,8 @@ CREATE TABLE IF NOT EXISTS location_publication (
   location_id TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'published'
     CHECK (status IN ('draft', 'published', 'archived')),
+  state_source TEXT NOT NULL DEFAULT 'import'
+    CHECK (state_source IN ('backfill', 'import', 'editor')),
   source_snapshot_date TEXT,
   updated_at TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (tenant_id, location_id),
@@ -81,7 +88,7 @@ CREATE INDEX IF NOT EXISTS idx_mews_reference_sync_type
 
 -- Neutral backfill. Existing production rows are published; a draft is written
 -- by the importer from source publication state, not guessed by this migration.
-INSERT OR IGNORE INTO room_type_publication (tenant_id, room_type_id, status)
-  SELECT tenant_id, id, 'published' FROM room_types;
-INSERT OR IGNORE INTO location_publication (tenant_id, location_id, status)
-  SELECT tenant_id, id, 'published' FROM locations;
+INSERT OR IGNORE INTO room_type_publication (tenant_id, room_type_id, status, state_source)
+  SELECT tenant_id, id, 'published', 'backfill' FROM room_types;
+INSERT OR IGNORE INTO location_publication (tenant_id, location_id, status, state_source)
+  SELECT tenant_id, id, 'published', 'backfill' FROM locations;

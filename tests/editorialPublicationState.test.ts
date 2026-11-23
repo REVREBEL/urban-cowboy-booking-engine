@@ -20,6 +20,7 @@ import {
   listRoomTypePublications,
   publishedLocationIds,
   publishedRoomTypeIds,
+  setRoomTypePublication,
 } from "../worker/d1.ts";
 import { loadPublishedCollection } from "../worker/content-provider.ts";
 
@@ -48,6 +49,7 @@ function d1(db: DatabaseSync): any {
       let params: unknown[] = [];
       return {
         bind(...values: unknown[]) { params = values; return this; },
+        run() { db.prepare(query).run(...params); return { success: true }; },
         async all() { return { results: db.prepare(query).all(...params) }; },
       };
     },
@@ -171,6 +173,68 @@ test("admin reads return contract-shaped publication rows; guest reads use them"
   assert.deepEqual(guestRooms.map((row) => row.id), ["pub-room-live"]);
   const guestLocations = await loadPublishedCollection(api, { tenantId: "pub-fixture" }, "locations");
   assert.deepEqual(guestLocations.map((row) => row.id), ["pub-location"]);
+  db.close();
+});
+
+test("backfill placeholders on an already-seeded database are replaced by source state", async () => {
+  const db = new DatabaseSync(":memory:");
+  db.exec("PRAGMA foreign_keys = ON");
+  db.exec(read("migrations/0001_init.sql"));
+  db.exec(read("migrations/0003_property_scoped_contracts.sql"));
+  db.exec(read("migrations/0007_amenity_editorial.sql"));
+  // Reconstruct the pre-0012 seeded database: everything except publication rows.
+  const prePublicationSeed = read("seed.sql").split("\n").filter(
+    (line) => !line.startsWith("INSERT INTO room_type_publication")
+      && !line.startsWith("INSERT INTO location_publication"),
+  ).join("\n");
+  db.exec(prePublicationSeed);
+
+  // Applying 0012 to an existing seeded database backfills every row as a
+  // published placeholder. The draft must not stay published after reseeding.
+  db.exec(sql.publication);
+  const placeholder = db.prepare(
+    "SELECT status, state_source FROM room_type_publication WHERE room_type_id='6abd4a1debcab0ea7e461c9a'",
+  ).get();
+  assert.equal(placeholder.status, "published");
+  assert.equal(placeholder.state_source, "backfill");
+
+  db.exec(read("seed.sql"));
+  const imported = db.prepare(
+    "SELECT status, state_source FROM room_type_publication WHERE room_type_id='6abd4a1debcab0ea7e461c9a'",
+  ).get();
+  assert.equal(imported.status, "draft");
+  assert.equal(imported.state_source, "import");
+
+  const ids = await publishedRoomTypeIds(d1(db), { tenantId: "urban-cowboy" });
+  assert.equal(ids.has("6abd4a1debcab0ea7e461c9a"), false);
+  const guest = await loadPublishedCollection(d1(db), { tenantId: "urban-cowboy" }, "roomTypes");
+  assert.equal(guest.some((row) => row.id === "6abd4a1debcab0ea7e461c9a"), false);
+  db.close();
+});
+
+test("editor-owned publication state survives a source reimport", async () => {
+  const db = makeDb();
+  const api = d1(db);
+  const written = await setRoomTypePublication(
+    api, { tenantId: "pub-fixture" }, "pub-room-draft", "published", "2026-11-23",
+  );
+  assert.equal(written.stateSource, "editor");
+  assert.equal(written.status, "published");
+
+  // A later importer upsert must not replace the explicit editorial decision.
+  db.prepare(`
+    INSERT INTO room_type_publication
+      (tenant_id, room_type_id, status, state_source, source_snapshot_date, updated_at)
+    VALUES ('pub-fixture', 'pub-room-draft', 'draft', 'import', '2026-11-15', '2026-11-15T00:00:00Z')
+    ON CONFLICT (tenant_id, room_type_id) DO UPDATE SET
+      status = excluded.status, state_source = excluded.state_source
+    WHERE room_type_publication.state_source IN ('backfill', 'import')
+  `).run();
+  const after = db.prepare(
+    "SELECT status, state_source FROM room_type_publication WHERE room_type_id='pub-room-draft'",
+  ).get();
+  assert.equal(after.status, "published");
+  assert.equal(after.state_source, "editor");
   db.close();
 });
 
