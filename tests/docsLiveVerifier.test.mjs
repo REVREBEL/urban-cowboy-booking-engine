@@ -1,7 +1,12 @@
 // COW-85 M4: the live verifier must fail when a promised check cannot run.
 import assert from "node:assert/strict";
 import test from "node:test";
-import { brokenImages, recordCheck, requireControl } from "../scripts/fumadocs/live-check-core.mjs";
+import {
+  brokenImages,
+  checkFinalUrl,
+  recordCheck,
+  requireControl,
+} from "../scripts/fumadocs/live-check-core.mjs";
 
 test("recordCheck records a failure and returns a result object", () => {
   const failures = [];
@@ -21,6 +26,28 @@ test("an image with no natural width is reported even without a 404", () => {
     ["/assets/empty.png", "(no src)"],
   );
   assert.deepEqual(brokenImages([{ src: "/assets/ok.png", ok: true }]), []);
+});
+
+test("final URL checks reject foreign hosts, path changes and HTTPS downgrades", () => {
+  const path = "/urban-cowboy-booking-engine/components/search-bar/";
+  assert.equal(
+    checkFinalUrl(`https://revrebel.github.io${path}`, path).ok, true,
+  );
+  assert.equal(
+    checkFinalUrl(`https://resource-hub.revrebel.io${path}`, path).ok, true,
+  );
+  assert.match(
+    checkFinalUrl(`https://evil.example${path}`, path).detail, /unexpected host/,
+  );
+  assert.match(
+    checkFinalUrl(`https://revrebel.github.io/wrong`, path).detail, /path changed/,
+  );
+  assert.match(
+    checkFinalUrl(`http://resource-hub.revrebel.io${path}`, path).detail, /HTTPS downgrade/,
+  );
+  assert.equal(
+    checkFinalUrl(`http://resource-hub.revrebel.io${path}`, path, { requireHttps: false }).ok, true,
+  );
 });
 
 test("a missing demo control is a failure, never a skipped check", () => {
