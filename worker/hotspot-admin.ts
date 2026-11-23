@@ -752,11 +752,20 @@ async function runReplacement(
     return json({ error: "version_asset_mismatch" }, 400, "no-store");
   }
 
-  const versionRow = await db.prepare(
+  // Crop rectangles are normalized 0..1 of their OWN version's dimensions:
+  // cropBefore belongs to the source coordinate space, cropAfter to the
+  // target. Scaling both with one version corrupts geometry when they differ.
+  const sourceVersion = await db.prepare(
+    "SELECT width, height FROM media_versions WHERE id = ?1 AND media_asset_id = ?2",
+  ).bind(input.fromVersionId, input.mediaAssetId).first() as { width: number | null; height: number | null } | null;
+  const targetVersion = await db.prepare(
     "SELECT width, height FROM media_versions WHERE id = ?1 AND media_asset_id = ?2",
   ).bind(input.toVersionId, input.mediaAssetId).first() as { width: number | null; height: number | null } | null;
-  const cropSize = versionRow?.width && versionRow?.height
-    ? { width: versionRow.width, height: versionRow.height }
+  const sourceCropSize = sourceVersion?.width && sourceVersion?.height
+    ? { width: sourceVersion.width, height: sourceVersion.height }
+    : null;
+  const targetCropSize = targetVersion?.width && targetVersion?.height
+    ? { width: targetVersion.width, height: targetVersion.height }
     : null;
 
   // A plan applies one source coordinate system to every pin in the placement.
@@ -780,8 +789,8 @@ async function runReplacement(
     fromVersionId: input.fromVersionId,
     toVersionId: input.toVersionId,
     urlOnly: input.urlOnly,
-    cropBefore: toPixelCrop(input.cropBefore, cropSize),
-    cropAfter: toPixelCrop(input.cropAfter, cropSize),
+    cropBefore: toPixelCrop(input.cropBefore, sourceCropSize),
+    cropAfter: toPixelCrop(input.cropAfter, targetCropSize),
     fromFingerprint: fromFacts,
     toFingerprint: toFacts,
     sameHashOnOtherMedia: duplicates.sameHashOnOtherMedia,

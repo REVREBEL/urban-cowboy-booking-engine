@@ -678,3 +678,35 @@ test("a pending pin introduced before the publish batch blocks it atomically", a
   assert.notEqual(firstRow.review_reason, "deleted");
   assert.ok(db.prepare("SELECT mapping_id FROM photo_hotspot_deletions WHERE mapping_id = ?").get(first.mapping.id), "deletion overlay intact");
 });
+
+test("cropBefore uses source dimensions and cropAfter uses target dimensions", async () => {
+  const db = makeDb();
+  // Fingerprint dimensions match (so the decision is crop_remap) while the
+  // stored media_versions dimensions differ between source and target.
+  db.exec("UPDATE media_version_fingerprints SET sha256 = 'hash-1', width = 1000, height = 1000 WHERE version_id IN ('v-1','v-2')");
+  db.exec("UPDATE media_versions SET width = 1000, height = 1000 WHERE id = 'v-1'");
+  db.exec("UPDATE media_versions SET width = 2000, height = 1000 WHERE id = 'v-2'");
+  await createRoomHotspot(ctx(db, createInput()), "room-a", allowAdmin);
+
+  const plan = await jsonBody(await planHotspotReplacement(ctx(db, replacementInput({
+    cropBefore: { left: 0, top: 0, width: 1, height: 1 },
+    cropAfter: { left: 0.1, top: 0.1, width: 0.4, height: 0.4 },
+  })), "room-a", allowAdmin));
+  assert.equal(plan.decision, "crop_remap");
+  // cropAfter normalized 0.1/0.1/0.4/0.4 must be scaled by TARGET dims
+  // (2000x1000): 200/100/800/400 — not source dims (100/100/400/400).
+  assert.equal(plan.mappings[0].cropLeft, 200);
+  assert.equal(plan.mappings[0].cropTop, 100);
+  assert.equal(plan.mappings[0].cropWidth, 800);
+  assert.equal(plan.mappings[0].cropHeight, 400);
+
+  await applyHotspotReplacement(ctx(db, replacementInput({
+    cropBefore: { left: 0, top: 0, width: 1, height: 1 },
+    cropAfter: { left: 0.1, top: 0.1, width: 0.4, height: 0.4 },
+  })), "room-a", allowAdmin);
+  const persisted = db.prepare(
+    "SELECT crop_left, crop_top, crop_width, crop_height FROM photo_hotspot_mappings LIMIT 1",
+  ).get() as any;
+  assert.equal(persisted.crop_left, 200);
+  assert.equal(persisted.crop_width, 800);
+});
