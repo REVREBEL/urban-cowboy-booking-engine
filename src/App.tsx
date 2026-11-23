@@ -4,7 +4,7 @@ import { currentStudioLayout, setStudioDefaultLayout, type RoomResultsLayout } f
 import { api } from "./lib/api";
 import { BookingProvider, useBooking, type Step } from "./state/booking";
 import { eventsMerchandisingEnabled } from "./journey/eventMerchandisingFlag";
-import { fetchPublishedSiteSettings } from "./lib/siteSettingsClient";
+import { fetchPublishedSiteSettings, selectProductionLayout } from "./lib/siteSettingsClient";
 import { BookingHeader } from "@/components/booking/chrome/header";
 import { BookingFooter } from "@/components/booking/chrome/footer";
 import { Banner } from "@/components/ui/banner";
@@ -140,8 +140,10 @@ function BookingApp() {
       void Promise.all([api.locations(), fetchPublishedSiteSettings()]).then(([locations, settings]) => {
         if (!active) return;
         // Only a published D1 source may override the legacy Webflow layout.
-        const publishedLayout = settings?.settings.productionLayout;
-        setLayout(publishedLayout ?? (locations.hotel?.productionLayout === "photo" ? "photo" : "card"));
+        setLayout(selectProductionLayout(
+          settings,
+          locations.hotel?.productionLayout === "photo" ? "photo" : "card",
+        ));
       }).catch(() => { if (active) setLayout("card"); });
       return () => { active = false; };
     }

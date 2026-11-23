@@ -16,6 +16,7 @@ import { normalizePublishedAmenities, normalizeRoomAmenityMap, normalizePhotoHot
 import { json } from "../mews/_lib.ts";
 import { applyPublishedAmenities } from "../published-amenities.ts";
 import { applyPublishedHotspots } from "../published-hotspots.ts";
+import { applyPublishedGalleries } from "../published-galleries.ts";
 
 interface WebflowOption {
   id?: unknown;
@@ -376,6 +377,7 @@ async function response(env: Env, payload: CachedReviewPayload, stale: boolean):
   // visible immediately and a draft never leaks into the cached Webflow payload.
   let guest = await applyPublishedAmenities(env, env.TENANT_ID, payload);
   guest = await applyPublishedHotspots(env, env.TENANT_ID, guest);
+  guest = await applyPublishedGalleries(env, env.TENANT_ID, guest);
   return json(
     {
       reviews: guest.reviews,

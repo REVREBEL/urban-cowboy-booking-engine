@@ -8,9 +8,12 @@
  *
  * Usage:
  *   node scripts/seed-d1-from-webflow.mjs [export-dir] \
- *     [--out seed.sql] [--report docs/generated/d1-reconciliation.json] [--write]
+ *     [--out seed.sql] [--report docs/generated/d1-reconciliation.json] \
+ *     [--field-map docs/generated/cms-field-mapping.json] [--write] [--check] [--diff]
  *
  * Without --write it is a dry run: nothing is written, and the summary is printed.
+ * --check fails when the committed generated files differ from this run (ignoring
+ * generatedAt). --diff prints added/removed line counts instead of writing.
  * With --write it writes the SQL and report files. It never contacts D1 directly;
  * apply the SQL with the normal Wrangler migration/seed workflow after review.
  *
@@ -27,6 +30,7 @@ import {
   provenanceSeed,
 } from "../src/lib/content-provenance.ts";
 import { eventScheduleJson, parseVenue } from "../src/lib/event-recurrence.ts";
+import { fieldMappingFor } from "../src/lib/cms-field-mapping.ts";
 import {
   SITE_SETTINGS_KIND, SITE_SETTINGS_SLUG,
   siteSettingsFromWebflow,
@@ -40,11 +44,17 @@ const option = (name, fallback) => {
   return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith("--") ? argv[i + 1] : fallback;
 };
 const WRITE = argv.includes("--write");
+const CHECK = argv.includes("--check");
+const DIFF = argv.includes("--diff");
 const outPath = option("--out", "seed.sql");
 const reportPath = option("--report", "docs/generated/d1-reconciliation.json");
+const fieldMapPath = option("--field-map", "docs/generated/cms-field-mapping.json");
 
 const TENANT_ID = "urban-cowboy";
 const CATSKILLS_ID = "6abc9142d98b325b2821ca23";
+// Documented non-secret Mews reference (docs/catskills-mews-ids.md). Editorial
+// metadata only: the Worker never consults this value when calling Mews.
+const CATSKILLS_MEWS_HOTEL_ID = "8bd38131-c371-4625-9c29-b10600705d34";
 // Explicit per-property IANA zones. Never apply Catskills' zone to Denver/Nashville.
 const LOCATION_TIME_ZONES = Object.freeze({
   catskills: "America/New_York",
@@ -269,16 +279,21 @@ addSection("tenants", buildInsert(
 for (const location of collections.locations.rows) {
   LOCATION_ZONE_BY_ID.set(val(location, "id"), locationTimeZone(val(location, "slug")));
 }
-// 2. Locations. Source has no Mews hotel ID field; leave NULL with a decision.
+// 2. Locations. The export has no Mews hotel field. Only the Catskills Hotel ID
+// is documented (docs/catskills-mews-ids.md); map it explicitly and never infer
+// IDs for the other properties. This is editorial metadata, not a Mews call input.
 addSection("locations", buildInsert(
   "locations",
   ["id", "tenant_id", "slug", "name", "time_zone", "mews_hotel_id"],
   collections.locations.rows.map((r) => [
-    val(r, "id"), TENANT_ID, val(r, "slug"), val(r, "name"), locationTimeZone(val(r, "slug")), null,
+    val(r, "id"), TENANT_ID, val(r, "slug"), val(r, "name"), locationTimeZone(val(r, "slug")),
+    val(r, "id") === CATSKILLS_ID ? CATSKILLS_MEWS_HOTEL_ID : null,
   ]),
 ));
-note(`${collections.locations.rows.length} locations have no Mews hotel ID in the export; ` +
-  "mews_hotel_id remains NULL pending an explicit per-location Mews mapping.");
+note("Catskills mews_hotel_id is mapped from the documented Hotel ID in " +
+  "docs/catskills-mews-ids.md; the other 3 locations remain NULL because no " +
+  "per-property Mews hotel ID is documented. It is editorial reference metadata, " +
+  "not an input to any Mews request.");
 
 // COW-97: publication state lives in extension tables. ON CONFLICT DO NOTHING
 // keeps editor-owned D1 state on reseed; the CMS export is the one-time baseline.
@@ -450,8 +465,9 @@ addSection("events", buildInsert(
   eventRows,
 ));
 note(`${eventStartFallback} of ${collections.events.rows.length} events are recurring and used ` +
-  "recurring-start as starts_at. Times are stored verbatim (source Z suffix); confirm the " +
-  "America/New_York interpretation before cutover.");
+  "recurring-start as starts_at. Each event carries its property time zone and a " +
+  "DST-safe recurrence_rule (COW-40); recurring wall time is interpreted in that " +
+  "zone rather than a hard-coded Catskills offset.");
 
 // 7. Offers. The old seed published all 8; 3 have active=false and no Mews
 // rate product, i.e. editorial/nonbookable. Respect both signals.
@@ -747,6 +763,36 @@ const report = {
   samplePayloadComparisons: samples,
 };
 
+// COW-98: per-collection, per-field mapping report. Every exported field is
+// classified as mapped, import metadata, or unmapped with an explicit reason.
+const fieldMappingReport = {
+  generatedAt: new Date().toISOString(),
+  snapshotDate: WEBFLOW_SNAPSHOT_DATE,
+  sourceDirectory: dir,
+  tenantId: TENANT_ID,
+  collections: Object.values(collections).map((c) => {
+    const map = fieldMappingFor(c.collection);
+    if (!map) throw new Error(`No field mapping contract for ${c.collection}`);
+    return {
+      sourceCollection: c.collection,
+      sourceFile: c.file,
+      sourceRows: c.rows.length,
+      d1Targets: map.d1Targets,
+      fields: c.header.map((field) => {
+        const targets = map.fieldTargets[field];
+        if (targets) return { field, status: "mapped", targets };
+        if (map.metadataFields.includes(field)) {
+          return { field, status: "metadata", targets: [], reason: "Import metadata or publication state; not stored as its own column" };
+        }
+        if (map.allFieldsToPayload) {
+          return { field, status: "mapped", targets: [map.allFieldsToPayload] };
+        }
+        return { field, status: "unmapped", targets: [], reason: map.unmappedReason };
+      }),
+    };
+  }),
+};
+
 const sql = [
   "-- Generated by scripts/seed-d1-from-webflow.mjs. Review before applying.",
   `-- Source: ${dir} | tenant: ${TENANT_ID}`,
@@ -756,12 +802,64 @@ const sql = [
   ...sections,
   "",
 ].join("\n");
+const reportText = JSON.stringify(report, null, 2) + "\n";
+const fieldMapText = JSON.stringify(fieldMappingReport, null, 2) + "\n";
+
+// generatedAt is intentionally ignored: a fresh run must not look stale just
+// because the clock advanced.
+const stableJson = (text) => {
+  try {
+    const value = JSON.parse(text);
+    delete value.generatedAt;
+    return JSON.stringify(value, null, 2) + "\n";
+  } catch {
+    return text;
+  }
+};
 
 if (WRITE) {
-  mkdirSync(dirname(outPath), { recursive: true });
-  mkdirSync(dirname(reportPath), { recursive: true });
+  for (const path of [outPath, reportPath, fieldMapPath]) {
+    mkdirSync(dirname(path), { recursive: true });
+  }
   writeFileSync(outPath, sql, "utf8");
-  writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n", "utf8");
+  writeFileSync(reportPath, reportText, "utf8");
+  writeFileSync(fieldMapPath, fieldMapText, "utf8");
+}
+
+if (CHECK) {
+  const targets = [
+    [outPath, sql, false],
+    [reportPath, reportText, true],
+    [fieldMapPath, fieldMapText, true],
+  ];
+  const stale = targets.filter(([path, generated, isJson]) => {
+    let current;
+    try { current = readFileSync(path, "utf8"); } catch { return true; }
+    return isJson ? stableJson(current) !== stableJson(generated) : current !== generated;
+  }).map(([path]) => path);
+  if (stale.length) {
+    console.error(`Generated files are out of date: ${stale.join(", ")}. Run npm run seed:d1.`);
+    process.exitCode = 1;
+  } else {
+    console.log("Seed, reconciliation report and field map are current.");
+  }
+}
+
+if (DIFF) {
+  const summarize = (label, path, generated) => {
+    let current = "";
+    try { current = readFileSync(path, "utf8"); } catch { /* missing file: everything is added */ }
+    const before = new Set(current.split("\n"));
+    const after = new Set(generated.split("\n"));
+    const added = [...after].filter((line) => !before.has(line));
+    const removed = [...before].filter((line) => !after.has(line));
+    console.log(`${label}: +${added.length} / -${removed.length} lines`);
+    for (const line of added.slice(0, 5)) console.log(`  + ${line}`);
+    for (const line of removed.slice(0, 5)) console.log(`  - ${line}`);
+  };
+  summarize("seed.sql", outPath, sql);
+  summarize("reconciliation", reportPath, reportText);
+  summarize("field map", fieldMapPath, fieldMapText);
 }
 
 console.log(`Webflow -> D1 seed ${WRITE ? "written" : "dry run"}`);
@@ -773,6 +871,7 @@ for (const finding of findings) console.log(`  - ${finding}`);
 if (WRITE) {
   console.log(`  wrote ${outPath}`);
   console.log(`  wrote ${reportPath}`);
+  console.log(`  wrote ${fieldMapPath}`);
 } else {
-  console.log("  (pass --write to emit seed.sql and the reconciliation report)");
+  console.log("  (pass --write to emit the SQL, reconciliation report and field map)");
 }

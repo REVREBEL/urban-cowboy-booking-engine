@@ -75,6 +75,75 @@ test("location and Mews mappings are populated, not NULL", () => {
   db.close();
 });
 
+test("only the documented Catskills Mews hotel ID is mapped", () => {
+  const db = makeDb();
+  assert.equal(
+    db.prepare("SELECT mews_hotel_id FROM locations WHERE slug='catskills'").get().mews_hotel_id,
+    "8bd38131-c371-4625-9c29-b10600705d34",
+  );
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM locations WHERE mews_hotel_id IS NOT NULL AND slug != 'catskills'").get().n,
+    0,
+  );
+  db.close();
+});
+
+test("field mapping report classifies every exported field", () => {
+  const map = JSON.parse(read("docs/generated/cms-field-mapping.json"));
+  assert.equal(map.snapshotDate, "2026-11-15");
+  assert.equal(map.collections.length, 12);
+  for (const collection of map.collections) {
+    assert.ok(collection.fields.length > 0, `${collection.sourceCollection} has fields`);
+    for (const field of collection.fields) {
+      assert.ok(["mapped", "metadata", "unmapped"].includes(field.status), `${field.field} status`);
+      if (field.status === "mapped") assert.ok(field.targets.length > 0, `${field.field} has a target`);
+      if (field.status === "unmapped") assert.ok(field.reason, `${field.field} has a reason`);
+    }
+  }
+  const locations = map.collections.find((c) => c.sourceCollection === "locations");
+  assert.equal(locations.fields.find((f) => f.field === "id").targets[0], "locations.id");
+  const hotspots = map.collections.find((c) => c.sourceCollection === "photoHotspots");
+  assert.deepEqual(hotspots.d1Targets, []);
+  assert.ok(hotspots.fields.every((f) => f.status !== "mapped"));
+
+  // A claimed payload target must actually be present in the generated seed.
+  const db = makeDb();
+  const payloads = db.prepare(
+    "SELECT cr.payload_json, ci.kind FROM content_revisions cr JOIN content_items ci ON ci.id = cr.content_item_id",
+  ).all().map((row) => ({ kind: row.kind, keys: new Set(Object.keys(JSON.parse(row.payload_json))) }));
+  const siteSettings = payloads.find((p) => p.kind === "site_settings");
+  assert.ok(siteSettings, "site_settings revision exists");
+  const allKeys = new Set(payloads.flatMap((p) => [...p.keys]));
+  for (const collection of map.collections) {
+    for (const field of collection.fields) {
+      const target = field.targets.find((t) => t.includes("payload_json"));
+      if (!target) continue;
+      const siteKey = target.match(/site_settings\.([A-Za-z]+)\)/)?.[1];
+      if (siteKey) {
+        assert.ok(siteSettings.keys.has(siteKey), `${field.field} maps to site_settings.${siteKey}`);
+      } else {
+        assert.ok(allKeys.has(field.field), `${collection.sourceCollection}.${field.field} is a payload key`);
+      }
+    }
+  }
+  for (const field of [
+    "feature-headline-1", "feature-paragraph-1", "feature-headline-2",
+    "feature-paragraph-2", "feature-headline-3", "feature-paragraph-3",
+  ]) {
+    assert.equal(siteSettings.keys.has(field), false, `${field} is not in the site_settings payload`);
+  }
+  assert.deepEqual(
+    [...siteSettings.keys].sort(),
+    [
+      "demoLayout", "enableDemoEngine", "enableEventDatesQuickSelection",
+      "enableFeatureSection", "productionLayout",
+    ],
+    "site_settings contains exactly the five published behavior controls",
+  );
+  assert.ok(locations.d1Targets.includes("content_provenance"));
+  db.close();
+});
+
 test("events satisfy NOT NULL starts_at and publication flags", () => {
   const db = makeDb();
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM events WHERE starts_at IS NULL").get().n, 0);
