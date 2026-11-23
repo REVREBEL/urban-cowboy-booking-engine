@@ -52,8 +52,11 @@ import { analyticsSummary } from "./d1-analytics";
 import { listAdminMedia, listRoomGallery, listRooms } from "./room-media.ts";
 import { getRoomAmenities, listAdminAmenities } from "./room-amenities.ts";
 import {
+  applyHotspotReplacement,
   createRoomHotspot,
+  deleteRoomHotspot,
   listRoomHotspots,
+  planHotspotReplacement,
   publishRoomHotspots,
   rollbackRoomHotspots,
   updateRoomHotspot,
@@ -194,20 +197,26 @@ export default {
       return listRoomGallery(adminCtx, roomId);
     }
     // COW-84 hotspot admin: specific actions before the mapping-id route.
-    const hotspotAction = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/hotspots\/(publish|rollback)\/?$/);
+    const hotspotAction = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/hotspots\/(publish|rollback|plan|apply)\/?$/);
     if (hotspotAction) {
       if (request.method !== "POST") return json({ error: "not_found" }, 404);
       let roomId: string;
       try { roomId = decodeURIComponent(hotspotAction[1]); }
       catch { return json({ error: "invalid_room_id" }, 400); }
       if (!roomId) return json({ error: "invalid_room_id" }, 400);
-      return hotspotAction[2] === "publish"
-        ? publishRoomHotspots(adminCtx, roomId)
-        : rollbackRoomHotspots(adminCtx, roomId);
+      const action = hotspotAction[2];
+      if (action === "publish") return publishRoomHotspots(adminCtx, roomId);
+      if (action === "rollback") return rollbackRoomHotspots(adminCtx, roomId);
+      return action === "plan"
+        ? planHotspotReplacement(adminCtx, roomId)
+        : applyHotspotReplacement(adminCtx, roomId);
     }
     const hotspotMapping = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/hotspots\/([^/]+)\/?$/);
     if (hotspotMapping) {
-      if (request.method !== "PATCH") return json({ error: "not_found" }, 404);
+      if (request.method !== "PATCH" && request.method !== "DELETE") {
+        return json({ error: "not_found" }, 404);
+      }
+      const wantsDelete = request.method === "DELETE";
       let roomId: string;
       let mappingId: string;
       try {
@@ -215,7 +224,9 @@ export default {
         mappingId = decodeURIComponent(hotspotMapping[2]);
       } catch { return json({ error: "invalid_room_id" }, 400); }
       if (!roomId || !mappingId) return json({ error: "invalid_room_id" }, 400);
-      return updateRoomHotspot(adminCtx, roomId, mappingId);
+      return wantsDelete
+        ? deleteRoomHotspot(adminCtx, roomId, mappingId)
+        : updateRoomHotspot(adminCtx, roomId, mappingId);
     }
     const roomHotspots = url.pathname.match(/^\/api\/admin\/rooms\/([^/]+)\/hotspots\/?$/);
     if (roomHotspots) {

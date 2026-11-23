@@ -46,6 +46,8 @@ interface Hotspot {
   status: "draft" | "published";
   reviewState: "none" | "pending" | "approved";
   reviewReason: string | null;
+  hasDraft?: boolean;
+  pendingDelete?: boolean;
 }
 
 interface HotspotResponse {
@@ -81,6 +83,7 @@ function HotspotEditorCard({
   const [y, setY] = useState(hotspot.sourceY);
   const [amenityId, setAmenityId] = useState(hotspot.amenityId);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   useEffect(() => {
     setX(hotspot.sourceX);
     setY(hotspot.sourceY);
@@ -116,11 +119,32 @@ function HotspotEditorCard({
     }
   };
 
+  const remove = async () => {
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      setFeedback({ tone: "error", message: "Confirm removal; publish to apply" });
+      return;
+    }
+    setBusy(true);
+    try {
+      await api.deleteRoomHotspot(roomId, hotspot.id);
+      setFeedback({ tone: "success", message: "Removal staged — publish to apply" });
+      onChanged();
+    } catch (error) {
+      setFeedback({ tone: "error", message: error instanceof Error ? error.message : "Removal failed" });
+    } finally {
+      setBusy(false);
+      setConfirmDelete(false);
+    }
+  };
+
   return (
     <li className="space-y-3 rounded-lg border border-border p-4">
       <div className="flex flex-wrap items-center gap-2">
         <Pill size="small" textCase="title">#{hotspot.displayOrder + 1}</Pill>
         <Pill variant="outline" size="small" textCase="title">{hotspot.status}</Pill>
+        {hotspot.pendingDelete && <Pill colorScheme="bandana-red" size="small">Pending deletion</Pill>}
+        {hotspot.hasDraft && !hotspot.pendingDelete && <Pill size="small">Unpublished edit</Pill>}
         <Pill
           colorScheme={hotspot.reviewState === "pending" ? "bandana-red" : "lake-forest"}
           size="small"
@@ -180,6 +204,12 @@ function HotspotEditorCard({
           disabled={busy || hotspot.reviewState === "pending"} onClick={() => review("pending")}
         >
           Flag review
+        </Button>
+        <Button
+          type="button" variant="transparent" colorScheme="bandana-red" size="small" textCase="title"
+          disabled={busy || hotspot.pendingDelete} onClick={remove}
+        >
+          {confirmDelete ? "Confirm delete" : "Delete pin"}
         </Button>
       </div>
       {feedback && <p className={`text-sm ${feedback.tone === "error" ? "text-destructive" : "text-muted-foreground"}`} role="status">{feedback.message}</p>}
@@ -309,6 +339,11 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [busy, setBusy] = useState(false);
   const [versionId, setVersionId] = useState("");
+  const [fromVersionId, setFromVersionId] = useState("");
+  const [toVersionId, setToVersionId] = useState("");
+  const [urlOnly, setUrlOnly] = useState(false);
+  const [approveReview, setApproveReview] = useState(false);
+  const [replacementPlan, setReplacementPlan] = useState<{ decision: string; reviewRequired: boolean } | null>(null);
 
   useEffect(() => {
     if (!roomId && rooms.data?.length) setRoomId(rooms.data[0].id);
@@ -333,6 +368,9 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
     setPlacement(null);
     setAmenityId("");
     setVersionId("");
+    setFromVersionId("");
+    setToVersionId("");
+    setReplacementPlan(null);
     setFeedback(null);
   }, [roomId]);
   useEffect(() => {
@@ -340,6 +378,8 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
       setPlacementId(photos[0]?.placementId ?? "");
       setPlacement(null);
       setVersionId("");
+      setToVersionId("");
+      setReplacementPlan(null);
     }
   }, [photos, placementId]);
   const photo = photos.find((item) => item.placementId === placementId);
@@ -348,7 +388,8 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
   );
   useEffect(() => {
     if (!versionId && photo?.currentVersionId) setVersionId(photo.currentVersionId);
-  }, [versionId, photo?.currentVersionId]);
+    if (!fromVersionId && photo?.currentVersionId) setFromVersionId(photo.currentVersionId);
+  }, [versionId, fromVersionId, photo?.currentVersionId]);
 
   if (rooms.loading) return <LoadingPanel label="Loading room types" />;
   if (rooms.error) return <ErrorPanel message={rooms.error} onRetry={rooms.reload} />;
@@ -419,6 +460,60 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
       hotspots.reload();
     } catch (error) {
       setFeedback({ tone: "error", message: error instanceof Error ? error.message : "Rollback failed" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const replacementInput = () => ({
+    mediaAssetId: photo?.mediaAssetId,
+    placementId: photo?.placementId,
+    fromVersionId,
+    toVersionId,
+    urlOnly,
+    approveReview,
+  });
+
+  const plan = async () => {
+    if (!photo || !fromVersionId || !toVersionId) return;
+    setBusy(true);
+    setFeedback(null);
+    try {
+      const result = await api.planHotspotReplacement<{
+        decision: string; reviewRequired: boolean;
+      }>(roomId, replacementInput());
+      setReplacementPlan(result);
+      setFeedback({
+        tone: result.reviewRequired ? "error" : "success",
+        message: result.reviewRequired
+          ? `Decision ${result.decision} requires review before publishing`
+          : `Decision ${result.decision} is safe to publish`,
+      });
+    } catch (error) {
+      setFeedback({ tone: "error", message: error instanceof Error ? error.message : "Planning failed" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const apply = async () => {
+    if (!photo || !fromVersionId || !toVersionId) return;
+    setBusy(true);
+    setFeedback(null);
+    try {
+      const result = await api.applyHotspotReplacement<{
+        decision: string; reviewRequired: boolean; written: number;
+      }>(roomId, replacementInput());
+      setReplacementPlan({ decision: result.decision, reviewRequired: result.reviewRequired });
+      setFeedback({
+        tone: result.reviewRequired ? "error" : "success",
+        message: result.reviewRequired
+          ? `${result.written} pins staged for review (${result.decision})`
+          : `${result.written} pins updated (${result.decision})`,
+      });
+      hotspots.reload();
+    } catch (error) {
+      setFeedback({ tone: "error", message: error instanceof Error ? error.message : "Apply failed" });
     } finally {
       setBusy(false);
     }
@@ -542,6 +637,45 @@ export function RoomHotspotsPanel({ api }: { api: DashboardApi }) {
           {feedback && (
             <p className={`text-sm ${feedback.tone === "error" ? "text-destructive" : "text-muted-foreground"}`} role="status">
               {feedback.message}
+            </p>
+          )}
+        </section>
+      )}
+
+      {photo && (
+        <section className="space-y-3 rounded-lg border border-border p-4">
+          <h2 className="text-sm font-semibold">Source replacement and crop review</h2>
+          <p className="text-sm text-muted-foreground">
+            Planning never writes. Ambiguous geometry is classified for review and cannot publish
+            until an editor approves it.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="flex flex-col gap-1 text-sm">
+              From version
+              <input value={fromVersionId} onChange={(event) => setFromVersionId(event.target.value)} className="rounded-md border border-border bg-background px-3 py-2" />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              To version (same asset)
+              <input value={toVersionId} onChange={(event) => setToVersionId(event.target.value)} className="rounded-md border border-border bg-background px-3 py-2" />
+            </label>
+          </div>
+          <div className="flex flex-wrap items-center gap-4 text-sm">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={urlOnly} onChange={(event) => setUrlOnly(event.target.checked)} />
+              URL-only change
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={approveReview} onChange={(event) => setApproveReview(event.target.checked)} />
+              I approve a pending geometry review
+            </label>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" colorScheme="lake-forest" size="small" textCase="title" disabled={busy || !fromVersionId || !toVersionId} onClick={plan}>Plan replacement</Button>
+            <Button type="button" colorScheme="copper" size="small" textCase="title" disabled={busy || !fromVersionId || !toVersionId} onClick={apply}>Apply plan</Button>
+          </div>
+          {replacementPlan && (
+            <p className="text-sm text-muted-foreground" role="status">
+              Decision: {replacementPlan.decision} · {replacementPlan.reviewRequired ? "review required" : "safe to publish"}
             </p>
           )}
         </section>

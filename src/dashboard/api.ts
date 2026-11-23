@@ -92,6 +92,9 @@ export interface DashboardApi {
   getRoomHotspots<T>(roomId: string): Promise<T>;
   createRoomHotspot<T>(roomId: string, input: unknown): Promise<T>;
   updateRoomHotspot<T>(roomId: string, mappingId: string, input: unknown): Promise<T>;
+  deleteRoomHotspot<T>(roomId: string, mappingId: string): Promise<T>;
+  planHotspotReplacement<T>(roomId: string, input: unknown): Promise<T>;
+  applyHotspotReplacement<T>(roomId: string, input: unknown): Promise<T>;
   publishRoomHotspots<T>(roomId: string, input: unknown): Promise<T>;
   rollbackRoomHotspots<T>(roomId: string, input: unknown): Promise<T>;
   /** COW-84 image catalog for linking room gallery photos. */
@@ -201,6 +204,25 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
     }
   }
 
+  async function del<T>(path: string): Promise<T> {
+    if (!path.startsWith("/api/")) throw new Error("Dashboard API paths must start with /api/");
+    const timed = requestSignal();
+    try {
+      const response = await doFetch(path, {
+        method: "DELETE",
+        credentials: "same-origin",
+        signal: timed.signal,
+      });
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw errorFrom(response.status, text);
+      }
+      return (await response.json()) as T;
+    } finally {
+      timed.dispose();
+    }
+  }
+
   return {
     get,
     post,
@@ -234,6 +256,17 @@ export function createDashboardApi(options: DashboardApiOptions = {}): Dashboard
         `/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots/${encodeURIComponent(mappingId)}`,
         input,
       );
+    },
+    async deleteRoomHotspot<T>(roomId: string, mappingId: string): Promise<T> {
+      return del<T>(
+        `/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots/${encodeURIComponent(mappingId)}`,
+      );
+    },
+    async planHotspotReplacement<T>(roomId: string, input: unknown): Promise<T> {
+      return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots/plan`, input);
+    },
+    async applyHotspotReplacement<T>(roomId: string, input: unknown): Promise<T> {
+      return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots/apply`, input);
     },
     async publishRoomHotspots<T>(roomId: string, input: unknown): Promise<T> {
       return post<T>(`/api/admin/rooms/${encodeURIComponent(roomId)}/hotspots/publish`, input);

@@ -68,7 +68,9 @@ async function loadMappings(
   ).bind(tenantId, mediaAssetId, placementId ?? null).all();
   return (result.results ?? []).flatMap((row) => {
     const parsed = photoHotspotMappingRowSchema.safeParse(row);
-    return parsed.success ? [parsed.data] : [];
+    // Soft-deleted pins are retained only for audit; never plan, publish or
+    // roll them back into the guest-visible set.
+    return parsed.success && parsed.data.reviewReason !== "deleted" ? [parsed.data] : [];
   });
 }
 
@@ -317,12 +319,21 @@ export async function rollbackMappings(
   actor?: string | null,
   placementId?: string | null,
 ): Promise<RollbackResult> {
-  const result = await db.prepare(
-    `SELECT * FROM photo_hotspot_mapping_revisions
-      WHERE tenant_id = ?1 AND media_asset_id = ?2 AND to_version_id = ?3
-        AND action IN ('create','carry','remap','review')
-      ORDER BY created_at DESC, rowid DESC`,
-  ).bind(tenantId, mediaAssetId, toVersionId).all();
+  const [result, deletedRows] = await Promise.all([
+    db.prepare(
+      `SELECT * FROM photo_hotspot_mapping_revisions
+        WHERE tenant_id = ?1 AND media_asset_id = ?2 AND to_version_id = ?3
+          AND action IN ('create','carry','remap','review')
+        ORDER BY created_at DESC, rowid DESC`,
+    ).bind(tenantId, mediaAssetId, toVersionId).all(),
+    db.prepare(
+      `SELECT id FROM photo_hotspot_mappings
+        WHERE tenant_id = ?1 AND media_asset_id = ?2 AND review_reason = 'deleted'`,
+    ).bind(tenantId, mediaAssetId).all(),
+  ]);
+  // Published deletions are terminal in this phase: never let a historical
+  // snapshot resurrect a pin the editor removed.
+  const deletedIds = new Set((deletedRows.results ?? []).map((row: any) => row.id));
   const snapshots = new Map<string, PhotoHotspotMappingRow>();
   for (const row of result.results ?? []) {
     const parsed = photoHotspotMappingRevisionRowSchema.safeParse(row);
@@ -332,6 +343,7 @@ export async function rollbackMappings(
       // A shared media asset can be placed in several rooms. Never restore a
       // pin that belongs to a different placement than the requested one.
       if (placementId && restored.placementId !== placementId) continue;
+      if (deletedIds.has(parsed.data.mappingId)) continue;
       snapshots.set(parsed.data.mappingId, restored);
     } catch { /* an unreadable snapshot is skipped, never applied */ }
   }
