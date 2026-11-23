@@ -58,6 +58,8 @@ export interface Env {
   CONTENT_SOURCE_POLICY_LANGUAGE?: string;
   // COW-104 per-route flag for the guest add-ons adapter.
   CONTENT_SOURCE_ADD_ONS?: string;
+  // COW-106 guest room-gallery overlay: webflow (default) | d1.
+  CONTENT_SOURCE_ROOM_GALLERIES?: string;
 }
 
 // POST best-effort d'un JSON vers une URL de webhook. No-op si l'URL est absente/invalide.

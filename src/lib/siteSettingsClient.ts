@@ -9,6 +9,18 @@ export interface SiteSettingsResponse {
 }
 
 /**
+ * Published D1 settings control the production layout when the Worker reports a
+ * published D1 source. An absent or invalid published value keeps the existing
+ * Webflow-derived layout, so production never falls back to an invented choice.
+ */
+export function selectProductionLayout(
+  published: SiteSettingsResponse | null,
+  webflowLayout: "card" | "photo",
+): "card" | "photo" {
+  return published?.settings.productionLayout ?? webflowLayout;
+}
+
+/**
  * Returns settings only when the Worker explicitly reports a published D1
  * source. Any other flag/error keeps the Webflow path in control.
  */
