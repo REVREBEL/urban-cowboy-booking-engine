@@ -2,8 +2,8 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 42,
-    "planned": 94,
+    "documented": 58,
+    "planned": 78,
     "excluded": 6,
     "undocumentedProductionCandidates": 41,
     "candidateTriage": {
@@ -159,13 +159,13 @@
       "component": "RusticLodgeSignboard",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/discovery/RusticLodgeSignboard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/rustic-lodge-signboard.mdx",
+      "docsPage": "docs-app/content/docs/components/booking-details.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Booking details page with base-path-prefixed artwork and local slot buttons."
     },
     {
       "component": "AddonCard",
@@ -179,7 +179,7 @@
         "Included"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists."
     },
     {
       "component": "AddonCustomizerModal",
@@ -191,7 +191,7 @@
         "Open"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists."
     },
     {
       "component": "ExtrasStep",
@@ -203,7 +203,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists."
     },
     {
       "component": "CreoleUpsellStories",
@@ -299,13 +299,13 @@
       "component": "BestRateGuaranteedLabel",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/BestRateGuaranteedLabel.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/best-rate-guaranteed-label.mdx",
+      "docsPage": "docs-app/content/docs/components/booking-details.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Booking details page with tooltip and theme props."
     },
     {
       "component": "DateSearchDropdown",
@@ -319,7 +319,7 @@
         "ExternalActions"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists."
     },
     {
       "component": "InlineDateRangePicker",
@@ -331,31 +331,31 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists."
     },
     {
       "component": "PropertyLocationLabel",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/PropertyLocationLabel.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/property-location-label.mdx",
+      "docsPage": "docs-app/content/docs/components/booking-details.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Booking details page with canonical location keys and local click callback."
     },
     {
       "component": "PropertyPropertyLabel",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/search/PropertyPropertyLabel.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/property-property-label.mdx",
+      "docsPage": "docs-app/content/docs/components/booking-details.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Booking details page with property display names and local click callback."
     },
     {
       "component": "SearchBar",
@@ -441,7 +441,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: CheckoutStep embeds BookingSummary, which reads the live BookingProvider; a side-effect-free fixture is required."
     },
     {
       "component": "ExtrasStep",
@@ -453,7 +453,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists."
     },
     {
       "component": "BookingSummary",
@@ -465,7 +465,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: BookingSummary reads the live BookingProvider (hotel data, geolocation, tracking); a side-effect-free fixture is required."
     },
     {
       "component": "StayBreakdown",
@@ -477,19 +477,19 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: StayBreakdown reads the live BookingProvider and Mews rate totals; a side-effect-free fixture is required."
     },
     {
       "component": "StaySummary",
       "category": "Booking steps",
       "storySource": "src/stories/components/booking/summary/stay-summary.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/booking/stay-summary.mdx",
+      "docsPage": "docs-app/content/docs/components/booking-summary.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Booking summary page with a deterministic stay and nightly-rate fixture."
     },
     {
       "component": "Brand",
@@ -504,7 +504,7 @@
         "CustomColor"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: brand presentation story has no interactive state beyond the documented brand tokens."
     },
     {
       "component": "DataBadge",
@@ -609,7 +609,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: icon set is consumed as implementation detail inside documented components; a separate page would duplicate the registry documentation."
     },
     {
       "component": "BuildingWoodcut",
@@ -623,7 +623,7 @@
         "Lodge"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: icon set is consumed as implementation detail inside documented components; a separate page would duplicate the registry documentation."
     },
     {
       "component": "CowboyIcons",
@@ -635,7 +635,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: icon set is consumed as implementation detail inside documented components; a separate page would duplicate the registry documentation."
     },
     {
       "component": "Disappear for a While",
@@ -762,7 +762,7 @@
       "component": "ConfigurableRateOffer",
       "category": "Rates",
       "storySource": "src/stories/components/rates/ConfigurableRateOffer.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/configurable-rate-offer.mdx",
+      "docsPage": "docs-app/content/docs/components/rate-offers.mdx",
       "demos": 9,
       "demoExports": [
         "Collapsed",
@@ -775,8 +775,8 @@
         "SunupExpanded",
         "OutfitExpanded"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Rate offers page with a deterministic RateCardConfig, live content and pricing fixture."
     },
     {
       "component": "Figma Rate Card",
@@ -795,7 +795,7 @@
         "PolicyTimeline"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "OutfitOffersCard",
@@ -808,7 +808,7 @@
         "Compact"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "PillarFeatures",
@@ -820,7 +820,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "PlanAheadOffersCard",
@@ -832,13 +832,13 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "PolicyDisplay",
       "category": "Rates",
       "storySource": "src/stories/components/rates/PolicyDisplay.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/policy-display.mdx",
+      "docsPage": "docs-app/content/docs/components/rate-offers.mdx",
       "demos": 6,
       "demoExports": [
         "Horizontal",
@@ -848,8 +848,8 @@
         "CowboyPaymentSchedule",
         "TextOnlyFallback"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Rate offers page with horizontal/vertical layout and tooltip props."
     },
     {
       "component": "ProductionRateTray",
@@ -871,7 +871,7 @@
         "MemberUnlockVerified"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "RateCardLab",
@@ -889,13 +889,13 @@
         "FullyLocked"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "RateOfferCard",
       "category": "Rates",
       "storySource": "src/stories/components/rates/RateOfferCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/rate-offer-card.mdx",
+      "docsPage": "docs-app/content/docs/components/rate-offers.mdx",
       "demos": 12,
       "demoExports": [
         "RideEasy",
@@ -911,14 +911,14 @@
         "CompactRideEasy",
         "CompactOutfitExpanded"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Rate offers page with variant/theme props and local-only booking callbacks."
     },
     {
       "component": "RateOfferSidePanel",
       "category": "Rates",
       "storySource": "src/stories/components/rates/RateOfferSidePanel.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rates/rate-offer-side-panel.mdx",
+      "docsPage": "docs-app/content/docs/components/rate-offers.mdx",
       "demos": 7,
       "demoExports": [
         "Default",
@@ -929,8 +929,8 @@
         "Sunup",
         "Submitting"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Rate offers page with a static stay breakdown and policy copy."
     },
     {
       "component": "RateSelectionView",
@@ -942,7 +942,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "RideEasyOffersCard",
@@ -954,7 +954,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "RideEasySoloPage",
@@ -966,7 +966,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "StayAwhileOffersCard",
@@ -978,7 +978,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "SunupOffersCard",
@@ -990,7 +990,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
     },
     {
       "component": "AmenityIcons",
@@ -1023,7 +1023,7 @@
         "EmptyRoomList"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
     },
     {
       "component": "BuildingIcon",
@@ -1043,7 +1043,7 @@
       "component": "FocusAmenity",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenity.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity.mdx",
+      "docsPage": "docs-app/content/docs/components/focus-amenity.mdx",
       "demos": 9,
       "demoExports": [
         "Playground",
@@ -1056,56 +1056,56 @@
         "IconsActive",
         "ToneComparison"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Focus amenity family page with all five pin states and select callbacks."
     },
     {
       "component": "FocusAmenityAction",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenityAction.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-action.mdx",
+      "docsPage": "docs-app/content/docs/components/focus-amenity.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "Hover",
         "Active"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Focus amenity family page with state variants and tone notes."
     },
     {
       "component": "FocusAmenityCard",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenityCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-card.mdx",
+      "docsPage": "docs-app/content/docs/components/focus-amenity.mdx",
       "demos": 3,
       "demoExports": [
         "FigmaReference",
         "HeadlineOnly",
         "WrappedCopy"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Focus amenity family page with headline and description copy."
     },
     {
       "component": "FocusAmenityCount",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenityCount.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-count.mdx",
+      "docsPage": "docs-app/content/docs/components/focus-amenity.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "Hover",
         "Active"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Focus amenity family page with count and state variants."
     },
     {
       "component": "FocusAmenityIcon",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/FocusAmenityIcon.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/focus-amenity-icon.mdx",
+      "docsPage": "docs-app/content/docs/components/focus-amenity.mdx",
       "demos": 6,
       "demoExports": [
         "Default",
@@ -1115,8 +1115,8 @@
         "AllIconsByGroup",
         "InteractiveExplorer"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Focus amenity family page with registry-validated names and icon states."
     },
     {
       "component": "GuestReviewQuoteCard",
@@ -1132,7 +1132,7 @@
         "WithAttributionNoLink"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
     },
     {
       "component": "MultiRoomViewBuilding",
@@ -1151,7 +1151,7 @@
         "StackedLeftWithIcon"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
     },
     {
       "component": "MultiRoomViewList",
@@ -1163,7 +1163,7 @@
         "FigmaReference"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
     },
     {
       "component": "MultiRoomViewListItem",
@@ -1177,7 +1177,7 @@
         "RowReverse"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
     },
     {
       "component": "MultiRoomViewRoomTypeCard",
@@ -1190,7 +1190,7 @@
         "Focus"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
     },
     {
       "component": "RoomDetailModal",
@@ -1205,7 +1205,7 @@
         "ClosedState"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
     },
     {
       "component": "RoomsListBuilding",
@@ -1217,7 +1217,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
     },
     {
       "component": "RoomsListCard",
@@ -1245,15 +1245,15 @@
       "component": "Cabin King Bed + Bunk",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/SideFocusAmenityBar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/side-focus-amenity-bar.mdx",
+      "docsPage": "docs-app/content/docs/components/focus-amenity.mdx",
       "demos": 3,
       "demoExports": [
         "Collapsed",
         "Expanded",
         "Overflow"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Focus amenity family page as the SideBarFocusAmenity rail with local items."
     },
     {
       "component": "Button",
@@ -1304,13 +1304,13 @@
       "component": "ReservationSummaryBar",
       "category": "Shared controls",
       "storySource": "src/stories/components/ui/ReservationSummaryBar.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/ui/reservation-summary-bar.mdx",
+      "docsPage": "docs-app/content/docs/components/booking-summary.mdx",
       "demos": 1,
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "status": "documented",
+      "note": "Documented on the Booking summary page with a local action callback and static totals."
     },
     {
       "component": "Accordion",
@@ -1322,7 +1322,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "AlertDialog",
@@ -1334,7 +1334,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Alert",
@@ -1346,7 +1346,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "AspectRatio",
@@ -1358,7 +1358,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Avatar",
@@ -1370,7 +1370,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Badge",
@@ -1385,7 +1385,7 @@
         "Outline"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Banner",
@@ -1397,7 +1397,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Breadcrumb",
@@ -1409,7 +1409,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Calendar",
@@ -1421,7 +1421,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Card",
@@ -1433,7 +1433,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Carousel",
@@ -1445,7 +1445,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Chart",
@@ -1457,7 +1457,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Checkbox",
@@ -1469,7 +1469,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Collapsible",
@@ -1481,7 +1481,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Command",
@@ -1493,7 +1493,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "ContextMenu",
@@ -1505,7 +1505,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Dialog",
@@ -1517,7 +1517,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Drawer",
@@ -1529,7 +1529,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "DropdownMenu",
@@ -1541,7 +1541,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Form",
@@ -1553,7 +1553,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "HoverCard",
@@ -1565,7 +1565,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "InputOTP",
@@ -1577,7 +1577,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Input",
@@ -1590,7 +1590,7 @@
         "Disabled"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Label",
@@ -1602,7 +1602,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Menubar",
@@ -1614,7 +1614,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "NavigationMenu",
@@ -1626,7 +1626,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Pagination",
@@ -1638,7 +1638,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Popover",
@@ -1650,7 +1650,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Progress",
@@ -1662,7 +1662,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "RadioGroup",
@@ -1674,7 +1674,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Resizable",
@@ -1686,7 +1686,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "ScrollArea",
@@ -1698,7 +1698,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Select",
@@ -1710,7 +1710,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Separator",
@@ -1722,7 +1722,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Sheet",
@@ -1734,7 +1734,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Sidebar",
@@ -1746,7 +1746,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Skeleton",
@@ -1758,7 +1758,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Slider",
@@ -1770,7 +1770,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Sonner",
@@ -1782,7 +1782,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Switch",
@@ -1806,7 +1806,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Tabs",
@@ -1818,7 +1818,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Textarea",
@@ -1830,7 +1830,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "ToggleGroup",
@@ -1842,7 +1842,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Toggle",
@@ -1854,7 +1854,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Tooltip",
@@ -1866,7 +1866,7 @@
         "Default"
       ],
       "status": "planned",
-      "note": "Awaiting Fumadocs page and interactive demos."
+      "note": "Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior."
     },
     {
       "component": "Party Template",

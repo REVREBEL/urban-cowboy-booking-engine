@@ -2,7 +2,7 @@
 
 ## COW-85 follow-up coverage and live verification
 
-Coverage matrix after this slice: **142 stories — 42 documented, 94 planned, 6 excluded**;
+Coverage matrix after the M3 slice: **142 stories — 58 documented, 78 planned, 6 excluded**;
 **41 production candidates — 0 deferred, 41 dispositioned** (32 excluded, 9 now family-covered or
 documented). The previous 9 deferred entries are resolved with evidence:
 
@@ -41,6 +41,30 @@ Follow-ups: (1) the custom domain currently redirects to **http** and `https://r
 fails certificate validation (`SSL: no alternative certificate subject name matches`); the Pages
 custom-domain certificate needs fixing. (2) Re-run the live checks after merge/deploy to confirm the
 six new pages, static search entries and interactive demos are published.
+
+## COW-85 M3 — remaining historical catalog audit
+
+Four family pages were added in this M3 slice, covering 16 previously planned stories with real
+source imports and docs-only deterministic harnesses:
+
+| Page | Stories covered |
+| --- | --- |
+| `focus-amenity.mdx` | `FocusAmenity`, `FocusAmenityAction`, `FocusAmenityCard`, `FocusAmenityCount`, `FocusAmenityIcon`, `SideFocusAmenityBar` |
+| `rate-offers.mdx` | `RateOfferCard`, `ConfigurableRateOffer`, `RateOfferSidePanel`, `PolicyDisplay` |
+| `booking-summary.mdx` | `StaySummary`, `ReservationSummaryBar` |
+| `booking-details.mdx` | `BestRateGuaranteedLabel`, `PropertyLocationLabel`, `PropertyPropertyLabel`, `RusticLodgeSignboard` |
+| M1 context (not added here) | `room-list-card.mdx`, `extras-upsell.mdx`, `search-bar.mdx` — already merged in PR #355 |
+
+`CheckoutStep`, `BookingSummary` and `StayBreakdown` remain planned: they embed `BookingSummary` or
+read the live `BookingProvider`, which loads hotel data, geolocation and tracking. Demoing them
+would have side effects, so the documentation explicitly records the need for a side-effect-free
+fixture. The remaining 78 planned rows carry category-specific rationales in the matrix: generic
+shadcn/ui primitives, rate/room presentation variants needing live fixtures, and implementation-detail
+icon sets. No row claims coverage merely because a related page exists.
+
+All planned rows now have a specific note; the inventory generator and `docs:inventory:check` verify
+that documented rows point at real indexed pages and that exclusions/candidate dispositions carry
+evidence.
 
 ## COW-70 catalog coverage
 
@@ -222,7 +246,7 @@ and absence of API/token strings. A subpath build was also exercised with
 
 ## Remaining gates before removing the historical Storybook runtime sweep
 
-1. Convert the remaining **94 planned** entries in the current coverage matrix, preserving
+1. Convert the remaining **78 planned** entries in the current coverage matrix, preserving
    meaningful variants and controls. All 41 production candidates are already dispositioned
    (32 excluded, 0 deferred, 1 documented, 8 family-covered).
 2. Keep static search and source links current as pages are added (both are in place today).

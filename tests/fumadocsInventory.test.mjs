@@ -76,6 +76,21 @@ test("inventory generation is deterministic and maps existing pages unambiguousl
     Conversion: "docs-app/content/docs/components/conversion-badges.mdx",
     UpsellCard: "docs-app/content/docs/components/extras-upsell.mdx",
     RoomsListCard: "docs-app/content/docs/components/room-list-card.mdx",
+    FocusAmenity: "docs-app/content/docs/components/focus-amenity.mdx",
+    FocusAmenityAction: "docs-app/content/docs/components/focus-amenity.mdx",
+    FocusAmenityCard: "docs-app/content/docs/components/focus-amenity.mdx",
+    FocusAmenityCount: "docs-app/content/docs/components/focus-amenity.mdx",
+    FocusAmenityIcon: "docs-app/content/docs/components/focus-amenity.mdx",
+    RateOfferCard: "docs-app/content/docs/components/rate-offers.mdx",
+    ConfigurableRateOffer: "docs-app/content/docs/components/rate-offers.mdx",
+    RateOfferSidePanel: "docs-app/content/docs/components/rate-offers.mdx",
+    PolicyDisplay: "docs-app/content/docs/components/rate-offers.mdx",
+    StaySummary: "docs-app/content/docs/components/booking-summary.mdx",
+    ReservationSummaryBar: "docs-app/content/docs/components/booking-summary.mdx",
+    BestRateGuaranteedLabel: "docs-app/content/docs/components/booking-details.mdx",
+    PropertyLocationLabel: "docs-app/content/docs/components/booking-details.mdx",
+    PropertyPropertyLabel: "docs-app/content/docs/components/booking-details.mdx",
+    RusticLodgeSignboard: "docs-app/content/docs/components/booking-details.mdx",
   };
   for (const [name, page] of Object.entries(expectedPaths)) {
     const documented = byComponent(name).find((entry) => entry.status === "documented");
@@ -103,6 +118,18 @@ test("planned rows carry an explicit reason, not just a generic pending note", (
   assert.equal(footer.status, "planned");
   assert.match(footer.note, /api\.locations\(\)/);
   assert.match(footer.note, /safe docs-only fixture/);
+});
+
+test("every planned row explains why it is not yet documented", () => {
+  const matrix = JSON.parse(read("docs/component-library/coverage-matrix.json"));
+  const planned = matrix.components.filter((entry) => entry.status === "planned");
+  assert.ok(planned.length > 0, "planned rows remain");
+  for (const entry of planned) {
+    assert.ok(entry.note && entry.note.length > 30, `specific rationale for ${entry.component}`);
+    assert.notEqual(entry.note, "Awaiting Fumadocs page and interactive demos.");
+  }
+  const checkout = planned.find((entry) => entry.component === "CheckoutStep");
+  assert.match(checkout.note, /BookingProvider/);
 });
 
 test("documented rows describe the coverage they actually provide", () => {

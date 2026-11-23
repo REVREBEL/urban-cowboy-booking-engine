@@ -1,0 +1,56 @@
+---
+title: Rate offers
+description: Rate card, configurable offer, side panel and policy display.
+---
+
+import { RateOfferCardStoryControl, ConfigurableRateOfferStoryControl, RateOfferSidePanelStoryControl, PolicyDisplayStoryControl } from '~/components/story-controls';
+
+These components present rate merchandising copy. Prices and policies in the demos are static
+fixtures; confirming a selection only flips local state and never calls Mews or starts payment.
+
+## Rate card
+
+<RateOfferCardStoryControl />
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `theme` | offer theme token | Presentation preset |
+| `variant` | `default`, `compact` | Card density |
+| `price`, `priceUnit`, `taxDisclaimer` | string | Merchandising copy |
+| `onToggleExpand`, `onBook`, `onConfirmBooking` | callbacks | Docs harness records actions only |
+
+## Configurable offer
+
+<ConfigurableRateOfferStoryControl />
+
+`ConfigurableRateOffer` takes a `RateCardConfig`, published `RateCardLiveContent` and a deterministic
+pricing object. The config demonstrates the CMS-backed fields (eyebrow, headline, artwork positions,
+policy windows) without a CMS token. The fixture uses 50% of the full $1,172.40 total: $586.20 due
+at booking and $586.20 remaining. That matches the booking engine's own split — the
+`RateSelectionView` fallback halves `subtotal + taxes + resort fee`, and the live Mews path uses
+`totalGross * settlement.value`.
+
+## Side panel
+
+<RateOfferSidePanelStoryControl />
+
+The panel shows the same stay numbers in a compact breakdown with deposit/remaining notes. The demo
+has local open state: its close button hides the panel and a local reopen control restores it.
+
+## Policy display
+
+<PolicyDisplayStoryControl />
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `orientation` | `horizontal`, `vertical` | Payment milestone layout |
+| `initialAmount`, `remainingAmount` | string | Deposit and balance copy |
+| `showTooltips` | boolean | Explanatory tooltips |
+
+## Responsive behaviour
+
+The rate card keeps its designed fixed width; on narrow screens its preview scrolls inside a bounded
+container. The side panel and policy display stack their content. No demo overflows the document
+itself.
+
+[Rate card source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rates/RateOfferCard.tsx) · [Configurable offer source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rates/ConfigurableRateOffer.tsx) · [Policy source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rates/PolicyDisplay.tsx)

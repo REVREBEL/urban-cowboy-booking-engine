@@ -1,0 +1,40 @@
+---
+title: Booking summary
+description: Stay summary and reservation summary bar.
+---
+
+import { StaySummaryStoryControl, ReservationSummaryBarStoryControl } from '~/components/story-controls';
+
+These components present stay details during the booking flow. Demos use static dates and local
+callbacks; no form is submitted and no reservation state changes.
+
+## Stay summary
+
+<StaySummaryStoryControl />
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `roomName`, `rateName` | string | Editorial labels |
+| `checkIn`, `checkOut`, `adults` | required | Drives the night count and copy |
+| `children`, `dog` | optional | Guest breakdown |
+| `nightlyRate`, `total`, `currency` | optional | Formatted with the shared money helper |
+
+## Reservation bar
+
+<ReservationSummaryBarStoryControl />
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `roomName`, `rateTitle`, `nights` | required | Stay identity |
+| `extrasTotal`, `selectedItemCount` | optional | Extras summary |
+| `onAction` | callback | Docs harness records the click only |
+
+`BookingSummary`, `StayBreakdown` and `CheckoutStep` (which embeds `BookingSummary`) read the live
+`BookingProvider`, which loads hotel data and geolocation; they stay planned until a
+side-effect-free fixture is available.
+
+## Responsive behaviour
+
+The folio stacks below the main column on narrow screens and the summary bar keeps its action visible.
+
+[Stay summary source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/summary/stay-summary.tsx) · [Checkout source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/summary/CheckoutStep.tsx) · [Bar source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/ui/ReservationSummaryBar.tsx)
