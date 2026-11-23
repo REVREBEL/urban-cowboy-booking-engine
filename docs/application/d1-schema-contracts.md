@@ -111,9 +111,17 @@ npm test                                        # full suite
 npm run typecheck
 ```
 
+## Editorial publication state (COW-97)
+
+Migration `0012_editorial_publication_state.sql` adds `room_type_publication`, `location_publication` and `mews_reference_sync`. See [W2.2 editorial publication contracts](w2-2-editorial-publication-contracts.md) for the full rationale and the editorial source-of-truth decision.
+
+- Publication state is an additive extension table, never a physical `ADD COLUMN`, because the runner applies every migration twice.
+- A row without a publication record is published; the backfill is `INSERT OR IGNORE`, so editor-owned state survives re-application and reseeding.
+- `mews_reference_sync` accepts only stable Mews reference types; ARI types are rejected by SQL `CHECK` and by the Zod enum.
+- Rollback: `scripts/d1-rollback/0012_editorial_publication_state_down.sql`.
+
 ## Deferred (not in this change)
 
-- Publication-state columns for `locations` and `room_types`. The 2026-11-15 export has no draft locations; the single draft room type is `6abd4a1debcab0ea7e461c9a`. Adding a status column requires a backfill decision and is tracked in the COW-29 audit gates.
-- Importing the 238 photo hotspots: the source export still lacks stable media identity. The registry now exists; the re-export, importer and placement mapping are COW-34.
+- Importing the 238 photo hotspots: the source export still lacks stable media identity. The registry exists; the re-export, importer and placement mapping are W2.4 (COW-99).
 - Removing the Squarespace-shaped columns from `media_assets` / `media_versions`. New uploads carry deterministic fallback values there so the NOT NULL constraints stay satisfied.
 - Using these helpers in public endpoints; that switch stays behind the parity/flag gates.

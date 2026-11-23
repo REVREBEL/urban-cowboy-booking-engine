@@ -36,6 +36,7 @@ function makeDb() {
     "migrations/0005_media_registry.sql",
     "migrations/0006_working_revision_pointer.sql",
     "migrations/0007_amenity_editorial.sql",
+    "migrations/0012_editorial_publication_state.sql",
   ]) db.exec(read(file));
   db.exec(`
     INSERT INTO tenants (id, slug, name) VALUES

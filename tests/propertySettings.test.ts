@@ -34,6 +34,7 @@ function makeDb() {
     "migrations/0003_property_scoped_contracts.sql", "migrations/0004_published_snapshots.sql",
     "migrations/0005_media_registry.sql", "migrations/0006_working_revision_pointer.sql",
     "migrations/0007_amenity_editorial.sql",
+    "migrations/0012_editorial_publication_state.sql",
   ]) db.exec(read(file));
   db.exec(read("seed.sql"));
   return db;

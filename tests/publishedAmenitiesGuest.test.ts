@@ -50,6 +50,7 @@ function makeDb() {
     "migrations/0001_init.sql",
     "migrations/0004_published_snapshots.sql",
     "migrations/0007_amenity_editorial.sql",
+    "migrations/0012_editorial_publication_state.sql",
   ]) db.exec(read(file));
   db.exec(`
     INSERT INTO tenants (id, slug, name) VALUES ('${TENANT}','${TENANT}','Urban Cowboy');
@@ -58,6 +59,10 @@ function makeDb() {
       ('room-b','${TENANT}','mews-b','Suite B','suite-b',2),
       ('room-unmigrated','${TENANT}','mews-unmigrated','Unmigrated','unmigrated',3),
       ('6abd4a1debcab0ea7e461c9a','${TENANT}','mews-draft','Draft Room','draft',4);
+    INSERT INTO room_type_publication (tenant_id, room_type_id, status, source_snapshot_date) VALUES
+      ('${TENANT}','room-a','published','2026-11-15'),
+      ('${TENANT}','room-b','published','2026-11-15'),
+      ('${TENANT}','6abd4a1debcab0ea7e461c9a','draft','2026-11-15');
     -- Only rooms with a published room_amenities document are guest-facing.
     INSERT INTO content_items (id, tenant_id, kind, slug, status) VALUES
       ('ci-a','${TENANT}','room_amenities','room-a','published'),

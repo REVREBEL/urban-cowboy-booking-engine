@@ -20,6 +20,8 @@ import {
   listScopedEvents,
   listScopedLocations,
   listScopedRoomTypes,
+  publishedLocationIds,
+  publishedRoomTypeIds,
   type TenantScope,
 } from "./d1.ts";
 import type { Env } from "./mews/_lib.ts";
@@ -63,7 +65,18 @@ export async function loadPublishedCollection(
   collection: ContentCollection,
 ): Promise<PublishedRecord[]> {
   const records = await loadAllRows(db, scope, collection);
-  return records.filter((record) => isPublishedSource(collection, record.id));
+  // COW-97: publication state for room types and locations now comes from the
+  // extension tables, not a hardcoded source-ID deny-list. The deny-list stays
+  // as the fallback for collections without a publication contract.
+  const publishedIds =
+    collection === "roomTypes" || collection === "roomAmenities"
+      ? await publishedRoomTypeIds(db, scope)
+      : collection === "locations"
+        ? await publishedLocationIds(db, scope)
+        : null;
+  return records.filter((record) =>
+    publishedIds ? publishedIds.has(record.id) : isPublishedSource(collection, record.id),
+  );
 }
 
 async function loadAllRows(
@@ -128,7 +141,6 @@ async function loadAllRows(
         byRoom.set(assignment.roomTypeId, list);
       }
       return rooms
-        .filter((room) => isPublishedSource("roomTypes", room.id))
         .map((room) => ({
           id: room.id, collection, payload: {
             mewsRoomCategoryId: room.mewsRoomCategoryId,

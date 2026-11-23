@@ -19,6 +19,18 @@ const flag = z.number().int().min(0).max(1).transform((value) => value === 1);
 export const contentStatusSchema = z.enum(["draft", "published", "archived"]);
 export type ContentStatusValue = z.infer<typeof contentStatusSchema>;
 
+/**
+ * COW-97: publication state for structured editorial rows whose own table has
+ * no status column (`room_types`, `locations`). A missing extension row means
+ * published, preserving the behavior of databases seeded before 0012.
+ */
+export const editorialStatusSchema = z.enum(["draft", "published", "archived"]);
+export type EditorialStatus = z.infer<typeof editorialStatusSchema>;
+
+/** Where a publication row came from. Only `editor` is immune to reseeding. */
+export const publicationStateSourceSchema = z.enum(["backfill", "import", "editor"]);
+export type PublicationStateSource = z.infer<typeof publicationStateSourceSchema>;
+
 export const mediaAliasTypeSchema = z.enum([
   "webflow_file_id",
   "webflow_cdn_url",
@@ -114,6 +126,42 @@ export const roomTypeRowSchema = z.object({
   createdAt: row.created_at,
 }));
 export type RoomTypeContract = z.output<typeof roomTypeRowSchema>;
+
+/** COW-97: editor-owned publication state for a Room Type. */
+export const roomTypePublicationRowSchema = z.object({
+  tenant_id: id,
+  room_type_id: id,
+  status: editorialStatusSchema,
+  state_source: publicationStateSourceSchema,
+  source_snapshot_date: nullableText,
+  updated_at: timestamp,
+}).transform((row) => ({
+  tenantId: row.tenant_id,
+  roomTypeId: row.room_type_id,
+  status: row.status,
+  stateSource: row.state_source,
+  sourceSnapshotDate: row.source_snapshot_date,
+  updatedAt: row.updated_at,
+}));
+export type RoomTypePublicationContract = z.output<typeof roomTypePublicationRowSchema>;
+
+/** COW-97: editor-owned publication state for a Location. */
+export const locationPublicationRowSchema = z.object({
+  tenant_id: id,
+  location_id: id,
+  status: editorialStatusSchema,
+  state_source: publicationStateSourceSchema,
+  source_snapshot_date: nullableText,
+  updated_at: timestamp,
+}).transform((row) => ({
+  tenantId: row.tenant_id,
+  locationId: row.location_id,
+  status: row.status,
+  stateSource: row.state_source,
+  sourceSnapshotDate: row.source_snapshot_date,
+  updatedAt: row.updated_at,
+}));
+export type LocationPublicationContract = z.output<typeof locationPublicationRowSchema>;
 
 export const amenityRowSchema = z.object({
   id,
@@ -461,6 +509,45 @@ export const contentProvenanceRowSchema = z.object({
   importedAt: row.imported_at,
 }));
 export type ContentProvenanceContract = z.output<typeof contentProvenanceRowSchema>;
+
+/**
+ * COW-97: stable Mews reference types that may be mirrored into D1. The list
+ * deliberately excludes availability, inventory, restrictions and rates; those
+ * are read live from Mews and must never be authoritative in D1.
+ */
+export const mewsReferenceTypeSchema = z.enum([
+  "hotel",
+  "rate_group",
+  "product",
+  "room_category",
+  "age_category",
+]);
+export type MewsReferenceType = z.infer<typeof mewsReferenceTypeSchema>;
+
+export const mewsReferenceSyncRowSchema = z.object({
+  id,
+  tenant_id: id,
+  location_id: nullableText,
+  reference_type: mewsReferenceTypeSchema,
+  reference_id: id,
+  payload_json: nullableText,
+  source_system: z.literal("mews"),
+  synced_at: timestamp,
+  reconciled_at: nullableText,
+  created_at: timestamp,
+}).transform((row) => ({
+  id: row.id,
+  tenantId: row.tenant_id,
+  locationId: row.location_id,
+  referenceType: row.reference_type,
+  referenceId: row.reference_id,
+  payloadJson: row.payload_json,
+  sourceSystem: row.source_system,
+  syncedAt: row.synced_at,
+  reconciledAt: row.reconciled_at,
+  createdAt: row.created_at,
+}));
+export type MewsReferenceSyncContract = z.output<typeof mewsReferenceSyncRowSchema>;
 
 // ---------------------------------------------------------------------------
 // COW-33 media registry extension

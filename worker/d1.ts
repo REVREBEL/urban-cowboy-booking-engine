@@ -3,6 +3,7 @@
 // revisions, media IDs, merchandising, recovery state and reporting read models.
 
 import type { Env } from "./mews/_lib";
+import { z } from "zod";
 import {
   addOnRowSchema,
   amenityEditorialRowSchema,
@@ -11,9 +12,12 @@ import {
   contentItemRowSchema,
   contentProvenanceRowSchema,
   eventRowSchema,
+  locationPublicationRowSchema,
   locationRowSchema,
+  mewsReferenceSyncRowSchema,
   mediaAliasRowSchema,
   mediaAssetRowSchema,
+  roomTypePublicationRowSchema,
   roomTypeRowSchema,
   roomGalleryRowSchema,
   roomAmenityAssignmentRowSchema,
@@ -23,12 +27,17 @@ import {
   type BuildingContract,
   type ContentItemContract,
   type ContentProvenanceContract,
+  type EditorialStatus,
   type EventContract,
   type LocationContract,
+  type LocationPublicationContract,
   type MediaAliasContract,
   type MediaAssetContract,
   type MediaAliasType,
+  type MewsReferenceSyncContract,
+  type MewsReferenceType,
   type RoomTypeContract,
+  type RoomTypePublicationContract,
   type RoomGalleryRow,
   type RoomAmenityAssignmentRow,
 } from "../src/types/d1-contracts.ts";
@@ -463,6 +472,171 @@ export function listScopedLocations(
 ): Promise<LocationContract[]> {
   const query = locationsQuery(scope);
   return allScoped(db, query.sql, query.bindings, locationRowSchema);
+}
+
+// ---------------------------------------------------------------------------
+// COW-97 editorial publication state and Mews reference metadata
+// ---------------------------------------------------------------------------
+
+const publishedIdRowSchema = z.object({ id: z.string().min(1) });
+
+/**
+ * IDs visible to guests. A row with no publication record keeps the historical
+ * published behavior; an explicit draft/archived record excludes it. Both the
+ * source row and the publication row must belong to the requested tenant, so a
+ * mismatched publication row can never publish another tenant's record.
+ */
+async function publishedEditorialIds(
+  db: D1Database,
+  scope: TenantScope,
+  sourceTable: "room_types" | "locations",
+  publicationTable: "room_type_publication" | "location_publication",
+  publicationIdColumn: "room_type_id" | "location_id",
+  scopeColumn: "location_id" | "id",
+): Promise<Set<string>> {
+  const scoped = scope.locationId != null;
+  const where = scoped
+    ? `rt.tenant_id = ?1 AND rt.${scopeColumn} = ?2`
+    : "rt.tenant_id = ?1";
+  const rows = await allScoped(
+    db,
+    `SELECT rt.id AS id FROM ${sourceTable} rt
+       LEFT JOIN ${publicationTable} p
+         ON p.tenant_id = rt.tenant_id AND p.${publicationIdColumn} = rt.id
+      WHERE ${where} AND (p.${publicationIdColumn} IS NULL OR p.status = 'published')`,
+    scoped ? [scope.tenantId, scope.locationId] : [scope.tenantId],
+    publishedIdRowSchema,
+  );
+  return new Set(rows.map((row) => row.id));
+}
+
+export function publishedRoomTypeIds(db: D1Database, scope: TenantScope): Promise<Set<string>> {
+  return publishedEditorialIds(
+    db, scope, "room_types", "room_type_publication", "room_type_id", "location_id",
+  );
+}
+
+export function publishedLocationIds(db: D1Database, scope: TenantScope): Promise<Set<string>> {
+  return publishedEditorialIds(
+    db, scope, "locations", "location_publication", "location_id", "id",
+  );
+}
+
+export async function listPublishedRoomTypes(
+  db: D1Database,
+  scope: TenantScope,
+): Promise<RoomTypeContract[]> {
+  const ids = await publishedRoomTypeIds(db, scope);
+  const rows = await listScopedRoomTypes(db, scope);
+  return rows.filter((row) => ids.has(row.id));
+}
+
+export async function listPublishedLocations(
+  db: D1Database,
+  scope: TenantScope,
+): Promise<LocationContract[]> {
+  const ids = await publishedLocationIds(db, scope);
+  const rows = await listScopedLocations(db, scope);
+  return rows.filter((row) => ids.has(row.id));
+}
+
+export function listRoomTypePublications(
+  db: D1Database,
+  scope: TenantScope,
+): Promise<RoomTypePublicationContract[]> {
+  return allScoped(
+    db,
+    `SELECT p.tenant_id, p.room_type_id, p.status, p.state_source, p.source_snapshot_date, p.updated_at
+       FROM room_type_publication p
+       JOIN room_types rt ON rt.id = p.room_type_id AND rt.tenant_id = p.tenant_id
+      WHERE p.tenant_id = ?1 AND (?2 IS NULL OR rt.location_id = ?2)`,
+    [scope.tenantId, scope.locationId ?? null],
+    roomTypePublicationRowSchema,
+  );
+}
+
+export function listLocationPublications(
+  db: D1Database,
+  scope: TenantScope,
+): Promise<LocationPublicationContract[]> {
+  return allScoped(
+    db,
+    `SELECT p.tenant_id, p.location_id, p.status, p.state_source, p.source_snapshot_date, p.updated_at
+       FROM location_publication p
+       JOIN locations l ON l.id = p.location_id AND l.tenant_id = p.tenant_id
+      WHERE p.tenant_id = ?1 AND (?2 IS NULL OR p.location_id = ?2)`,
+    [scope.tenantId, scope.locationId ?? null],
+    locationPublicationRowSchema,
+  );
+}
+
+/** Stable Mews reference metadata. No ARI type can be stored here. */
+export function listMewsReferenceSync(
+  db: D1Database,
+  scope: TenantScope,
+  referenceType?: MewsReferenceType,
+): Promise<MewsReferenceSyncContract[]> {
+  return allScoped(
+    db,
+    `SELECT id, tenant_id, location_id, reference_type, reference_id, payload_json,
+            source_system, synced_at, reconciled_at, created_at
+       FROM mews_reference_sync
+      WHERE tenant_id = ?1 AND (?2 IS NULL OR location_id = ?2)
+        AND (?3 IS NULL OR reference_type = ?3)
+      ORDER BY reference_type, reference_id`,
+    [scope.tenantId, scope.locationId ?? null, referenceType ?? null],
+    mewsReferenceSyncRowSchema,
+  );
+}
+
+/**
+ * Explicit D1 editor decision. Stamping `state_source='editor'` makes the row
+ * immune to both migration re-application and CMS reseeding.
+ */
+export async function setRoomTypePublication(
+  db: D1Database,
+  scope: TenantScope,
+  roomTypeId: string,
+  status: EditorialStatus,
+  sourceSnapshotDate: string | null = null,
+): Promise<RoomTypePublicationContract> {
+  await db.prepare(
+    `INSERT INTO room_type_publication
+       (tenant_id, room_type_id, status, state_source, source_snapshot_date)
+     VALUES (?1, ?2, ?3, 'editor', ?4)
+     ON CONFLICT (tenant_id, room_type_id) DO UPDATE SET
+       status = excluded.status,
+       state_source = 'editor',
+       source_snapshot_date = excluded.source_snapshot_date,
+       updated_at = datetime('now')`,
+  ).bind(scope.tenantId, roomTypeId, status, sourceSnapshotDate).run();
+  const rows = await listRoomTypePublications(db, scope);
+  const updated = rows.find((row) => row.roomTypeId === roomTypeId);
+  if (!updated) throw new Error(`room type ${roomTypeId} is outside the requested scope`);
+  return updated;
+}
+
+export async function setLocationPublication(
+  db: D1Database,
+  scope: TenantScope,
+  locationId: string,
+  status: EditorialStatus,
+  sourceSnapshotDate: string | null = null,
+): Promise<LocationPublicationContract> {
+  await db.prepare(
+    `INSERT INTO location_publication
+       (tenant_id, location_id, status, state_source, source_snapshot_date)
+     VALUES (?1, ?2, ?3, 'editor', ?4)
+     ON CONFLICT (tenant_id, location_id) DO UPDATE SET
+       status = excluded.status,
+       state_source = 'editor',
+       source_snapshot_date = excluded.source_snapshot_date,
+       updated_at = datetime('now')`,
+  ).bind(scope.tenantId, locationId, status, sourceSnapshotDate).run();
+  const rows = await listLocationPublications(db, scope);
+  const updated = rows.find((row) => row.locationId === locationId);
+  if (!updated) throw new Error(`location ${locationId} is outside the requested scope`);
+  return updated;
 }
 
 export function listScopedEvents(

@@ -18,6 +18,8 @@ function makeDb() {
   db.exec(read("migrations/0003_property_scoped_contracts.sql"));
   // COW-73: seed.sql now imports published amenity editorial values.
   db.exec(read("migrations/0007_amenity_editorial.sql"));
+  // COW-97: publication state for room types and locations.
+  db.exec(read("migrations/0012_editorial_publication_state.sql"));
   db.exec(read("seed.sql"));
   return db;
 }
@@ -35,8 +37,10 @@ test("per-table counts match the reconciliation plan", () => {
   const expected = {
     tenants: 1,
     locations: 4,
+    location_publication: 4,
     buildings: 9,
     room_types: 22,
+    room_type_publication: 22,
     amenities: 76,
     amenity_editorial: 76,
     events: 8,
@@ -134,10 +138,23 @@ test("no fake foreign keys or placeholder media were introduced", () => {
   assert.doesNotMatch(seed, /INSERT\s+OR\s+IGNORE/i);
 });
 
+test("publication state marks the single Webflow draft room type", () => {
+  const db = makeDb();
+  const drafts = db.prepare(
+    "SELECT room_type_id FROM room_type_publication WHERE status = 'draft'",
+  ).all().map((r) => r.room_type_id);
+  assert.deepEqual(drafts, ["6abd4a1debcab0ea7e461c9a"]);
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM location_publication WHERE status = 'published'").get().n,
+    4,
+  );
+  db.close();
+});
+
 test("seed is idempotent", () => {
   const db = makeDb();
   const before = Object.fromEntries(
-    ["tenants", "locations", "buildings", "room_types", "amenities", "amenity_editorial", "events", "offers", "add_ons", "room_type_amenities", "content_items", "content_revisions"]
+    ["tenants", "locations", "location_publication", "buildings", "room_types", "room_type_publication", "amenities", "amenity_editorial", "events", "offers", "add_ons", "room_type_amenities", "content_items", "content_revisions"]
       .map((t) => [t, count(db, t)]),
   );
   db.exec(read("seed.sql"));
@@ -168,9 +185,11 @@ test("reconciliation report matches generated SQL and source scope", () => {
   assert.equal(report.relationships.hotspotsExcluded, 238);
   assert.equal(report.tenantId, TENANT);
   assert.deepEqual(report.destinationRows.room_type_amenities, 253);
+  assert.equal(report.destinationRows.room_type_publication, 22);
+  assert.equal(report.destinationRows.location_publication, 4);
   assert.equal(
     Object.values(report.destinationRows).reduce((a, b) => a + b, 0),
-    521,
+    547,
   );
 });
 
