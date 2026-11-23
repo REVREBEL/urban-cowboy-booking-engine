@@ -68,7 +68,9 @@ async function loadMappings(
   ).bind(tenantId, mediaAssetId, placementId ?? null).all();
   return (result.results ?? []).flatMap((row) => {
     const parsed = photoHotspotMappingRowSchema.safeParse(row);
-    return parsed.success ? [parsed.data] : [];
+    // Soft-deleted pins are retained only for audit; never plan, publish or
+    // roll them back into the guest-visible set.
+    return parsed.success && parsed.data.reviewReason !== "deleted" ? [parsed.data] : [];
   });
 }
 

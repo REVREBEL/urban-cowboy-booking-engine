@@ -81,7 +81,14 @@ This slice adds the admin surface for COW-34 durable pins on top of the publishe
 - `src/dashboard/RoomHotspotsPanel.tsx` is the new `#/hotspots` dashboard route. It offers room/photo selection with stale-selection resets, click-to-place pins mapped through `containedRect`/`pointToSource` against the rendered image bounds (correct for portrait and non-16:9 photos), keyboard-editable X/Y inputs, room-eligible amenity selection, review approve/flag controls, and explicit publish/rollback feedback. The canvas is a focusable `role="button"` with arrow-key crosshair movement, Enter/Space placement and explicit new-pin X/Y inputs, so placement works without a pointer. No guest source or Mews behavior is changed.
 - `tests/hotspotAdmin.test.ts` (8 tests), `tests/hotspotsPanel.test.ts` (7 tests) and `tests/hotspotCanvas.test.ts` (4 tests) cover tenant scoping, role denial, relationship validation, draft isolation for published pins, placement-scoped publish/rollback, revision snapshots, letterbox geometry for portrait/wide images and the panel contract.
 
-**Still open for COW-84:** replacement planning/crop-remap endpoints that drive `planReplacement`/`applyReplacement`, pin deletion, guest Photo Journey cutover to published D1 hotspots, and browser verification of the admin and guest routes.
+## COW-81 Phase 3 — replacement and deletion lifecycle
+
+- `POST /api/admin/rooms/:id/hotspots/plan` and `/apply` expose COW-34 `planReplacement`/`applyReplacement`. Plan is read-only and recomputed server side; callers never submit mapping rows. Both actions require admin scope, a placement bound to the requested room and media asset, and versions belonging to that same canonical asset. URL-only, exact reupload, crop remap, crop review, replacement review and duplicate decisions are classified by the existing COW-34 policy. Ambiguous geometry is written as a draft with `pending` review and cannot publish until an editor approves.
+- Pin deletion (`DELETE .../hotspots/:mappingId`) is staged in `photo_hotspot_deletions` (`0011`) with a COW-34 revision snapshot. The published guest row is untouched until publish; publish soft-deletes it (`status='draft'`, `review_reason='deleted'`) so the audit chain stays intact and guest reads cannot see it. Rollback cancels pending removals on the placement.
+- The `#/hotspots` panel adds a reviewed replacement planning section (from/to version, URL-only flag, explicit review approval), decision/review feedback, and a two-step delete action with pending-deletion and unpublished-edit indicators.
+- `tests/hotspotAdmin.test.ts` (13 tests) and `tests/hotspotsPanel.test.ts` (10 tests) cover server-side planning scoping, read-only plan behavior, foreign-version rejection, review-gated apply/publish, crop classification, staged deletion, rollback cancellation and the matching UI contract.
+
+**Still open:** guest Photo Journey cutover to published D1 hotspots and deployed admin/guest browser verification are Phase 4 (COW-82), not part of this phase.
 
 ## Remaining slices (not in this PR)
 

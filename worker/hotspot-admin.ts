@@ -9,7 +9,14 @@ import {
   photoHotspotMappingSnapshotSchema,
   type PhotoHotspotMappingRow,
 } from "../src/types/d1-contracts.ts";
-import { publishMappings, rollbackMappings } from "./hotspot-mappings.ts";
+import {
+  applyReplacement,
+  planReplacement,
+  publishMappings,
+  rollbackMappings,
+  type Fingerprint,
+} from "./hotspot-mappings.ts";
+import type { ExifOrientation } from "../src/lib/hotspotGeometry.ts";
 import { z } from "zod";
 
 export interface HotspotAdminCtx {
@@ -57,6 +64,37 @@ const rollbackSchema = z.object({
   mediaAssetId: z.string().min(1),
   placementId: z.string().min(1),
   toVersionId: z.string().min(1),
+}).strict();
+
+const fingerprintSchema = z.object({
+  sha256: z.string().nullable().optional(),
+  phash: z.string().nullable().optional(),
+  width: z.number().int().nullable().optional(),
+  height: z.number().int().nullable().optional(),
+  exifOrientation: z.number().int().min(1).max(8).optional(),
+}).strict();
+
+const cropSchema = z.object({
+  left: z.number().min(0).max(1),
+  top: z.number().min(0).max(1),
+  width: z.number().min(0).max(1),
+  height: z.number().min(0).max(1),
+}).strict();
+
+const replacementSchema = z.object({
+  mediaAssetId: z.string().min(1),
+  placementId: z.string().min(1),
+  fromVersionId: z.string().min(1),
+  toVersionId: z.string().min(1),
+  urlOnly: z.boolean().optional(),
+  cropBefore: cropSchema.nullable().optional(),
+  cropAfter: cropSchema.nullable().optional(),
+  fromFingerprint: fingerprintSchema.nullable().optional(),
+  toFingerprint: fingerprintSchema.nullable().optional(),
+  sameHashOnOtherMedia: z.boolean().optional(),
+  duplicateOfMediaId: z.string().min(1).nullable().optional(),
+  phashDistance: z.number().int().min(0).max(64).nullable().optional(),
+  approveReview: z.boolean().optional(),
 }).strict();
 
 async function principalFor(
@@ -132,16 +170,36 @@ async function loadDrafts(
   return drafts;
 }
 
+async function loadDeletions(
+  db: D1Database,
+  tenant: string,
+  mediaAssetId: string,
+): Promise<Map<string, PhotoHotspotMappingRow>> {
+  const result = await db.prepare(
+    "SELECT snapshot_json FROM photo_hotspot_deletions WHERE tenant_id = ?1 AND media_asset_id = ?2",
+  ).bind(tenant, mediaAssetId).all();
+  const deletions = new Map<string, PhotoHotspotMappingRow>();
+  for (const row of result.results ?? []) {
+    try {
+      const parsed = photoHotspotMappingSnapshotSchema.parse(JSON.parse((row as any).snapshot_json));
+      deletions.set(parsed.id, parsed as PhotoHotspotMappingRow);
+    } catch { /* an unreadable pending deletion is ignored, never applied */ }
+  }
+  return deletions;
+}
+
 /** The admin sees the draft geometry; the published row keeps serving guests. */
 function mergeDrafts(
   rows: PhotoHotspotMappingRow[],
   drafts: Map<string, PhotoHotspotMappingRow>,
-): Array<PhotoHotspotMappingRow & { hasDraft: boolean }> {
+  deletions: Map<string, PhotoHotspotMappingRow> = new Map(),
+): Array<PhotoHotspotMappingRow & { hasDraft: boolean; pendingDelete: boolean }> {
   return rows.map((row) => {
     const draft = drafts.get(row.id);
     return {
       ...(draft ? { ...draft, status: row.status } : row),
       hasDraft: Boolean(draft),
+      pendingDelete: deletions.has(row.id),
     };
   });
 }
@@ -222,12 +280,14 @@ export async function listRoomHotspots(
   ]);
   const rows = parseRows(mappings.results ?? []);
   const drafts = new Map<string, PhotoHotspotMappingRow>();
+  const deletions = new Map<string, PhotoHotspotMappingRow>();
   for (const mediaAssetId of new Set(rows.map((row) => row.mediaAssetId))) {
     for (const [id, draft] of await loadDrafts(db, tenant, mediaAssetId)) drafts.set(id, draft);
+    for (const [id, snapshot] of await loadDeletions(db, tenant, mediaAssetId)) deletions.set(id, snapshot);
   }
   return json({
     roomId,
-    items: mergeDrafts(rows, drafts),
+    items: mergeDrafts(rows, drafts, deletions).filter((item) => item.reviewReason !== "deleted"),
     amenities: amenities.results ?? [],
   }, 200, "no-store");
 }
@@ -407,13 +467,28 @@ export async function publishRoomHotspots(
   if (scoped.some((draft) => draft.reviewState === "pending")) {
     return json({ ok: false, error: "review_pending", pending: scoped.length }, 409, "no-store");
   }
-  if (scoped.length) {
+  const deletions = await loadDeletions(db, tenant, input.mediaAssetId);
+  const removed = [...deletions.values()].filter((snapshot) => snapshot.placementId === input.placementId);
+  if (scoped.length || removed.length) {
     const statements: D1PreparedStatement[] = [];
     for (const draft of scoped) {
       statements.push(insertMapping(db, { ...draft, status: "published", updatedAt: new Date().toISOString() }));
       statements.push(
         db.prepare("DELETE FROM photo_hotspot_drafts WHERE mapping_id = ?1 AND tenant_id = ?2")
           .bind(draft.id, tenant),
+      );
+    }
+    for (const snapshot of removed) {
+      // Soft delete keeps the audit chain intact and removes the pin from
+      // guest reads (which only accept published rows).
+      statements.push(db.prepare(
+        `UPDATE photo_hotspot_mappings
+            SET status = 'draft', review_reason = 'deleted', updated_at = datetime('now')
+          WHERE id = ?1 AND tenant_id = ?2`,
+      ).bind(snapshot.id, tenant));
+      statements.push(
+        db.prepare("DELETE FROM photo_hotspot_deletions WHERE mapping_id = ?1 AND tenant_id = ?2")
+          .bind(snapshot.id, tenant),
       );
     }
     await db.batch(statements);
@@ -444,12 +519,154 @@ export async function rollbackRoomHotspots(
   );
   if (result.ok) {
     const drafts = await loadDrafts(db, tenant, input.mediaAssetId);
-    const statements = [...drafts.values()]
-      .filter((draft) => draft.placementId === input.placementId)
-      .map((draft) => db.prepare(
-        "DELETE FROM photo_hotspot_drafts WHERE mapping_id = ?1 AND tenant_id = ?2",
-      ).bind(draft.id, tenant));
+    const deletions = await loadDeletions(db, tenant, input.mediaAssetId);
+    const statements: D1PreparedStatement[] = [
+      ...[...drafts.values()]
+        .filter((draft) => draft.placementId === input.placementId)
+        .map((draft) => db.prepare(
+          "DELETE FROM photo_hotspot_drafts WHERE mapping_id = ?1 AND tenant_id = ?2",
+        ).bind(draft.id, tenant)),
+      // A rollback cancels pending removals on this placement.
+      ...[...deletions.values()]
+        .filter((snapshot) => snapshot.placementId === input.placementId)
+        .map((snapshot) => db.prepare(
+          "DELETE FROM photo_hotspot_deletions WHERE mapping_id = ?1 AND tenant_id = ?2",
+        ).bind(snapshot.id, tenant)),
+    ];
     if (statements.length) await db.batch(statements);
   }
   return json(result, result.ok ? 200 : 409, "no-store");
+}
+
+/** Fingerprints are optional for URL-only imports; orientation defaults to 1. */
+function toFingerprint(value: z.infer<typeof fingerprintSchema> | null | undefined): Fingerprint | null {
+  if (!value) return null;
+  return {
+    sha256: value.sha256 ?? null,
+    phash: value.phash ?? null,
+    width: value.width ?? null,
+    height: value.height ?? null,
+    exifOrientation: (value.exifOrientation ?? 1) as ExifOrientation,
+  };
+}
+
+async function versionBelongsToAsset(
+  db: D1Database, tenant: string, mediaAssetId: string, versionId: string,
+): Promise<boolean> {
+  return Boolean(await db.prepare(
+    `SELECT v.id FROM media_versions v
+       JOIN media_assets a ON a.id = v.media_asset_id AND a.tenant_id = ?3 AND a.kind = 'image'
+      WHERE v.id = ?1 AND v.media_asset_id = ?2`,
+  ).bind(versionId, mediaAssetId, tenant).first());
+}
+
+/** Plan is computed server-side on every call; callers never submit mapping rows. */
+async function runReplacement(
+  ctx: HotspotAdminCtx,
+  roomId: string,
+  authorize: HotspotAdminAuthorize,
+  commit: boolean,
+): Promise<Response> {
+  const principal = await principalFor(ctx, authorize, "admin");
+  if (principal instanceof Response) return principal;
+  const tenant = principal.tenantId;
+  const input = await readJson(ctx.request, replacementSchema);
+  if (input instanceof Response) return input;
+  const db = getDb(ctx.env);
+  if (!db) return json({ error: "D1 not configured" }, 503, "no-store");
+  if (!await ownedRoom(db, tenant, roomId)) return json({ error: "room_not_found" }, 404, "no-store");
+  if (!await placementInRoom(db, tenant, roomId, input.placementId, input.mediaAssetId)) {
+    return json({ error: "placement_asset_mismatch" }, 400, "no-store");
+  }
+  // A replacement changes versions of the same canonical asset, never the
+  // asset identity itself.
+  if (!await versionBelongsToAsset(db, tenant, input.mediaAssetId, input.fromVersionId)
+    || !await versionBelongsToAsset(db, tenant, input.mediaAssetId, input.toVersionId)) {
+    return json({ error: "version_asset_mismatch" }, 400, "no-store");
+  }
+
+  const planInput = {
+    tenantId: tenant,
+    mediaAssetId: input.mediaAssetId,
+    placementId: input.placementId,
+    fromVersionId: input.fromVersionId,
+    toVersionId: input.toVersionId,
+    urlOnly: input.urlOnly,
+    cropBefore: input.cropBefore ?? null,
+    cropAfter: input.cropAfter ?? null,
+    fromFingerprint: toFingerprint(input.fromFingerprint),
+    toFingerprint: toFingerprint(input.toFingerprint),
+    sameHashOnOtherMedia: input.sameHashOnOtherMedia,
+    duplicateOfMediaId: input.duplicateOfMediaId ?? null,
+    phashDistance: input.phashDistance ?? null,
+    approveReview: input.approveReview,
+  };
+  const plan = await planReplacement(db, planInput);
+
+  // Ambiguous geometry can never be published: the COW-34 planner marks it
+  // draft/pending. Applying a planned change writes those draft states only.
+  if (!commit) return json(plan, 200, "no-store");
+
+  const previousRows = await db.prepare(
+    `SELECT ${MAPPING_COLUMNS} FROM photo_hotspot_mappings
+      WHERE tenant_id = ?1 AND media_asset_id = ?2 AND placement_id = ?3
+      ORDER BY display_order, id`,
+  ).bind(tenant, input.mediaAssetId, input.placementId).all();
+  const previous = parseRows(previousRows.results ?? []);
+  const actor = principal.email || principal.sub || "unknown";
+  const result = await applyReplacement(db, plan, previous, {
+    fromVersionId: input.fromVersionId,
+    actor,
+  });
+  return json({ ...result, reviewRequired: plan.reviewRequired, decision: plan.decision }, 200, "no-store");
+}
+
+export function planHotspotReplacement(
+  ctx: HotspotAdminCtx,
+  roomId: string,
+  authorize: HotspotAdminAuthorize = authorizeScopedRequest,
+): Promise<Response> {
+  return runReplacement(ctx, roomId, authorize, false);
+}
+
+export function applyHotspotReplacement(
+  ctx: HotspotAdminCtx,
+  roomId: string,
+  authorize: HotspotAdminAuthorize = authorizeScopedRequest,
+): Promise<Response> {
+  return runReplacement(ctx, roomId, authorize, true);
+}
+
+/** Removal is staged and revisioned; the mapping row stays for audit/FK integrity. */
+export async function deleteRoomHotspot(
+  ctx: HotspotAdminCtx,
+  roomId: string,
+  mappingId: string,
+  authorize: HotspotAdminAuthorize = authorizeScopedRequest,
+): Promise<Response> {
+  const principal = await principalFor(ctx, authorize, "admin");
+  if (principal instanceof Response) return principal;
+  const tenant = principal.tenantId;
+  const db = getDb(ctx.env);
+  if (!db) return json({ error: "D1 not configured" }, 503, "no-store");
+  if (!await ownedRoom(db, tenant, roomId)) return json({ error: "room_not_found" }, 404, "no-store");
+  const row = await db.prepare(
+    `SELECT ${MAPPING_COLUMNS} FROM photo_hotspot_mappings
+      WHERE id = ?1 AND tenant_id = ?2 AND target_table = 'room_types' AND target_id = ?3`,
+  ).bind(mappingId, tenant, roomId).first();
+  const mapping = parseRows(row ? [row] : [])[0];
+  if (!mapping) return json({ error: "mapping_not_found" }, 404, "no-store");
+  const actor = principal.email || principal.sub || "unknown";
+
+  await db.batch([
+    db.prepare(
+      `INSERT INTO photo_hotspot_deletions (mapping_id, tenant_id, media_asset_id, snapshot_json, note)
+       VALUES (?1, ?2, ?3, ?4, 'editor removal')
+       ON CONFLICT(mapping_id) DO UPDATE SET snapshot_json = excluded.snapshot_json,
+         note = excluded.note, created_at = datetime('now')`,
+    ).bind(mappingId, tenant, mapping.mediaAssetId, JSON.stringify(mapping)),
+    db.prepare("DELETE FROM photo_hotspot_drafts WHERE mapping_id = ?1 AND tenant_id = ?2").bind(mappingId, tenant),
+    revision(db, mapping, "review", actor, mapping),
+  ]);
+  return json({ ok: true, roomId, mappingId, pendingDelete: true }, 200, "no-store");
 }

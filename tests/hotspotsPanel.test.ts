@@ -86,3 +86,22 @@ test("admin client declares the tenant-independent hotspot helpers", () => {
   assert.match(api, /rollbackRoomHotspots<T>\(roomId: string, input: unknown\): Promise<T>/);
   assert.match(api, /\/hotspots/);
 });
+
+test("admin client declares replacement and deletion helpers", () => {
+  assert.match(api, /deleteRoomHotspot<T>\(roomId: string, mappingId: string\): Promise<T>/);
+  assert.match(api, /planHotspotReplacement<T>\(roomId: string, input: unknown\): Promise<T>/);
+  assert.match(api, /applyHotspotReplacement<T>\(roomId: string, input: unknown\): Promise<T>/);
+  assert.match(api, /method: "DELETE"/);
+  assert.match(api, /hotspots\/(plan|apply)/);
+});
+
+test("panel exposes staged deletion and reviewed replacement planning", () => {
+  assert.match(panel, /api\.deleteRoomHotspot\(roomId, hotspot\.id\)/);
+  assert.match(panel, /Confirm delete/);
+  assert.match(panel, /Pending deletion/);
+  assert.match(panel, /api\.planHotspotReplacement</);
+  assert.match(panel, /api\.applyHotspotReplacement</);
+  assert.match(panel, /review required/);
+  assert.match(panel, /Source replacement and crop review/);
+  assert.match(panel, /approveReview/);
+});
