@@ -3,6 +3,7 @@
 // Playwright checks desktop/mobile pages, deep-link refresh, static search,
 // assets, console/network errors and representative interactive demos.
 import { chromium } from "@playwright/test";
+import { brokenImages as findBrokenImages, recordCheck, requireControl } from "./live-check-core.mjs";
 
 const BASE = (process.env.DOCS_LIVE_URL ?? "https://revrebel.github.io/urban-cowboy-booking-engine/")
   .replace(/\/?$/, "/");
@@ -28,10 +29,7 @@ const viewports = [
 ];
 
 const failures = [];
-const record = (section, ok, detail) => {
-  if (!ok) failures.push(`${section}: ${detail}`);
-  return { ok, detail };
-};
+const record = (section, ok, detail) => recordCheck(failures, section, ok, detail);
 
 const browser = await chromium.launch({ headless: true });
 const report = {
@@ -69,7 +67,7 @@ for (const viewport of viewports) {
     const images = await page.locator("img").evaluateAll((nodes) =>
       nodes.map((node) => ({ src: node.getAttribute("src"), ok: node.complete && node.naturalWidth > 0 })),
     );
-    const brokenImages = images.filter((image) => !image.ok).map((image) => image.src);
+    const broken = findBrokenImages(images);
 
     report.pages.push({
       viewport: viewport.name,
@@ -77,8 +75,10 @@ for (const viewport of viewports) {
       status: response?.status() ?? 0,
       marker: record(`${viewport.name}/${entry.path || "root"}`, markerOk, `missing marker ${entry.marker}`),
       deepLink: record(`${viewport.name}/${entry.path || "root"} refresh`, deepLinkOk, "deep link did not survive refresh"),
-      brokenImages,
+      brokenImages: broken,
     });
+    record(`${viewport.name}/${entry.path || "root"} images`, broken.length === 0,
+      `broken images: ${broken.slice(0, 3).join(", ")}`);
     record(`${viewport.name}/${entry.path || "root"}`, (response?.status() ?? 0) === 200, `HTTP ${response?.status()}`);
   }
 
@@ -88,10 +88,11 @@ for (const viewport of viewports) {
     await page.getByRole("combobox", { name: "Search" }).fill("Focus");
     await page.waitForTimeout(700);
     const option = page.locator('[id="fd-search-option-/components/focus-amenity/"]');
+    const optionPresent = requireControl(await option.count(), "focus-amenity search result");
     report.search = {
-      indexResult: record("search", (await option.count()) > 0, "focus-amenity missing from static search results"),
+      indexResult: record("search", optionPresent.ok, optionPresent.detail),
     };
-    if ((await option.count()) > 0) {
+    if (optionPresent.ok) {
       await option.click();
       await page.waitForTimeout(700);
       report.search.navigate = record(
@@ -99,13 +100,17 @@ for (const viewport of viewports) {
         page.url().includes("/components/focus-amenity/"),
         `landed on ${page.url()}`,
       );
+    } else {
+      report.search.navigate = record("search navigation", false, "no result to navigate to");
     }
 
     await page.goto(new URL("components/focus-amenity/", BASE).href, { waitUntil: "networkidle" });
     const railToggle = page.getByRole("button", { name: "Toggle amenity rail" });
-    if ((await railToggle.count()) > 0) {
+    const railPresent = requireControl(await railToggle.count(), "amenity rail toggle");
+    report.demos.amenityRail = record("amenity rail control", railPresent.ok, railPresent.detail);
+    if (railPresent.ok) {
       await railToggle.click();
-      report.demos.amenityRail = record(
+      report.demos.amenityRailState = record(
         "amenity rail toggle",
         (await page.locator('[role="status"]').filter({ hasText: "Rail open" }).count()) > 0,
         "rail state did not change",
@@ -116,7 +121,9 @@ for (const viewport of viewports) {
     // The last close control belongs to the SidePanelDemo; earlier ones are
     // embedded in the rate card/configurable offer demos.
     const close = page.getByRole("button", { name: "Close rate details" }).last();
-    if ((await close.count()) > 0) {
+    const closePresent = requireControl(await close.count(), "rate panel close");
+    report.demos.ratePanelClose = record("rate panel close control", closePresent.ok, closePresent.detail);
+    if (closePresent.ok) {
       // The close control sits inside a layered card; force the docs-only click.
       await close.click({ force: true });
       report.demos.ratePanel = record(
