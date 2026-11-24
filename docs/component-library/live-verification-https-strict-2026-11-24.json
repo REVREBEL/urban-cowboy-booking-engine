@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-11-23T23:52:37.124Z",
+  "url": "https://cowboy-components.revrebel.io/",
+  "viewports": [
+    "desktop",
+    "mobile"
+  ],
+  "httpsPolicy": "required",
+  "pages": [],
+  "search": {},
+  "demos": {},
+  "https": {
+    "error": "TypeError: fetch failed"
+  },
+  "failures": [
+    "desktop/root navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/\", waiting until \"networkidle\"\u001b[22m",
+    "desktop/components/search-bar/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/search-bar/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/components/se",
+    "desktop/components/search-dropdowns/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/search-dropdowns/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/compone",
+    "desktop/components/booking-chrome/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/booking-chrome/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/component",
+    "desktop/components/conversion-badges/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/conversion-badges/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/compon",
+    "desktop/components/extras-upsell/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/extras-upsell/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/components",
+    "desktop/components/room-list-card/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/room-list-card/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/component",
+    "desktop/components/focus-amenity/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/focus-amenity/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/components",
+    "desktop/components/rate-offers/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/rate-offers/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/components/r",
+    "desktop/components/booking-summary/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/booking-summary/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/componen",
+    "desktop/components/booking-details/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/booking-details/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/componen",
+    "desktop search/demo interactions: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/\", waiting until \"networkidle\"\u001b[22m",
+    "mobile/root navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/\", waiting until \"networkidle\"\u001b[22m",
+    "mobile/components/search-bar/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/search-bar/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/components/se",
+    "mobile/components/search-dropdowns/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/search-dropdowns/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/compone",
+    "mobile/components/booking-chrome/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/booking-chrome/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/component",
+    "mobile/components/conversion-badges/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/conversion-badges/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/compon",
+    "mobile/components/extras-upsell/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/extras-upsell/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/components",
+    "mobile/components/room-list-card/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/room-list-card/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/component",
+    "mobile/components/focus-amenity/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/focus-amenity/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/components",
+    "mobile/components/rate-offers/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/rate-offers/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/components/r",
+    "mobile/components/booking-summary/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/booking-summary/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/componen",
+    "mobile/components/booking-details/ navigation: Error: page.goto: net::ERR_CERT_COMMON_NAME_INVALID at https://cowboy-components.revrebel.io/components/booking-details/\nCall log:\n\u001b[2m  - navigating to \"https://cowboy-components.revrebel.io/componen"
+  ],
+  "console_desktop": [],
+  "bad_responses_desktop": [],
+  "console_mobile": [],
+  "bad_responses_mobile": []
+}

@@ -51,7 +51,7 @@
     "docs:dev": "node scripts/fumadocs/dev-docs.mjs",
     "docs:build": "npm run docs:prepare && npm run build -w @urban-cowboy/docs && node scripts/fumadocs/finalize-docs-assets.mjs docs-app/out",
     "docs:smoke": "node scripts/fumadocs/smoke-docs.mjs docs-app/out",
-    "test:docs:runtime": "node --test tests/docsRuntime.test.mjs",
+    "test:docs:runtime": "node --test tests/docsRuntime.test.mjs tests/docsLiveVerifierIntegration.test.mjs",
     "test:docs:dev": "node --test tests/docsDev.test.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
