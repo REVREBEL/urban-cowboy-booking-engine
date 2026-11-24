@@ -371,29 +371,42 @@ async function refreshReviews(
   return payload;
 }
 
-async function response(env: Env, payload: CachedReviewPayload, stale: boolean): Promise<Response> {
+async function overlayPayload(env: Env, payload: CachedReviewPayload): Promise<CachedReviewPayload> {
   // COW-73: guest values come from published D1 records where available.
   // The overlay runs on every response (not inside the cache) so a publish is
   // visible immediately and a draft never leaks into the cached Webflow payload.
   let guest = await applyPublishedAmenities(env, env.TENANT_ID, payload);
   guest = await applyPublishedHotspots(env, env.TENANT_ID, guest);
-  guest = await applyPublishedGalleries(env, env.TENANT_ID, guest);
-  return json(
-    {
-      reviews: guest.reviews,
-      descriptions: guest.descriptions,
-      galleries: guest.galleries,
-      amenities: guest.amenities,
-      hotspots: guest.hotspots,
-      hotspotsByRoom: guest.hotspotsByRoom ?? null,
-      hotspotSourceCount: guest.hotspotSourceCount ?? null,
-      generatedAt: new Date(guest.fetchedAt).toISOString(),
-      stale,
-      amenitySource: "d1-published",
-    },
-    200,
-    BROWSER_CACHE_CONTROL,
-  );
+  return await applyPublishedGalleries(env, env.TENANT_ID, guest);
+}
+
+/** Cache a D1-only room response only when its final gallery payload has usable images. */
+function hasUsableGalleryContent(payload: CachedReviewPayload): boolean {
+  return Object.values(payload.galleries).some((gallery) => gallery.images.length > 0);
+}
+
+function responseBody(
+  guest: CachedReviewPayload,
+  stale: boolean,
+  generatedAt: string | null = new Date(guest.fetchedAt).toISOString(),
+) {
+  return {
+    reviews: guest.reviews,
+    descriptions: guest.descriptions,
+    galleries: guest.galleries,
+    amenities: guest.amenities,
+    hotspots: guest.hotspots,
+    hotspotsByRoom: guest.hotspotsByRoom ?? null,
+    hotspotSourceCount: guest.hotspotSourceCount ?? null,
+    generatedAt,
+    stale,
+    amenitySource: "d1-published",
+  };
+}
+
+async function response(env: Env, payload: CachedReviewPayload, stale: boolean): Promise<Response> {
+  const guest = await overlayPayload(env, payload);
+  return json(responseBody(guest, stale), 200, BROWSER_CACHE_CONTROL);
 }
 
 export async function onRequestGet({
@@ -406,7 +419,20 @@ export async function onRequestGet({
   const collectionId = env.WEBFLOW_ROOM_TYPE_COLLECTION_ID;
 
   if (!env.WEBFLOW_CMS_API_TOKEN || !collectionId) {
-    return json({ reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {}, generatedAt: null, stale: false }, 200, "no-store");
+    // No Webflow source is available (e.g. a D1-only preview). Apply published
+    // D1 overlays when they can supply content; otherwise keep the previous
+    // no-store empty response so a CDN cannot cache an empty gallery through a
+    // D1 outage or before the publication gate is ready.
+    const guest = await overlayPayload(env, {
+      fetchedAt: Date.now(),
+      reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {},
+    });
+    const cacheable = hasUsableGalleryContent(guest);
+    return json(
+      responseBody(guest, false, cacheable ? new Date(guest.fetchedAt).toISOString() : null),
+      200,
+      cacheable ? BROWSER_CACHE_CONTROL : "no-store",
+    );
   }
 
   const cached = await readCachedReviews(env, cacheKey(collectionId, env.WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID || ""));
