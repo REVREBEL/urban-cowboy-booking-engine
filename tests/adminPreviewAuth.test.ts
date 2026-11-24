@@ -1,6 +1,8 @@
-// COW-114: local admin UI preview is opt-in, local-only and API-safe.
+// COW-114: local admin UI preview is opt-in, local-only, and reaches only the
+// local seeded D1 through a strictly gated booking Worker.
 import assert from "node:assert/strict";
 import test from "node:test";
+import { LOCAL_PREVIEW_HEADER } from "../worker/auth.ts";
 import {
   isLocalPreviewEnabled,
   LOCAL_PREVIEW_ENV,
@@ -21,6 +23,12 @@ function setEnv(values: Record<string, string | undefined>) {
     else process.env[key] = value;
   }
 }
+
+const previewEnv = {
+  NODE_ENV: "development",
+  [LOCAL_PREVIEW_ENV]: "1",
+  API_BASE_URL: "https://urban-cowboy-booking-engine.revrebel.workers.dev",
+};
 
 test("preview requires both an explicit opt-in and a local dev runtime", () => {
   setEnv({ NODE_ENV: undefined, [LOCAL_PREVIEW_ENV]: undefined });
@@ -57,58 +65,101 @@ test("the preview identity is an admin with no credential material", () => {
   assert.equal(JSON.stringify(session).includes("assertion"), false);
 });
 
-test("preview API reads are local fixtures and never call the booking Worker", async () => {
-  setEnv({
-    NODE_ENV: "development",
-    [LOCAL_PREVIEW_ENV]: "1",
-    API_BASE_URL: "https://urban-cowboy-booking-engine.revrebel.workers.dev",
-  });
-  let fetchCalls = 0;
+test("preview reads go to the local Worker with only a marker header", async () => {
+  setEnv(previewEnv);
+  let target: URL | null = null;
+  let forwarded: Headers | null = null;
   const response = await proxyDashboardRequest(
-    new Request("https://localhost:5174/api/admin/rooms", {
+    new Request("https://localhost:5174/api/d1/rooms?tenant=urban-cowboy", {
       headers: {
         cookie: "CF_Session=secret",
         authorization: "Bearer client-token",
         "cf-access-jwt-assertion": "client-assertion",
+        accept: "application/json",
       },
     }),
     "server-verified-assertion",
-    { fetchImpl: (async () => { fetchCalls += 1; return new Response("unexpected"); }) as typeof fetch },
+    {
+      fetchImpl: (async (input: unknown, init?: RequestInit) => {
+        target = new URL(String(input));
+        forwarded = new Headers(init?.headers);
+        return new Response(JSON.stringify({ items: [{ id: "seeded" }] }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      }) as typeof fetch,
+    },
   );
   assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { items: [], preview: true });
-  assert.equal(fetchCalls, 0, "no upstream call in preview mode");
+  assert.deepEqual(await response.json(), { items: [{ id: "seeded" }] });
+  assert.equal(target?.origin, "http://localhost:8787", "never the deployed API_BASE_URL");
+  assert.equal(target?.pathname, "/api/d1/rooms");
+  assert.equal(target?.searchParams.get("tenant"), "urban-cowboy");
+  assert.equal(forwarded?.get(LOCAL_PREVIEW_HEADER), "1");
+  assert.equal(forwarded?.get("cf-access-jwt-assertion"), null);
+  assert.equal(forwarded?.get("authorization"), null);
+  assert.equal(forwarded?.get("cookie"), null);
+  assert.equal(forwarded?.get("accept"), "application/json");
 });
 
-test("preview API mutations are refused without contacting the booking Worker", async () => {
-  setEnv({ NODE_ENV: "development", [LOCAL_PREVIEW_ENV]: "1" });
-  let fetchCalls = 0;
+test("preview mutations reach the local Worker, never a deployed one", async () => {
+  setEnv(previewEnv);
+  let target: URL | null = null;
+  let forwarded: Headers | null = null;
+  let body: string | null = null;
   const response = await proxyDashboardRequest(
     new Request("https://localhost:5174/api/content/editor/items", {
       method: "POST",
       headers: { origin: "https://localhost:5174", "content-type": "application/json" },
-      body: "{}",
+      body: '{"name":"seeded"}',
     }),
     "server-verified-assertion",
-    { fetchImpl: (async () => { fetchCalls += 1; return new Response("unexpected"); }) as typeof fetch },
+    {
+      fetchImpl: (async (input: unknown, init?: RequestInit) => {
+        target = new URL(String(input));
+        forwarded = new Headers(init?.headers);
+        const raw = init?.body;
+        body = typeof raw === "string"
+          ? raw
+          : raw instanceof ArrayBuffer
+            ? new TextDecoder().decode(raw)
+            : null;
+        return new Response(JSON.stringify({ ok: true }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      }) as typeof fetch,
+    },
   );
-  assert.equal(response.status, 403);
-  assert.deepEqual(await response.json(), { error: "preview_read_only" });
-  assert.equal(fetchCalls, 0);
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { ok: true });
+  assert.equal(target?.origin, "http://localhost:8787");
+  assert.equal(forwarded?.get(LOCAL_PREVIEW_HEADER), "1");
+  assert.equal(forwarded?.get("cf-access-jwt-assertion"), null);
+  assert.equal(body, '{"name":"seeded"}');
 });
 
-test("with production parity restored, the real proxy path is used", async () => {
-  setEnv({
-    NODE_ENV: "production",
-    [LOCAL_PREVIEW_ENV]: "1",
-    API_BASE_URL: "https://urban-cowboy-booking-engine.revrebel.workers.dev",
-  });
+test("a missing local Worker fails loudly instead of silently faking data", async () => {
+  setEnv(previewEnv);
+  const response = await proxyDashboardRequest(
+    new Request("https://localhost:5174/api/d1/rooms"),
+    "",
+    { fetchImpl: (async () => { throw new Error("connection refused"); }) as typeof fetch },
+  );
+  assert.equal(response.status, 502);
+  assert.deepEqual(await response.json(), { error: "local_preview_worker_unavailable" });
+});
+
+test("with preview disabled, the real proxy path and assertion are preserved", async () => {
+  setEnv({ ...previewEnv, NODE_ENV: "production" });
+  let target: URL | null = null;
   let forwarded: Headers | null = null;
   const response = await proxyDashboardRequest(
     new Request("https://localhost:5174/api/admin/rooms"),
     "real-assertion",
     {
-      fetchImpl: (async (_input: unknown, init?: RequestInit) => {
+      fetchImpl: (async (input: unknown, init?: RequestInit) => {
+        target = new URL(String(input));
         forwarded = new Headers(init?.headers);
         return new Response(JSON.stringify({ items: [{ id: "real" }] }), {
           status: 200,
@@ -119,5 +170,7 @@ test("with production parity restored, the real proxy path is used", async () =>
   );
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { items: [{ id: "real" }] });
-  assert.equal(forwarded instanceof Headers && forwarded.get("cf-access-jwt-assertion"), "real-assertion");
+  assert.equal(target?.origin, "https://urban-cowboy-booking-engine.revrebel.workers.dev");
+  assert.equal(forwarded?.get("cf-access-jwt-assertion"), "real-assertion");
+  assert.equal(forwarded?.get(LOCAL_PREVIEW_HEADER), null);
 });

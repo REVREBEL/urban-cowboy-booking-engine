@@ -42,6 +42,11 @@ CF_ACCESS_AUD = "__ENV_CF_ACCESS_AUD__"
 ADMIN_EMAILS = "__ENV_ADMIN_EMAILS__"
 ADMIN_GROUPS = "__ENV_ADMIN_GROUPS__"
 
+# COW-114 local D1 preview gate. Literal on purpose: the deploy script only
+# rewrites templated env placeholders, so a deployed Worker always gets "0".
+# Local .dev.vars overrides this to "1" for the seeded-D1 admin preview.
+LOCAL_DEV_PREVIEW = "0"
+
 # Tenant served by the private analytics/recovery routes. Queries bind this
 # value; a caller's ?tenant= is rejected when it differs.
 TENANT_ID = "__ENV_TENANT_ID__"

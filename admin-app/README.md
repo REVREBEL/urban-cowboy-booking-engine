@@ -15,17 +15,31 @@ npm run admin:deploy:check
 
 `admin:dev` uses the Cloudflare Vite plugin. Put local nonsecret values in `admin-app/.dev.vars` (see `.dev.vars.example`); the app fails closed when Access or API configuration is missing.
 
-## Local authentication preview (COW-114)
+## Local authentication preview with seeded D1 (COW-114)
 
-To iterate on protected UI without a Cloudflare Access login, copy `.dev.vars.example` to `.dev.vars` (or export `ADMIN_LOCAL_PREVIEW=1`) and run the dev server:
+Run two local servers. First prepare the booking Worker's local environment from the repository root:
+
+```bash
+cp .dev.vars.example .dev.vars
+npx wrangler d1 migrations apply urban-cowboy-content --local
+npx wrangler d1 execute urban-cowboy-content --local --file seed.sql
+npm run dev:worker          # booking Worker on http://localhost:8787
+```
+
+Then, in a second terminal:
 
 ```bash
 cd admin-app && ADMIN_LOCAL_PREVIEW=1 npx vite dev --port 5174 --strictPort
 ```
 
-Open `http://localhost:5174/`. The shell renders with a deterministic simulated administrator (`local-preview@invalid.local`), every protected navigation route is visible, and `/` no longer redirects to `/login`. Preview is enabled **only** when `ADMIN_LOCAL_PREVIEW=1` and the runtime is local development (Vite `DEV` or `NODE_ENV=development`). Production and deployed preview builds cannot activate it: the deployment wrapper does not supply the flag, and `isLocalPreviewEnabled()` fails closed in a production runtime. With preview disabled, the existing Access challenge behavior is unchanged.
+Open `http://localhost:5174/`. The shell renders with a deterministic simulated administrator (`local-preview@invalid.local`), every protected navigation route is visible, `/` no longer redirects to `/login`, and panels show real seeded D1 data (room types, amenities, assignments). If the local Worker is not running, API calls fail with `502 local_preview_worker_unavailable` instead of silently showing empty data.
 
-The mock identity is centralized in `lib/preview-auth.ts` and returned by `lib/session.ts`; individual screens do not bypass authorization. It is never a signed Access assertion and is never forwarded to the booking Worker. In preview mode the same-origin API proxy returns empty local fixtures for reads (`{ "items": [], "preview": true }`) and refuses mutations with `403 preview_read_only`; no production D1 data can be read or mutated. Real Access verification, roles and tenant enforcement remain in force in every nonlocal environment.
+The preview is gated on both sides:
+
+- **Admin app:** `ADMIN_LOCAL_PREVIEW=1` plus a local dev runtime (Vite `DEV` or `NODE_ENV=development`). Deployed builds fail closed.
+- **Booking Worker:** all three of `LOCAL_DEV_PREVIEW=1` (root `.dev.vars`; `wrangler.toml` hard-codes the literal `"0"` for deployed Workers), a loopback request host, and the plain marker header `x-local-preview: 1`. Without all three, normal Access JWT verification applies.
+
+The admin proxy forwards relative `/api/*` to the fixed origin `http://localhost:8787` with only the marker header — no assertion, cookie or authorization is forwarded. The simulated identity is centralized in `lib/preview-auth.ts` and `lib/session.ts`; individual screens do not bypass authorization, and the identity never becomes a signed assertion. The content-source flags in the root `.dev.vars` switch **local** reads to D1; production keeps its Webflow baseline. With preview disabled, the Access challenge path is unchanged and real role/tenant enforcement remains in force in every nonlocal environment.
 
 ## API boundary
 

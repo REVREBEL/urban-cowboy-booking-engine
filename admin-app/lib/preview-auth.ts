@@ -7,10 +7,12 @@
  * synthetic identity is never an Access assertion and is never forwarded to
  * the booking Worker.
  */
+import { PREVIEW_EMAIL } from "../../worker/auth.ts";
 import type { AdminSession } from "./auth.ts";
 
+export { PREVIEW_EMAIL };
+
 export const LOCAL_PREVIEW_ENV = "ADMIN_LOCAL_PREVIEW";
-export const PREVIEW_EMAIL = "local-preview@invalid.local";
 
 /** Vite sets DEV=true in the local dev worker and false in production builds. */
 const viteDev = (import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV === true;
