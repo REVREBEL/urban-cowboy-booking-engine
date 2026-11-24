@@ -1,8 +1,16 @@
 # COW-95 — W1.7 Sync Gate 2: Admin Portal acceptance record
 
-**Status: prepared, NOT accepted.** W1.7 is the final shared checkpoint with COW-102 (W2.7) and
-COW-111 (W3.7). As of this record COW-111 is Done, COW-102 is In Progress (PR #412 open), and
-COW-95 is Backlog. Final acceptance requires all three to be complete together.
+**Status: deployment complete, acceptance evidence still partial.** W1.7 is the final shared
+checkpoint with COW-102 (W2.7, Done) and COW-111 (W3.7, currently In Progress); COW-95 is In
+Review and its child COW-112 owns the deployed verification. Final acceptance requires all three
+to be complete together.
+
+**Deployed 2026-11-24 (COW-112):** Worker `urban-cowboy-admin`, Version ID
+`84daddb3-9bf0-4b21-b159-077e65ea2b13`, account `REVREBEL`
+(`4c154709ffe87621073f9ecfa86a57dd`), URL
+`https://urban-cowboy-admin.revrebel.workers.dev`. Deployment method: `npm run admin:deploy`
+(vinext Cloudflare deploy via `cf`). Only the `ASSETS` binding is present — Access variables and
+`API_BASE_URL` are not configured yet, so the app fails closed to `/login`.
 
 ## 1. W1 delivery chain (evidence)
 
@@ -20,11 +28,26 @@ COW-95 is Backlog. Final acceptance requires all three to be complete together.
 
 | Requirement | Local evidence | Deployed evidence |
 | --- | --- | --- |
-| Production Next.js admin deployed at agreed route | `npm run admin:build` passes; `admin-app/cloudflare.config.ts` names `urban-cowboy-admin` | **Missing** — no preview/production deploy or URL recorded (Gate 1 D1) |
-| Auth, sessions, roles verified in deployed environment | 7 auth tests + 32 combined auth/route tests pass; dev smoke: 401 session, 307 to `/login` | **Missing** — real Access JWT against team JWKS not exercised |
+| Production Next.js admin deployed at agreed route | `npm run admin:build` passes; `admin-app/cloudflare.config.ts` names `urban-cowboy-admin` | **Deployed** — Worker + Version ID + URL recorded above; no custom hostname/route yet |
+| Auth, sessions, roles verified in deployed environment | 7 auth tests + 32 combined auth/route tests pass; dev smoke: 401 session, 307 to `/login` | **Partial** — unauthenticated 401/307 verified at deployed URL; real Access JWT/roles not exercised (Access not configured) |
 | Parity matrix fully closed with evidence | All 90 IDs have a status; residuals listed in §3 | W2/W3 sign-off on residual scope still required |
-| Content writes/publish/rollback/media use shared D1 | Domains panels call Worker APIs; editor API is Worker-side with revision/audit/rollback | Browser E2E of create → publish → rollback not run |
-| No Astro / Webflow CMS write dependency in admin target | `admin-app/package.json` has no astro/webflow deps; no CMS token read by admin app | Confirm at deploy; legacy `dashboard.html` remains for rollback only |
+| Content writes/publish/rollback/media use shared D1 | Domain panels call Worker APIs; editor API is Worker-side with revision/audit/rollback | **Not run** — no `API_BASE_URL`, no browser E2E of create → publish → rollback |
+| No Astro / Webflow CMS write dependency in admin target | `admin-app/package.json` has no astro/webflow deps; no CMS token read by admin app | **Verified at build/deploy** — deployed bundle is the vinext Worker; legacy `dashboard.html` remains for rollback only |
+
+### Deployed reachability record (2026-11-24, no Access configured)
+
+`GET https://urban-cowboy-admin.revrebel.workers.dev`:
+
+| Path | Result |
+| --- | --- |
+| `/api/health` | 200, body `{"status":"ok","app":"admin-app","apiBaseConfigured":false}`, `cache-control: no-store, private` |
+| `/login` | 200 HTML, `cache-control: no-store, private` |
+| `/`, `/admin`, `/admin/rooms`, `/rooms`, `/settings`, `/hotspots`, `/amenities`, `/media` | 307 → `/login?next=<encoded path>` (edge UX guard) |
+| `/api/auth/session` | 401 `{"authenticated":false}` |
+
+Boundary: with no Access team/AUD bindings, `getAdminSession()` fails closed, so the `/admin →
+/rooms` redirect and authorized panel rendering cannot yet be observed on the deployed Worker.
+That behavior is verified only by local tests and dev smoke until Access is configured.
 
 ## 3. Residual scope carried into acceptance (do not silently drop)
 
@@ -47,11 +70,11 @@ These are documented, not resolved. A green CI run does not prove deployed brows
 
 - [x] W1 code delivered via merged PRs with green CI and review approvals.
 - [x] Source parity matrix and residual scope documented with evidence.
-- [ ] Deployed admin URL and browser evidence attached (blocked on deploy credentials/decisions).
-- [ ] Deployed auth/RBAC and role-restriction tests pass.
-- [ ] Admin write/publish/rollback E2E against shared D1 recorded.
-- [ ] W2 confirms D1 parity and media integrity (COW-102 complete).
-- [ ] W3 confirms guest runtime consumption (COW-111 complete).
+- [x] Deployed admin URL and deployment identifier recorded (COW-112; see §Deployed reachability record). Browser screenshots still pending.
+- [ ] Deployed auth/RBAC and role-restriction tests pass (Access team/AUD not configured yet).
+- [ ] Admin write/publish/rollback E2E against shared D1 recorded (`API_BASE_URL` not configured yet).
+- [x] W2 confirms D1 parity and media integrity (COW-102 Done).
+- [ ] W3 confirms guest runtime consumption (COW-111 currently In Progress).
 - [ ] All three Gate 2 issues cross-reference the same evidence and are complete.
 
 **Not claimed:** production acceptance, full parity, or W1 closeout. This record exists so the
