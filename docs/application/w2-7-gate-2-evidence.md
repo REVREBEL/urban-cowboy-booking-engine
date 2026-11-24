@@ -1,6 +1,6 @@
 # COW-102 — W2 Gate 2 evidence (`gate1-v1.0` contract version)
 
-**Status:** W2 deliverable prepared. The joint gate is **not** closed: W1.7 (COW-95) and W3.7 (COW-111) must record their own production acceptance.
+**Status:** W2 deliverable complete. All three Gate 2 issues are Done (COW-95, COW-111, COW-102); the joint gate is closed. Final migration closeout remains a separate owner decision.
 
 ## W2 deliverable checklist
 
@@ -31,4 +31,4 @@
 ## Cross-stream confirmations
 
 - W2 confirms production D1 schema/data parity and media integrity to W1.7 and W3.7 (comments recorded on COW-95 and COW-111).
-- W1 production Admin Portal acceptance and W3 live booking/guest parity are still outstanding; COW-102 remains In Progress until all three Gate 2 issues are complete.
+- W1 production Admin Portal acceptance (COW-95) and W3 live booking/guest parity (COW-111) are complete; W2 confirmations were posted on both issues. All three Gate 2 issues are Done.
