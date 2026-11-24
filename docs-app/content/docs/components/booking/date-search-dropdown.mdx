@@ -5,6 +5,7 @@ description: Date picker dropdown with calendar, quick-select ranges and confirm
 
 import {
   DateSearchDropdownStoryControl,
+  DateSearchDropdownUnselectedStoryControl,
   DateSearchDropdownExternalActionsStoryControl,
 } from '~/components/story-controls';
 
@@ -24,7 +25,7 @@ The `confirm` variant shows a **Confirm dates** button that closes the dialog wh
 
 The `Unselected` story demonstrates the empty state with no dates chosen.
 
-<DateSearchDropdownStoryControl />
+<DateSearchDropdownUnselectedStoryControl />
 
 ### External actions
 
@@ -64,8 +65,8 @@ interface DailyRate {
 - Calendar grid with `role="grid"` and column headers
 - Selected dates announced via `aria-selected` and `aria-pressed`
 - Escape key closes and returns focus to trigger
-- Keyboard navigation through months and days
-- Disabled dates are crossed out and non-interactive
+- Month navigation via Previous/Next month buttons (keyboard accessible)
+- Disabled dates (before `minDate`) are crossed out and non-interactive; cached `available: false` dates remain selectable (advisory only — live Search validates availability)
 
 ## Responsive behaviour
 

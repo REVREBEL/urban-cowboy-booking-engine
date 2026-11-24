@@ -5,21 +5,51 @@ import { DateSearchDropdown } from "../../src/components/booking/search/DateSear
 import { InlineDateRangePicker, type DailyRate } from "../../src/components/booking/search/InlineDateRangePicker";
 import { defineStory } from "../lib/story";
 
-const DEMO_RATES: Record<string, DailyRate> = {
-  "2026-10-14": { amount: 299, currency: "USD", available: true, minNights: 2 },
-  "2026-10-15": { amount: 319, currency: "USD", available: true, minNights: 2 },
-  "2026-10-16": { amount: 349, currency: "USD", available: true, minNights: 2 },
-  "2026-10-17": { amount: 299, currency: "USD", available: true },
-  "2026-10-18": { amount: 279, currency: "USD", available: false, minNights: 3 },
-  "2026-10-19": { amount: 279, currency: "USD", available: true, minNights: 3 },
-  "2026-11-05": { amount: 249, currency: "USD", available: true, minNights: 2 },
-  "2026-11-06": { amount: 259, currency: "USD", available: true, minNights: 2 },
-  "2026-11-07": { amount: 269, currency: "USD", available: true, minNights: 2 },
-  "2026-11-08": { amount: 249, currency: "USD", available: true },
-};
+/** Generate a future-relative date fixture so demos work on any day. */
+function buildDemoRates(base: Date = new Date()): Record<string, DailyRate> {
+  const rates: Record<string, DailyRate> = {};
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const iso = (d: Date) => `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+
+  // Start ~2 weeks from now, span ~3 weeks
+  const start = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate() + 14));
+  for (let i = 0; i < 21; i++) {
+    const d = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate() + i));
+    const dateKey = iso(d);
+    const dayOfWeek = d.getUTCDay();
+    const isWeekend = dayOfWeek === 5 || dayOfWeek === 6; // Fri/Sat
+    const baseAmount = isWeekend ? 349 : 299;
+    const variation = (i % 7) * 10;
+    rates[dateKey] = {
+      amount: baseAmount + variation,
+      currency: "USD",
+      available: i !== 7, // one unavailable day in the middle
+      minNights: isWeekend ? 2 : 1,
+      invalidStayLengths: i === 10 ? [3] : undefined, // one day with invalid stay length
+    };
+  }
+  return rates;
+}
+
+const DEMO_RATES = buildDemoRates();
+
+/** Compute a valid default range: first two available days in the fixture. */
+function getDefaultRange(rates: Record<string, DailyRate>): { checkIn: string; checkOut: string } {
+  const available = Object.entries(rates)
+    .filter(([, r]) => r.available)
+    .sort(([a], [b]) => a.localeCompare(b));
+  if (available.length >= 2) {
+    return { checkIn: available[0][0], checkOut: available[1][0] };
+  }
+  // Fallback to first two keys
+  const keys = Object.keys(rates).sort();
+  return { checkIn: keys[0] ?? "", checkOut: keys[1] ?? "" };
+}
+
+const DEFAULT_RANGE = getDefaultRange(DEMO_RATES);
 
 function DateSearchDropdownDemo({ variant = "confirm" }: { variant: "confirm" | "external-actions" }) {
-  const [range, setRange] = useState({ checkIn: "2026-11-05", checkOut: "2026-11-08" });
+  const [range, setRange] = useState({ checkIn: DEFAULT_RANGE.checkIn, checkOut: DEFAULT_RANGE.checkOut });
   const [closed, setClosed] = useState(false);
   return (
     <div className="w-full max-w-3xl space-y-4 py-4">
@@ -48,15 +78,47 @@ function DateSearchDropdownDemo({ variant = "confirm" }: { variant: "confirm" | 
   );
 }
 
+function DateSearchDropdownUnselectedDemo() {
+  const [range, setRange] = useState({ checkIn: "", checkOut: "" });
+  const [closed, setClosed] = useState(false);
+  return (
+    <div className="w-full max-w-3xl space-y-4 py-4">
+      {closed ? (
+        <button
+          className="rounded border p-3 w-full"
+          onClick={() => setClosed(false)}
+        >
+          Reopen date picker
+        </button>
+      ) : (
+        <DateSearchDropdown
+          variant="confirm"
+          checkIn={range.checkIn}
+          checkOut={range.checkOut}
+          dailyRates={DEMO_RATES}
+          onChange={(checkIn, checkOut) => setRange({ checkIn, checkOut })}
+          onClose={() => setClosed(true)}
+          onVisibleRangeChange={() => {}}
+        />
+      )}
+      <p className="text-sm text-muted-foreground" role="status">
+        Selected: {range.checkIn || "—"} → {range.checkOut || "—"} {closed ? " (dialog closed)" : ""}
+      </p>
+    </div>
+  );
+}
+
 function InlineDateRangePickerDemo() {
-  const [range, setRange] = useState({ checkIn: "2026-10-14", checkOut: "2026-10-17" });
+  const [range, setRange] = useState({ checkIn: DEFAULT_RANGE.checkIn, checkOut: DEFAULT_RANGE.checkOut });
+  // Use a minDate that's before our fixture start so the calendar can navigate
+  const minDate = Object.keys(DEMO_RATES).sort()[0];
   return (
     <div className="w-full max-w-4xl space-y-2 py-4">
       <InlineDateRangePicker
         checkIn={range.checkIn}
         checkOut={range.checkOut}
         dailyRates={DEMO_RATES}
-        minDate="2026-10-01"
+        minDate={minDate}
         onChange={(checkIn, checkOut) => setRange({ checkIn, checkOut })}
         onVisibleRangeChange={() => {}}
       />
@@ -69,6 +131,11 @@ function InlineDateRangePickerDemo() {
 
 export const dateSearchDropdownStory = defineStory({
   Component: DateSearchDropdownDemo,
+  args: { initial: { variant: "confirm" } },
+});
+
+export const dateSearchDropdownUnselectedStory = defineStory({
+  Component: DateSearchDropdownUnselectedDemo,
   args: { initial: { variant: "confirm" } },
 });
 

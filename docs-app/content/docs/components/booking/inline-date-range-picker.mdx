@@ -48,7 +48,7 @@ interface RestrictionAdvisory {
 | Minimum nights advisory | Ring + tooltip | Stay shorter than `minNights` |
 | Invalid stay length | Ring + tooltip | Stay length in `invalidStayLengths` |
 | Restriction badge | Dot + tooltip | `ClosedToArrival/Departure/Stay` on that date |
-| Unavailable | Crossed out, muted | `available === false` without `minNights` |
+| Unavailable (cached) | Crossed out, muted | `available === false` — **advisory only**, remains selectable; live Search validates |
 | Past / before `minDate` | Crossed out, disabled | Not selectable |
 
 ## Accessibility
@@ -56,10 +56,10 @@ interface RestrictionAdvisory {
 - Month headers as `role="grid"` with column headers (M–S)
 - Each day is a `<button role="gridcell">` with `aria-selected`, `aria-pressed`, `aria-label`
 - Month navigation buttons have `aria-label` (Previous/Next month)
-- Keyboard: arrow keys navigate days, Page Up/Down change months, Home/End jump to first/last day
 - Escape is handled by the parent dialog (`DateSearchDropdown`)
 - Focus visible ring on every interactive element
 - Tooltips on restriction/min-nights via group-hover on the day button
+- **Note**: Day-level keyboard navigation (arrow keys, Page Up/Down, Home/End) is not currently implemented; use month navigation buttons or mouse/touch.
 
 ## Responsive behaviour
 

@@ -26,6 +26,7 @@ import {
 } from "./search-dropdowns.story";
 import {
   dateSearchDropdownStory,
+  dateSearchDropdownUnselectedStory,
   dateSearchDropdownExternalActionsStory,
   inlineDateRangePickerStory,
 } from "./search-date.story";
@@ -437,6 +438,10 @@ export function SearchPromoDropdownStoryControl() {
 
 export function DateSearchDropdownStoryControl() {
   return <dateSearchDropdownStory.WithControl />;
+}
+
+export function DateSearchDropdownUnselectedStoryControl() {
+  return <dateSearchDropdownUnselectedStory.WithControl />;
 }
 
 export function DateSearchDropdownExternalActionsStoryControl() {
