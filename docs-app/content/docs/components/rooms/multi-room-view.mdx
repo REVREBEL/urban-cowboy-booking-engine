@@ -1,0 +1,170 @@
+---
+title: Multi-Room View
+description: Building header, list and room type card components for multi-room layouts.
+---
+
+import {
+  MultiRoomViewBuildingStoryControl,
+  MultiRoomViewBuildingWithIconStoryControl,
+  MultiRoomViewBuildingRowReverseStoryControl,
+  MultiRoomViewBuildingStackedCenterStoryControl,
+  MultiRoomViewBuildingStackedLeftStoryControl,
+  MultiRoomViewListStoryControl,
+  MultiRoomViewListItemStoryControl,
+  MultiRoomViewListItemRowStoryControl,
+  MultiRoomViewListItemRowReverseStoryControl,
+  MultiRoomViewRoomTypeCardStoryControl,
+  MultiRoomViewRoomTypeCardFocusedStoryControl,
+} from '~/components/story-controls';
+
+The multi-room view components present a building's room offerings in various editorial layouts. Demos use deterministic `ShapedRoom` fixtures with mocked merchandising; selection actions are recorded locally.
+
+## Building Header — MultiRoomViewBuilding
+
+The building header shows the building name, tagline, description and optional icon. Four layout variants control the arrangement of content and icon.
+
+### Default (Row)
+
+<MultiRoomViewBuildingStoryControl />
+
+### With Building Icon
+
+<MultiRoomViewBuildingWithIconStoryControl />
+
+### Row Reverse
+
+<MultiRoomViewBuildingRowReverseStoryControl />
+
+### Stacked Center
+
+<MultiRoomViewBuildingStackedCenterStoryControl />
+
+### Stacked Left
+
+<MultiRoomViewBuildingStackedLeftStoryControl />
+
+### Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `buildingName` | string | Building display name |
+| `buildingDescription` | string | Editorial description |
+| `buildingTagline` | string | Marketing tagline |
+| `layout` | `Row`, `Row Reverse`, `StackedCenter`, `StackedLeft` | Content arrangement |
+| `displayBuildingIcon` | boolean | Show building icon slot |
+| `buildingIconSlot` | `ReactNode` | Optional `BuildingIcon` instance |
+
+## Room List — MultiRoomViewList
+
+Displays a vertical list of room type cards for a building.
+
+<MultiRoomViewListStoryControl />
+
+### Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `rooms` | `ShapedRoom[]` | Rooms to display |
+| `criteria` | `SearchCriteria` | Search context |
+| `imageBaseUrl` | string | Base URL for imagery |
+| `onSelectRoom` | `() => void` | Room selection callback |
+| `onOpenRoomDetails` | `() => void` | Room details callback |
+
+## Room List Item — MultiRoomViewListItem
+
+Individual room card within the list, supporting three layout modes.
+
+### Default
+
+<MultiRoomViewListItemStoryControl />
+
+### Row Layout
+
+<MultiRoomViewListItemRowStoryControl />
+
+### Row Reverse Layout
+
+<MultiRoomViewListItemRowReverseStoryControl />
+
+### Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `room` | `ShapedRoom` | Room data with merchandising |
+| `imageBaseUrl` | string | Base URL for imagery |
+| `layout` | `Default`, `Row`, `RowReverse` | Card arrangement |
+| `onSelect` | `() => void` | Selection callback |
+| `onOpenDetails` | `() => void` | Details callback |
+
+## Room Type Card — MultiRoomViewRoomTypeCard
+
+Focused room type presentation with optional highlight state.
+
+### Default
+
+<MultiRoomViewRoomTypeCardStoryControl />
+
+### Focused
+
+<MultiRoomViewRoomTypeCardFocusedStoryControl />
+
+### Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `room` | `ShapedRoom` | Room data with merchandising |
+| `imageBaseUrl` | string | Base URL for imagery |
+| `focused` | boolean | Highlighted presentation |
+| `onSelect` | `() => void` | Selection callback |
+| `onOpenDetails` | `() => void` | Details callback |
+
+## Responsive behaviour
+
+- Building header layouts adapt: Row/Row Reverse stack on mobile; Stacked variants remain stacked
+- Room list uses single-column stack on all viewports
+- Room type cards maintain aspect ratio and stack on narrow screens
+
+## Usage
+
+```tsx
+import { MultiRoomViewBuilding, MultiRoomViewList, MultiRoomViewListItem, MultiRoomViewRoomTypeCard } from '@/components/rooms';
+
+// Building header
+<MultiRoomViewBuilding
+  buildingName="Alpine"
+  buildingDescription="Built into the hillside..."
+  buildingTagline="This is Where you Come to Soak..."
+  layout="Row"
+  displayBuildingIcon={true}
+  buildingIconSlot={<BuildingIcon buildingName="Alpine" />}
+/>
+
+// Room list
+<MultiRoomViewList
+  rooms={rooms}
+  criteria={criteria}
+  imageBaseUrl="/images"
+  onSelectRoom={handleSelect}
+  onOpenRoomDetails={handleDetails}
+/>
+
+// Individual list item
+<MultiRoomViewListItem
+  room={room}
+  imageBaseUrl="/images"
+  layout="Row"
+  onSelect={handleSelect}
+  onOpenDetails={handleDetails}
+/>
+
+// Room type card
+<MultiRoomViewRoomTypeCard
+  room={room}
+  imageBaseUrl="/images"
+  focused={true}
+  onSelect={handleSelect}
+  onOpenDetails={handleDetails}
+/>
+```
+
+[Building source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewBuilding.tsx) · [List source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewList.tsx) · [List item source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewListItem.tsx) · [Room type card source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewRoomTypeCard.tsx)
