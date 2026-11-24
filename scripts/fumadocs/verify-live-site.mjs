@@ -61,6 +61,7 @@ const report = {
   pages: [],
   search: {},
   demos: {},
+  styles: {},
   https: {},
   failures,
 };
@@ -175,6 +176,20 @@ for (const viewport of viewports) {
         "reopen control not visible after close",
       );
     }
+
+    await page.goto(new URL("components/room-list-card/", BASE).href, { waitUntil: "networkidle" });
+    const styles = await page.evaluate(() => ({
+      tableHeaderAlign: getComputedStyle(document.querySelector(".prose table th")).textAlign,
+      storyFrameGap: getComputedStyle(document.querySelector(".docs-story-frame")).gap,
+      proseGap: getComputedStyle(document.querySelector("article#nd-page .prose.flex-1")).gap,
+    }));
+    report.styles = styles;
+    record("table headers align left", styles.tableHeaderAlign === "left",
+      `computed text-align: ${styles.tableHeaderAlign}`);
+    record("story frame gap", styles.storyFrameGap === "16px",
+      `computed gap: ${styles.storyFrameGap}`);
+    record("prose gap", styles.proseGap === "16px",
+      `computed gap: ${styles.proseGap}`);
    } catch (error) {
     record("desktop search/demo interactions", false, String(error).slice(0, 200));
    }

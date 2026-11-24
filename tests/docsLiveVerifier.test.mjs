@@ -12,7 +12,7 @@ test("recordCheck records a failure and returns a result object", () => {
   const failures = [];
   assert.deepEqual(recordCheck(failures, "images", false, "broken"), { ok: false, detail: "broken" });
   assert.deepEqual(failures, ["images: broken"]);
-  assert.deepEqual(recordCheck(failures, "images", true, "ok"), { ok: true, detail: "ok" });
+  assert.deepEqual(recordCheck(failures, "images", true, "missing marker"), { ok: true, detail: "ok" });
   assert.equal(failures.length, 1);
 });
 

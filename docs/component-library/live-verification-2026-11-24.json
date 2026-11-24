@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-24T08:05:10.279Z",
+  "checkedAt": "2026-11-24T08:18:45.429Z",
   "url": "http://cowboy-components.revrebel.io/",
   "viewports": [
     "desktop",
@@ -13,11 +13,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Urban Cowboy Component Library"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -27,11 +27,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker SearchBar"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -41,11 +41,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Search dropdowns"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -55,11 +55,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Booking chrome"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -69,11 +69,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Conversion badges"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -83,11 +83,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Extras upsell"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -97,11 +97,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Room list card"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -111,11 +111,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Focus amenity family"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -125,11 +125,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Rate offers"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -139,11 +139,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Booking summary"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -153,11 +153,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Booking details"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -167,11 +167,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Urban Cowboy Component Library"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -181,11 +181,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker SearchBar"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -195,11 +195,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Search dropdowns"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -209,11 +209,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Booking chrome"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -223,11 +223,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Conversion badges"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -237,11 +237,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Extras upsell"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -251,11 +251,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Room list card"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -265,11 +265,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Focus amenity family"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -279,11 +279,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Rate offers"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -293,11 +293,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Booking summary"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     },
@@ -307,11 +307,11 @@
       "status": 200,
       "marker": {
         "ok": true,
-        "detail": "missing marker Booking details"
+        "detail": "ok"
       },
       "deepLink": {
         "ok": true,
-        "detail": "deep link marker missing after refresh"
+        "detail": "ok"
       },
       "brokenImages": []
     }
@@ -319,30 +319,35 @@
   "search": {
     "indexResult": {
       "ok": true,
-      "detail": "focus-amenity search result present"
+      "detail": "ok"
     },
     "navigate": {
       "ok": true,
-      "detail": "landed on http://cowboy-components.revrebel.io/components/focus-amenity/"
+      "detail": "ok"
     }
   },
   "demos": {
     "amenityRail": {
       "ok": true,
-      "detail": "amenity rail toggle present"
+      "detail": "ok"
     },
     "amenityRailState": {
       "ok": true,
-      "detail": "rail state did not change"
+      "detail": "ok"
     },
     "ratePanelClose": {
       "ok": true,
-      "detail": "rate panel close present"
+      "detail": "ok"
     },
     "ratePanel": {
       "ok": true,
-      "detail": "reopen control not visible after close"
+      "detail": "ok"
     }
+  },
+  "styles": {
+    "tableHeaderAlign": "left",
+    "storyFrameGap": "16px",
+    "proseGap": "16px"
   },
   "https": {
     "error": "TypeError: fetch failed"
