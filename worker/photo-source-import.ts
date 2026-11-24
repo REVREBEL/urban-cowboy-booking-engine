@@ -112,6 +112,9 @@ async function loadState(db: D1Like, tenantId: string) {
   const assetRows = await db.prepare(
     "SELECT id, squarespace_url AS url FROM media_assets WHERE tenant_id = ?1",
   ).bind(tenantId).all<{ id: string; url: string | null }>();
+  const versionRows = await db.prepare(
+    "SELECT media_asset_id, current_version_id FROM media_asset_metadata WHERE tenant_id = ?1",
+  ).bind(tenantId).all<{ media_asset_id: string; current_version_id: string | null }>();
   const roomRows = await db.prepare(
     "SELECT id FROM room_types WHERE tenant_id = ?1",
   ).bind(tenantId).all<{ id: string }>();
@@ -120,6 +123,9 @@ async function loadState(db: D1Like, tenantId: string) {
       `${row.alias_type}|${row.alias_value}`, row.media_asset_id,
     ])),
     assets: new Map(assetRows.results.map((row) => [row.id, row.url ?? ""])),
+    currentVersions: new Map(versionRows.results.map((row) => [
+      row.media_asset_id, row.current_version_id,
+    ])),
     roomTypes: new Set(roomRows.results.map((row) => row.id)),
   };
 }
@@ -144,6 +150,8 @@ function assetStatements(
   photo: SourcePhoto,
   mediaId: string,
   isNew: boolean,
+  urlChanged: boolean,
+  currentVersionId: string | null,
 ): SqlStatement[] {
   const now = input.now ?? "";
   const sourceAssetId = `${photo.aliases[0].aliasType}:${photo.aliases[0].aliasValue}`;
@@ -165,9 +173,19 @@ function assetStatements(
     },
   ];
   // An existing registry asset may have an arbitrary v1 primary key and a
-  // newer current version (a replacement/hotspot revision). A URL-only import
-  // must not invent a version row or rewind current_version_id: only the
-  // mutable URL/dimension fields on media_assets are updated.
+  // newer current version (a replacement/hotspot revision). Never invent a
+  // version row or rewind current_version_id. For an importer-managed asset
+  // whose current version is still the original `:v1`, update that version's
+  // mutable URL/dimensions in place so the published gallery read (which
+  // resolves COALESCE(version.url, asset.url)) sees the new delivery URL.
+  if (!isNew && urlChanged && currentVersionId === `${mediaId}:v1`) {
+    statements.push({
+      sql: `UPDATE media_versions
+               SET squarespace_url = ?1, width = ?2, height = ?3
+             WHERE id = ?4 AND media_asset_id = ?5`,
+      params: [photo.url, photo.width, photo.height, currentVersionId, mediaId],
+    });
+  }
   if (isNew) {
     statements.push({
       sql: `INSERT INTO media_versions
@@ -257,7 +275,9 @@ export async function planPhotoImport(
       decisions.push({ kind: "create", mediaId, photo });
       createdInPlan.add(mediaId);
     }
-    statements.push(...assetStatements(input, photo, mediaId, !exists));
+    statements.push(...assetStatements(
+      input, photo, mediaId, !exists, urlChanged, state.currentVersions.get(mediaId) ?? null,
+    ));
 
     const existing = await existingPlacements(db, input.tenantId, photo.roomTypeRef);
     const targetId = placementId(photo.roomTypeRef, mediaId);

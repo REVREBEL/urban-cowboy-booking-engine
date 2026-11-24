@@ -32,17 +32,47 @@ There is deliberately **no** ARI/rate source flag. See the
 
 1. **Published-only data**: the collection's D1 rows are published and
    tenant/location scoped. Draft, pending-review and ambiguous rows fail closed.
-2. **Parity**: run shadow mode (`CONTENT_SOURCE_<DOMAIN>=shadow`) and compare the
-   recorded `parity_reports` summaries via `GET /api/content/parity`. No
-   unexplained field differences remain for guest-visible fields.
+2. **Parity**: the procedure is domain-specific — see §2a. Only policy language,
+   site settings and add-ons support shadow mode; galleries and hotspots are
+   two-state flags and need a direct published-data comparison instead.
 3. **Migration gates**: add-ons require a published `add_on_sync/complete` marker
    whose `expectedCount` matches the published `add_on` items. Galleries require
    a published `room_gallery` document per room; unmigrated rooms keep Webflow.
 4. **Snapshots refreshed**: room galleries, amenities and policy content are read
    from immutable published snapshots. A refresh is triggered by editor publish
    but **not** by the offline photo importer — see §3.
-5. **Rollback tested**: `POST /api/content/snapshots/rollback` repoints to the
-   previous snapshot version; verify it on staging before each flip.
+5. **Rollback tested**: a collection-scoped snapshot rollback repoints only the
+   named collection; verify it on staging before each flip (see §6).
+
+## 2a. Parity procedures by domain
+
+**Shadow-capable routes — policy language, site settings, add-ons.** These have
+a real `shadow` mode. Set the per-route flag (`CONTENT_SOURCE_POLICY_LANGUAGE`,
+`CONTENT_SOURCE_SITE_SETTINGS`, `CONTENT_SOURCE_ADD_ONS`) to `shadow`, then read
+`GET /api/content/parity?collection=<name>` (admin). Valid collection names are
+`policyLanguage`, `siteSettings` and `addOns`. The response contains `reports`
+(the field-level diff summary) and `pointers` (the current snapshot version per
+collection). Shadow writes a report only when the summary changes, so no new
+report after a stable soak means no new drift. Compare the reported fields
+against the guest-visible contract; resolve every unexplained difference.
+
+**Galleries and hotspots — no shadow mode.** `CONTENT_SOURCE_ROOM_GALLERIES`
+and `PHOTO_HOTSPOT_SOURCE` accept only `webflow` (default) or `d1`; there is no
+`shadow` value and no parity summary is written for them. Verify before flipping:
+
+1. Capture the current Webflow response from
+   `GET /api/content/room-type-reviews` (`galleries` and `hotspots`) and keep it
+   as the baseline.
+2. On a staging Worker with the flag set to `d1`, capture the same response.
+   Galleries are merged per room: only rooms with a published `room_gallery`
+   document change; compare those rooms' ordered image URLs against the
+   baseline and confirm every unmigrated room is byte-identical.
+3. For hotspots, compare `hotspotsByRoom` from the D1 response against the
+   baseline `hotspots` map by photo key and pinned amenity; verify pin IDs,
+   display order, normalized x/y and geometry.
+4. Do not use `GET /api/content/parity` as evidence for these two domains: it
+   recomputes collection-level parity over `content_items`-backed collections,
+   not the per-room gallery/hotspot guest payloads.
 
 ## 3. Temporary Webflow photo URLs (W2 importer → guest reads)
 
@@ -102,9 +132,21 @@ window between flips:
 For any regression:
 
 1. Set the affected per-route flag back to `webflow` (no data is deleted).
-2. If published content itself is wrong, repoint its snapshot with
-   `POST /api/content/snapshots/rollback`, then re-verify.
-3. Keep the failure visible in logs/parity reports; do not patch guest data
+2. If published content itself is wrong, repoint **only that collection's**
+   snapshot. `snapshotsRollback` defaults to all ten collections when no body is
+   supplied, so always send the scoped JSON body:
+   `POST /api/content/snapshots/rollback` with
+   `{"collection":"roomGallery"}` (use `policyLanguage`, `siteSettings`,
+   `addOns`, etc. for the other domains). The response is
+   `{ "pointers": { "<collection>": "<newCurrentVersion>" }, "skipped": [...] }`:
+   - `pointers` containing the named collection means the rollback succeeded and
+     shows the version now current — record it.
+   - a collection listed in `skipped` had no previous version, so nothing changed;
+     do not assume a rollback happened.
+   - `pointers` must not contain unrelated collections; if it does, the request
+     was not scoped correctly.
+3. Re-run the guest response check for the affected domain after rollback, then
+   keep the failure visible in logs/parity reports; do not patch guest data
    directly.
 4. Rollback controls stay in place until Gate 2 (COW-111) accepts Webflow
    runtime retirement.
