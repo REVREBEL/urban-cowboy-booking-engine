@@ -9,6 +9,7 @@
 // Déployé via `wrangler deploy` (compatible Cloudflare Workers Builds / Git).
 
 import type { Env } from "./mews/_lib";
+import { isAdminOrigin, preflightResponse, withAdminCors } from "./admin-cors.ts";
 import { onRequestGet as hotelGet, onRequestPost as hotelPost } from "./mews/hotel";
 import { onRequestPost as availability } from "./mews/availability";
 import { onRequestPost as calendar } from "./mews/calendar";
@@ -89,20 +90,6 @@ const json = (data: unknown, status: number) =>
     status,
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
-
-/** Single approved admin origin; cross-origin calls carry the Access JWT cookie. */
-const ADMIN_ORIGIN = "https://urban-cowboy-admin.revrebel.workers.dev";
-
-function adminCorsHeaders(origin: string): HeadersInit {
-  return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "content-type, authorization, cf-access-token",
-    "Access-Control-Max-Age": "86400",
-    Vary: "Origin",
-  };
-}
 
 async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -329,20 +316,10 @@ async function handleRequest(request: Request, env: Env, ctx: ExecutionContext):
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const origin = request.headers.get("origin");
-    if (origin === ADMIN_ORIGIN && request.method === "OPTIONS" &&
-        request.headers.has("access-control-request-method")) {
-      return new Response(null, { status: 204, headers: adminCorsHeaders(origin) });
-    }
+    const preflight = preflightResponse(request);
+    if (preflight) return preflight;
     const response = await handleRequest(request, env, ctx);
-    if (origin !== ADMIN_ORIGIN) return response;
-    const headers = new Headers(response.headers);
-    for (const [key, value] of Object.entries(adminCorsHeaders(origin))) headers.set(key, value);
-    return new Response(response.body, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
+    return isAdminOrigin(request) ? withAdminCors(request, response) : response;
   },
 
   async scheduled(
