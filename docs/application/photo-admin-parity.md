@@ -115,13 +115,25 @@ Run from the repo root on the merged `main`:
 
 Verified properties from the checks above: draft, pending-review and soft-deleted mappings never appear in the guest hotspot map; a D1 outage preserves the Webflow payload; a failed/empty image-feed import never deletes previously published gallery media; URL resize variants and source replacement keep a stable canonical photo identity; and Mews transactional tests remain green.
 
-### Live deployed verification (owner action — not yet executed here)
+### Live deployed verification (2026-11-24)
 
-The following require the deployed Worker/admin environment and a browser; they are **not** claimed as complete by this local run:
+Deployed Worker: `https://urban-cowboy-booking-engine.revrebel.workers.dev` (workers.dev, no custom domain/route found in the account).
 
-- Deployed admin URL: `<DEPLOYED_WORKER_ORIGIN>/dashboard.html#/rooms` and `#/hotspots` (exact origin is environment-provided; confirm before the check).
-- Guest Photo Journey URL: `<DEPLOYED_WORKER_ORIGIN>/` with `?photoSource=mews` and the default editorial source.
-- Set `PHOTO_HOTSPOT_SOURCE=d1` only after confirming the published D1 snapshot on staging; verify pins appear on the correct photos at desktop and mobile widths, no console/network errors, and rollback restores the prior published state.
-- Capture screenshots and a dated test record here before closing COW-84.
+| Check | Result |
+| --- | --- |
+| Guest landing, desktop browser | HTTP 200, title "Urban Cowboy — Book your stay", arrival form and navigation render; no console errors reported by the browser snapshot. |
+| Guest landing with `?photoSource=mews` | HTTP 200, same arrival render. This query selects Mews imagery; it does **not** enable the D1 content path. |
+| `/api/content/site-settings` | 200 with `x-content-source: webflow` — flags remain at Webflow defaults. |
+| `/dashboard.html#/rooms` | Redirects to `/dashboard#/rooms` and serves the **legacy** Supabase dashboard ("Dashboard à configurer — Ajoute ta clé anon public Supabase…"). The React photo/hotspot admin is not reachable at this deployed URL. |
+| Production D1 | 156 `room_gallery` placements; published `roomGallery`, `roomAmenities` and `roomTypes` snapshots present; **0** `photo_hotspot_mappings` rows. There is no production hotspot data for a D1 guest-hotspot check. |
+| Local suite | `npm test` 610/610 pass; targeted gallery/hotspot tests 83/83 pass, including published-only hotspot reads, draft isolation, review gates, publish/rollback, import-failure preservation and Mews tests. |
 
-No production flag is changed by this phase. Guest reads default to Webflow; Mews booking, pricing and availability code is untouched.
+### What this does and does not establish
+
+The deployed **guest arrival page** renders, and the D1 gallery data and snapshots exist in production. It does **not** establish COW-82 acceptance items that require deployed state:
+
+- Admin gallery/hotspot routes in the deployed environment — the deployed dashboard is the legacy Supabase page, not the React admin.
+- Guest Photo Journey from **published D1** gallery/hotspot data — no D1 content flag is enabled, and production has zero hotspot mappings.
+- End-to-end publish/rollback in the deployed admin, desktop/mobile hotspot pin verification and rollback restore.
+
+These remain owner/deployment actions. No production flag was changed by this phase; guest reads still default to Webflow and Mews booking, pricing and availability code is untouched. COW-82 and COW-84 should not be closed on the strength of local tests alone.
