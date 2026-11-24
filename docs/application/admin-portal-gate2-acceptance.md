@@ -77,7 +77,7 @@ successful re-test are recorded above.
 | Production Next.js admin deployed at agreed route | `npm run admin:build` passes; config names `urban-cowboy-admin` | **Partial**. Worker and `workers.dev` URL are deployed with proxy/bindings; no agreed custom hostname/route. |
 | Auth, sessions and roles verified in deployed environment | Auth and proxy tests pass; server route verifies session before forwarding | **Partial**. Real admin Access login, direct links and invalid-token denial observed; viewer role and expired-token checks remain open. |
 | Parity matrix fully closed with evidence | All 90 IDs have a status; residuals listed in §4 | W2/W3 sign-off on residual scope is still required. |
-| Content writes, publish, rollback and media use shared D1 | Domain panels use relative APIs; server proxy forwards the verified assertion; Worker owns revision/audit/rollback | **Partial**. Settings draft `r2` → publish → rollback `r1` observed; broader panel write coverage and guest D1 consumption remain open. |
+| Content writes, publish, rollback and media use shared D1 | Domain panels use relative APIs; server proxy forwards the verified assertion; Worker owns revision/audit/rollback | **Partial**. Settings draft `r2` → publish → rollback `r1` observed; remaining panel write coverage is assigned to COW-94, and guest D1 consumption remains open. |
 | No Astro / Webflow CMS write dependency in admin target | `admin-app/package.json` has no Astro/Webflow dependency; no CMS token is read by the admin app | **Verified for the built target**. Legacy `dashboard.html` remains for rollback only. |
 
 ## 4. Residual scope carried into acceptance
@@ -115,7 +115,7 @@ These items are documented and unresolved. A green CI run does not close them.
 - [x] Gate 2 issues cross-reference the same evidence documents.
 - [x] Deployed admin URL and authenticated admin browser evidence attached. The proxy/bindings are deployed; `/admin`, direct sections and desktop/mobile `/rooms` were exercised.
 - [ ] Deployed auth/RBAC and role-restriction tests pass. Admin login and invalid-token denial are observed; viewer-role and expired-token checks remain open.
-- [ ] Admin read/edit/publish/rollback E2E across the required panels is recorded and reverted safely. Settings draft/publish/rollback passed; remaining panel writes need coverage.
+- [ ] Admin read/edit/publish/rollback E2E across the required panels is recorded and reverted safely. Settings draft/publish/rollback passed; remaining panel writes are assigned to COW-94 for coverage rather than claimed here.
 - [ ] W3 confirms guest runtime consumption from published D1.
 - [ ] Residual scope in §4 is acknowledged or closed by the product owner.
 
@@ -155,7 +155,8 @@ Access edge or production D1.
    expired-token checks remain.
 4. Run controlled D1 read/edit/publish/rollback operations through the Admin Portal, capture the
    guest published read and restore the original state. Settings passed and was restored; the
-   guest read correctly remained Webflow because no content flag was changed.
+   guest read correctly remained Webflow because no content flag was changed. Remaining panel
+   write coverage is assigned to COW-94.
 5. Record W3 D1 content consumption, Mews regression evidence and Webflow runtime retirement.
 6. Record the product-owner decision on the residual scope in §4.
 
