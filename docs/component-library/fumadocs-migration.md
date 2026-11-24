@@ -140,6 +140,11 @@ Evidence: `docs/component-library/live-verification-canonical-2026-11-24.json` (
 `docs/component-library/live-verification-https-strict-2026-11-24.json` (23 recorded failures, no
 crash). The verifier now records certificate/navigation failures instead of throwing.
 
+Re-verified **2026-11-24T08:05Z** after PR #407 deployed the table-alignment and 1rem story-gap
+fixes: `docs/component-library/live-verification-2026-11-24.json` records 22 page/viewport checks
+with 0 failures, and the live computed styles are `th text-align: left`, `gap: 16px` on both
+`.docs-story-frame` and the prose block.
+
 Conclusion: every content, asset, search, navigation, responsive and interaction check passes on the
 canonical custom domain. The one open M4 item is HTTPS: `https_enforced` is false and the domain
 presents a `*.github.io` certificate. The Pages REST update calls returned 404 for this token, so an
