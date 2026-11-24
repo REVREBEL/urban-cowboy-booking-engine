@@ -14,6 +14,8 @@ export interface AdminRuntimeConfig {
 }
 
 const DEFAULT_TIMEOUT_MS = 8_000;
+export const BOOKING_API_ORIGIN = "https://urban-cowboy-booking-engine.revrebel.workers.dev";
+const TRUSTED_API_ORIGINS = new Set([BOOKING_API_ORIGIN, "http://localhost:8787"]);
 
 export function getAdminRuntimeConfig(): AdminRuntimeConfig {
   const rawBase = process.env.API_BASE_URL?.trim() ?? "";
@@ -36,6 +38,9 @@ export function getAdminRuntimeConfig(): AdminRuntimeConfig {
     }
     if (!/^\/+$/.test(parsed.pathname)) {
       throw new Error("API_BASE_URL must be an origin without a path");
+    }
+    if (!TRUSTED_API_ORIGINS.has(parsed.origin)) {
+      throw new Error("API_BASE_URL is not an approved booking API origin");
     }
     apiBaseUrl = parsed.origin;
   }

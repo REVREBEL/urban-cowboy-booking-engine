@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DashboardPanelHost } from "../../../components/DashboardPanelHost.tsx";
-import { getAdminRuntimeConfig } from "../../../lib/env.ts";
 import { can, getAdminSession } from "../../../lib/session.ts";
 import { ROUTE_CAPABILITY, routeIdFromSegment } from "../../../lib/routes.ts";
 import { DASHBOARD_NAV } from "../../../../src/dashboard/navigation.ts";
@@ -31,7 +30,7 @@ export default async function SectionPage({
         <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
       </div>
       {can(session, ROUTE_CAPABILITY[route]) ? (
-        <DashboardPanelHost route={route} apiBaseUrl={getAdminRuntimeConfig().apiBaseUrl} />
+        <DashboardPanelHost route={route} />
       ) : (
         <div role="alert" className="rounded-md border border-border p-4">
           <h2 className="text-lg font-semibold">Insufficient role</h2>

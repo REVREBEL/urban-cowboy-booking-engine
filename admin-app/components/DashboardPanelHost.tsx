@@ -26,14 +26,8 @@ const REUSED_PANELS: Partial<Record<DashboardRouteId, PanelComponent>> = {
   settings: SiteSettingsPanel,
 };
 
-export function DashboardPanelHost({
-  route,
-  apiBaseUrl,
-}: {
-  route: DashboardRouteId;
-  apiBaseUrl: string;
-}) {
-  const api = useMemo(() => createAdminDashboardApi(apiBaseUrl), [apiBaseUrl]);
+export function DashboardPanelHost({ route }: { route: DashboardRouteId }) {
+  const api = useMemo(() => createAdminDashboardApi(), []);
   const Panel = REUSED_PANELS[route];
   if (Panel) return <Panel api={api} />;
 

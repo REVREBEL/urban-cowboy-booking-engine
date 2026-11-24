@@ -1,5 +1,12 @@
 import { bindings, defineConfig, defineWorker } from "cf/config";
 
+const ADMIN_ACCESS_AUD = "4bf8d1515fc028e57532548fc1687b5750d68f534a7d0cee0c1542cdf99a3255";
+
+const textBinding = (name: string, fallback?: string) => {
+  const value = process.env[name]?.trim() || fallback;
+  return value === undefined ? undefined : bindings.text(value);
+};
+
 export default defineConfig({
   worker: defineWorker({
     name: "urban-cowboy-admin",
@@ -13,11 +20,17 @@ export default defineConfig({
     },
     env: {
       ASSETS: bindings.assets(),
-      API_BASE_URL: bindings.text("https://urban-cowboy-booking-engine.revrebel.workers.dev"),
-      TENANT_ID: bindings.text("urban-cowboy"),
-      CF_ACCESS_TEAM_DOMAIN: bindings.text("revrebel.cloudflareaccess.com"),
-      CF_ACCESS_AUD: bindings.text("4bf8d1515fc028e57532548fc1687b5750d68f534a7d0cee0c1542cdf99a3255"),
-      ADMIN_EMAILS: bindings.text("gary@revrebel.io"),
+      // Deployed nonsecret defaults keep preview builds usable. The root deploy
+      // wrapper pins the production values before uploading a version.
+      CF_ACCESS_TEAM_DOMAIN: textBinding("CF_ACCESS_TEAM_DOMAIN"),
+      CF_ACCESS_AUD: textBinding("CF_ACCESS_AUD", ADMIN_ACCESS_AUD),
+      ADMIN_EMAILS: textBinding("ADMIN_EMAILS"),
+      ADMIN_GROUPS: textBinding("ADMIN_GROUPS"),
+      TENANT_ID: textBinding("TENANT_ID"),
+      // Server-only. The same-origin proxy forwards the verified assertion to
+      // this origin, so the booking Worker must use the same Access AUD.
+      API_BASE_URL: textBinding("API_BASE_URL"),
+      API_REQUEST_TIMEOUT_MS: textBinding("API_REQUEST_TIMEOUT_MS"),
     },
   }),
 });

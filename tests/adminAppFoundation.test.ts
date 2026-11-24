@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { getAdminRuntimeConfig } from "../admin-app/lib/env.ts";
+import { BOOKING_API_ORIGIN, getAdminRuntimeConfig } from "../admin-app/lib/env.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -22,10 +22,13 @@ const withEnv = <T>(key: string, value: string | undefined, run: () => T): T => 
 test("admin app is an npm workspace with delegation scripts", () => {
   const rootPkg = json("package.json");
   const workspaces = rootPkg.workspaces as string[];
+  const scripts = rootPkg.scripts as Record<string, string>;
   assert.ok(workspaces.includes("admin-app"));
-  for (const script of ["admin:dev", "admin:build", "admin:typecheck", "admin:deploy"]) {
-    assert.match(String((rootPkg.scripts as Record<string, string>)[script]), /-w admin-app/);
+  for (const script of ["admin:dev", "admin:build", "admin:typecheck"]) {
+    assert.match(scripts[script], /-w admin-app/);
   }
+  assert.equal(scripts["admin:deploy"], "node scripts/deploy-admin.mjs");
+  assert.equal(scripts["admin:deploy:check"], "node scripts/deploy-admin.mjs --check");
 });
 
 test("admin app dependencies are pinned, not floating on latest", () => {
@@ -51,8 +54,8 @@ test("admin runtime config fails closed on malformed environment", () => {
     });
   });
 
-  withEnv("API_BASE_URL", "https://api.example.com///", () => {
-    assert.equal(getAdminRuntimeConfig().apiBaseUrl, "https://api.example.com");
+  withEnv("API_BASE_URL", `${BOOKING_API_ORIGIN}///`, () => {
+    assert.equal(getAdminRuntimeConfig().apiBaseUrl, BOOKING_API_ORIGIN);
   });
 
   assert.throws(
@@ -60,11 +63,12 @@ test("admin runtime config fails closed on malformed environment", () => {
     /absolute http\(s\) origin/,
   );
   for (const invalid of [
-    "https://user:pass@api.example.com",
-    "https://api.example.com/v1",
-    "https://api.example.com?tenant=x",
-    "https://api.example.com/#fragment",
+    `https://user:pass@${new URL(BOOKING_API_ORIGIN).host}`,
+    `${BOOKING_API_ORIGIN}/v1`,
+    `${BOOKING_API_ORIGIN}?tenant=x`,
+    `${BOOKING_API_ORIGIN}/#fragment`,
     "ftp://api.example.com",
+    "https://unrelated.example",
   ]) {
     assert.throws(
       () => withEnv("API_BASE_URL", invalid, () => getAdminRuntimeConfig()),
@@ -83,7 +87,21 @@ test("Cloudflare worker config stays cache-free and keeps proxy ahead of assets"
   assert.match(config, /name: "urban-cowboy-admin"/);
   assert.match(config, /compatibilityFlags: \["nodejs_compat"\]/);
   assert.match(config, /runWorkerFirst: \["\/\*", "!\/_next\/static\/\*", "!\/\*\/_next\/static\/\*"\]/);
+  for (const name of [
+    "CF_ACCESS_TEAM_DOMAIN",
+    "CF_ACCESS_AUD",
+    "ADMIN_EMAILS",
+    "ADMIN_GROUPS",
+    "TENANT_ID",
+    "API_BASE_URL",
+    "API_REQUEST_TIMEOUT_MS",
+  ]) {
+    assert.match(config, new RegExp(`${name}: textBinding\\("${name}"`), `${name} is a deployable text binding`);
+  }
   assert.doesNotMatch(config, /bindings\.secret\(/);
+  const deploy = read("scripts/deploy-admin.mjs");
+  assert.ok(deploy.includes(`trustedBookingApiOrigin = "${BOOKING_API_ORIGIN}"`));
+  assert.match(deploy, /expectedAdminAud = "[a-f0-9]{64}"/);
 });
 
 test("admin route group owns error, loading and not-found boundaries", () => {

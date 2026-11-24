@@ -27,7 +27,9 @@ export function proxy(request: NextRequest) {
   login.pathname = "/login";
   login.search = "";
   login.searchParams.set("next", pathname);
-  return NextResponse.redirect(login);
+  const redirectResponse = NextResponse.redirect(login);
+  redirectResponse.headers.set("Cache-Control", "no-store, private");
+  return redirectResponse;
 }
 
 export default proxy;

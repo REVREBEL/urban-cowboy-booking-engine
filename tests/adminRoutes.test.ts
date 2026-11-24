@@ -9,7 +9,6 @@ import {
   routeIdFromSegment,
   routePath,
 } from "../admin-app/lib/routes.ts";
-import { resolveApiUrl } from "../admin-app/lib/dashboard-api.ts";
 import { can, sessionFromClaims, type AdminAuthEnv } from "../admin-app/lib/auth.ts";
 
 const root = new URL("../", import.meta.url);
@@ -47,15 +46,6 @@ test("route capabilities cover all sections and gate mutations by role", () => {
     assert.equal(ROUTE_CAPABILITY[id], "read");
     assert.equal(can(viewer, ROUTE_CAPABILITY[id]), true, `viewer must read ${id}`);
   }
-});
-
-test("API URL adapter keeps /api paths and only changes the origin", () => {
-  assert.equal(resolveApiUrl("/api/admin/rooms", ""), "/api/admin/rooms");
-  assert.equal(
-    resolveApiUrl("/api/admin/rooms", "https://worker.example.com///"),
-    "https://worker.example.com/api/admin/rooms",
-  );
-  assert.throws(() => resolveApiUrl("/admin/rooms", "https://worker.example.com"), /\/api\//);
 });
 
 test("panels are reused, not reimplemented, and the legacy hotspot wiring defect is fixed", () => {
@@ -110,4 +100,6 @@ test("section route guards session, unknown segment and capability before render
   assert.match(page, /getAdminSession/);
   assert.match(page, /can\(session, ROUTE_CAPABILITY\[route\]\)/);
   assert.match(page, /DashboardPanelHost/);
+  assert.doesNotMatch(page, /getAdminRuntimeConfig|apiBaseUrl/);
+  assert.doesNotMatch(read("admin-app/components/DashboardPanelHost.tsx"), /apiBaseUrl|API_BASE_URL/);
 });
