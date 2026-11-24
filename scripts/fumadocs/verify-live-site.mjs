@@ -179,11 +179,17 @@ for (const viewport of viewports) {
     }
 
     await page.goto(new URL("components/room-list-card/", BASE).href, { waitUntil: "networkidle" });
-    const styles = await page.evaluate(() => ({
-      tableHeaderAlign: getComputedStyle(document.querySelector(".prose table th")).textAlign,
-      storyFrameGap: getComputedStyle(document.querySelector(".docs-story-frame")).gap,
-      proseGap: getComputedStyle(document.querySelector("article#nd-page .prose.flex-1")).gap,
-    }));
+    const styles = await page.evaluate(() => {
+      const value = (selector, property) => {
+        const element = document.querySelector(selector);
+        return element ? getComputedStyle(element)[property] : null;
+      };
+      return {
+        tableHeaderAlign: value(".prose table th", "textAlign"),
+        storyFrameGap: value(".docs-story-frame", "gap"),
+        proseGap: value("article#nd-page .prose.flex-1", "gap"),
+      };
+    });
     report.styles = styles;
     record("table headers align left", styles.tableHeaderAlign === "left",
       `computed text-align: ${styles.tableHeaderAlign}`);
