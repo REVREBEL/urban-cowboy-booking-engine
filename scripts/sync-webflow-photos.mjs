@@ -104,11 +104,11 @@ function d1Like(db) {
 }
 
 /**
- * Build the published-snapshot refresh as ordinary SQL in the same BEGIN/COMMIT
- * script as the registry updates. Guests read the immutable roomGallery
+ * Build the published-snapshot refresh as ordinary SQL in the same atomic D1
+ * file import as the registry updates. Guests read the immutable roomGallery
  * snapshot, so leaving this out would keep serving old URLs after a successful
- * registry import. If any earlier statement fails, the transaction rolls back
- * and no new snapshot version is published.
+ * registry import. Wrangler D1 imports are atomic and reject explicit
+ * BEGIN/COMMIT; a failed import publishes no snapshot.
  */
 function snapshotRefreshStatements(db, tenantId, changedMediaIds, plannedUrls) {
   if (!changedMediaIds.size) return [];

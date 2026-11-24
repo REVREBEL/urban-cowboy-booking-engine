@@ -137,7 +137,7 @@ test("first import creates permanent master IDs, aliases and ordered placements"
     ["rt-alpine", 1], ["rt-alpine", 2], ["rt-walden", 1],
   ]);
   const sql = renderPhotoImportSql(plan, "webflow");
-  assert.match(sql, /BEGIN;/);
+  assert.doesNotMatch(sql, /\bBEGIN\b|\bCOMMIT\b/i, "D1 rejects explicit transactions");
   assert.doesNotMatch(sql, /DELETE/i);
   db.close();
 });
@@ -486,8 +486,7 @@ test("the real CLI apply script refreshes the published gallery snapshot", () =>
     assert.equal(digest(exportPath), before, "export stays read-only");
 
     const sql = readFileSync(sqlPath, "utf8");
-    assert.match(sql, /BEGIN;/);
-    assert.match(sql, /COMMIT;/);
+    assert.doesNotMatch(sql, /\bBEGIN\b|\bCOMMIT\b/i, "D1 rejects explicit transactions");
     assert.match(sql, /published_snapshots/, "snapshot refresh is part of the apply script");
 
     cpSync(exportPath, applyPath);

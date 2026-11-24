@@ -92,7 +92,7 @@ async function main() {
     const lines = [
       "-- COW-101 initial published snapshots",
       "-- Review before applying. Each version is content-addressed and immutable.",
-      "BEGIN;",
+      "-- Wrangler D1 file imports are atomic; no explicit transaction statements.",
       ...statements.map((statement) => {
         let index = 0;
         const sql = statement.sql.replace(/\?(\d+)/g, (_match, position) => {
@@ -101,7 +101,6 @@ async function main() {
         });
         return sql.trim() + ";";
       }),
-      "COMMIT;",
     ];
     writeFileSync(out, lines.join("\n") + "\n", "utf8");
     console.log(`wrote ${statements.length} statements to ${out}`);

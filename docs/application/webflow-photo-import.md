@@ -20,7 +20,7 @@ This importer uses the existing Webflow photo/CMS functionality as a temporary i
 - Reordering changes only `media_placements.display_order`. Room remapping adds a placement; the old placement is never deleted. A single source image may be placed in several rooms: one master asset, one placement per room, one `update` decision after the first `create`.
 - New assets get version 1 (`<mediaId>:v1`) and a matching `media_asset_metadata.current_version_id`. An existing asset keeps its real version IDs and current pointer: a URL-only re-import never creates a version row and never rewinds a replacement (e.g. an arbitrary v1 key with an active v2).
 - `--db <sqlite-file>` is opened **read-only** and validated against the required schema; a dry run never migrates or mutates the supplied export.
-- Guest galleries read the immutable `roomGallery` snapshot, not live placements. The CLI therefore generates the snapshot refresh as **ordinary SQL in the same `BEGIN`/`COMMIT` script** as the registry updates: new `published_snapshots` row plus an idempotent `snapshot_pointers` update. A failed import statement rolls the whole script back, so no new snapshot version is published. The refresh uses the URLs from the plan (the read-only export still holds the old URLs), changes only `sourceUrl` for affected media IDs, and leaves working revisions and unpublished editor drafts untouched. `refreshPublishedGalleryUrls()` remains available for programmatic D1 callers.
+- Guest galleries read the immutable `roomGallery` snapshot, not live placements. The CLI therefore generates the snapshot refresh as **ordinary SQL in the same apply script** as the registry updates: new `published_snapshots` row plus an idempotent `snapshot_pointers` update. Wrangler D1 file imports are atomic and reject explicit `BEGIN`/`COMMIT`, so the script contains only ordered statements; a failed import leaves no partial publish. The refresh uses the URLs from the plan (the read-only export still holds the old URLs), changes only `sourceUrl` for affected media IDs, and leaves working revisions and unpublished editor drafts untouched. `refreshPublishedGalleryUrls()` remains available for programmatic D1 callers.
 - A URL-only reimport preserves known width/height when the source omits dimensions (`COALESCE` in the current-version update), so replacement/crop decisions keep their geometry facts.
 
 ## Safety properties
@@ -46,7 +46,7 @@ WEBFLOW_SITE_ID=... WEBFLOW_ROOM_TYPE_COLLECTION_ID=... WEBFLOW_CMS_API_TOKEN=..
 
 # Emit a reviewable script, then apply explicitly. --sql-out requires --db:
 # the published roomGallery snapshot is read from the export and refreshed in
-# the same transaction as the registry updates.
+# the same apply script as the registry updates.
 node scripts/sync-webflow-photos.mjs --file photos.json --room-types room-types.json \
   --db local.sqlite --sql-out /tmp/webflow-photos.sql
 wrangler d1 execute urban-cowboy-content --local  --file /tmp/webflow-photos.sql
@@ -55,7 +55,7 @@ wrangler d1 execute urban-cowboy-content --remote --file /tmp/webflow-photos.sql
 
 `--room-types` is required for explicit room resolution. `--db` points at a local SQLite file seeded from D1; without it the dry run seeds the supplied room types into an in-memory database, so per-room matching is still meaningful but existing-state diffs are empty. `--now` fixes the timestamp for deterministic output.
 
-The dry-run report shows matched, created, updated, duplicate, invalid, unresolved and reported-removed counts plus each source issue. `--sql-out` writes a `BEGIN`/`COMMIT` script with no deletions.
+The dry-run report shows matched, created, updated, duplicate, invalid, unresolved and reported-removed counts plus each source issue. `--sql-out` writes an atomic D1 file import script with no deletions and no explicit transaction statements.
 
 ## Verification
 

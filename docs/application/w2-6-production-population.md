@@ -47,7 +47,7 @@ Media tables are populated only by the reviewed photo-import script; hotspots re
    npm run sync:webflow-photos -- --file webflow-photos.json --room-types room-types.json \
      --db /path/to/backup.sqlite --sql-out /tmp/webflow-photos.sql
    ```
-   `--db` is mandatory for `--sql-out`: the generated script refreshes the published `roomGallery` snapshot in the same `BEGIN`/`COMMIT` transaction as the registry updates. The export is opened read-only. Review the dry-run counts before applying.
+   `--db` is mandatory for `--sql-out`: the generated script refreshes the published `roomGallery` snapshot in the same atomic D1 file import as the registry updates. The export is opened read-only. Review the dry-run counts before applying. Wrangler D1 rejects explicit `BEGIN`/`COMMIT`, so no transaction statements are emitted.
 5. **Apply the reviewed photo script:** `npx wrangler d1 execute urban-cowboy-content --remote --file /tmp/webflow-photos.sql`.
 6. **Publish the remaining initial snapshots:** `npm run d1:publish-snapshots -- --db /path/to/backup.sqlite --out /tmp/snapshots.sql`, review, then apply with `wrangler d1 execute ... --file /tmp/snapshots.sql`. Collection versions are content-addressed and the pointer update is idempotent, so a replay does not create duplicate versions.
 7. **Verify** with the reconciliation queries below. Keep all content flags at `webflow`; W3 owns the cutover (COW-108).
@@ -67,7 +67,7 @@ SELECT collection, current_version FROM snapshot_pointers ORDER BY collection;
 PRAGMA foreign_key_check;                                -- must be empty
 ```
 
-No orphan media, placements, hotspots or references are acceptable. Import retry and source failure must preserve existing published content: the seed uses upserts, publication rows are editor-owned (`state_source='editor'` is never overwritten), the importer emits no `DELETE`, and a failed import transaction never repoints a snapshot.
+No orphan media, placements, hotspots or references are acceptable. Import retry and source failure must preserve existing published content: the seed uses upserts, publication rows are editor-owned (`state_source='editor'` is never overwritten), the importer emits no `DELETE`, and a failed atomic import never repoints a snapshot.
 
 ## Selective Mews reference sync
 

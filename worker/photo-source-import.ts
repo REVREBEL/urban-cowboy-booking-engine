@@ -349,10 +349,11 @@ export async function applyPhotoImport(
 
 /** Renders a reviewable SQL script with bound values inlined. */
 export function renderPhotoImportSql(plan: PhotoImportPlan, provider: string): string {
+  // Wrangler D1 file imports are atomic and reject explicit BEGIN/COMMIT, so
+  // the script is a plain ordered list of statements.
   const lines = [
     `-- COW-99 ${provider} photo URL import`,
     "-- Review before applying. Removals are reported, never applied.",
-    "BEGIN;",
   ];
   for (const statement of plan.statements) {
     let index = 0;
@@ -362,6 +363,5 @@ export function renderPhotoImportSql(plan: PhotoImportPlan, provider: string): s
     });
     lines.push(sql.trim() + ";");
   }
-  lines.push("COMMIT;");
   return lines.join("\n") + "\n";
 }

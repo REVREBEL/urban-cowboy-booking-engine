@@ -78,8 +78,7 @@ test("publish-d1-snapshots generates an idempotent, applyable script from a read
   ], { cwd: new URL("../", import.meta.url).pathname, encoding: "utf8" });
   assert.match(output, /roomGallery/);
   const sql = readFileSync(outPath, "utf8");
-  assert.match(sql, /BEGIN;/);
-  assert.match(sql, /COMMIT;/);
+  assert.doesNotMatch(sql, /\bBEGIN\b|\bCOMMIT\b/i, "D1 rejects explicit transactions");
   assert.match(sql, /INSERT INTO published_snapshots/);
 
   const applyPath = join(dir, "apply.sqlite");
