@@ -81,9 +81,9 @@ Visual timeline showing free cancellation date, balance due date and deposit/rem
 | Prop | Values | Notes |
 | --- | --- | --- |
 | `timeline` | `CancellationTimeline` | Output from `buildCancellationTimeline` |
-| `arrivalDate` | string | Check-in date (ISO) |
-| `total` | number | Total stay amount |
 | `currency` | string | Currency code |
+| `arrivalDate` | string | Check-in date (ISO) |
+| `language` | `PolicyLanguage` | Optional policy language override |
 
 ## Responsive behaviour
 
@@ -141,7 +141,6 @@ const timeline = buildCancellationTimeline("2026-11-20", "2027-01-13", 285.60, {
 <FigmaPolicyTimeline
   timeline={timeline}
   arrivalDate="2027-01-13"
-  total={285.60}
   currency="USD"
 />
 ```
