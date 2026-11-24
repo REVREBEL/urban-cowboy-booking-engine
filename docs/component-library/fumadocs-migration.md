@@ -250,8 +250,15 @@ copied assets when files change. `npm run test:docs:dev` removes the generated o
 verifies that search and representative assets are served by the dev server; the docs CI runs
 it on a clean checkout before the production build.
 
-Published site: `https://revrebel.github.io/urban-cowboy-booking-engine/` (redirects to
-`resource-hub.revrebel.io`). COW-70's consolidated PR #351 merged and the docs workflow
+#### COW-78 Stage 6 verification (2026-11-24)
+
+- Published URL: `https://revrebel.github.io/urban-cowboy-booking-engine/` → `http://cowboy-components.revrebel.io/`. The custom-domain HTTPS endpoint still fails (`fetch failed`), so the verifier ran in its documented `DOCS_ALLOW_HTTP=1` deviation mode; this is recorded in the dated report `docs/component-library/live-verification-cow78.json`.
+- Live Playwright verification at desktop (1280×900) and mobile (375×812): all 11 catalog pages returned 200 with their markers, all deep links survived refresh on an allowed host/path, static search-and-navigate worked, two representative interactive examples passed (amenity rail and rate panel, each with a control and a state check), no broken images, and no console or 4xx/5xx response errors. Result: `LIVE VERIFICATION PASSED` with zero failures; the only accepted deviation is custom-domain HTTPS. The report's `url` is the custom-domain HTTP origin; the GitHub Pages project URL redirect was checked separately with `curl -L`: `https://revrebel.github.io/urban-cowboy-booking-engine/` returns 200 with final URL `http://cowboy-components.revrebel.io/`.
+- Local build and smoke: `npm run docs:build` finalized 52 pages under the `/urban-cowboy-booking-engine` base path and `npm run docs:smoke` passed 42 pages with the static search index present and referenced. `npm run test:docs:runtime` (10 tests), `npm run test:docs` (11 tests) and `npm run typecheck` pass.
+- The verifier's 16px story/prose gap expectation was stale after the documented 2rem (32px) rhythm change in `docs-app/app/globals.css`; it now asserts the intended 32px. Search remains fully static (`search-index.json` built at prepare time), with no server search API.
+
+Published site: `https://revrebel.github.io/urban-cowboy-booking-engine/` (currently redirects to
+`cowboy-components.revrebel.io`). COW-70's consolidated PR #351 merged and the docs workflow
 redeployed from `main`, so the six-stage catalog is published. An earlier COW-70 checkpoint
 recorded that the live deployment served only the stage-1 catalog and that stages 2–6
 returned 404 until the stacked PRs merged; that was a historical rollout state, not current.
