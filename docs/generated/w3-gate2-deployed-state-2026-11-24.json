@@ -1,0 +1,138 @@
+{
+  "capturedAt": "2026-11-24T15:42:10Z",
+  "scope": "Read-only Cloudflare API and HTTPS checks. No production changes or flag flips.",
+  "bookingWorker": {
+    "name": "urban-cowboy-booking-engine",
+    "url": "https://urban-cowboy-booking-engine.revrebel.workers.dev",
+    "deploymentId": "cac66a94-998b-496a-a2fe-407e6a362526",
+    "versionId": "0a7aef11-1dfd-44d1-b00e-f90717619be4",
+    "deployedAt": "2026-11-24T15:39:12.721191Z",
+    "observability": {
+      "logsEnabled": true,
+      "tracesEnabled": true,
+      "issuesEnabled": true
+    },
+    "bindings": [
+      "ADMIN_TOKEN (secret)",
+      "ASSETS",
+      "CALENDAR_CACHE",
+      "CLOUDFLARE_ACCOUNT_ID (secret)",
+      "CLOUDFLARE_API_TOKEN (secret)",
+      "DB",
+      "MEWS_ADULT_AGE_CATEGORY_ID",
+      "MEWS_APP_BASE_URL",
+      "MEWS_BASE_URL",
+      "MEWS_CHILD_AGE_CATEGORY_ID",
+      "MEWS_CLIENT",
+      "MEWS_CONFIG_ID",
+      "MEWS_HOTEL_ID",
+      "WEBFLOW_CMS_API_TOKEN (secret)"
+    ],
+    "missingCutoverBindings": [
+      "CONTENT_SOURCE",
+      "CONTENT_SOURCE_POLICY_LANGUAGE",
+      "CONTENT_SOURCE_SITE_SETTINGS",
+      "CONTENT_SOURCE_ADD_ONS",
+      "CONTENT_SOURCE_ROOM_GALLERIES",
+      "PHOTO_HOTSPOT_SOURCE",
+      "WEBFLOW_SITE_ID",
+      "WEBFLOW_RATE_CARD_COLLECTION_ID",
+      "WEBFLOW_CONTENT_SETTINGS_COLLECTION_ID",
+      "WEBFLOW_POLICY_LANGUAGE_ITEM_ID",
+      "WEBFLOW_ADD_ON_COLLECTION_ID",
+      "WEBFLOW_ROOM_TYPE_COLLECTION_ID",
+      "WEBFLOW_LOCATION_COLLECTION_ID",
+      "WEBFLOW_BUILDING_COLLECTION_ID",
+      "WEBFLOW_AMENITY_COLLECTION_ID",
+      "WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID",
+      "WEBFLOW_LOCATION_ITEM_ID",
+      "CF_ACCESS_TEAM_DOMAIN",
+      "CF_ACCESS_AUD",
+      "ADMIN_EMAILS",
+      "ADMIN_GROUPS",
+      "TENANT_ID"
+    ],
+    "endpointChecks": [
+      {
+        "path": "/api/content/site-settings",
+        "status": 200,
+        "contentSource": "webflow",
+        "summary": "Default site settings; productionLayout=card. No Webflow location IDs are bound, so this is not evidence of a live Webflow or D1 read."
+      },
+      {
+        "path": "/api/content/policy-language",
+        "status": 200,
+        "summary": "Empty language object."
+      },
+      {
+        "path": "/api/content/add-ons",
+        "status": 200,
+        "summary": "Empty addOns array."
+      },
+      {
+        "path": "/api/content/room-type-reviews",
+        "status": 200,
+        "summary": "Empty reviews, descriptions, galleries, amenities and hotspots."
+      },
+      {
+        "path": "/api/content/locations",
+        "status": 200,
+        "summary": "Empty locations map."
+      },
+      {
+        "path": "/api/content/buildings",
+        "status": 200,
+        "summary": "Empty buildings map."
+      },
+      {
+        "path": "/api/content/rate-cards",
+        "status": 200,
+        "summary": "Empty cards array."
+      },
+      {
+        "path": "/api/content/events/occurrences",
+        "status": 401,
+        "summary": "Unauthenticated request rejected; endpoint requires viewer auth."
+      }
+    ]
+  },
+  "adminWorker": {
+    "name": "urban-cowboy-admin",
+    "url": "https://urban-cowboy-admin.revrebel.workers.dev",
+    "deploymentId": "785fa785-a5a9-4599-bb37-04f62855bc04",
+    "versionId": "84daddb3-9bf0-4b21-b159-077e65ea2b13",
+    "deployedAt": "2026-11-24T15:25:05.986561Z",
+    "accessProtection": true,
+    "bindings": [
+      "ASSETS"
+    ],
+    "missingOperationalBindings": [
+      "DB",
+      "booking Worker service binding or configured API origin",
+      "CF_ACCESS_TEAM_DOMAIN",
+      "CF_ACCESS_AUD",
+      "ADMIN_EMAILS",
+      "ADMIN_GROUPS",
+      "TENANT_ID",
+      "API_BASE_URL"
+    ],
+    "endpointChecks": [
+      {
+        "path": "/api/health",
+        "status": 302,
+        "summary": "Redirected to Cloudflare Access login; worker is protected."
+      },
+      {
+        "path": "/api/auth/session",
+        "status": 302,
+        "summary": "Redirected to Cloudflare Access login; no authenticated session evidence captured."
+      }
+    ]
+  },
+  "peerGateStatus": {
+    "W1.7": "OPEN / In Progress",
+    "W2.7": "CLOSED",
+    "W3.7": "OPEN / In Progress"
+  },
+  "conclusion": "Gate 2 live acceptance remains blocked. The deployed booking Worker cannot serve published D1 content because cutover flags are absent, and its legacy Webflow content reads are empty because the required Webflow IDs are absent. The deployed admin Worker is Access-protected but has no data/API/auth bindings, so production publish/rollback E2E cannot be performed. No Webflow runtime dependency has been retired."
+}

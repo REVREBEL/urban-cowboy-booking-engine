@@ -1,9 +1,30 @@
 # COW-111 W3 Gate 2 readiness — live verification and Webflow retirement
 
 This is the W3-side preparation for Sync Gate 2. It is **not** a gate completion:
-W1.7 (COW-95) and W2.7 (COW-102) are still open, live deployed evidence has not
-been recorded, and no Webflow runtime dependency has been removed here. Nothing
-in this document authorizes a flag flip or a production change by itself.
+W1.7 (COW-95) is still open, live booking/checkout evidence has not been
+recorded, and no Webflow runtime dependency has been removed here. W2.7
+(COW-102) is closed. Nothing in this document authorizes a flag flip or a
+production change by itself.
+
+## 0. Deployed-state snapshot — 2026-11-24 15:42 UTC
+
+Read-only Cloudflare API and HTTPS checks are recorded in
+[`docs/generated/w3-gate2-deployed-state-2026-11-24.json`](../generated/w3-gate2-deployed-state-2026-11-24.json).
+No deployment, binding edit or flag change was performed.
+
+| Surface | Deployed state | Gate 2 impact |
+| --- | --- | --- |
+| Booking Worker | `urban-cowboy-booking-engine.revrebel.workers.dev`, version `0a7aef11…`, deployed 15:39 UTC; logs/traces/issues enabled | Live URL exists, but the version has **none** of the five content-source flags and **none** of the Webflow site/collection/item IDs. D1 is bound. |
+| Guest content endpoints | `site-settings` returns defaults with `X-Content-Source: webflow`; policy, add-ons, rooms, locations, buildings and rate cards return empty payloads | This is not D1 cutover evidence. Missing Webflow IDs mean the legacy reads are empty/default; missing flags keep the safe Webflow path. |
+| Admin Worker | `urban-cowboy-admin.revrebel.workers.dev`, version `84daddb3…`, deployed 15:25 UTC; Cloudflare Access redirects unauthenticated requests | The Worker exists and is protected, but has only `ASSETS`. No D1, booking Worker service/API origin, Access claims configuration or tenant binding is present, so publish/rollback E2E is not possible yet. |
+| Peer gates | W1.7 open; W2.7 closed; W3.7 open | Joint Gate 2 cannot close. |
+
+**Immediate blockers before live acceptance:**
+
+1. Deploy the booking Worker with the required Webflow IDs for baseline parity, or with reviewed D1 flags after parity/soak. The current empty/default guest payloads are not an accepted baseline.
+2. Deploy the admin Worker with D1 plus the agreed booking API/service-binding and Access/tenant configuration.
+3. Record authenticated admin publish/rollback evidence and desktop/mobile guest-flow evidence against the deployed URLs.
+4. Complete controlled Mews quote → reservation → payment regression with test credentials and cleanup evidence.
 
 ## 1. W3 deliverable status
 
@@ -110,8 +131,9 @@ suite. Keep the KV calendar cache — it is advisory and Mews-derived, not Webfl
 ## 4. Peer dependencies and closeout
 
 - W1 (COW-95) must confirm the production Admin Portal can manage/publish the
-  content.
-- W2 (COW-102) must confirm D1 parity and media integrity.
+  content. The admin Worker is now deployed and Access-protected, but its
+  operational bindings are still missing (§0).
+- W2 (COW-102) is closed and has recorded D1 parity/media integrity evidence.
 - All three Gate 2 issues must be complete before final migration closeout.
 - Record evidence (deployed URL, viewport, timestamp, result, screenshot/log
   link) directly on COW-111; a local test run is not deployed evidence.
