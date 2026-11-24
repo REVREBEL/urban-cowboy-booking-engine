@@ -1,6 +1,6 @@
 # COW-102 — W2 Gate 2 evidence (`gate1-v1.0` contract version)
 
-**Status:** W2 deliverable complete. All three Gate 2 issues are Done (COW-95, COW-111, COW-102); the joint gate is closed. Final migration closeout remains a separate owner decision.
+**Status:** W2 deliverable complete; **joint Gate 2 remains open**. All three Linear issues are marked Done, but W1 and W3 acceptance records explicitly state that deployed evidence is still missing: `admin-portal-gate2-acceptance.md` has no deployed admin URL, real Access/RBAC verification or browser publish/rollback E2E, and `w3-gate2-readiness.md` has no live booking evidence, no Webflow runtime removal and content flags still at Webflow defaults. Issue status is not acceptance. Final migration closeout remains a separate owner decision.
 
 ## W2 deliverable checklist
 
@@ -31,4 +31,4 @@
 ## Cross-stream confirmations
 
 - W2 confirms production D1 schema/data parity and media integrity to W1.7 and W3.7 (comments recorded on COW-95 and COW-111).
-- W1 production Admin Portal acceptance (COW-95) and W3 live booking/guest parity (COW-111) are complete; W2 confirmations were posted on both issues. All three Gate 2 issues are Done.
+- COW-95 and COW-111 are marked Done and W2 confirmations were posted on both issues, but their own acceptance records list outstanding deployed evidence (W1) and live cutover/runtime removal (W3). The joint gate is therefore not complete; COW-102 stays open until those records are satisfied.
