@@ -109,6 +109,27 @@ article#nd-page {
   gap: 2rem;
 }
 
+/* The sticky side rail is removed, so the in-page TOC popover is the only
+   section navigation at every width, including xl. */
+[data-toc-popover] {
+  display: flex !important;
+}
+
+/* On wide viewports the content column should grow with the window instead of
+   stopping at the old 1600px story cap. Prose keeps a readable measure; the
+   story frame itself uses the full available width. */
+@media (min-width: 1600px) {
+  #nd-docs-layout main[grid-area="main"] {
+    max-width: none;
+  }
+  .docs-story-frame {
+    max-width: none;
+  }
+  article#nd-page .prose.flex-1 {
+    max-width: 90ch;
+  }
+}
+
 @media (max-width: 640px) {
   article#nd-page {
     padding-inline: 16px;
@@ -119,7 +140,7 @@ article#nd-page {
 }
 
 /* Story demos and the prose that follows them are adjacent siblings with no
-   margin between them; give each block a consistent 1rem vertical rhythm. */
+   margin between them; give each block a consistent 2rem vertical rhythm. */
 article#nd-page .prose.flex-1 {
   display: flex;
   flex-direction: column;

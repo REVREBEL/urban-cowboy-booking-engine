@@ -17,6 +17,7 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
       toc={page.data.toc}
       tableOfContent={{ enabled: false }}
       tableOfContentPopover={{ enabled: true }}
+      full
     >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>

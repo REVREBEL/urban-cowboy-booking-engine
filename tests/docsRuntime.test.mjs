@@ -173,6 +173,35 @@ test("COW-85 inline mask URLs are base-path prefixed and their assets are copied
   }
 });
 
+test("TOC popover stays available at desktop and mobile without the side rail", async () => {
+  const server = await serve();
+  const browser = await chromium.launch();
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    const origin = `http://127.0.0.1:${address.port}`;
+    for (const viewport of [{ width: 1433, height: 830 }, { width: 375, height: 812 }]) {
+      const page = await browser.newPage({ viewport });
+      await page.goto(`${origin}${basePath}/components/arrival/`, { waitUntil: "networkidle" });
+      assert.equal(await page.locator("#nd-toc").count(), 0, "side TOC rail removed");
+      const trigger = page.locator("[data-toc-popover-trigger]").first();
+      assert.ok((await trigger.count()) > 0, "TOC popover trigger present");
+      await trigger.focus();
+      await page.keyboard.press("Enter");
+      const link = page.getByRole("link", { name: "Responsive behaviour" }).first();
+      await link.waitFor({ state: "visible" });
+      await link.click();
+      assert.ok(page.url().includes("#responsive-behaviour") || page.url().includes("#"),
+        "TOC link navigates within the page");
+      assert.ok((await trigger.count()) > 0, "TOC remains accessible after navigation");
+      await page.close();
+    }
+  } finally {
+    await browser.close();
+    await new Promise((done) => server.close(done));
+  }
+});
+
 test("documented component images resolve under the Pages base path", async () => {
   const server = await serve();
   const browser = await chromium.launch();
