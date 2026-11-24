@@ -155,7 +155,9 @@ script and bindings plus all content flags set to `d1`:
 - Bindings: production D1 database, `CALENDAR_CACHE` KV, Mews plain-text config,
   and `CONTENT_SOURCE_POLICY_LANGUAGE`, `CONTENT_SOURCE_SITE_SETTINGS`,
   `CONTENT_SOURCE_ADD_ONS`, `CONTENT_SOURCE_ROOM_GALLERIES`, `PHOTO_HOTSPOT_SOURCE`
-  all set to `d1`. No production flag or deployment was changed.
+  all set to `d1`. No production flag or deployment was changed. The preview
+  reuses the production D1, KV and Mews bindings, so it is suitable for read-path
+  checks only, not isolated write-path or transactional testing.
 
 Observed (2026-11-24, HTTP):
 
@@ -174,8 +176,14 @@ but `content_items` contains only `site_settings` (published), `outlet`,
 `instagram` and one **draft** `policy` row — no `add_on` or `room_gallery`
 publication documents.
 
-**Conclusion:** D1 mode is safe (draft/incomplete data fails closed, Mews stays
-direct) but **not ready for a production cutover**. Before COW-111 can be
+**Conclusion:** the specific checks above show published-only reads refusing a
+draft policy row, an absent add-ons marker falling back, and availability coming
+directly from Mews. They do **not** establish D1-mode safety generally: the
+observed fallbacks returned empty guest content, and the preview shares the
+production D1, KV and Mews bindings, so it is not an isolated environment for
+write-path testing. No asset/browser Photo Journey check or controlled booking
+transaction was performed. A production cutover is therefore **not ready**.
+Before COW-111 can be
 accepted: publish the policy content and an add-ons cutover marker, publish
 per-room gallery documents, provision a preview with static assets for full
 desktop/mobile Photo Journey verification, obtain W1's deployed admin
