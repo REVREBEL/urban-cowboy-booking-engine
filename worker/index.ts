@@ -9,7 +9,6 @@
 // Déployé via `wrangler deploy` (compatible Cloudflare Workers Builds / Git).
 
 import type { Env } from "./mews/_lib";
-import { isAdminOrigin, preflightResponse, withAdminCors } from "./admin-cors.ts";
 import { onRequestGet as hotelGet, onRequestPost as hotelPost } from "./mews/hotel";
 import { onRequestPost as availability } from "./mews/availability";
 import { onRequestPost as calendar } from "./mews/calendar";
@@ -316,10 +315,9 @@ async function handleRequest(request: Request, env: Env, ctx: ExecutionContext):
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const preflight = preflightResponse(request);
-    if (preflight) return preflight;
-    const response = await handleRequest(request, env, ctx);
-    return isAdminOrigin(request) ? withAdminCors(request, response) : response;
+    // Admin API access uses the same-origin server-side proxy in admin-app;
+    // the browser never calls this Worker cross-origin with credentials.
+    return handleRequest(request, env, ctx);
   },
 
   async scheduled(
