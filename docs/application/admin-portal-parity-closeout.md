@@ -9,7 +9,7 @@ acceptance. It does not claim full parity or deployed E2E verification.
 | Item | Evidence |
 | --- | --- |
 | All 12 sections now render real data or a reused editor panel | `admin-app/components/DashboardPanelHost.tsx` |
-| Remaining seven sections read shared D1 APIs | `admin-app/components/AdminResourcePanel.tsx`; `/api/admin/media`, `/api/content/offers`, `/api/content/policy-language`, `/api/d1/add-ons`, `/api/content/upgrades`, `/api/recovery`, `/api/analytics/summary` |
+| Remaining seven sections read shared D1 APIs and render endpoint-specific fields | `admin-app/components/AdminResourcePanel.tsx`, `admin-app/lib/resource-fields.ts`; representative-response tests in `tests/adminResourceFields.test.ts` |
 | Recovery role corrected to admin | `admin-app/lib/auth.ts` `CAPABILITY_ROLES.recovery`, `admin-app/lib/routes.ts` — matches `worker/d1-recovery.ts` `authorizeScopedRequest(..., "admin")` |
 | Direct `/admin` and deep links `/admin/<section>` | `admin-app/app/admin/page.tsx`, `admin-app/app/admin/[section]/page.tsx` — redirect to the guarded section route |
 | Tests | `tests/adminRoutes.test.ts` (6 tests), `tests/adminAuth.test.ts` (7 tests); 13/13 pass |
@@ -35,7 +35,7 @@ Worker-side authorization gap owned by W2/W3, not introduced by this W1 slice.
 
 | Check | Result |
 | --- | --- |
-| `node --test tests/adminRoutes.test.ts tests/adminAuth.test.ts` | 13/13 pass |
+| `node --test tests/adminResourceFields.test.ts tests/adminRoutes.test.ts tests/adminAuth.test.ts` | 19/19 pass |
 | `npm run admin:typecheck`, `npm run typecheck` | pass |
 | `npm run admin:build` | pass — routes `/`, `/:section`, `/admin`, `/admin/:section`, `/login`, auth/health APIs |
 | `npm run lint:controls` | pass — no new control overrides |

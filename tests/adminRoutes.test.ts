@@ -75,8 +75,9 @@ test("panels are reused, not reimplemented, and the legacy hotspot wiring defect
   assert.match(legacy, /route !== "hotspots"/);
 });
 
-test("remaining sections read shared D1 APIs and /admin deep links resolve", () => {
+test("remaining sections read shared D1 APIs and /admin deep links resolve", async () => {
   const host = read("admin-app/components/DashboardPanelHost.tsx");
+  const { RESOURCE_SECTIONS } = await import("../admin-app/lib/resource-fields.ts");
   const resources: Record<string, string> = {
     media: "/api/admin/media",
     rates: "/api/content/offers",
@@ -87,8 +88,8 @@ test("remaining sections read shared D1 APIs and /admin deep links resolve", () 
     analytics: "/api/analytics/summary",
   };
   for (const [route, path] of Object.entries(resources)) {
-    assert.ok(host.includes(route), `${route} is mapped`);
-    assert.ok(host.includes(path), `${route} uses ${path}`);
+    assert.equal(RESOURCE_SECTIONS[route]?.path, path, `${route} uses ${path}`);
+    assert.ok(host.includes(`RESOURCE_SECTIONS[${route}]`) || host.includes("RESOURCE_SECTIONS[route]"));
   }
   assert.match(host, /AdminResourcePanel/);
   const panel = read("admin-app/components/AdminResourcePanel.tsx");
