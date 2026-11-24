@@ -71,6 +71,28 @@ function d1(db: DatabaseSync): any {
   };
 }
 
+function d1Failing(
+  db: DatabaseSync,
+  shouldFail: (sql: string, values: unknown[]) => boolean,
+): D1Database {
+  const base = d1(db);
+  return {
+    prepare(sql: string) {
+      if (shouldFail(sql, [])) throw new Error("selective D1 failure");
+      const statement = base.prepare(sql);
+      return {
+        bind(...values: unknown[]) {
+          if (shouldFail(sql, values)) throw new Error("selective D1 failure");
+          return statement.bind(...values);
+        },
+        all: () => statement.all(),
+        first: () => statement.first(),
+        run: () => statement.run(),
+      };
+    },
+  } as unknown as D1Database;
+}
+
 function publishRoomGallery(
   db: DatabaseSync,
   rooms: Array<{ id: string; mewsId: string; images: Array<{ mediaAssetId: string; sourceUrl: string }> }>,
@@ -273,6 +295,73 @@ test("no Webflow source: empty or unusable amenities snapshots stay no-store unt
     const body = await published.json() as { galleries: Record<string, { images: string[] }>; generatedAt: string };
     assert.deepEqual(body.galleries["mews-a"].images, [OLD_URL]);
     assert.equal(typeof body.generatedAt, "string");
+  } finally {
+    db.close();
+  }
+});
+
+test("no Webflow source: a failed amenities overlay keeps a successful gallery response uncached", async () => {
+  const db = makeDb();
+  try {
+    const connection = d1(db) as D1Database;
+    await publishRoomGallery(db, [
+      { id: "room-a", mewsId: "mews-a", images: [{ mediaAssetId: "media-1", sourceUrl: OLD_URL }] },
+    ]);
+    publishRoomDocument(db, "room-a");
+    const partial = d1Failing(db, (sql, values) =>
+      sql.includes("snapshot_pointers") && values.includes("roomAmenities"),
+    );
+    const failed = await roomTypeReviewsGet({
+      env: envFor(partial, "d1"),
+      waitUntil: () => undefined,
+    });
+    assert.equal(failed.headers.get("cache-control"), "no-store");
+    const failedBody = await failed.json() as {
+      galleries: Record<string, { images: string[] }>;
+      amenities: Record<string, unknown>;
+      generatedAt: string | null;
+    };
+    assert.deepEqual(failedBody.galleries["mews-a"].images, [OLD_URL]);
+    assert.deepEqual(failedBody.amenities, {});
+    assert.equal(failedBody.generatedAt, null);
+
+    const recovered = await roomTypeReviewsGet({
+      env: envFor(connection, "d1"),
+      waitUntil: () => undefined,
+    });
+    assert.match(recovered.headers.get("cache-control") ?? "", /max-age=60/);
+  } finally {
+    db.close();
+  }
+});
+
+test("no Webflow source: a failed hotspots overlay keeps a successful gallery response uncached", async () => {
+  const db = makeDb();
+  try {
+    const connection = d1(db) as D1Database;
+    await publishRoomGallery(db, [
+      { id: "room-a", mewsId: "mews-a", images: [{ mediaAssetId: "media-1", sourceUrl: OLD_URL }] },
+    ]);
+    publishRoomDocument(db, "room-a");
+    const partial = d1Failing(db, (sql) => sql.includes("photo_hotspot_mappings"));
+    const env = {
+      ...envFor(partial, "d1"),
+      PHOTO_HOTSPOT_SOURCE: "d1",
+    } as Env;
+    const failed = await roomTypeReviewsGet({ env, waitUntil: () => undefined });
+    assert.equal(failed.headers.get("cache-control"), "no-store");
+    const failedBody = await failed.json() as {
+      galleries: Record<string, { images: string[] }>;
+      generatedAt: string | null;
+    };
+    assert.deepEqual(failedBody.galleries["mews-a"].images, [OLD_URL]);
+    assert.equal(failedBody.generatedAt, null);
+
+    const recovered = await roomTypeReviewsGet({
+      env: { ...envFor(connection, "d1"), PHOTO_HOTSPOT_SOURCE: "d1" } as Env,
+      waitUntil: () => undefined,
+    });
+    assert.match(recovered.headers.get("cache-control") ?? "", /max-age=60/);
   } finally {
     db.close();
   }

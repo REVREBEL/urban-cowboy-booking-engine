@@ -123,11 +123,16 @@ export async function refreshPublishedGalleryUrls(
   return { refreshed: true, version: built.version };
 }
 
-/** Overlay published D1 galleries when the per-route flag is enabled. */
+/**
+ * Overlay published D1 galleries when the per-route flag is enabled. Read
+ * failures preserve the fallback and report through the optional callback so
+ * callers can keep a partial response uncached.
+ */
 export async function applyPublishedGalleries(
   env: Env,
   tenantId: string | undefined,
   payload: CachedReviewPayload,
+  onReadError?: (error: unknown) => void,
 ): Promise<CachedReviewPayload> {
   if (env.CONTENT_SOURCE_ROOM_GALLERIES !== "d1") return payload;
   if (!env.DB || !tenantId?.trim()) return payload;
@@ -141,6 +146,7 @@ export async function applyPublishedGalleries(
     return { ...payload, galleries };
   } catch (error) {
     console.warn("[publishedGalleries] published snapshot read failed; serving Webflow galleries", error);
+    onReadError?.(error);
     return payload;
   }
 }

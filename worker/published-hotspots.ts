@@ -113,12 +113,14 @@ export async function loadPublishedHotspots(
 
 /**
  * Overlay published D1 hotspots onto a guest payload. No-op unless the route
- * flag is enabled. On any D1 error the Webflow hotspots are preserved.
+ * flag is enabled. On any D1 error the Webflow hotspots are preserved and the
+ * optional read-error callback lets callers keep the fallback uncached.
  */
 export async function applyPublishedHotspots(
   env: Env,
   tenantId: string | undefined,
   payload: CachedReviewPayload,
+  onReadError?: (error: unknown) => void,
 ): Promise<CachedReviewPayload> {
   if (hotspotSource(env) !== "d1") return payload;
   if (!env.DB || !tenantId?.trim()) return payload;
@@ -129,6 +131,7 @@ export async function applyPublishedHotspots(
     return { ...payload, hotspotsByRoom, hotspots: {} };
   } catch (error) {
     console.warn("[publishedHotspots] snapshot read failed; serving Webflow hotspots", error);
+    onReadError?.(error);
     return payload;
   }
 }

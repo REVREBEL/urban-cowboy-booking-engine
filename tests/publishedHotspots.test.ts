@@ -168,7 +168,7 @@ test("a D1 failure falls back to the Webflow hotspot payload", async () => {
 
 test("the guest room-content response applies the published hotspot overlay", () => {
   const reviews = read("worker/webflow/room-type-reviews.ts");
-  assert.match(reviews, /applyPublishedHotspots\(env, env\.TENANT_ID, guest\)/);
+  assert.match(reviews, /applyPublishedHotspots\(env, env\.TENANT_ID, guest, onReadError\)/);
   // The flag is fail-safe: webflow by default, d1 only when explicitly set.
   const source = read("worker/hotspot-source.ts");
   assert.match(source, /value === "d1" \? "d1" : "webflow"/);
