@@ -143,7 +143,12 @@ The approved design is the **same-origin server-side admin API proxy** (`admin-a
 and `admin-app/lib/api-proxy.ts`): the browser calls the admin origin only, the proxy verifies the
 admin session and same-origin mutation rule, and forwards the verified Access assertion to the
 booking Worker. The booking Worker uses the same Access team domain, AUD and allowlist, so the
-assertion is verified by the shared `worker/access.ts` verifier. The temporary browser CORS path and
+assertion is verified by the shared `worker/access.ts` verifier. The temporary separate Access
+application on the booking Worker's `/api/admin/*` was deleted so it cannot intercept the
+server-side fetch with a different AUD; this shared-AUD configuration is the deliberately
+configured Worker-to-Worker trust boundary. It is not a public/bypassed API: the booking Worker
+still verifies the end-user's signed assertion, role and tenant on every request (`worker/auth.ts`),
+and browser cookies, bearer headers and client-supplied assertions are never forwarded by the proxy. The temporary browser CORS path and
 the extra Access app on the booking Worker's `/api/admin/*` were removed; no credentialed
 cross-origin browser access remains. Authorized/denied behavior is covered by
 `tests/adminApiProxy.test.ts` and `tests/adminProxyAccessIntegration.test.ts` (signed admin reads and
