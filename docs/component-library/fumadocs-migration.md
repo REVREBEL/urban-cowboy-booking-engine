@@ -157,6 +157,10 @@ the viewport, so the main track expands from 1024px to 2036px at a 2400px viewpo
 use the full column (1988px). Prose keeps a 90ch readable measure. Runtime tests assert widths and
 the absence of horizontal overflow at 375/767/768/1433/1599/1600/2400px.
 
+PR #433 removed the last inner cap: at 2840px the `.prose` wrapper and its demo cards expand to the
+full 2428px frame while direct paragraphs/lists keep a 90ch measure, so large demos no longer sit in
+a narrow column. Runtime tests assert the wide-viewport demo/text widths.
+
 Conclusion: every content, asset, search, navigation, responsive and interaction check passes on the
 canonical custom domain. The one open M4 item is HTTPS: `https_enforced` is false and the domain
 presents a `*.github.io` certificate. The Pages REST update calls returned 404 for this token, so an
