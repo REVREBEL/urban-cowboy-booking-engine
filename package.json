@@ -45,7 +45,7 @@
     "lint:controls:all": "node scripts/check-control-contract.mjs --all",
     "docs:inventory": "node scripts/fumadocs/inventory-stories.mjs",
     "docs:inventory:check": "node scripts/fumadocs/inventory-stories.mjs --check",
-    "test:docs": "node --test tests/fumadocsInventory.test.mjs tests/docsLiveVerifier.test.mjs",
+    "test:docs": "node --test tests/fumadocsInventory.test.mjs tests/docsLiveVerifier.test.mjs tests/docsLiveVerifierIntegration.test.mjs",
     "docs:prepare": "node scripts/fumadocs/prepare-docs-assets.mjs && node scripts/fumadocs/build-search-index.mjs",
     "docs:dev": "node scripts/fumadocs/dev-docs.mjs",
     "docs:build": "npm run docs:prepare && npm run build -w @urban-cowboy/docs && node scripts/fumadocs/finalize-docs-assets.mjs docs-app/out",

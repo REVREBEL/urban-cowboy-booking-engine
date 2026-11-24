@@ -22,7 +22,7 @@ const REPORT = process.env.DOCS_LIVE_REPORT ?? null;
 // certificate issue is open; the deviation is recorded in the runbook.
 const requireHttps = process.env.DOCS_ALLOW_HTTP !== "1";
 
-const pages = [
+const allPages = [
   { path: "", marker: "Urban Cowboy Component Library" },
   { path: "components/search-bar/", marker: "SearchBar" },
   { path: "components/search-dropdowns/", marker: "Search dropdowns" },
@@ -35,6 +35,14 @@ const pages = [
   { path: "components/booking-summary/", marker: "Booking summary" },
   { path: "components/booking-details/", marker: "Booking details" },
 ];
+
+// Test-only filters keep failure-path integration tests fast; the default run
+// always checks every page and both viewports.
+const onlyPath = process.env.DOCS_LIVE_ONLY;
+const pages = onlyPath === undefined
+  ? allPages
+  : allPages.filter((entry) => entry.path === onlyPath.replace(/^\//, ""));
+const skipInteractions = process.env.DOCS_LIVE_SKIP_INTERACTIONS === "1";
 
 const viewports = [
   { name: "desktop", width: 1280, height: 900 },
@@ -83,11 +91,19 @@ for (const viewport of viewports) {
     const body = await page.locator("body").innerText();
     const markerOk = body.includes(entry.marker);
     // Refreshable deep link: reloading must land on the same URL and still render.
-    await page.reload({ waitUntil: "networkidle" });
+    let reloadError = null;
+    try {
+      await page.reload({ waitUntil: "networkidle" });
+    } catch (error) {
+      // A failed refresh is a failed deep-link check, not an unhandled crash.
+      reloadError = String(error).slice(0, 200);
+    }
     // The GitHub Pages URL redirects to the custom domain, so compare paths,
     // not origins, when checking that a deep link survives refresh.
     const expectedPath = new URL(url).pathname;
-    const finalUrl = checkFinalUrl(page.url(), expectedPath, { requireHttps });
+    const finalUrl = reloadError
+      ? { ok: false, detail: `refresh failed: ${reloadError}` }
+      : checkFinalUrl(page.url(), expectedPath, { requireHttps });
     const deepLinkOk = finalUrl.ok && (await page.locator("body").innerText()).includes(entry.marker);
     const images = await page.locator("img").evaluateAll((nodes) =>
       nodes.map((node) => ({ src: node.getAttribute("src"), ok: node.complete && node.naturalWidth > 0 })),
@@ -108,7 +124,7 @@ for (const viewport of viewports) {
     record(`${viewport.name}/${entry.path || "root"}`, (response?.status() ?? 0) === 200, `HTTP ${response?.status()}`);
   }
 
-  if (viewport.name === "desktop") {
+  if (viewport.name === "desktop" && !skipInteractions) {
    try {
     await page.goto(BASE, { waitUntil: "networkidle" });
     await page.locator("button").filter({ hasText: "Search" }).first().click();
