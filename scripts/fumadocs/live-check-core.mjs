@@ -2,7 +2,8 @@
 // Every promised check must be able to fail — silence is never success.
 
 export function recordCheck(failures, section, ok, detail) {
-  const result = { ok, detail };
+  // A passing check must never publish a failure-oriented detail string.
+  const result = ok ? { ok: true, detail: "ok" } : { ok: false, detail };
   if (!ok) failures.push(`${section}: ${detail}`);
   return result;
 }

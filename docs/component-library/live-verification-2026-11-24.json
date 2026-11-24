@@ -1,0 +1,363 @@
+{
+  "checkedAt": "2026-11-24T08:32:26.607Z",
+  "url": "http://cowboy-components.revrebel.io/",
+  "viewports": [
+    "desktop",
+    "mobile"
+  ],
+  "httpsPolicy": "deviation-allowed (DOCS_ALLOW_HTTP=1)",
+  "pages": [
+    {
+      "viewport": "desktop",
+      "path": "/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/search-bar/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/search-dropdowns/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/booking-chrome/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/conversion-badges/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/extras-upsell/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/room-list-card/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/focus-amenity/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/rate-offers/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/booking-summary/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "desktop",
+      "path": "components/booking-details/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/search-bar/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/search-dropdowns/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/booking-chrome/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/conversion-badges/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/extras-upsell/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/room-list-card/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/focus-amenity/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/rate-offers/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/booking-summary/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    },
+    {
+      "viewport": "mobile",
+      "path": "components/booking-details/",
+      "status": 200,
+      "marker": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "deepLink": {
+        "ok": true,
+        "detail": "ok"
+      },
+      "brokenImages": []
+    }
+  ],
+  "search": {
+    "indexResult": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "navigate": {
+      "ok": true,
+      "detail": "ok"
+    }
+  },
+  "demos": {
+    "amenityRail": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "amenityRailState": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "ratePanelClose": {
+      "ok": true,
+      "detail": "ok"
+    },
+    "ratePanel": {
+      "ok": true,
+      "detail": "ok"
+    }
+  },
+  "styles": {
+    "tableHeaderAlign": "left",
+    "storyFrameGap": "16px",
+    "proseGap": "16px"
+  },
+  "https": {
+    "error": "TypeError: fetch failed"
+  },
+  "acceptedDeviations": [
+    "custom domain HTTPS: TypeError: fetch failed"
+  ],
+  "failures": [],
+  "console_desktop": [],
+  "bad_responses_desktop": [],
+  "console_mobile": [],
+  "bad_responses_mobile": []
+}

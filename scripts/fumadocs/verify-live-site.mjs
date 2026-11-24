@@ -61,7 +61,9 @@ const report = {
   pages: [],
   search: {},
   demos: {},
+  styles: {},
   https: {},
+  acceptedDeviations: [],
   failures,
 };
 
@@ -175,6 +177,26 @@ for (const viewport of viewports) {
         "reopen control not visible after close",
       );
     }
+
+    await page.goto(new URL("components/room-list-card/", BASE).href, { waitUntil: "networkidle" });
+    const styles = await page.evaluate(() => {
+      const value = (selector, property) => {
+        const element = document.querySelector(selector);
+        return element ? getComputedStyle(element)[property] : null;
+      };
+      return {
+        tableHeaderAlign: value(".prose table th", "textAlign"),
+        storyFrameGap: value(".docs-story-frame", "gap"),
+        proseGap: value("article#nd-page .prose.flex-1", "gap"),
+      };
+    });
+    report.styles = styles;
+    record("table headers align left", styles.tableHeaderAlign === "left",
+      `computed text-align: ${styles.tableHeaderAlign}`);
+    record("story frame gap", styles.storyFrameGap === "16px",
+      `computed gap: ${styles.storyFrameGap}`);
+    record("prose gap", styles.proseGap === "16px",
+      `computed gap: ${styles.proseGap}`);
    } catch (error) {
     record("desktop search/demo interactions", false, String(error).slice(0, 200));
    }
@@ -195,6 +217,17 @@ try {
   report.https = { status: response.status, url: response.url };
 } catch (error) {
   report.https = { error: String(error) };
+}
+if (report.https.error) {
+  if (requireHttps) {
+    record("custom domain HTTPS", false, report.https.error);
+  } else {
+    // Documented deviation: still recorded, just not counted as a failure.
+    report.acceptedDeviations = [
+      ...(report.acceptedDeviations ?? []),
+      `custom domain HTTPS: ${report.https.error}`,
+    ];
+  }
 }
 
 console.log(JSON.stringify(report, null, 2));
