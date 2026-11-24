@@ -90,8 +90,21 @@ const json = (data: unknown, status: number) =>
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
 
-export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+/** Single approved admin origin; cross-origin calls carry the Access JWT cookie. */
+const ADMIN_ORIGIN = "https://urban-cowboy-admin.revrebel.workers.dev";
+
+function adminCorsHeaders(origin: string): HeadersInit {
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "content-type, authorization, cf-access-token",
+    "Access-Control-Max-Age": "86400",
+    Vary: "Origin",
+  };
+}
+
+async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     // COW-68: the React admin is a separate Vite entry (dashboard.html). Serve
     // it at both readable admin routes; guest routes keep the SPA fallback.
@@ -312,6 +325,24 @@ export default {
     }
     // Front statique + fallback SPA (géré par le binding ASSETS).
     return env.ASSETS.fetch(request);
+}
+
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const origin = request.headers.get("origin");
+    if (origin === ADMIN_ORIGIN && request.method === "OPTIONS" &&
+        request.headers.has("access-control-request-method")) {
+      return new Response(null, { status: 204, headers: adminCorsHeaders(origin) });
+    }
+    const response = await handleRequest(request, env, ctx);
+    if (origin !== ADMIN_ORIGIN) return response;
+    const headers = new Headers(response.headers);
+    for (const [key, value] of Object.entries(adminCorsHeaders(origin))) headers.set(key, value);
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   },
 
   async scheduled(

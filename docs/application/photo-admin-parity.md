@@ -128,12 +128,20 @@ Deployed Worker: `https://urban-cowboy-booking-engine.revrebel.workers.dev` (wor
 | Production D1 | 156 `room_gallery` placements; published `roomGallery`, `roomAmenities` and `roomTypes` snapshots present; **0** `photo_hotspot_mappings` rows. There is no production hotspot data for a D1 guest-hotspot check. |
 | Local suite | `npm test` 610/610 pass; targeted gallery/hotspot tests 83/83 pass, including published-only hotspot reads, draft isolation, review gates, publish/rollback, import-failure preservation and Mews tests. |
 
+### Deployed admin and gallery cutover (2026-11-24, authorized)
+
+- React admin deployed to `https://urban-cowboy-admin.revrebel.workers.dev`, protected by a new Cloudflare Access application (AUD `4bf8d1515fc028e57532548fc1687b5750d68f534a7d0cee0c1542cdf99a3255`) using the existing IdP and the `gary@revrebel.io` allowlist. Unauthenticated requests redirect to `https://revrebel.cloudflareaccess.com/...` with that AUD.
+- Booking Worker admin APIs are protected by a second Access app on `/api/admin/*`; `OPTIONS` preflight from the admin origin now returns 204 with `Access-Control-Allow-Origin: https://urban-cowboy-admin.revrebel.workers.dev`, `Access-Control-Allow-Credentials: true` and `Vary: Origin`. The Worker CORS wrapper is covered by `tests/adminCors.test.ts`.
+- 19 published `room_gallery` documents were created from the reviewed 156 media placements (no new source URLs or editorial values invented), and snapshots were refreshed through the parameterized D1 apply path.
+- `CONTENT_SOURCE_ROOM_GALLERIES=d1` was enabled on the deployed booking Worker. `GET /api/content/room-type-reviews` now returns 20 rooms whose gallery images are the D1/Webflow-CDN URLs from the importer, with Mews ARI and all other content flags unchanged.
+- `PHOTO_HOTSPOT_SOURCE` remains `webflow`; production still has zero hotspot mappings, so there is no D1 guest hotspot payload to cut over.
+
 ### What this does and does not establish
 
-The deployed **guest arrival page** renders, and the D1 gallery data and snapshots exist in production. It does **not** establish COW-82 acceptance items that require deployed state:
+The deployed React admin is reachable behind Access, the admin-to-API CORS boundary is verified, and guest galleries are now served from published D1. It does **not** establish:
 
-- Admin gallery/hotspot routes in the deployed environment — the deployed dashboard is the legacy Supabase page, not the React admin.
-- Guest Photo Journey from **published D1** gallery/hotspot data — no D1 content flag is enabled, and production has zero hotspot mappings.
-- End-to-end publish/rollback in the deployed admin, desktop/mobile hotspot pin verification and rollback restore.
+- An authenticated browser publish/rollback E2E inside the deployed admin (requires an Access login in the user's browser session).
+- Guest hotspot cutover from D1 — production has zero published pin mappings and the flag remains Webflow.
+- Desktop/mobile pin placement verification against deployed D1 hotspot data.
 
-These remain owner/deployment actions. No production flag was changed by this phase; guest reads still default to Webflow and Mews booking, pricing and availability code is untouched. COW-82 and COW-84 should not be closed on the strength of local tests alone.
+Mews booking, pricing and availability code is untouched. COW-82's remaining items are explicitly the authenticated admin E2E and any hotspot data/cutover; W3 gate-2 evidence governs the wider guest cutover.

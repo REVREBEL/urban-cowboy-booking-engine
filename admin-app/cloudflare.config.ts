@@ -13,6 +13,11 @@ export default defineConfig({
     },
     env: {
       ASSETS: bindings.assets(),
+      API_BASE_URL: bindings.text("https://urban-cowboy-booking-engine.revrebel.workers.dev"),
+      TENANT_ID: bindings.text("urban-cowboy"),
+      CF_ACCESS_TEAM_DOMAIN: bindings.text("revrebel.cloudflareaccess.com"),
+      CF_ACCESS_AUD: bindings.text("4bf8d1515fc028e57532548fc1687b5750d68f534a7d0cee0c1542cdf99a3255"),
+      ADMIN_EMAILS: bindings.text("gary@revrebel.io"),
     },
   }),
 });
