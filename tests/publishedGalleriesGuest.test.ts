@@ -212,19 +212,31 @@ test("draft documents, missing snapshots and disabled flags keep Webflow galleri
   }
 });
 
-test("published galleries apply even when no Webflow source is bound", async () => {
+test("no Webflow source: empty D1 stays no-store, then published data is cacheable", async () => {
   const db = makeDb();
   try {
+    const connection = d1(db) as D1Database;
+    const request = () => roomTypeReviewsGet({
+      env: envFor(connection, "d1"),
+      waitUntil: () => undefined,
+    });
+
+    // No published snapshot or room document: fail closed, never cache an empty gallery.
+    const empty = await request();
+    assert.equal(empty.status, 200);
+    assert.equal(empty.headers.get("cache-control"), "no-store");
+    const emptyBody = await empty.json() as { galleries: Record<string, unknown> };
+    assert.deepEqual(emptyBody.galleries, {});
+
+    // Publishing the snapshot and room document makes the response cacheable.
     await publishRoomGallery(db, [
       { id: "room-a", mewsId: "mews-a", images: [{ mediaAssetId: "media-1", sourceUrl: OLD_URL }] },
     ]);
     publishRoomDocument(db, "room-a");
-    const response = await roomTypeReviewsGet({
-      env: envFor(d1(db) as D1Database, "d1"),
-      waitUntil: () => undefined,
-    });
-    assert.equal(response.status, 200);
-    const body = await response.json() as { galleries: Record<string, { images: string[] }> };
+    const published = await request();
+    assert.equal(published.status, 200);
+    assert.match(published.headers.get("cache-control") ?? "", /max-age=60/);
+    const body = await published.json() as { galleries: Record<string, { images: string[] }> };
     assert.deepEqual(body.galleries["mews-a"].images, [OLD_URL]);
   } finally {
     db.close();
