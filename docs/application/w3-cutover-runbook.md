@@ -164,3 +164,27 @@ soak period on D1 with no fallback, per-room published-data parity is accepted,
 the Webflow env vars/hosts from the COW-103 audit §5.4 are removable, and the
 Mews authority tests still pass. Do not remove the KV calendar cache or move it
 into D1 — it is advisory and Mews-derived.
+
+## 8. D1 publication completion — 2026-11-24
+
+The data prerequisites that previously kept the cutover blocked were published
+in production D1 as one idempotent batch (no Webflow flag was flipped):
+
+- **Policy language**: the existing `policy` content item was published and its
+  revision marked published with `isDraft=false` and a `lastPublished` timestamp.
+  All ten `PolicyLanguage` fields were already non-empty.
+- **Add-ons**: nine CMS-shaped `add_on` published documents were created from the
+  live Webflow response (`name`, distinct `itemName`, short/long descriptions,
+  `mewsProductId` and mutable `imageUrl`), plus the published
+  `add_on_sync/complete` marker with `expectedCount=9`. An audit row records the
+  publication.
+- **Room galleries**: published `room_gallery` documents already exist for 19
+  rooms; the `roomGallery` snapshot has 22 rooms. The remaining two rooms keep
+  their Webflow galleries under the per-room merge rule.
+
+Verified on the D1-mode preview after publication: `policy-language` returns
+`X-Content-Source: d1` with all 10 fields, and `add-ons` returns 9 cards from D1
+with the same image URLs as Webflow. `room-type-reviews` still returned an empty
+gallery map because that handler short-circuits before applying overlays when no
+Webflow bindings exist; PR #434 fixes that path, and gallery serving must be
+re-verified after it is merged and deployed. No production flag was flipped.
