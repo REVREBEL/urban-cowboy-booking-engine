@@ -1,0 +1,92 @@
+---
+title: Inline Date Range Picker
+description: Two-month calendar with rate overlay, restriction advisories and hover preview.
+---
+
+import { InlineDateRangePickerStoryControl } from '~/components/story-controls';
+
+`InlineDateRangePicker` is the standalone calendar used by `DateSearchDropdown` and `SearchBarExpanded`. It renders two months, shows nightly rates or restriction badges, and supports hover preview of check-out dates. The demo keeps the range in local state; it does not load live rates from Mews.
+
+<InlineDateRangePickerStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `checkIn` / `checkOut` | ISO date strings | Controlled range; empty = unselected |
+| `minDate` | ISO date string | Earliest selectable day; defaults to today (UTC) |
+| `dailyRates` | `Record<string, DailyRate>` | Optional rate/restriction data for calendar cells |
+| `formatRate` | `(rate) => string` | Custom rate formatter (default: currency, 0 decimals) |
+| `onChange` | `(checkIn, checkOut) => void` | Called when range changes |
+| `onVisibleRangeChange` | `(start, end) => void` | Reports visible months for rate pre-fetch |
+
+## DailyRate shape
+
+```ts
+interface DailyRate {
+  amount: number;
+  currency?: string;
+  available?: boolean;
+  minNights?: number;
+  invalidStayLengths?: number[];
+  restrictions?: RestrictionAdvisory[];
+}
+
+interface RestrictionAdvisory {
+  type: 'ClosedToArrival' | 'ClosedToDeparture' | 'ClosedToStay';
+}
+```
+
+## Visual states
+
+| State | Appearance | Meaning |
+| --- | --- | --- |
+| Selected check-in | Filled circle, primary background | Start of stay |
+| Selected check-out | Filled circle, primary background | End of stay |
+| In-range | Background wash | Nights between check-in and check-out |
+| Hover preview (check-out) | Outline + in-range wash | Preview of candidate check-out |
+| Minimum nights advisory | Ring + tooltip | Stay shorter than `minNights` |
+| Invalid stay length | Ring + tooltip | Stay length in `invalidStayLengths` |
+| Restriction badge | Dot + tooltip | `ClosedToArrival/Departure/Stay` on that date |
+| Unavailable (cached) | Crossed out, muted | `available === false` — **advisory only**, remains selectable; live Search validates |
+| Past / before `minDate` | Crossed out, disabled | Not selectable |
+
+## Accessibility
+
+- Month headers as `role="grid"` with column headers (M–S)
+- Each day is a `<button role="gridcell">` with `aria-selected`, `aria-pressed`, `aria-label`
+- Month navigation buttons have `aria-label` (Previous/Next month)
+- Escape is handled by the parent dialog (`DateSearchDropdown`)
+- Focus visible ring on every interactive element
+- Tooltips on restriction/min-nights via group-hover on the day button
+- **Note**: Day-level keyboard navigation (arrow keys, Page Up/Down, Home/End) is not currently implemented; use month navigation buttons or mouse/touch.
+
+## Responsive behaviour
+
+- Two months side-by-side on `md` (768px+) with a vertical divider
+- Single month stacked on smaller screens
+- Fixed 6-week grid per month prevents layout shift when navigating
+- Rate text uses tabular figures (`font-number`) for alignment
+
+## Performance notes
+
+- Month cell arrays are cached (42 cells × 2 months) to avoid re-allocation on hover
+- `Intl.NumberFormat` and `Intl.DateTimeFormat` instances are module-level singletons
+- Restriction checks memoized per visible month pair
+- Selected range header memoized to avoid re-formatting on hover
+
+## Usage
+
+```tsx
+import { InlineDateRangePicker } from '@/components/booking/search/InlineDateRangePicker';
+
+<InlineDateRangePicker
+  checkIn={range.checkIn}
+  checkOut={range.checkOut}
+  dailyRates={rates}
+  onChange={(checkIn, checkOut) => setRange({ checkIn, checkOut })}
+  onVisibleRangeChange={prefetchRates}
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/InlineDateRangePicker.tsx)
