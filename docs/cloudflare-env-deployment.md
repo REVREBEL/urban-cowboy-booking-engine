@@ -89,7 +89,9 @@ Dashboard browsers call the admin origin. The admin Worker verifies the Access s
 forwards allowed API requests to `API_BASE_URL` with the verified assertion. The deployment
 wrapper pins the production booking Worker origin and the current admin Access AUD. The booking
 Worker must use the same AUD and remain outside a different Access application. Do not configure
-the admin API base as the admin Worker origin itself.
+the admin API base as the admin Worker origin itself. The admin Worker enables
+`global_fetch_strictly_public` so this server-side fetch can reach the public booking Worker on
+the same zone; without it Cloudflare returns error `1042` before the proxy runs.
 
 ## Apply D1 schema migrations
 
