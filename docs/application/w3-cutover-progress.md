@@ -5,12 +5,19 @@ booking Worker still serves Webflow defaults, and Mews remains the sole ARI/tran
 
 ## Completed in this pass
 
-- `urban-cowboy-admin` redeployed with operational bindings (version
-  `ea9fc5f0-5b59-46df-b1c1-6bf1b1c14fbc`): `CF_ACCESS_TEAM_DOMAIN`,
-  `CF_ACCESS_AUD`, `ADMIN_EMAILS`, `ADMIN_GROUPS`, `TENANT_ID` and `API_BASE_URL`.
+- `urban-cowboy-admin` was redeployed with Access/role/tenant bindings: `CF_ACCESS_TEAM_DOMAIN`,
+  `CF_ACCESS_AUD`, `ADMIN_EMAILS`, `ADMIN_GROUPS`, `TENANT_ID` and a deliberately empty
+  `API_BASE_URL` (see the cross-origin caveat below).
 - Found and corrected an AUD mismatch: the Access application protecting the admin Worker uses
   `4bf8d1515fc028e57532548fc1687b5750d68f534a7d0cee0c1542cdf99a3255`, not the booking Worker's
   `e284cf2d…`. Without this fix every verified JWT would have been rejected.
+- **Cross-origin API blocker:** `createAdminDashboardApi()` sends credentialed browser requests to
+  `API_BASE_URL`. The booking Worker has a different Access AUD and no credentialed CORS/OPTIONS
+  policy, so setting that default would produce panels that cannot read or write data. The default
+  is therefore empty until either (a) a same-origin App Router proxy forwards requests to the
+  booking Worker through a service binding with a valid booking-Access service token, or (b) the
+  narrow cross-origin Access/CORS integration is implemented and tested. A build plus an
+  unauthenticated Access redirect does **not** exercise that connection.
 - Cloudflare Access is active on `https://urban-cowboy-admin.revrebel.workers.dev`: unauthenticated
   requests (including `/api/health` and `/api/auth/session`) are redirected to the Access login
   flow. That is the expected boundary behavior.
@@ -44,6 +51,9 @@ Webflow and could hide incomplete content.
 
 ## Next steps (owner/W2 data work)
 
+0. Implement and test the authenticated admin→booking API path (same-origin service-binding proxy
+   or scoped cross-origin Access/CORS), including viewer/admin read and mutation requests and
+   denial cases; `API_BASE_URL` stays empty until then.
 1. Publish the policy content item and refresh the `policyLanguage` snapshot.
 2. Create and publish the nine CMS-shaped `add_on` content revisions plus one
    `add_on_sync/complete` marker (`expectedCount: 9`), then refresh the `addOns` snapshot.

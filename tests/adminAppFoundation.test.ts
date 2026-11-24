@@ -84,6 +84,9 @@ test("Cloudflare worker config stays cache-free and keeps proxy ahead of assets"
   assert.match(config, /compatibilityFlags: \["nodejs_compat"\]/);
   assert.match(config, /runWorkerFirst: \["\/\*", "!\/_next\/static\/\*", "!\/\*\/_next\/static\/\*"\]/);
   assert.doesNotMatch(config, /bindings\.secret\(/);
+  // Cross-origin API_BASE_URL is not operational until a service-binding proxy
+  // or scoped Access/CORS integration exists; never ship a hardcoded origin.
+  assert.match(config, /API_BASE_URL: bindings\.text\(process\.env\.API_BASE_URL \?\? ""\)/);
 });
 
 test("admin route group owns error, loading and not-found boundaries", () => {

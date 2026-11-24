@@ -27,10 +27,12 @@ export default defineConfig({
       ADMIN_EMAILS: bindings.text(process.env.ADMIN_EMAILS ?? "gary@revrebel.io"),
       ADMIN_GROUPS: bindings.text(process.env.ADMIN_GROUPS ?? ""),
       TENANT_ID: bindings.text(process.env.TENANT_ID ?? "urban-cowboy"),
-      API_BASE_URL: bindings.text(
-        process.env.API_BASE_URL ??
-          "https://urban-cowboy-booking-engine.revrebel.workers.dev",
-      ),
+      // Intentionally empty by default. The booking Worker has a different
+      // Access AUD and no credentialed CORS policy, so a browser-origin
+      // API_BASE_URL cannot safely be used yet. It must be set only together
+      // with a deliberate same-origin service-binding proxy or a narrowly
+      // scoped cross-origin Access/CORS integration (COW-108 blocker).
+      API_BASE_URL: bindings.text(process.env.API_BASE_URL ?? ""),
     },
   }),
 });
