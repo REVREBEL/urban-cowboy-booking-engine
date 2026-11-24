@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isLocalPreviewEnabled } from "./lib/preview-auth.ts";
 
 /**
  * Edge UX guard only: redirects obviously unauthenticated page requests before
@@ -10,6 +11,10 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const response = NextResponse.next();
   response.headers.set("Cache-Control", "no-store, private");
+
+  // Local UI preview: let the server-side session provider supply the mock
+  // identity. This branch can only be reached in a local dev process.
+  if (isLocalPreviewEnabled()) return response;
 
   if (
     pathname === "/login" ||
