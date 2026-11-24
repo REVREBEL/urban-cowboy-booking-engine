@@ -9,7 +9,7 @@
 1. `npm run d1:migrate:remote` — applied 0010, 0011 and 0012 after a dated remote export backup.
 2. `npm run deploy:d1` — applied idempotent `seed.sql` (737 queries) and verified counts/time zones.
 3. `npm run sync:webflow-photos -- --api --room-types … --db <backup> --sql-out …` — 156 live Webflow gallery images, 122 new master assets, 34 additional placements on existing assets; applied via Wrangler.
-4. Published 10 initial snapshots through the Cloudflare D1 API with bound parameters (the Wrangler SQL-file path hit D1's per-statement size limit on the large `roomGallery` payload).
+4. Published 10 initial snapshots through the Cloudflare D1 API with bound parameters (the Wrangler SQL-file path hit D1's per-statement size limit on the large `roomGallery` payload). This path is now supported by `npm run d1:publish-snapshots -- --api-apply` and `npm run sync:webflow-photos -- --api-apply`, which send media and pointer updates in one atomic batch; tests cover a production-sized payload and an induced batch failure.
 
 ## Migration ledger
 

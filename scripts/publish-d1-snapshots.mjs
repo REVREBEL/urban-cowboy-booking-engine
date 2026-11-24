@@ -3,11 +3,14 @@
 // snapshots from a read-only D1 export. Nothing is written to the export.
 //
 //   node scripts/publish-d1-snapshots.mjs --db local.sqlite --out /tmp/snapshots.sql
+//   node scripts/publish-d1-snapshots.mjs --db local.sqlite --api-apply
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 
 const { CONTENT_COLLECTIONS, loadPublishedCollection, buildSnapshot } = await import("../worker/content-provider.ts");
+const { applyBatch } = await import("./lib/d1-api.mjs");
+const argv = process.argv.slice(2);
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -86,6 +89,17 @@ async function main() {
       params: [tenantId, collection, built.version, previous?.current_version ?? null],
     });
     console.log(`  ${collection}: ${records.length} items -> ${built.version.slice(0, 12)}`);
+  }
+
+  if (argv.includes("--api-apply")) {
+    if (!statements.length) {
+      console.log("all snapshots are already current; nothing applied");
+    } else {
+      const result = await applyBatch(statements);
+      console.log(`applied ${result.applied} parameterized statements via D1 API`);
+    }
+    db.close();
+    return;
   }
 
   if (statements.length) {

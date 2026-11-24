@@ -18,6 +18,7 @@ import { readFileSync } from "node:fs";
 const { webflowPhotoSourceAdapter, fetchWebflowRoomTypeItems } = await import("../worker/photo-source-webflow.ts");
 const { planPhotoImport, renderPhotoImportSql } = await import("../worker/photo-source-import.ts");
 const { canonicalJson } = await import("../worker/content-provider.ts");
+const { applyBatch } = await import("./lib/d1-api.mjs");
 const { DatabaseSync } = await import("node:sqlite");
 
 const DEFAULT_TENANT = "urban-cowboy";
@@ -176,9 +177,10 @@ async function main() {
   const roomTypes = loadRoomTypes(await loadJson(argValue("--room-types"), "--room-types"));
   const sqlOut = argValue("--sql-out");
   const dbPath = argValue("--db");
+  const apiApply = process.argv.includes("--api-apply");
   const now = argValue("--now") ?? new Date().toISOString();
 
-  if (sqlOut && !dbPath) {
+  if ((sqlOut || apiApply) && !dbPath) {
     console.error(
       "--sql-out requires --db <export.sqlite>.\n" +
         "The published roomGallery snapshot is what guests read; it must be refreshed\n" +
@@ -236,9 +238,15 @@ async function main() {
     }
   }
 
-  if (sqlOut) {
-    // The snapshot refresh is appended to the same transaction: if any import
-    // statement fails, COMMIT never happens and no new version is published.
+  if (apiApply) {
+    // Media updates and the gallery snapshot refresh go in ONE parameterized
+    // D1 batch, so an induced failure cannot leave media updated with a stale
+    // published pointer.
+    const refresh = snapshotRefreshStatements(db, tenantId, changedMediaIds, plannedUrls);
+    const result = await applyBatch([...plan.statements, ...refresh]);
+    console.log(`\napplied ${result.applied} parameterized statements via D1 API (${refresh.length} snapshot refresh)`);
+  } else if (sqlOut) {
+    // The snapshot refresh is appended to the same atomic D1 file import.
     const refresh = snapshotRefreshStatements(db, tenantId, changedMediaIds, plannedUrls);
     const statements = [...plan.statements, ...refresh];
     await writeFile(sqlOut, renderPhotoImportSql({ ...plan, statements }, snapshot.provider), "utf8");

@@ -53,7 +53,9 @@ wrangler d1 execute urban-cowboy-content --local  --file /tmp/webflow-photos.sql
 wrangler d1 execute urban-cowboy-content --remote --file /tmp/webflow-photos.sql   # separate approval
 ```
 
-`--room-types` is required for explicit room resolution. `--db` points at a local SQLite file seeded from D1; without it the dry run seeds the supplied room types into an in-memory database, so per-room matching is still meaningful but existing-state diffs are empty. `--now` fixes the timestamp for deterministic output.
+For production-sized galleries, replace `--sql-out` with `--api-apply`: it sends media updates and the gallery snapshot refresh in **one atomic, bound-parameter D1 batch** (`CLOUDFLARE_API_TOKEN` from the environment). The SQL-file form inlines the snapshot payload and can exceed D1's per-statement size limit; `--api-apply` keeps large payloads in parameters and is the supported production path.
+
+`--room-types` is required for explicit room resolution. `--db` points at a local SQLite file built from a D1 export; it is mandatory for both `--sql-out` and `--api-apply`. Without it the dry run seeds the supplied room types into an in-memory database, so per-room matching is still meaningful but existing-state diffs are empty. `--now` fixes the timestamp for deterministic output.
 
 The dry-run report shows matched, created, updated, duplicate, invalid, unresolved and reported-removed counts plus each source issue. `--sql-out` writes an atomic D1 file import script with no deletions and no explicit transaction statements.
 
