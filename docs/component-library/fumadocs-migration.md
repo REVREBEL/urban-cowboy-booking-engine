@@ -209,6 +209,19 @@ reservation, payment or admin write is triggered. `PhotoTourArrow`, `RoomMatcher
 `MatchBenefitsCard` gained an optional `imageBaseUrl` for their root-relative assets, and the
 docs build copies those icons/illustrations for the static export.
 
+**COW-76 closeout (Stage 4):** the fourth group is complete. All 12 canonical
+Stage 4 stories — six photo-journey (`arrival`, `journey-extras`, `stay-journal`,
+`journey-rooms`, `photo-tour-arrow`, `room-photo-tour`), `Photo`, and five
+discovery/compare stories (`help-me-choose-modal`, `match-or-browse-screen`,
+`room-matcher-page`, `matcher-progress`, `match-benefits-card`) — are marked
+`documented` in the coverage matrix with an MDX page, a client `defineStory`
+wrapper and control, a `meta.json` entry and a live smoke marker. Phase 4 landed
+on `main` under COW-70 (commits `a0ccbcbe` and `269f3b99`); the open COW-76 /
+GitHub #329 issue only lacked this closeout record. `npm run docs:inventory:check`
+reports the inventory current. The adjacent `RoomDetailModal` and
+`RoomsListBuilding` stories remain `planned` as Stage 3-adjacent work, and admin
+hotspot editors stay intentionally excluded from public interactive docs.
+
 Fifth migrated group: forms, feedback and booking layout. `DateRangePicker`, `PhoneInput`,
 `EmptyState`, `ErrorState`, `LoadingState`, `StepLayout`, `StepProgress`, `ProgressBar` and
 `ProgressStep` have reference pages with local-only state and the real `BookingProvider` where
