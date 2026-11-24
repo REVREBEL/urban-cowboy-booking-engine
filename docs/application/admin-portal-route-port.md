@@ -18,7 +18,8 @@ Access session and by a per-route capability check:
 | --- | --- |
 | rooms, hotspots, amenities | `edit` (admin) |
 | settings | `settings` (admin) |
-| media, rates, policies, events, add-ons, upgrades, recovery, analytics | `read` (viewer) |
+| recovery | `recovery` (admin — matches the Worker's `/api/recovery` handler) |
+| media, rates, policies, events, add-ons, upgrades, analytics | `read` (viewer) |
 
 A viewer who requests an admin-only section sees an "Insufficient role" state and **no content is
 loaded**. This is UX defence only — the actual write authorization stays at the Worker API.
@@ -40,10 +41,12 @@ No panel code was duplicated. `admin-app/lib/dashboard-api.ts` adapts the origin
 When the API lives on another origin the browser sends credentials; W3 owns the CORS/cookie
 arrangement. With an empty `API_BASE_URL` the app uses relative `/api` paths (same origin).
 
-Sections still backed by a placeholder (`media`, `rates`, `policies`, `add-ons`, `upgrades`,
-`recovery`, `analytics`) are explicitly listed in the W1.1 parity matrix as remaining W1.6 work.
-The legacy Supabase-backed funnel panel is intentionally not reused; its retirement is tracked in
-`content-editor-publishing.md`.
+The remaining sections are no longer placeholders as of W1.6: `AdminResourcePanel` reads the
+shared D1-backed Worker endpoints (`/api/admin/media`, `/api/content/offers`,
+`/api/content/policy-language`, `/api/d1/add-ons`, `/api/content/upgrades`, `/api/recovery`,
+`/api/analytics/summary`) with the same loading/error/empty contract. They are read-only;
+field-level editing is the remaining W1.6 gap. The legacy Supabase-backed funnel panel is
+intentionally not reused; its retirement is tracked in `content-editor-publishing.md`.
 
 ## 3. Navigation and the legacy defect
 

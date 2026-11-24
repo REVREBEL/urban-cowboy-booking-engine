@@ -39,11 +39,11 @@ test("route capabilities cover all sections and gate mutations by role", () => {
     assert.ok(ROUTE_CAPABILITY[id], `${id} must declare a capability`);
     assert.equal(can(admin, ROUTE_CAPABILITY[id]), true, `admin must access ${id}`);
   }
-  for (const id of ["rooms", "hotspots", "amenities", "settings"] as const) {
-    assert.notEqual(ROUTE_CAPABILITY[id], "read", `${id} performs writes`);
+  for (const id of ["rooms", "hotspots", "amenities", "settings", "recovery"] as const) {
+    assert.notEqual(ROUTE_CAPABILITY[id], "read", `${id} is admin-only at the Worker API`);
     assert.equal(can(viewer, ROUTE_CAPABILITY[id]), false);
   }
-  for (const id of ["media", "rates", "policies", "events", "add-ons", "upgrades", "recovery", "analytics"] as const) {
+  for (const id of ["media", "rates", "policies", "events", "add-ons", "upgrades", "analytics"] as const) {
     assert.equal(ROUTE_CAPABILITY[id], "read");
     assert.equal(can(viewer, ROUTE_CAPABILITY[id]), true, `viewer must read ${id}`);
   }
@@ -73,6 +73,33 @@ test("panels are reused, not reimplemented, and the legacy hotspot wiring defect
   assert.doesNotMatch(host, /async function|fetch\(/);
   const legacy = read("src/dashboard/DashboardApp.tsx");
   assert.match(legacy, /route !== "hotspots"/);
+});
+
+test("remaining sections read shared D1 APIs and /admin deep links resolve", () => {
+  const host = read("admin-app/components/DashboardPanelHost.tsx");
+  const resources: Record<string, string> = {
+    media: "/api/admin/media",
+    rates: "/api/content/offers",
+    policies: "/api/content/policy-language",
+    "add-ons": "/api/d1/add-ons",
+    upgrades: "/api/content/upgrades",
+    recovery: "/api/recovery",
+    analytics: "/api/analytics/summary",
+  };
+  for (const [route, path] of Object.entries(resources)) {
+    assert.ok(host.includes(route), `${route} is mapped`);
+    assert.ok(host.includes(path), `${route} uses ${path}`);
+  }
+  assert.match(host, /AdminResourcePanel/);
+  const panel = read("admin-app/components/AdminResourcePanel.tsx");
+  assert.match(panel, /useDashboardResource/);
+  assert.match(panel, /LoadingPanel/);
+  assert.match(panel, /ErrorPanel/);
+  assert.match(panel, /EmptyPanel/);
+  assert.match(read("admin-app/app/admin/page.tsx"), /redirect\("\/rooms"\)/);
+  const deepLink = read("admin-app/app/admin/[section]/page.tsx");
+  assert.match(deepLink, /routeIdFromSegment/);
+  assert.match(deepLink, /redirect\(`\/\$\{route\}`\)/);
 });
 
 test("section route guards session, unknown segment and capability before rendering", () => {

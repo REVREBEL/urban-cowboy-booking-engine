@@ -28,7 +28,7 @@ export const ROUTE_CAPABILITY: Readonly<Record<DashboardRouteId, AdminCapability
   events: "read",
   "add-ons": "read",
   upgrades: "read",
-  recovery: "read",
+  recovery: "recovery",
   analytics: "read",
   settings: "settings",
 };
