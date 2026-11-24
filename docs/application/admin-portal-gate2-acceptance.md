@@ -1,8 +1,11 @@
 # COW-95 — W1.7 Sync Gate 2: Admin Portal acceptance record
 
 **Status: prepared, NOT accepted.** W1.7 is the final shared checkpoint with COW-102 (W2.7) and
-COW-111 (W3.7). As of this record COW-111 is Done, COW-102 is In Progress (PR #412 open), and
-COW-95 is Backlog. Final acceptance requires all three to be complete together.
+COW-111 (W3.7). COW-111 and COW-102 are both Done and their evidence is cross-referenced below,
+but issue status is not acceptance: neither record contains deployed live evidence. COW-95 was
+reopened to In Progress on 2026-11-24 because the deployed URL, real Access/JWT checks, publish/
+rollback E2E and residual-scope decisions are still open. Local W1 evidence was re-verified on
+2026-11-24 (§6). Final acceptance still requires all three streams to pass together.
 
 ## 1. W1 delivery chain (evidence)
 
@@ -14,7 +17,7 @@ COW-95 is Backlog. Final acceptance requires all three to be complete together.
 | W1.4 route port | COW-92 / PR #400 | Merged; 12 App Router sections, panel reuse |
 | W1.5 Gate 1 | COW-93 / PR #405 | Done with COW-100/107 |
 | W1.6 parity + D1 workflows | COW-94 / PR #409 | Merged; D1-backed sections, field mapping, `/admin` routes |
-| W1.7 Gate 2 | COW-95 | **Not complete** — this record is preparation only |
+| W1.7 Gate 2 | COW-95 | **In Progress (reopened)** — local evidence re-verified; deployed evidence still missing |
 
 ## 2. W1 acceptance checks
 
@@ -37,22 +40,45 @@ From `docs/application/admin-portal-parity-closeout.md`:
 
 These are documented, not resolved. A green CI run does not prove deployed browser/Access integration.
 
-## 4. Cross-workstream confirmations required
+## 4. Cross-workstream confirmations
 
-- W2/COW-102: signed-off reconciliation counts, media master IDs, published snapshots and revision data; confirmation that the admin forms/APIs match the D1 contract (Gate 1 D4).
-- W3/COW-111: guest runtime consumes published D1 data; ARI remains Mews-direct; admin-write boundary and AUD/team domain match the admin app's verification inputs (Gate 1 D2/D3/D5).
-- W1: deployed admin URL + browser evidence (see §2), plus acknowledgment of the residual scope in §3.
+- **W2 / COW-102 — Done, evidence recorded**: `docs/generated/w2-6-production-reconciliation.md`
+  and `docs/application/w2-7-gate-2-evidence.md` record all 12 migrations, exact editorial counts,
+  stable media master IDs, published snapshots and the ID-only Mews reference contract. W2
+  explicitly notes that issue status is not acceptance and that deployed W1/W3 evidence is still
+  missing.
+- **W3 / COW-111 — Done, evidence recorded**: `docs/application/w3-gate2-readiness.md` records the
+  W3 deliverable status and the live-verification checklist. It also states that all content flags
+  remain at Webflow defaults, no Webflow runtime has been removed, and no live booking evidence is
+  recorded — so W3's Done status likewise does not prove deployed acceptance.
+- **W1 — still required**: deployed admin URL + browser evidence (§2), acknowledgment of the
+  residual scope in §3, and the three open checklist items in §5. Note: the REVREBEL Cloudflare
+  account was queried on 2026-11-24 and contains `urban-cowboy-booking-engine` but **no
+  `urban-cowboy-admin` Worker**, so there is no deployed admin origin to evidence yet.
 
 ## 5. Gate 2 acceptance checklist
 
 - [x] W1 code delivered via merged PRs with green CI and review approvals.
 - [x] Source parity matrix and residual scope documented with evidence.
-- [ ] Deployed admin URL and browser evidence attached (blocked on deploy credentials/decisions).
-- [ ] Deployed auth/RBAC and role-restriction tests pass.
-- [ ] Admin write/publish/rollback E2E against shared D1 recorded.
-- [ ] W2 confirms D1 parity and media integrity (COW-102 complete).
-- [ ] W3 confirms guest runtime consumption (COW-111 complete).
-- [ ] All three Gate 2 issues cross-reference the same evidence and are complete.
+- [x] W2 confirms D1 parity and media integrity (COW-102 Done; evidence in §4).
+- [x] W3 confirms guest runtime consumption (COW-111 Done; evidence in §4).
+- [x] Gate 2 issues cross-reference the same evidence documents (§4).
+- [ ] Deployed admin URL and browser evidence attached — **blocked**: no `urban-cowboy-admin` Worker deployed; deployment decision/credentials required.
+- [ ] Deployed auth/RBAC and role-restriction tests pass — needs real Access JWT against team JWKS.
+- [ ] Admin write/publish/rollback E2E against shared D1 recorded — browser E2E not run.
+- [ ] Residual scope in §3 acknowledged/closed by the product owner.
 
-**Not claimed:** production acceptance, full parity, or W1 closeout. This record exists so the
-joint gate has W1's evidence in one place; COW-95 must stay open until the checklist is complete.
+**Not claimed:** production acceptance, full parity, or W1 closeout. Local verification (§6) does
+not substitute for deployed evidence. COW-95 stays In Progress until the four open items are closed.
+
+## 6. Local verification record — 2026-11-24
+
+| Command | Result |
+| --- | --- |
+| `npm run admin:build` | Build complete; routes include `/api/auth/session`, `/api/health`, `/login` |
+| `npm run admin:typecheck` | Pass (`admin-app` `tsc --noEmit`) |
+| `node --test tests/adminAppFoundation.test.ts tests/adminAuth.test.ts tests/adminRoutes.test.ts tests/auth.test.ts tests/dashboardAccessIntegration.test.ts` | 29 passed, 0 failed |
+| Cloudflare account worker list (REVREBEL) | `urban-cowboy-booking-engine` present; no `urban-cowboy-admin` Worker |
+
+These confirm the code and local contracts only. No deployment, flag flip or production write was
+performed as part of this record.
