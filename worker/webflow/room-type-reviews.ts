@@ -371,13 +371,23 @@ async function refreshReviews(
   return payload;
 }
 
-async function overlayPayload(env: Env, payload: CachedReviewPayload): Promise<CachedReviewPayload> {
+interface OverlayResult {
+  payload: CachedReviewPayload;
+  healthy: boolean;
+}
+
+async function overlayPayload(env: Env, payload: CachedReviewPayload): Promise<OverlayResult> {
   // COW-73: guest values come from published D1 records where available.
   // The overlay runs on every response (not inside the cache) so a publish is
   // visible immediately and a draft never leaks into the cached Webflow payload.
-  let guest = await applyPublishedAmenities(env, env.TENANT_ID, payload);
-  guest = await applyPublishedHotspots(env, env.TENANT_ID, guest);
-  return await applyPublishedGalleries(env, env.TENANT_ID, guest);
+  let healthy = Boolean(env.DB && env.TENANT_ID?.trim());
+  const onReadError = () => {
+    healthy = false;
+  };
+  let guest = await applyPublishedAmenities(env, env.TENANT_ID, payload, onReadError);
+  guest = await applyPublishedHotspots(env, env.TENANT_ID, guest, onReadError);
+  guest = await applyPublishedGalleries(env, env.TENANT_ID, guest, onReadError);
+  return { payload: guest, healthy };
 }
 
 /** Cache a D1-only room response only when its final gallery payload has usable images. */
@@ -405,7 +415,7 @@ function responseBody(
 }
 
 async function response(env: Env, payload: CachedReviewPayload, stale: boolean): Promise<Response> {
-  const guest = await overlayPayload(env, payload);
+  const { payload: guest } = await overlayPayload(env, payload);
   return json(responseBody(guest, stale), 200, BROWSER_CACHE_CONTROL);
 }
 
@@ -423,13 +433,17 @@ export async function onRequestGet({
     // D1 overlays when they can supply content; otherwise keep the previous
     // no-store empty response so a CDN cannot cache an empty gallery through a
     // D1 outage or before the publication gate is ready.
-    const guest = await overlayPayload(env, {
+    const overlay = await overlayPayload(env, {
       fetchedAt: Date.now(),
       reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {},
     });
-    const cacheable = hasUsableGalleryContent(guest);
+    const cacheable = overlay.healthy && hasUsableGalleryContent(overlay.payload);
     return json(
-      responseBody(guest, false, cacheable ? new Date(guest.fetchedAt).toISOString() : null),
+      responseBody(
+        overlay.payload,
+        false,
+        cacheable ? new Date(overlay.payload.fetchedAt).toISOString() : null,
+      ),
       200,
       cacheable ? BROWSER_CACHE_CONTROL : "no-store",
     );

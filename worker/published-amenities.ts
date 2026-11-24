@@ -4,7 +4,8 @@
  * migrated, and its published-only + room-eligibility rules are unchanged.
  *
  * The D1 snapshot is immutable and only refreshed on publish/rollback, so a
- * draft edit can never reach a guest through this path.
+ * draft edit can never reach a guest through this path. The optional read-error
+ * callback lets callers keep a partial fallback response out of public caches.
  */
 import type { Env } from "./mews/_lib.ts";
 import type { CachedReviewPayload } from "./webflow/room-type-reviews.ts";
@@ -40,6 +41,7 @@ export async function applyPublishedAmenities(
   env: Env,
   tenantId: string | undefined,
   payload: CachedReviewPayload,
+  onReadError?: (error: unknown) => void,
 ): Promise<CachedReviewPayload> {
   if (!env.DB || !tenantId?.trim()) return payload;
   let snapshot;
@@ -49,13 +51,17 @@ export async function applyPublishedAmenities(
     // A D1 outage must never take down the existing Webflow room-content
     // response (reviews, galleries, hotspots and descriptions included).
     console.warn("[publishedAmenities] snapshot read failed; serving Webflow content", error);
+    onReadError?.(error);
     return payload;
   }
   if (!snapshot) return payload;
 
   let stored: unknown;
   try { stored = JSON.parse(snapshot.payloadJson); }
-  catch { return payload; }
+  catch {
+    onReadError?.(new Error("invalid_room_amenities_snapshot"));
+    return payload;
+  }
   const records = (stored as { items?: { id: string; payload: Record<string, unknown> }[] } | null)?.items;
   if (!Array.isArray(records) || records.length === 0) return payload;
 
