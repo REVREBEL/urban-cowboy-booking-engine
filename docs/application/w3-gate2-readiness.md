@@ -115,3 +115,40 @@ suite. Keep the KV calendar cache — it is advisory and Mews-derived, not Webfl
 - All three Gate 2 issues must be complete before final migration closeout.
 - Record evidence (deployed URL, viewport, timestamp, result, screenshot/log
   link) directly on COW-111; a local test run is not deployed evidence.
+
+## 5. D1-mode preview rehearsal — 2026-11-24
+
+A non-production preview of the deployed booking Worker was created with the same
+script and bindings plus all content flags set to `d1`:
+
+- Preview: `cow-111-d1-rehearsal`, deployment `225c60db-5a45-4a3e-b0b6-53756b0d3621`
+- URL: `https://225c60db-urban-cowboy-booking-engine.revrebel.workers.dev`
+- Bindings: production D1 database, `CALENDAR_CACHE` KV, Mews plain-text config,
+  and `CONTENT_SOURCE_POLICY_LANGUAGE`, `CONTENT_SOURCE_SITE_SETTINGS`,
+  `CONTENT_SOURCE_ADD_ONS`, `CONTENT_SOURCE_ROOM_GALLERIES`, `PHOTO_HOTSPOT_SOURCE`
+  all set to `d1`. No production flag or deployment was changed.
+
+Observed (2026-11-24, HTTP):
+
+| Check | Result |
+| --- | --- |
+| `GET /api/content/site-settings` | `X-Content-Source: d1`, `{"productionLayout":"photo",...}` — published D1 config selects the Photo Journey |
+| `GET /api/content/policy-language` | `X-Content-Source: webflow-fallback`, empty language — D1 `policy` item is **draft**, so published-only reads correctly refuse it |
+| `GET /api/content/add-ons` | `X-Content-Source: webflow-fallback`, empty list — no published `add_on_sync/complete` cutover marker exists |
+| `GET /api/content/room-type-reviews` | Empty galleries/hotspots — no room has a published `room_gallery` document, so Webflow is preserved; preview has no Webflow bindings, hence the empty payload |
+| `POST /api/mews/availability` (future window, property `hotel`) | 200 with 2 rate groups, 3 rates, 14 room availabilities — ARI still comes directly from Mews |
+| Production `urban-cowboy-booking-engine` Worker | No content flags bound; `/api/content/site-settings` reports `X-Content-Source: webflow`, live layout Card |
+
+Direct D1 inspection (production database) confirmed 10 published snapshot
+pointers including `roomGallery`, 9 published `add_ons`, 156 gallery placements,
+but `content_items` contains only `site_settings` (published), `outlet`,
+`instagram` and one **draft** `policy` row — no `add_on` or `room_gallery`
+publication documents.
+
+**Conclusion:** D1 mode is safe (draft/incomplete data fails closed, Mews stays
+direct) but **not ready for a production cutover**. Before COW-111 can be
+accepted: publish the policy content and an add-ons cutover marker, publish
+per-room gallery documents, provision a preview with static assets for full
+desktop/mobile Photo Journey verification, obtain W1's deployed admin
+confirmation, and then flip production flags as a reviewed deployment. The
+preview remains evidence only — it is not production acceptance.
