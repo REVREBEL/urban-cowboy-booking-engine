@@ -30,6 +30,7 @@
     "seed:d1": "node scripts/seed-d1-from-webflow.mjs webflow_cms_export --write",
     "seed:check": "node scripts/seed-d1-from-webflow.mjs webflow_cms_export --check",
     "seed:diff": "node scripts/seed-d1-from-webflow.mjs webflow_cms_export --diff",
+    "d1:publish-snapshots": "node scripts/publish-d1-snapshots.mjs",
     "normalize:svgs": "node scripts/normalize-svg-assets.mjs --write",
     "normalize:svgs:check": "node scripts/normalize-svg-assets.mjs",
     "mews:smoke": "bash scripts/test-mews-booking-api.sh",
