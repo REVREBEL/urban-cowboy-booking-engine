@@ -17,7 +17,7 @@ import {
   MultiRoomViewRoomTypeCardFocusedStoryControl,
 } from '~/components/story-controls';
 
-The multi-room view components present a building's room offerings in various editorial layouts. Demos use deterministic `ShapedRoom` fixtures with mocked merchandising; selection actions are recorded locally.
+The multi-room view components present a building's room offerings in various editorial layouts. Demos use deterministic room card data fixtures; selection actions are recorded locally.
 
 ## Building Header — MultiRoomViewBuilding
 
@@ -56,7 +56,7 @@ The building header shows the building name, tagline, description and optional i
 
 ## Room List — MultiRoomViewList
 
-Displays a vertical list of room type cards for a building.
+Displays up to three building groups as vertical stacks. Each group is a `MultiRoomViewListItem` with an optional building section slot. The component is exported from `RoomTypeList.tsx`.
 
 <MultiRoomViewListStoryControl />
 
@@ -64,15 +64,37 @@ Displays a vertical list of room type cards for a building.
 
 | Prop | Values | Notes |
 | --- | --- | --- |
-| `rooms` | `ShapedRoom[]` | Rooms to display |
-| `criteria` | `SearchCriteria` | Search context |
-| `imageBaseUrl` | string | Base URL for imagery |
-| `onSelectRoom` | `() => void` | Room selection callback |
-| `onOpenRoomDetails` | `() => void` | Room details callback |
+| `buildingGroup1` | `ReactNode` | First building group (required) |
+| `buildingGroup2` | `ReactNode` | Second building group (optional) |
+| `buildingGroup3` | `ReactNode` | Third building group (optional) |
+| `className` | string | Additional CSS classes |
+
+### Usage
+
+```tsx
+import { MultiRoomViewList, MultiRoomViewListItem, MultiRoomViewBuilding } from '@/components/rooms';
+
+const buildingGroup1 = (
+  <MultiRoomViewListItem
+    layout="Row"
+    roomTypes={alpineRoomTypes}
+    buildingSectionSlot={
+      <MultiRoomViewBuilding
+        buildingName="Alpine"
+        buildingDescription="Built into the hillside..."
+        buildingTagline="This is Where you Come to Soak..."
+        layout="StackedCenter"
+      />
+    }
+  />
+);
+
+<MultiRoomViewList buildingGroup1={buildingGroup1} buildingGroup2={buildingGroup2} />
+```
 
 ## Room List Item — MultiRoomViewListItem
 
-Individual room card within the list, supporting three layout modes.
+Renders a building section with optional header and a horizontal list of room type cards. Supports three layout modes.
 
 ### Default
 
@@ -90,11 +112,24 @@ Individual room card within the list, supporting three layout modes.
 
 | Prop | Values | Notes |
 | --- | --- | --- |
-| `room` | `ShapedRoom` | Room data with merchandising |
-| `imageBaseUrl` | string | Base URL for imagery |
-| `layout` | `Default`, `Row`, `RowReverse` | Card arrangement |
-| `onSelect` | `() => void` | Selection callback |
-| `onOpenDetails` | `() => void` | Details callback |
+| `layout` | `Default`, `Row`, `RowReverse` | Card arrangement (default: `Default`) |
+| `roomTypes` | `MultiRoomViewRoomTypeCardData[]` | Array of room type card data (required) |
+| `buildingSectionSlot` | `ReactNode` | Optional building header slot (e.g., `MultiRoomViewBuilding`) |
+| `displayBuilding` | boolean | Show building section (default: `true`) |
+| `className` | string | Additional CSS classes |
+
+### Room Type Card Data Shape
+
+```ts
+type MultiRoomViewRoomTypeCardData = {
+  id: string;
+  buildingName: string;
+  numberOfBeds: string;
+  price: string;
+  roomTypeName: string;
+  state: 'Default' | 'Focus';
+};
+```
 
 ## Room Type Card — MultiRoomViewRoomTypeCard
 
@@ -112,11 +147,11 @@ Focused room type presentation with optional highlight state.
 
 | Prop | Values | Notes |
 | --- | --- | --- |
-| `room` | `ShapedRoom` | Room data with merchandising |
-| `imageBaseUrl` | string | Base URL for imagery |
-| `focused` | boolean | Highlighted presentation |
-| `onSelect` | `() => void` | Selection callback |
-| `onOpenDetails` | `() => void` | Details callback |
+| `buildingName` | string | Building display name |
+| `numberOfBeds` | string | Bed count label (e.g., "8 beds") |
+| `price` | string | Price label (e.g., "$596") |
+| `roomTypeName` | string | Room type name |
+| `state` | `Default`, `Focus` | Highlighted presentation (default: `Default`) |
 
 ## Responsive behaviour
 
@@ -139,32 +174,35 @@ import { MultiRoomViewBuilding, MultiRoomViewList, MultiRoomViewListItem, MultiR
   buildingIconSlot={<BuildingIcon buildingName="Alpine" />}
 />
 
-// Room list
-<MultiRoomViewList
-  rooms={rooms}
-  criteria={criteria}
-  imageBaseUrl="/images"
-  onSelectRoom={handleSelect}
-  onOpenRoomDetails={handleDetails}
-/>
+// Room list (slot-based)
+const buildingGroup1 = (
+  <MultiRoomViewListItem
+    layout="Row"
+    roomTypes={[
+      { id: "1", buildingName: "Alpine", numberOfBeds: "8 beds", price: "$596", roomTypeName: "Alpine Bathing Suite", state: "Focus" },
+      { id: "2", buildingName: "Alpine", numberOfBeds: "6 beds", price: "$445", roomTypeName: "Alpine King Suite", state: "Default" },
+    ]}
+    buildingSectionSlot={
+      <MultiRoomViewBuilding
+        buildingName="Alpine"
+        buildingDescription="Built into the hillside..."
+        buildingTagline="This is Where you Come to Soak..."
+        layout="StackedCenter"
+      />
+    }
+  />
+);
 
-// Individual list item
-<MultiRoomViewListItem
-  room={room}
-  imageBaseUrl="/images"
-  layout="Row"
-  onSelect={handleSelect}
-  onOpenDetails={handleDetails}
-/>
+<MultiRoomViewList buildingGroup1={buildingGroup1} />
 
-// Room type card
+// Standalone room type card
 <MultiRoomViewRoomTypeCard
-  room={room}
-  imageBaseUrl="/images"
-  focused={true}
-  onSelect={handleSelect}
-  onOpenDetails={handleDetails}
+  buildingName="Alpine"
+  numberOfBeds="8 beds"
+  price="$596"
+  roomTypeName="Alpine Bathing Suite with Den"
+  state="Focus"
 />
 ```
 
-[Building source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewBuilding.tsx) · [List source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewList.tsx) · [List item source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewListItem.tsx) · [Room type card source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewRoomTypeCard.tsx)
+[Building source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewBuilding.tsx) · [List source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/RoomTypeList.tsx) · [List item source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewListItem.tsx) · [Room type card source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewRoomTypeCard.tsx)

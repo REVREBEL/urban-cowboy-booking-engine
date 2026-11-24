@@ -78,7 +78,7 @@ function FigmaRateDetailPopupDemo() {
           policyText="Cancellation: Free Cancellation until Dec 30, 2026"
           timeline={timeline}
           arrivalDate={SAMPLE_DATE}
-          onClose={fn()}
+          onClose={() => setIsOpen(false)}
           onConfirm={fn()}
         />
       )}
