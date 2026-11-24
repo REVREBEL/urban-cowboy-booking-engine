@@ -12,6 +12,7 @@ The goal is to preserve not only what the application does, but why particular i
 - [Admin Portal route and workflow port](./admin-portal-route-port.md) — COW-92 W1.4 route parity, panel reuse, capability gates and legacy defect fix.
 - [W1.5 Sync Gate 1 readiness](./admin-portal-gate1-readiness.md) — COW-93 evidence, route/API/auth contract, and open cross-workstream decisions.
 - [W1.6 parity closeout](./admin-portal-parity-closeout.md) — COW-94 incremental D1-backed sections, role fix, direct admin routes and remaining gaps.
+- [W1.7 Gate 2 acceptance record](./admin-portal-gate2-acceptance.md) — COW-95 W1 evidence, residual scope and joint-gate checklist.
 
 - [Calendar Availability & Rate Snapshot Architecture](./calendar-availability-rate-snapshot.md) — how calendar rates, restrictions, caching, adaptive Mews polling, reservation-triggered refreshes, and the future Connector API migration work.
 

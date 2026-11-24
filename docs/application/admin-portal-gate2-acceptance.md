@@ -1,0 +1,58 @@
+# COW-95 — W1.7 Sync Gate 2: Admin Portal acceptance record
+
+**Status: prepared, NOT accepted.** W1.7 is the final shared checkpoint with COW-102 (W2.7) and
+COW-111 (W3.7). As of this record COW-111 is Done, COW-102 is In Progress (PR #412 open), and
+COW-95 is Backlog. Final acceptance requires all three to be complete together.
+
+## 1. W1 delivery chain (evidence)
+
+| Step | Issue / PR | State |
+| --- | --- | --- |
+| W1.1 source inventory / parity matrix | COW-89; `docs/application/admin-portal-parity-matrix.md` | Done; 90 capability IDs |
+| W1.2 foundation | COW-90 / PR #395 | Merged; `admin-app` vinext npm workspace |
+| W1.3 auth/session/RBAC | COW-91 / PR #397 | Merged; Access verifier reuse, capability matrix, CSRF |
+| W1.4 route port | COW-92 / PR #400 | Merged; 12 App Router sections, panel reuse |
+| W1.5 Gate 1 | COW-93 / PR #405 | Done with COW-100/107 |
+| W1.6 parity + D1 workflows | COW-94 / PR #409 | Merged; D1-backed sections, field mapping, `/admin` routes |
+| W1.7 Gate 2 | COW-95 | **Not complete** — this record is preparation only |
+
+## 2. W1 acceptance checks
+
+| Requirement | Local evidence | Deployed evidence |
+| --- | --- | --- |
+| Production Next.js admin deployed at agreed route | `npm run admin:build` passes; `admin-app/cloudflare.config.ts` names `urban-cowboy-admin` | **Missing** — no preview/production deploy or URL recorded (Gate 1 D1) |
+| Auth, sessions, roles verified in deployed environment | 7 auth tests + 32 combined auth/route tests pass; dev smoke: 401 session, 307 to `/login` | **Missing** — real Access JWT against team JWKS not exercised |
+| Parity matrix fully closed with evidence | All 90 IDs have a status; residuals listed in §3 | W2/W3 sign-off on residual scope still required |
+| Content writes/publish/rollback/media use shared D1 | Domains panels call Worker APIs; editor API is Worker-side with revision/audit/rollback | Browser E2E of create → publish → rollback not run |
+| No Astro / Webflow CMS write dependency in admin target | `admin-app/package.json` has no astro/webflow deps; no CMS token read by admin app | Confirm at deploy; legacy `dashboard.html` remains for rollback only |
+
+## 3. Residual scope carried into acceptance (do not silently drop)
+
+From `docs/application/admin-portal-parity-closeout.md`:
+
+- Generic field-driven editor UI (SRC-08/09/10/34/35/44/45): Worker editor API exists; browser UI does not. Needs an explicit owner decision — implement in W1.6 follow-up or retire with rationale.
+- Webflow utility tooling (SRC-29/30/31/32/68/70/71): alt-text export/import, image upload, Mews sync trigger — product-owner scope decision D7.
+- Reverse amenity editor and bespoke section layouts (SRC-51/52): P1.
+- Deployed responsive/keyboard review and E2E authorization evidence.
+
+These are documented, not resolved. A green CI run does not prove deployed browser/Access integration.
+
+## 4. Cross-workstream confirmations required
+
+- W2/COW-102: signed-off reconciliation counts, media master IDs, published snapshots and revision data; confirmation that the admin forms/APIs match the D1 contract (Gate 1 D4).
+- W3/COW-111: guest runtime consumes published D1 data; ARI remains Mews-direct; admin-write boundary and AUD/team domain match the admin app's verification inputs (Gate 1 D2/D3/D5).
+- W1: deployed admin URL + browser evidence (see §2), plus acknowledgment of the residual scope in §3.
+
+## 5. Gate 2 acceptance checklist
+
+- [x] W1 code delivered via merged PRs with green CI and review approvals.
+- [x] Source parity matrix and residual scope documented with evidence.
+- [ ] Deployed admin URL and browser evidence attached (blocked on deploy credentials/decisions).
+- [ ] Deployed auth/RBAC and role-restriction tests pass.
+- [ ] Admin write/publish/rollback E2E against shared D1 recorded.
+- [ ] W2 confirms D1 parity and media integrity (COW-102 complete).
+- [ ] W3 confirms guest runtime consumption (COW-111 complete).
+- [ ] All three Gate 2 issues cross-reference the same evidence and are complete.
+
+**Not claimed:** production acceptance, full parity, or W1 closeout. This record exists so the
+joint gate has W1's evidence in one place; COW-95 must stay open until the checklist is complete.
