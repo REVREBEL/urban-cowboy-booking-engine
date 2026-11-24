@@ -1,3 +1,4 @@
+import { LOCAL_PREVIEW_HEADER } from "../../worker/auth.ts";
 import { assertionFromHeaders, isSameOriginMutation } from "./auth.ts";
 import { getAdminRuntimeConfig } from "./env.ts";
 import { isLocalPreviewEnabled } from "./preview-auth.ts";
@@ -7,6 +8,15 @@ const ALLOWED_EXACT_PATHS = new Set(["/api/recovery"]);
 const ALLOWED_METHODS = new Set(["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"]);
 const FORWARDED_REQUEST_HEADERS = ["accept", "content-type"] as const;
 const FORWARDED_RESPONSE_HEADERS = ["content-type", "x-content-source", "retry-after"] as const;
+
+/**
+ * Preview always targets the local booking Worker on its dev port. It is a
+ * constant on purpose: no environment value can redirect preview traffic to a
+ * deployed Worker or production D1.
+ */
+const LOCAL_PREVIEW_API_ORIGIN = "http://localhost:8787";
+const PREVIEW_TIMEOUT_MS = 8_000;
+
 
 export interface AdminProxyOptions {
   fetchImpl?: typeof fetch;
@@ -84,20 +94,47 @@ export async function proxyDashboardRequest(
   assertion: string,
   options: AdminProxyOptions = {},
 ): Promise<Response> {
-  // Local UI preview never reaches the booking Worker: reads return an empty
-  // fixture and mutations are refused. No assertion or browser credential is
-  // forwarded, so local iteration cannot mutate production D1 data.
+  // Local preview talks only to the local booking Worker, which gates the
+  // marker header on a loopback host + local-only binding and reads the seeded
+  // local D1. No Access assertion, cookie or authorization is forwarded, and
+  // the target origin is a constant, so production D1 is unreachable here.
   if (isLocalPreviewEnabled()) {
-    if (request.method !== "GET" && request.method !== "HEAD") {
-      return jsonError(403, "preview_read_only");
+    if (!ALLOWED_METHODS.has(request.method)) {
+      return jsonError(405, "method_not_allowed", { Allow: [...ALLOWED_METHODS].join(", ") });
     }
-    return new Response(JSON.stringify({ items: [], preview: true }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store, private",
-      },
-    });
+    if (!isSameOriginMutation(request)) return jsonError(403, "origin_not_allowed");
+    const url = upstreamUrl(request.url, LOCAL_PREVIEW_API_ORIGIN);
+    if (!url) return jsonError(404, "not_found");
+
+    const headers = new Headers();
+    for (const name of FORWARDED_REQUEST_HEADERS) {
+      const value = request.headers.get(name);
+      if (value) headers.set(name, value);
+    }
+    headers.set(LOCAL_PREVIEW_HEADER, "1");
+
+    const hasBody = request.method !== "GET" && request.method !== "HEAD";
+    let body: ArrayBuffer | undefined;
+    if (hasBody && request.body) {
+      try {
+        body = await request.arrayBuffer();
+      } catch {
+        return jsonError(400, "invalid_body");
+      }
+    }
+    let response: Response;
+    try {
+      response = await (options.fetchImpl ?? fetch)(url, {
+        method: request.method,
+        headers,
+        body,
+        redirect: "manual",
+        signal: AbortSignal.timeout(PREVIEW_TIMEOUT_MS),
+      });
+    } catch {
+      return jsonError(502, "local_preview_worker_unavailable");
+    }
+    return upstreamResponse(response);
   }
 
   if (!ALLOWED_METHODS.has(request.method)) {

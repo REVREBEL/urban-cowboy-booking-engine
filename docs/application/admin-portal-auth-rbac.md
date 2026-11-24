@@ -62,7 +62,11 @@ cannot grant a role or change scope.
 
 ## 4a. Local UI preview (COW-114)
 
-`admin-app/lib/preview-auth.ts` provides an explicit local-development-only simulated administrator. It activates only with `ADMIN_LOCAL_PREVIEW=1` **and** a local dev runtime (Vite `DEV` or `NODE_ENV=development`); production and deployed preview builds fail closed even if the flag is present. The mock identity is returned centrally by `lib/session.ts`, so no screen bypasses capability checks, and it is never a signed Access assertion. In preview mode the same-origin API proxy returns empty read fixtures and refuses mutations, so the booking Worker and production D1 are never contacted. With preview disabled the Access challenge path is unchanged. See `admin-app/README.md` for the command and `tests/adminPreviewAuth.test.ts` for opt-in, default-disabled, nonlocal fail-closed and production-parity coverage.
+`admin-app/lib/preview-auth.ts` provides an explicit local-development-only simulated administrator. It activates only with `ADMIN_LOCAL_PREVIEW=1` **and** a local dev runtime (Vite `DEV` or `NODE_ENV=development`); production and deployed preview builds fail closed even if the flag is present. The mock identity is returned centrally by `lib/session.ts`, so no screen bypasses capability checks, and it is never a signed Access assertion.
+
+On the Worker side, `worker/auth.ts:verifiedPrincipal()` is the single choke point for a local preview identity. It bypasses JWT verification only when all three gates hold: `LOCAL_DEV_PREVIEW=1` (root `.dev.vars` only; `wrangler.toml` hard-codes the literal `"0"` so a deployed Worker fails), a loopback request host, and the plain marker header `x-local-preview: 1`. The admin proxy targets the fixed origin `http://localhost:8787` with that marker and forwards no assertion, cookie or authorization. Reads and writes therefore reach only the **seeded local D1**; production D1 is unreachable and no mock identity becomes a signed assertion. Local content-source flags in `.dev.vars` switch local reads to D1; production keeps its Webflow baseline. With preview disabled the Access challenge path is unchanged.
+
+See `admin-app/README.md` for the two-server command and seeded-DB setup. Coverage: `tests/adminPreviewAuth.test.ts` (opt-in, default-disabled, nonlocal fail-closed, proxy forwarding and production parity) and `tests/workerLocalDevAuth.test.ts` (three gates, deployed-host rejection, scoped principal, tenant checks).
 
 ## 5. Environment contract
 

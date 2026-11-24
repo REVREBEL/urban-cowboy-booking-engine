@@ -53,3 +53,16 @@ CONTENT_SOURCE_ROOM_GALLERIES=webflow
 # COW-82 guest hotspot cutover. webflow (default) keeps the existing source;
 # d1 serves only published, approved, non-deleted hotspots from D1.
 PHOTO_HOTSPOT_SOURCE=webflow
+
+# --- COW-114 local admin preview against the seeded local D1 ---
+# Local-only overrides. Later definitions win when this file is copied to
+# .dev.vars, so the webflow baseline above stays intact for deployments (the
+# deploy renderer reads .env, never this file).
+LOCAL_DEV_PREVIEW=1
+TENANT_ID=urban-cowboy
+CONTENT_SOURCE=d1
+CONTENT_SOURCE_POLICY_LANGUAGE=d1
+CONTENT_SOURCE_SITE_SETTINGS=d1
+CONTENT_SOURCE_ADD_ONS=d1
+CONTENT_SOURCE_ROOM_GALLERIES=d1
+PHOTO_HOTSPOT_SOURCE=d1

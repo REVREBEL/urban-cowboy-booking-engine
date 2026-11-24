@@ -14,8 +14,9 @@ async function proxy(request: Request): Promise<Response> {
     });
   }
   // Local UI preview uses a synthetic session and must not require a signed
-  // Access assertion. proxyDashboardRequest returns local fixtures in this mode
-  // and never forwards the placeholder to the booking Worker.
+  // Access assertion. proxyDashboardRequest forwards to the local booking
+  // Worker's gated preview path using a plain marker header, never the mock
+  // identity or any browser credential.
   if (isLocalPreviewEnabled()) return proxyDashboardRequest(request, "");
 
   const assertion = assertionFromHeaders(await headers());
