@@ -20,6 +20,7 @@ The goal is to preserve not only what the application does, but why particular i
 - [Booking Runtime Webflow Dependency Inventory (COW-103)](./booking-runtime-webflow-dependency-inventory.md) — route/consumer/source ownership map, Webflow runtime dependencies and required D1 replacements, Mews ARI authority proof, and wire-up gaps for W3.
 - [Mews ARI Authority Matrix (COW-105)](./mews-authority-matrix.md) — authoritative operations, prohibited sources, D1 reference-data allowlist, guardrails shared with W1/W2, and the tests enforcing each boundary.
 - [Gate 1 Integration Contract v1.0 (COW-107)](./gate1-integration-contract.md) — proposed shared W1/W2/W3 contract: authority matrix, guest envelopes, publication semantics, media identity, acceptance checklist and open decisions.
+- [W3 Cutover Runbook (COW-108)](./w3-cutover-runbook.md) — flag inventory and defaults, parity/migration prerequisites, temporary Webflow photo URL handling, flip order, post-flip verification and rollback.
 - [CMS-Driven Booking Footer](./cms-booking-footer.md) — Mews-property-to-Webflow-Location binding, dynamic location/copyright copy, optional legal links, and footer cache behavior.
 
 - [Catskills Mews Identifiers](../catskills-mews-ids.md#deferred-add-on-delivery-tasks) — includes the deferred Connector API task-creation plan for scheduled add-ons and the certification prerequisite.
