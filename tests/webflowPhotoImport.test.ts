@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -435,6 +435,70 @@ test("a URL reimport with null dimensions keeps known geometry", async () => {
   assert.equal(version.width, 1600);
   assert.equal(version.height, 1000);
   db.close();
+});
+
+test("the real CLI apply script refreshes the published gallery snapshot", () => {
+  const dir = mkdtempSync(join(tmpdir(), "wf-cli-"));
+  const exportPath = join(dir, "export.sqlite");
+  const applyPath = join(dir, "apply.sqlite");
+  const sqlPath = join(dir, "import.sql");
+  const db = new DatabaseSync(exportPath);
+  db.exec("PRAGMA foreign_keys = ON");
+  for (const file of MIGRATIONS) db.exec(read(file));
+  db.exec(`
+    INSERT INTO tenants (id, slug, name) VALUES ('urban-cowboy','urban-cowboy','UC');
+    INSERT INTO locations (id, tenant_id, slug, name, time_zone) VALUES ('6abc9142d98b325b2821ca23','urban-cowboy','catskills','Catskills','America/New_York');
+    INSERT INTO room_types (id, tenant_id, location_id, mews_room_category_id, name, slug, sort_order) VALUES
+      ('rt-alpine','urban-cowboy','6abc9142d98b325b2821ca23','mews-alpine','Alpine','alpine',1);
+    INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status)
+      VALUES ('gallery-ci','urban-cowboy','6abc9142d98b325b2821ca23','room_gallery','rt-alpine','published');
+    INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by)
+      VALUES ('gallery-r','gallery-ci',1,'{"items":[]}','test');
+  `);
+
+  // Populate the registry and published snapshot through the real helpers.
+  const seedSnap = snapshot();
+  const seedPlan = planPhotoImport(d1(db), {
+    tenantId: "urban-cowboy", locationId: "6abc9142d98b325b2821ca23", snapshot: seedSnap, now: NOW,
+  }).then((plan) => applyPhotoImport(executor(db), plan));
+  return seedPlan.then(async () => {
+    const api = d1Db(db);
+    const records = await loadPublishedCollection(api, { tenantId: "urban-cowboy" }, "roomGallery");
+    await saveSnapshot(api, { tenantId: "urban-cowboy" }, "roomGallery",
+      await buildSnapshot("roomGallery", records));
+    db.close();
+
+    // A changed delivery URL must be reflected in the published guest view.
+    const changedUrl = "https://cdn.prod.website-files.com/site/aaaaaaaaaaaaaaaaaaaaaaaa_cli.jpg";
+    const changedPayload = JSON.parse(read("tests/fixtures/webflow-room-types-photos.json"));
+    changedPayload.items[0].fieldData.images[0].url = changedUrl;
+    const changedPath = join(dir, "changed.json");
+    writeFileSync(changedPath, JSON.stringify(changedPayload));
+
+    const digest = (path: string) => createHash("sha256").update(readFileSync(path)).digest("hex");
+    const before = digest(exportPath);
+    execFileSync(process.execPath, [
+      "scripts/sync-webflow-photos.mjs",
+      "--file", changedPath,
+      "--room-types", "tests/fixtures/webflow-photo-room-types.json",
+      "--db", exportPath, "--sql-out", sqlPath, "--now", NOW,
+    ], { cwd: new URL("../", import.meta.url).pathname, encoding: "utf8" });
+    assert.equal(digest(exportPath), before, "export stays read-only");
+
+    const sql = readFileSync(sqlPath, "utf8");
+    assert.match(sql, /BEGIN;/);
+    assert.match(sql, /COMMIT;/);
+    assert.match(sql, /published_snapshots/, "snapshot refresh is part of the apply script");
+
+    cpSync(exportPath, applyPath);
+    const applyDb = new DatabaseSync(applyPath);
+    applyDb.exec(sql);
+    const guest = await loadPublishedGalleries(d1Db(applyDb), "urban-cowboy");
+    assert.ok(Object.values(guest).some((gallery) =>
+      gallery.images.includes(changedUrl)), "guest sees the refreshed published URL");
+    applyDb.close();
+    rmSync(dir, { recursive: true, force: true });
+  });
 });
 
 test("live Webflow fetch is paginated and uses the injected fetch function", async () => {
