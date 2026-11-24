@@ -14,11 +14,13 @@ test("travel party demo uses the accessible group, not orphan radio buttons", ()
   assert.match(component, /aria-label="Select your travel party"/);
 });
 
-test("docs tables align left and story blocks keep a 1rem vertical rhythm", () => {
+test("docs tables align left, story blocks keep a 2rem rhythm and share one left edge", () => {
   const css = read("../docs-app/app/globals.css");
   assert.match(css, /\.prose table th[\s\S]*?text-align: left/);
-  assert.match(css, /\.docs-story-frame \{[\s\S]*?gap: 1rem/);
-  assert.match(css, /article#nd-page \.prose\.flex-1 \{[\s\S]*?gap: 1rem/);
+  assert.match(css, /\.docs-story-frame \{[\s\S]*?gap: 2rem/);
+  assert.match(css, /article#nd-page \.prose\.flex-1 \{[\s\S]*?gap: 2rem/);
+  assert.match(css, /article#nd-page \{[\s\S]*?padding-inline: 24px/);
+  assert.match(css, /\.docs-story-frame \{[\s\S]*?padding-block: 24px 48px/);
 });
 
 test("docs export publishes and prefixes root-relative component icons", () => {

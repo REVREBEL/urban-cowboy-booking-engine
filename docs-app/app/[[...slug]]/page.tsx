@@ -13,7 +13,12 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
   const Content = page.data.body;
 
   return (
-    <DocsPage toc={page.data.toc}>
+    <DocsPage
+      toc={page.data.toc}
+      tableOfContent={{ enabled: false }}
+      tableOfContentPopover={{ enabled: true }}
+      full
+    >
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <div className="docs-story-frame">
