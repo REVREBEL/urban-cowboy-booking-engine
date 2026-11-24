@@ -193,9 +193,12 @@ for (const viewport of viewports) {
     report.styles = styles;
     record("table headers align left", styles.tableHeaderAlign === "left",
       `computed text-align: ${styles.tableHeaderAlign}`);
-    record("story frame gap", styles.storyFrameGap === "16px",
+    // docs-app/app/globals.css sets a deliberate 2rem (32px) rhythm between the
+    // demo, its controls and the prose. An earlier 16px expectation predates
+    // that layout change and must not fail a correct deployed build.
+    record("story frame gap", styles.storyFrameGap === "32px",
       `computed gap: ${styles.storyFrameGap}`);
-    record("prose gap", styles.proseGap === "16px",
+    record("prose gap", styles.proseGap === "32px",
       `computed gap: ${styles.proseGap}`);
    } catch (error) {
     record("desktop search/demo interactions", false, String(error).slice(0, 200));
