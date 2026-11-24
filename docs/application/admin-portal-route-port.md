@@ -36,10 +36,11 @@ loaded**. This is UX defence only — the actual write authorization stays at th
 | `/events` | `src/dashboard/EventsCalendarPanel.tsx` | editorial events |
 | `/settings` | `src/dashboard/SiteSettingsPanel.tsx` | COW-68 five published settings |
 
-No panel code was duplicated. `admin-app/lib/dashboard-api.ts` adapts the origin via
-`API_BASE_URL` and keeps the shared `createDashboardApi()` contract, deadlines and typed errors.
-When the API lives on another origin the browser sends credentials; W3 owns the CORS/cookie
-arrangement. With an empty `API_BASE_URL` the app uses relative `/api` paths (same origin).
+No panel code was duplicated. `admin-app/lib/dashboard-api.ts` keeps the shared
+`createDashboardApi()` contract, deadlines and typed errors, and all browser calls use relative
+`/api` paths. `admin-app/app/api/[...path]/route.ts` verifies the Access session and forwards
+allowed dashboard requests to the booking Worker with the verified assertion. `API_BASE_URL`
+stays server-only, so no cross-origin Access cookie or CORS arrangement is required.
 
 The remaining sections are no longer placeholders as of W1.6: `AdminResourcePanel` reads the
 shared D1-backed Worker endpoints (`/api/admin/media`, `/api/content/offers`,
@@ -64,9 +65,12 @@ admin-app/app/(admin)/[section]/page.tsx   route parity + capability gate
 admin-app/components/DashboardPanelHost.tsx reused panels / placeholder state
 admin-app/components/AdminNav.tsx          grouped navigation, real paths
 admin-app/lib/routes.ts                    route ↔ capability map
-admin-app/lib/dashboard-api.ts             API origin adapter
+admin-app/lib/dashboard-api.ts             same-origin dashboard client
+admin-app/lib/api-proxy.ts                 server-side booking API forwarding
+admin-app/app/api/[...path]/route.ts      authenticated proxy route
 src/dashboard/DashboardApp.tsx             D-01 one-line fix
-tests/adminRoutes.test.ts                  5 tests
+tests/adminRoutes.test.ts                  route and panel reuse tests
+tests/adminApiProxy.test.ts                proxy authorization and forwarding tests
 ```
 
 ## 5. Verification evidence (local, 2026-11-23)

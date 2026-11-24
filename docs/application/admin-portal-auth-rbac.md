@@ -68,11 +68,14 @@ cannot grant a role or change scope.
 | `CF_ACCESS_AUD` | Expected Access application AUD |
 | `ADMIN_EMAILS`, `ADMIN_GROUPS` | Admin role allowlists |
 | `TENANT_ID` | Server-side tenant scope (never taken from the request) |
-| `API_BASE_URL` | Shared Worker origin for W1.4 API calls |
+| `API_BASE_URL` | Booking Worker origin used only by the server-side API proxy |
+| `API_REQUEST_TIMEOUT_MS` | Server proxy deadline, default `8000` |
 
-All are read from `process.env` on the server and fail closed when absent. Before a Cloudflare
-deployment, W3 must declare the non-secret values as Worker text bindings; the deploy is not
-part of this issue.
+The Access, role, tenant and API values are required for production. `ADMIN_GROUPS` and
+`API_REQUEST_TIMEOUT_MS` are optional. Missing or malformed required values fail closed.
+`cloudflare.config.ts` declares the nonsecret text bindings, and `npm run admin:deploy` loads
+them through the guarded root deployment wrapper. The booking Worker must use the same Access
+team domain, AUD, admin allowlist and tenant scope.
 
 ## 6. Files
 
@@ -85,6 +88,8 @@ admin-app/components/SignOutButton.tsx        same-origin form POST
 admin-app/app/api/auth/session/route.ts       GET session
 admin-app/app/api/auth/session-response.ts    testable response builder
 admin-app/app/api/auth/logout/route.ts        POST Access logout
+admin-app/app/api/[...path]/route.ts           verified same-origin API proxy
+admin-app/lib/api-proxy.ts                     path, CSRF and assertion forwarding boundary
 admin-app/proxy.ts                            UX redirect + no-store policy
 worker/access.ts                              type-only BufferSource fix for dual tsconfigs
 tests/adminAuth.test.ts                       7 tests
@@ -103,8 +108,21 @@ tests/adminAuth.test.ts                       7 tests
 A real Access JWT against the configured team/JWKS and a deployed preview were not exercised
 here; those require the owner-provided environment described in §5.
 
-## 8. Deferred
+## 8. Same-origin API integration
 
-- W1.4: per-handler capability enforcement on all data APIs, role-aware navigation, and CSRF on
-  every mutation route (not just logout).
-- W3: bind the Access variables and coordinate the app's route/Access policy.
+W1.7 replaced direct browser calls to the booking Worker with a server-side proxy. The browser
+calls relative `/api/*` paths on the admin origin. The catch-all route verifies the Access
+session, requires a same-origin `Origin` for mutations and forwards only dashboard API families.
+It sends the verified assertion to the booking Worker and strips browser cookies, authorization
+and client-supplied assertion headers. Worker authorization remains authoritative.
+
+The production `API_BASE_URL` is pinned to the Urban Cowboy booking Worker origin. Both Workers
+must use the admin Access application's AUD, and the booking Worker must remain outside a
+different Access application. If that changes, replace assertion forwarding with a service
+binding that verifies end-user identity independently. The proxy rejects upstream redirects, so
+an unexpected Access edge fails closed instead of forwarding the assertion elsewhere.
+
+## 9. Deferred
+
+- W3 must deploy matching Access/RBAC/tenant bindings on both Workers and record real Access,
+  browser and D1 publish/rollback evidence for Gate 2.

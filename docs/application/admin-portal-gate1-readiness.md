@@ -49,9 +49,10 @@ routes; the browser client is the shared `createDashboardApi()` with only the or
   `.../venues`, `.../occurrences`.
 - W1 does **not** add direct Webflow writes or duplicate domain logic.
 
-**Origin rule:** empty `API_BASE_URL` → relative `/api` (same-origin); a non-empty value must be
-an absolute `http(s)` origin with no path/query/fragment, and the browser sends credentials.
-Cross-origin cookie/CORS/service-binding routing is a W3 decision (§5).
+**Origin rule:** dashboard panels use relative `/api` paths on the admin origin. The server-side
+proxy uses `API_BASE_URL`, which must be an absolute `http(s)` origin with no
+path/query/fragment, and forwards the verified Access assertion to the booking Worker. Browser
+cookies, authorization headers and client-supplied assertions are not forwarded.
 
 ## 4. Auth contract offered to W2/W3
 
@@ -74,7 +75,7 @@ Cross-origin cookie/CORS/service-binding routing is a W3 decision (§5).
 | # | Decision | Owner | Status |
 | --- | --- | --- | --- |
 | D1 | Deploy `urban-cowboy-admin` to a Cloudflare preview and attach URL | W1 owner / Cloudflare auth | **Open** |
-| D2 | `API_BASE_URL` vs service binding; CORS + Access cookie arrangement for cross-origin panel calls | W3 (runtime config) + W1 | **Open** |
+| D2 | Admin-to-booking API routing | W3 (runtime config) + W1 | **Decided locally 2026-11-24** — same-origin server proxy; deployed verification open |
 | D3 | Bind `CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, `ADMIN_EMAILS`, `ADMIN_GROUPS`, `TENANT_ID` on both Workers; agree AUD | W3 + W1 | **Open** |
 | D4 | Confirm W2 D1 contract version: draft/publish pointers, `409 edit_conflict`, audit, tenant ownership; W1 confirms form compatibility | W2 (COW-100) + W1 | **Open** (peer in Backlog) |
 | D5 | Confirm guest-read/published-snapshot and media-identity contract with W3; no ARI data in D1 | W3 (COW-107) + W2 | **Open** (peer In Review) |

@@ -11,13 +11,11 @@ booking Worker still serves Webflow defaults, and Mews remains the sole ARI/tran
 - Found and corrected an AUD mismatch: the Access application protecting the admin Worker uses
   `4bf8d1515fc028e57532548fc1687b5750d68f534a7d0cee0c1542cdf99a3255`, not the booking Worker's
   `e284cf2d…`. Without this fix every verified JWT would have been rejected.
-- **Cross-origin API blocker:** `createAdminDashboardApi()` sends credentialed browser requests to
-  `API_BASE_URL`. The booking Worker has a different Access AUD and no credentialed CORS/OPTIONS
-  policy, so setting that default would produce panels that cannot read or write data. The default
-  is therefore empty until either (a) a same-origin App Router proxy forwards requests to the
-  booking Worker through a service binding with a valid booking-Access service token, or (b) the
-  narrow cross-origin Access/CORS integration is implemented and tested. A build plus an
-  unauthenticated Access redirect does **not** exercise that connection.
+- **Admin-to-booking API path:** [PR #432](https://github.com/REVREBEL/urban-cowboy-booking-engine/pull/432)
+  implements a same-origin App Router proxy that forwards the verified admin assertion to a pinned
+  booking Worker origin. It is not deployed yet. The booking Worker still uses its previous Access
+  AUD and must be updated to the admin AUD before `API_BASE_URL` can be enabled. Browser CORS is
+  not part of this design.
 - Cloudflare Access is active on `https://urban-cowboy-admin.revrebel.workers.dev`: unauthenticated
   requests (including `/api/health` and `/api/auth/session`) are redirected to the Access login
   flow. That is the expected boundary behavior.
@@ -51,9 +49,9 @@ Webflow and could hide incomplete content.
 
 ## Next steps (owner/W2 data work)
 
-0. Implement and test the authenticated admin→booking API path (same-origin service-binding proxy
-   or scoped cross-origin Access/CORS), including viewer/admin read and mutation requests and
-   denial cases; `API_BASE_URL` stays empty until then.
+0. Deploy the authenticated admin-to-booking API proxy from PR #432 and align the booking
+   Worker's Access AUD, role allowlists and tenant scope with the admin Worker. Then exercise
+   viewer/admin reads, mutations and denial cases; `API_BASE_URL` stays empty until that passes.
 1. Publish the policy content item and refresh the `policyLanguage` snapshot.
 2. Create and publish the nine CMS-shaped `add_on` content revisions plus one
    `add_on_sync/complete` marker (`expectedCount: 9`), then refresh the `addOns` snapshot.
