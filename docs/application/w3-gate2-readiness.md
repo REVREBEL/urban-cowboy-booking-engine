@@ -35,18 +35,42 @@ for each item.
    without regression.
 6. Response headers on content routes show `X-Content-Source: d1`; no
    `webflow-fallback` appears in a healthy soak window.
-7. Browser/network trace shows no `api.webflow.com`, `api-cdn.webflow.com` or
-   Squarespace feed request during a guest session.
+7. **Worker-side egress evidence** (not a browser trace) proves no Webflow
+   runtime calls. Webflow fetches are server-side in `worker/webflow/*`, so a
+   browser network trace cannot detect them. With Workers Logs and Traces
+   enabled (`observability.enabled` and `observability.traces.enabled`), inspect
+   outbound fetch events during the soak window and record zero requests to
+   `api.webflow.com` / `api-cdn.webflow.com`, plus zero `webflow-fallback`
+   `X-Content-Source` responses. A browser trace may supplement this but is not
+   sufficient evidence.
 
 **Mobile** — repeat items 1–6 at a phone viewport, including hotspot placement
 and the numbered-dot control.
 
-**Mews regression** — run the existing smoke scripts
-(`bash scripts/test-mews-booking-api.sh`,
-`bash scripts/test-mews-production.sh` with the registered client) and confirm
-availability, `reservations/price`, `reservationGroups/create`,
-`reservationGroups/get` and payment-link flows are unchanged. Run
-`node --test tests/mewsAriAuthority.test.ts`.
+**Mews ARI smoke (configuration/availability only)** — the existing scripts
+`bash scripts/test-mews-booking-api.sh` and
+`bash scripts/test-mews-production.sh` exercise only `configuration/get` and
+`hotels/getAvailability`. `test-mews-booking-api.sh` defaults to a past window
+(`2026-10-15`/`2026-10-16`), so set `MEWS_TEST_START_UTC` and
+`MEWS_TEST_END_UTC` to a future stay window before running it. These scripts are
+evidence for ARI connectivity only — they do **not** cover the transactional
+operations below and must not be cited as such.
+
+**Mews transactional regression (controlled)** — on a staging deployment with
+Mews test credentials and a future stay window, drive the guest flow through
+quote → reservation creation → status check → payment link and capture:
+
+- Worker logs/traces showing `reservations/price`, `reservationGroups/create`
+  and `reservationGroups/get` with the Mews IDs and response bodies;
+- quote totals and `AmountToChargeOnConfirmation`, reservation group ID, and
+  the hosted payment URL host (`MEWS_APP_BASE_URL`);
+- confirmation that no D1 row, snapshot, cache or admin setting supplied an
+  ARI or quote value (`node --test tests/mewsAriAuthority.test.ts`);
+- a cancellation/cleanup record for any test reservation, so no real booking is
+  left behind.
+
+Record the exact stay window, timestamp and evidence links for each item. Do
+not infer transactional results from the ARI smoke scripts.
 
 **Monitoring/rollback** — confirm alerting on content errors and D1 read
 failures; rehearse the per-collection snapshot rollback and flag fallback on
@@ -76,8 +100,9 @@ be called from a guest request path. `tests/webflowRuntimeBoundary.test.ts`
 enforces that all Webflow host references stay inside the legacy handlers,
 shadow-read and the importer module.
 
-Removal sequence: (1) all relevant flags on `d1` with a clean soak and no
-fallback; (2) live verification evidence recorded; (3) W1/W2 Gate 2 acceptance;
+Removal sequence: (1) all relevant flags on `d1` with a clean soak, no fallback,
+and the Worker-side egress evidence from §2 item 7; (2) the remaining live
+verification evidence recorded; (3) W1/W2 Gate 2 acceptance;
 (4) delete the legacy handlers and route fallbacks; (5) remove env vars/bindings
 from `wrangler.toml` and deployment config; (6) re-run typecheck and the full
 suite. Keep the KV calendar cache — it is advisory and Mews-derived, not Webflow.
