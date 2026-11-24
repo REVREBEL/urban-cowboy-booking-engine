@@ -7,7 +7,7 @@ import { applyPublishedGalleries, loadPublishedGalleries } from "../worker/publi
 import { loadPublishedHotspots } from "../worker/published-hotspots.ts";
 import { buildSnapshot } from "../worker/content-provider.ts";
 import { saveSnapshot } from "../worker/published-snapshots.ts";
-import type { CachedReviewPayload } from "../worker/webflow/room-type-reviews.ts";
+import { onRequestGet as roomTypeReviewsGet, type CachedReviewPayload } from "../worker/webflow/room-type-reviews.ts";
 import type { Env } from "../worker/mews/_lib.ts";
 
 const root = new URL("../", import.meta.url);
@@ -207,6 +207,25 @@ test("draft documents, missing snapshots and disabled flags keep Webflow galleri
     ]);
     const draftOnly = await applyPublishedGalleries(envFor(connection, "d1"), TENANT, original);
     assert.equal(draftOnly.galleries["mews-a"].images[0], "https://webflow/a.jpg");
+  } finally {
+    db.close();
+  }
+});
+
+test("published galleries apply even when no Webflow source is bound", async () => {
+  const db = makeDb();
+  try {
+    await publishRoomGallery(db, [
+      { id: "room-a", mewsId: "mews-a", images: [{ mediaAssetId: "media-1", sourceUrl: OLD_URL }] },
+    ]);
+    publishRoomDocument(db, "room-a");
+    const response = await roomTypeReviewsGet({
+      env: envFor(d1(db) as D1Database, "d1"),
+      waitUntil: () => undefined,
+    });
+    assert.equal(response.status, 200);
+    const body = await response.json() as { galleries: Record<string, { images: string[] }> };
+    assert.deepEqual(body.galleries["mews-a"].images, [OLD_URL]);
   } finally {
     db.close();
   }

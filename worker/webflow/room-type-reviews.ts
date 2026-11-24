@@ -406,7 +406,12 @@ export async function onRequestGet({
   const collectionId = env.WEBFLOW_ROOM_TYPE_COLLECTION_ID;
 
   if (!env.WEBFLOW_CMS_API_TOKEN || !collectionId) {
-    return json({ reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {}, generatedAt: null, stale: false }, 200, "no-store");
+    // No Webflow source is available (e.g. a D1-only preview). Published D1
+    // overlays must still be applied or a migrated room would render no photos.
+    return await response(env, {
+      fetchedAt: Date.now(),
+      reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {},
+    }, false);
   }
 
   const cached = await readCachedReviews(env, cacheKey(collectionId, env.WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID || ""));
