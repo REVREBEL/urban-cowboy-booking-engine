@@ -23,6 +23,7 @@ The goal is to preserve not only what the application does, but why particular i
 - [Mews ARI Authority Matrix (COW-105)](./mews-authority-matrix.md) — authoritative operations, prohibited sources, D1 reference-data allowlist, guardrails shared with W1/W2, and the tests enforcing each boundary.
 - [Gate 1 Integration Contract v1.0 (COW-107)](./gate1-integration-contract.md) — proposed shared W1/W2/W3 contract: authority matrix, guest envelopes, publication semantics, media identity, acceptance checklist and open decisions.
 - [W3 Cutover Runbook (COW-108)](./w3-cutover-runbook.md) — flag inventory and defaults, parity/migration prerequisites, temporary Webflow photo URL handling, flip order, post-flip verification and rollback.
+- [W3 cutover progress](./w3-cutover-progress.md) — deployed admin bindings, D1 readiness gaps and the data prerequisites before any content flag flip.
 - [W3 Gate 2 Readiness (COW-111)](./w3-gate2-readiness.md) — W3 deliverable status, live desktop/mobile and Mews verification checklist, Webflow runtime retirement inventory and removal sequence, and peer acceptance requirements.
 - [CMS-Driven Booking Footer](./cms-booking-footer.md) — Mews-property-to-Webflow-Location binding, dynamic location/copyright copy, optional legal links, and footer cache behavior.
 

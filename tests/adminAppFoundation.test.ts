@@ -96,7 +96,7 @@ test("Cloudflare worker config stays cache-free and keeps proxy ahead of assets"
     "API_BASE_URL",
     "API_REQUEST_TIMEOUT_MS",
   ]) {
-    assert.ok(config.includes(`textBinding("${name}")`), `${name} is a deployable text binding`);
+    assert.match(config, new RegExp(`${name}: textBinding\\("${name}"`), `${name} is a deployable text binding`);
   }
   assert.doesNotMatch(config, /bindings\.secret\(/);
   const deploy = read("scripts/deploy-admin.mjs");
