@@ -74,6 +74,8 @@ PRAGMA foreign_key_check;                                -- must be empty
 
 No orphan media, placements, hotspots or references are acceptable. Import retry and source failure must preserve existing published content: the seed uses upserts, publication rows are editor-owned (`state_source='editor'` is never overwritten), the importer emits no `DELETE`, and a failed atomic import never repoints a snapshot.
 
+The atomicity guarantee is Cloudflare D1's batch semantics: batched statements are SQL transactions and a failed statement aborts and rolls back the whole sequence (Cloudflare D1 docs, `D1Database.batch`). `applyBatch()` additionally fails closed when the API returns HTTP 200 with no or fewer results than submitted statements, so a partial response is never reported as success. This guarantee applies to the `--api-apply` batch path only; the SQL-file path is for small review fixtures, not production-scale snapshots.
+
 ## Selective Mews reference sync
 
 `mews_reference_sync` accepts only `hotel`, `rate_group`, `product`, `room_category` and `age_category`, pinned to `source_system='mews'` with sync/reconciliation timestamps. No ARI reference type may be added without a new contract version. Nothing is populated here by default.

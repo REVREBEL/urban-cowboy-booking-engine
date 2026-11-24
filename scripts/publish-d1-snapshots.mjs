@@ -55,8 +55,11 @@ function d1Like(db) {
 
 async function main() {
   const tenantId = argValue("--tenant") ?? process.env.TENANT_ID ?? "urban-cowboy";
+  const apiApply = process.argv.includes("--api-apply");
   const out = argValue("--out");
-  if (!out) throw new Error("--out <file.sql> is required");
+  // The supported production path applies a parameterized batch and does not
+  // write a SQL file; --out is required only for the reviewable file mode.
+  if (!apiApply && !out) throw new Error("--out <file.sql> is required (or use --api-apply)");
   const db = openExport(argValue("--db"));
   const api = d1Like(db);
   const statements = [];
@@ -91,7 +94,7 @@ async function main() {
     console.log(`  ${collection}: ${records.length} items -> ${built.version.slice(0, 12)}`);
   }
 
-  if (argv.includes("--api-apply")) {
+  if (apiApply) {
     if (!statements.length) {
       console.log("all snapshots are already current; nothing applied");
     } else {
