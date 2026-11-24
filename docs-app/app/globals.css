@@ -72,7 +72,11 @@
   /* Fumadocs sets a mobile 0px width on this element with a utility class. */
   #nd-docs-layout {
     --fd-sidebar-width: 268px;
-    --fd-toc-width: 260px;
+    /* The side rail is gone; do not reserve a column for it. */
+    --fd-toc-width: 0px;
+    /* Let the main grid track grow with the window instead of stopping at
+       Fumadocs' default 97rem. The 6rem reserve keeps a small gutter each side. */
+    --fd-layout-width: calc(100vw - 6rem);
   }
 }
 
@@ -122,9 +126,13 @@ article#nd-page {
   #nd-docs-layout main[grid-area="main"] {
     max-width: none;
   }
+  article#nd-page {
+    max-width: none;
+  }
   .docs-story-frame {
     max-width: none;
   }
+  /* Prose stays readable; demos use the full expanded column. */
   article#nd-page .prose.flex-1 {
     max-width: 90ch;
   }
