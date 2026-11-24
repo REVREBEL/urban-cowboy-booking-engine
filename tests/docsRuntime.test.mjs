@@ -173,6 +173,52 @@ test("COW-85 inline mask URLs are base-path prefixed and their assets are copied
   }
 });
 
+test("main column fills the removed TOC space without horizontal overflow", async () => {
+  const server = await serve();
+  const browser = await chromium.launch();
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    const origin = `http://127.0.0.1:${address.port}`;
+    for (const width of [375, 767, 768, 1433, 1599, 1600, 2400]) {
+      const page = await browser.newPage({ viewport: { width, height: 900 } });
+      await page.goto(`${origin}${basePath}/components/arrival/`, { waitUntil: "networkidle" });
+      const layout = await page.evaluate(() => {
+        const grid = document.querySelector("#nd-docs-layout");
+        const main = document.querySelector("main[data-layout-main]");
+        const frame = document.querySelector(".docs-story-frame");
+        const article = document.querySelector("article#nd-page");
+        return {
+          gridWidth: Math.round(grid.getBoundingClientRect().width),
+          tocColumn: getComputedStyle(grid).getPropertyValue("--fd-toc-width").trim(),
+          mainWidth: Math.round(main.getBoundingClientRect().width),
+          articleWidth: Math.round(article.getBoundingClientRect().width),
+          frameWidth: Math.round(frame.getBoundingClientRect().width),
+          scrollWidth: document.documentElement.scrollWidth,
+          sidebar: !!document.querySelector("aside")?.getClientRects().length,
+          tocTrigger: !!document.querySelector("[data-toc-popover-trigger]")?.getClientRects().length,
+        };
+      });
+      assert.equal(layout.tocColumn, "0px", `${width}px: no TOC grid column`);
+      assert.ok(layout.scrollWidth <= width + 1, `${width}px: no horizontal overflow`);
+      assert.ok(layout.frameWidth > 0 && layout.frameWidth <= layout.mainWidth,
+        `${width}px: frame fits within the main column`);
+      if (width >= 768) {
+        assert.ok(layout.sidebar, `${width}px: sidebar available`);
+        assert.ok(layout.tocTrigger, `${width}px: TOC popover available`);
+      }
+      if (width >= 1600) {
+        assert.ok(layout.mainWidth > 1200, `${width}px: main track expanded (${layout.mainWidth}px)`);
+        assert.ok(layout.frameWidth > 1100, `${width}px: frame expanded (${layout.frameWidth}px)`);
+      }
+      await page.close();
+    }
+  } finally {
+    await browser.close();
+    await new Promise((done) => server.close(done));
+  }
+});
+
 test("TOC popover stays available at desktop and mobile without the side rail", async () => {
   const server = await serve();
   const browser = await chromium.launch();

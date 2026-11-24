@@ -1,9 +1,36 @@
 # COW-111 W3 Gate 2 readiness — live verification and Webflow retirement
 
 This is the W3-side preparation for Sync Gate 2. It is **not** a gate completion:
-W1.7 (COW-95) and W2.7 (COW-102) are still open, live deployed evidence has not
-been recorded, and no Webflow runtime dependency has been removed here. Nothing
-in this document authorizes a flag flip or a production change by itself.
+W1.7 (COW-95) is still open, live booking/checkout evidence has not been
+recorded, and no Webflow runtime dependency has been removed here. W2.7
+(COW-102) is closed. Nothing in this document authorizes a flag flip or a
+production change by itself.
+
+## 0. Deployed-state snapshot — 2026-11-24 15:42 UTC
+
+Read-only Cloudflare API and HTTPS checks are recorded in
+[`docs/generated/w3-gate2-deployed-state-2026-11-24.json`](../generated/w3-gate2-deployed-state-2026-11-24.json).
+No deployment, binding edit or flag change was performed.
+
+| Surface | Deployed state | Gate 2 impact |
+| --- | --- | --- |
+| Booking Worker | `urban-cowboy-booking-engine.revrebel.workers.dev`, version `0a7aef11…`, deployed 15:39 UTC; logs/traces/issues enabled | Live URL exists, but the version has **none** of the five content-source flags and **none** of the Webflow site/collection/item IDs. D1 is bound. |
+| Guest content endpoints | `site-settings` returns defaults with `X-Content-Source: webflow`; policy, add-ons, rooms, locations, buildings and rate cards return empty payloads | This is not D1 cutover evidence. Missing Webflow IDs mean the legacy reads are empty/default; missing flags keep the safe Webflow path. |
+| Admin Worker | `urban-cowboy-admin.revrebel.workers.dev`, version `84daddb3…`, deployed 15:25 UTC; Cloudflare Access redirects unauthenticated requests | The Worker exists and is protected, but has only `ASSETS`. No booking API/service-binding path, Access claims configuration or tenant binding is present, so publish/rollback E2E is not possible yet. A direct D1 binding is optional unless a server-side D1 data path is introduced. |
+| Peer gates | W1.7 open; W2.7 closed; W3.7 open | Joint Gate 2 cannot close. |
+
+**Immediate blockers before live acceptance:**
+
+1. Deploy the booking Worker with the required Webflow IDs for baseline parity, or with reviewed D1 flags after parity/soak. The current empty/default guest payloads are not an accepted baseline. The deployment script now rejects missing/placeholder Webflow IDs and non-`webflow` baseline flags; the real `WEBFLOW_LOCATION_COLLECTION_ID` and a complete shared `.env` are still required.
+2. Deploy the admin Worker with the agreed booking API/service-binding path plus Access/tenant configuration. A direct D1 binding is optional unless a server-side D1 data path is introduced; the current panels call the shared Worker API.
+3. Record authenticated admin publish/rollback evidence and desktop/mobile guest-flow evidence against the deployed URLs.
+4. Complete controlled Mews quote → reservation → payment regression with test credentials and cleanup evidence.
+
+**Prepared baseline guard:** `scripts/deploy-worker.mjs` now requires every Webflow
+site/collection/item ID, validates 24-character Webflow ID shape, and requires
+all six source flags to be explicitly `webflow`. Regression tests cover missing
+IDs, placeholders and attempted D1 cutover. `npm run deploy:check` passes with a
+synthetic complete environment; no remote deployment is performed by the guard.
 
 ## 1. W3 deliverable status
 
@@ -110,8 +137,55 @@ suite. Keep the KV calendar cache — it is advisory and Mews-derived, not Webfl
 ## 4. Peer dependencies and closeout
 
 - W1 (COW-95) must confirm the production Admin Portal can manage/publish the
-  content.
-- W2 (COW-102) must confirm D1 parity and media integrity.
+  content. The admin Worker is now deployed and Access-protected, but its
+  booking API/auth bindings are still missing (§0); direct D1 access is not a
+  requirement unless a server-side D1 path is added.
+- W2 (COW-102) is closed and has recorded D1 parity/media integrity evidence.
 - All three Gate 2 issues must be complete before final migration closeout.
 - Record evidence (deployed URL, viewport, timestamp, result, screenshot/log
   link) directly on COW-111; a local test run is not deployed evidence.
+
+## 5. D1-mode preview rehearsal — 2026-11-24
+
+A non-production preview of the deployed booking Worker was created with the same
+script and bindings plus all content flags set to `d1`:
+
+- Preview: `cow-111-d1-rehearsal`, deployment `225c60db-5a45-4a3e-b0b6-53756b0d3621`
+- URL: `https://225c60db-urban-cowboy-booking-engine.revrebel.workers.dev`
+- Bindings: production D1 database, `CALENDAR_CACHE` KV, Mews plain-text config,
+  and `CONTENT_SOURCE_POLICY_LANGUAGE`, `CONTENT_SOURCE_SITE_SETTINGS`,
+  `CONTENT_SOURCE_ADD_ONS`, `CONTENT_SOURCE_ROOM_GALLERIES`, `PHOTO_HOTSPOT_SOURCE`
+  all set to `d1`. No production flag or deployment was changed. The preview
+  reuses the production D1, KV and Mews bindings, so it is suitable for read-path
+  checks only, not isolated write-path or transactional testing.
+
+Observed (2026-11-24, HTTP):
+
+| Check | Result |
+| --- | --- |
+| `GET /api/content/site-settings` | `X-Content-Source: d1`, `{"productionLayout":"photo",...}` — published D1 config selects the Photo Journey |
+| `GET /api/content/policy-language` | `X-Content-Source: webflow-fallback`, empty language — D1 `policy` item is **draft**, so published-only reads correctly refuse it |
+| `GET /api/content/add-ons` | `X-Content-Source: webflow-fallback`, empty list — no published `add_on_sync/complete` cutover marker exists |
+| `GET /api/content/room-type-reviews` | Empty galleries/hotspots — no room has a published `room_gallery` document, so Webflow is preserved; preview has no Webflow bindings, hence the empty payload |
+| `POST /api/mews/availability` (future window, property `hotel`) | 200 with 2 rate groups, 3 rates, 14 room availabilities — ARI still comes directly from Mews |
+| Production `urban-cowboy-booking-engine` Worker | No content flags bound; `/api/content/site-settings` reports `X-Content-Source: webflow`, live layout Card |
+
+Direct D1 inspection (production database) confirmed 10 published snapshot
+pointers including `roomGallery`, 9 published `add_ons`, 156 gallery placements,
+but `content_items` contains only `site_settings` (published), `outlet`,
+`instagram` and one **draft** `policy` row — no `add_on` or `room_gallery`
+publication documents.
+
+**Conclusion:** the specific checks above show published-only reads refusing a
+draft policy row, an absent add-ons marker falling back, and availability coming
+directly from Mews. They do **not** establish D1-mode safety generally: the
+observed fallbacks returned empty guest content, and the preview shares the
+production D1, KV and Mews bindings, so it is not an isolated environment for
+write-path testing. No asset/browser Photo Journey check or controlled booking
+transaction was performed. A production cutover is therefore **not ready**.
+Before COW-111 can be
+accepted: publish the policy content and an add-ons cutover marker, publish
+per-room gallery documents, provision a preview with static assets for full
+desktop/mobile Photo Journey verification, obtain W1's deployed admin
+confirmation, and then flip production flags as a reviewed deployment. The
+preview remains evidence only — it is not production acceptance.

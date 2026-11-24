@@ -2,8 +2,8 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 60,
-    "planned": 76,
+    "documented": 68,
+    "planned": 68,
     "excluded": 6,
     "undocumentedProductionCandidates": 41,
     "candidateTriage": {
@@ -794,8 +794,8 @@
         "DepositWithoutTimeline",
         "PolicyTimeline"
       ],
-      "status": "planned",
-      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "OutfitOffersCard",
@@ -819,8 +819,8 @@
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Planned: rate presentation variant needs a live Mews-pricing fixture before its behavior can be shown safely; the Rate offers page documents the shared rate-card API."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "PlanAheadOffersCard",
@@ -1022,8 +1022,8 @@
         "SingleRoomAvailable",
         "EmptyRoomList"
       ],
-      "status": "planned",
-      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "BuildingIcon",
@@ -1131,14 +1131,14 @@
         "QuoteOnly",
         "WithAttributionNoLink"
       ],
-      "status": "planned",
-      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "MultiRoomViewBuilding",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/MultiRoomViewBuilding.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-building.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view.mdx",
       "demos": 8,
       "demoExports": [
         "Row",
@@ -1150,47 +1150,47 @@
         "StackedLeft",
         "StackedLeftWithIcon"
       ],
-      "status": "planned",
-      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "MultiRoomViewList",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/MultiRoomViewList.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-list.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view.mdx",
       "demos": 1,
       "demoExports": [
         "FigmaReference"
       ],
-      "status": "planned",
-      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "MultiRoomViewListItem",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/MultiRoomViewListItem.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-list-item.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view.mdx",
       "demos": 3,
       "demoExports": [
         "Default",
         "Row",
         "RowReverse"
       ],
-      "status": "planned",
-      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "MultiRoomViewRoomTypeCard",
       "category": "Rooms",
       "storySource": "src/stories/components/rooms/MultiRoomViewRoomTypeCard.stories.tsx",
-      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view-room-type-card.mdx",
+      "docsPage": "docs-app/content/docs/components/rooms/multi-room-view.mdx",
       "demos": 2,
       "demoExports": [
         "Default",
         "Focus"
       ],
-      "status": "planned",
-      "note": "Planned: room presentation variant needs a side-effect-free room fixture; the Rooms family pages document the shared room-card and amenity APIs."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "RoomDetailModal",
