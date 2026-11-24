@@ -1,5 +1,6 @@
 import { assertionFromHeaders, isSameOriginMutation } from "./auth.ts";
 import { getAdminRuntimeConfig } from "./env.ts";
+import { isLocalPreviewEnabled } from "./preview-auth.ts";
 
 const ALLOWED_PREFIXES = ["/api/admin/", "/api/content/", "/api/d1/", "/api/analytics/"] as const;
 const ALLOWED_EXACT_PATHS = new Set(["/api/recovery"]);
@@ -83,6 +84,22 @@ export async function proxyDashboardRequest(
   assertion: string,
   options: AdminProxyOptions = {},
 ): Promise<Response> {
+  // Local UI preview never reaches the booking Worker: reads return an empty
+  // fixture and mutations are refused. No assertion or browser credential is
+  // forwarded, so local iteration cannot mutate production D1 data.
+  if (isLocalPreviewEnabled()) {
+    if (request.method !== "GET" && request.method !== "HEAD") {
+      return jsonError(403, "preview_read_only");
+    }
+    return new Response(JSON.stringify({ items: [], preview: true }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, private",
+      },
+    });
+  }
+
   if (!ALLOWED_METHODS.has(request.method)) {
     return jsonError(405, "method_not_allowed", { Allow: [...ALLOWED_METHODS].join(", ") });
   }

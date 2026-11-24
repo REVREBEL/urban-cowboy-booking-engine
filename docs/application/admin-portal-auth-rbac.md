@@ -60,6 +60,10 @@ cannot grant a role or change scope.
 - W1.4 will repeat `can(session, capability)` and same-origin checks inside every data-mutating
   App Router handler; UI hiding is never the authorization boundary.
 
+## 4a. Local UI preview (COW-114)
+
+`admin-app/lib/preview-auth.ts` provides an explicit local-development-only simulated administrator. It activates only with `ADMIN_LOCAL_PREVIEW=1` **and** a local dev runtime (Vite `DEV` or `NODE_ENV=development`); production and deployed preview builds fail closed even if the flag is present. The mock identity is returned centrally by `lib/session.ts`, so no screen bypasses capability checks, and it is never a signed Access assertion. In preview mode the same-origin API proxy returns empty read fixtures and refuses mutations, so the booking Worker and production D1 are never contacted. With preview disabled the Access challenge path is unchanged. See `admin-app/README.md` for the command and `tests/adminPreviewAuth.test.ts` for opt-in, default-disabled, nonlocal fail-closed and production-parity coverage.
+
 ## 5. Environment contract
 
 | Name | Purpose |

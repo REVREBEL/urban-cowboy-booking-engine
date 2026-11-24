@@ -13,7 +13,19 @@ npm run admin:typecheck
 npm run admin:deploy:check
 ```
 
-`admin:dev` uses the Cloudflare Vite plugin. Put local nonsecret values in `admin-app/.dev.vars`; the app fails closed when Access or API configuration is missing.
+`admin:dev` uses the Cloudflare Vite plugin. Put local nonsecret values in `admin-app/.dev.vars` (see `.dev.vars.example`); the app fails closed when Access or API configuration is missing.
+
+## Local authentication preview (COW-114)
+
+To iterate on protected UI without a Cloudflare Access login, copy `.dev.vars.example` to `.dev.vars` (or export `ADMIN_LOCAL_PREVIEW=1`) and run the dev server:
+
+```bash
+cd admin-app && ADMIN_LOCAL_PREVIEW=1 npx vite dev --port 5174 --strictPort
+```
+
+Open `http://localhost:5174/`. The shell renders with a deterministic simulated administrator (`local-preview@invalid.local`), every protected navigation route is visible, and `/` no longer redirects to `/login`. Preview is enabled **only** when `ADMIN_LOCAL_PREVIEW=1` and the runtime is local development (Vite `DEV` or `NODE_ENV=development`). Production and deployed preview builds cannot activate it: the deployment wrapper does not supply the flag, and `isLocalPreviewEnabled()` fails closed in a production runtime. With preview disabled, the existing Access challenge behavior is unchanged.
+
+The mock identity is centralized in `lib/preview-auth.ts` and returned by `lib/session.ts`; individual screens do not bypass authorization. It is never a signed Access assertion and is never forwarded to the booking Worker. In preview mode the same-origin API proxy returns empty local fixtures for reads (`{ "items": [], "preview": true }`) and refuses mutations with `403 preview_read_only`; no production D1 data can be read or mutated. Real Access verification, roles and tenant enforcement remain in force in every nonlocal environment.
 
 ## API boundary
 

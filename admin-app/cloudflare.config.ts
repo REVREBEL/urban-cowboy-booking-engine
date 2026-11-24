@@ -31,6 +31,10 @@ export default defineConfig({
       // this origin, so the booking Worker must use the same Access AUD.
       API_BASE_URL: textBinding("API_BASE_URL"),
       API_REQUEST_TIMEOUT_MS: textBinding("API_REQUEST_TIMEOUT_MS"),
+      // Declared so local dev can expose the opt-in flag at runtime. The
+      // deployment wrapper never supplies it, and preview-auth additionally
+      // requires a non-production runtime before it can take effect.
+      ADMIN_LOCAL_PREVIEW: bindings.text(process.env.ADMIN_LOCAL_PREVIEW === "1" ? "1" : ""),
     },
   }),
 });
