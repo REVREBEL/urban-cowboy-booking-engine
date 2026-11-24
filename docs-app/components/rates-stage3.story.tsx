@@ -20,6 +20,9 @@ const timeline = buildCancellationTimeline("2026-11-20", SAMPLE_DATE, 285.60, {
 });
 
 // Figma Rate Components
+// Timeline free cancellation: 14 days before 2027-01-13 = 2026-12-30
+const FREE_CANCEL_DATE = "December 30";
+
 function FigmaRateCardDemo({ variant = "default" }: { variant?: "default" | "member" | "package" }) {
   return (
     <div className="w-full max-w-[523px] mx-auto rounded-xl bg-smoke p-4 sm:p-6">
@@ -27,7 +30,7 @@ function FigmaRateCardDemo({ variant = "default" }: { variant?: "default" | "mem
         eyebrow={variant === "member" ? "Member Exclusive" : "Keep Your Options Open"}
         name={variant === "member" ? "Member Rate" : variant === "package" ? "Cowboy Package" : "Ride Easy"}
         description="Our standard rate for guests who want a little more freedom around their plans."
-        policy="Free Cancellation Until December 31"
+        policy={`Free Cancellation Until ${FREE_CANCEL_DATE}`}
         roomSummary="Alpine Bathing Suite, 1 night for 2 Adults"
         total={285.60}
         currency="USD"

@@ -245,14 +245,24 @@ const mockRooms: ShapedRoom[] = [
 ];
 
 // Room type card data for MultiRoomViewListItem
-const makeRoomTypeCardData = (room: ShapedRoom, index: number) => ({
-  id: `card-${room.roomTypeId}-${index}`,
-  buildingName: room.merchandising?.roomTypeGroupKey === "alpine" ? "Alpine" : "Walden",
-  numberOfBeds: `${room.normalBedCount + room.extraBedCount} beds`,
-  price: `$${Math.round((room.rates?.[0]?.perNightGross ?? 0) / 100)}`,
-  roomTypeName: room.name,
-  state: (index === 0 ? "Focus" : "Default") as "Focus" | "Default",
-});
+const makeRoomTypeCardData = (room: ShapedRoom, index: number) => {
+  const perNightGross = room.rates?.[0]?.perNightGross ?? 0;
+  // Fixture assertion: verify expected price labels
+  if (room.roomTypeId === "alpine-bathing-suite") {
+    if (perNightGross !== 425) throw new Error(`Expected Alpine rate 425, got ${perNightGross}`);
+  }
+  if (room.roomTypeId === "walden-king") {
+    if (perNightGross !== 395) throw new Error(`Expected Walden rate 395, got ${perNightGross}`);
+  }
+  return {
+    id: `card-${room.roomTypeId}-${index}`,
+    buildingName: room.merchandising?.roomTypeGroupKey === "alpine" ? "Alpine" : "Walden",
+    numberOfBeds: `${room.normalBedCount + room.extraBedCount} beds`,
+    price: `$${perNightGross}`,
+    roomTypeName: room.name,
+    state: (index === 0 ? "Focus" : "Default") as "Focus" | "Default",
+  };
+};
 
 // BuildingExperienceList
 function BuildingExperienceListDemo() {
