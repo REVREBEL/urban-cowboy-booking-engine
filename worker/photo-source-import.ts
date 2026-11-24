@@ -112,7 +112,7 @@ async function loadState(db: D1Like, tenantId: string) {
   const assetRows = await db.prepare(
     "SELECT id, squarespace_url AS url FROM media_assets WHERE tenant_id = ?1",
   ).bind(tenantId).all<{ id: string; url: string | null }>();
-  const versionRows = await db.prepare(
+  const metadataRows = await db.prepare(
     "SELECT media_asset_id, current_version_id FROM media_asset_metadata WHERE tenant_id = ?1",
   ).bind(tenantId).all<{ media_asset_id: string; current_version_id: string | null }>();
   const roomRows = await db.prepare(
@@ -123,7 +123,7 @@ async function loadState(db: D1Like, tenantId: string) {
       `${row.alias_type}|${row.alias_value}`, row.media_asset_id,
     ])),
     assets: new Map(assetRows.results.map((row) => [row.id, row.url ?? ""])),
-    currentVersions: new Map(versionRows.results.map((row) => [
+    currentVersions: new Map(metadataRows.results.map((row) => [
       row.media_asset_id, row.current_version_id,
     ])),
     roomTypes: new Set(roomRows.results.map((row) => row.id)),
@@ -150,7 +150,6 @@ function assetStatements(
   photo: SourcePhoto,
   mediaId: string,
   isNew: boolean,
-  urlChanged: boolean,
   currentVersionId: string | null,
 ): SqlStatement[] {
   const now = input.now ?? "";
@@ -164,8 +163,8 @@ function assetStatements(
             VALUES (?1, ?2, ?3, 'image', ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10)
             ON CONFLICT(id) DO UPDATE SET
               squarespace_url = excluded.squarespace_url,
-              width = excluded.width,
-              height = excluded.height,
+              width = COALESCE(excluded.width, media_assets.width),
+              height = COALESCE(excluded.height, media_assets.height),
               alt_text = COALESCE(media_assets.alt_text, excluded.alt_text),
               updated_at = excluded.updated_at`,
       params: [mediaId, input.tenantId, input.locationId, filename, sourceAssetId, photo.url,
@@ -173,19 +172,10 @@ function assetStatements(
     },
   ];
   // An existing registry asset may have an arbitrary v1 primary key and a
-  // newer current version (a replacement/hotspot revision). Never invent a
-  // version row or rewind current_version_id. For an importer-managed asset
-  // whose current version is still the original `:v1`, update that version's
-  // mutable URL/dimensions in place so the published gallery read (which
-  // resolves COALESCE(version.url, asset.url)) sees the new delivery URL.
-  if (!isNew && urlChanged && currentVersionId === `${mediaId}:v1`) {
-    statements.push({
-      sql: `UPDATE media_versions
-               SET squarespace_url = ?1, width = ?2, height = ?3
-             WHERE id = ?4 AND media_asset_id = ?5`,
-      params: [photo.url, photo.width, photo.height, currentVersionId, mediaId],
-    });
-  }
+  // newer current version (a replacement/hotspot revision). A URL-only import
+  // must not invent a version row or rewind current_version_id. It updates the
+  // mutable URL/dimension fields on the *current* version in place, which is
+  // what the published gallery read resolves (COALESCE(v.url, a.url)).
   if (isNew) {
     statements.push({
       sql: `INSERT INTO media_versions
@@ -199,6 +189,15 @@ function assetStatements(
               (media_asset_id, tenant_id, current_version_id, created_at, updated_at)
             VALUES (?1, ?2, ?3, ?4, ?4)`,
       params: [mediaId, input.tenantId, `${mediaId}:v1`, now],
+    });
+  } else if (currentVersionId) {
+    statements.push({
+      sql: `UPDATE media_versions
+               SET squarespace_url = ?2,
+                   width = COALESCE(?3, width),
+                   height = COALESCE(?4, height)
+             WHERE id = ?1 AND media_asset_id = ?5`,
+      params: [currentVersionId, photo.url, photo.width, photo.height, mediaId],
     });
   }
   for (const alias of photo.aliases) {
@@ -276,7 +275,7 @@ export async function planPhotoImport(
       createdInPlan.add(mediaId);
     }
     statements.push(...assetStatements(
-      input, photo, mediaId, !exists, urlChanged, state.currentVersions.get(mediaId) ?? null,
+      input, photo, mediaId, !exists, state.currentVersions.get(mediaId) ?? null,
     ));
 
     const existing = await existingPlacements(db, input.tenantId, photo.roomTypeRef);

@@ -39,8 +39,10 @@ There is deliberately **no** ARI/rate source flag. See the
    whose `expectedCount` matches the published `add_on` items. Galleries require
    a published `room_gallery` document per room; unmigrated rooms keep Webflow.
 4. **Snapshots refreshed**: room galleries, amenities and policy content are read
-   from immutable published snapshots. A refresh is triggered by editor publish
-   but **not** by the offline photo importer — see §3.
+   from immutable published snapshots. A refresh is triggered by editor publish,
+   and the W2 photo importer appends its `roomGallery` refresh to the same SQL
+   transaction — see §3. Verify the pointer/version actually changed before
+   enabling a flag.
 5. **Rollback tested**: a collection-scoped snapshot rollback repoints only the
    named collection; verify it on staging before each flip (see §6).
 
@@ -77,21 +79,25 @@ and `PHOTO_HOTSPOT_SOURCE` accept only `webflow` (default) or `d1`; there is no
 ## 3. Temporary Webflow photo URLs (W2 importer → guest reads)
 
 The W2 importer (`scripts/sync-webflow-photos.mjs`) stores URL references only:
-a neutral `mm-` master ID, stable `media_aliases`, a mutable version URL and one
-placement per room. Hotspot mappings reference the media/placement IDs, so a
-URL-only change or provider switch preserves identity and geometry.
+a neutral `mm-` master ID, stable `media_aliases`, a mutable current-version URL
+and one placement per room. Hotspot mappings reference the media/placement IDs,
+so a URL-only change or provider switch preserves identity and geometry.
 
 Sequence for a photo URL change:
 
-1. Run the importer with `--sql-out`, review the script (no `DELETE` statements),
-   then apply it to D1.
-2. **Refresh the published snapshots** — the importer does not do this:
-   `POST /api/content/snapshots` with `{"collection":"roomGallery"}` (admin).
-   Without this step guests keep seeing the old published URL.
+1. Run the importer with `--sql-out` and review the generated script. It must
+   contain no `DELETE` statements and must include the `roomGallery` snapshot
+   refresh statements (`published_snapshots` insert plus `snapshot_pointers`
+   update) appended to the import transaction.
+2. Apply the script to D1. If applying through a different path that omits the
+   refresh, send `POST /api/content/snapshots` with
+   `{"collection":"roomGallery"}` (admin) explicitly. Without a refresh guests
+   keep seeing the old published URL.
 3. Verify guest resolution:
-   `node --test tests/cutoverPhotoResolution.test.ts` (temporary URL appears in
-   the gallery, hotspot keys join on the same 24-hex file ID, and a URL-only
-   reimport keeps master/version/placement IDs and hotspot geometry).
+   `node --test tests/cutoverPhotoResolution.test.ts tests/webflowPhotoImport.test.ts`
+   (temporary URL appears in the gallery; hotspot keys join on the same 24-hex
+   file ID; a URL-only reimport keeps master/version/placement IDs and hotspot
+   geometry; and the real CLI apply script refreshes the published snapshot).
 4. Enable `CONTENT_SOURCE_ROOM_GALLERIES=d1` only after the published snapshot
    contains the new URLs and parity is accepted.
 

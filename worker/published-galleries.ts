@@ -16,7 +16,8 @@ import type { Env } from "./mews/_lib.ts";
 import type { CachedReviewPayload } from "./webflow/room-type-reviews.ts";
 import type { RoomTypeCmsGalleryMap } from "../src/types/room-type-cms.ts";
 import { listPublishedRoomGallerySlugs } from "./d1.ts";
-import { getSnapshot } from "./published-snapshots.ts";
+import { buildSnapshot, type PublishedRecord } from "./content-provider.ts";
+import { getSnapshot, saveSnapshot } from "./published-snapshots.ts";
 
 interface SnapshotGalleryItem {
   mediaAssetId?: unknown;
@@ -63,6 +64,63 @@ export async function loadPublishedGalleries(
     galleries[mewsId] = { roomTypeId: mewsId, images };
   }
   return galleries;
+}
+
+/**
+ * Publication-safety refresh after an importer changes a delivery URL.
+ *
+ * The published `roomGallery` snapshot is immutable and is what guests read, so
+ * a URL-only registry update would otherwise leave old URLs in the guest view.
+ * This rebuilds a new content-addressed version from the snapshot's own records,
+ * changing only `sourceUrl` for the affected media IDs. Working revisions and
+ * unpublished editor drafts are never read or modified; the previous snapshot
+ * version stays available for rollback.
+ */
+export async function refreshPublishedGalleryUrls(
+  db: D1Database,
+  tenantId: string,
+  changedMediaIds: ReadonlySet<string>,
+): Promise<{ refreshed: boolean; version: string | null }> {
+  if (!changedMediaIds.size) return { refreshed: false, version: null };
+  const snapshot = await getSnapshot(db, { tenantId }, "roomGallery");
+  if (!snapshot) return { refreshed: false, version: null };
+
+  let payload: { items?: PublishedRecord[] };
+  try {
+    payload = JSON.parse(snapshot.payloadJson) as { items?: PublishedRecord[] };
+  } catch {
+    return { refreshed: false, version: snapshot.version };
+  }
+  const records = Array.isArray(payload.items) ? payload.items : [];
+
+  const { results } = await db.prepare(
+    `SELECT a.id AS id, COALESCE(v.squarespace_url, a.squarespace_url) AS source_url
+       FROM media_assets a
+       LEFT JOIN media_asset_metadata md
+         ON md.media_asset_id = a.id AND md.tenant_id = a.tenant_id
+       LEFT JOIN media_versions v ON v.id = md.current_version_id
+      WHERE a.tenant_id = ?1`,
+  ).bind(tenantId).all<{ id: string; source_url: string | null }>();
+  const currentUrls = new Map(results.map((row) => [row.id, row.source_url]));
+
+  let changed = false;
+  for (const record of records) {
+    const items = record.payload?.items;
+    if (!Array.isArray(items)) continue;
+    for (const item of items) {
+      if (typeof item.mediaAssetId !== "string" || !changedMediaIds.has(item.mediaAssetId)) continue;
+      const next = currentUrls.get(item.mediaAssetId);
+      if (typeof next === "string" && next.length > 0 && next !== item.sourceUrl) {
+        item.sourceUrl = next;
+        changed = true;
+      }
+    }
+  }
+  if (!changed) return { refreshed: false, version: snapshot.version };
+
+  const built = await buildSnapshot("roomGallery", records);
+  await saveSnapshot(db, { tenantId }, "roomGallery", built);
+  return { refreshed: true, version: built.version };
 }
 
 /** Overlay published D1 galleries when the per-route flag is enabled. */

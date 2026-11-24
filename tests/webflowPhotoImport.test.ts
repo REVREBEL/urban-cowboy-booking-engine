@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -20,6 +20,12 @@ import {
   type PhotoImportInput,
 } from "../worker/photo-source-import.ts";
 import type { CanonicalRoomType, PhotoSourceSnapshot } from "../worker/photo-source-adapter.ts";
+import { buildSnapshot, loadPublishedCollection } from "../worker/content-provider.ts";
+import { saveSnapshot } from "../worker/published-snapshots.ts";
+import {
+  loadPublishedGalleries,
+  refreshPublishedGalleryUrls,
+} from "../worker/published-galleries.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -31,6 +37,7 @@ const NOW = "2026-11-23T00:00:00Z";
 const MIGRATIONS = [
   "migrations/0001_init.sql",
   "migrations/0003_property_scoped_contracts.sql",
+  "migrations/0004_published_snapshots.sql",
   "migrations/0005_media_registry.sql",
   "migrations/0009_media_placement_flags.sql",
 ];
@@ -57,6 +64,21 @@ function d1(db: DatabaseSync): D1Like {
       return {
         bind(...values: unknown[]) { params = values; return this; },
         async all<T>() { return { results: db.prepare(sql).all(...params) as T[] }; },
+      };
+    },
+  };
+}
+
+/** Full D1-shaped adapter for snapshot helpers (all/first/run/bind). */
+function d1Db(db: DatabaseSync): any {
+  return {
+    prepare(sql: string) {
+      let params: unknown[] = [];
+      return {
+        bind(...values: unknown[]) { params = values; return this; },
+        async all() { return { results: db.prepare(sql).all(...params) }; },
+        async first() { return db.prepare(sql).get(...params) ?? null; },
+        async run() { db.prepare(sql).run(...params); return { success: true }; },
       };
     },
   };
@@ -301,6 +323,16 @@ test("an existing arbitrary v1 and current v2 are preserved on URL reimport", as
   await applyPhotoImport(executor(db), plan);
 
   assert.equal(db.prepare("SELECT squarespace_url FROM media_assets WHERE id=?").get(mediaId)?.squarespace_url, changedUrl);
+  assert.equal(
+    (db.prepare("SELECT squarespace_url FROM media_versions WHERE id='legacy-v1-custom'").get() as { squarespace_url: string }).squarespace_url,
+    "https://legacy/v1.jpg",
+    "historical v1 URL is untouched",
+  );
+  assert.equal(
+    (db.prepare("SELECT squarespace_url FROM media_versions WHERE id='legacy-v2-custom'").get() as { squarespace_url: string }).squarespace_url,
+    changedUrl,
+    "current version URL is updated for published gallery reads",
+  );
   assert.deepEqual(
     (db.prepare("SELECT id FROM media_versions WHERE media_asset_id=? ORDER BY version").all(mediaId) as Array<{ id: string }>).map((row) => row.id),
     ["legacy-v1-custom", "legacy-v2-custom"],
@@ -329,6 +361,144 @@ test("repeating the same import is idempotent", async () => {
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_placements").get().n, 3);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_aliases").get().n, 3);
   db.close();
+});
+
+test("a published gallery serves the refreshed URL without touching the draft", async () => {
+  const db = makeDb();
+  const api = d1Db(db);
+  const snap = snapshot();
+  await applyPhotoImport(executor(db), await planPhotoImport(d1(db), input(snap)));
+
+  // Publish the gallery document and its roomGallery snapshot.
+  db.exec(`
+    INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status)
+      VALUES ('gallery-ci','${TENANT}','${LOCATION}','room_gallery','rt-alpine','published');
+    INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by)
+      VALUES ('gallery-r','gallery-ci',1,'{"items":[]}','test');
+  `);
+  const records = await loadPublishedCollection(api, { tenantId: TENANT }, "roomGallery");
+  assert.ok(records.length > 0);
+  const built = await buildSnapshot("roomGallery", records);
+  await saveSnapshot(api, { tenantId: TENANT }, "roomGallery", built);
+  const before = await loadPublishedGalleries(api, TENANT);
+  assert.ok(Object.values(before).some((gallery) => gallery.images.some((url) => url.includes("alpine.jpg"))));
+
+  // An editor draft with a different order must survive the import refresh.
+  const draftPayload = '{"items":[{"mediaAssetId":"custom","displayOrder":5}]}';
+  db.exec(`
+    INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status)
+      VALUES ('gallery-draft','${TENANT}','${LOCATION}','room_gallery','rt-walden','draft');
+    INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by)
+      VALUES ('draft-r','gallery-draft',1,'${draftPayload}','editor');
+  `);
+
+  const mediaId = (db.prepare(
+    "SELECT media_asset_id FROM media_aliases WHERE alias_value='aaaaaaaaaaaaaaaaaaaaaaaa'",
+  ).get() as { media_asset_id: string }).media_asset_id;
+  const changedUrl = "https://cdn.prod.website-files.com/site/aaaaaaaaaaaaaaaaaaaaaaaa_new.jpg";
+  const changed = snapshot({
+    photos: snap.photos.map((photo) =>
+      photo.sourceAssetId === "webflow_file_id:aaaaaaaaaaaaaaaaaaaaaaaa"
+        ? { ...photo, url: changedUrl }
+        : photo),
+  });
+  await applyPhotoImport(executor(db), await planPhotoImport(d1(db), input(changed)));
+  const refresh = await refreshPublishedGalleryUrls(api, TENANT, new Set([mediaId]));
+  assert.equal(refresh.refreshed, true);
+
+  const guest = await loadPublishedGalleries(api, TENANT);
+  assert.ok(Object.values(guest).some((gallery) => gallery.images.includes(changedUrl)));
+  assert.equal(
+    (db.prepare("SELECT payload_json FROM content_revisions WHERE id='draft-r'").get() as { payload_json: string }).payload_json,
+    draftPayload,
+    "unpublished draft is untouched",
+  );
+  db.close();
+});
+
+test("a URL reimport with null dimensions keeps known geometry", async () => {
+  const db = makeDb();
+  const snap = snapshot();
+  await applyPhotoImport(executor(db), await planPhotoImport(d1(db), input(snap)));
+  const mediaId = (db.prepare(
+    "SELECT media_asset_id FROM media_aliases WHERE alias_value='aaaaaaaaaaaaaaaaaaaaaaaa'",
+  ).get() as { media_asset_id: string }).media_asset_id;
+  const changed = snapshot({
+    photos: snap.photos.map((photo) =>
+      photo.sourceAssetId === "webflow_file_id:aaaaaaaaaaaaaaaaaaaaaaaa"
+        ? { ...photo, url: "https://cdn.prod.website-files.com/site/aaaaaaaaaaaaaaaaaaaaaaaa_v2.jpg", width: null, height: null }
+        : photo),
+  });
+  const plan = await planPhotoImport(d1(db), input(changed));
+  await applyPhotoImport(executor(db), plan);
+  const version = db.prepare("SELECT width, height FROM media_versions WHERE id=?").get(`${mediaId}:v1`) as { width: number; height: number };
+  assert.equal(version.width, 1600);
+  assert.equal(version.height, 1000);
+  db.close();
+});
+
+test("the real CLI apply script refreshes the published gallery snapshot", () => {
+  const dir = mkdtempSync(join(tmpdir(), "wf-cli-"));
+  const exportPath = join(dir, "export.sqlite");
+  const applyPath = join(dir, "apply.sqlite");
+  const sqlPath = join(dir, "import.sql");
+  const db = new DatabaseSync(exportPath);
+  db.exec("PRAGMA foreign_keys = ON");
+  for (const file of MIGRATIONS) db.exec(read(file));
+  db.exec(`
+    INSERT INTO tenants (id, slug, name) VALUES ('urban-cowboy','urban-cowboy','UC');
+    INSERT INTO locations (id, tenant_id, slug, name, time_zone) VALUES ('6abc9142d98b325b2821ca23','urban-cowboy','catskills','Catskills','America/New_York');
+    INSERT INTO room_types (id, tenant_id, location_id, mews_room_category_id, name, slug, sort_order) VALUES
+      ('rt-alpine','urban-cowboy','6abc9142d98b325b2821ca23','mews-alpine','Alpine','alpine',1);
+    INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status)
+      VALUES ('gallery-ci','urban-cowboy','6abc9142d98b325b2821ca23','room_gallery','rt-alpine','published');
+    INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by)
+      VALUES ('gallery-r','gallery-ci',1,'{"items":[]}','test');
+  `);
+
+  // Populate the registry and published snapshot through the real helpers.
+  const seedSnap = snapshot();
+  const seedPlan = planPhotoImport(d1(db), {
+    tenantId: "urban-cowboy", locationId: "6abc9142d98b325b2821ca23", snapshot: seedSnap, now: NOW,
+  }).then((plan) => applyPhotoImport(executor(db), plan));
+  return seedPlan.then(async () => {
+    const api = d1Db(db);
+    const records = await loadPublishedCollection(api, { tenantId: "urban-cowboy" }, "roomGallery");
+    await saveSnapshot(api, { tenantId: "urban-cowboy" }, "roomGallery",
+      await buildSnapshot("roomGallery", records));
+    db.close();
+
+    // A changed delivery URL must be reflected in the published guest view.
+    const changedUrl = "https://cdn.prod.website-files.com/site/aaaaaaaaaaaaaaaaaaaaaaaa_cli.jpg";
+    const changedPayload = JSON.parse(read("tests/fixtures/webflow-room-types-photos.json"));
+    changedPayload.items[0].fieldData.images[0].url = changedUrl;
+    const changedPath = join(dir, "changed.json");
+    writeFileSync(changedPath, JSON.stringify(changedPayload));
+
+    const digest = (path: string) => createHash("sha256").update(readFileSync(path)).digest("hex");
+    const before = digest(exportPath);
+    execFileSync(process.execPath, [
+      "scripts/sync-webflow-photos.mjs",
+      "--file", changedPath,
+      "--room-types", "tests/fixtures/webflow-photo-room-types.json",
+      "--db", exportPath, "--sql-out", sqlPath, "--now", NOW,
+    ], { cwd: new URL("../", import.meta.url).pathname, encoding: "utf8" });
+    assert.equal(digest(exportPath), before, "export stays read-only");
+
+    const sql = readFileSync(sqlPath, "utf8");
+    assert.match(sql, /BEGIN;/);
+    assert.match(sql, /COMMIT;/);
+    assert.match(sql, /published_snapshots/, "snapshot refresh is part of the apply script");
+
+    cpSync(exportPath, applyPath);
+    const applyDb = new DatabaseSync(applyPath);
+    applyDb.exec(sql);
+    const guest = await loadPublishedGalleries(d1Db(applyDb), "urban-cowboy");
+    assert.ok(Object.values(guest).some((gallery) =>
+      gallery.images.includes(changedUrl)), "guest sees the refreshed published URL");
+    applyDb.close();
+    rmSync(dir, { recursive: true, force: true });
+  });
 });
 
 test("live Webflow fetch is paginated and uses the injected fetch function", async () => {

@@ -122,10 +122,29 @@ rendered HTML but never hydrated (search and demos were inert). The variable is 
 fresh build/deploy emits root-relative assets for the custom-domain root. The verifier now defaults
 to the canonical domain and allows only `cowboy-components.revrebel.io` / `revrebel.github.io`.
 
-Conclusion: all content, asset, search, navigation, responsive and interaction checks pass once the
-site is served with the correct base path. The remaining acceptance item is HTTPS: the custom domain
-still presents a `*.github.io` certificate and `https_enforced` is false. Enforce HTTPS / provision
-the Pages certificate, then rerun `node scripts/fumadocs/verify-live-site.mjs` **without**
+**Final canonical-domain verification — 2026-11-23T23:50Z**, after the fresh deployment with
+`DOCS_BASE_PATH=/`. Tested URL: `http://cowboy-components.revrebel.io/` (strict HTTPS probe fails
+with `ERR_CERT_COMMON_NAME_INVALID`).
+
+| Check | Result |
+| --- | --- |
+| 10 M1/M3 pages + home, desktop and mobile | PASS |
+| Deep-link refresh at both widths | PASS |
+| Static search + navigation | PASS (search now hydrates with root-path assets) |
+| Amenity rail and rate-panel demos | PASS |
+| Console errors, network 404s, broken images | PASS — none |
+| Deviation run (`DOCS_ALLOW_HTTP=1`) | PASS — `LIVE VERIFICATION PASSED`, 0 failures |
+| Strict HTTPS | FAIL — cert common-name mismatch; `https_enforced: false` |
+
+Evidence: `docs/component-library/live-verification-canonical-2026-11-24.json` (0 failures) and
+`docs/component-library/live-verification-https-strict-2026-11-24.json` (23 recorded failures, no
+crash). The verifier now records certificate/navigation failures instead of throwing.
+
+Conclusion: every content, asset, search, navigation, responsive and interaction check passes on the
+canonical custom domain. The one open M4 item is HTTPS: `https_enforced` is false and the domain
+presents a `*.github.io` certificate. The Pages REST update calls returned 404 for this token, so an
+administrator must enable **Settings → Pages → Enforce HTTPS** for `cowboy-components.revrebel.io`.
+After the certificate is issued, rerun `node scripts/fumadocs/verify-live-site.mjs` without
 `DOCS_ALLOW_HTTP=1` to close M4.
 
 ## COW-70 catalog coverage

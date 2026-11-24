@@ -14,6 +14,13 @@ test("travel party demo uses the accessible group, not orphan radio buttons", ()
   assert.match(component, /aria-label="Select your travel party"/);
 });
 
+test("docs tables align left and story blocks keep a 1rem vertical rhythm", () => {
+  const css = read("../docs-app/app/globals.css");
+  assert.match(css, /\.prose table th[\s\S]*?text-align: left/);
+  assert.match(css, /\.docs-story-frame \{[\s\S]*?gap: 1rem/);
+  assert.match(css, /article#nd-page \.prose\.flex-1 \{[\s\S]*?gap: 1rem/);
+});
+
 test("docs export publishes and prefixes root-relative component icons", () => {
   const prepare = read("../scripts/fumadocs/prepare-docs-assets.mjs");
   const finalize = read("../scripts/fumadocs/finalize-docs-assets.mjs");
