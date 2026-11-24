@@ -33,15 +33,26 @@ function buildDemoRates(base: Date = new Date()): Record<string, DailyRate> {
 
 const DEMO_RATES = buildDemoRates();
 
-/** Compute a valid default range: first two available days in the fixture. */
+/** Compute a valid default range: first two available days that include a minNights > 1 day. */
 function getDefaultRange(rates: Record<string, DailyRate>): { checkIn: string; checkOut: string } {
   const available = Object.entries(rates)
     .filter(([, r]) => r.available)
     .sort(([a], [b]) => a.localeCompare(b));
+  
+  // Find first available day with minNights > 1, use it as check-in
+  const minNightsDay = available.find(([, r]) => (r.minNights ?? 1) > 1);
+  if (minNightsDay && available.length >= 2) {
+    const minNightsIndex = available.findIndex(([d]) => d === minNightsDay[0]);
+    // Use the minNights day as check-in, next available as check-out
+    const checkOut = available[Math.min(minNightsIndex + 1, available.length - 1)][0];
+    return { checkIn: minNightsDay[0], checkOut };
+  }
+  
+  // Fallback to first two available days
   if (available.length >= 2) {
     return { checkIn: available[0][0], checkOut: available[1][0] };
   }
-  // Fallback to first two keys
+  // Final fallback to first two keys
   const keys = Object.keys(rates).sort();
   return { checkIn: keys[0] ?? "", checkOut: keys[1] ?? "" };
 }
