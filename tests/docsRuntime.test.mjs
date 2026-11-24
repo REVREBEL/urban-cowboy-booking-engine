@@ -210,6 +210,22 @@ test("main column fills the removed TOC space without horizontal overflow", asyn
       if (width >= 1600) {
         assert.ok(layout.mainWidth > 1200, `${width}px: main track expanded (${layout.mainWidth}px)`);
         assert.ok(layout.frameWidth > 1100, `${width}px: frame expanded (${layout.frameWidth}px)`);
+        // The demo cards live inside the prose wrapper; they must expand with
+        // the frame rather than being capped by the readable-text measure.
+        const demo = await page.evaluate(() => {
+          const frame = document.querySelector(".docs-story-frame");
+          const prose = frame.querySelector(".prose");
+          const card = frame.querySelector(".not-prose");
+          const paragraph = frame.querySelector(".prose > p");
+          return {
+            prose: Math.round(prose.getBoundingClientRect().width),
+            card: card ? Math.round(card.getBoundingClientRect().width) : 0,
+            paragraph: paragraph ? Math.round(paragraph.getBoundingClientRect().width) : 0,
+          };
+        });
+        assert.equal(demo.prose, layout.frameWidth, `${width}px: prose wrapper fills the frame`);
+        assert.equal(demo.card, layout.frameWidth, `${width}px: demo card fills the frame`);
+        assert.ok(demo.paragraph <= 907, `${width}px: running text keeps a readable measure`);
       }
       await page.close();
     }

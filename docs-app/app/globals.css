@@ -132,8 +132,13 @@ article#nd-page {
   .docs-story-frame {
     max-width: none;
   }
-  /* Prose stays readable; demos use the full expanded column. */
+  /* The prose wrapper contains the demo cards, so it must expand too;
+     only running text keeps a readable measure. */
   article#nd-page .prose.flex-1 {
+    max-width: none;
+  }
+  article#nd-page .prose.flex-1 > p,
+  article#nd-page .prose.flex-1 > li {
     max-width: 90ch;
   }
 }
