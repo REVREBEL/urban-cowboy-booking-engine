@@ -39,17 +39,22 @@ Media tables are populated only by the reviewed photo-import script; hotspots re
 1. **Export and back up the remote database.** `scripts/deploy-d1.mjs` does this automatically before writes; the backup lands in `backups/d1/` and must never be committed.
 2. **Apply migrations:** `npm run d1:migrate:remote`. The runner validates filename order and manifest checksums, reuses the approved-account check, and applies only forward migrations. Migration 0012 adds the publication extension tables and the ARI-safe Mews reference contract.
 3. **Apply the editorial seed:** `npm run deploy:d1`. It renders the approved Wrangler config, applies idempotent `seed.sql`, then verifies the counts above, per-location time zones and non-NULL `location_id`s.
-4. **Generate the photo import script from a fresh export:**
+4. **Apply the live Webflow photo import.** For production-sized galleries use the parameterized path: `npm run sync:webflow-photos -- --api --room-types room-types.json --db /path/to/backup.sqlite --api-apply`. It sends the media updates and the gallery snapshot refresh in one atomic D1 batch with bound parameters. The `--sql-out` form below is only for small/review datasets because an inlined `roomGallery` snapshot can exceed D1's statement-size limit. Export room types from D1 first:
+
    ```bash
    npx wrangler d1 execute urban-cowboy-content --remote --json \
      --command "SELECT id, name, slug, mews_room_category_id FROM room_types" > room-types.json
-   # capture the Webflow room-type CMS payload as webflow-photos.json (live --api or saved fixture)
+   # production: one atomic parameterized batch (credentials stay in the environment)
+   CLOUDFLARE_API_TOKEN=... WEBFLOW_CMS_API_TOKEN=... \
+     npm run sync:webflow-photos -- --api --room-types room-types.json \
+       --db /path/to/backup.sqlite --api-apply
+   # small fixtures only: reviewable SQL file
    npm run sync:webflow-photos -- --file webflow-photos.json --room-types room-types.json \
      --db /path/to/backup.sqlite --sql-out /tmp/webflow-photos.sql
+   npx wrangler d1 execute urban-cowboy-content --remote --file /tmp/webflow-photos.sql
    ```
-   `--db` is mandatory for `--sql-out`: the generated script refreshes the published `roomGallery` snapshot in the same `BEGIN`/`COMMIT` transaction as the registry updates. The export is opened read-only. Review the dry-run counts before applying.
-5. **Apply the reviewed photo script:** `npx wrangler d1 execute urban-cowboy-content --remote --file /tmp/webflow-photos.sql`.
-6. **Publish the remaining initial snapshots:** `npm run d1:publish-snapshots -- --db /path/to/backup.sqlite --out /tmp/snapshots.sql`, review, then apply with `wrangler d1 execute ... --file /tmp/snapshots.sql`. Collection versions are content-addressed and the pointer update is idempotent, so a replay does not create duplicate versions.
+   `--db` is mandatory for both `--api-apply` and `--sql-out`: the current `roomGallery` snapshot must be read from a read-only export to build the refresh. Review the dry-run counts before applying. If the batch fails, no media or pointer statement is committed.
+6. **Publish the remaining initial snapshots using the parameterized path:** `npm run d1:publish-snapshots -- --db /path/to/backup.sqlite --api-apply`. It sends all snapshot inserts and pointer updates in **one bound-parameter D1 batch**. The SQL-file alternative (`--out /tmp/snapshots.sql` + `wrangler d1 execute --file`) works for small datasets only: a production-sized `roomGallery` payload exceeds D1's per-statement size limit when inlined as a literal. Collection versions are content-addressed and the pointer update is idempotent, so a replay does not create duplicate versions.
 7. **Verify** with the reconciliation queries below. Keep all content flags at `webflow`; W3 owns the cutover (COW-108).
 
 ## Reconciliation queries
@@ -67,7 +72,9 @@ SELECT collection, current_version FROM snapshot_pointers ORDER BY collection;
 PRAGMA foreign_key_check;                                -- must be empty
 ```
 
-No orphan media, placements, hotspots or references are acceptable. Import retry and source failure must preserve existing published content: the seed uses upserts, publication rows are editor-owned (`state_source='editor'` is never overwritten), the importer emits no `DELETE`, and a failed import transaction never repoints a snapshot.
+No orphan media, placements, hotspots or references are acceptable. Import retry and source failure must preserve existing published content: the seed uses upserts, publication rows are editor-owned (`state_source='editor'` is never overwritten), the importer emits no `DELETE`, and a failed atomic import never repoints a snapshot.
+
+REST batch atomicity was verified directly, not inferred from Worker-binding docs: a disposable D1 database received a batch with a successful INSERT followed by a duplicate-key violation; the API returned 400 and the read-back table was empty, proving the first write rolled back. Evidence: `docs/generated/d1-rest-batch-atomicity.md`. `applyBatch()` additionally fails closed when the API returns HTTP 200 with no or fewer results than submitted statements, so a partial response is never reported as success. This guarantee applies to the `--api-apply` batch path only; the SQL-file path is for small review fixtures, not production-scale snapshots.
 
 ## Selective Mews reference sync
 

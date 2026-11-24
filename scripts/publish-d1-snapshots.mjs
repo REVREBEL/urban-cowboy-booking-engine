@@ -3,11 +3,14 @@
 // snapshots from a read-only D1 export. Nothing is written to the export.
 //
 //   node scripts/publish-d1-snapshots.mjs --db local.sqlite --out /tmp/snapshots.sql
+//   node scripts/publish-d1-snapshots.mjs --db local.sqlite --api-apply
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 
 const { CONTENT_COLLECTIONS, loadPublishedCollection, buildSnapshot } = await import("../worker/content-provider.ts");
+const { applyBatch } = await import("./lib/d1-api.mjs");
+const argv = process.argv.slice(2);
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -52,8 +55,11 @@ function d1Like(db) {
 
 async function main() {
   const tenantId = argValue("--tenant") ?? process.env.TENANT_ID ?? "urban-cowboy";
+  const apiApply = process.argv.includes("--api-apply");
   const out = argValue("--out");
-  if (!out) throw new Error("--out <file.sql> is required");
+  // The supported production path applies a parameterized batch and does not
+  // write a SQL file; --out is required only for the reviewable file mode.
+  if (!apiApply && !out) throw new Error("--out <file.sql> is required (or use --api-apply)");
   const db = openExport(argValue("--db"));
   const api = d1Like(db);
   const statements = [];
@@ -88,11 +94,22 @@ async function main() {
     console.log(`  ${collection}: ${records.length} items -> ${built.version.slice(0, 12)}`);
   }
 
+  if (apiApply) {
+    if (!statements.length) {
+      console.log("all snapshots are already current; nothing applied");
+    } else {
+      const result = await applyBatch(statements);
+      console.log(`applied ${result.applied} parameterized statements via D1 API`);
+    }
+    db.close();
+    return;
+  }
+
   if (statements.length) {
     const lines = [
       "-- COW-101 initial published snapshots",
       "-- Review before applying. Each version is content-addressed and immutable.",
-      "BEGIN;",
+      "-- Wrangler D1 file imports are atomic; no explicit transaction statements.",
       ...statements.map((statement) => {
         let index = 0;
         const sql = statement.sql.replace(/\?(\d+)/g, (_match, position) => {
@@ -101,7 +118,6 @@ async function main() {
         });
         return sql.trim() + ";";
       }),
-      "COMMIT;",
     ];
     writeFileSync(out, lines.join("\n") + "\n", "utf8");
     console.log(`wrote ${statements.length} statements to ${out}`);
