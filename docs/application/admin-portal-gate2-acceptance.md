@@ -1,11 +1,12 @@
 # COW-95 — W1.7 Sync Gate 2: Admin Portal acceptance record
 
 **Status: prepared, NOT accepted.** W1.7 is the final shared checkpoint with COW-102 (W2.7) and
-COW-111 (W3.7). COW-111 and COW-102 are both Done and their evidence is cross-referenced below,
-but issue status is not acceptance: neither record contains deployed live evidence. COW-95 was
-reopened to In Progress on 2026-11-24 because the deployed URL, real Access/JWT checks, publish/
-rollback E2E and residual-scope decisions are still open. Local W1 evidence was re-verified on
-2026-11-24 (§6). Final acceptance still requires all three streams to pass together.
+COW-111 (W3.7). COW-102 is Done, but COW-111 was reopened to In Progress on 2026-11-24 and COW-95
+is In Review — no Gate 2 issue currently proves production acceptance. Cross-references below are
+evidence pointers only; neither issue status nor a linked document establishes deployed acceptance,
+because no deployed live evidence exists for W1 or W3. The deployed URL, real Access/JWT checks,
+publish/rollback E2E and residual-scope decisions remain open. Local W1 evidence was re-verified
+on 2026-11-24 (§6). Final acceptance requires all three streams to pass together.
 
 ## 1. W1 delivery chain (evidence)
 
@@ -47,10 +48,10 @@ These are documented, not resolved. A green CI run does not prove deployed brows
   stable media master IDs, published snapshots and the ID-only Mews reference contract. W2
   explicitly notes that issue status is not acceptance and that deployed W1/W3 evidence is still
   missing.
-- **W3 / COW-111 — Done, evidence recorded**: `docs/application/w3-gate2-readiness.md` records the
-  W3 deliverable status and the live-verification checklist. It also states that all content flags
-  remain at Webflow defaults, no Webflow runtime has been removed, and no live booking evidence is
-  recorded — so W3's Done status likewise does not prove deployed acceptance.
+- **W3 / COW-111 — In Progress (reopened 2026-11-24)**: `docs/application/w3-gate2-readiness.md`
+  records the W3 deliverable status and live-verification checklist, but explicitly states that
+  content flags remain at Webflow defaults, no Webflow runtime has been removed, and no live booking
+  evidence exists. There is **no W3 confirmation of guest runtime consumption** to accept here.
 - **W1 — still required**: deployed admin URL + browser evidence (§2), acknowledgment of the
   residual scope in §3, and the three open checklist items in §5. Note: the REVREBEL Cloudflare
   account was queried on 2026-11-24 and contains `urban-cowboy-booking-engine` but **no
@@ -60,16 +61,17 @@ These are documented, not resolved. A green CI run does not prove deployed brows
 
 - [x] W1 code delivered via merged PRs with green CI and review approvals.
 - [x] Source parity matrix and residual scope documented with evidence.
-- [x] W2 confirms D1 parity and media integrity (COW-102 Done; evidence in §4).
-- [x] W3 confirms guest runtime consumption (COW-111 Done; evidence in §4).
-- [x] Gate 2 issues cross-reference the same evidence documents (§4).
+- [x] W2 confirms D1 parity and media integrity (explicit confirmation on COW-95; evidence in §4). This is a data-contract confirmation, not deployed acceptance.
+- [ ] W3 confirms guest runtime consumption — **not granted**: COW-111 is In Progress and its record has no live evidence.
+- [x] Gate 2 issues cross-reference the same evidence documents (§4) — pointers only, not proof of acceptance.
 - [ ] Deployed admin URL and browser evidence attached — **blocked**: no `urban-cowboy-admin` Worker deployed; deployment decision/credentials required.
 - [ ] Deployed auth/RBAC and role-restriction tests pass — needs real Access JWT against team JWKS.
 - [ ] Admin write/publish/rollback E2E against shared D1 recorded — browser E2E not run.
 - [ ] Residual scope in §3 acknowledged/closed by the product owner.
 
 **Not claimed:** production acceptance, full parity, or W1 closeout. Local verification (§6) does
-not substitute for deployed evidence. COW-95 stays In Progress until the four open items are closed.
+not substitute for deployed evidence. COW-95 stays open (currently In Review) until the five open
+items are closed.
 
 ## 6. Local verification record — 2026-11-24
 
