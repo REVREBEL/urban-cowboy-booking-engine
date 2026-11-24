@@ -115,7 +115,7 @@ five unchecked items are closed.
 
 | Command | Result |
 | --- | --- |
-| `node --test tests/adminApiProxy.test.ts tests/adminDeployConfig.test.ts tests/adminAppFoundation.test.ts tests/adminRoutes.test.ts tests/adminAuth.test.ts tests/dashboardAccessIntegration.test.ts` | 32 passed, 0 failed |
+| `node --test tests/adminApiProxy.test.ts tests/adminProxyAccessIntegration.test.ts tests/adminDeployConfig.test.ts tests/adminAppFoundation.test.ts tests/adminRoutes.test.ts tests/adminAuth.test.ts tests/dashboardAccessIntegration.test.ts` | 35 passed, 0 failed |
 | `npm run admin:typecheck` | Pass |
 | `npm run typecheck` | Pass |
 | `npm run admin:build` | Pass; route table includes `λ /api/:path+` |
@@ -127,14 +127,17 @@ five unchecked items are closed.
 
 The tests cover allowed API paths, session-gated route wiring, same-origin mutation checks,
 assertion forwarding, credential stripping, upstream failures, redirect rejection, relative
-browser calls and deployment-config validation. They do not exercise a real Access identity,
-the deployed Workers or production D1.
+browser calls and deployment-config validation. A signed-JWT integration suite exercises valid
+admin/viewer assertions and expired, wrong-audience, wrong-issuer and forged assertions through
+both the admin verifier and the booking Worker authorizer. The tests do not exercise the deployed
+Access edge or production D1.
 
 ## 8. Required production closeout
 
 1. Approve the admin hostname, Access team/AUD, admin allowlist, tenant and booking API origin.
 2. Deploy the admin Worker through `npm run admin:deploy` and deploy matching Access/RBAC/tenant
-   bindings on the booking Worker.
+   bindings on the booking Worker. Use the pinned booking origin and the admin Access AUD. Keep
+   the booking Worker outside a different Access application.
 3. Record a real Access login, invalid/expired token behavior, viewer/admin restrictions,
    authenticated refresh and direct section links at desktop and mobile viewports.
 4. Run controlled D1 read/edit/publish/rollback operations through the Admin Portal, capture the

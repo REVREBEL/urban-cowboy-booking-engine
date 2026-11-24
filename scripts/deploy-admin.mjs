@@ -16,6 +16,8 @@ const checkOnly = args.includes("--check");
 const sourceFlag = args.indexOf("--env-file");
 const sourcePath = sourceFlag === -1 ? join(root, ".env") : resolve(args[sourceFlag + 1] ?? "");
 const expectedAccountId = "4c154709ffe87621073f9ecfa86a57dd";
+const expectedAdminAud = "4bf8d1515fc028e57532548fc1687b5750d68f534a7d0cee0c1542cdf99a3255";
+const trustedBookingApiOrigin = "https://urban-cowboy-booking-engine.revrebel.workers.dev";
 const requiredVars = [
   "CF_ACCESS_TEAM_DOMAIN",
   "CF_ACCESS_AUD",
@@ -62,6 +64,9 @@ if (!/^[a-z0-9][a-z0-9.-]*\.cloudflareaccess\.com$/i.test(teamDomain)) {
 if (!/^[a-f0-9]{64}$/i.test(value("CF_ACCESS_AUD"))) {
   fail("CF_ACCESS_AUD must be the 64-character Access application AUD");
 }
+if (value("CF_ACCESS_AUD").toLowerCase() !== expectedAdminAud) {
+  fail("CF_ACCESS_AUD does not match the Urban Cowboy admin Access application");
+}
 if (!value("ADMIN_EMAILS").split(",").every((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))) {
   fail("ADMIN_EMAILS must contain comma-separated email addresses");
 }
@@ -77,6 +82,9 @@ try {
 if (apiBase.protocol !== "https:" || apiBase.username || apiBase.password ||
     apiBase.search || apiBase.hash || !/^\/+$/.test(apiBase.pathname)) {
   fail("API_BASE_URL must be an https origin without credentials, path, query or fragment");
+}
+if (apiBase.origin !== trustedBookingApiOrigin) {
+  fail("API_BASE_URL is not the approved Urban Cowboy booking Worker origin");
 }
 const timeout = value("API_REQUEST_TIMEOUT_MS");
 if (timeout !== undefined && (!/^\d+$/.test(timeout) || Number(timeout) < 1000 || Number(timeout) > 60000)) {

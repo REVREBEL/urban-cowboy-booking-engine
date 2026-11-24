@@ -86,9 +86,10 @@ upload or deployment. The deploy passes only these nonsecret runtime bindings:
 deployment and is never an admin Worker binding.
 
 Dashboard browsers call the admin origin. The admin Worker verifies the Access session and
-forwards allowed API requests to `API_BASE_URL` with the verified assertion. The booking Worker
-must use the same Access team domain, AUD, admin allowlist and tenant scope. Do not configure the
-admin API base as the admin Worker origin itself.
+forwards allowed API requests to `API_BASE_URL` with the verified assertion. The deployment
+wrapper pins the production booking Worker origin and the current admin Access AUD. The booking
+Worker must use the same AUD and remain outside a different Access application. Do not configure
+the admin API base as the admin Worker origin itself.
 
 ## Apply D1 schema migrations
 

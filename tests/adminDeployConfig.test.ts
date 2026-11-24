@@ -55,9 +55,11 @@ test("admin deploy check rejects missing or unsafe runtime values", () => {
   const cases: Array<[string, RegExp]> = [
     [validEnv.replace("API_BASE_URL=https://urban-cowboy-booking-engine.revrebel.workers.dev", ""), /Missing required API_BASE_URL/],
     [validEnv.replace(aud, "not-an-aud"), /64-character Access application AUD/],
+    [validEnv.replace(aud, "b".repeat(64)), /does not match the Urban Cowboy admin Access application/],
     [validEnv.replace("revrebel.cloudflareaccess.com", "https://revrebel.cloudflareaccess.com/admin"), /team hostname/],
     [validEnv.replace("https://urban-cowboy-booking-engine.revrebel.workers.dev", "https://booking.example/v1"), /https origin/],
     [validEnv.replace("https://urban-cowboy-booking-engine.revrebel.workers.dev", "http://booking.example"), /https origin/],
+    [validEnv.replace("https://urban-cowboy-booking-engine.revrebel.workers.dev", "https://unrelated.example"), /approved Urban Cowboy booking Worker origin/],
     [validEnv + "\nAPI_REQUEST_TIMEOUT_MS=5\n", /between 1000 and 60000/],
   ];
   for (const [content, message] of cases) {

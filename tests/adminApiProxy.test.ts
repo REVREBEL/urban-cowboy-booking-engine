@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { createAdminDashboardApi } from "../admin-app/lib/dashboard-api.ts";
+import { BOOKING_API_ORIGIN } from "../admin-app/lib/env.ts";
 import { isAllowedDashboardApiPath, proxyDashboardRequest } from "../admin-app/lib/api-proxy.ts";
 
 function withProxyEnv(apiBaseUrl: string | undefined, run: () => void | Promise<void>) {
@@ -49,7 +50,7 @@ test("proxy allows dashboard API families and rejects local, guest and traversal
 });
 
 test("GET proxy forwards query and verified assertion without browser credentials", async () => {
-  await withProxyEnv("https://booking.example///", async () => {
+  await withProxyEnv(BOOKING_API_ORIGIN, async () => {
     const calls: Array<{ url: URL; init?: RequestInit }> = [];
     const response = await proxyDashboardRequest(
       dashboardRequest("/api/admin/rooms?tenant=urban-cowboy", {
@@ -79,7 +80,7 @@ test("GET proxy forwards query and verified assertion without browser credential
     );
 
     assert.equal(calls.length, 1);
-    assert.equal(calls[0].url.href, "https://booking.example/api/admin/rooms?tenant=urban-cowboy");
+    assert.equal(calls[0].url.href, `${BOOKING_API_ORIGIN}/api/admin/rooms?tenant=urban-cowboy`);
     assert.equal(calls[0].init?.method, "GET");
     assert.equal(calls[0].init?.redirect, "manual");
     const headers = new Headers(calls[0].init?.headers);
@@ -97,7 +98,7 @@ test("GET proxy forwards query and verified assertion without browser credential
 });
 
 test("mutation proxy preserves the body and rejects missing or foreign origins", async () => {
-  await withProxyEnv("https://booking.example", async () => {
+  await withProxyEnv(BOOKING_API_ORIGIN, async () => {
     const calls: Array<{ url: URL; init?: RequestInit }> = [];
     const fetchImpl: typeof fetch = async (input, init) => {
       calls.push({ url: new URL(String(input)), init });
@@ -140,7 +141,7 @@ test("mutation proxy preserves the body and rejects missing or foreign origins",
 });
 
 test("proxy rejects unsupported methods, disallowed paths and missing assertions before fetch", async () => {
-  await withProxyEnv("https://booking.example", async () => {
+  await withProxyEnv(BOOKING_API_ORIGIN, async () => {
     let calls = 0;
     const fetchImpl: typeof fetch = async () => {
       calls += 1;
@@ -161,7 +162,7 @@ test("proxy rejects unsupported methods, disallowed paths and missing assertions
 });
 
 test("missing or malformed API configuration fails closed", async () => {
-  for (const base of [undefined, "", "booking.example", "https://booking.example/v1", "ftp://booking.example", "https://admin.example"]) {
+  for (const base of [undefined, "", "booking.example", `${BOOKING_API_ORIGIN}/v1`, "ftp://booking.example", "https://admin.example", "https://unrelated.example"]) {
     await withProxyEnv(base, async () => {
       let calls = 0;
       const response = await proxyDashboardRequest(dashboardRequest("/api/admin/rooms"), "verified", {
@@ -178,7 +179,7 @@ test("missing or malformed API configuration fails closed", async () => {
 });
 
 test("upstream failures and redirects become bounded proxy errors", async () => {
-  await withProxyEnv("https://booking.example", async () => {
+  await withProxyEnv(BOOKING_API_ORIGIN, async () => {
     const unavailable = await proxyDashboardRequest(dashboardRequest("/api/admin/rooms"), "verified", {
       fetchImpl: async () => {
         throw new Error("network details must not reach the browser");
@@ -196,7 +197,7 @@ test("upstream failures and redirects become bounded proxy errors", async () => 
 });
 
 test("worker authorization status and body pass through the proxy", async () => {
-  await withProxyEnv("https://booking.example", async () => {
+  await withProxyEnv(BOOKING_API_ORIGIN, async () => {
     for (const status of [401, 403, 404, 409, 500]) {
       const response = await proxyDashboardRequest(dashboardRequest("/api/admin/rooms"), "verified", {
         fetchImpl: async () => new Response(JSON.stringify({ error: `worker-${status}` }), {

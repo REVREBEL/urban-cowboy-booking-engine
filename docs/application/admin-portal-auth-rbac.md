@@ -116,6 +116,12 @@ session, requires a same-origin `Origin` for mutations and forwards only dashboa
 It sends the verified assertion to the booking Worker and strips browser cookies, authorization
 and client-supplied assertion headers. Worker authorization remains authoritative.
 
+The production `API_BASE_URL` is pinned to the Urban Cowboy booking Worker origin. Both Workers
+must use the admin Access application's AUD, and the booking Worker must remain outside a
+different Access application. If that changes, replace assertion forwarding with a service
+binding that verifies end-user identity independently. The proxy rejects upstream redirects, so
+an unexpected Access edge fails closed instead of forwarding the assertion elsewhere.
+
 ## 9. Deferred
 
 - W3 must deploy matching Access/RBAC/tenant bindings on both Workers and record real Access,

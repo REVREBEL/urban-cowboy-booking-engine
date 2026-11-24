@@ -21,6 +21,8 @@ Dashboard panels call relative `/api/*` paths on the admin origin. `admin-app/ap
 
 The booking Worker remains the authority for D1 reads and writes, publishing, revisions, rollback and role checks. The proxy does not grant a role or replace Worker authorization.
 
+`API_BASE_URL` is pinned to the Urban Cowboy booking Worker origin in production and `http://localhost:8787` in local development. Both Workers must use the Urban Cowboy admin Access application's AUD. The booking Worker must remain outside a different Access application; otherwise this assertion-forwarding design must be replaced with a service binding that verifies end-user identity independently.
+
 ## Deployment
 
 Use the root deployment wrapper. It reads the shared `.env`, validates the REVREBEL account and passes only these nonsecret runtime bindings:
@@ -38,6 +40,6 @@ npm run admin:deploy:check
 npm run admin:deploy
 ```
 
-The check performs no build, upload or deployment. The deploy command requires `CLOUDFLARE_API_TOKEN` and the approved values in `.env`. Do not commit `.env`, `.dev.vars` or Cloudflare credentials.
+The check performs no build, upload or deployment. The deploy command requires `CLOUDFLARE_API_TOKEN` and the approved values in `.env`. It pins the production API origin and the current admin Access AUD. Do not commit `.env`, `.dev.vars` or Cloudflare credentials.
 
 The booking Worker must use the same Access team domain, AUD and admin allowlist so it can verify the assertion forwarded by the admin proxy.

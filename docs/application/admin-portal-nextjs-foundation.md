@@ -79,7 +79,7 @@ tests/adminAppFoundation.test.ts
 | `CF_ACCESS_AUD` | server | none | 64-character Access application AUD in the deploy wrapper |
 | `ADMIN_EMAILS`, `ADMIN_GROUPS` | server | none | comma-separated role allowlists |
 | `TENANT_ID` | server | none | nonblank server-bound tenant scope |
-| `API_BASE_URL` | server proxy | none | absolute `http(s)` origin with no credentials, path, query or fragment; production wrapper requires HTTPS |
+| `API_BASE_URL` | server proxy | none | pinned to the production booking Worker origin or `http://localhost:8787`; no credentials, path, query or fragment |
 | `API_REQUEST_TIMEOUT_MS` | server proxy | `8000` | integer 1000–60000 |
 
 Declared string bindings appear on `process.env` in the Worker because `nodejs_compat` and a
@@ -96,7 +96,7 @@ npm run admin:build       # production Worker build
 npm run admin:typecheck   # tsc --noEmit for admin-app
 npm run admin:deploy:check # validate .env bindings without deploying
 npm run admin:deploy      # guarded vinext-cloudflare deploy
-node --test tests/adminAppFoundation.test.ts tests/adminApiProxy.test.ts tests/adminDeployConfig.test.ts
+node --test tests/adminAppFoundation.test.ts tests/adminApiProxy.test.ts tests/adminProxyAccessIntegration.test.ts tests/adminDeployConfig.test.ts
 ```
 
 Root `package.json` includes `admin-app` in `workspaces`. The deployment wrapper reads the shared
