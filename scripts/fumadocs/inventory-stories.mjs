@@ -89,6 +89,14 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/booking/layout/step-progress.stories.tsx": "docs-app/content/docs/components/step-progress.mdx",
   "src/stories/components/booking/progress/ProgressBar.stories.tsx": "docs-app/content/docs/components/progress-bar.mdx",
   "src/stories/components/booking/progress/ProgressStep.stories.tsx": "docs-app/content/docs/components/progress-step.mdx",
+  "src/stories/components/rooms/BuildingExperienceList.stories.tsx": "docs-app/content/docs/components/rooms/building-experience-list.mdx",
+  "src/stories/components/rooms/MultiRoomViewBuilding.stories.tsx": "docs-app/content/docs/components/rooms/multi-room-view.mdx",
+  "src/stories/components/rooms/MultiRoomViewList.stories.tsx": "docs-app/content/docs/components/rooms/multi-room-view.mdx",
+  "src/stories/components/rooms/MultiRoomViewListItem.stories.tsx": "docs-app/content/docs/components/rooms/multi-room-view.mdx",
+  "src/stories/components/rooms/MultiRoomViewRoomTypeCard.stories.tsx": "docs-app/content/docs/components/rooms/multi-room-view.mdx",
+  "src/stories/components/rooms/GuestReviewQuoteCard.stories.tsx": "docs-app/content/docs/components/rooms/guest-review-quote-card.mdx",
+  "src/stories/components/rates/FigmaRateComponents.stories.tsx": "docs-app/content/docs/components/rates/figma-rate-components.mdx",
+  "src/stories/components/rates/PillarFeatures.stories.tsx": "docs-app/content/docs/components/rates/pillar-features.mdx",
 });
 
 /**

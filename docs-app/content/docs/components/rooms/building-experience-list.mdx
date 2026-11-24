@@ -1,0 +1,56 @@
+---
+title: Building Experience List
+description: Editorial building experience list with feature filters, view toggles and room cards.
+---
+
+import { BuildingExperienceListStoryControl } from '~/components/story-controls';
+
+`BuildingExperienceList` presents lodging experiences organized by building with editorial taglines, feature filter pills (indoor tub, outdoor soak, fireplace, view), and magazine vs catalog view toggles. The demo uses a deterministic `ShapedRoom` fixture with mocked merchandising data; selection actions are recorded locally and never call Mews or start a booking.
+
+<BuildingExperienceListStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `criteria` | `SearchCriteria` | Search parameters (dates, guests, nights) |
+| `rooms` | `ShapedRoom[]` | List of available shaped rooms with merchandising |
+| `imageBaseUrl` | string | Base URL for Mews imagery |
+| `onUpdateCriteria` | `() => void` | Called when criteria change |
+| `onSelectRoom` | `() => void` | Called when a room is selected |
+| `onOpenRoomDetails` | `() => void` | Called when room details are requested |
+| `onOpenHelpMeChoose` | `() => void` | Called when help modal opens |
+| `onBackToSearch` | `() => void` | Called when back to search is clicked |
+
+## Features
+
+- **Building organization**: Rooms grouped by building (Alpine, Walden)
+- **Feature filters**: Toggle pills for indoor tub, outdoor soak, fireplace, scenic view
+- **View modes**: Magazine (editorial) vs Catalog (grid) toggle
+- **Editorial content**: Taglines, descriptions, party/interest scores from merchandising
+- **Empty state**: Graceful handling when no rooms match filters
+
+## Responsive behaviour
+
+- Feature filter pills wrap on narrow screens
+- Magazine view stacks on mobile; catalog view uses responsive grid
+- Room cards maintain aspect ratio and stack appropriately
+
+## Usage
+
+```tsx
+import { BuildingExperienceList } from '@/components/rooms/BuildingExperienceList';
+
+<BuildingExperienceList
+  criteria={criteria}
+  rooms={rooms}
+  imageBaseUrl="/images"
+  onUpdateCriteria={handleUpdateCriteria}
+  onSelectRoom={handleSelectRoom}
+  onOpenRoomDetails={handleOpenRoomDetails}
+  onOpenHelpMeChoose={handleOpenHelpMeChoose}
+  onBackToSearch={handleBackToSearch}
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/BuildingExperienceList.tsx)

@@ -1,0 +1,208 @@
+---
+title: Multi-Room View
+description: Building header, list and room type card components for multi-room layouts.
+---
+
+import {
+  MultiRoomViewBuildingStoryControl,
+  MultiRoomViewBuildingWithIconStoryControl,
+  MultiRoomViewBuildingRowReverseStoryControl,
+  MultiRoomViewBuildingStackedCenterStoryControl,
+  MultiRoomViewBuildingStackedLeftStoryControl,
+  MultiRoomViewListStoryControl,
+  MultiRoomViewListItemStoryControl,
+  MultiRoomViewListItemRowStoryControl,
+  MultiRoomViewListItemRowReverseStoryControl,
+  MultiRoomViewRoomTypeCardStoryControl,
+  MultiRoomViewRoomTypeCardFocusedStoryControl,
+} from '~/components/story-controls';
+
+The multi-room view components present a building's room offerings in various editorial layouts. Demos use deterministic room card data fixtures; selection actions are recorded locally.
+
+## Building Header — MultiRoomViewBuilding
+
+The building header shows the building name, tagline, description and optional icon. Four layout variants control the arrangement of content and icon.
+
+### Default (Row)
+
+<MultiRoomViewBuildingStoryControl />
+
+### With Building Icon
+
+<MultiRoomViewBuildingWithIconStoryControl />
+
+### Row Reverse
+
+<MultiRoomViewBuildingRowReverseStoryControl />
+
+### Stacked Center
+
+<MultiRoomViewBuildingStackedCenterStoryControl />
+
+### Stacked Left
+
+<MultiRoomViewBuildingStackedLeftStoryControl />
+
+### Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `buildingName` | string | Building display name |
+| `buildingDescription` | string | Editorial description |
+| `buildingTagline` | string | Marketing tagline |
+| `layout` | `Row`, `Row Reverse`, `StackedCenter`, `StackedLeft` | Content arrangement |
+| `displayBuildingIcon` | boolean | Show building icon slot |
+| `buildingIconSlot` | `ReactNode` | Optional `BuildingIcon` instance |
+
+## Room List — MultiRoomViewList
+
+Displays up to three building groups as vertical stacks. Each group is a `MultiRoomViewListItem` with an optional building section slot. The component is exported from `RoomTypeList.tsx`.
+
+<MultiRoomViewListStoryControl />
+
+### Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `buildingGroup1` | `ReactNode` | First building group (required) |
+| `buildingGroup2` | `ReactNode` | Second building group (optional) |
+| `buildingGroup3` | `ReactNode` | Third building group (optional) |
+| `className` | string | Additional CSS classes |
+
+### Usage
+
+```tsx
+import { MultiRoomViewList, MultiRoomViewListItem, MultiRoomViewBuilding } from '@/components/rooms';
+
+const buildingGroup1 = (
+  <MultiRoomViewListItem
+    layout="Row"
+    roomTypes={alpineRoomTypes}
+    buildingSectionSlot={
+      <MultiRoomViewBuilding
+        buildingName="Alpine"
+        buildingDescription="Built into the hillside..."
+        buildingTagline="This is Where you Come to Soak..."
+        layout="StackedCenter"
+      />
+    }
+  />
+);
+
+<MultiRoomViewList buildingGroup1={buildingGroup1} buildingGroup2={buildingGroup2} />
+```
+
+## Room List Item — MultiRoomViewListItem
+
+Renders a building section with optional header and a horizontal list of room type cards. Supports three layout modes.
+
+### Default
+
+<MultiRoomViewListItemStoryControl />
+
+### Row Layout
+
+<MultiRoomViewListItemRowStoryControl />
+
+### Row Reverse Layout
+
+<MultiRoomViewListItemRowReverseStoryControl />
+
+### Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `layout` | `Default`, `Row`, `RowReverse` | Card arrangement (default: `Default`) |
+| `roomTypes` | `MultiRoomViewRoomTypeCardData[]` | Array of room type card data (required) |
+| `buildingSectionSlot` | `ReactNode` | Optional building header slot (e.g., `MultiRoomViewBuilding`) |
+| `displayBuilding` | boolean | Show building section (default: `true`) |
+| `className` | string | Additional CSS classes |
+
+### Room Type Card Data Shape
+
+```ts
+type MultiRoomViewRoomTypeCardData = {
+  id: string;
+  buildingName: string;
+  numberOfBeds: string;
+  price: string;
+  roomTypeName: string;
+  state: 'Default' | 'Focus';
+};
+```
+
+## Room Type Card — MultiRoomViewRoomTypeCard
+
+Focused room type presentation with optional highlight state.
+
+### Default
+
+<MultiRoomViewRoomTypeCardStoryControl />
+
+### Focused
+
+<MultiRoomViewRoomTypeCardFocusedStoryControl />
+
+### Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `buildingName` | string | Building display name |
+| `numberOfBeds` | string | Bed count label (e.g., "8 beds") |
+| `price` | string | Price label (e.g., "$596") |
+| `roomTypeName` | string | Room type name |
+| `state` | `Default`, `Focus` | Highlighted presentation (default: `Default`) |
+
+## Responsive behaviour
+
+- Building header layouts adapt: Row/Row Reverse stack on mobile; Stacked variants remain stacked
+- Room list uses single-column stack on all viewports
+- Room type cards maintain aspect ratio and stack on narrow screens
+
+## Usage
+
+```tsx
+import { MultiRoomViewBuilding, MultiRoomViewList, MultiRoomViewListItem, MultiRoomViewRoomTypeCard } from '@/components/rooms';
+
+// Building header
+<MultiRoomViewBuilding
+  buildingName="Alpine"
+  buildingDescription="Built into the hillside..."
+  buildingTagline="This is Where you Come to Soak..."
+  layout="Row"
+  displayBuildingIcon={true}
+  buildingIconSlot={<BuildingIcon buildingName="Alpine" />}
+/>
+
+// Room list (slot-based)
+const buildingGroup1 = (
+  <MultiRoomViewListItem
+    layout="Row"
+    roomTypes={[
+      { id: "1", buildingName: "Alpine", numberOfBeds: "8 beds", price: "$596", roomTypeName: "Alpine Bathing Suite", state: "Focus" },
+      { id: "2", buildingName: "Alpine", numberOfBeds: "6 beds", price: "$445", roomTypeName: "Alpine King Suite", state: "Default" },
+    ]}
+    buildingSectionSlot={
+      <MultiRoomViewBuilding
+        buildingName="Alpine"
+        buildingDescription="Built into the hillside..."
+        buildingTagline="This is Where you Come to Soak..."
+        layout="StackedCenter"
+      />
+    }
+  />
+);
+
+<MultiRoomViewList buildingGroup1={buildingGroup1} />
+
+// Standalone room type card
+<MultiRoomViewRoomTypeCard
+  buildingName="Alpine"
+  numberOfBeds="8 beds"
+  price="$596"
+  roomTypeName="Alpine Bathing Suite with Den"
+  state="Focus"
+/>
+```
+
+[Building source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewBuilding.tsx) · [List source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/RoomTypeList.tsx) · [List item source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewListItem.tsx) · [Room type card source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/MultiRoomViewRoomTypeCard.tsx)
