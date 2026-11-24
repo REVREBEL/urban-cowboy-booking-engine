@@ -22,11 +22,11 @@ export default defineConfig({
       ASSETS: bindings.assets(),
       // Deployed nonsecret defaults keep preview builds usable. The root deploy
       // wrapper pins the production values before uploading a version.
-      CF_ACCESS_TEAM_DOMAIN: textBinding("CF_ACCESS_TEAM_DOMAIN", "revrebel.cloudflareaccess.com"),
+      CF_ACCESS_TEAM_DOMAIN: textBinding("CF_ACCESS_TEAM_DOMAIN"),
       CF_ACCESS_AUD: textBinding("CF_ACCESS_AUD", ADMIN_ACCESS_AUD),
-      ADMIN_EMAILS: textBinding("ADMIN_EMAILS", "gary@revrebel.io"),
-      ADMIN_GROUPS: textBinding("ADMIN_GROUPS", ""),
-      TENANT_ID: textBinding("TENANT_ID", "urban-cowboy"),
+      ADMIN_EMAILS: textBinding("ADMIN_EMAILS"),
+      ADMIN_GROUPS: textBinding("ADMIN_GROUPS"),
+      TENANT_ID: textBinding("TENANT_ID"),
       // Server-only. The same-origin proxy forwards the verified assertion to
       // this origin, so the booking Worker must use the same Access AUD.
       API_BASE_URL: textBinding("API_BASE_URL"),

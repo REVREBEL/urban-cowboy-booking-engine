@@ -141,6 +141,60 @@ test("a real signed viewer assertion reads through the proxy but cannot mutate",
   assert.deepEqual(await write.json(), { error: "forbidden" });
 });
 
+test("a signed admin mutation passes both verifiers through the proxy", async () => {
+  const token = accessJwt({ email: "admin@example.com" });
+  const response = await proxyDashboardRequest(
+    new Request("https://admin.example/api/content/editor/items", {
+      method: "POST",
+      headers: { origin: "https://admin.example", "content-type": "application/json" },
+      body: JSON.stringify({ kind: "policy", slug: "gate2-test", payload: {} }),
+    }),
+    token,
+    { fetchImpl: workerFetch("admin") },
+  );
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { items: [] });
+});
+
+test("a caller-supplied tenant is rejected at the worker boundary", async () => {
+  const token = accessJwt({ email: "admin@example.com" });
+  const response = await proxyDashboardRequest(
+    new Request("https://admin.example/api/admin/rooms?tenant=other-tenant"),
+    token,
+    { fetchImpl: workerFetch("viewer") },
+  );
+  assert.equal(response.status, 403);
+});
+
+test("an upstream denial passes through without credential leakage", async () => {
+  const token = accessJwt({ email: "admin@example.com" });
+  let forwarded = new Headers();
+  const response = await proxyDashboardRequest(
+    new Request("https://admin.example/api/admin/rooms", {
+      headers: {
+        cookie: "CF_Session=secret",
+        authorization: "Bearer browser",
+        "cf-access-jwt-assertion": "client-forged",
+      },
+    }),
+    token,
+    {
+      fetchImpl: (async (_input: unknown, init?: RequestInit) => {
+        forwarded = new Headers(init?.headers);
+        return new Response(JSON.stringify({ error: "forbidden" }), {
+          status: 403,
+          headers: { "content-type": "application/json" },
+        });
+      }) as typeof fetch,
+    },
+  );
+  assert.equal(response.status, 403);
+  assert.deepEqual(await response.json(), { error: "forbidden" });
+  assert.equal(forwarded.get("cf-access-jwt-assertion"), token);
+  assert.equal(forwarded.get("cookie"), null);
+  assert.equal(forwarded.get("authorization"), null);
+});
+
 test("expired, wrong-audience, wrong-issuer and forged assertions fail both verifiers", async () => {
   const tokens = [
     accessJwt({ expired: true }),

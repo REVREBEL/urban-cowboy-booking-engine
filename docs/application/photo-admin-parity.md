@@ -131,27 +131,50 @@ custom domain/route found in the account).
 | Production D1 | 156 `room_gallery` placements; published `roomGallery`, `roomAmenities` and `roomTypes` snapshots present; **0** `photo_hotspot_mappings` rows. There is no production hotspot data for a D1 guest-hotspot check. |
 | Local suite (separate verification run) | `npm test` 610/610 pass; targeted gallery/hotspot tests 83/83 pass, including published-only hotspot reads, draft isolation, review gates, publish/rollback, import-failure preservation and Mews tests. The 596/596 non-browser run recorded above used a different exclusion set. |
 
-A separate Admin Portal Worker, `urban-cowboy-admin`, was deployed at
-`https://urban-cowboy-admin.revrebel.workers.dev` (version
-`84daddb3-9bf0-4b21-b159-077e65ea2b13`) under COW-112; it currently fails closed to `/login`
-because Cloudflare Access and `API_BASE_URL` are not configured. It does not yet provide the
-deployed React admin evidence required here.
+### Deployed admin and API trust boundary (2026-11-24, reconciled)
+
+A separate Admin Portal Worker, `urban-cowboy-admin`, was deployed under COW-112 at
+`https://urban-cowboy-admin.revrebel.workers.dev`; the earlier record noted that it failed closed to
+`/login` because Access and `API_BASE_URL` were not configured. It is now configured with the Access
+team/AUD, admin allowlist, tenant and booking API origin bindings, and unauthenticated requests
+redirect to `https://revrebel.cloudflareaccess.com/...`.
+
+The approved design is the **same-origin server-side admin API proxy** (`admin-app/app/api/[...path]/route.ts`
+and `admin-app/lib/api-proxy.ts`): the browser calls the admin origin only, the proxy verifies the
+admin session and same-origin mutation rule, and forwards the verified Access assertion to the
+booking Worker. The booking Worker uses the same Access team domain, AUD and allowlist, so the
+assertion is verified by the shared `worker/access.ts` verifier. The temporary separate Access
+application on the booking Worker's `/api/admin/*` was deleted so it cannot intercept the
+server-side fetch with a different AUD; this shared-AUD configuration is the deliberately
+configured Worker-to-Worker trust boundary. It is not a public/bypassed API: the booking Worker
+still verifies the end-user's signed assertion, role and tenant on every request (`worker/auth.ts`),
+and browser cookies, bearer headers and client-supplied assertions are never forwarded by the proxy. The temporary browser CORS path and
+the extra Access app on the booking Worker's `/api/admin/*` were removed; no credentialed
+cross-origin browser access remains. Authorized/denied behavior is covered by
+`tests/adminApiProxy.test.ts` and `tests/adminProxyAccessIntegration.test.ts` (signed admin reads and
+mutations, viewer reads without mutation rights, expired/wrong-audience/wrong-issuer forgeries and
+upstream failures).
+
+19 `room_gallery` documents were created from the reviewed 156 media placements and snapshots were
+refreshed, but this PR does **not** leave a production content flag flipped: the reviewed deployment
+guard requires baseline `webflow` flags before the Gate 2 cutover runbook is followed. An earlier
+API-level check with `CONTENT_SOURCE_ROOM_GALLERIES=d1` confirmed the D1 gallery response shape (20
+rooms of importer URLs); production is back on the Webflow baseline. `PHOTO_HOTSPOT_SOURCE` remains
+`webflow` and production has zero hotspot mappings.
 
 ### Acceptance status after live verification
 
 | Acceptance item | Status | Evidence needed / noted gap |
 | --- | --- | --- |
-| Admin gallery and hotspot routes verified in the deployed environment | Pending | Booking Worker serves the legacy Supabase dashboard; the new admin Worker has no Access identity yet. Needs an authenticated browser run of `#/rooms` and `#/hotspots`. |
-| Published D1 gallery and hotspot data verified in guest Photo Journey | Partial | D1 has 156 gallery placements and published snapshots, but content flags are Webflow-default and there are zero hotspot mappings. Needs `PHOTO_HOTSPOT_SOURCE=d1` on staging after published snapshot confirmation. |
+| Admin gallery and hotspot routes verified in the deployed environment | Pending | Admin Worker is deployed behind Access and the same-origin proxy is tested locally; the legacy Supabase dashboard is still served at booking Worker `/dashboard.html#/rooms`. Needs an authenticated browser run of the React admin's `#/rooms` and `#/hotspots`. |
+| Published D1 gallery and hotspot data verified in guest Photo Journey | Partial | D1 gallery API reads were confirmed at API level under a temporary flag; production flags are Webflow-baseline, zero hotspot mappings, and no deployed guest Photo Journey E2E exists. |
 | Draft isolation, review gates, publish and rollback verified end-to-end | Local only | Deployed browser run showing a draft/pending pin invisible to guests, then publish → visible, rollback → prior state. |
 | Import/sync failure preserves existing published media | Local only | Deployed import failure trace plus before/after published gallery counts. |
 | Desktop and mobile browser checks; no material console/network errors | Partial | Desktop guest arrival checked; mobile widths and the authenticated admin still need screenshots and console/network logs. |
-| Mews booking behavior unchanged | Local only | Deployed rate/availability/checkout smoke result. |
-| Photo-admin parity documentation contains reproducible evidence | This section | Deployed URLs, dates and results recorded; screenshots still to be appended. |
+| Mews booking behavior unchanged | Local only | Deployed rate/availability/checkout smoke result; Mews code and flags untouched. |
+| Photo-admin parity documentation contains reproducible evidence | This section | Deployed URLs, dates and proxy/CMS checks recorded; browser screenshots still to be appended. |
 
-The deployed **guest arrival page** renders, and D1 gallery data and snapshots exist in production.
-It does **not** establish deployed admin routes, published-D1 guest content, end-to-end
-publish/rollback, or desktop/mobile hotspot verification. Set `PHOTO_HOTSPOT_SOURCE=d1` only after
-confirming the published D1 snapshot on staging. No production flag was changed by this phase;
-guest reads still default to Webflow and Mews booking, pricing and availability code is untouched.
-COW-82 and COW-84 should not be closed on the strength of local tests alone.
+The deployed guest arrival page renders and the D1 gallery API path was confirmed at API level, but
+there is no authenticated admin publish/rollback E2E, desktop/mobile hotspot verification, or
+published-D1 hotspot data. Follow the W3 cutover runbook for any flag change. COW-82 and COW-84 must
+not be closed on the strength of local tests or API-level checks alone.

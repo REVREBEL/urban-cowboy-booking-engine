@@ -90,8 +90,7 @@ const json = (data: unknown, status: number) =>
     headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
 
-export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+async function handleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     // COW-68: the React admin is a separate Vite entry (dashboard.html). Serve
     // it at both readable admin routes; guest routes keep the SPA fallback.
@@ -312,6 +311,13 @@ export default {
     }
     // Front statique + fallback SPA (géré par le binding ASSETS).
     return env.ASSETS.fetch(request);
+}
+
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    // Admin API access uses the same-origin server-side proxy in admin-app;
+    // the browser never calls this Worker cross-origin with credentials.
+    return handleRequest(request, env, ctx);
   },
 
   async scheduled(
