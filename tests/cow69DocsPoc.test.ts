@@ -101,7 +101,8 @@ test("Fumadocs theme maps brand color tokens and lays out the desktop sidebar", 
   assert.match(globalCss, /--color-fd-muted-foreground: var\(--paper-300\)/);
   assert.match(globalCss, /#nd-docs-layout \{/);
   assert.match(globalCss, /--fd-sidebar-width: 268px/);
-  assert.match(globalCss, /--fd-toc-width: 260px/);
+  // COW-85: the side rail was removed, so the TOC grid column is now zero.
+  assert.match(globalCss, /--fd-toc-width: 0px/);
 });
 
 test("muted foreground meets WCAG AA contrast in both themes", () => {

@@ -21,6 +21,8 @@ test("docs tables align left, story blocks keep a 2rem rhythm and share one left
   assert.match(css, /article#nd-page \.prose\.flex-1 \{[\s\S]*?gap: 2rem/);
   assert.match(css, /article#nd-page \{[\s\S]*?padding-inline: 24px/);
   assert.match(css, /\.docs-story-frame \{[\s\S]*?padding-block: 24px 48px/);
+  assert.match(css, /--fd-toc-width: 0px/);
+  assert.match(css, /--fd-layout-width: calc\(100vw - 6rem\)/);
 });
 
 test("docs export publishes and prefixes root-relative component icons", () => {
