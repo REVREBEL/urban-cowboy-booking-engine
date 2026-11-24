@@ -98,30 +98,40 @@ This slice adds the admin surface for COW-34 durable pins on top of the publishe
 
 ### Verification evidence (local, reproducible)
 
-Run from the repo root on the merged `main`:
+**Recorded 2026-11-24** on `main` @ `69cf9e37` in a clean npm workspace (`npm ci`). Run from the
+repo root:
 
 | Check | Command | Result |
 | --- | --- | --- |
-| Full application suite | `npm test` | 524/524 pass |
-| Published-only guest hotspots | `node --test tests/publishedHotspots.test.ts` | 9/9 pass |
-| Hotspot admin lifecycle | `node --test tests/hotspotAdmin.test.ts` | 26/26 pass |
-| Hotspot dashboard panel | `node --test tests/hotspotsPanel.test.ts` | 12/12 pass |
-| Hotspot geometry/replacement | `node --test tests/hotspotGeometry.test.ts tests/hotspotMapping.test.ts tests/hotspotCanvas.test.ts` | pass |
+| Full application suite (browser-only tests excluded; Playwright chromium not installed locally) | `find tests -maxdepth 1 -name '*.test.ts' ! -name 'dateDropdownAccessibility*' ! -name 'promoDropdownAccessibility*' -print0 \| xargs -0 node --test` | **596/596 pass** |
+| Photo-admin targeted suite (published hotspots, hotspot admin/panel/geometry/replacement, gallery import, published gallery guest reads, Mews pricing) | `node --test tests/publishedHotspots.test.ts tests/hotspotAdmin.test.ts tests/hotspotsPanel.test.ts tests/hotspotGeometry.test.ts tests/hotspotMapping.test.ts tests/hotspotCanvas.test.ts tests/roomGallery.test.ts tests/roomGalleryEditing.test.ts tests/snapshotsParity.test.ts tests/mewsPricing.test.ts tests/catskillsMewsIds.test.ts` | **128/128 pass** |
+| Published-only guest hotspots | `node --test tests/publishedHotspots.test.ts` | pass (included in targeted suite) |
+| Hotspot admin lifecycle | `node --test tests/hotspotAdmin.test.ts` | pass (included in targeted suite) |
+| Hotspot dashboard panel | `node --test tests/hotspotsPanel.test.ts` | pass (included in targeted suite) |
+| Hotspot geometry/replacement | `node --test tests/hotspotGeometry.test.ts tests/hotspotMapping.test.ts tests/hotspotCanvas.test.ts` | pass (included in targeted suite) |
 | Room gallery import (failure never deletes) | `node --test tests/roomGallery.test.ts` | pass; missing gallery reports removals but writes nothing |
 | Published gallery guest reads | `node --test tests/roomGalleryEditing.test.ts snapshotsParity.test.ts` | pass |
 | Mews pricing/availability unchanged | `node --test tests/mewsPricing.test.ts tests/catskillsMewsIds.test.ts` | pass |
 | Typecheck / control contract | `npm run typecheck` / `npm run lint:controls` | pass |
-| D1 migration integrity | `npm run d1:migrate:check` | 11 migrations applied twice, FK/integrity pass |
+| D1 migration integrity | `npm run d1:migrate:check` | **12 migrations** applied twice, FK/integrity pass |
 
 Verified properties from the checks above: draft, pending-review and soft-deleted mappings never appear in the guest hotspot map; a D1 outage preserves the Webflow payload; a failed/empty image-feed import never deletes previously published gallery media; URL resize variants and source replacement keep a stable canonical photo identity; and Mews transactional tests remain green.
 
-### Live deployed verification (owner action — not yet executed here)
+### Live deployed verification (owner action — still pending)
 
-The following require the deployed Worker/admin environment and a browser; they are **not** claimed as complete by this local run:
+The following require the deployed Worker/admin environment, a browser and Access identity. They
+are **not** claimed by the local evidence above; COW-82 remains open until they are recorded.
 
-- Deployed admin URL: `<DEPLOYED_WORKER_ORIGIN>/dashboard.html#/rooms` and `#/hotspots` (exact origin is environment-provided; confirm before the check).
-- Guest Photo Journey URL: `<DEPLOYED_WORKER_ORIGIN>/` with `?photoSource=mews` and the default editorial source.
-- Set `PHOTO_HOTSPOT_SOURCE=d1` only after confirming the published D1 snapshot on staging; verify pins appear on the correct photos at desktop and mobile widths, no console/network errors, and rollback restores the prior published state.
-- Capture screenshots and a dated test record here before closing COW-84.
+| Acceptance item | Status | Evidence needed |
+| --- | --- | --- |
+| Admin gallery and hotspot routes verified in the deployed environment | Pending | Exact URL `<DEPLOYED_WORKER_ORIGIN>/dashboard.html#/rooms` and `#/hotspots`, Access identity, dated result |
+| Published D1 gallery and hotspot data verified in guest Photo Journey | Pending | Guest URL `<DEPLOYED_WORKER_ORIGIN>/`, `PHOTO_HOTSPOT_SOURCE=d1` on staging after published snapshot confirmation |
+| Draft isolation, review gates, publish and rollback verified end-to-end | Local only | Deployed browser run showing a draft/pending pin invisible to guests, then publish → visible, rollback → prior state |
+| Import/sync failure preserves existing published media | Local only | Deployed import failure trace plus before/after published gallery counts |
+| Desktop and mobile browser checks; no material console/network errors | Pending | Screenshots/desktop + mobile widths, console and network logs |
+| Mews booking behavior unchanged | Local only | Deployed rate/availability/checkout smoke result |
+| Photo-admin parity documentation contains reproducible evidence | This section | Deployed URLs, date, results and screenshots appended here |
 
-No production flag is changed by this phase. Guest reads default to Webflow; Mews booking, pricing and availability code is untouched.
+Set `PHOTO_HOTSPOT_SOURCE=d1` only after confirming the published D1 snapshot on staging. No
+production flag is changed by this phase; guest reads default to Webflow, and Mews booking,
+pricing and availability code is untouched.
