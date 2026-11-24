@@ -23,6 +23,10 @@ WEBFLOW_ROOM_TYPE_COLLECTION_ID=6abc815b36cbcba74b8b01c4
 WEBFLOW_AMENITY_COLLECTION_ID=6abc8175a7bbdc92fa9e6599
 WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID=6acfb8250c28159487fb2aaf
 WEBFLOW_ADD_ON_COLLECTION_ID=6ac364287c8782e8e653075e
+WEBFLOW_LOCATION_ITEM_ID=6abc9142d98b325b2821ca23
+# Required for the Webflow baseline. Set the real 24-character Locations
+# collection ID before deploying; the deploy script rejects placeholders.
+WEBFLOW_LOCATION_COLLECTION_ID=__SET_WEBFLOW_LOCATION_COLLECTION_ID__
 WEBFLOW_CMS_API_TOKEN=<Webflow CMS API token — DO NOT commit the real value>
 
 # Funnel tracking is disabled unless this project provisions its own endpoint.
@@ -37,13 +41,15 @@ WEBFLOW_CMS_API_TOKEN=<Webflow CMS API token — DO NOT commit the real value>
 # ADMIN_GROUPS=<IdP group UUID allowed the admin role>
 # TENANT_ID=urban-cowboy
 
-# CMS read migration (COW-39). webflow is the default; shadow compares D1 with
-# Webflow without serving it; d1 serves published D1 rows and falls back safely.
-# CONTENT_SOURCE=webflow
-# CONTENT_SOURCE_POLICY_LANGUAGE=webflow
-# CONTENT_SOURCE_ADD_ONS=webflow
-# CONTENT_SOURCE_ROOM_GALLERIES=webflow
+# CMS read migration (COW-39). The production baseline must set every source
+# explicitly to webflow. A D1 cutover is a separate reviewed deployment using the
+# Gate 2 runbook; deploy-worker.mjs refuses non-webflow baseline flags.
+CONTENT_SOURCE=webflow
+CONTENT_SOURCE_POLICY_LANGUAGE=webflow
+CONTENT_SOURCE_SITE_SETTINGS=webflow
+CONTENT_SOURCE_ADD_ONS=webflow
+CONTENT_SOURCE_ROOM_GALLERIES=webflow
 
 # COW-82 guest hotspot cutover. webflow (default) keeps the existing source;
 # d1 serves only published, approved, non-deleted hotspots from D1.
-# PHOTO_HOTSPOT_SOURCE=webflow
+PHOTO_HOTSPOT_SOURCE=webflow

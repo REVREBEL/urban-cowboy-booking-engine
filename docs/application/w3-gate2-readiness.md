@@ -21,10 +21,16 @@ No deployment, binding edit or flag change was performed.
 
 **Immediate blockers before live acceptance:**
 
-1. Deploy the booking Worker with the required Webflow IDs for baseline parity, or with reviewed D1 flags after parity/soak. The current empty/default guest payloads are not an accepted baseline.
+1. Deploy the booking Worker with the required Webflow IDs for baseline parity, or with reviewed D1 flags after parity/soak. The current empty/default guest payloads are not an accepted baseline. The deployment script now rejects missing/placeholder Webflow IDs and non-`webflow` baseline flags; the real `WEBFLOW_LOCATION_COLLECTION_ID` and a complete shared `.env` are still required.
 2. Deploy the admin Worker with D1 plus the agreed booking API/service-binding and Access/tenant configuration.
 3. Record authenticated admin publish/rollback evidence and desktop/mobile guest-flow evidence against the deployed URLs.
 4. Complete controlled Mews quote → reservation → payment regression with test credentials and cleanup evidence.
+
+**Prepared baseline guard:** `scripts/deploy-worker.mjs` now requires every Webflow
+site/collection/item ID, validates 24-character Webflow ID shape, and requires
+all six source flags to be explicitly `webflow`. Regression tests cover missing
+IDs, placeholders and attempted D1 cutover. `npm run deploy:check` passes with a
+synthetic complete environment; no remote deployment is performed by the guard.
 
 ## 1. W3 deliverable status
 

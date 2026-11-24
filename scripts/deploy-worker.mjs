@@ -25,7 +25,33 @@ const dryRun = args.has("--dry-run");
 const sourceFlag = process.argv.indexOf("--env-file");
 const sourcePath = sourceFlag === -1 ? join(root, ".env") : resolve(process.argv[sourceFlag + 1] ?? "");
 const workerSecretNames = ["WEBFLOW_CMS_API_TOKEN", "ADMIN_TOKEN"];
-const requiredVars = ["MEWS_CLIENT", "MEWS_BASE_URL", "MEWS_APP_BASE_URL", "MEWS_HOTEL_ID", "MEWS_CONFIG_ID"];
+const requiredVars = [
+  "MEWS_CLIENT",
+  "MEWS_BASE_URL",
+  "MEWS_APP_BASE_URL",
+  "MEWS_HOTEL_ID",
+  "MEWS_CONFIG_ID",
+  // Baseline Webflow content must never deploy silently empty/default.
+  "WEBFLOW_SITE_ID",
+  "WEBFLOW_RATE_CARD_COLLECTION_ID",
+  "WEBFLOW_CONTENT_SETTINGS_COLLECTION_ID",
+  "WEBFLOW_POLICY_LANGUAGE_ITEM_ID",
+  "WEBFLOW_ADD_ON_COLLECTION_ID",
+  "WEBFLOW_ROOM_TYPE_COLLECTION_ID",
+  "WEBFLOW_LOCATION_COLLECTION_ID",
+  "WEBFLOW_BUILDING_COLLECTION_ID",
+  "WEBFLOW_AMENITY_COLLECTION_ID",
+  "WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID",
+  "WEBFLOW_LOCATION_ITEM_ID",
+];
+const requiredWebflowFlags = [
+  "CONTENT_SOURCE",
+  "CONTENT_SOURCE_POLICY_LANGUAGE",
+  "CONTENT_SOURCE_SITE_SETTINGS",
+  "CONTENT_SOURCE_ADD_ONS",
+  "CONTENT_SOURCE_ROOM_GALLERIES",
+  "PHOTO_HOTSPOT_SOURCE",
+];
 const requiredSecrets = ["ADMIN_TOKEN"];
 
 
@@ -62,6 +88,18 @@ if (process.env.CLOUDFLARE_ACCOUNT_ID &&
   fail("Shell CLOUDFLARE_ACCOUNT_ID conflicts with the Urban Cowboy account. Unset or correct it.");
 }
 for (const key of requiredVars) if (!value(key)) fail("Missing required " + key);
+for (const key of requiredVars.filter((name) => name.startsWith("WEBFLOW_"))) {
+  if (!/^[0-9a-f]{24}$/i.test(value(key))) {
+    fail(key + " must be a 24-character Webflow identifier");
+  }
+}
+for (const key of requiredWebflowFlags) {
+  const flag = value(key);
+  if (!flag) fail("Missing required baseline content flag " + key);
+  if (flag.toLowerCase() !== "webflow") {
+    fail(key + " must remain webflow for the baseline deployment; cutover requires the reviewed Gate 2 runbook");
+  }
+}
 if (!renderOnly) {
   for (const key of requiredSecrets) if (!value(key)) fail("Missing required Worker secret " + key);
   if (!dryRun && !apiToken) fail("Missing CLOUDFLARE_API_TOKEN");
