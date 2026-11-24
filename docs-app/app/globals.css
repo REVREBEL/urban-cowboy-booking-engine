@@ -138,7 +138,8 @@ article#nd-page {
     max-width: none;
   }
   article#nd-page .prose.flex-1 > p,
-  article#nd-page .prose.flex-1 > li {
+  article#nd-page .prose.flex-1 > ul,
+  article#nd-page .prose.flex-1 > ol {
     max-width: 90ch;
   }
 }
