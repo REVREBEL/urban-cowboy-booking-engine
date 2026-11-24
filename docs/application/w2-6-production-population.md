@@ -74,7 +74,7 @@ PRAGMA foreign_key_check;                                -- must be empty
 
 No orphan media, placements, hotspots or references are acceptable. Import retry and source failure must preserve existing published content: the seed uses upserts, publication rows are editor-owned (`state_source='editor'` is never overwritten), the importer emits no `DELETE`, and a failed atomic import never repoints a snapshot.
 
-The atomicity guarantee is Cloudflare D1's batch semantics: batched statements are SQL transactions and a failed statement aborts and rolls back the whole sequence (Cloudflare D1 docs, `D1Database.batch`). `applyBatch()` additionally fails closed when the API returns HTTP 200 with no or fewer results than submitted statements, so a partial response is never reported as success. This guarantee applies to the `--api-apply` batch path only; the SQL-file path is for small review fixtures, not production-scale snapshots.
+REST batch atomicity was verified directly, not inferred from Worker-binding docs: a disposable D1 database received a batch with a successful INSERT followed by a duplicate-key violation; the API returned 400 and the read-back table was empty, proving the first write rolled back. Evidence: `docs/generated/d1-rest-batch-atomicity.md`. `applyBatch()` additionally fails closed when the API returns HTTP 200 with no or fewer results than submitted statements, so a partial response is never reported as success. This guarantee applies to the `--api-apply` batch path only; the SQL-file path is for small review fixtures, not production-scale snapshots.
 
 ## Selective Mews reference sync
 

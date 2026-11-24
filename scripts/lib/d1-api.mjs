@@ -27,8 +27,9 @@ export function toApiStatements(statements) {
  * Apply one atomic batch through the D1 API. `fetchFn` and `baseUrl` are
  * injectable for tests; production uses the Cloudflare endpoint.
  *
- * D1 batches are SQL transactions (Cloudflare D1 docs, `D1Database.batch`):
- * a failed statement aborts and rolls back the whole sequence. This helper
+ * The D1 REST /query batch path was verified all-or-nothing with a disposable
+ * database: a duplicate-key failure in statement 2 rolled back statement 1's
+ * successful INSERT (docs/generated/d1-rest-batch-atomicity.md). This helper
  * additionally fails closed when the API returns a 200 with missing or partial
  * results, so callers never report a partial apply as success.
  */

@@ -16,6 +16,7 @@
 | Squarespace switch limited to adapter | No schema or guest-frontend redesign required; contract in `docs/application/webflow-photo-import.md` |
 | Mews ARI direct and no D1 ARI source | `tests/mewsAriAuthority.test.ts`; `mews_reference_sync` empty and restricted to stable reference types |
 | No flags flipped in this gate | All content flags remain at Webflow defaults; W3 owns cutover |
+| Atomic production apply | D1 REST batch all-or-nothing proven on a disposable database (`docs/generated/d1-rest-batch-atomicity.md`) |
 
 ## Signed-off reconciliation
 
