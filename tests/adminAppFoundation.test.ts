@@ -22,10 +22,13 @@ const withEnv = <T>(key: string, value: string | undefined, run: () => T): T => 
 test("admin app is an npm workspace with delegation scripts", () => {
   const rootPkg = json("package.json");
   const workspaces = rootPkg.workspaces as string[];
+  const scripts = rootPkg.scripts as Record<string, string>;
   assert.ok(workspaces.includes("admin-app"));
-  for (const script of ["admin:dev", "admin:build", "admin:typecheck", "admin:deploy"]) {
-    assert.match(String((rootPkg.scripts as Record<string, string>)[script]), /-w admin-app/);
+  for (const script of ["admin:dev", "admin:build", "admin:typecheck"]) {
+    assert.match(scripts[script], /-w admin-app/);
   }
+  assert.equal(scripts["admin:deploy"], "node scripts/deploy-admin.mjs");
+  assert.equal(scripts["admin:deploy:check"], "node scripts/deploy-admin.mjs --check");
 });
 
 test("admin app dependencies are pinned, not floating on latest", () => {
@@ -83,6 +86,17 @@ test("Cloudflare worker config stays cache-free and keeps proxy ahead of assets"
   assert.match(config, /name: "urban-cowboy-admin"/);
   assert.match(config, /compatibilityFlags: \["nodejs_compat"\]/);
   assert.match(config, /runWorkerFirst: \["\/\*", "!\/_next\/static\/\*", "!\/\*\/_next\/static\/\*"\]/);
+  for (const name of [
+    "CF_ACCESS_TEAM_DOMAIN",
+    "CF_ACCESS_AUD",
+    "ADMIN_EMAILS",
+    "ADMIN_GROUPS",
+    "TENANT_ID",
+    "API_BASE_URL",
+    "API_REQUEST_TIMEOUT_MS",
+  ]) {
+    assert.ok(config.includes(`textBinding("${name}")`), `${name} is a deployable text binding`);
+  }
   assert.doesNotMatch(config, /bindings\.secret\(/);
 });
 

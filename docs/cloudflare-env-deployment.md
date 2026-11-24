@@ -70,6 +70,26 @@ npm run deploy:d1
 - The legacy `ADMIN_TOKEN` binding is no longer consulted for authorization. The role matrix
   lives in `tests/auth.test.ts` and the tenant scope tests in `tests/tenantScope.test.ts`.
 
+## Admin Portal deployment
+
+The Admin Portal deploys as a separate Worker through the guarded root wrapper:
+
+```bash
+npm run admin:deploy:check
+npm run admin:deploy
+```
+
+The check reads the shared `.env`, validates the REVREBEL account and exits without a build,
+upload or deployment. The deploy passes only these nonsecret runtime bindings:
+`CF_ACCESS_TEAM_DOMAIN`, `CF_ACCESS_AUD`, `ADMIN_EMAILS`, optional `ADMIN_GROUPS`, `TENANT_ID`,
+`API_BASE_URL` and optional `API_REQUEST_TIMEOUT_MS`. `CLOUDFLARE_API_TOKEN` authenticates the
+deployment and is never an admin Worker binding.
+
+Dashboard browsers call the admin origin. The admin Worker verifies the Access session and
+forwards allowed API requests to `API_BASE_URL` with the verified assertion. The booking Worker
+must use the same Access team domain, AUD, admin allowlist and tenant scope. Do not configure the
+admin API base as the admin Worker origin itself.
+
 ## Apply D1 schema migrations
 
 Schema changes are separate from Worker deploys and content imports. Migration files are

@@ -100,6 +100,12 @@ test("mutations require an explicit same-origin Origin header", () => {
   );
 });
 
+test("anonymous page redirects keep the no-store policy", () => {
+  const source = read("admin-app/proxy.ts");
+  assert.match(source, /const redirectResponse = NextResponse\.redirect\(login\)/);
+  assert.match(source, /redirectResponse\.headers\.set\("Cache-Control", "no-store, private"\)/);
+});
+
 test("logout defers to Cloudflare Access and fails closed without a team domain", () => {
   const request = new Request("https://admin.example.com/api/auth/logout", {
     method: "POST",

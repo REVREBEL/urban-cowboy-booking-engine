@@ -15,15 +15,16 @@ ownership of D1, Mews, publishing and all `/api/admin/*`, `/api/content/*` and
 | Concern | Owner |
 | --- | --- |
 | Admin UI, routes, app router layouts/boundaries | `admin-app/app/**` |
-| Admin runtime config and API client (client in W1.4) | `admin-app/lib/env.ts` |
-| Cloudflare Worker config and deploy | `admin-app/cloudflare.config.ts` |
+| Admin runtime config and server API proxy | `admin-app/lib/env.ts`, `admin-app/lib/api-proxy.ts` |
+| Cloudflare Worker config and guarded deploy | `admin-app/cloudflare.config.ts`, `scripts/deploy-admin.mjs` |
 | D1/API contracts, auth verification, domain logic | existing Worker (`worker/**`) |
 | Guest journey and legacy `dashboard.html` | unchanged |
 
-Cross-origin API access is environment-driven: `API_BASE_URL` points at the booking-engine
-Worker origin. An empty value means same-origin relative `/api` requests. W3 coordinates the
-final routing/service-binding arrangement; no credential or account-specific value is
-committed.
+Dashboard panels call relative `/api/*` paths on the admin origin. The catch-all App Router
+handler in `admin-app/app/api/[...path]/route.ts` verifies the Access session and forwards allowed
+dashboard paths to the booking-engine Worker with the verified assertion. `API_BASE_URL` stays
+server-only, so the browser never receives the booking Worker origin or Access JWT. The booking
+Worker remains authoritative for D1, publishing and role checks.
 
 ## 2. Runtime choices (confirmed before scaffolding)
 
@@ -58,9 +59,11 @@ admin-app/
     (admin)/error.tsx         client error boundary with retry
     (admin)/not-found.tsx     admin 404
     api/health/route.ts       non-secret deploy smoke endpoint
+    api/[...path]/route.ts    authenticated same-origin API proxy
     globals.css               shared design-system import
     layout.tsx                root html/metadata
   lib/env.ts                  fail-closed runtime config parser
+  lib/api-proxy.ts            allowed-path forwarding and assertion handling
   proxy.ts                    no-store policy (W1.3 adds auth)
   cloudflare.config.ts        Worker: urban-cowboy-admin
   vite.config.ts              vinext + Cloudflare plugin + shared alias
@@ -72,8 +75,12 @@ tests/adminAppFoundation.test.ts
 
 | Name | Scope | Default | Validation |
 | --- | --- | --- | --- |
-| `API_BASE_URL` | server | empty → same-origin | parsed with `URL`; must be an absolute `http(s)` origin with no credentials, path, query or fragment; trailing slashes normalised |
-| `API_REQUEST_TIMEOUT_MS` | server | `8000` | integer 1000–60000 |
+| `CF_ACCESS_TEAM_DOMAIN` | server | none | Cloudflare Access team hostname |
+| `CF_ACCESS_AUD` | server | none | 64-character Access application AUD in the deploy wrapper |
+| `ADMIN_EMAILS`, `ADMIN_GROUPS` | server | none | comma-separated role allowlists |
+| `TENANT_ID` | server | none | nonblank server-bound tenant scope |
+| `API_BASE_URL` | server proxy | none | absolute `http(s)` origin with no credentials, path, query or fragment; production wrapper requires HTTPS |
+| `API_REQUEST_TIMEOUT_MS` | server proxy | `8000` | integer 1000–60000 |
 
 Declared string bindings appear on `process.env` in the Worker because `nodejs_compat` and a
 compatibility date after 2025-04-01 are configured. `lib/env.ts` is server-only; never import it
@@ -87,34 +94,36 @@ From the repository root:
 npm run admin:dev         # vite dev for admin-app
 npm run admin:build       # production Worker build
 npm run admin:typecheck   # tsc --noEmit for admin-app
-npm run admin:deploy      # vinext-cloudflare deploy (needs Cloudflare auth)
-node --test tests/adminAppFoundation.test.ts
+npm run admin:deploy:check # validate .env bindings without deploying
+npm run admin:deploy      # guarded vinext-cloudflare deploy
+node --test tests/adminAppFoundation.test.ts tests/adminApiProxy.test.ts tests/adminDeployConfig.test.ts
 ```
 
-Root `package.json` now includes `admin-app` in `workspaces` and delegates those scripts with
-`-w admin-app`. All admin dependencies are pinned; `package-lock.json` is the single npm
-lockfile for the repository.
+Root `package.json` includes `admin-app` in `workspaces`. The deployment wrapper reads the shared
+`.env`, validates the approved account and forwards only the nonsecret bindings listed above.
+All admin dependencies are pinned; `package-lock.json` is the single npm lockfile.
 
-## 7. Deployment still required (owner action)
+## 7. Deployment and production acceptance
 
-`npm run admin:deploy` was **not** run here: it needs Cloudflare authentication and an owner
-decision about the preview Worker name/route. Before deploying:
+`urban-cowboy-admin` was deployed on 2026-11-24, but production acceptance remains open. The
+deployed version predates the same-origin API proxy and has only the `ASSETS` binding. Use
+`npm run admin:deploy:check` before any later deployment, then `npm run admin:deploy` with the
+approved shared `.env` values. The booking Worker must use the same Access team domain, AUD,
+admin allowlist and tenant scope.
 
-1. Confirm the Worker name `urban-cowboy-admin` is available in the target account.
-2. Decide how the app reaches the booking-engine APIs (`API_BASE_URL` text binding or a
-   service binding coordinated with W3). Do not commit environment values.
-3. Deploy to a preview environment, request `/api/health`, and record the deployed URL in COW-90.
-4. Confirm admin HTML responses are `no-store, private` and that no admin data is exposed before
-   W1.3 session enforcement is in place. Keep the Worker non-public or behind Access until then.
+Deployed Access login, role restrictions, D1 read/edit/publish/rollback and browser evidence are
+tracked in [admin-portal-gate2-acceptance.md](./admin-portal-gate2-acceptance.md). A local build
+or configuration check does not close those items.
 
 ## 8. Deferred to later W1 issues
 
-- W1.3 (COW-91): delivered — see [admin-portal-auth-rbac.md](./admin-portal-auth-rbac.md).
+- W1.3 (COW-91): delivered. See [admin-portal-auth-rbac.md](./admin-portal-auth-rbac.md).
   Cloudflare Access session verification, logout, expiry, role matrix, CSRF and unauthorized
   states are in place; Booking Studio enablement remains separate.
 - W1.4 (COW-92): App Router routes for the parity matrix, API client, and reuse of the domain
-  panels. Fix the destination wiring defect `D-01` recorded in the parity audit.
-- W1.5/W1.7: sync gates; no post-gate integration until gate peers complete.
+  panels. The destination wiring defect `D-01` is recorded in the parity audit.
+- W1.5/W1.7: sync gates. W1.7 added the same-origin API proxy and deployment binding contract
+  locally on 2026-11-24; production acceptance remains open.
 
 ## 9. Local verification evidence (2026-11-23)
 
@@ -131,3 +140,10 @@ decision about the preview Worker name/route. Before deploying:
 Build emits upstream vinext warnings (ineffective dynamic imports in vinext shims and
 sourcemap notices from `@vitejs/plugin-rsc`). They are framework-level warnings, not app errors,
 and the build completes successfully.
+
+## 10. Same-origin integration evidence, 2026-11-24
+
+The authenticated API proxy, relative dashboard client and guarded deployment bindings were
+implemented and verified locally. The command results and explicit production gaps are recorded
+in [admin-portal-gate2-acceptance.md](./admin-portal-gate2-acceptance.md) §7. No deployment or
+production setting was changed.
