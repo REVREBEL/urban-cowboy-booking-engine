@@ -228,6 +228,15 @@ test("no Webflow source: empty D1 stays no-store, then published data is cacheab
     const emptyBody = await empty.json() as { galleries: Record<string, unknown> };
     assert.deepEqual(emptyBody.galleries, {});
 
+    // An existing but empty amenities snapshot is still no usable content.
+    const emptyAmenities = await buildSnapshot("roomAmenities", []);
+    await saveSnapshot(d1(db), { tenantId: TENANT }, "roomAmenities", emptyAmenities);
+    const unusable = await request();
+    assert.equal(unusable.headers.get("cache-control"), "no-store");
+    const unusableBody = await unusable.json() as { galleries: Record<string, unknown>; amenities: Record<string, unknown> };
+    assert.deepEqual(unusableBody.galleries, {});
+    assert.deepEqual(unusableBody.amenities, {});
+
     // Publishing the snapshot and room document makes the response cacheable.
     await publishRoomGallery(db, [
       { id: "room-a", mewsId: "mews-a", images: [{ mediaAssetId: "media-1", sourceUrl: OLD_URL }] },
