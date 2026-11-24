@@ -188,3 +188,8 @@ with the same image URLs as Webflow. `room-type-reviews` still returned an empty
 gallery map because that handler short-circuits before applying overlays when no
 Webflow bindings exist; PR #434 fixes that path, and gallery serving must be
 re-verified after it is merged and deployed. No production flag was flipped.
+
+The no-Webflow response stays `no-store` with `generatedAt: null` until the final
+overlaid payload contains usable published gallery images. Empty or malformed
+snapshots, amenity-only content and D1 failures cannot seed a public cache. The
+regression suite covers later recovery after gallery publication.

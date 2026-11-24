@@ -371,7 +371,25 @@ async function refreshReviews(
   return payload;
 }
 
-function guestBody(guest: CachedReviewPayload, stale: boolean) {
+async function overlayPayload(env: Env, payload: CachedReviewPayload): Promise<CachedReviewPayload> {
+  // COW-73: guest values come from published D1 records where available.
+  // The overlay runs on every response (not inside the cache) so a publish is
+  // visible immediately and a draft never leaks into the cached Webflow payload.
+  let guest = await applyPublishedAmenities(env, env.TENANT_ID, payload);
+  guest = await applyPublishedHotspots(env, env.TENANT_ID, guest);
+  return await applyPublishedGalleries(env, env.TENANT_ID, guest);
+}
+
+/** Cache a D1-only room response only when its final gallery payload has usable images. */
+function hasUsableGalleryContent(payload: CachedReviewPayload): boolean {
+  return Object.values(payload.galleries).some((gallery) => gallery.images.length > 0);
+}
+
+function responseBody(
+  guest: CachedReviewPayload,
+  stale: boolean,
+  generatedAt: string | null = new Date(guest.fetchedAt).toISOString(),
+) {
   return {
     reviews: guest.reviews,
     descriptions: guest.descriptions,
@@ -380,31 +398,15 @@ function guestBody(guest: CachedReviewPayload, stale: boolean) {
     hotspots: guest.hotspots,
     hotspotsByRoom: guest.hotspotsByRoom ?? null,
     hotspotSourceCount: guest.hotspotSourceCount ?? null,
-    generatedAt: new Date(guest.fetchedAt).toISOString(),
+    generatedAt,
     stale,
     amenitySource: "d1-published",
   };
 }
 
-/** Apply the published overlays to a payload; snapshot existence alone is not content. */
-async function applyGuestOverlays(env: Env, payload: CachedReviewPayload): Promise<CachedReviewPayload> {
-  let guest = await applyPublishedAmenities(env, env.TENANT_ID, payload);
-  guest = await applyPublishedHotspots(env, env.TENANT_ID, guest);
-  return applyPublishedGalleries(env, env.TENANT_ID, guest);
-}
-
-function hasUsableGuestContent(guest: CachedReviewPayload): boolean {
-  return Object.keys(guest.galleries).length > 0 ||
-    Object.keys(guest.amenities).length > 0 ||
-    Object.keys(guest.hotspots).length > 0 ||
-    Object.keys(guest.hotspotsByRoom ?? {}).length > 0;
-}
-
 async function response(env: Env, payload: CachedReviewPayload, stale: boolean): Promise<Response> {
-  // COW-73: guest values come from published D1 records where available.
-  // The overlay runs on every response (not inside the cache) so a publish is
-  // visible immediately and a draft never leaks into the cached Webflow payload.
-  return json(guestBody(await applyGuestOverlays(env, payload), stale), 200, BROWSER_CACHE_CONTROL);
+  const guest = await overlayPayload(env, payload);
+  return json(responseBody(guest, stale), 200, BROWSER_CACHE_CONTROL);
 }
 
 export async function onRequestGet({
@@ -418,15 +420,19 @@ export async function onRequestGet({
 
   if (!env.WEBFLOW_CMS_API_TOKEN || !collectionId) {
     // No Webflow source is available (e.g. a D1-only preview). Apply published
-    // D1 overlays and cache only when the resulting payload actually contains
-    // guest content. An empty snapshot or a D1 outage keeps the no-store empty
-    // response so a CDN cannot serve an empty gallery after data is published.
-    const guest = await applyGuestOverlays(env, {
+    // D1 overlays when they can supply content; otherwise keep the previous
+    // no-store empty response so a CDN cannot cache an empty gallery through a
+    // D1 outage or before the publication gate is ready.
+    const guest = await overlayPayload(env, {
       fetchedAt: Date.now(),
       reviews: {}, descriptions: {}, galleries: {}, amenities: {}, hotspots: {},
     });
-    return json(guestBody(guest, false), 200,
-      hasUsableGuestContent(guest) ? BROWSER_CACHE_CONTROL : "no-store");
+    const cacheable = hasUsableGalleryContent(guest);
+    return json(
+      responseBody(guest, false, cacheable ? new Date(guest.fetchedAt).toISOString() : null),
+      200,
+      cacheable ? BROWSER_CACHE_CONTROL : "no-store",
+    );
   }
 
   const cached = await readCachedReviews(env, cacheKey(collectionId, env.WEBFLOW_PHOTO_HOTSPOT_COLLECTION_ID || ""));

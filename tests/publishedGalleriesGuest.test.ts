@@ -212,7 +212,7 @@ test("draft documents, missing snapshots and disabled flags keep Webflow galleri
   }
 });
 
-test("no Webflow source: empty D1 stays no-store, then published data is cacheable", async () => {
+test("no Webflow source: empty or unusable amenities snapshots stay no-store until a gallery publishes", async () => {
   const db = makeDb();
   try {
     const connection = d1(db) as D1Database;
@@ -220,22 +220,48 @@ test("no Webflow source: empty D1 stays no-store, then published data is cacheab
       env: envFor(connection, "d1"),
       waitUntil: () => undefined,
     });
+    const saveAmenities = (records: Array<{ id: string; payload: Record<string, unknown> }>) =>
+      buildSnapshot("roomAmenities", records.map((record) => ({
+        ...record,
+        collection: "roomAmenities" as const,
+      }))).then((built) => saveSnapshot(connection, { tenantId: TENANT }, "roomAmenities", built));
 
-    // No published snapshot or room document: fail closed, never cache an empty gallery.
-    const empty = await request();
-    assert.equal(empty.status, 200);
-    assert.equal(empty.headers.get("cache-control"), "no-store");
-    const emptyBody = await empty.json() as { galleries: Record<string, unknown> };
-    assert.deepEqual(emptyBody.galleries, {});
+    await saveAmenities([]);
+    const emptySnapshot = await request();
+    assert.equal(emptySnapshot.headers.get("cache-control"), "no-store");
+    assert.equal((await emptySnapshot.json() as { generatedAt: string | null }).generatedAt, null);
 
-    // An existing but empty amenities snapshot is still no usable content.
-    const emptyAmenities = await buildSnapshot("roomAmenities", []);
-    await saveSnapshot(d1(db), { tenantId: TENANT }, "roomAmenities", emptyAmenities);
-    const unusable = await request();
-    assert.equal(unusable.headers.get("cache-control"), "no-store");
-    const unusableBody = await unusable.json() as { galleries: Record<string, unknown>; amenities: Record<string, unknown> };
-    assert.deepEqual(unusableBody.galleries, {});
-    assert.deepEqual(unusableBody.amenities, {});
+    await saveAmenities([{
+      id: "room-a",
+      payload: { mewsRoomCategoryId: "mews-a", migrated: false, amenities: [] },
+    }]);
+    const unusableSnapshot = await request();
+    assert.equal(unusableSnapshot.headers.get("cache-control"), "no-store");
+    assert.equal((await unusableSnapshot.json() as { generatedAt: string | null }).generatedAt, null);
+
+    await saveAmenities([{
+      id: "room-a",
+      payload: { mewsRoomCategoryId: "mews-a", migrated: true, amenities: [{
+        amenityId: "", name: "", shortName: null, shortDescription: null,
+        longDescription: null, imagePath: null, imageName: null,
+        displayOrder: 1, excluded: false,
+      }] },
+    }]);
+    const malformedSnapshot = await request();
+    assert.equal(malformedSnapshot.headers.get("cache-control"), "no-store");
+    assert.equal((await malformedSnapshot.json() as { generatedAt: string | null }).generatedAt, null);
+
+    await saveAmenities([{
+      id: "room-a",
+      payload: { mewsRoomCategoryId: "mews-a", migrated: true, amenities: [{
+        amenityId: "tub", name: "Soaking tub", shortName: "Tub", shortDescription: null,
+        longDescription: null, imagePath: null, imageName: null,
+        displayOrder: 1, excluded: false,
+      }] },
+    }]);
+    const amenitiesOnly = await request();
+    assert.equal(amenitiesOnly.headers.get("cache-control"), "no-store");
+    assert.equal((await amenitiesOnly.json() as { generatedAt: string | null }).generatedAt, null);
 
     // Publishing the snapshot and room document makes the response cacheable.
     await publishRoomGallery(db, [
@@ -243,9 +269,44 @@ test("no Webflow source: empty D1 stays no-store, then published data is cacheab
     ]);
     publishRoomDocument(db, "room-a");
     const published = await request();
-    assert.equal(published.status, 200);
     assert.match(published.headers.get("cache-control") ?? "", /max-age=60/);
-    const body = await published.json() as { galleries: Record<string, { images: string[] }> };
+    const body = await published.json() as { galleries: Record<string, { images: string[] }>; generatedAt: string };
+    assert.deepEqual(body.galleries["mews-a"].images, [OLD_URL]);
+    assert.equal(typeof body.generatedAt, "string");
+  } finally {
+    db.close();
+  }
+});
+
+test("no Webflow source: unavailable D1 stays no-store and recovers after publication", async () => {
+  const db = makeDb();
+  try {
+    const connection = d1(db) as D1Database;
+    const unavailable = {
+      prepare() {
+        throw new Error("D1 unavailable");
+      },
+    } as unknown as D1Database;
+    const failed = await roomTypeReviewsGet({
+      env: envFor(unavailable, "d1"),
+      waitUntil: () => undefined,
+    });
+    assert.equal(failed.status, 200);
+    assert.equal(failed.headers.get("cache-control"), "no-store");
+    const failedBody = await failed.json() as { galleries: Record<string, unknown>; generatedAt: string | null };
+    assert.deepEqual(failedBody.galleries, {});
+    assert.equal(failedBody.generatedAt, null);
+
+    await publishRoomGallery(db, [
+      { id: "room-a", mewsId: "mews-a", images: [{ mediaAssetId: "media-1", sourceUrl: OLD_URL }] },
+    ]);
+    publishRoomDocument(db, "room-a");
+    const recovered = await roomTypeReviewsGet({
+      env: envFor(connection, "d1"),
+      waitUntil: () => undefined,
+    });
+    assert.match(recovered.headers.get("cache-control") ?? "", /max-age=60/);
+    const body = await recovered.json() as { galleries: Record<string, { images: string[] }> };
     assert.deepEqual(body.galleries["mews-a"].images, [OLD_URL]);
   } finally {
     db.close();
