@@ -6,7 +6,13 @@
 import type { AccessClaims } from "../../worker/access.ts";
 import { principalFromClaims, type Principal, type Role } from "../../worker/auth.ts";
 
-export type AdminCapability = "read" | "edit" | "publish" | "settings" | "destructiveMedia";
+export type AdminCapability =
+  | "read"
+  | "edit"
+  | "publish"
+  | "settings"
+  | "recovery"
+  | "destructiveMedia";
 
 /** Every capability is checked on the server; UI visibility is never the gate. */
 export const CAPABILITY_ROLES: Readonly<Record<AdminCapability, Role>> = {
@@ -14,6 +20,8 @@ export const CAPABILITY_ROLES: Readonly<Record<AdminCapability, Role>> = {
   edit: "admin",
   publish: "admin",
   settings: "admin",
+  // The Worker's /api/recovery handler requires the admin role.
+  recovery: "admin",
   destructiveMedia: "admin",
 };
 
