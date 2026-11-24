@@ -82,11 +82,11 @@ export const RESOURCE_SECTIONS: Readonly<Record<string, ResourceSectionConfig>> 
     path: "/api/recovery",
     label: "recovery records",
     fields: [
+      // One canonical key per semantic field: displayFields falls back between
+      // snake_case and camelCase, so listing both would duplicate the label.
       { key: "cart_id", label: "Cart" },
-      { key: "cartId", label: "Cart" },
       { key: "status", label: "Status" },
       { key: "created_at", label: "Created" },
-      { key: "createdAt", label: "Created" },
       { key: "id", label: "ID" },
     ],
   },
@@ -98,7 +98,6 @@ export const RESOURCE_SECTIONS: Readonly<Record<string, ResourceSectionConfig>> 
       { key: "metric", label: "Metric" },
       { key: "value", label: "Value" },
       { key: "tenant_id", label: "Tenant" },
-      { key: "tenantId", label: "Tenant" },
     ],
   },
 };
@@ -136,12 +135,16 @@ export interface DisplayField {
 /** Render the fields the endpoint actually returns, not an opaque id. */
 export function displayFields(record: RecordValue, config: ResourceSectionConfig): DisplayField[] {
   const result: DisplayField[] = [];
+  const seen = new Set<string>();
   for (const field of config.fields) {
     const raw =
       record[field.key] ??
       record[camelToSnake(field.key)] ??
       record[snakeToCamel(field.key)];
     if (raw === null || raw === undefined || raw === "") continue;
+    // Defensive dedupe: labels are used as React keys in the panel.
+    if (seen.has(field.label)) continue;
+    seen.add(field.label);
     const text = typeof raw === "object" ? JSON.stringify(raw) : String(raw);
     result.push({ label: field.label, value: text.length > 240 ? `${text.slice(0, 240)}…` : text });
   }

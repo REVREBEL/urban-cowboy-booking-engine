@@ -89,6 +89,35 @@ test("recovery accepts snake_case cart rows without exposing an opaque label", (
   assert.notEqual(recordLabel(rows[0], config), "Record");
 });
 
+test("field labels and keys stay unique for snake_case and camelCase responses", () => {
+  const cases = [
+    {
+      sectionId: "recovery",
+      snake: { items: [{ id: "r1", cart_id: "cart-9", status: "open", created_at: "2026-11-23" }] },
+      camel: { items: [{ id: "r1", cartId: "cart-9", status: "open", createdAt: "2026-11-23" }] },
+      expected: ["Cart", "Status", "Created", "ID"],
+    },
+    {
+      sectionId: "analytics",
+      snake: { items: [{ tenant_id: "urban-cowboy", day: "2026-11-23", metric: "sessions", value: 4 }] },
+      camel: { items: [{ tenantId: "urban-cowboy", day: "2026-11-23", metric: "sessions", value: 4 }] },
+      expected: ["Day", "Metric", "Value", "Tenant"],
+    },
+  ];
+
+  for (const testCase of cases) {
+    const config = section(testCase.sectionId);
+    for (const payload of [testCase.snake, testCase.camel]) {
+      const row = recordsFromResponse(payload, config)[0];
+      const fields = displayFields(row, config);
+      const labels = fields.map((field) => field.label);
+      assert.deepEqual(new Set(labels).size, labels.length, `${testCase.sectionId} labels must be unique`);
+      assert.deepEqual(labels, testCase.expected, `${testCase.sectionId} keeps one field per concept`);
+      assert.deepEqual(new Set(fields.map((f) => f.value)).size, fields.length);
+    }
+  }
+});
+
 test("empty, missing and malformed payloads produce no rows", () => {
   for (const value of [{ items: [] }, [], null, undefined, "oops"]) {
     assert.deepEqual(recordsFromResponse(value, section("media")), []);

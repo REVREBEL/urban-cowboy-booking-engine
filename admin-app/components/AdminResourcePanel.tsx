@@ -49,8 +49,8 @@ export function AdminResourcePanel({
           <li key={String(record.id ?? index)} className="card space-y-1 p-3">
             <p className="font-medium text-foreground">{recordLabel(record, config)}</p>
             <dl className="grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
-              {fields.slice(1).map((field) => (
-                <div key={field.label} className="flex min-w-0 gap-2">
+              {fields.slice(1).map((field, index) => (
+                <div key={`${field.label}-${index}`} className="flex min-w-0 gap-2">
                   <dt className="shrink-0 font-medium">{field.label}:</dt>
                   <dd className="min-w-0 break-all">{field.value}</dd>
                 </div>
