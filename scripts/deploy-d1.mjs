@@ -19,9 +19,10 @@ const configPath = join(root, ".wrangler.generated.toml");
 const seedPath = join(root, "seed.sql");
 const cli = join(root, "node_modules", ".bin", "wrangler");
 const expectedCounts = {
-  tenants: 1, locations: 4, buildings: 9, room_types: 22, amenities: 76,
+  tenants: 1, locations: 4, location_publication: 4, buildings: 9,
+  room_types: 22, room_type_publication: 22, amenities: 76, amenity_editorial: 76,
   events: 8, offers: 8, add_ons: 9, room_type_amenities: 253,
-  rate_merchandising: 5, content_items: 24, content_revisions: 24,
+  rate_merchandising: 5, content_items: 25, content_revisions: 25,
 };
 const expectedZones = {
   catskills: "America/New_York", denver: "America/Denver",
@@ -131,4 +132,4 @@ for (const table of ["room_types", "buildings"]) {
   if (Number(rows[0]?.n) !== 0) fail(table + " has unassigned location IDs");
 }
 console.log("Remote D1 reconciliation passed.");
-console.log("Media assets/hotspots remain intentionally excluded until source media IDs exist.");
+console.log("Editorial seed reconciled. Apply the reviewed photo-import SQL and publish snapshots as separate, explicitly approved steps (see docs/application/w2-6-production-population.md).");

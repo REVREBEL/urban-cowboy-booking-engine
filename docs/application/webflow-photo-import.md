@@ -20,6 +20,8 @@ This importer uses the existing Webflow photo/CMS functionality as a temporary i
 - Reordering changes only `media_placements.display_order`. Room remapping adds a placement; the old placement is never deleted. A single source image may be placed in several rooms: one master asset, one placement per room, one `update` decision after the first `create`.
 - New assets get version 1 (`<mediaId>:v1`) and a matching `media_asset_metadata.current_version_id`. An existing asset keeps its real version IDs and current pointer: a URL-only re-import never creates a version row and never rewinds a replacement (e.g. an arbitrary v1 key with an active v2).
 - `--db <sqlite-file>` is opened **read-only** and validated against the required schema; a dry run never migrates or mutates the supplied export.
+- Guest galleries read the immutable `roomGallery` snapshot, not live placements. The CLI therefore generates the snapshot refresh as **ordinary SQL in the same `BEGIN`/`COMMIT` script** as the registry updates: new `published_snapshots` row plus an idempotent `snapshot_pointers` update. A failed import statement rolls the whole script back, so no new snapshot version is published. The refresh uses the URLs from the plan (the read-only export still holds the old URLs), changes only `sourceUrl` for affected media IDs, and leaves working revisions and unpublished editor drafts untouched. `refreshPublishedGalleryUrls()` remains available for programmatic D1 callers.
+- A URL-only reimport preserves known width/height when the source omits dimensions (`COALESCE` in the current-version update), so replacement/crop decisions keep their geometry facts.
 
 ## Safety properties
 
@@ -42,7 +44,9 @@ node scripts/sync-webflow-photos.mjs \
 WEBFLOW_SITE_ID=... WEBFLOW_ROOM_TYPE_COLLECTION_ID=... WEBFLOW_CMS_API_TOKEN=... \
   node scripts/sync-webflow-photos.mjs --api --room-types room-types.json
 
-# Emit a reviewable script, then apply explicitly
+# Emit a reviewable script, then apply explicitly. --sql-out requires --db:
+# the published roomGallery snapshot is read from the export and refreshed in
+# the same transaction as the registry updates.
 node scripts/sync-webflow-photos.mjs --file photos.json --room-types room-types.json \
   --db local.sqlite --sql-out /tmp/webflow-photos.sql
 wrangler d1 execute urban-cowboy-content --local  --file /tmp/webflow-photos.sql
@@ -57,13 +61,13 @@ The dry-run report shows matched, created, updated, duplicate, invalid, unresolv
 
 ```bash
 node --test tests/webflowPhotoImport.test.ts
-npm test                 # 570 tests pass
+npm test                 # 588 tests pass
 npm run typecheck
 npm run lint:controls
 npm run d1:migrate:check
 ```
 
-The test suite covers explicit room resolution, deterministic IDs, ordered placements, URL changes, provider switch, duplicate aliases, tenant isolation, room remapping, shared images across rooms, arbitrary v1/current-v2 preservation, repeated idempotent import, read-only `--db`, empty-source safety, non-deletion and paginated live fetch.
+The test suite covers explicit room resolution, deterministic IDs, ordered placements, URL changes, provider switch, duplicate aliases, tenant isolation, room remapping, shared images across rooms, arbitrary v1/current-v2 preservation, repeated idempotent import, read-only `--db`, empty-source safety, non-deletion, paginated live fetch, published-gallery URL refresh with draft preservation, null-dimension geometry preservation, and the real CLI `--sql-out` → apply → guest-read workflow.
 
 ## Next
 

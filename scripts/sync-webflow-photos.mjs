@@ -17,6 +17,7 @@ import { readFileSync } from "node:fs";
 
 const { webflowPhotoSourceAdapter, fetchWebflowRoomTypeItems } = await import("../worker/photo-source-webflow.ts");
 const { planPhotoImport, renderPhotoImportSql } = await import("../worker/photo-source-import.ts");
+const { canonicalJson } = await import("../worker/content-provider.ts");
 const { DatabaseSync } = await import("node:sqlite");
 
 const DEFAULT_TENANT = "urban-cowboy";
@@ -102,12 +103,89 @@ function d1Like(db) {
   };
 }
 
+/**
+ * Build the published-snapshot refresh as ordinary SQL in the same BEGIN/COMMIT
+ * script as the registry updates. Guests read the immutable roomGallery
+ * snapshot, so leaving this out would keep serving old URLs after a successful
+ * registry import. If any earlier statement fails, the transaction rolls back
+ * and no new snapshot version is published.
+ */
+function snapshotRefreshStatements(db, tenantId, changedMediaIds, plannedUrls) {
+  if (!changedMediaIds.size) return [];
+  const pointer = db.prepare(
+    "SELECT current_version, previous_version FROM snapshot_pointers WHERE tenant_id=?1 AND location_id='' AND collection='roomGallery'",
+  ).get(tenantId);
+  if (!pointer) return [];
+  const snapshot = db.prepare(
+    "SELECT payload_json FROM published_snapshots WHERE tenant_id=?1 AND location_id='' AND collection='roomGallery' AND version=?2",
+  ).get(tenantId, pointer.current_version);
+  if (!snapshot) return [];
+
+  let payload;
+  try { payload = JSON.parse(snapshot.payload_json); } catch { return []; }
+  const records = Array.isArray(payload.items) ? payload.items : [];
+  const urls = new Map(db.prepare(
+    `SELECT a.id AS id, COALESCE(v.squarespace_url, a.squarespace_url) AS source_url
+       FROM media_assets a
+       LEFT JOIN media_asset_metadata md ON md.media_asset_id=a.id AND md.tenant_id=a.tenant_id
+       LEFT JOIN media_versions v ON v.id=md.current_version_id
+      WHERE a.tenant_id=?1`,
+  ).all(tenantId).map((row) => [row.id, row.source_url]));
+
+  let changed = false;
+  for (const record of records) {
+    for (const item of record.payload?.items ?? []) {
+      if (!changedMediaIds.has(item.mediaAssetId)) continue;
+      // The export is read-only and still holds the OLD url; the plan holds the
+      // new one. Never derive the published URL from the stale export.
+      const next = plannedUrls.get(item.mediaAssetId) ?? urls.get(item.mediaAssetId);
+      if (typeof next === "string" && next.length > 0 && next !== item.sourceUrl) {
+        item.sourceUrl = next;
+        changed = true;
+      }
+    }
+  }
+  if (!changed) return [];
+
+  const items = [...records].sort((a, b) => String(a.id).localeCompare(String(b.id)));
+  const checksum = createHash("sha256").update(canonicalJson(items)).digest("hex");
+  const payloadJson = JSON.stringify({ collection: "roomGallery", version: checksum, itemCount: items.length, items });
+  return [
+    {
+      sql: `INSERT INTO published_snapshots (tenant_id, location_id, collection, version, payload_json, item_count, checksum)
+            VALUES (?1, '', 'roomGallery', ?2, ?3, ?4, ?5) ON CONFLICT DO NOTHING`,
+      params: [tenantId, checksum, payloadJson, items.length, checksum],
+    },
+    {
+      sql: `INSERT INTO snapshot_pointers (tenant_id, location_id, collection, current_version, previous_version)
+            VALUES (?1, '', 'roomGallery', ?2, ?3)
+            ON CONFLICT (tenant_id, location_id, collection) DO UPDATE SET
+              current_version = excluded.current_version,
+              previous_version = CASE
+                WHEN snapshot_pointers.current_version = excluded.current_version
+                THEN snapshot_pointers.previous_version ELSE excluded.previous_version END,
+              updated_at = datetime('now')`,
+      params: [tenantId, checksum, pointer.current_version],
+    },
+  ];
+}
+
 async function main() {
   const tenantId = argValue("--tenant") ?? process.env.TENANT_ID ?? DEFAULT_TENANT;
   const locationId = argValue("--location") ?? DEFAULT_LOCATION;
   const roomTypes = loadRoomTypes(await loadJson(argValue("--room-types"), "--room-types"));
   const sqlOut = argValue("--sql-out");
+  const dbPath = argValue("--db");
   const now = argValue("--now") ?? new Date().toISOString();
+
+  if (sqlOut && !dbPath) {
+    console.error(
+      "--sql-out requires --db <export.sqlite>.\n" +
+        "The published roomGallery snapshot is what guests read; it must be refreshed\n" +
+        "in the same transaction as the registry update. Export the D1 database first.",
+    );
+    process.exit(1);
+  }
 
   let payload;
   let sourceUrl;
@@ -131,8 +209,13 @@ async function main() {
     payload, roomTypes, sourceUrl, fetchedAt: now, digest,
   });
 
-  const db = makeDb(argValue("--db"), roomTypes);
+  const db = makeDb(dbPath, roomTypes);
   const plan = await planPhotoImport(d1Like(db), { tenantId, locationId, snapshot, now });
+  const importDecisions = plan.decisions.filter(
+    (decision) => decision.kind === "create" || decision.kind === "update",
+  );
+  const changedMediaIds = new Set(importDecisions.map((decision) => decision.mediaId));
+  const plannedUrls = new Map(importDecisions.map((decision) => [decision.mediaId, decision.photo.url]));
 
   console.log(`provider    : ${snapshot.provider}`);
   console.log(`source      : ${sourceUrl}`);
@@ -154,8 +237,12 @@ async function main() {
   }
 
   if (sqlOut) {
-    await writeFile(sqlOut, renderPhotoImportSql(plan, snapshot.provider), "utf8");
-    console.log(`\nwrote ${plan.statements.length} statements to ${sqlOut}`);
+    // The snapshot refresh is appended to the same transaction: if any import
+    // statement fails, COMMIT never happens and no new version is published.
+    const refresh = snapshotRefreshStatements(db, tenantId, changedMediaIds, plannedUrls);
+    const statements = [...plan.statements, ...refresh];
+    await writeFile(sqlOut, renderPhotoImportSql({ ...plan, statements }, snapshot.provider), "utf8");
+    console.log(`\nwrote ${statements.length} statements to ${sqlOut} (${refresh.length} snapshot refresh)`);
     console.log("\napply with:");
     console.log(`  wrangler d1 execute urban-cowboy-content --local  --file ${sqlOut}`);
   } else {
