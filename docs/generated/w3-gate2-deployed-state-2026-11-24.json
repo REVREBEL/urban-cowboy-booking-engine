@@ -106,8 +106,7 @@
     "bindings": [
       "ASSETS"
     ],
-    "missingOperationalBindings": [
-      "DB",
+    "missingRequiredBindings": [
       "booking Worker service binding or configured API origin",
       "CF_ACCESS_TEAM_DOMAIN",
       "CF_ACCESS_AUD",
@@ -115,6 +114,9 @@
       "ADMIN_GROUPS",
       "TENANT_ID",
       "API_BASE_URL"
+    ],
+    "optionalBindings": [
+      "DB (only if a server-side direct D1 data path is introduced)"
     ],
     "endpointChecks": [
       {
@@ -134,5 +136,5 @@
     "W2.7": "CLOSED",
     "W3.7": "OPEN / In Progress"
   },
-  "conclusion": "Gate 2 live acceptance remains blocked. The deployed booking Worker cannot serve published D1 content because cutover flags are absent, and its legacy Webflow content reads are empty because the required Webflow IDs are absent. The deployed admin Worker is Access-protected but has no data/API/auth bindings, so production publish/rollback E2E cannot be performed. No Webflow runtime dependency has been retired."
+  "conclusion": "Gate 2 live acceptance remains blocked. The deployed booking Worker cannot serve published D1 content because cutover flags are absent, and its legacy Webflow content reads are empty because the required Webflow IDs are absent. The deployed admin Worker is Access-protected but has no booking API/auth bindings, so production publish/rollback E2E cannot be performed. A direct D1 binding is optional unless a server-side D1 path is introduced. No Webflow runtime dependency has been retired."
 }

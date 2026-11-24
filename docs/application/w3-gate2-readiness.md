@@ -16,13 +16,13 @@ No deployment, binding edit or flag change was performed.
 | --- | --- | --- |
 | Booking Worker | `urban-cowboy-booking-engine.revrebel.workers.dev`, version `0a7aef11…`, deployed 15:39 UTC; logs/traces/issues enabled | Live URL exists, but the version has **none** of the five content-source flags and **none** of the Webflow site/collection/item IDs. D1 is bound. |
 | Guest content endpoints | `site-settings` returns defaults with `X-Content-Source: webflow`; policy, add-ons, rooms, locations, buildings and rate cards return empty payloads | This is not D1 cutover evidence. Missing Webflow IDs mean the legacy reads are empty/default; missing flags keep the safe Webflow path. |
-| Admin Worker | `urban-cowboy-admin.revrebel.workers.dev`, version `84daddb3…`, deployed 15:25 UTC; Cloudflare Access redirects unauthenticated requests | The Worker exists and is protected, but has only `ASSETS`. No D1, booking Worker service/API origin, Access claims configuration or tenant binding is present, so publish/rollback E2E is not possible yet. |
+| Admin Worker | `urban-cowboy-admin.revrebel.workers.dev`, version `84daddb3…`, deployed 15:25 UTC; Cloudflare Access redirects unauthenticated requests | The Worker exists and is protected, but has only `ASSETS`. No booking API/service-binding path, Access claims configuration or tenant binding is present, so publish/rollback E2E is not possible yet. A direct D1 binding is optional unless a server-side D1 data path is introduced. |
 | Peer gates | W1.7 open; W2.7 closed; W3.7 open | Joint Gate 2 cannot close. |
 
 **Immediate blockers before live acceptance:**
 
 1. Deploy the booking Worker with the required Webflow IDs for baseline parity, or with reviewed D1 flags after parity/soak. The current empty/default guest payloads are not an accepted baseline. The deployment script now rejects missing/placeholder Webflow IDs and non-`webflow` baseline flags; the real `WEBFLOW_LOCATION_COLLECTION_ID` and a complete shared `.env` are still required.
-2. Deploy the admin Worker with D1 plus the agreed booking API/service-binding and Access/tenant configuration.
+2. Deploy the admin Worker with the agreed booking API/service-binding path plus Access/tenant configuration. A direct D1 binding is optional unless a server-side D1 data path is introduced; the current panels call the shared Worker API.
 3. Record authenticated admin publish/rollback evidence and desktop/mobile guest-flow evidence against the deployed URLs.
 4. Complete controlled Mews quote → reservation → payment regression with test credentials and cleanup evidence.
 
@@ -138,7 +138,8 @@ suite. Keep the KV calendar cache — it is advisory and Mews-derived, not Webfl
 
 - W1 (COW-95) must confirm the production Admin Portal can manage/publish the
   content. The admin Worker is now deployed and Access-protected, but its
-  operational bindings are still missing (§0).
+  booking API/auth bindings are still missing (§0); direct D1 access is not a
+  requirement unless a server-side D1 path is added.
 - W2 (COW-102) is closed and has recorded D1 parity/media integrity evidence.
 - All three Gate 2 issues must be complete before final migration closeout.
 - Record evidence (deployed URL, viewport, timestamp, result, screenshot/log
