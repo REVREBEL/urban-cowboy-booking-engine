@@ -163,8 +163,8 @@ function assetStatements(
             VALUES (?1, ?2, ?3, 'image', ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10)
             ON CONFLICT(id) DO UPDATE SET
               squarespace_url = excluded.squarespace_url,
-              width = excluded.width,
-              height = excluded.height,
+              width = COALESCE(excluded.width, media_assets.width),
+              height = COALESCE(excluded.height, media_assets.height),
               alt_text = COALESCE(media_assets.alt_text, excluded.alt_text),
               updated_at = excluded.updated_at`,
       params: [mediaId, input.tenantId, input.locationId, filename, sourceAssetId, photo.url,
@@ -193,7 +193,9 @@ function assetStatements(
   } else if (currentVersionId) {
     statements.push({
       sql: `UPDATE media_versions
-               SET squarespace_url = ?2, width = ?3, height = ?4
+               SET squarespace_url = ?2,
+                   width = COALESCE(?3, width),
+                   height = COALESCE(?4, height)
              WHERE id = ?1 AND media_asset_id = ?5`,
       params: [currentVersionId, photo.url, photo.width, photo.height, mediaId],
     });

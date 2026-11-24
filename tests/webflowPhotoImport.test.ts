@@ -20,6 +20,12 @@ import {
   type PhotoImportInput,
 } from "../worker/photo-source-import.ts";
 import type { CanonicalRoomType, PhotoSourceSnapshot } from "../worker/photo-source-adapter.ts";
+import { buildSnapshot, loadPublishedCollection } from "../worker/content-provider.ts";
+import { saveSnapshot } from "../worker/published-snapshots.ts";
+import {
+  loadPublishedGalleries,
+  refreshPublishedGalleryUrls,
+} from "../worker/published-galleries.ts";
 
 const root = new URL("../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
@@ -31,6 +37,7 @@ const NOW = "2026-11-23T00:00:00Z";
 const MIGRATIONS = [
   "migrations/0001_init.sql",
   "migrations/0003_property_scoped_contracts.sql",
+  "migrations/0004_published_snapshots.sql",
   "migrations/0005_media_registry.sql",
   "migrations/0009_media_placement_flags.sql",
 ];
@@ -57,6 +64,21 @@ function d1(db: DatabaseSync): D1Like {
       return {
         bind(...values: unknown[]) { params = values; return this; },
         async all<T>() { return { results: db.prepare(sql).all(...params) as T[] }; },
+      };
+    },
+  };
+}
+
+/** Full D1-shaped adapter for snapshot helpers (all/first/run/bind). */
+function d1Db(db: DatabaseSync): any {
+  return {
+    prepare(sql: string) {
+      let params: unknown[] = [];
+      return {
+        bind(...values: unknown[]) { params = values; return this; },
+        async all() { return { results: db.prepare(sql).all(...params) }; },
+        async first() { return db.prepare(sql).get(...params) ?? null; },
+        async run() { db.prepare(sql).run(...params); return { success: true }; },
       };
     },
   };
@@ -338,6 +360,80 @@ test("repeating the same import is idempotent", async () => {
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_assets").get().n, 3);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_placements").get().n, 3);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM media_aliases").get().n, 3);
+  db.close();
+});
+
+test("a published gallery serves the refreshed URL without touching the draft", async () => {
+  const db = makeDb();
+  const api = d1Db(db);
+  const snap = snapshot();
+  await applyPhotoImport(executor(db), await planPhotoImport(d1(db), input(snap)));
+
+  // Publish the gallery document and its roomGallery snapshot.
+  db.exec(`
+    INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status)
+      VALUES ('gallery-ci','${TENANT}','${LOCATION}','room_gallery','rt-alpine','published');
+    INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by)
+      VALUES ('gallery-r','gallery-ci',1,'{"items":[]}','test');
+  `);
+  const records = await loadPublishedCollection(api, { tenantId: TENANT }, "roomGallery");
+  assert.ok(records.length > 0);
+  const built = await buildSnapshot("roomGallery", records);
+  await saveSnapshot(api, { tenantId: TENANT }, "roomGallery", built);
+  const before = await loadPublishedGalleries(api, TENANT);
+  assert.ok(Object.values(before).some((gallery) => gallery.images.some((url) => url.includes("alpine.jpg"))));
+
+  // An editor draft with a different order must survive the import refresh.
+  const draftPayload = '{"items":[{"mediaAssetId":"custom","displayOrder":5}]}';
+  db.exec(`
+    INSERT INTO content_items (id, tenant_id, location_id, kind, slug, status)
+      VALUES ('gallery-draft','${TENANT}','${LOCATION}','room_gallery','rt-walden','draft');
+    INSERT INTO content_revisions (id, content_item_id, revision, payload_json, created_by)
+      VALUES ('draft-r','gallery-draft',1,'${draftPayload}','editor');
+  `);
+
+  const mediaId = (db.prepare(
+    "SELECT media_asset_id FROM media_aliases WHERE alias_value='aaaaaaaaaaaaaaaaaaaaaaaa'",
+  ).get() as { media_asset_id: string }).media_asset_id;
+  const changedUrl = "https://cdn.prod.website-files.com/site/aaaaaaaaaaaaaaaaaaaaaaaa_new.jpg";
+  const changed = snapshot({
+    photos: snap.photos.map((photo) =>
+      photo.sourceAssetId === "webflow_file_id:aaaaaaaaaaaaaaaaaaaaaaaa"
+        ? { ...photo, url: changedUrl }
+        : photo),
+  });
+  await applyPhotoImport(executor(db), await planPhotoImport(d1(db), input(changed)));
+  const refresh = await refreshPublishedGalleryUrls(api, TENANT, new Set([mediaId]));
+  assert.equal(refresh.refreshed, true);
+
+  const guest = await loadPublishedGalleries(api, TENANT);
+  assert.ok(Object.values(guest).some((gallery) => gallery.images.includes(changedUrl)));
+  assert.equal(
+    (db.prepare("SELECT payload_json FROM content_revisions WHERE id='draft-r'").get() as { payload_json: string }).payload_json,
+    draftPayload,
+    "unpublished draft is untouched",
+  );
+  db.close();
+});
+
+test("a URL reimport with null dimensions keeps known geometry", async () => {
+  const db = makeDb();
+  const snap = snapshot();
+  await applyPhotoImport(executor(db), await planPhotoImport(d1(db), input(snap)));
+  const mediaId = (db.prepare(
+    "SELECT media_asset_id FROM media_aliases WHERE alias_value='aaaaaaaaaaaaaaaaaaaaaaaa'",
+  ).get() as { media_asset_id: string }).media_asset_id;
+  const changed = snapshot({
+    photos: snap.photos.map((photo) =>
+      photo.sourceAssetId === "webflow_file_id:aaaaaaaaaaaaaaaaaaaaaaaa"
+        ? { ...photo, url: "https://cdn.prod.website-files.com/site/aaaaaaaaaaaaaaaaaaaaaaaa_v2.jpg", width: null, height: null }
+        : photo),
+  });
+  const plan = await planPhotoImport(d1(db), input(changed));
+  await applyPhotoImport(executor(db), plan);
+  const version = db.prepare("SELECT width, height FROM media_versions WHERE id=?").get(`${mediaId}:v1`) as { width: number; height: number };
+  assert.equal(version.width, 1600);
+  assert.equal(version.height, 1000);
   db.close();
 });
 

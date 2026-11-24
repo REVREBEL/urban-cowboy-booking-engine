@@ -20,6 +20,8 @@ This importer uses the existing Webflow photo/CMS functionality as a temporary i
 - Reordering changes only `media_placements.display_order`. Room remapping adds a placement; the old placement is never deleted. A single source image may be placed in several rooms: one master asset, one placement per room, one `update` decision after the first `create`.
 - New assets get version 1 (`<mediaId>:v1`) and a matching `media_asset_metadata.current_version_id`. An existing asset keeps its real version IDs and current pointer: a URL-only re-import never creates a version row and never rewinds a replacement (e.g. an arbitrary v1 key with an active v2).
 - `--db <sqlite-file>` is opened **read-only** and validated against the required schema; a dry run never migrates or mutates the supplied export.
+- Guest galleries read the immutable `roomGallery` snapshot, not live placements. After applying a changed URL, call `refreshPublishedGalleryUrls(db, tenantId, changedMediaIds)`; it rebuilds a new content-addressed snapshot version, changing only `sourceUrl` for the affected media IDs. Working revisions and unpublished editor drafts are untouched and the previous version stays available for rollback.
+- A URL-only reimport preserves known width/height when the source omits dimensions (`COALESCE` in the current-version update), so replacement/crop decisions keep their geometry facts.
 
 ## Safety properties
 
@@ -57,13 +59,13 @@ The dry-run report shows matched, created, updated, duplicate, invalid, unresolv
 
 ```bash
 node --test tests/webflowPhotoImport.test.ts
-npm test                 # 570 tests pass
+npm test                 # 587 tests pass
 npm run typecheck
 npm run lint:controls
 npm run d1:migrate:check
 ```
 
-The test suite covers explicit room resolution, deterministic IDs, ordered placements, URL changes, provider switch, duplicate aliases, tenant isolation, room remapping, shared images across rooms, arbitrary v1/current-v2 preservation, repeated idempotent import, read-only `--db`, empty-source safety, non-deletion and paginated live fetch.
+The test suite covers explicit room resolution, deterministic IDs, ordered placements, URL changes, provider switch, duplicate aliases, tenant isolation, room remapping, shared images across rooms, arbitrary v1/current-v2 preservation, repeated idempotent import, read-only `--db`, empty-source safety, non-deletion, paginated live fetch, published-gallery URL refresh with draft preservation, and null-dimension geometry preservation.
 
 ## Next
 
