@@ -146,6 +146,12 @@ with 0 failures and a `styles` section with the computed `th text-align: left`, 
 `.docs-story-frame` and the prose block. The verifier asserts those values; passing checks now carry
 `detail: "ok"` instead of failure-oriented wording.
 
+PR #413 further refined the layout: the article owns the horizontal inset so the breadcrumb, title,
+description and story frames share one left edge; the story/prose gap is 2rem; the sticky right-hand
+"On this page" rail was replaced by a keyboard-accessible TOC popover at every width; and on screens
+1600px and wider the content column grows with the viewport instead of stopping at the 1600px story
+cap. `tests/docsRuntime.test.mjs` exercises the popover at desktop and mobile widths.
+
 Conclusion: every content, asset, search, navigation, responsive and interaction check passes on the
 canonical custom domain. The one open M4 item is HTTPS: `https_enforced` is false and the domain
 presents a `*.github.io` certificate. The Pages REST update calls returned 404 for this token, so an

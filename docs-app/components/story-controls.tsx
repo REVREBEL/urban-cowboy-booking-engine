@@ -106,6 +106,33 @@ import {
   progressBarStory,
   progressStepStatesStory,
 } from "./booking-layout.story";
+import {
+  buildingExperienceListStory,
+  multiRoomViewBuildingStory,
+  multiRoomViewBuildingWithIconStory,
+  multiRoomViewBuildingRowReverseStory,
+  multiRoomViewBuildingStackedCenterStory,
+  multiRoomViewBuildingStackedLeftStory,
+  multiRoomViewListStory,
+  multiRoomViewListItemStory,
+  multiRoomViewListItemRowStory,
+  multiRoomViewListItemRowReverseStory,
+  multiRoomViewRoomTypeCardStory,
+  multiRoomViewRoomTypeCardFocusedStory,
+  guestReviewQuoteCardStory,
+  guestReviewQuoteCardSmallStory,
+  guestReviewQuoteCardLargeStory,
+  guestReviewQuoteCardQuoteOnlyStory,
+  guestReviewQuoteCardAttributionNoLinkStory,
+} from "./rooms.story";
+import {
+  figmaRateCardStandardStory,
+  figmaRateCardMemberStory,
+  figmaRateCardPackageStory,
+  figmaRateDetailPopupStory,
+  figmaPolicyTimelineStory,
+  pillarFeaturesStory,
+} from "./rates-stage3.story";
 
 /** Client wrappers so MDX renders a component, not a member of a client proxy. */
 export function PillStoryControl() {
@@ -450,4 +477,96 @@ export function DateSearchDropdownExternalActionsStoryControl() {
 
 export function InlineDateRangePickerStoryControl() {
   return <inlineDateRangePickerStory.WithControl />;
+}
+
+export function BuildingExperienceListStoryControl() {
+  return <buildingExperienceListStory.WithControl />;
+}
+
+export function MultiRoomViewBuildingStoryControl() {
+  return <multiRoomViewBuildingStory.WithControl />;
+}
+
+export function MultiRoomViewBuildingWithIconStoryControl() {
+  return <multiRoomViewBuildingWithIconStory.WithControl />;
+}
+
+export function MultiRoomViewBuildingRowReverseStoryControl() {
+  return <multiRoomViewBuildingRowReverseStory.WithControl />;
+}
+
+export function MultiRoomViewBuildingStackedCenterStoryControl() {
+  return <multiRoomViewBuildingStackedCenterStory.WithControl />;
+}
+
+export function MultiRoomViewBuildingStackedLeftStoryControl() {
+  return <multiRoomViewBuildingStackedLeftStory.WithControl />;
+}
+
+export function MultiRoomViewListStoryControl() {
+  return <multiRoomViewListStory.WithControl />;
+}
+
+export function MultiRoomViewListItemStoryControl() {
+  return <multiRoomViewListItemStory.WithControl />;
+}
+
+export function MultiRoomViewListItemRowStoryControl() {
+  return <multiRoomViewListItemRowStory.WithControl />;
+}
+
+export function MultiRoomViewListItemRowReverseStoryControl() {
+  return <multiRoomViewListItemRowReverseStory.WithControl />;
+}
+
+export function MultiRoomViewRoomTypeCardStoryControl() {
+  return <multiRoomViewRoomTypeCardStory.WithControl />;
+}
+
+export function MultiRoomViewRoomTypeCardFocusedStoryControl() {
+  return <multiRoomViewRoomTypeCardFocusedStory.WithControl />;
+}
+
+export function GuestReviewQuoteCardStoryControl() {
+  return <guestReviewQuoteCardStory.WithControl />;
+}
+
+export function GuestReviewQuoteCardSmallStoryControl() {
+  return <guestReviewQuoteCardSmallStory.WithControl />;
+}
+
+export function GuestReviewQuoteCardLargeStoryControl() {
+  return <guestReviewQuoteCardLargeStory.WithControl />;
+}
+
+export function GuestReviewQuoteCardQuoteOnlyStoryControl() {
+  return <guestReviewQuoteCardQuoteOnlyStory.WithControl />;
+}
+
+export function GuestReviewQuoteCardAttributionNoLinkStoryControl() {
+  return <guestReviewQuoteCardAttributionNoLinkStory.WithControl />;
+}
+
+export function FigmaRateCardStandardStoryControl() {
+  return <figmaRateCardStandardStory.WithControl />;
+}
+
+export function FigmaRateCardMemberStoryControl() {
+  return <figmaRateCardMemberStory.WithControl />;
+}
+
+export function FigmaRateCardPackageStoryControl() {
+  return <figmaRateCardPackageStory.WithControl />;
+}
+
+export function FigmaRateDetailPopupStoryControl() {
+  return <figmaRateDetailPopupStory.WithControl />;
+}
+
+export function FigmaPolicyTimelineStoryControl() {
+  return <figmaPolicyTimelineStory.WithControl />;
+}
+
+export function PillarFeaturesStoryControl() {
+  return <pillarFeaturesStory.WithControl />;
 }
