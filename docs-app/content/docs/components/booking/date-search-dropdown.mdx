@@ -1,0 +1,92 @@
+---
+title: Date Search Dropdown
+description: Date picker dropdown with calendar, quick-select ranges and confirm actions.
+---
+
+import {
+  DateSearchDropdownStoryControl,
+  DateSearchDropdownExternalActionsStoryControl,
+} from '~/components/story-controls';
+
+`DateSearchDropdown` wraps the inline calendar in a dialog with quick-select presets and an optional confirm action. The demo keeps the selected range in local state and reports callbacks; it does not fetch live rates from Mews.
+
+<DateSearchDropdownStoryControl />
+
+## Variants
+
+### Default (confirm variant)
+
+The `confirm` variant shows a **Confirm dates** button that closes the dialog when a complete range is selected.
+
+<DateSearchDropdownStoryControl />
+
+### Unselected
+
+The `Unselected` story demonstrates the empty state with no dates chosen.
+
+<DateSearchDropdownStoryControl />
+
+### External actions
+
+The `external-actions` variant hides the confirm button and quick-select; the caller owns the commit/close flow.
+
+<DateSearchDropdownExternalActionsStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `variant` | `confirm`, `external-actions` | `confirm` shows quick-select + confirm button; `external-actions` delegates to caller |
+| `checkIn` / `checkOut` | ISO date strings | Controlled range; empty = unselected |
+| `dailyRates` | `Record<string, DailyRate>` | Optional rate overlay for calendar cells |
+| `showQuickSelect` | boolean | Show quick-select presets (default: true in `confirm` variant) |
+| `onChange` | `(checkIn, checkOut) => void` | Called when range changes |
+| `onClose` | `() => void` | Called when dialog should close |
+| `onVisibleRangeChange` | `(start, end) => void` | Reports visible calendar months for rate pre-fetch |
+| `triggerRef` | `React.RefObject<HTMLElement>` | Optional external trigger for focus return |
+
+## DailyRate shape
+
+```ts
+interface DailyRate {
+  amount: number;
+  currency?: string;
+  available?: boolean;
+  minNights?: number;
+  invalidStayLengths?: number[];
+  restrictions?: RestrictionAdvisory[];
+}
+```
+
+## Accessibility
+
+- Dialog role with `aria-label="Select dates of stay"`
+- Calendar grid with `role="grid"` and column headers
+- Selected dates announced via `aria-selected` and `aria-pressed`
+- Escape key closes and returns focus to trigger
+- Keyboard navigation through months and days
+- Disabled dates are crossed out and non-interactive
+
+## Responsive behaviour
+
+- Dialog constrained to `max-w-[760px]` with horizontal padding
+- Calendar shows two months side-by-side on `md` and up; single month on smaller screens
+- Quick-select buttons wrap on narrow viewports
+- Touch targets meet 44×44 minimum
+
+## Usage
+
+```tsx
+import { DateSearchDropdown } from '@/components/booking/search/DateSearchDropdown';
+
+<DateSearchDropdown
+  checkIn={range.checkIn}
+  checkOut={range.checkOut}
+  dailyRates={rates}
+  onChange={(checkIn, checkOut) => setRange({ checkIn, checkOut })}
+  onClose={onClose}
+  onVisibleRangeChange={prefetchRates}
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/DateSearchDropdown.tsx) · [View calendar source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/InlineDateRangePicker.tsx)

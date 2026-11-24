@@ -2,8 +2,8 @@
   "generatedFrom": "src/stories + docs-app/content/docs",
   "totals": {
     "components": 142,
-    "documented": 58,
-    "planned": 78,
+    "documented": 60,
+    "planned": 76,
     "excluded": 6,
     "undocumentedProductionCandidates": 41,
     "candidateTriage": {
@@ -318,8 +318,8 @@
         "Unselected",
         "ExternalActions"
       ],
-      "status": "planned",
-      "note": "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "InlineDateRangePicker",
@@ -330,8 +330,8 @@
       "demoExports": [
         "Default"
       ],
-      "status": "planned",
-      "note": "Planned: booking-chrome or summary variant reads live booking context; document after a side-effect-free fixture exists."
+      "status": "documented",
+      "note": "Historical story has a Fumadocs page; variants pending migration."
     },
     {
       "component": "PropertyLocationLabel",

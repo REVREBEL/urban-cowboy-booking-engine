@@ -24,6 +24,11 @@ import {
   searchLocationDropdownStory,
   searchPromoDropdownStory,
 } from "./search-dropdowns.story";
+import {
+  dateSearchDropdownStory,
+  dateSearchDropdownExternalActionsStory,
+  inlineDateRangePickerStory,
+} from "./search-date.story";
 import { inlineUpsellStory, upsellCardStory } from "./extras-upsell.story";
 import { roomsListCardStory, roomsListCardCopperStory } from "./room-list-card.story";
 import {
@@ -428,4 +433,16 @@ export function SearchLocationDropdownStoryControl() {
 
 export function SearchPromoDropdownStoryControl() {
   return <searchPromoDropdownStory.WithControl />;
+}
+
+export function DateSearchDropdownStoryControl() {
+  return <dateSearchDropdownStory.WithControl />;
+}
+
+export function DateSearchDropdownExternalActionsStoryControl() {
+  return <dateSearchDropdownExternalActionsStory.WithControl />;
+}
+
+export function InlineDateRangePickerStoryControl() {
+  return <inlineDateRangePickerStory.WithControl />;
 }

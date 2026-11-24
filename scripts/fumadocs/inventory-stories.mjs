@@ -41,6 +41,8 @@ const DOC_PAGE_OVERRIDES = Object.freeze({
   "src/stories/components/booking/search/SearchBarGuestsDropdown.stories.tsx": "docs-app/content/docs/components/search-dropdowns.mdx",
   "src/stories/components/booking/search/SearchBarLocationDropdown.stories.tsx": "docs-app/content/docs/components/search-dropdowns.mdx",
   "src/stories/components/booking/search/SearchBarPromoDropdown.stories.tsx": "docs-app/content/docs/components/search-dropdowns.mdx",
+  "src/stories/components/booking/search/DateSearchDropdown.stories.tsx": "docs-app/content/docs/components/booking/date-search-dropdown.mdx",
+  "src/stories/components/booking/search/InlineDateRangePicker.stories.tsx": "docs-app/content/docs/components/booking/inline-date-range-picker.mdx",
   "src/stories/components/booking/chrome/header.stories.tsx": "docs-app/content/docs/components/booking-chrome.mdx",
   "src/stories/components/booking/chrome/contact-bar.stories.tsx": "docs-app/content/docs/components/booking-chrome.mdx",
   "src/stories/components/booking/conversion.stories.tsx": "docs-app/content/docs/components/conversion-badges.mdx",
