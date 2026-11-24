@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-24T08:18:45.429Z",
+  "checkedAt": "2026-11-24T08:21:40.786Z",
   "url": "http://cowboy-components.revrebel.io/",
   "viewports": [
     "desktop",
@@ -352,6 +352,9 @@
   "https": {
     "error": "TypeError: fetch failed"
   },
+  "acceptedDeviations": [
+    "custom domain HTTPS: TypeError: fetch failed"
+  ],
   "failures": [],
   "console_desktop": [],
   "bad_responses_desktop": [],

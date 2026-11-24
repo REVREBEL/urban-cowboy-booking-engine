@@ -63,6 +63,7 @@ const report = {
   demos: {},
   styles: {},
   https: {},
+  acceptedDeviations: [],
   failures,
 };
 
@@ -210,6 +211,17 @@ try {
   report.https = { status: response.status, url: response.url };
 } catch (error) {
   report.https = { error: String(error) };
+}
+if (report.https.error) {
+  if (requireHttps) {
+    record("custom domain HTTPS", false, report.https.error);
+  } else {
+    // Documented deviation: still recorded, just not counted as a failure.
+    report.acceptedDeviations = [
+      ...(report.acceptedDeviations ?? []),
+      `custom domain HTTPS: ${report.https.error}`,
+    ];
+  }
 }
 
 console.log(JSON.stringify(report, null, 2));
