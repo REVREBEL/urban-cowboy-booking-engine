@@ -85,7 +85,7 @@ test("admin runtime config fails closed on malformed environment", () => {
 test("Cloudflare worker config stays cache-free and keeps proxy ahead of assets", () => {
   const config = read("admin-app/cloudflare.config.ts");
   assert.match(config, /name: "urban-cowboy-admin"/);
-  assert.match(config, /compatibilityFlags: \["nodejs_compat"\]/);
+  assert.match(config, /compatibilityFlags: \["nodejs_compat", "global_fetch_strictly_public"\]/);
   assert.match(config, /runWorkerFirst: \["\/\*", "!\/_next\/static\/\*", "!\/\*\/_next\/static\/\*"\]/);
   for (const name of [
     "CF_ACCESS_TEAM_DOMAIN",

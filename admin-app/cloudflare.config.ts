@@ -12,7 +12,7 @@ export default defineConfig({
     name: "urban-cowboy-admin",
     entrypoint: "vinext/server/fetch-handler",
     compatibilityDate: "2026-11-23",
-    compatibilityFlags: ["nodejs_compat"],
+    compatibilityFlags: ["nodejs_compat", "global_fetch_strictly_public"],
     assets: {
       htmlHandling: "none",
       notFoundHandling: "none",

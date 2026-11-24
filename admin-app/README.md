@@ -23,6 +23,8 @@ The booking Worker remains the authority for D1 reads and writes, publishing, re
 
 `API_BASE_URL` is pinned to the Urban Cowboy booking Worker origin in production and `http://localhost:8787` in local development. Both Workers must use the Urban Cowboy admin Access application's AUD. The booking Worker must remain outside a different Access application; otherwise this assertion-forwarding design must be replaced with a service binding that verifies end-user identity independently.
 
+The admin Worker enables the `global_fetch_strictly_public` compatibility flag so its server proxy can fetch the public booking Worker URL. Without it, Cloudflare rejects same-zone Worker-to-Worker fetches with error `1042` before the proxy can forward the request.
+
 ## Deployment
 
 Use the root deployment wrapper. It reads the shared `.env`, validates the REVREBEL account and passes only these nonsecret runtime bindings:
