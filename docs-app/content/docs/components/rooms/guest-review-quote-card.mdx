@@ -1,0 +1,81 @@
+---
+title: Guest Review Quote Card
+description: Styled guest review quote with optional attribution, date, site and link.
+---
+
+import {
+  GuestReviewQuoteCardStoryControl,
+  GuestReviewQuoteCardSmallStoryControl,
+  GuestReviewQuoteCardLargeStoryControl,
+  GuestReviewQuoteCardQuoteOnlyStoryControl,
+  GuestReviewQuoteCardAttributionNoLinkStoryControl,
+} from '~/components/story-controls';
+
+`GuestReviewQuoteCard` displays a styled guest review quote with optional attribution, date, publication site, and source link. Three size variants control typography and padding. The demo uses local state; no external calls are made.
+
+<GuestReviewQuoteCardStoryControl />
+
+## Variants
+
+### Default (md with attribution and link)
+
+<GuestReviewQuoteCardStoryControl />
+
+### Small
+
+<GuestReviewQuoteCardSmallStoryControl />
+
+### Large
+
+<GuestReviewQuoteCardLargeStoryControl />
+
+### Quote Only (no attribution)
+
+<GuestReviewQuoteCardQuoteOnlyStoryControl />
+
+### Attribution Without Link
+
+<GuestReviewQuoteCardAttributionNoLinkStoryControl />
+
+## Props
+
+| Prop | Values | Notes |
+| --- | --- | --- |
+| `quote` | string | Review quote text (required) |
+| `reviewer` | string \| null | Name of the reviewer |
+| `date` | string \| null | Date of the review |
+| `site` | string \| null | Source site or publication name |
+| `sourceUrl` | string \| null | URL linking to the full review source |
+| `size` | `sm`, `md`, `lg` | Typography and padding size variant (default: `md`) |
+| `className` | string | Additional CSS classes |
+
+## Visual variants
+
+| Size | Typography | Padding | Use case |
+| --- | --- | --- | --- |
+| `sm` | `text-sm`, tighter leading | `px-4 py-3` | Inline in room cards, lists |
+| `md` | `text-base`, relaxed leading | `px-6 py-4` | Default, standalone quotes |
+| `lg` | `text-lg`, relaxed leading | `px-8 py-6` | Hero sections, feature highlights |
+
+## Responsive behaviour
+
+- Text wraps naturally at all sizes
+- Attribution line stacks on narrow screens
+- Link remains accessible at all viewports
+
+## Usage
+
+```tsx
+import { GuestReviewQuoteCard } from '@/components/rooms/GuestReviewQuoteCard';
+
+<GuestReviewQuoteCard
+  quote="The freestanding clawfoot tub facing the snow-dusted pines was magic."
+  reviewer="Sarah Jenkins"
+  date="October 2025"
+  site="Condé Nast Traveler"
+  sourceUrl="https://example.com/review"
+  size="md"
+/>
+```
+
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/rooms/GuestReviewQuoteCard.tsx)

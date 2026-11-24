@@ -33,20 +33,75 @@ function buildDemoRates(base: Date = new Date()): Record<string, DailyRate> {
 
 const DEMO_RATES = buildDemoRates();
 
-/** Compute a valid default range: first two available days in the fixture. */
+/** Add days to an ISO date string. */
+function addDays(iso: string, days: number): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/** Check if all dates in [checkIn, checkOut) are available in rates. */
+function isRangeAvailable(rates: Record<string, DailyRate>, checkIn: string, checkOut: string): boolean {
+  const checkInTime = new Date(`${checkIn}T00:00:00Z`).getTime();
+  const checkOutTime = new Date(`${checkOut}T00:00:00Z`).getTime();
+  for (let t = checkInTime; t < checkOutTime; t += 86_400_000) {
+    const date = new Date(t).toISOString().slice(0, 10);
+    if (!rates[date]?.available) return false;
+  }
+  return true;
+}
+
+/** Compute a valid default range: check-in with minNights > 1, check-out at least minNights days later, all days available. */
 function getDefaultRange(rates: Record<string, DailyRate>): { checkIn: string; checkOut: string } {
   const available = Object.entries(rates)
     .filter(([, r]) => r.available)
     .sort(([a], [b]) => a.localeCompare(b));
+  
+  // Find first available day with minNights > 1 that can support a full valid stay
+  for (const [checkIn, rate] of available) {
+    const minNights = rate.minNights ?? 1;
+    if (minNights <= 1) continue;
+    
+    const minCheckOut = addDays(checkIn, minNights);
+    
+    // Find first available date >= minCheckOut
+    const checkOutEntry = available.find(([d]) => d >= minCheckOut);
+    if (!checkOutEntry) continue;
+    const checkOut = checkOutEntry[0];
+    
+    // Verify all dates in range are available
+    if (isRangeAvailable(rates, checkIn, checkOut)) {
+      return { checkIn, checkOut };
+    }
+  }
+  
+  // Fallback: first two available days
   if (available.length >= 2) {
     return { checkIn: available[0][0], checkOut: available[1][0] };
   }
-  // Fallback to first two keys
+  // Final fallback
   const keys = Object.keys(rates).sort();
   return { checkIn: keys[0] ?? "", checkOut: keys[1] ?? "" };
 }
 
 const DEFAULT_RANGE = getDefaultRange(DEMO_RATES);
+
+// Assertion: verify default range satisfies minNights and availability
+if (typeof window === "undefined") {
+  // Only run in build/SSR context
+  const checkInRate = DEMO_RATES[DEFAULT_RANGE.checkIn];
+  const minNights = checkInRate?.minNights ?? 1;
+  const checkOutDate = new Date(`${DEFAULT_RANGE.checkOut}T00:00:00Z`);
+  const checkInDate = new Date(`${DEFAULT_RANGE.checkIn}T00:00:00Z`);
+  const actualNights = Math.round((checkOutDate.getTime() - checkInDate.getTime()) / 86_400_000);
+  
+  if (actualNights < minNights) {
+    throw new Error(`Default range check-out (${DEFAULT_RANGE.checkOut}) is only ${actualNights} nights after check-in (${DEFAULT_RANGE.checkIn}), but minNights is ${minNights}`);
+  }
+  if (!isRangeAvailable(DEMO_RATES, DEFAULT_RANGE.checkIn, DEFAULT_RANGE.checkOut)) {
+    throw new Error(`Default range ${DEFAULT_RANGE.checkIn} → ${DEFAULT_RANGE.checkOut} contains unavailable dates`);
+  }
+}
 
 function DateSearchDropdownDemo({ variant = "confirm" }: { variant: "confirm" | "external-actions" }) {
   const [range, setRange] = useState({ checkIn: DEFAULT_RANGE.checkIn, checkOut: DEFAULT_RANGE.checkOut });

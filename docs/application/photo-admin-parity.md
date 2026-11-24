@@ -98,26 +98,29 @@ This slice adds the admin surface for COW-34 durable pins on top of the publishe
 
 ### Verification evidence (local, reproducible)
 
-Run from the repo root on the merged `main`:
+**Recorded 2026-11-24** on `main` @ `69cf9e37` in a clean npm workspace (`npm ci`). Run from the
+repo root:
 
 | Check | Command | Result |
 | --- | --- | --- |
-| Full application suite | `npm test` | 524/524 pass |
-| Published-only guest hotspots | `node --test tests/publishedHotspots.test.ts` | 9/9 pass |
-| Hotspot admin lifecycle | `node --test tests/hotspotAdmin.test.ts` | 26/26 pass |
-| Hotspot dashboard panel | `node --test tests/hotspotsPanel.test.ts` | 12/12 pass |
-| Hotspot geometry/replacement | `node --test tests/hotspotGeometry.test.ts tests/hotspotMapping.test.ts tests/hotspotCanvas.test.ts` | pass |
+| Full application suite (browser-only tests excluded; Playwright chromium not installed locally) | `find tests -maxdepth 1 -name '*.test.ts' ! -name 'dateDropdownAccessibility*' ! -name 'promoDropdownAccessibility*' -print0 \| xargs -0 node --test` | **596/596 pass** |
+| Photo-admin targeted suite (published hotspots, hotspot admin/panel/geometry/replacement, gallery import, published gallery guest reads, Mews pricing) | `node --test tests/publishedHotspots.test.ts tests/hotspotAdmin.test.ts tests/hotspotsPanel.test.ts tests/hotspotGeometry.test.ts tests/hotspotMapping.test.ts tests/hotspotCanvas.test.ts tests/roomGallery.test.ts tests/roomGalleryEditing.test.ts tests/snapshotsParity.test.ts tests/mewsPricing.test.ts tests/catskillsMewsIds.test.ts` | **128/128 pass** |
+| Published-only guest hotspots | `node --test tests/publishedHotspots.test.ts` | pass (included in targeted suite) |
+| Hotspot admin lifecycle | `node --test tests/hotspotAdmin.test.ts` | pass (included in targeted suite) |
+| Hotspot dashboard panel | `node --test tests/hotspotsPanel.test.ts` | pass (included in targeted suite) |
+| Hotspot geometry/replacement | `node --test tests/hotspotGeometry.test.ts tests/hotspotMapping.test.ts tests/hotspotCanvas.test.ts` | pass (included in targeted suite) |
 | Room gallery import (failure never deletes) | `node --test tests/roomGallery.test.ts` | pass; missing gallery reports removals but writes nothing |
 | Published gallery guest reads | `node --test tests/roomGalleryEditing.test.ts snapshotsParity.test.ts` | pass |
 | Mews pricing/availability unchanged | `node --test tests/mewsPricing.test.ts tests/catskillsMewsIds.test.ts` | pass |
 | Typecheck / control contract | `npm run typecheck` / `npm run lint:controls` | pass |
-| D1 migration integrity | `npm run d1:migrate:check` | 11 migrations applied twice, FK/integrity pass |
+| D1 migration integrity | `npm run d1:migrate:check` | **12 migrations** applied twice, FK/integrity pass |
 
 Verified properties from the checks above: draft, pending-review and soft-deleted mappings never appear in the guest hotspot map; a D1 outage preserves the Webflow payload; a failed/empty image-feed import never deletes previously published gallery media; URL resize variants and source replacement keep a stable canonical photo identity; and Mews transactional tests remain green.
 
 ### Live deployed verification (2026-11-24)
 
-Deployed Worker: `https://urban-cowboy-booking-engine.revrebel.workers.dev` (workers.dev, no custom domain/route found in the account).
+Booking Worker: `https://urban-cowboy-booking-engine.revrebel.workers.dev` (workers.dev; no
+custom domain/route found in the account).
 
 | Check | Result |
 | --- | --- |
@@ -126,14 +129,29 @@ Deployed Worker: `https://urban-cowboy-booking-engine.revrebel.workers.dev` (wor
 | `/api/content/site-settings` | 200 with `x-content-source: webflow` — flags remain at Webflow defaults. |
 | `/dashboard.html#/rooms` | Redirects to `/dashboard#/rooms` and serves the **legacy** Supabase dashboard ("Dashboard à configurer — Ajoute ta clé anon public Supabase…"). The React photo/hotspot admin is not reachable at this deployed URL. |
 | Production D1 | 156 `room_gallery` placements; published `roomGallery`, `roomAmenities` and `roomTypes` snapshots present; **0** `photo_hotspot_mappings` rows. There is no production hotspot data for a D1 guest-hotspot check. |
-| Local suite | `npm test` 610/610 pass; targeted gallery/hotspot tests 83/83 pass, including published-only hotspot reads, draft isolation, review gates, publish/rollback, import-failure preservation and Mews tests. |
+| Local suite (separate verification run) | `npm test` 610/610 pass; targeted gallery/hotspot tests 83/83 pass, including published-only hotspot reads, draft isolation, review gates, publish/rollback, import-failure preservation and Mews tests. The 596/596 non-browser run recorded above used a different exclusion set. |
 
-### What this does and does not establish
+A separate Admin Portal Worker, `urban-cowboy-admin`, was deployed at
+`https://urban-cowboy-admin.revrebel.workers.dev` (version
+`84daddb3-9bf0-4b21-b159-077e65ea2b13`) under COW-112; it currently fails closed to `/login`
+because Cloudflare Access and `API_BASE_URL` are not configured. It does not yet provide the
+deployed React admin evidence required here.
 
-The deployed **guest arrival page** renders, and the D1 gallery data and snapshots exist in production. It does **not** establish COW-82 acceptance items that require deployed state:
+### Acceptance status after live verification
 
-- Admin gallery/hotspot routes in the deployed environment — the deployed dashboard is the legacy Supabase page, not the React admin.
-- Guest Photo Journey from **published D1** gallery/hotspot data — no D1 content flag is enabled, and production has zero hotspot mappings.
-- End-to-end publish/rollback in the deployed admin, desktop/mobile hotspot pin verification and rollback restore.
+| Acceptance item | Status | Evidence needed / noted gap |
+| --- | --- | --- |
+| Admin gallery and hotspot routes verified in the deployed environment | Pending | Booking Worker serves the legacy Supabase dashboard; the new admin Worker has no Access identity yet. Needs an authenticated browser run of `#/rooms` and `#/hotspots`. |
+| Published D1 gallery and hotspot data verified in guest Photo Journey | Partial | D1 has 156 gallery placements and published snapshots, but content flags are Webflow-default and there are zero hotspot mappings. Needs `PHOTO_HOTSPOT_SOURCE=d1` on staging after published snapshot confirmation. |
+| Draft isolation, review gates, publish and rollback verified end-to-end | Local only | Deployed browser run showing a draft/pending pin invisible to guests, then publish → visible, rollback → prior state. |
+| Import/sync failure preserves existing published media | Local only | Deployed import failure trace plus before/after published gallery counts. |
+| Desktop and mobile browser checks; no material console/network errors | Partial | Desktop guest arrival checked; mobile widths and the authenticated admin still need screenshots and console/network logs. |
+| Mews booking behavior unchanged | Local only | Deployed rate/availability/checkout smoke result. |
+| Photo-admin parity documentation contains reproducible evidence | This section | Deployed URLs, dates and results recorded; screenshots still to be appended. |
 
-These remain owner/deployment actions. No production flag was changed by this phase; guest reads still default to Webflow and Mews booking, pricing and availability code is untouched. COW-82 and COW-84 should not be closed on the strength of local tests alone.
+The deployed **guest arrival page** renders, and D1 gallery data and snapshots exist in production.
+It does **not** establish deployed admin routes, published-D1 guest content, end-to-end
+publish/rollback, or desktop/mobile hotspot verification. Set `PHOTO_HOTSPOT_SOURCE=d1` only after
+confirming the published D1 snapshot on staging. No production flag was changed by this phase;
+guest reads still default to Webflow and Mews booking, pricing and availability code is untouched.
+COW-82 and COW-84 should not be closed on the strength of local tests alone.
