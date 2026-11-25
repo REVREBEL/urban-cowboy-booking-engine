@@ -11,6 +11,12 @@ export default defineConfig({
       "@": fileURLToPath(new URL("../src", import.meta.url)),
     },
   },
+  build: {
+    // vinext's RSC transforms do not emit sourcemaps; asking for them produces
+    // SOURCEMAP_BROKEN warnings on every build. The root browser build already
+    // ships without sourcemaps, so keep the admin build consistent.
+    sourcemap: false,
+  },
   plugins: [
     vinext(),
     cloudflare({

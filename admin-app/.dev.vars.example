@@ -1,4 +1,13 @@
-# Local-only Admin Portal UI preview. Never set this in a deployed Worker.
-# Only ADMIN_LOCAL_PREVIEW=1 together with a local development runtime enables
-# the simulated administrator session; see README.md.
-ADMIN_LOCAL_PREVIEW=1
+# Local nonsecret values for the Admin Portal's Cloudflare Worker binding.
+#
+# NOTE: ADMIN_LOCAL_PREVIEW is deliberately NOT read from this file. The Admin
+# Portal reads it from the shell environment when Vite starts (see
+# admin-app/cloudflare.config.ts). The root `npm run admin:dev` script exports
+# it for you. If you start Vite directly, export it in the shell:
+#
+#   ADMIN_LOCAL_PREVIEW=1 npx vite dev --port 5174 --strictPort
+#
+# To exercise the real Cloudflare Access path locally, run the workspace dev
+# script instead, which does not set the flag:
+#
+#   npm run dev -w admin-app
