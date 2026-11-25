@@ -100,6 +100,7 @@ test("production component runtime fixtures render without browser errors", asyn
 
   server = await createServer({
     logLevel: "silent",
+    cacheDir: "node_modules/.vite-production-component-runtime",
     server: { port },
   });
   await server.listen();
@@ -129,6 +130,9 @@ test("production component runtime fixtures render without browser errors", asyn
         await page.goto(`http://localhost:${port}/tests/fixtures/production-components.html?case=${runtimeCase.slug}`);
         await runtimeCase.check(page);
         assert.deepEqual(errors, [], `browser errors in ${runtimeCase.name}`);
+      } catch (error) {
+        const body = await page.locator("body").innerText().catch(() => "");
+        throw new Error(`${runtimeCase.name} failed: ${error instanceof Error ? error.message : String(error)}\nBrowser errors: ${errors.join("\n") || "none"}\nPage text: ${body.slice(0, 2000)}`);
       } finally {
         await page.close();
       }
