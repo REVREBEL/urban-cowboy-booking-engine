@@ -29,8 +29,10 @@ npm run dev:worker          # booking Worker on http://localhost:8787
 Then, in a second terminal:
 
 ```bash
-cd admin-app && ADMIN_LOCAL_PREVIEW=1 npx vite dev --port 5174 --strictPort
+npm run admin:dev
 ```
+
+The root script exports `ADMIN_LOCAL_PREVIEW=1` for you, so the simulated session is active without setting anything by hand. To exercise the real Cloudflare Access path locally, run `npm run dev -w admin-app` instead (the workspace script does not set the flag). The script uses POSIX shell variable syntax; on Windows, export the variable in the shell before running the workspace dev script.
 
 Open `http://localhost:5174/`. The shell renders with a deterministic simulated administrator (`local-preview@invalid.local`), every protected navigation route is visible, `/` no longer redirects to `/login`, and panels show real seeded D1 data (room types, amenities, assignments). If the local Worker is not running, API calls fail with `502 local_preview_worker_unavailable` instead of silently showing empty data.
 
