@@ -49,6 +49,9 @@ const pages = [
   "components/step-progress/index.html",
   "components/progress-bar/index.html",
   "components/progress-step/index.html",
+  "design-tokens/typography/index.html",
+  "design-tokens/colors/index.html",
+  "design-tokens/general-tokens/index.html",
 ];
 const forbidden = [
   /api\.mews\.com/i,
@@ -114,6 +117,9 @@ const markersByPage = {
   "components/step-progress/index.html": ["Rooms"],
   "components/progress-bar/index.html": ["Room"],
   "components/progress-step/index.html": ["Stepper"],
+  "design-tokens/typography/index.html": ["Font families", "--font-heading", "DesertRain", "Aa Bb Cc 0123456789"],
+  "design-tokens/colors/index.html": ["Primitive palette", "--paper-500", "--color-primary", "Contrast pairings"],
+  "design-tokens/general-tokens/index.html": ["Radii", "--radius-control", "--shadow-card", "--border-width-medium", "Gaps in the current theme"],
 };
 for (const [page, markers] of Object.entries(markersByPage)) {
   for (const marker of markers) {
