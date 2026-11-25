@@ -32,6 +32,8 @@ npm run test:docs:runtime
 
 `docs:smoke` checks exported pages, rendered component markers, static assets and the absence of API or token strings. Playwright serves the export under the configured Pages base path and verifies search, deep links, responsive layouts and representative interactions. Published-site evidence is retained in `docs/component-library/live-verification*.json`.
 
+`tests/productionComponentRuntime.test.ts` serves `tests/fixtures/production-components.html` through Vite and exercises production components that do not have Fumadocs pages: rate selection, production rate details, room details, building room lists, checkout and footer, extras and brand artwork. Each case fails on browser console errors, uncaught exceptions or broken local artwork.
+
 ## Publication
 
 `REVREBEL/urban-cowboy-booking-engine` is public. GitHub Pages publication requires explicit opt-in on `main` through `DOCS_PAGES_ENABLED == "true"`. The workflow uses `DOCS_BASE_PATH`, defaults to `/urban-cowboy-booking-engine`, and supports `/` for a custom-domain root. The deployment URL comes from `actions/deploy-pages`.
