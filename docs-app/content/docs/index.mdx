@@ -38,7 +38,6 @@ Stage 5 adds the <Link href="/components/date-range-picker/">date range picker</
 
 ## Coverage
 
-The component catalog is tracked in the repository's
-[coverage matrix](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/docs/component-library/coverage-matrix.json).
-It lists every historical story, its Fumadocs page and demo status, plus undocumented
-production-component candidates.
+Each reference page is listed in `components/meta.json` and imports the real component through a
+client story control. The docs build and Playwright smoke checks verify the published pages,
+interactive controls, assets and responsive layouts.

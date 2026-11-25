@@ -46,20 +46,10 @@ yarn-error.log*
 .claude/settings.local.json
 .agents/
 
-*storybook.log
-storybook-static
 /.agents
 
-# Generated output inside source/story directories
+# Generated output inside source directories
 src/**/dist/
-
-# Chromatic
-build-storybook.log
-chromatic.log
-chromatic-build-*.xml
-chromatic-diagnostics.json
-.qwen/skills/scry-setup
-.trae/skills/scry-setup
 
 webflow_backend/
 webflow_cms_export/

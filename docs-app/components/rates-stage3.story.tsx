@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { fn } from "storybook/test";
 import { buildCancellationTimeline } from "@/lib/cancellationTimeline";
 import {
   FigmaRateCard,
@@ -37,8 +36,8 @@ function FigmaRateCardDemo({ variant = "default" }: { variant?: "default" | "mem
         variant={variant}
         perks={variant === "package" ? ["Upgrade on Arrival", "Breakfast for Two (2)", "S'mores Kits"] : undefined}
         confirmLabel={variant === "member" || variant === "package" ? "Unlock This Rate" : "Book This Rate"}
-        onDetails={fn()}
-        onConfirm={fn()}
+        onDetails={() => undefined}
+        onConfirm={() => undefined}
       />
     </div>
   );
@@ -82,7 +81,7 @@ function FigmaRateDetailPopupDemo() {
           timeline={timeline}
           arrivalDate={SAMPLE_DATE}
           onClose={() => setIsOpen(false)}
-          onConfirm={fn()}
+          onConfirm={() => undefined}
         />
       )}
     </div>

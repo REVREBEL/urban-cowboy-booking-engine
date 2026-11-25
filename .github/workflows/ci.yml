@@ -82,24 +82,3 @@ jobs:
           if [ -f /tmp/urban-cowboy-wrangler.pid ]; then
             kill "$(cat /tmp/urban-cowboy-wrangler.pid)" 2>/dev/null || true
           fi
-
-      # Temporary COW-70 compatibility gate: historical stories without Fumadocs
-      # runtime equivalents still need Chromium rendering coverage.
-      # Remove this only after coverage-matrix migration and replacement tests.
-      - name: Build historical Storybook coverage
-        id: storybook
-        if: success() || failure()
-        run: npm run build-storybook
-
-      - name: Render historical stories in Chromium
-        if: always() && steps.storybook.outcome == 'success'
-        run: npm run test:storybook:runtime
-
-      - name: Upload historical story runtime failures
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: storybook-runtime-report
-          path: storybook-runtime-report/
-          if-no-files-found: ignore
-          retention-days: 7
