@@ -15,8 +15,8 @@ are copyable from the rendered pages. Missing names (`--border-width-*`, plus th
 spacing, breakpoint and opacity token families) are emitted as **gaps** with source
 references; the pages do not invent stand-in values.
 
-Build tooling: `docs:prepare` regenerates the metadata, `dev-docs.mjs` watches the style
-tree, `docs:tokens:check` keeps the tracked JSON in sync in CI, and `smoke-docs.mjs`
+Build tooling: `docs:prepare` regenerates the metadata, `dev-docs.mjs` watches the source
+tree (CSS declarations and TS/TSX token references), `docs:tokens:check` keeps the tracked JSON in sync in CI, and `smoke-docs.mjs`
 checks the three exported pages and their rendered markers. Browser runtime coverage
 verifies real font loading, copy controls and mobile layout.
 

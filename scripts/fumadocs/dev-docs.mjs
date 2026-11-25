@@ -13,7 +13,9 @@ import { writeFileSync } from "node:fs";
 const root = process.cwd();
 const contentRoot = join(root, "docs-app", "content", "docs");
 const assetsRoot = join(root, "public", "assets");
-const stylesRoot = join(root, "src", "styles");
+// The generator reads declarations from src/styles and missing-token references
+// from every source file, so watch the whole tree rather than just the CSS.
+const sourceRoot = join(root, "src");
 const tokenOutput = join(root, "docs-app", "lib", "design-tokens.generated.json");
 
 function refreshTokens() {
@@ -52,7 +54,7 @@ function refresh(kind) {
   timer = setTimeout(async () => {
     try {
       if (kind === "assets") prepareDocsAssets(root);
-      if (kind === "styles") refreshTokens();
+      if (kind === "tokens") refreshTokens();
       await buildSearchIndex(root);
     } catch (error) {
       console.error(`[docs-dev] ${kind} refresh failed:`, error);
@@ -62,7 +64,7 @@ function refresh(kind) {
 
 watchTree(contentRoot, () => refresh("content"));
 watchTree(assetsRoot, () => refresh("assets"));
-watchTree(stylesRoot, () => refresh("styles"));
+watchTree(sourceRoot, () => refresh("tokens"));
 
 function shutdown(signal) {
   if (!child.killed) child.kill(signal);

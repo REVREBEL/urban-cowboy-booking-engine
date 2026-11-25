@@ -108,7 +108,9 @@ test("visual reference pages are indexed, sourced and smoke-tested", () => {
   assert.match(packageJson.scripts["docs:prepare"], /generate-design-tokens\.mjs/);
   assert.match(packageJson.scripts["test:docs"], /designTokens\.test\.mjs/);
   assert.match(read(".github/workflows/docs-pages.yml"), /docs:tokens:check/);
-  assert.match(read("scripts/fumadocs/dev-docs.mjs"), /generateDesignTokens/);
+  const devDocs = read("scripts/fumadocs/dev-docs.mjs");
+  assert.match(devDocs, /generateDesignTokens/);
+  assert.match(devDocs, /watchTree\(sourceRoot/, "TS/TSX token references also refresh the metadata");
 });
 
 test("copy affordances use accessible native controls", () => {
