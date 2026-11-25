@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "npm run build && concurrently -k -n worker,web -c magenta,cyan \"npm:dev:worker\" \"npm:dev:web\"",
-    "admin:dev": "npm run dev -w admin-app",
+    "admin:dev": "ADMIN_LOCAL_PREVIEW=1 npm run dev -w admin-app",
     "admin:build": "npm run build -w admin-app",
     "admin:typecheck": "npm run typecheck -w admin-app",
     "admin:deploy": "node scripts/deploy-admin.mjs",
