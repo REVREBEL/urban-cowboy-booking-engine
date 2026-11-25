@@ -99,7 +99,7 @@ test("production component runtime fixtures render without browser errors", asyn
   let browser: Browser;
 
   server = await createServer({
-    logLevel: "silent",
+    logLevel: "error",
     cacheDir: "node_modules/.vite-production-component-runtime",
     server: { port },
   });
@@ -127,7 +127,10 @@ test("production component runtime fixtures render without browser errors", asyn
       );
 
       try {
-        await page.goto(`http://localhost:${port}/tests/fixtures/production-components.html?case=${runtimeCase.slug}`);
+        const response = await page.goto(`http://localhost:${port}/tests/fixtures/production-components.html?case=${runtimeCase.slug}`);
+        if (!response?.ok()) {
+          throw new Error(`fixture HTTP ${response?.status() ?? "unknown"}: ${(await response?.text()) ?? "no response body"}`);
+        }
         await runtimeCase.check(page);
         assert.deepEqual(errors, [], `browser errors in ${runtimeCase.name}`);
       } catch (error) {
