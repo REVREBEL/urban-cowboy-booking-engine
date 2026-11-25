@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { BookingFooter } from "../../src/components/booking/chrome/footer";
 import { ExtrasStep } from "../../src/components/booking/extras/ExtrasStep";
 import { CheckoutStep } from "../../src/components/booking/summary/CheckoutStep";
-import { Brand } from "../../src/components/brand/Brand";
+import { Brand } from "../../src/components/brand/brand";
 import { AmenityWoodcutIcon } from "../../src/components/icons/AmenityWoodcutIcon";
 import { BuildingWoodcut } from "../../src/components/icons/BuildingWoodcut";
 import { IconBed } from "../../src/components/icons/cowboy-icons";
