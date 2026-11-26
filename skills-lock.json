@@ -1,11 +1,53 @@
 {
-  "version": 1,
+  "version": 2,
   "skills": {
+    "Database Design Expert": {
+      "source": "martinholovsky/claude-skills-generator",
+      "commit": "1086ef25672acba2916220c6ce032a612cd9dc98",
+      "sourceType": "github",
+      "skillPath": "skills/database-design/SKILL.md",
+      "computedHash": "e6e4a9edee3fad82183181e43b5771c3807cd8de721e9e74fbc2d8376246566e"
+    },
+    "artistic": {
+      "source": "bergside/awesome-design-skills",
+      "commit": "f631a09b4fcc0166f2e2c1a8c81906ef680c57e8",
+      "sourceType": "github",
+      "skillPath": "skills/artistic/SKILL.md",
+      "computedHash": "a36345888c0c36592c575dbbf81c5d42e781a8e590bc2d0911f34eb7cd8f1fc1"
+    },
+    "d1-database": {
+      "source": "null-shot/cloudflare-skills",
+      "commit": "cfdd76ff6061ab4128850906b60be5512f036662",
+      "sourceType": "github",
+      "skillPath": "d1-database/SKILL.md",
+      "computedHash": "6055afee8e5a6005a9377633888a4ff83f25856bd4be811894fdf50f2b480dbb"
+    },
+    "database-schema-designer": {
+      "source": "softaworks/agent-toolkit",
+      "commit": "3027f20f3181758385a1bb8c022d4041dfb4de84",
+      "sourceType": "github",
+      "skillPath": "skills/database-schema-designer/SKILL.md",
+      "computedHash": "45844be469e96fb9ca60d0cb820e0702db70ab24fc8158663502fbd1ec3008fc"
+    },
+    "documentary-brutalist-agency": {
+      "source": "MengTo/Skills",
+      "commit": "a5b1d3d28bd72b206a28e4a76b653792fc7b4859",
+      "sourceType": "github",
+      "skillPath": "agent-skills/web-design/documentary-brutalist-agency/SKILL.md",
+      "computedHash": "762859d940be8d5349d1e32991cbc19fdcc9b5def67b91ea23f71a1a72a03c56"
+    },
+    "flat": {
+      "source": "bergside/awesome-design-skills",
+      "commit": "f631a09b4fcc0166f2e2c1a8c81906ef680c57e8",
+      "sourceType": "github",
+      "skillPath": "skills/flat/SKILL.md",
+      "computedHash": "06fe4ce58cfca7241f6e7f7125872c5c9f72117ae2627a10a83be541dbb72a89"
+    },
     "scry-setup": {
       "source": "epinnock/scry-node",
       "sourceType": "github",
       "skillPath": "skills/scry-setup/SKILL.md",
-      "computedHash": "4ba212923045c4d5aab90d30abfa45550da243caaa75d16c93ccf4ff1bf9db0f"
+      "computedHash": ""
     }
   }
 }
