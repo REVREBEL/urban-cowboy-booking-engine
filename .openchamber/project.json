@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "setupWorktree": [
+    "cp \"$MAIN_WORKTREE_PATH/.env\" .env 2>/dev/null || true"
+  ],
+  "projectActions": [
+    {
+      "id": "06dab3f9-25cf-49d8-9069-a89500eb8a76",
+      "name": "Booking Engine Dev",
+      "command": "dev:worker",
+      "icon": "play"
+    },
+    {
+      "id": "e4b912be-03be-447c-92e1-1222a3e447eb",
+      "name": "Deploy",
+      "command": "npm run deploy",
+      "icon": "play"
+    },
+    {
+      "id": "ae0f1aa6-7358-489e-8d35-49d2e3a8374b",
+      "name": "Wrangler Deploy",
+      "command": "npm run build && npx wrangler deploy",
+      "icon": "build"
+    },
+    {
+      "id": "06e686b7-d408-4f62-9dd3-3b272c8c03c8",
+      "name": "Admin Dev",
+      "command": "npm run admin:dev",
+      "icon": "play"
+    },
+    {
+      "id": "d28b787d-3906-4751-80cf-0b460a70f1ff",
+      "name": "Copy Env",
+      "command": "cp \"/Users/garystringham/github-revrebel/urban-cowboy-booking-engine/.env\" .env 2>/dev/null || true",
+      "icon": "play"
+    }
+  ]
+}
