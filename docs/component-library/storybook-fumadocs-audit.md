@@ -17,38 +17,40 @@ Corroboration rule: file counts were not trusted alone. Every historical entry w
 
 ## 1. Final verdict
 
-**68 canonical historical Storybook components are missing from active Fumadocs documentation.** Zero of the 68 baseline `documented` entries regressed: all of their target pages still exist, are indexed in navigation, and render at least one live demo. The 6 intentional exclusions (2 dev-tooling stories, 4 Storybook scaffold examples) are not counted as documentation loss. If excluded rows are included in the raw gap count, the figure is 74 of 142 story files.
+**66 distinct historical Storybook components are missing from active Fumadocs documentation** (67 planned story-source entries; the two `ExtrasStep` sources collapse to one component identity). Zero of the 68 baseline `documented` entries regressed: all of their target pages still exist and are indexed in navigation. Adding `Label`, which is rendered by the live Switch demo, gives 69 covered component identities. The 6 intentional exclusions (2 dev-tooling stories, 4 Storybook scaffold examples) are not counted as documentation loss. Counting raw story-source rows instead of identities, the Storybook-only figure is 73 of 142.
 
-Nothing in the audit blocks the Storybook-removal merge, and that merge has already landed on `origin/main`. However, the removal was not coverage-neutral: 68 historical entries have no equivalent Fumadocs page. The loss is concentrated in 45 generic shadcn/ui primitives that the project explicitly recorded as non-production, plus live-context booking/rate/room surfaces that were consciously deferred because a side-effect-free fixture did not exist. Those deferred production surfaces are currently covered by `tests/productionComponentRuntime.test.ts`, not by Fumadocs. See section 8 for the prioritized remediation list.
+Nothing in this audit blocks the Storybook-removal merge, and that merge has already landed on `origin/main`; this audit makes no claim about CI workflow results at PR head. The removal was not coverage-neutral: 67 planned entries (66 component identities) have no equivalent Fumadocs documentation. The loss is concentrated in 44 generic shadcn/ui primitives that the project explicitly recorded as non-production, plus live-context booking/rate/room surfaces that were consciously deferred because a side-effect-free fixture did not exist. Most of those deferred surfaces are exercised by `tests/productionComponentRuntime.test.ts` rather than documented in Fumadocs; **no existing fixture mounts `StayBreakdown`**. See section 8 for the prioritized remediation list.
 
 ## 2. Counting layers and mathematical reconciliation
 
 | Metric | Count | Basis |
 | --- | --- | --- |
 | Historical Storybook story files (story-source entries) | 142 | 142 `src/stories/**/*.stories.*` files at 8e7eca65 |
-| Historical named story exports | 345 | inventory.json totalExamples; 6 skipped stories |
+| Historical named story exports | 345 | inventory.json totalExamples = 235 covered + 98 planned + 12 excluded; 6 skipped files |
 | Current Fumadocs component MDX pages | 48 | all present in `components/meta.json` (48/48) |
 | Current Fumadocs demo story files / story objects | 34 / 110 | `docs-app/components/*.story.tsx`; 110 `defineStory` objects and 110 controls |
-| Historical canonical components (excluding 6 intentional) | 136 | 135 unique names (ExtrasStep has two story sources) |
-| Overlap (canonical components with active Fumadocs docs) | 68 | all 68 baseline `documented` rows; every page still exists and is indexed |
-| Storybook-only (uncovered historical entries) | 74 | 68 genuinely undocumented + 6 intentional exclusions |
-| Fumadocs-only documented components | 9 | FavoriteBadge, HoldTimer, HotBadge, Label, PillButton, ProgressStepper, SavingsLine, Stars, ViewersNudge (plus 3 design-token pages) |
-| Current Fumadocs documented component identities | 77 | 68 overlap + 9 Fumadocs-only |
-| Historical coverage (canonical) | 68/136 = 50.0% | documented / (documented + planned) |
-| Historical coverage (all story files) | 68/142 = 47.9% | documented / all 142 story-source entries |
+| Historical canonical entries (excluding 6 intentional) | 136 entries / 135 identities | ExtrasStep has two story sources but one component identity |
+| Overlap (components rendered by active demos) | 69 entries / 69 identities | 68 baseline `documented` rows plus `Label`, rendered by the Switch demo |
+| Storybook-only (uncovered historical entries) | 73 | 67 planned entries + 6 intentional exclusions (73 raw rows) |
+| Missing unique component identities | 66 | 67 planned entries collapse to 66 identities (ExtrasStep) |
+| Fumadocs-only documented components | 8 | FavoriteBadge, HoldTimer, HotBadge, PillButton, ProgressStepper, SavingsLine, Stars, ViewersNudge (plus 3 design-token pages) |
+| Current Fumadocs documented component identities | 77 | 69 overlap + 8 Fumadocs-only |
+| Historical coverage (entry level) | 69/136 = 50.7% | covered story-source entries / canonical entries |
+| Historical coverage (identity level) | 69/135 = 51.1% | covered component identities / canonical identities |
 
-Reconciliation checks:
+Reconciliation checks (entry level, then component-identity level):
 
-- overlap + Storybook-only = 68 + 74 = 142 = historical total (142). OK.
-- overlap + Fumadocs-only = 68 + 9 = 77 = current Fumadocs documented component identities. OK.
-- canonical historical total = 68 documented + 68 planned = 136; plus 6 exclusions = 142. OK.
-- export layer: 234 historical exports belong to covered entries, 99 exports belong to uncovered entries, total 345. OK.
+- overlap + Storybook-only = 69 + 73 = 142 = historical story-source total (142). OK.
+- overlap + Fumadocs-only = 69 + 8 = 77 = current Fumadocs documented component identities. OK.
+- canonical identities = 69 covered + 66 missing = 135 unique components; the 6 exclusions are raw rows, not extra canonical identities. OK.
+- canonical entries = 69 covered + 67 planned = 136; plus 6 exclusions = 142 entries. OK.
+- export layer: 235 covered + 98 planned + 12 excluded (the 6 skipped stories) = 345 named exports. OK.
 
-Normalization applied: `Header`→`BookingHeader`, `RusticLodgeSignboard`→`LodgeSignboard`, `RoomMatcherProgress`→`MatcherProgress`, `FindYourStayTravelPartyButton`→`TravelPartyGroup`, `CreoleUpsellStories`→`InlineUpsell`, `SideFocusAmenityBar`/`Cabin King Bed + Bunk`→`SideBarFocusAmenity`, `Figma Rate Card`→`FigmaRateCard`/`FigmaRateDetailPopup`/`FigmaPolicyTimeline`, `Disappear for a While`→`Arrive`, `Extras`→`PhotoExtrasStep`, `Stay Journal`→`PhotoJournal`, `Rooms`→`PhotoRooms`, `Photo Tour Arrow`→`PhotoTourArrow`, `Room Photo Tour`→`RoomPhotoTour`. `ExtrasStep` has two historical story sources but one component identity. The 6 intentional exclusions are kept as separate entries so the file count still reconciles.
+Normalization applied: `Header`→`BookingHeader`, `RusticLodgeSignboard`→`LodgeSignboard`, `RoomMatcherProgress`→`MatcherProgress`, `FindYourStayTravelPartyButton`→`TravelPartyGroup`, `CreoleUpsellStories`→`InlineUpsell`, `SideFocusAmenityBar`/`Cabin King Bed + Bunk`→`SideBarFocusAmenity`, `Figma Rate Card`→`FigmaRateCard`/`FigmaRateDetailPopup`/`FigmaPolicyTimeline`, `Disappear for a While`→`Arrive`, `Extras`→`PhotoExtrasStep`, `Stay Journal`→`PhotoJournal`, `Rooms`→`PhotoRooms`, `Photo Tour Arrow`→`PhotoTourArrow`, `Room Photo Tour`→`RoomPhotoTour`. `ExtrasStep` has two historical story sources but one component identity. `Label` has no dedicated page but is rendered by the live Switch demo, so it is counted as Covered (rendered) rather than Fumadocs-only. The 6 intentional exclusions are kept as separate rows so the file count still reconciles.
 
 ## 3. Component-level comparison (all 142 historical entries, sortable)
 
-Classification: **Covered** = active Fumadocs page with a live demo; **Missing (deferred)** = no active page; **Intentional exclusion** = documented rationale for not migrating. `Consolidated family demo` means several historical components share one page/demo grid rather than each having a dedicated page.
+Classification: **Covered** = rendered by an active Fumadocs demo (on a dedicated page or inside a family demo); **Missing (deferred)** = no active demo renders it; **Intentional exclusion** = documented rationale for not migrating. `Consolidated family demo` means several historical components share one page/demo grid rather than each having a dedicated page.
 
 | Historical component | Story source @ 8e7eca65 | Story exports (n) | Baseline status | Fumadocs page (demos) | Parity | Classification | Evidence / note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -167,7 +169,7 @@ Classification: **Covered** = active Fumadocs page with a live demo; **Missing (
 | HoverCard | `src/stories/components/ui/hover-card.stories.tsx` | 1 (Default) | planned | — | none | Missing (deferred) | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. |
 | InputOTP | `src/stories/components/ui/input-otp.stories.tsx` | 1 (Default) | planned | — | none | Missing (deferred) | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. |
 | Input | `src/stories/components/ui/input.stories.tsx` | 2 (Default, Disabled) | planned | — | none | Missing (deferred) | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. |
-| Label | `src/stories/components/ui/label.stories.tsx` | 1 (Default) | planned | — | none | Missing (deferred) | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. |
+| Label | `src/stories/components/ui/label.stories.tsx` | 1 (Default) | planned | `switch` (1 demos) | Rendered inside `switch` demo (no dedicated page) | Covered | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. |
 | Menubar | `src/stories/components/ui/menubar.stories.tsx` | 1 (Default) | planned | — | none | Missing (deferred) | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. |
 | NavigationMenu | `src/stories/components/ui/navigation-menu.stories.tsx` | 1 (Default) | planned | — | none | Missing (deferred) | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. |
 | Pagination | `src/stories/components/ui/pagination.stories.tsx` | 1 (Default) | planned | — | none | Missing (deferred) | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. |
@@ -195,7 +197,7 @@ Classification: **Covered** = active Fumadocs page with a live demo; **Missing (
 | Header | `src/stories/examples/Header.stories.ts` | 2 (LoggedIn, LoggedOut) | excluded | — | n/a | Intentional exclusion | Storybook scaffold or story-only harness, not a canonical component. Replaced by component stories or existing interaction tests. |
 | Page | `src/stories/examples/Page.stories.ts` | 2 (LoggedOut, LoggedIn) | excluded | — | n/a | Intentional exclusion | Storybook scaffold or story-only harness, not a canonical component. Replaced by component stories or existing interaction tests. |
 
-## 4. Story / export / variant-level gap list (68 missing entries)
+## 4. Story / export / variant-level gap list (67 missing entries / 66 identities)
 
 These are the Storybook-only story exports with no equivalent active Fumadocs demo. Severity reflects production impact, not effort. The `Evidence / rationale` column quotes the baseline coverage-matrix note (the deleted inventory carried a note for every planned row, so no gap is unexplained).
 
@@ -241,7 +243,6 @@ These are the Storybook-only story exports with no equivalent active Fumadocs de
 | Low | HoverCard | Shared controls | Default | `src/stories/components/ui/hover-card.stories.tsx` | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. | New `components/ui/<kebab>.mdx` page (only if the app adds bespoke behavior); otherwise remain intentionally undocumented |
 | Low | Input | Shared controls | Default, Disabled | `src/stories/components/ui/input.stories.tsx` | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. | New `components/ui/<kebab>.mdx` page (only if the app adds bespoke behavior); otherwise remain intentionally undocumented |
 | Low | InputOTP | Shared controls | Default | `src/stories/components/ui/input-otp.stories.tsx` | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. | New `components/ui/<kebab>.mdx` page (only if the app adds bespoke behavior); otherwise remain intentionally undocumented |
-| Low | Label | Shared controls | Default | `src/stories/components/ui/label.stories.tsx` | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. | New `components/ui/<kebab>.mdx` page (only if the app adds bespoke behavior); otherwise remain intentionally undocumented |
 | Low | Menubar | Shared controls | Default | `src/stories/components/ui/menubar.stories.tsx` | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. | New `components/ui/<kebab>.mdx` page (only if the app adds bespoke behavior); otherwise remain intentionally undocumented |
 | Low | NavigationMenu | Shared controls | Default | `src/stories/components/ui/navigation-menu.stories.tsx` | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. | New `components/ui/<kebab>.mdx` page (only if the app adds bespoke behavior); otherwise remain intentionally undocumented |
 | Low | Pagination | Shared controls | Default | `src/stories/components/ui/pagination.stories.tsx` | Planned: generic shadcn/ui primitive retained in the historical catalog. It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior. | New `components/ui/<kebab>.mdx` page (only if the app adds bespoke behavior); otherwise remain intentionally undocumented |
@@ -282,7 +283,7 @@ Variant-level note for covered components: the current Fumadocs demos are consol
 | SearchBarLocationDropdown | Default, KeyboardNavigationAndEscape, SwitchingSectionPreservesNewFocus (3) | 1 control (`searchLocationDropdownStory`) | Keyboard-navigation and section-switch states not separately reproduced | search-dropdowns |
 | RoomsListCard | 11 exports incl. five named room-type fixtures | 2 controls (`roomsListCardStory`, `roomsListCardCopperStory`) | Named room-type fixtures are consolidated into the single card demo | room-list-card |
 
-These are parity reductions, not missing component pages. They are reported separately from the 68 component-level gaps so that a component counted as `Covered` is not mistaken for full one-to-one story parity. Whether a reduced variant matters is a product decision; the demos that exist all resolve to real components and were exercised on the published site (section 6).
+These are parity reductions, not missing component pages. They are reported separately from the component-level gaps so that a component counted as `Covered` is not mistaken for full one-to-one story parity. Whether a reduced variant matters is a product decision. Source wiring was verified for every demo; the much narrower published-site evidence is described in section 6 and does not cover all 48 pages or 110 controls.
 
 
 ## 5. Storybook-only exclusions and Fumadocs-only additions
@@ -308,10 +309,9 @@ Earlier intentional retirements confirmed in git history: `11964cd7` removed the
 | Stars, HotBadge, FavoriteBadge, ViewersNudge, SavingsLine, HoldTimer | conversion-badges | family-covered production primitives; no standalone historical story |
 | PillButton | pill | Button presentation primitive rendered inside the Pill demo |
 | ProgressStepper | progress-bar / progress-step | progress presentation primitive rendered inside layout demos |
-| Label | switch | paired `Label` from the shared UI kit, rendered with Switch |
 | Design tokens: typography, colors, general-tokens | design-tokens group | new COW-116 reference pages; not components and not in the Storybook story catalog |
 
-Nine of these are production primitives rendered inside family demos rather than standalone stories; they were already triaged as `family-covered` production candidates in the deleted `coverage-matrix.json`. The three design-token pages were added by COW-116 and are docs-only artifacts, not components.
+Eight of these are production primitives rendered inside family demos rather than standalone stories; they were already triaged as `family-covered` production candidates in the deleted `coverage-matrix.json`. `Label` is *not* listed here because the Switch demo renders it and it is therefore counted as Covered. The three design-token pages were added by COW-116 and are docs-only artifacts, not components.
 
 
 ## 6. Navigation and demo-render verification
@@ -320,7 +320,9 @@ Nine of these are production primitives rendered inside family demos rather than
 - `docs-app/content/docs/design-tokens/meta.json` lists all three token pages; `docs/meta.json` links `index`, `components` and `design-tokens`.
 - Every one of the 48 pages imports its `StoryControl` wrappers from `~/components/story-controls` and uses them in JSX. All 110 exported controls resolve to a story object in a `*.story.tsx` file; no imported-but-unused or used-but-not-imported control was found.
 - All 34 `*.story.tsx` files import real components from `src/` (110 `defineStory` objects). Demos use local state and deterministic fixtures; no Mews call, booking start or admin write.
-- Published-site evidence: `docs/component-library/live-verification-canonical-2026-11-24.json` records 22 page checks at HTTP 200 on desktop and mobile with empty `failures`, working deep links, a populated static search index, and working interactive demos (`amenityRail`, `amenityRailState`, `ratePanel`, `ratePanelClose` all `ok: true`). This confirms demos render on the deployed site, not just in source.
+- Published-site evidence is limited. `docs/component-library/live-verification-2026-11-24.json` records `ok: true` with `detail: "ok"` and an empty `failures` array for 22 checks across **11 paths** on desktop and mobile (root plus `booking-chrome`, `booking-details`, `booking-summary`, `conversion-badges`, `extras-upsell`, `focus-amenity`, `rate-offers`, `room-list-card`, `search-bar` and `search-dropdowns`), plus static-search index/navigation and four interaction probes (`amenityRail`, `amenityRailState`, `ratePanelClose`, `ratePanel`). This establishes rendered pages and those four interactions on those 11 paths only; it does **not** establish live rendering of all 48 pages or 110 controls.
+- `docs/component-library/live-verification-canonical-2026-11-24.json` is cited as a historical artifact only and **not** as passing evidence: its `detail` strings still describe failure conditions (e.g. `missing marker …`, `rail state did not change`) even though `ok` is true, which conflicts with the current `scripts/fumadocs/live-check-core.mjs` rule that a passing check stores `detail: "ok"`. The verification data was not regenerated, because this is an audit-only change.
+- Navigation and source wiring checks above establish discoverability and that demos are wired to real components; they are not proof of successful live rendering. No per-page or per-control runtime evidence was produced by this audit.
 
 
 ## 7. Cross-check: related issues and PRs
@@ -345,11 +347,11 @@ Uncertainty notes from the cross-check: no issue or PR explicitly names the dupl
 
 ## 8. Prioritized remediation list
 
-**P0 — before any future claim of full parity (High severity, 12 entries):** restore side-effect-free Fumadocs demos for the live-context surfaces: `CheckoutStep`, `BookingSummary`, `StayBreakdown`, `ExtrasStep` (both sources), `Footer`, `AddonCard`, `AddonCustomizerModal`, `RoomDetailModal`, `RoomsListBuilding`, `ProductionRateTray`, `RateSelectionView`. `tests/productionComponentRuntime.test.ts` already supplies deterministic fixtures for these; port those fixtures into `defineStory` demos.
+**P0 — before any future claim of full parity (High severity, 11 component identities / 12 story-source entries):** restore side-effect-free Fumadocs demos for the live-context surfaces: `CheckoutStep`, `BookingSummary`, `StayBreakdown`, `ExtrasStep` (two sources, one identity), `Footer`, `AddonCard`, `AddonCustomizerModal`, `RoomDetailModal`, `RoomsListBuilding`, `ProductionRateTray`, `RateSelectionView`. `tests/productionComponentRuntime.test.ts` supplies deterministic fixtures for rate selection, production rate tray, room details, building room lists, checkout/footer and extras/addons; port those fixtures into `defineStory` demos. **No existing fixture mounts `StayBreakdown`** — it embeds live booking state and needs a new side-effect-free fixture before a demo is possible.
 
 **P1 — Medium severity (6 entries):** add named offer-theme variants to `rate-offers.mdx` for `OutfitOffersCard`, `PlanAheadOffersCard`, `RideEasyOffersCard`, `RideEasySoloPage`, `StayAwhileOffersCard`, `SunupOffersCard`. Full parity needs a live Mews-pricing fixture; static presentation parity can be reached with deterministic pricing data.
 
-**P2 — Low severity (50 entries + 6 exclusions):** 45 generic shadcn/ui primitives in `src/stories/components/ui/**` (the baseline matrix records `It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior.`), plus `RateCardLab`, `Brand` and the three icon sets. Treat these as intentionally undocumented unless the app adds bespoke behavior; do not create 45 lookalike pages. Keep the 6 exclusions retired.
+**P2 — Low severity (49 entries + 6 exclusions):** 44 generic shadcn/ui primitives in `src/stories/components/ui/**` (the baseline matrix records `It is not a Urban Cowboy production surface; document only if the app adds bespoke behavior.`), plus `RateCardLab`, `Brand` and the three icon sets. Treat these as intentionally undocumented unless the app adds bespoke behavior; do not create 44 lookalike pages. Keep the 6 exclusions retired.
 
 **Intended exclusions (marked separately, not remediation work):** dev-tooling stories, Storybook scaffold examples, retired `FeatureFocus`, duplicate Pill stories, and admin hotspot editors (the baseline migration doc states they `stay intentionally excluded from public interactive docs`).
 
@@ -359,5 +361,7 @@ Uncertainty notes from the cross-check: no issue or PR explicitly names the dupl
 - No live Storybook build exists at the audited commit, so parity was judged from story source, named exports, the historical coverage matrix and the current demo wiring rather than by running a Storybook server. Matches that depend on visual equivalence are marked `Consolidated family demo` rather than asserted as exact.
 - The historical migration doc at 8e7eca65 still quotes an earlier `58 documented / 78 planned` snapshot; the generated `coverage-matrix.json` at the same commit is authoritative at `68 / 68 / 6` and is used here.
 - `Cabin King Bed + Bunk` is the coverage matrix's canonical name for the `SideFocusAmenityBar` story; it is normalised to `SideBarFocusAmenity` in current docs.
-- `ExtrasStep` has two story sources but one component identity; counts are reported at both levels so the arithmetic remains transparent.
+- `ExtrasStep` has two story sources but one component identity; counts are reported at both entry and identity levels so the arithmetic remains transparent. `Label` has no dedicated page but is counted as Covered because the Switch demo renders it.
+- Live verification is partial: the cited passing record covers 11 paths and four interactions, not all pages/controls, and the canonical record is stale. No verification data was regenerated.
+- CI workflow results at the PR head were not verified by this audit; no merge-safety claim is made.
 - This is an audit-only deliverable. Missing documentation is identified, not implemented, and archival coverage data was read from history rather than deleted.
