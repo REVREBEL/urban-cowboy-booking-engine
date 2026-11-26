@@ -1,0 +1,26 @@
+---
+title: General tokens
+description: Radii, shadows, border widths, control sizing and a candid list of design-token gaps in the current theme.
+---
+
+import { GeneralTokensShowcase } from '~/components/general-tokens-showcase';
+
+This page documents the general design tokens that actually exist in the booking engine: corner
+radii, shadow values, the named button border token and the `btn-*` sizing declarations. Samples use
+the token as the CSS value, not a hardcoded imitation.
+
+<GeneralTokensShowcase />
+
+## What is not a token yet
+
+Spacing, breakpoint, opacity and the `--border-width-*` names referenced by some components have no
+matching custom property in `src/styles`. They are listed at the bottom of the showcase as gaps with
+their source references. Utility defaults and media-query values are deliberately not promoted to
+tokens here: that would change the design system rather than document it.
+
+## Responsive notes
+
+Radius and shadow cards stack on small screens. The sizing table scrolls inside its container so the
+declaration text stays readable without widening the article.
+
+[View the theme source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/styles/theme.css)

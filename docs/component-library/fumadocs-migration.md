@@ -1,6 +1,30 @@
 # Component documentation
 
 The component library is a static Fumadocs site in `docs-app`. It imports the real React components from `src` and renders them with deterministic, docs-only fixtures. The site does not call Mews, D1, the Worker or admin APIs.
+## COW-116 visual token library
+
+Three reference pages now sit under the **Design tokens** navigation group:
+`design-tokens/typography`, `design-tokens/colors` and `design-tokens/general-tokens`.
+They render the real `@font-face` assets and CSS custom properties from `src/styles`;
+no lookalike fonts or copied values are used.
+
+`scripts/fumadocs/generate-design-tokens.mjs` is the single source for their metadata.
+It parses `theme.css`, `colors.css`, `typography.css`, `utilities.css` and `index.css`,
+resolves `var()` chains, verifies that every declared font asset is checked in, and writes
+`docs-app/lib/design-tokens.generated.json`. Token names, declarations and resolved values
+are copyable from the rendered pages. Missing names (`--border-width-*`, plus the absent
+spacing, breakpoint and opacity token families) are emitted as **gaps** with source
+references; the pages do not invent stand-in values.
+
+Build tooling: `docs:prepare` regenerates the metadata, `dev-docs.mjs` watches the source
+tree (CSS declarations and TS/TSX token references), `docs:tokens:check` keeps the tracked JSON in sync in CI, and `smoke-docs.mjs`
+checks the three exported pages and their rendered markers. Browser runtime coverage
+verifies real font loading, copy controls and mobile layout.
+
+Verify with `npm run docs:tokens:check`, `npm run test:docs`, `npm run docs:build`,
+`npm run docs:smoke` and `npm run test:docs:runtime`.
+
+## COW-85 follow-up coverage and live verification
 
 ## Add a component page
 

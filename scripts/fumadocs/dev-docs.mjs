@@ -7,12 +7,23 @@ import { readdirSync, watch } from "node:fs";
 import { join } from "node:path";
 import { prepareDocsAssets } from "./prepare-docs-assets.mjs";
 import { buildSearchIndex } from "./build-search-index.mjs";
+import { generateDesignTokens } from "./generate-design-tokens.mjs";
+import { writeFileSync } from "node:fs";
 
 const root = process.cwd();
 const contentRoot = join(root, "docs-app", "content", "docs");
 const assetsRoot = join(root, "public", "assets");
+// The generator reads declarations from src/styles and missing-token references
+// from every source file, so watch the whole tree rather than just the CSS.
+const sourceRoot = join(root, "src");
+const tokenOutput = join(root, "docs-app", "lib", "design-tokens.generated.json");
+
+function refreshTokens() {
+  writeFileSync(tokenOutput, `${JSON.stringify(generateDesignTokens(root), null, 2)}\n`);
+}
 
 prepareDocsAssets(root);
+refreshTokens();
 await buildSearchIndex(root);
 
 const child = spawn("npm", ["run", "dev", "-w", "@urban-cowboy/docs"], {
@@ -43,6 +54,7 @@ function refresh(kind) {
   timer = setTimeout(async () => {
     try {
       if (kind === "assets") prepareDocsAssets(root);
+      if (kind === "tokens") refreshTokens();
       await buildSearchIndex(root);
     } catch (error) {
       console.error(`[docs-dev] ${kind} refresh failed:`, error);
@@ -52,6 +64,7 @@ function refresh(kind) {
 
 watchTree(contentRoot, () => refresh("content"));
 watchTree(assetsRoot, () => refresh("assets"));
+watchTree(sourceRoot, () => refresh("tokens"));
 
 function shutdown(signal) {
   if (!child.killed) child.kill(signal);

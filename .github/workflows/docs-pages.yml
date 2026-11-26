@@ -42,6 +42,12 @@ jobs:
       - name: Validate component documentation
         run: npm run test:docs
 
+      - name: Verify generated inventory is current
+        run: npm run docs:inventory:check
+
+      - name: Verify generated design tokens are current
+        run: npm run docs:tokens:check
+
       - name: Clean-checkout docs dev regression
         run: npm run test:docs:dev
 
