@@ -1,4 +1,4 @@
 {
   "title": "Component library",
-  "pages": ["index", "components"]
+  "pages": ["index", "components", "design-tokens"]
 }

@@ -1,0 +1,30 @@
+---
+title: Typography
+description: Every configured font family, font role, type size and case treatment, rendered from the booking engine's real assets and tokens.
+---
+
+import { TypographyShowcase } from '~/components/typography-showcase';
+
+This page reads the same CSS the booking engine uses. The specimens below are painted with the
+declared `@font-face` families and `--font-*`, `--text-size-*` and `--tracking-*` custom properties,
+so they change when the theme changes. No lookalike fonts or copied pixel values are used.
+
+<TypographyShowcase />
+
+## Reading the specimens
+
+Font families are grouped by the name in `@font-face`; each face lists its weight, style and the
+checked-in asset path. Families used by a font role also show the `--font-*` token. The font roles
+table renders a sentence with each token itself, which is the safest way to see the actual stack
+including its fallbacks.
+
+The type scale uses fluid `--text-size-*` declarations with their `--text-*` Tailwind aliases.
+Tracking and case treatments use the single `--tracking-normal` token and the shared
+`text-case-*` utilities.
+
+## Responsive notes
+
+Fluid type sizes scale with the viewport. On a narrow screen the role table scrolls inside its own
+container rather than pushing the page wider, and the family cards stack into one column.
+
+[View the typography source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/styles/typography.css)

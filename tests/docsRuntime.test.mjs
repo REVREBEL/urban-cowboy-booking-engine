@@ -346,6 +346,9 @@ const deepLinks = [
   { path: "/components/configurable-rate-card/", heading: "ConfigurableRateCard" },
   { path: "/components/room-photo-tour/", heading: "Room Photo Tour" },
   { path: "/components/date-range-picker/", heading: "Date Range Picker" },
+  { path: "/design-tokens/typography/", heading: "Typography" },
+  { path: "/design-tokens/colors/", heading: "Colors" },
+  { path: "/design-tokens/general-tokens/", heading: "General tokens" },
 ];
 
 test("documented deep links render at desktop and mobile widths", async () => {
@@ -374,6 +377,53 @@ test("documented deep links render at desktop and mobile widths", async () => {
       }
       assert.deepEqual(notFound, [], `${viewport.width}px no missing assets`);
       await page.close();
+    }
+  } finally {
+    await browser.close();
+    await new Promise((done) => server.close(done));
+  }
+});
+
+test("visual token pages load real fonts and expose copy controls", async () => {
+  const server = await serve();
+  const browser = await chromium.launch();
+  try {
+    const address = server.address();
+    assert.ok(address && typeof address !== "string");
+    const origin = `http://127.0.0.1:${address.port}`;
+    const page = await browser.newPage({
+      viewport: { width: 375, height: 812 },
+      permissions: ["clipboard-read", "clipboard-write"],
+    });
+    const fontResponses = [];
+    page.on("response", (response) => {
+      if (response.url().includes("/fonts/")) fontResponses.push(response);
+    });
+
+    await page.goto(`${origin}${basePath}/design-tokens/typography/`, { waitUntil: "networkidle" });
+    await page.evaluate(() => document.fonts.ready);
+    assert.ok(
+      await page.evaluate(() => document.fonts.check('20px "DesertRain"')),
+      "the declared DesertRain face loaded",
+    );
+    assert.ok(
+      fontResponses.some((response) => response.status() === 200 && response.url().includes("DesertRain")),
+      "the real DesertRain asset was requested",
+    );
+    const copy = page.getByRole("button", { name: /^Copy token/ }).first();
+    await copy.click();
+    await page.getByText(/Copied token/).first().waitFor();
+    const typographyOverflow = await page.evaluate(() =>
+      document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    assert.ok(typographyOverflow <= 1, `typography page has no mobile overflow (${typographyOverflow}px)`);
+
+    for (const slug of ["colors", "general-tokens"]) {
+      await page.goto(`${origin}${basePath}/design-tokens/${slug}/`, { waitUntil: "networkidle" });
+      const copies = page.getByRole("button", { name: /^Copy / });
+      assert.ok(await copies.count() > 0, `${slug} has copy controls`);
+      const overflow = await page.evaluate(() =>
+        document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      assert.ok(overflow <= 1, `${slug} has no mobile overflow (${overflow}px)`);
     }
   } finally {
     await browser.close();
