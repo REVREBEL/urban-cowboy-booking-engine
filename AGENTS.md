@@ -40,7 +40,7 @@ This repository uses **Tailwind CSS v4**, not v3. Before changing UI classes or 
 - **Do not override** radius, padding, border, fonts, tracking, colors, opacity, height, hover/focus, or pressed behavior with local classes, inline `style`, ancestor selectors, or important modifiers.
 - Use `className` on shared controls **only** for approved placement classes such as `w-full`, `shrink-0`, `self-end`, or grid order/span. Place other layout styles on a wrapper.
 - Do not forward opaque prop spreads into shared controls: explicitly pass the supported behavior props.
-- If a new appearance is needed, extend the shared component's documented variant or token styles and its Storybook examples rather than introducing a screen-local workaround.
+- If a new appearance is needed, extend the shared component's documented variant or token styles and its Fumadocs examples and relevant tests rather than introducing a screen-local workaround.
 - An icon's own asset mask or dimensions belong on the icon child, not on the Button element.
 - Run `npm run lint:controls` before committing. CI compares changed TSX files against `main` and **rejects newly introduced** overrides. Existing violations elsewhere are technical debt, not precedent; use `npm run lint:controls:all` for a full audit.
 

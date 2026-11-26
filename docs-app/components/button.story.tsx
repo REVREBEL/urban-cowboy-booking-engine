@@ -100,6 +100,16 @@ function ButtonVariantsDemo() {
           Clicked {clicks} times
         </Button>
       </section>
+      <section className="space-y-2">
+        <h3 className="font-label text-sm uppercase tracking-wider">Icon-only controls</h3>
+        <div className="flex flex-wrap items-center gap-2 rounded-xl bg-smoke p-3">
+          {sizes.map((size) => (
+            <Button key={size} type="button" aria-label={`${size} icon control`} iconOnly colorScheme="paper" size={size}>
+              <span aria-hidden="true">→</span>
+            </Button>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

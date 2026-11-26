@@ -19,7 +19,7 @@
 .border-fd-border { border-color: var(--color-fd-border); }
 
 :root {
-  --storybook-story-max-width: 1600px;
+  --component-docs-max-width: 1600px;
 
   /* Fumadocs utilities read --color-fd-*, not --fd-*. Use the brand palette. */
   --color-fd-background: var(--paper-100);
@@ -92,7 +92,7 @@ body {
 .fumadocs-docs,
 .docs-story-frame {
   width: 100%;
-  max-width: var(--storybook-story-max-width);
+  max-width: var(--component-docs-max-width);
   margin-inline: auto;
   box-sizing: border-box;
   overflow-x: visible;

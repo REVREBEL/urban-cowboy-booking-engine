@@ -1,6 +1,6 @@
 "use client";
 
-import { pillStory } from "./pill.story";
+import { pillStory, pillVariantsStory } from "./pill.story";
 import { preferenceIconButtonStory } from "./preference-icon-button.story";
 import { buttonStory, buttonVariantsStory } from "./button.story";
 import { switchStory } from "./switch.story";
@@ -137,6 +137,10 @@ import {
 /** Client wrappers so MDX renders a component, not a member of a client proxy. */
 export function PillStoryControl() {
   return <pillStory.WithControl />;
+}
+
+export function PillVariantsStoryControl() {
+  return <pillVariantsStory.WithControl />;
 }
 
 export function PreferenceIconButtonStoryControl() {

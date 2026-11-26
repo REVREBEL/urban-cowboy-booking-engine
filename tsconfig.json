@@ -26,9 +26,6 @@
       "@/*": [
         "./src/*"
       ],
-      "@stories/*": [
-        "./src/stories/*"
-      ],
       "@data/*": [
         "./src/data/*"
       ],
@@ -40,7 +37,7 @@
       ]
     }
   },
-  "include": ["src/**/*", ".storybook/**/*"],
+  "include": ["src/**/*"],
   "exclude": [
     "src/components/booking/summary/ExtrasStep.tsx",
     "src/components/rates/RideEasySoloPage.tsx"

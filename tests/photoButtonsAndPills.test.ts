@@ -5,6 +5,9 @@ import { readFileSync } from "node:fs";
 const read = (path: string) =>
   readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8");
 
+const readDocs = (path: string) =>
+  readFileSync(new URL(`../docs-app/${path}`, import.meta.url), "utf8");
+
 const photoComponents = [
   "journey/PhotoArrival.tsx",
   "journey/PhotoJournal.tsx",
@@ -98,11 +101,12 @@ test("native button detector is case-sensitive for JSX components", () => {
 
 test("Button icon-only controls use equal dimensions and a circular shared shape", () => {
   const button = read("components/ui/Button.tsx");
-  const stories = read("stories/components/ui/Button.stories.tsx");
+  const docsExample = readDocs("components/button.story.tsx");
   assert.match(button, /iconOnly\?: boolean/);
   assert.match(button, /xsmall: "size-11 rounded-full p-0"/);
   assert.match(button, /iconOnly && ICON_ONLY_SIZE_CLASSES\[size\]/);
-  assert.match(stories, /export const IconOnly/);
+  assert.match(docsExample, /iconOnly/);
+  assert.match(docsExample, /aria-label=\{`\$\{size\} icon control`\}/);
 });
 
 test("Pill shares the Button palette and interactive PillButton delegates to Button", () => {
@@ -148,14 +152,13 @@ test("control palette utilities use runtime foundation variables and filled cont
   assert.match(filled, /border-style:\s*solid/);
 });
 
-test("Pill stories cover all Button palette colors, variants and toggles", () => {
-  const story = read("stories/components/ui/Pill.stories.tsx");
-  const storybook = readFileSync(new URL("../.storybook/main.ts", import.meta.url), "utf8");
-  assert.match(storybook, /src\/stories\/components\/\*\*\/\*\.stories/);
+test("Pill docs examples cover all Button palette colors, variants and toggles", () => {
+  const story = readDocs("components/pill.story.tsx");
   assert.match(story, /Object\.keys\(COLOR_PALETTE\)/);
-  for (const name of ["Playground", "AllColors", "Sizes", "Selectable", "ComparedWithButtons"]) {
-    assert.ok(story.includes(`export const ${name}`), `Story ${name} missing`);
-  }
+  assert.match(story, /\["xsmall", "small", "default", "large"\]/);
+  assert.match(story, /<PillButton\b/);
+  assert.match(story, /pressed=\{selected\}/);
+  assert.match(story, /export const pillVariantsStory/);
 });
 
 test("Button and Pill share a single color prop and border/clickable styling", () => {

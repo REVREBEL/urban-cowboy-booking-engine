@@ -5,6 +5,9 @@ import { readFileSync } from "node:fs";
 const src = (file: string) =>
   readFileSync(new URL(`../src/${file}`, import.meta.url), "utf8");
 
+const docs = (file: string) =>
+  readFileSync(new URL(`../docs-app/${file}`, import.meta.url), "utf8");
+
 test("Photo Journey header excludes the added hotel-name action", () => {
   const header = src("journey/PhotoJourneyHeader.tsx");
   assert.doesNotMatch(header, /Urban Cowboy · Catskills/);
@@ -15,7 +18,7 @@ test("Photo Journey header excludes the added hotel-name action", () => {
 test("Photo toolbar uses xsmall pills and a label-font sort selector", () => {
   const rooms = src("journey/PhotoRooms.tsx");
   const pill = src("components/ui/Pill.tsx");
-  const story = src("stories/components/ui/Pill.stories.tsx");
+  const story = docs("components/pill.story.tsx");
 
   assert.match(pill, /PillSize = "xsmall" \| "small" \| "default" \| "large"/);
   assert.match(pill, /xsmall:/);
