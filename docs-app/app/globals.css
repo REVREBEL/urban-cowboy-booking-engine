@@ -180,6 +180,30 @@ article#nd-page .prose.flex-1 {
   gap: 2rem;
 }
 
+/* Sections that introduce a component or variant get a title treatment, so
+   they read as headings rather than body copy. The MDX h2 (and its TOC entry)
+   stays intact; the wrapper only supplies the class to style. */
+.docs-component-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-subheading);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--color-fd-foreground);
+}
+
+.docs-component-heading h2::before {
+  content: "";
+  flex: none;
+  width: 4px;
+  height: 1.1em;
+  border-radius: 2px;
+  background-color: var(--color-fd-ring);
+}
+
 /* The Fumadocs prose preset centres table headings; component API tables read
    better with headers aligned to the cells they describe. */
 .prose table th,

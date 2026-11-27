@@ -138,6 +138,13 @@ test("story demos never expose a no-op Unset choice", () => {
   }
 });
 
+test("component-name headings have a distinct docs title style", () => {
+  const mdx = read("docs-app/content/docs/components/search-bar.mdx");
+  assert.match(mdx, /<div className="docs-component-heading">\n\n## Expanded search panel/);
+  assert.match(globalCss, /\.docs-component-heading h2 \{[\s\S]*?font-family: var\(--font-subheading\)/);
+  assert.match(globalCss, /\.docs-component-heading h2::before \{[\s\S]*?background-color: var\(--color-fd-ring\)/);
+});
+
 test("Pages workflow validates PRs and gates publication behind an explicit variable", () => {
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /fetch-depth: 0/);
