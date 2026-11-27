@@ -2,7 +2,7 @@
 
 Working record for the Urban Cowboy database redesign. Add a dated entry whenever a decision is made, including the current structure (OLD), the agreed direction (NEW), and implementation or review status. Keep open questions separate from decisions. Update the migration and validation references as work progresses.
 
-**Current status:** design decisions recorded; proposed changes have not been implemented or applied to D1. Local DbGate review workflow is planned, not yet set up. Baseline: main at `e54b19ae50f661c9a08ee6080443b9a1dc3d8394`; live D1 amenity schema and counts were inspected on 2026-11-26. Database and source data may change.
+**Current status:** first additive lookup/property-assignment migration is prepared on `draft/amenity-schema-foundation` and applied to the local review copy on the Mac. Production has not been migrated. Consolidation, global behavior and existing assignment backfill remain pending. Baseline: main at `e54b19ae50f661c9a08ee6080443b9a1dc3d8394`; live D1 amenity schema and counts were inspected on 2026-11-26. Database and source data may change.
 
 ## Decisions — 2026-11-26
 
@@ -47,7 +47,7 @@ Working record for the Urban Cowboy database redesign. Add a dated entry wheneve
 ### WORK-01: Incremental migrations and review
 **OLD:** A complete database design and its historical decisions are not yet captured in a single running OLD/NEW log.
 **NEW:** Maintain this log and save numbered migration files in the repository as work progresses. Build a local working copy for DbGate review, test the migration sequence with the project's D1 migration process, and retain migration and validation evidence. Production can be updated incrementally or at the end, coordinated with compatible application changes. Applied production migrations are not rewritten; subsequent changes use new migrations.
-**Status:** workflow agreed in principle; local environment, release timing and first migration not yet established.
+**Status:** local copy established at `~/Documents/Urban-Cowboy-Database-Review/urban-cowboy-review.sqlite`; first additive migration `0013_amenity_foundation.sql` applied locally via SQLite, not the Wrangler migration ledger. Production release timing remains open.
 
 ## Open questions
 - Which source values populate every proposed field, including type/category, location, global flag, benefit copy and slug?
@@ -63,4 +63,4 @@ Working record for the Urban Cowboy database redesign. Add a dated entry wheneve
 - [Source-to-target assessment](w2-1-source-schema-authority-assessment.md)
 - [Webflow photo hotspots and amenity contract](webflow-photo-hotspots.md)
 - [Current migrations](../../migrations/)
-- First migration: not created. Local DbGate database: not set up. Production application: not scheduled.
+- First migration: `0013_amenity_foundation.sql` on `draft/amenity-schema-foundation`, for local review. Initial lookup and property-assignment tables only; it does not consolidate existing amenity tables, assign existing amenities to locations, or implement global/exception behavior.\n- Local review copy created from the live D1 export on 2026-11-26 and opened with DbGate. The migration was applied directly to this SQLite copy; it is not marked in a Wrangler ledger. Rebuild the local copy or reconcile the ledger before using a migration runner on it.\n- Production application: not scheduled.
