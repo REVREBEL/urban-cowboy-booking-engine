@@ -20,15 +20,15 @@
 .bg-fd-primary { background-color: var(--color-fd-primary); }
 .bg-fd-secondary { background-color: var(--color-fd-secondary); }
 .bg-fd-accent { background-color: var(--color-fd-accent); }
-/* Story select popup states: keep the open menu opaque and invert the primary
-   pair on the active option so the current choice stands out. */
+/* Story select popup states: keep the open menu opaque and use the Fumadocs
+   primary pair on the active option so the current choice stands out. */
 .hover\:bg-fd-accent:hover,
 .data-popup-open\:bg-fd-accent[data-popup-open] {
   background-color: var(--color-fd-accent);
 }
 .data-\[highlighted\]\:bg-fd-accent[data-highlighted] {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
+  background-color: var(--color-fd-primary);
+  color: var(--color-fd-primary-foreground);
 }
 .from-fd-popover {
   --tw-gradient-from: var(--color-fd-popover) var(--tw-gradient-from-position, 0%);

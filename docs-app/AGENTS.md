@@ -10,5 +10,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Fumadocs theme tokens are not interchangeable with the raw design tokens
 
-`docs-app/app/globals.css` maps Fumadocs' `--color-fd-*` tokens from the brand palette in the opposite direction to the raw tokens in `src/styles/index.css`: `--color-fd-primary` is `--lake-forest` (raw `--primary-foreground`), while `--color-fd-primary-foreground` is `--paper` (raw `--primary`). When a request names raw tokens (`--primary`, `--primary-foreground`), use those literal variables in CSS rather than substituting the `fd-` equivalents.
+The docs app is a separate Fumadocs theme layer, so controls rendered by `@fumadocs/story` and `fumadocs-ui` are styled with the `--color-fd-*` tokens defined in `docs-app/app/globals.css`, not the raw `--primary` / `--primary-foreground` tokens from `src/styles/index.css`. These are inverted relative to the raw pair: `--color-fd-primary` is `--lake-forest` (raw `--primary-foreground`) and `--color-fd-primary-foreground` is `--paper` (raw `--primary`). Style docs-layer controls with the `fd-` pair — e.g. an active select option uses `--color-fd-primary` as its background and `--color-fd-primary-foreground` as its text. Use raw tokens only for components from the main project's design system.
 
