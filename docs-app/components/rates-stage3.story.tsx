@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { buildCancellationTimeline } from "@/lib/cancellationTimeline";
 import {
-  FigmaRateCard,
-  FigmaRateDetailPopup,
-  FigmaPolicyTimeline,
-} from "@/components/rates/FigmaRateComponents";
+  BasicRateCard,
+  BasicRateDetailPopup,
+  BasicPolicyTimeline,
+} from "@/components/rates/BasicRateComponents";
 import { PillarFeatures } from "@/components/rates/PillarFeatures";
 import { defineStory } from "../lib/story";
 
@@ -22,10 +22,10 @@ const timeline = buildCancellationTimeline("2026-11-20", SAMPLE_DATE, 285.60, {
 // Timeline free cancellation: 14 days before 2027-01-13 = 2026-12-30
 const FREE_CANCEL_DATE = "December 30";
 
-function FigmaRateCardDemo({ variant }: { variant: "default" | "member" | "package" }) {
+function BasicRateCardDemo({ variant }: { variant: "default" | "member" | "package" }) {
   return (
     <div className="w-full max-w-[523px] mx-auto rounded-xl bg-smoke p-4 sm:p-6">
-      <FigmaRateCard
+      <BasicRateCard
         eyebrow={variant === "member" ? "Member Exclusive" : "Keep Your Options Open"}
         name={variant === "member" ? "Member Rate" : variant === "package" ? "Cowboy Package" : "Ride Easy"}
         description="Our standard rate for guests who want a little more freedom around their plans."
@@ -43,22 +43,22 @@ function FigmaRateCardDemo({ variant }: { variant: "default" | "member" | "packa
   );
 }
 
-export const figmaRateCardStandardStory = defineStory({
-  Component: FigmaRateCardDemo,
+export const BasicRateCardStandardStory = defineStory({
+  Component: BasicRateCardDemo,
   args: { initial: { variant: "default" } },
 });
 
 export const figmaRateCardMemberStory = defineStory({
-  Component: FigmaRateCardDemo,
+  Component: BasicRateCardDemo,
   args: { initial: { variant: "member" } },
 });
 
 export const figmaRateCardPackageStory = defineStory({
-  Component: FigmaRateCardDemo,
+  Component: BasicRateCardDemo,
   args: { initial: { variant: "package" } },
 });
 
-function FigmaRateDetailPopupDemo() {
+function BasicRateDetailPopupDemo() {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="w-full max-w-[1314px] mx-auto">
@@ -66,7 +66,7 @@ function FigmaRateDetailPopupDemo() {
         {isOpen ? "Close Popup" : "Open Popup"}
       </button>
       {isOpen && (
-        <FigmaRateDetailPopup
+        <BasicRateDetailPopup
           name="Ride Easy"
           eyebrow="Keep Your Options Open"
           description="Our standard rate for guests who want a little more freedom around their plans."
@@ -88,15 +88,15 @@ function FigmaRateDetailPopupDemo() {
   );
 }
 
-export const figmaRateDetailPopupStory = defineStory({
-  Component: FigmaRateDetailPopupDemo,
+export const BasicRateDetailPopupStory = defineStory({
+  Component: BasicRateDetailPopupDemo,
   args: { initial: {} },
 });
 
-function FigmaPolicyTimelineDemo() {
+function BasicPolicyTimelineDemo() {
   return (
     <div className="w-full max-w-[523px] mx-auto rounded-xl bg-smoke p-4 sm:p-6">
-      <FigmaPolicyTimeline
+      <BasicPolicyTimeline
         timeline={timeline}
         arrivalDate={SAMPLE_DATE}
         currency="USD"
@@ -105,8 +105,8 @@ function FigmaPolicyTimelineDemo() {
   );
 }
 
-export const figmaPolicyTimelineStory = defineStory({
-  Component: FigmaPolicyTimelineDemo,
+export const BasicPolicyTimelineStory = defineStory({
+  Component: BasicPolicyTimelineDemo,
   args: { initial: {} },
 });
 

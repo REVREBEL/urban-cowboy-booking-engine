@@ -31,7 +31,7 @@ const PHASE_COLORS: Record<PhaseKind, string> = {
 };
 const money = (amount: number, currency: string) => currencyMoney(amount, currency, { locale: "en-US", decimals: 2 });
 
-export function FigmaPolicyTimeline({ timeline, currency, arrivalDate, language }: {
+export function BasicPolicyTimeline({ timeline, currency, arrivalDate, language }: {
   timeline: CancellationTimeline;
   currency: string;
   arrivalDate: string;
@@ -85,7 +85,7 @@ export function FigmaPolicyTimeline({ timeline, currency, arrivalDate, language 
 }
 
 /** Figma 1390:31339, standard, member and package rate-card variants. */
-export function FigmaRateCard({
+export function BasicRateCard({
   eyebrow, name, description, policy, roomSummary, total, currency,
   variant = "default", perks, isSelected, isDetailsOpen = false, onDetails, onConfirm, detailsLabel = "View Details", confirmLabel,
   disabled,
@@ -147,7 +147,7 @@ export function FigmaRateCard({
 }
 
 /** Figma 1390:30695 and 1390:31186. */
-export function FigmaRateDetailPopup({
+export function BasicRateDetailPopup({
   name, eyebrow, description, supportingText, nightly, currency, nights, subtotal, taxes, total,
   dueToday, policyText, timeline, arrivalDate, language, onClose, onConfirm, confirmLabel = "Confirm Booking", disabled,
 }: {
@@ -214,7 +214,7 @@ export function FigmaRateDetailPopup({
         </section>
       </div>
       {timeline ? (
-        <FigmaPolicyTimeline timeline={timeline} currency={currency} arrivalDate={arrivalDate} language={language} />
+        <BasicPolicyTimeline timeline={timeline} currency={currency} arrivalDate={arrivalDate} language={language} />
       ) : (
         <section className="w-full border-t border-lake-forest/20 pt-4" aria-label="Cancellation and payment summary">
           <h3 className="font-label text-xs font-bold uppercase tracking-[2px]">Policy &amp; Deposit Timeline</h3>

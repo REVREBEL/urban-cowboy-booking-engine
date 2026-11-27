@@ -121,11 +121,11 @@ import {
   guestReviewQuoteCardAttributionNoLinkStory,
 } from "./rooms.story";
 import {
-  figmaRateCardStandardStory,
+  BasicRateCardStandardStory,
   figmaRateCardMemberStory,
   figmaRateCardPackageStory,
-  figmaRateDetailPopupStory,
-  figmaPolicyTimelineStory,
+  BasicRateDetailPopupStory,
+  BasicPolicyTimelineStory,
   pillarFeaturesStory,
 } from "./rates-stage3.story";
 
@@ -538,24 +538,24 @@ export function GuestReviewQuoteCardAttributionNoLinkStoryControl() {
   return <guestReviewQuoteCardAttributionNoLinkStory.WithControl />;
 }
 
-export function FigmaRateCardStandardStoryControl() {
-  return <figmaRateCardStandardStory.WithControl />;
+export function BasicRateCardStandardStoryControl() {
+  return <BasicRateCardStandardStory.WithControl />;
 }
 
-export function FigmaRateCardMemberStoryControl() {
+export function BasicRateCardMemberStoryControl() {
   return <figmaRateCardMemberStory.WithControl />;
 }
 
-export function FigmaRateCardPackageStoryControl() {
+export function BasicRateCardPackageStoryControl() {
   return <figmaRateCardPackageStory.WithControl />;
 }
 
-export function FigmaRateDetailPopupStoryControl() {
-  return <figmaRateDetailPopupStory.WithControl />;
+export function BasicRateDetailPopupStoryControl() {
+  return <BasicRateDetailPopupStory.WithControl />;
 }
 
-export function FigmaPolicyTimelineStoryControl() {
-  return <figmaPolicyTimelineStory.WithControl />;
+export function BasicPolicyTimelineStoryControl() {
+  return <BasicPolicyTimelineStory.WithControl />;
 }
 
 export function PillarFeaturesStoryControl() {
