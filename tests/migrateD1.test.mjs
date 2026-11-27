@@ -122,6 +122,13 @@ test("redesign migrates seeded data while retaining existing readers and relatio
     }
     assert.equal(db.prepare("SELECT count(*) AS n FROM room_types WHERE building_id IS NOT NULL").get().n,22);
     assert.equal(db.prepare("SELECT count(*) AS n FROM media_placements WHERE target_table='extras'").get().n,1);
+    const media = db.prepare("SELECT media_asset_id FROM media_placements WHERE target_table='extras'").get().media_asset_id;
+    assert.equal(db.prepare("SELECT status FROM media_asset_metadata WHERE media_asset_id=?").get(media).status, "active");
+    db.prepare("INSERT INTO media_versions(id,media_asset_id,version,squarespace_asset_id,squarespace_url) VALUES (?,?,1,?,?)").run(`${media}:v1`, media, `${media}:v1`, `urn:media:${media}:v1`);
+    db.prepare("UPDATE media_asset_metadata SET current_version_id=? WHERE media_asset_id=?").run(`${media}:v1`, media);
+    assert.equal(db.prepare("SELECT current_version_id FROM media_asset_metadata WHERE media_asset_id=?").get(media).current_version_id, `${media}:v1`);
+    db.prepare("UPDATE media_asset_metadata SET status='retired' WHERE media_asset_id=?").run(media);
+    assert.equal(db.prepare("SELECT status FROM media_asset_metadata WHERE media_asset_id=?").get(media).status, "retired");
     assert.throws(() => db.exec("UPDATE outlets SET outlet_type_id='invalid'"));
     assert.throws(() => db.exec("UPDATE rate_card_geographic_settings SET mode='invalid'"));
     assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(), []);

@@ -4,6 +4,13 @@ SELECT 'extra-image:'||a.id,a.tenant_id,'image'
 FROM add_ons a JOIN content_items i ON i.tenant_id=a.tenant_id AND i.kind='add_on' AND i.slug=a.id
 JOIN content_revisions r ON r.id=i.current_revision_id AND r.content_item_id=i.id
 WHERE json_valid(r.payload_json) AND NULLIF(json_extract(r.payload_json,'$.imageUrl'),'') IS NOT NULL;
+INSERT OR IGNORE INTO media_asset_metadata(media_asset_id,tenant_id)
+SELECT id,tenant_id FROM media_assets WHERE id IN (
+ SELECT 'extra-image:'||a.id FROM add_ons a
+ JOIN content_items i ON i.tenant_id=a.tenant_id AND i.kind='add_on' AND i.slug=a.id
+ JOIN content_revisions r ON r.id=i.current_revision_id AND r.content_item_id=i.id
+ WHERE json_valid(r.payload_json) AND NULLIF(json_extract(r.payload_json,'$.imageUrl'),'') IS NOT NULL
+);
 INSERT OR IGNORE INTO media_aliases(id,tenant_id,media_asset_id,alias_type,alias_value)
 SELECT 'extra-image-url:'||a.id,a.tenant_id,'extra-image:'||a.id,'source_url',json_extract(r.payload_json,'$.imageUrl')
 FROM add_ons a JOIN content_items i ON i.tenant_id=a.tenant_id AND i.kind='add_on' AND i.slug=a.id
