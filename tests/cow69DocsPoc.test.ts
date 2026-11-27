@@ -88,7 +88,7 @@ test("story select menu has an opaque popover surface", () => {
   // expanded select popup. Without local definitions the menu renders transparent.
   assert.match(globalCss, /\.bg-fd-popover \{ background-color: var\(--color-fd-popover\)/);
   assert.match(globalCss, /\.text-fd-popover-foreground \{ color: var\(--color-fd-popover-foreground\)/);
-  assert.match(globalCss, /data-\\\[highlighted\\\]\\:bg-fd-accent\[data-highlighted\]/);
+  assert.match(globalCss, /data-\\\[highlighted\\\]\\:bg-fd-accent\[data-highlighted\] \{\n  background-color: var\(--color-fd-primary-foreground\);\n  color: var\(--color-fd-primary\);/);
 });
 
 test("muted foreground meets WCAG AA contrast in both themes", () => {
