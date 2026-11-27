@@ -27,8 +27,8 @@
   background-color: var(--color-fd-accent);
 }
 .data-\[highlighted\]\:bg-fd-accent[data-highlighted] {
-  background-color: var(--color-fd-primary-foreground);
-  color: var(--color-fd-primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 .from-fd-popover {
   --tw-gradient-from: var(--color-fd-popover) var(--tw-gradient-from-position, 0%);
