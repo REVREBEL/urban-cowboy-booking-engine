@@ -1,6 +1,6 @@
 // COW-69 docs PoC: inventory, static-export config and real-component import contract.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 import { resolveDocsBasePath } from "../scripts/fumadocs/base-path.mjs";
 import { contrastForTokens } from "../scripts/fumadocs/contrast.mjs";
@@ -122,6 +122,20 @@ test("SearchBar docs use one toggleable demo instead of static prop tables", () 
   assert.equal((mdx.match(/<SearchBarStoryControl \/>/g) ?? []).length, 1);
   assert.doesNotMatch(mdx, /<SearchBarSquareStoryControl \/>|<SearchBarLoadingStoryControl \/>/);
   assert.doesNotMatch(mdx, /\| `dateLabel` \/ `dateValue`/);
+});
+
+test("story demos never expose a no-op Unset choice", () => {
+  // @fumadocs/story adds "Unset" for optional demo props. When the wrapper
+  // also has a default, choosing it changes nothing, so all demo props are
+  // required and their values come from defineStory's initial args.
+  const files = readdirSync(new URL("docs-app/components/", root))
+    .filter((file) => file.endsWith(".story.tsx"));
+  assert.ok(files.length > 0);
+  for (const file of files) {
+    const source = read(`docs-app/components/${file}`);
+    assert.doesNotMatch(source, /function \w+Demo\([^)]*=/, `${file} has a defaulted demo prop`);
+    assert.doesNotMatch(source, /interface \w+DemoProps \{[^}]*\?:/, `${file} has an optional demo prop`);
+  }
 });
 
 test("Pages workflow validates PRs and gates publication behind an explicit variable", () => {
