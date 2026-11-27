@@ -1,0 +1,32 @@
+/* admin-app/styles/typography.css */
+@layer base {
+  .ap,
+  [data-portal="ap"] {
+    --ap-font-sans: "Aeonik", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --ap-font-display: "Rotonto", var(--ap-font-sans);
+    --ap-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    --ap-text-xs: 0.75rem;   /* 12px */
+    --ap-text-sm: 0.875rem;  /* 14px */
+    --ap-text-base: 1rem;    /* 16px */
+    --ap-text-md: 1.125rem;  /* 18px */
+    --ap-text-lg: 1.3125rem; /* 21px */
+    --ap-text-xl: 1.5rem;    /* 24px */
+    --ap-text-2xl: 3.125rem; /* 50px */
+    --ap-text-3xl: 4.125rem; /* 66px */
+
+    --ap-leading-tight: 1.15;
+    --ap-leading-snug: 1.4;
+    --ap-leading-base: 1.5;
+
+    --ap-tracking-base: 0.02em;
+    --ap-tracking-tight: -0.01em;
+    --ap-tracking-mono-caps: 0.08em;
+
+    font-family: var(--ap-font-sans);
+    font-size: var(--ap-text-base);
+    line-height: var(--ap-leading-base);
+    letter-spacing: var(--ap-tracking-base);
+    color: var(--ap-text-primary);
+  }
+}

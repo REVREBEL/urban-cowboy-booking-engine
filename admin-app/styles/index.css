@@ -1,0 +1,9 @@
+/* admin-app/styles/index.css */
+@import "tailwindcss";
+@custom-variant ap (&:where(.ap *, [data-portal="ap"] *));
+
+@import "./colors.css";
+@import "./typography.css";
+@import "./keyframes.css";
+@import "./theme.css";
+@import "./utilities.css";

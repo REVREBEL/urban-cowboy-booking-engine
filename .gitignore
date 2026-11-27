@@ -16,7 +16,16 @@ docs-app/public/assets/icons/ui/
 docs-app/public/assets/illustrations/
 docs-app/public/assets/labels/
 docs-app/public/search-index.json
+docs-app/public/assets/brand/
+docs-app/public/assets/decoration/
+docs-app/public/assets/icons/badges/
+docs-app/public/assets/icons/detailed/
 docs-app/public/fonts/
+
+admin-app/.cloudflare/
+admin-app/.next/
+admin-app/.vinext/
+admin-app/next-env.d.ts
 
 # Local D1 backups: never commit database snapshots
 backups/
