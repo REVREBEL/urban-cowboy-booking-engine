@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
-import { SearchButton } from "./SearchButton";
+import { SearchButton, type SearchButtonVariant } from "./SearchButton";
 import { SearchBarPromoDropdown } from "./SearchBarPromoDropdown";
 
 export type SearchBarExpandedVariant = "circle" | "square";
@@ -15,6 +15,8 @@ export interface SearchBarExpandedValues {
 
 export interface SearchBarExpandedProps {
   variant?: SearchBarExpandedVariant;
+  /** SearchButton variant used by the default search action in the button slot. */
+  buttonVariant?: SearchButtonVariant;
   values?: SearchBarExpandedValues;
   initialValues?: Partial<SearchBarExpandedValues>;
   dropdownVisible?: boolean;
@@ -107,6 +109,7 @@ SearchSection.displayName = "SearchSection";
 
 export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
   variant = "circle",
+  buttonVariant,
   values: controlledValues,
   initialValues,
   dropdownVisible = false,
@@ -193,7 +196,7 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
             {buttonSlot ?? (
               <SearchButton
                 aria-label="Search accommodations"
-                variant={variant === "circle" ? "full-circle" : "full-square"}
+                variant={buttonVariant ?? (variant === "circle" ? "full-circle" : "full-square")}
                 isLoading={isLoading}
                 onClick={() => !isLoading && onSearch?.(currentValues)}
               />

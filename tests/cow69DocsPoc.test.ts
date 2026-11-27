@@ -126,13 +126,19 @@ test("SearchBar docs use one toggleable demo instead of static prop tables", () 
 
 test("expanded search bar renders the shared SearchButton in its button slot", () => {
   const expanded = read("src/components/booking/search/SearchBarExpanded.tsx");
-  assert.match(expanded, /import \{ SearchButton \} from "\.\/SearchButton";/);
+  assert.match(expanded, /import \{ SearchButton, type SearchButtonVariant \} from "\.\/SearchButton";/);
+  assert.match(expanded, /buttonVariant\?: SearchButtonVariant;/);
   assert.match(
     expanded,
-    /buttonSlot \?\? \(\s*<SearchButton[\s\S]*?aria-label="Search accommodations"[\s\S]*?variant=\{variant === "circle" \? "full-circle" : "full-square"\}/,
+    /buttonSlot \?\? \(\s*<SearchButton[\s\S]*?aria-label="Search accommodations"[\s\S]*?variant=\{buttonVariant \?\? \(variant === "circle" \? "full-circle" : "full-square"\)\}/,
   );
   // The bespoke button used to duplicate SearchButton's styling and icon.
   assert.doesNotMatch(expanded, /ExpandedSearchButton/);
+
+  const story = read("docs-app/components/search-bar.story.tsx");
+  assert.match(story, /buttonVariant: SearchButtonVariant;/);
+  assert.match(story, /<SearchBarExpanded[\s\S]*?buttonVariant=\{buttonVariant\}/);
+  assert.match(story, /initial: \{ variant: "circle", buttonVariant: "full-circle" \}/);
 });
 
 test("component docs use story controls instead of static prop tables", () => {

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { SearchBar, type SearchBarVariant } from "../../src/components/booking/search/SearchBar";
+import { type SearchButtonVariant } from "../../src/components/booking/search/SearchButton";
 import { SearchBarExpanded } from "../../src/components/booking/search/SearchBarExpanded";
 import { defineStory } from "../lib/story";
 
@@ -36,12 +37,16 @@ export const searchBarStory = defineStory({
   args: { initial: { variant: "circle", loading: false } },
 });
 
-function ExpandedSearchDemo({ variant }: { variant: "circle" | "square" }) {
+function ExpandedSearchDemo({ variant, buttonVariant }: {
+  variant: "circle" | "square";
+  buttonVariant: SearchButtonVariant;
+}) {
   const [last, setLast] = useState("none");
   return (
     <div className="w-full rounded-xl p-4 sm:p-6">
       <SearchBarExpanded
         variant={variant}
+        buttonVariant={buttonVariant}
         initialValues={{
           property: "catskills",
           checkInDate: "2026-11-21",
@@ -60,5 +65,5 @@ function ExpandedSearchDemo({ variant }: { variant: "circle" | "square" }) {
 
 export const expandedSearchStory = defineStory({
   Component: ExpandedSearchDemo,
-  args: { initial: { variant: "circle" } },
+  args: { initial: { variant: "circle", buttonVariant: "full-circle" } },
 });
