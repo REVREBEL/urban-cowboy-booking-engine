@@ -74,4 +74,9 @@ Working record for the Urban Cowboy database redesign. Add a dated entry wheneve
 ### POL-01: One type per policy
 **OLD:** Policy and Activity were among the legacy amenity Type choices; a separate policy classification model is still being designed.
 **NEW:** Each policy has one Type defining its assignment level: Property, Room Type, or Rate. A policy belongs to only one of these levels. Whether a separate classification (such as Pets or Age) is needed remains open. The number of properties, rooms, or rates to which a policy can be assigned within its selected level is also open.
-**Status:** one-level Type requirement confirmed; no policy schema has been implemented.
+**Status:** one-level Type requirement confirmed. A local-only policy preview has been created; no production migration has been applied.
+
+### POL-02: Local policy table preview — 2026-11-27
+**OLD:** Policy content is represented in versioned content, while some policy-like labels were part of the legacy Amenities collection. There was no dedicated set of policy assignment tables in the local redesign.
+**NEW:** Local review tables `policies`, `policy_types`, `location_policies`, `room_type_policies`, and `rate_policies`. One policy Type selects one level (Property, Room Type, Rate), and the preview enforces that assignment tables match the selected Type. The proposed mapping allows a policy to be associated with multiple items at its chosen level; this cardinality is still for review. Each policy includes shared name, descriptions, and icon path/name. The rate link uses a placeholder external reference: the authoritative rate identity and any property association have not been determined.
+**Status:** preview only on the Mac's local review database. SQL is stored at `scripts/schema-review/policy_preview.sql` on `draft/amenity-schema-foundation`; it is not a production migration. Type defaults, integrity, foreign keys, and rejecting a room policy assigned to a rate were checked. Backup: `~/Documents/Urban-Cowboy-Database-Review/urban-cowboy-before-policy-preview.sqlite`. No policy content was imported.
