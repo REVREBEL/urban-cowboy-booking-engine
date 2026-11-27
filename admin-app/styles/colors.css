@@ -1,0 +1,45 @@
+/* admin-app/styles/colors.css */
+@layer base {
+  .ap,
+  [data-portal="ap"] {
+    /* Surfaces */
+    --ap-bg-canvas: #e2e4dd;
+    --ap-bg-surface: #ffffff;
+    --ap-bg-surface-subtle: #f4f6f4;
+    --ap-bg-surface-dark: #242628;
+
+    /* Palette */
+    --ap-color-linen: #d0d2c8;
+    --ap-color-steel: #828c97;
+    --ap-color-pewter: #adb9c6;
+    --ap-color-marigold: #bd8209;
+    --ap-color-sprout: #00be43;
+    --ap-color-mist: #f4f6f4;
+
+    /* Text */
+    --ap-text-primary: #000000;
+    --ap-text-secondary: #565e67;
+    --ap-text-muted: #828c97;
+    --ap-text-inverse: #ffffff;
+
+    /* Borders */
+    --ap-border-subtle: #d0d2c8;
+    --ap-border-strong: #adb9c6;
+    --ap-border-dark: #3a3e42;
+
+    /* Accents & Links */
+    --ap-accent-ember: #ff6100;
+    --ap-accent-amber: #ffb200;
+    --ap-accent-marigold: #bd8209;
+    --ap-accent-link: #0091ff;
+    --ap-accent-focus: #0091ff;
+
+    /* Status */
+    --ap-status-success-bg: #eef7f0;
+    --ap-status-success-text: #1b6b38;
+    --ap-status-warn-bg: #fff8e6;
+    --ap-status-warn-text: #8a5a00;
+    --ap-status-danger-bg: #fdf0ef;
+    --ap-status-danger-text: #a6261d;
+  }
+}

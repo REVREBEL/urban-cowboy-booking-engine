@@ -1,0 +1,111 @@
+/* admin-app/styles/theme.css */
+@layer base {
+  .ap,
+  [data-portal="ap"] {
+    /* Spacing & Layout */
+    --ap-container-max: 1200px;
+    --ap-gutter: 1.5rem;
+    --ap-space-1: 0.25rem;   /* 4px */
+    --ap-space-2: 0.5rem;    /* 8px */
+    --ap-space-3: 0.75rem;   /* 12px */
+    --ap-space-4: 1rem;      /* 16px */
+    --ap-space-6: 1.5rem;    /* 24px */
+    --ap-space-7: 1.75rem;   /* 28px */
+    --ap-space-8: 2rem;      /* 32px */
+    --ap-space-14: 3.5rem;   /* 56px */
+    --ap-space-16: 4rem;     /* 64px */
+    --ap-space-21: 5.25rem;  /* 84px */
+    --ap-space-28: 7rem;     /* 112px */
+
+    /* Radii & Borders */
+    --ap-radius-none: 0px;
+    --ap-radius-xs: 2px;
+    --ap-radius-sm: 7px;
+    --ap-radius-md: 14px;
+    --ap-radius-lg: 28px;
+    --ap-radius-pill: 112px;
+    --ap-radius-full: 9999px;
+
+    --ap-border-width: 1px;
+    --ap-shadow-none: none;
+    --ap-shadow-subtle: none;
+
+    /* Motion */
+    --ap-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ap-duration-fast: 150ms;
+    --ap-duration-base: 220ms;
+    --ap-duration-slow: 400ms;
+  }
+
+  .ap .ap-shell,
+  [data-portal="ap"] .ap-shell {
+    background-color: var(--ap-bg-canvas);
+    min-height: 100%;
+  }
+
+  .ap .ap-container,
+  [data-portal="ap"] .ap-container {
+    max-width: var(--ap-container-max);
+    margin-inline: auto;
+    padding-inline: var(--ap-gutter);
+  }
+}
+
+@theme inline {
+  --color-ap-bg-canvas: var(--ap-bg-canvas);
+  --color-ap-bg-surface: var(--ap-bg-surface);
+  --color-ap-bg-surface-subtle: var(--ap-bg-surface-subtle);
+  --color-ap-bg-surface-dark: var(--ap-bg-surface-dark);
+  --color-ap-color-linen: var(--ap-color-linen);
+  --color-ap-color-steel: var(--ap-color-steel);
+  --color-ap-color-pewter: var(--ap-color-pewter);
+  --color-ap-color-marigold: var(--ap-color-marigold);
+  --color-ap-color-sprout: var(--ap-color-sprout);
+  --color-ap-text-primary: var(--ap-text-primary);
+  --color-ap-text-secondary: var(--ap-text-secondary);
+  --color-ap-text-muted: var(--ap-text-muted);
+  --color-ap-text-inverse: var(--ap-text-inverse);
+  --color-ap-border-subtle: var(--ap-border-subtle);
+  --color-ap-border-strong: var(--ap-border-strong);
+  --color-ap-border-dark: var(--ap-border-dark);
+  --color-ap-accent-ember: var(--ap-accent-ember);
+  --color-ap-accent-amber: var(--ap-accent-amber);
+  --color-ap-accent-marigold: var(--ap-accent-marigold);
+  --color-ap-accent-link: var(--ap-accent-link);
+  --color-ap-accent-focus: var(--ap-accent-focus);
+
+  --font-ap-sans: var(--ap-font-sans);
+  --font-ap-display: var(--ap-font-display);
+  --font-ap-mono: var(--ap-font-mono);
+
+  --text-ap-xs: var(--ap-text-xs);
+  --text-ap-sm: var(--ap-text-sm);
+  --text-ap-base: var(--ap-text-base);
+  --text-ap-md: var(--ap-text-md);
+  --text-ap-lg: var(--ap-text-lg);
+  --text-ap-xl: var(--ap-text-xl);
+  --text-ap-2xl: var(--ap-text-2xl);
+  --text-ap-3xl: var(--ap-text-3xl);
+
+  --spacing-ap-1: var(--ap-space-1);
+  --spacing-ap-2: var(--ap-space-2);
+  --spacing-ap-3: var(--ap-space-3);
+  --spacing-ap-4: var(--ap-space-4);
+  --spacing-ap-6: var(--ap-space-6);
+  --spacing-ap-7: var(--ap-space-7);
+  --spacing-ap-8: var(--ap-space-8);
+  --spacing-ap-14: var(--ap-space-14);
+  --spacing-ap-16: var(--ap-space-16);
+  --spacing-ap-21: var(--ap-space-21);
+  --spacing-ap-28: var(--ap-space-28);
+
+  --radius-ap-none: var(--ap-radius-none);
+  --radius-ap-xs: var(--ap-radius-xs);
+  --radius-ap-sm: var(--ap-radius-sm);
+  --radius-ap-md: var(--ap-radius-md);
+  --radius-ap-lg: var(--ap-radius-lg);
+  --radius-ap-pill: var(--ap-radius-pill);
+  --radius-ap-full: var(--ap-radius-full);
+
+  --ease-ap-out: var(--ap-ease-out);
+}
