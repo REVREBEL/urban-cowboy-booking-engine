@@ -138,7 +138,8 @@ test("expanded search bar renders the shared SearchButton in its button slot", (
   const story = read("docs-app/components/search-bar.story.tsx");
   assert.match(story, /buttonVariant: SearchButtonVariant;/);
   assert.match(story, /<SearchBarExpanded[\s\S]*?buttonVariant=\{buttonVariant\}/);
-  assert.match(story, /initial: \{ variant: "circle", buttonVariant: "full-circle" \}/);
+  assert.match(story, /<SearchBarExpanded[\s\S]*?isLoading=\{isLoading\}/);
+  assert.match(story, /initial: \{ variant: "circle", buttonVariant: "full-circle", isLoading: false \}/);
 });
 
 test("component docs use story controls instead of static prop tables", () => {

@@ -37,9 +37,10 @@ export const searchBarStory = defineStory({
   args: { initial: { variant: "circle", loading: false } },
 });
 
-function ExpandedSearchDemo({ variant, buttonVariant }: {
+function ExpandedSearchDemo({ variant, buttonVariant, isLoading }: {
   variant: "circle" | "square";
   buttonVariant: SearchButtonVariant;
+  isLoading: boolean;
 }) {
   const [last, setLast] = useState("none");
   return (
@@ -47,6 +48,7 @@ function ExpandedSearchDemo({ variant, buttonVariant }: {
       <SearchBarExpanded
         variant={variant}
         buttonVariant={buttonVariant}
+        isLoading={isLoading}
         initialValues={{
           property: "catskills",
           checkInDate: "2026-11-21",
@@ -65,5 +67,5 @@ function ExpandedSearchDemo({ variant, buttonVariant }: {
 
 export const expandedSearchStory = defineStory({
   Component: ExpandedSearchDemo,
-  args: { initial: { variant: "circle", buttonVariant: "full-circle" } },
+  args: { initial: { variant: "circle", buttonVariant: "full-circle", isLoading: false } },
 });
