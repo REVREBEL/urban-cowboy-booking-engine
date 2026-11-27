@@ -51,7 +51,8 @@ test("Vite, TypeScript and CI retain app checks without Storybook wiring", () =>
   const vite = read("vite.config.ts");
   assert.doesNotMatch(vite, /storybook|vitest/i);
   assert.match(vite, /plugins: \[tailwindcss\(\), react\(\)\]/);
-  assert.match(vite, /components: "components\.html"/);
+  assert.doesNotMatch(vite, /components\.html/);
+  assert.match(vite, /main: "index\.html",\s*dashboard: "dashboard\.html",/);
 
   const tsconfig = read("tsconfig.json");
   assert.doesNotMatch(tsconfig, /storybook|@stories/i);

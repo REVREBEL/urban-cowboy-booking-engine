@@ -24,7 +24,6 @@ export default defineConfig(({ isSsrBuild }) => ({
         input: {
           main: "index.html",
           dashboard: "dashboard.html",
-          components: "components.html",
         },
       },
     }),

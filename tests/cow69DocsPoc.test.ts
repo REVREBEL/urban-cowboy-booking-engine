@@ -1,6 +1,6 @@
 // COW-69 docs PoC: inventory, static-export config and real-component import contract.
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 import { resolveDocsBasePath } from "../scripts/fumadocs/base-path.mjs";
 import { contrastForTokens } from "../scripts/fumadocs/contrast.mjs";
@@ -113,15 +113,22 @@ test("PoC stories import real components through client story controls", () => {
   assert.match(preferenceMdx, /docs-only harness/);
 });
 
-test("SearchBar docs use one toggleable demo instead of static prop tables", () => {
+test("the removed compact SearchBar and legacy component showcase leave no references", () => {
+  assert.equal(existsSync(new URL("src/components/booking/search/SearchBar.tsx", root)), false);
+  assert.equal(existsSync(new URL("components.html", root)), false);
+  assert.equal(existsSync(new URL("src/component-library/", root)), false);
+
   const story = read("docs-app/components/search-bar.story.tsx");
   const mdx = read("docs-app/content/docs/components/search-bar.mdx");
-  assert.match(story, /variant: SearchBarVariant;\n  loading: boolean;/);
-  assert.match(story, /initial: \{ variant: "circle", loading: false \}/);
-  assert.doesNotMatch(story, /searchBarSquareStory|searchBarLoadingStory/);
-  assert.equal((mdx.match(/<SearchBarStoryControl \/>/g) ?? []).length, 1);
-  assert.doesNotMatch(mdx, /<SearchBarSquareStoryControl \/>|<SearchBarLoadingStoryControl \/>/);
-  assert.doesNotMatch(mdx, /\| `dateLabel` \/ `dateValue`/);
+  const controls = read("docs-app/components/story-controls.tsx");
+  const viteConfig = read("vite.config.ts");
+  const packageJson = read("package.json");
+  assert.doesNotMatch(story, /\bSearchBar\b(?!Expanded)/);
+  assert.doesNotMatch(mdx, /<SearchBarStoryControl \/>/);
+  assert.match(mdx, /title: SearchBarExpanded/);
+  assert.doesNotMatch(storyControls, /SearchBarStoryControl/);
+  assert.doesNotMatch(viteConfig, /components\.html/);
+  assert.doesNotMatch(packageJson, /"components":/);
 });
 
 test("expanded search bar renders the shared SearchButton in its button slot", () => {

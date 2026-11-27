@@ -7,7 +7,7 @@ import { switchStory } from "./switch.story";
 import { dogToggleStory } from "./dog-toggle-button.story";
 import { travelPartyStory } from "./travel-party-button.story";
 import { searchButtonStory, searchButtonVariantsStory } from "./search-button.story";
-import { searchBarStory, expandedSearchStory } from "./search-bar.story";
+import { expandedSearchStory } from "./search-bar.story";
 import {
   bookingChromeDatesStory,
   bookingChromeResultsStory,
@@ -352,10 +352,6 @@ export function ProgressBarStoryControl() {
 
 export function ProgressStepStatesStoryControl() {
   return <progressStepStatesStory.WithControl />;
-}
-
-export function SearchBarStoryControl() {
-  return <searchBarStory.WithControl />;
 }
 
 export function ExpandedSearchStoryControl() {
