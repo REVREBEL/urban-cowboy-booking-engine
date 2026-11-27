@@ -110,3 +110,28 @@ Working record for the Urban Cowboy database redesign. Add a dated entry wheneve
 **OLD:** Feature copy items and the site-settings record were linked only by their shared property; no explicit section connection existed.
 **NEW:** Gary approved an explicit Feature Section relationship. The local preview adds `content_sections` with `settings_content_id` linked to the location's `site_settings` item, and `setting_key=enableFeatureSection` identifies the switch inside that item's revision JSON. `content_section_items` links the section to its location feature content items. Foreign keys enforce matching tenant/location; item order remains in the content revision's displayOrder. The existing setting value is unchanged. The setting key is a logical JSON reference, not an independently foreign-keyed settings row.
 **Status:** local preview applied; one Catskills section connects all three draft feature items. Preview applied twice on a validation copy, integrity and foreign-key checks passed, and a cross-property link was rejected. Script `scripts/schema-review/content_section_local_preview.sql` on `draft/amenity-schema-foundation` is not a production migration. Page/API integration, generalized content-section behavior and draft/publish handling remain to be designed. Backup: `~/Documents/Urban-Cowboy-Database-Review/urban-cowboy-before-content-section.sqlite`.
+
+
+## Rates and rate-card configuration — 2026-11-27
+
+### RATE-01: Rate content and shared themes
+**OLD:** The Webflow Offers collection contains rate content, presentation choices and cancellation fields; D1 uses `offers` and `rate_merchandising`.
+**NEW:** Rename the local review `offers` table to `rates`, add eyebrow and long description, and define reusable `rate_card_themes` holding button color, text color, card fill, rate font and accent color 2. `rate_card_configuration` connects a rate to a theme and stores its default-card and desktop/mobile overlay choices.
+**Status:** Local preview applied using `scripts/schema-review/rate_card_foundation_preview.py`; eight rates, themes and configurations retained. Webflow styling and overlay option IDs are preserved but need decoding; values have not been guessed. Existing `rate_merchandising` remains for subsequent reconciliation.
+
+### RATE-02: Configurable rate card switch and geographical controls
+**OLD:** The Webflow collection has separate geographic fencing switches, postal code and distance values.
+**NEW:** Add a Configurable Rate Cards setting; miles-from-center and postal-code activate only when it is enabled. Put geographic targeting in settings with a single mutually exclusive mode: exclude US; exclude North America (US, Canada, Mexico); or international fencing, including an all-regions choice or a selection of Europe, Asia, Mexico, Canada and US. All cannot be combined with individual choices.
+**Status:** Agreed requirements recorded; implementation pending clarification of switch and targeting scope and the exact behavior of international selections.
+
+### RATE-03: Rate cancellation policies
+**OLD:** Webflow offers contain cancellation penalty and full-forfeit windows and periods.
+**NEW:** Store these fields on `policies` and let rates select policies of Rate type via `rate_policies`, allowing a policy to be reused on multiple rates. Each policy retains its single assignment type.
+**Status:** Local preview stores numeric windows and preserves the opaque period option IDs; four source policies are linked to rates. Resolved period units and production migration are pending.
+
+### RATE-04: Webflow-only metadata
+**OLD:** The Webflow export includes `cmsLocaleId`, `createdOn`, `lastUpdated`, `lastPublished`, and `isArchived`.
+**NEW:** Do not add those Webflow-specific fields to the rate model. Application-owned timestamps and publication behavior remain separate.
+**Status:** These source-only fields were not imported into the rate preview. Other Webflow fields, including draft state, require their own mapping decisions.
+
+**Validation:** The rate preview was checked on a separate SQLite copy and then applied to the local review database. Integrity and foreign-key checks passed; imported content, overlay option IDs, defaults and cancellation values matched their source. Backup: `~/Documents/Urban-Cowboy-Database-Review/urban-cowboy-before-rate-foundation.sqlite`. This is a local review preview, not a production migration.
