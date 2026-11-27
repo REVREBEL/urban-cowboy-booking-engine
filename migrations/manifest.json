@@ -60,6 +60,51 @@
       "id": 12,
       "file": "0012_editorial_publication_state.sql",
       "sha256": "9567db97c2e0aad9b623cd73a3419b3dda4bfe56a839bac0460672f78ec17ad1"
+    },
+    {
+      "id": 13,
+      "file": "0013_amenity_foundation.sql",
+      "sha256": "b32c84130b3a3cb0858ab2e686e5fb53f1ff925d2e9284005d695f67b569a2ff"
+    },
+    {
+      "id": 14,
+      "file": "0014_policy_foundation.sql",
+      "sha256": "eabead6a7e21bc2112a6d51d5799bcd43009a1f69d6dc0b31ce3492f287e4a85"
+    },
+    {
+      "id": 15,
+      "file": "0015_outlet_foundation.sql",
+      "sha256": "df164e7e199ddb4454cd9c62e626c75ae0f642bacd2cbdf9e80d019769647575"
+    },
+    {
+      "id": 16,
+      "file": "0016_rate_card_foundation.sql",
+      "sha256": "374c3728c4e1a0c7570f7ae32553bf8f5199e370edb9a043a826c892a3f91e13"
+    },
+    {
+      "id": 17,
+      "file": "0017_extras_foundation.sql",
+      "sha256": "bd8ecfe4672e3db722ed127933e564e592845950652c8fe48b075e53002144c1"
+    },
+    {
+      "id": 18,
+      "file": "0018_editorial_fields.sql",
+      "sha256": "c4a00b59ad8d4e2dece3f320f1e74f3aefba1f838b13716ee89931a76402320f"
+    },
+    {
+      "id": 19,
+      "file": "0019_location_content_sections.sql",
+      "sha256": "e85e33a953da86ec779123f1c219cd456075a464d33d058b0be81a290df4d211"
+    },
+    {
+      "id": 20,
+      "file": "0020_extra_media.sql",
+      "sha256": "0e1084743c48b369012696e7736d523b78aa522646e1544fa3da46e3bf5046b7"
+    },
+    {
+      "id": 21,
+      "file": "0021_room_source_provenance.sql",
+      "sha256": "92257e4f8aefad421c3ac30bde3a2090a390fae04e1ccf9d4960ed2e3d473273"
     }
   ]
 }

@@ -6,15 +6,15 @@ const read = (path: string) =>
   readFileSync(new URL(`../src/${path}`, import.meta.url), "utf8");
 
 test("production rate actions render named slots through the shared Button", () => {
-  const tray = read("components/rates/FigmaProductionRateTray.tsx");
-  const replacement = read("components/rates/FigmaRateComponents.tsx");
+  const tray = read("components/rates/ProductionBasicRateTray.tsx");
+  const replacement = read("components/rates/BasicRateComponents.tsx");
   const source = tray + "\n" + replacement;
   assert.match(source, /import \{ Button \} from ["']@\/components\/ui\/Button["']/);
   assert.match(tray, /type RateActionSlot =/);
   assert.match(tray, /data-slot=\{slot\}/);
-  assert.match(tray, /<FigmaRateCard/);
-  assert.match(tray, /<FigmaRateDetailPopup/);
-  assert.match(replacement, /<FigmaPolicyTimeline/);
+  assert.match(tray, /<BasicRateCard/);
+  assert.match(tray, /<BasicRateDetailPopup/);
+  assert.match(replacement, /<BasicPolicyTimeline/);
   assert.match(source, /<Button\b/);
   assert.doesNotMatch(source, /<button\b/);
   for (const slot of ["change-room", "details", "select", "close-details", "browse-rooms"]) {

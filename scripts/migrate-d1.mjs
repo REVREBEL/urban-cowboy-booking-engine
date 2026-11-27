@@ -7,7 +7,7 @@
  * (an applied migration must never be edited), an idempotency/integrity gate for
  * CI, and a guarded remote apply that checks the approved Cloudflare account.
  *
- *   npm run d1:migrate:check    validate + apply twice to a fresh in-memory DB
+ *   npm run d1:migrate:check    validate, apply, and replay idempotent migrations
  *   npm run d1:migrate:plan     print ordered migrations and checksums only
  *   npm run d1:migrate:record   rewrite migrations/manifest.json (review first)
  *   npm run d1:migrate:remote   guarded apply to the approved remote D1
@@ -121,13 +121,16 @@ function checkApply(migrations) {
   try {
     db.exec("PRAGMA foreign_keys = ON");
     for (const migration of migrations) db.exec(migration.sql);
-    // Every committed migration uses IF NOT EXISTS; re-applying must be a no-op.
-    for (const migration of migrations) db.exec(migration.sql);
+    // Migrations that add SQLite columns are applied once by the D1 ledger.
+    // Recheck idempotency of other migrations unless explicitly marked.
+    for (const migration of migrations) {
+      if (!/^-- d1-migration: apply-once$/m.test(migration.sql)) db.exec(migration.sql);
+    }
     const violations = db.prepare("PRAGMA foreign_key_check").all();
     if (violations.length) fail("foreign_key_check failed: " + JSON.stringify(violations));
     const integrity = db.prepare("PRAGMA integrity_check").get().integrity_check;
     if (integrity !== "ok") fail("integrity_check failed: " + integrity);
-    console.log(`Applied ${migrations.length} migration(s) twice; FK and integrity checks passed.`);
+    console.log(`Applied ${migrations.length} migration(s); replayed idempotent migrations; FK and integrity checks passed.`);
   } finally {
     db.close();
   }

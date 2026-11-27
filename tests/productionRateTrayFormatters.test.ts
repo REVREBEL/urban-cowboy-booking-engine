@@ -12,7 +12,7 @@ test("rate tray currency formatting preserves en-US display through the cached h
   assert.equal(money(1234, "USD", { locale: "en-US" }), "$1,234");
   assert.equal(money(1234.5, "USD", { locale: "en-US" }), "$1,234.50");
   assert.equal(money(1234.5, "EUR", { locale: "en-US" }), "€1,234.50");
-  const card = readFileSync(new URL("../src/components/rates/FigmaRateComponents.tsx", import.meta.url), "utf8");
+  const card = readFileSync(new URL("../src/components/rates/BasicRateComponents.tsx", import.meta.url), "utf8");
   assert.match(card, /currencyMoney\(amount, currency, \{ locale: "en-US", decimals: 2 \}\)/);
 });
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ProductionRateTray } from "@/components/rates/FigmaProductionRateTray";
+import { ProductionRateTray } from "@/components/rates/ProductionBasicRateTray";
 import type { RateCardConfig } from "@/types/rate-card";
 import type { PolicyLanguage } from "@/types/policy-language";
 import { api } from "../lib/api";
