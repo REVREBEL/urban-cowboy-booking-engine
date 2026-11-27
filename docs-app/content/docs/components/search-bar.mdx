@@ -3,31 +3,13 @@ title: SearchBar
 description: Booking search summary with date, guest and offer controls.
 ---
 
-import { SearchBarStoryControl, SearchBarSquareStoryControl, SearchBarLoadingStoryControl, ExpandedSearchStoryControl } from '~/components/story-controls';
+import { SearchBarStoryControl, ExpandedSearchStoryControl } from '~/components/story-controls';
 
 `SearchBar` composes the date, guest and offer selectors with the shared `SearchButton`.
 The demos keep click state in a docs-only harness; they do not call the Mews API or start a booking.
+Use the **Props** panel to switch the action between circle and square and to preview the loading state.
 
 <SearchBarStoryControl />
-
-## Variants
-
-The `variant` prop switches between circle and square action buttons.
-
-<SearchBarSquareStoryControl />
-
-## Loading state
-
-<SearchBarLoadingStoryControl />
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `variant` | `circle`, `square` | Shape of the search action |
-| `dateLabel` / `dateValue` | string | Date selector copy |
-| `guestLabel` / `guestValue` | string | Guest selector copy |
-| `promoLabel` / `promoValue` | string | Offer selector copy |
-| `isLoading` | boolean | Loading presentation |
-| `onSearch`, `onDateClick`, `onGuestClick`, `onPromoClick` | callbacks | Docs harness records the last action locally |
 
 ## Responsive behaviour
 

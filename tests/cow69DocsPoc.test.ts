@@ -113,6 +113,17 @@ test("PoC stories import real components through client story controls", () => {
   assert.match(preferenceMdx, /docs-only harness/);
 });
 
+test("SearchBar docs use one toggleable demo instead of static prop tables", () => {
+  const story = read("docs-app/components/search-bar.story.tsx");
+  const mdx = read("docs-app/content/docs/components/search-bar.mdx");
+  assert.match(story, /variant: SearchBarVariant;\n  loading: boolean;/);
+  assert.match(story, /initial: \{ variant: "circle", loading: false \}/);
+  assert.doesNotMatch(story, /searchBarSquareStory|searchBarLoadingStory/);
+  assert.equal((mdx.match(/<SearchBarStoryControl \/>/g) ?? []).length, 1);
+  assert.doesNotMatch(mdx, /<SearchBarSquareStoryControl \/>|<SearchBarLoadingStoryControl \/>/);
+  assert.doesNotMatch(mdx, /\| `dateLabel` \/ `dateValue`/);
+});
+
 test("Pages workflow validates PRs and gates publication behind an explicit variable", () => {
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /fetch-depth: 0/);
