@@ -73,5 +73,5 @@ Working record for the Urban Cowboy database redesign. Add a dated entry wheneve
 
 ### POL-01: One type per policy
 **OLD:** Policy and Activity were among the legacy amenity Type choices; a separate policy classification model is still being designed.
-**NEW:** Gary specified one Type per policy. Whether this means one classification (such as Pets or Age), one assignment level (Property, Room Type or Rate), or both must be clarified before fixing the relationships.
-**Status:** one-Type requirement recorded; interpretation and assignment behavior open. No policy schema has been implemented.
+**NEW:** Each policy has one Type defining its assignment level: Property, Room Type, or Rate. A policy belongs to only one of these levels. Whether a separate classification (such as Pets or Age) is needed remains open. The number of properties, rooms, or rates to which a policy can be assigned within its selected level is also open.
+**Status:** one-level Type requirement confirmed; no policy schema has been implemented.
