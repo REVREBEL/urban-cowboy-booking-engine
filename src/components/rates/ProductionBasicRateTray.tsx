@@ -1,5 +1,5 @@
-import { BasicRateCard, FigmaRateDetailPopup } from "./FigmaRateComponents";
-import "./FigmaProductionRateTray.css";
+import { BasicRateCard, BasicRateDetailPopup } from "./BasicRateComponents";
+import "./ProductionBasicRateTray.css";
 import { useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import type { ShapedRate } from "@/types/mews";
@@ -44,7 +44,7 @@ const PHASE_COPY: Record<PhaseKind, {
 function phaseHeading(phase: PhaseKind, language: PolicyLanguage) {
   return language[PHASE_COPY[phase].title];
 }
-interface FigmaProductionRateTrayProps {
+interface ProductionBasicRateTrayProps {
   roomName: string;
   checkIn: string;
   nights: number;
@@ -185,7 +185,7 @@ export function ProductionRateTray({
   onChangeRoom,
   showChangeRoomAction = true,
   onUnlockMember,
-}: FigmaProductionRateTrayProps) {
+}: ProductionBasicRateTrayProps) {
   const language = resolvePolicyLanguage(policyLanguage);
   const [openRateId, setOpenRateId] = useState<string | null>(null);
   const [isDrawerClosing, setIsDrawerClosing] = useState(false);
@@ -333,7 +333,7 @@ export function ProductionRateTray({
                 setIsDrawerClosing(false);
               }}
             >
-              <FigmaRateDetailPopup
+              <BasicRateDetailPopup
                 name={openConfig?.headline || openRate.name}
                 eyebrow={openConfig?.eyebrow || "Rate details"}
                 description={openConfig?.description || openRate.description || "Book direct for the best available offer."}

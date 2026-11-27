@@ -4,9 +4,9 @@ import { useState } from "react";
 import { buildCancellationTimeline } from "@/lib/cancellationTimeline";
 import {
   BasicRateCard,
-  FigmaRateDetailPopup,
-  FigmaPolicyTimeline,
-} from "@/components/rates/FigmaRateComponents";
+  BasicRateDetailPopup,
+  BasicPolicyTimeline,
+} from "@/components/rates/BasicRateComponents";
 import { PillarFeatures } from "@/components/rates/PillarFeatures";
 import { defineStory } from "../lib/story";
 
@@ -43,7 +43,7 @@ function BasicRateCardDemo({ variant }: { variant: "default" | "member" | "packa
   );
 }
 
-export const figmaRateCardStandardStory = defineStory({
+export const BasicRateCardStandardStory = defineStory({
   Component: BasicRateCardDemo,
   args: { initial: { variant: "default" } },
 });
@@ -58,7 +58,7 @@ export const figmaRateCardPackageStory = defineStory({
   args: { initial: { variant: "package" } },
 });
 
-function FigmaRateDetailPopupDemo() {
+function BasicRateDetailPopupDemo() {
   const [isOpen, setIsOpen] = useState(true);
   return (
     <div className="w-full max-w-[1314px] mx-auto">
@@ -66,7 +66,7 @@ function FigmaRateDetailPopupDemo() {
         {isOpen ? "Close Popup" : "Open Popup"}
       </button>
       {isOpen && (
-        <FigmaRateDetailPopup
+        <BasicRateDetailPopup
           name="Ride Easy"
           eyebrow="Keep Your Options Open"
           description="Our standard rate for guests who want a little more freedom around their plans."
@@ -88,15 +88,15 @@ function FigmaRateDetailPopupDemo() {
   );
 }
 
-export const figmaRateDetailPopupStory = defineStory({
-  Component: FigmaRateDetailPopupDemo,
+export const BasicRateDetailPopupStory = defineStory({
+  Component: BasicRateDetailPopupDemo,
   args: { initial: {} },
 });
 
-function FigmaPolicyTimelineDemo() {
+function BasicPolicyTimelineDemo() {
   return (
     <div className="w-full max-w-[523px] mx-auto rounded-xl bg-smoke p-4 sm:p-6">
-      <FigmaPolicyTimeline
+      <BasicPolicyTimeline
         timeline={timeline}
         arrivalDate={SAMPLE_DATE}
         currency="USD"
@@ -105,8 +105,8 @@ function FigmaPolicyTimelineDemo() {
   );
 }
 
-export const figmaPolicyTimelineStory = defineStory({
-  Component: FigmaPolicyTimelineDemo,
+export const BasicPolicyTimelineStory = defineStory({
+  Component: BasicPolicyTimelineDemo,
   args: { initial: {} },
 });
 
