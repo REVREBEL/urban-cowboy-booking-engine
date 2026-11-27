@@ -11,17 +11,6 @@ grid shows every state side by side.
 
 <ProgressStepStatesStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `step` | number | Step number shown in the marker |
-| `label` | string | Step name |
-| `state` | `default`, `current`, `complete` | Visual state |
-| `onClick` | callback | Optional navigation |
-| `showCheckOnComplete` | boolean | Replace the number with a check when complete |
-| `isLoading` / `disabled` | boolean | Busy and disabled states |
-
 `ProgressStepper` accepts `currentStep`, `steps` and `showCheckOnComplete` and derives the
 per-step state.
 

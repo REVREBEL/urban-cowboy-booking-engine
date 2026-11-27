@@ -103,7 +103,7 @@ if (typeof window === "undefined") {
   }
 }
 
-function DateSearchDropdownDemo({ variant = "confirm" }: { variant: "confirm" | "external-actions" }) {
+function DateSearchDropdownDemo({ variant }: { variant: "confirm" | "external-actions" }) {
   const [range, setRange] = useState({ checkIn: DEFAULT_RANGE.checkIn, checkOut: DEFAULT_RANGE.checkOut });
   const [closed, setClosed] = useState(false);
   return (

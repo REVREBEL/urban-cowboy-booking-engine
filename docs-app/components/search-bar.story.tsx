@@ -5,9 +5,9 @@ import { SearchBar, type SearchBarVariant } from "../../src/components/booking/s
 import { SearchBarExpanded } from "../../src/components/booking/search/SearchBarExpanded";
 import { defineStory } from "../lib/story";
 
-function SearchBarDemo({ variant = "circle", loading = false }: {
-  variant?: SearchBarVariant;
-  loading?: boolean;
+function SearchBarDemo({ variant, loading }: {
+  variant: SearchBarVariant;
+  loading: boolean;
 }) {
   const [last, setLast] = useState("none");
   return (
@@ -31,22 +31,12 @@ function SearchBarDemo({ variant = "circle", loading = false }: {
   );
 }
 
-export const searchBarCircleStory = defineStory({
+export const searchBarStory = defineStory({
   Component: SearchBarDemo,
-  args: { initial: {} },
+  args: { initial: { variant: "circle", loading: false } },
 });
 
-export const searchBarSquareStory = defineStory({
-  Component: SearchBarDemo,
-  args: { initial: { variant: "square" } },
-});
-
-export const searchBarLoadingStory = defineStory({
-  Component: SearchBarDemo,
-  args: { initial: { loading: true } },
-});
-
-function ExpandedSearchDemo({ variant = "circle" }: { variant?: "circle" | "square" }) {
+function ExpandedSearchDemo({ variant }: { variant: "circle" | "square" }) {
   const [last, setLast] = useState("none");
   return (
     <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
@@ -70,5 +60,5 @@ function ExpandedSearchDemo({ variant = "circle" }: { variant?: "circle" | "squa
 
 export const expandedSearchStory = defineStory({
   Component: ExpandedSearchDemo,
-  args: { initial: {} },
+  args: { initial: { variant: "circle" } },
 });

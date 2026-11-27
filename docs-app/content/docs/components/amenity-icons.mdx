@@ -20,15 +20,6 @@ supported fallback glyph, shown inheriting the current text colour.
 
 <AmenityIconGridStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `icon` | `bed`, `tub`, `outdoor-tub`, `window`, `seat`, `stove`, `robes`, `speaker`, `shower`, `floors`, `desk`, `balcony` | Fallback `TourIcon` used when no asset resolves |
-| `iconPath` | CMS asset path or `null` | Checked-in SVG path, resolved under `assets/icons/` |
-| `imageUrl` | HTTPS URL or `null` | Webflow-hosted image, attempted first |
-| `className` | string | Applied to the wrapper; fills its parent by default |
-
 The icon fills its parent container fluidly, so provide a sized wrapper. Icon assets are
 monochrome masks tinted with `currentColor`.
 

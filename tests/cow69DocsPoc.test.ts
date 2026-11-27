@@ -1,6 +1,6 @@
 // COW-69 docs PoC: inventory, static-export config and real-component import contract.
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 import { resolveDocsBasePath } from "../scripts/fumadocs/base-path.mjs";
 import { contrastForTokens } from "../scripts/fumadocs/contrast.mjs";
@@ -83,6 +83,14 @@ test("Fumadocs theme maps brand color tokens and lays out the desktop sidebar", 
   assert.match(globalCss, /--fd-toc-width: 0px/);
 });
 
+test("story select menu has an opaque popover surface", () => {
+  // The story controls use bg-fd-popover/text-fd-popover-foreground on the
+  // expanded select popup. Without local definitions the menu renders transparent.
+  assert.match(globalCss, /\.bg-fd-popover \{ background-color: var\(--color-fd-popover\)/);
+  assert.match(globalCss, /\.text-fd-popover-foreground \{ color: var\(--color-fd-popover-foreground\)/);
+  assert.match(globalCss, /data-\\\[highlighted\\\]\\:bg-fd-accent\[data-highlighted\] \{\n  background-color: var\(--color-fd-primary\);\n  color: var\(--color-fd-primary-foreground\);/);
+});
+
 test("muted foreground meets WCAG AA contrast in both themes", () => {
   const light = contrastForTokens(brandColors, "lake-forest-200", "paper-100");
   const dark = contrastForTokens(brandColors, "paper-300", "smoke-950");
@@ -103,6 +111,58 @@ test("PoC stories import real components through client story controls", () => {
   assert.match(pillMdx, /PillStoryControl/);
   assert.match(preferenceMdx, /PreferenceIconButtonStoryControl/);
   assert.match(preferenceMdx, /docs-only harness/);
+});
+
+test("SearchBar docs use one toggleable demo instead of static prop tables", () => {
+  const story = read("docs-app/components/search-bar.story.tsx");
+  const mdx = read("docs-app/content/docs/components/search-bar.mdx");
+  assert.match(story, /variant: SearchBarVariant;\n  loading: boolean;/);
+  assert.match(story, /initial: \{ variant: "circle", loading: false \}/);
+  assert.doesNotMatch(story, /searchBarSquareStory|searchBarLoadingStory/);
+  assert.equal((mdx.match(/<SearchBarStoryControl \/>/g) ?? []).length, 1);
+  assert.doesNotMatch(mdx, /<SearchBarSquareStoryControl \/>|<SearchBarLoadingStoryControl \/>/);
+  assert.doesNotMatch(mdx, /\| `dateLabel` \/ `dateValue`/);
+});
+
+test("component docs use story controls instead of static prop tables", () => {
+  // The interactive Props panel on each story is the single source of truth
+  // for selectable values; a static table beside it only goes stale.
+  const walk = (dir: URL): URL[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const child = new URL(`${entry.name}${entry.isDirectory() ? "/" : ""}`, dir);
+      return entry.isDirectory()
+        ? walk(child)
+        : entry.name.endsWith(".mdx")
+          ? [child]
+          : [];
+    });
+  const files = walk(new URL("docs-app/content/docs/", root));
+  assert.ok(files.length > 0);
+  for (const file of files) {
+    const mdx = readFileSync(file, "utf8");
+    assert.doesNotMatch(mdx, /^\| Prop \| Values \| Notes \|$/m, `${file.pathname} has a static prop table`);
+  }
+});
+
+test("story demos never expose a no-op Unset choice", () => {
+  // @fumadocs/story adds "Unset" for optional demo props. When the wrapper
+  // also has a default, choosing it changes nothing, so all demo props are
+  // required and their values come from defineStory's initial args.
+  const files = readdirSync(new URL("docs-app/components/", root))
+    .filter((file) => file.endsWith(".story.tsx"));
+  assert.ok(files.length > 0);
+  for (const file of files) {
+    const source = read(`docs-app/components/${file}`);
+    assert.doesNotMatch(source, /function \w+Demo\([^)]*=/, `${file} has a defaulted demo prop`);
+    assert.doesNotMatch(source, /interface \w+DemoProps \{[^}]*\?:/, `${file} has an optional demo prop`);
+  }
+});
+
+test("component-name headings have a distinct docs title style", () => {
+  const mdx = read("docs-app/content/docs/components/search-bar.mdx");
+  assert.match(mdx, /<div className="docs-component-heading">\n\n## Expanded search panel/);
+  assert.match(globalCss, /\.docs-component-heading h2 \{[\s\S]*?font-family: var\(--font-subheading\)/);
+  assert.match(globalCss, /\.docs-component-heading h2::before \{[\s\S]*?background-color: var\(--color-fd-ring\)/);
 });
 
 test("Pages workflow validates PRs and gates publication behind an explicit variable", () => {

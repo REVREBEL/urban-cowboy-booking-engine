@@ -11,15 +11,6 @@ states and accessible label.
 
 <DogToggleStoryControl />
 
-## Props and states
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `selected` | boolean | Drives the visual treatment and `aria-pressed` |
-| `onToggle` | `() => void` | Called on activation; the caller updates `selected` |
-| `className` | string | Placement only |
-| `imageBaseUrl` | string | Optional prefix for the two icon URLs when the host app is served under a base path |
-
 Former Storybook states `Inactive` and `Selected` are represented by the interactive
 control. Two icon assets are swapped by breakpoint; both are decorative and hidden from
 assistive technology, with a visually hidden label on the button.

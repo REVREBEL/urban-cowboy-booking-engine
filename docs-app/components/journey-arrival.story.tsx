@@ -8,18 +8,18 @@ import { defineStory } from "../lib/story";
 const imageBaseUrl = process.env.NEXT_PUBLIC_DOCS_BASE_PATH ?? "";
 
 interface ArrivalDemoProps {
-  openCalendar?: boolean;
-  initialCheckIn?: string | null;
-  initialCheckOut?: string | null;
-  showEditorial?: boolean;
+  openCalendar: boolean;
+  initialCheckIn: string | null;
+  initialCheckOut: string | null;
+  showEditorial: boolean;
 }
 
 /** Docs-only controlled harness; date and guest state stays local, no Mews calls. */
 function ArrivalDemo({
-  openCalendar = false,
-  initialCheckIn = null,
-  initialCheckOut = null,
-  showEditorial = true,
+  openCalendar,
+  initialCheckIn,
+  initialCheckOut,
+  showEditorial,
 }: ArrivalDemoProps) {
   const [checkIn, setCheckIn] = useState<string | null>(initialCheckIn);
   const [checkOut, setCheckOut] = useState<string | null>(initialCheckOut);
@@ -83,20 +83,20 @@ function ArrivalDemo({
 
 export const arrivalStory = defineStory({
   Component: ArrivalDemo,
-  args: { initial: { openCalendar: false, showEditorial: true } },
+  args: { initial: { openCalendar: false, initialCheckIn: null, initialCheckOut: null, showEditorial: true } },
 });
 
 export const arrivalCalendarStory = defineStory({
   Component: ArrivalDemo,
-  args: { initial: { openCalendar: true, showEditorial: true } },
+  args: { initial: { openCalendar: true, initialCheckIn: null, initialCheckOut: null, showEditorial: true } },
 });
 
 export const arrivalDatesStory = defineStory({
   Component: ArrivalDemo,
-  args: { initial: { initialCheckIn: "2026-11-12", initialCheckOut: "2026-11-15", showEditorial: true } },
+  args: { initial: { openCalendar: false, initialCheckIn: "2026-11-12", initialCheckOut: "2026-11-15", showEditorial: true } },
 });
 
 export const arrivalNoEditorialStory = defineStory({
   Component: ArrivalDemo,
-  args: { initial: { showEditorial: false } },
+  args: { initial: { openCalendar: false, initialCheckIn: null, initialCheckOut: null, showEditorial: false } },
 });

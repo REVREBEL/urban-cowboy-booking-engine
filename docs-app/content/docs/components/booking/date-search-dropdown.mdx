@@ -33,19 +33,6 @@ The `external-actions` variant hides the confirm button and quick-select; the ca
 
 <DateSearchDropdownExternalActionsStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `variant` | `confirm`, `external-actions` | `confirm` shows quick-select + confirm button; `external-actions` delegates to caller |
-| `checkIn` / `checkOut` | ISO date strings | Controlled range; empty = unselected |
-| `dailyRates` | `Record<string, DailyRate>` | Optional rate overlay for calendar cells |
-| `showQuickSelect` | boolean | Show quick-select presets (default: true in `confirm` variant) |
-| `onChange` | `(checkIn, checkOut) => void` | Called when range changes |
-| `onClose` | `() => void` | Called when dialog should close |
-| `onVisibleRangeChange` | `(start, end) => void` | Reports visible calendar months for rate pre-fetch |
-| `triggerRef` | `React.RefObject<HTMLElement>` | Optional external trigger for focus return |
-
 ## DailyRate shape
 
 ```ts

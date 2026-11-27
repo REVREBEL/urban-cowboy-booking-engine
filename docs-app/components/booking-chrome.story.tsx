@@ -8,7 +8,7 @@ import { defineStory } from "../lib/story";
 
 const STEPS: Step[] = ["dates", "results", "guest", "extras", "payment"];
 
-function BookingChromeDemo({ start = "dates" }: { start?: Step }) {
+function BookingChromeDemo({ start }: { start: Step }) {
   const [step, setStep] = useState<Step>(start);
   const [last, setLast] = useState("none");
   const advance = () => {
@@ -42,7 +42,7 @@ function BookingChromeDemo({ start = "dates" }: { start?: Step }) {
 
 export const bookingChromeDatesStory = defineStory({
   Component: BookingChromeDemo,
-  args: { initial: {} },
+  args: { initial: { start: "dates" } },
 });
 
 export const bookingChromeResultsStory = defineStory({

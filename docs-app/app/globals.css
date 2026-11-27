@@ -10,12 +10,31 @@
 .text-fd-foreground { color: var(--color-fd-foreground); }
 .text-fd-muted-foreground { color: var(--color-fd-muted-foreground); }
 .text-fd-accent-foreground { color: var(--color-fd-accent-foreground); }
+.text-fd-popover-foreground { color: var(--color-fd-popover-foreground); }
 .text-fd-primary { color: var(--color-fd-primary); }
 .text-fd-primary-foreground { color: var(--color-fd-primary-foreground); }
 .bg-fd-background { background-color: var(--color-fd-background); }
 .bg-fd-card { background-color: var(--color-fd-card); }
 .bg-fd-muted { background-color: var(--color-fd-muted); }
+.bg-fd-popover { background-color: var(--color-fd-popover); }
 .bg-fd-primary { background-color: var(--color-fd-primary); }
+.bg-fd-secondary { background-color: var(--color-fd-secondary); }
+.bg-fd-accent { background-color: var(--color-fd-accent); }
+/* Story select popup states: keep the open menu opaque and use the Fumadocs
+   primary pair on the active option so the current choice stands out. */
+.hover\:bg-fd-accent:hover,
+.data-popup-open\:bg-fd-accent[data-popup-open] {
+  background-color: var(--color-fd-accent);
+}
+.data-\[highlighted\]\:bg-fd-accent[data-highlighted] {
+  background-color: var(--color-fd-primary);
+  color: var(--color-fd-primary-foreground);
+}
+.from-fd-popover {
+  --tw-gradient-from: var(--color-fd-popover) var(--tw-gradient-from-position, 0%);
+  --tw-gradient-to: transparent var(--tw-gradient-to-position, 100%);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
 .border-fd-border { border-color: var(--color-fd-border); }
 
 :root {
@@ -159,6 +178,30 @@ article#nd-page .prose.flex-1 {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+/* Sections that introduce a component or variant get a title treatment, so
+   they read as headings rather than body copy. The MDX h2 (and its TOC entry)
+   stays intact; the wrapper only supplies the class to style. */
+.docs-component-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-subheading);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--color-fd-foreground);
+}
+
+.docs-component-heading h2::before {
+  content: "";
+  flex: none;
+  width: 4px;
+  height: 1.1em;
+  border-radius: 2px;
+  background-color: var(--color-fd-ring);
 }
 
 /* The Fumadocs prose preset centres table headings; component API tables read

@@ -11,7 +11,7 @@ import {
 } from "../../src/components/booking/conversion";
 import { defineStory } from "../lib/story";
 
-function ConversionBadgesDemo({ compact = false }: { compact?: boolean }) {
+function ConversionBadgesDemo({ compact }: { compact: boolean }) {
   const [visible, setVisible] = useState(true);
   return (
     <div className="w-full rounded-xl bg-paper p-4 sm:p-6">
@@ -41,7 +41,7 @@ function ConversionBadgesDemo({ compact = false }: { compact?: boolean }) {
 
 export const conversionBadgesStory = defineStory({
   Component: ConversionBadgesDemo,
-  args: { initial: {} },
+  args: { initial: { compact: false } },
 });
 
 export const conversionBadgesCompactStory = defineStory({

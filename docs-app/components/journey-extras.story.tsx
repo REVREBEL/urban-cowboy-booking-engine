@@ -25,12 +25,12 @@ const sauna: MerchandisedAddOn = {
 };
 
 interface ExtrasDemoProps {
-  initialSelected?: string[];
-  products?: MerchandisedAddOn[];
+  initialSelected: string[];
+  products: MerchandisedAddOn[];
 }
 
 /** Docs-only selection harness; totals are local and no reservation is created. */
-function ExtrasDemo({ initialSelected = [], products = [sauna] }: ExtrasDemoProps) {
+function ExtrasDemo({ initialSelected, products }: ExtrasDemoProps) {
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>(initialSelected);
   const [selectedDisplayByProduct, setSelectedDisplayByProduct] = useState<Record<string, string>>({});
   const [preferences, setPreferences] = useState<Record<string, AddonSchedulePreference>>({});
@@ -78,15 +78,15 @@ function ExtrasDemo({ initialSelected = [], products = [sauna] }: ExtrasDemoProp
 
 export const extrasAvailableStory = defineStory({
   Component: ExtrasDemo,
-  args: { initial: {} },
+  args: { initial: { initialSelected: [], products: [sauna] } },
 });
 
 export const extrasSelectedStory = defineStory({
   Component: ExtrasDemo,
-  args: { initial: { initialSelected: [sauna.id] } },
+  args: { initial: { initialSelected: [sauna.id], products: [sauna] } },
 });
 
 export const extrasEmptyStory = defineStory({
   Component: ExtrasDemo,
-  args: { initial: { products: [] } },
+  args: { initial: { initialSelected: [], products: [] } },
 });

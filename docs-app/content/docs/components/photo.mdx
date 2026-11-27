@@ -16,15 +16,6 @@ instead of a remote photograph, so it works offline and under the Pages base pat
 
 <PhotoStatesStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `src` | string, `null` or `undefined` | Absent source renders the gradient fallback |
-| `alt` | string | Accessible label for both the image and the fallback |
-| `className` | string | Sizing and shape; applied to both states |
-| `gradient` | string | Tailwind gradient classes for the fallback |
-
 The component is lazy-loaded (`loading="lazy"`) and resets its error state whenever `src`
 changes, so swapping in a valid source recovers the image.
 

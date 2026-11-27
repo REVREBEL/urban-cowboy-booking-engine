@@ -18,11 +18,11 @@ const romanceProfile: MatchProfile = {
 };
 
 interface RoomsDemoProps {
-  profile?: MatchProfile | null;
-  studioCatalog?: boolean;
+  profile: MatchProfile | null;
+  studioCatalog: boolean;
 }
 
-function RoomsDemo({ profile = null, studioCatalog = true }: RoomsDemoProps) {
+function RoomsDemo({ profile, studioCatalog }: RoomsDemoProps) {
   const [action, setAction] = useState<string | null>(null);
   return (
     <div className="w-full">
@@ -45,15 +45,15 @@ function RoomsDemo({ profile = null, studioCatalog = true }: RoomsDemoProps) {
 
 export const journeyRoomsIndexStory = defineStory({
   Component: RoomsDemo,
-  args: { initial: {} },
+  args: { initial: { profile: null, studioCatalog: true } },
 });
 
 export const journeyRoomsSpreadsStory = defineStory({
   Component: RoomsDemo,
-  args: { initial: { studioCatalog: false } },
+  args: { initial: { profile: null, studioCatalog: false } },
 });
 
 export const journeyRoomsPreferencesStory = defineStory({
   Component: RoomsDemo,
-  args: { initial: { profile: romanceProfile } },
+  args: { initial: { profile: romanceProfile, studioCatalog: true } },
 });

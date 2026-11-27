@@ -12,22 +12,9 @@ callbacks; no form is submitted and no reservation state changes.
 
 <StaySummaryStoryControl />
 
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `roomName`, `rateName` | string | Editorial labels |
-| `checkIn`, `checkOut`, `adults` | required | Drives the night count and copy |
-| `children`, `dog` | optional | Guest breakdown |
-| `nightlyRate`, `total`, `currency` | optional | Formatted with the shared money helper |
-
 ## Reservation bar
 
 <ReservationSummaryBarStoryControl />
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `roomName`, `rateTitle`, `nights` | required | Stay identity |
-| `extrasTotal`, `selectedItemCount` | optional | Extras summary |
-| `onAction` | callback | Docs harness records the click only |
 
 `BookingSummary`, `StayBreakdown` and `CheckoutStep` (which embeds `BookingSummary`) read the live
 `BookingProvider`, which loads hotel data and geolocation; they stay planned until a

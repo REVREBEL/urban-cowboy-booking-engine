@@ -15,16 +15,6 @@ value locally; it never submits a guest form.
 
 <PhoneInputInvalidStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `value` | E.164 string | Controlled value |
-| `defaultCountry` | ISO code | Used when `value` has no country; defaults to `US` |
-| `onChange` | `(e164, valid) => void` | Reports the normalised value and validity |
-| `required`, `invalid` | boolean | Native required attribute and error styling |
-| `id`, `name`, `ariaDescribedBy` | string | Form wiring and accessible description |
-
 ## Accessibility
 
 The country selector and number field are labelled separately, and the invalid state is

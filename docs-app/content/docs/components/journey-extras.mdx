@@ -23,17 +23,6 @@ that in local state and uses a single fixed-price fixture, with no Mews product 
 
 <ExtrasEmptyStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `products` | `MerchandisedAddOn[]` | Deterministic fixture in docs |
-| `selectedProductIds` / `lockedProductIds` | string[] / `Set<string>` | Controlled selection and locked items |
-| `preferences` / `onSavePreference` | record / callback | Per-add-on scheduling choice |
-| `total` | number | Caller-computed total including add-ons |
-| `guestsCount`, `nights`, `checkIn`, `checkOut` | number / string | Stay context shown in the header |
-| `imageBaseUrl` | string | Optional prefix for add-on artwork |
-
 ## Responsive behaviour
 
 The add-on row becomes a single column on phones and expands at `sm`. The artwork fills its

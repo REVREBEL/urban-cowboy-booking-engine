@@ -26,12 +26,12 @@ const romanceProfile: MatchProfile = {
 };
 
 interface JournalDemoProps {
-  adults?: number;
-  children?: number;
-  initial?: MatchProfile | null;
+  adults: number;
+  children: number;
+  initial: MatchProfile | null;
 }
 
-function JournalDemo({ adults = 2, children = 0, initial = null }: JournalDemoProps) {
+function JournalDemo({ adults, children, initial }: JournalDemoProps) {
   const [result, setResult] = useState<string | null>(null);
   return (
     <div className="w-full">
@@ -52,15 +52,15 @@ function JournalDemo({ adults = 2, children = 0, initial = null }: JournalDemoPr
 
 export const journalCoupleStory = defineStory({
   Component: JournalDemo,
-  args: { initial: {} },
+  args: { initial: { adults: 2, children: 0, initial: null } },
 });
 
 export const journalFamilyStory = defineStory({
   Component: JournalDemo,
-  args: { initial: { adults: 2, children: 2 } },
+  args: { initial: { adults: 2, children: 2, initial: null } },
 });
 
 export const journalPreferencesStory = defineStory({
   Component: JournalDemo,
-  args: { initial: { initial: romanceProfile } },
+  args: { initial: { adults: 2, children: 0, initial: romanceProfile } },
 });

@@ -9,17 +9,6 @@ import { InlineDateRangePickerStoryControl } from '~/components/story-controls';
 
 <InlineDateRangePickerStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `checkIn` / `checkOut` | ISO date strings | Controlled range; empty = unselected |
-| `minDate` | ISO date string | Earliest selectable day; defaults to today (UTC) |
-| `dailyRates` | `Record<string, DailyRate>` | Optional rate/restriction data for calendar cells |
-| `formatRate` | `(rate) => string` | Custom rate formatter (default: currency, 0 decimals) |
-| `onChange` | `(checkIn, checkOut) => void` | Called when range changes |
-| `onVisibleRangeChange` | `(start, end) => void` | Reports visible months for rate pre-fetch |
-
 ## DailyRate shape
 
 ```ts

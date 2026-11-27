@@ -26,7 +26,7 @@ const room: ShapedRoom = {
   merchandisingSource: null,
 };
 
-function RoomsListCardDemo({ theme = "paper" }: { theme?: "paper" | "copper" | "lake-forest" }) {
+function RoomsListCardDemo({ theme }: { theme: "paper" | "copper" | "lake-forest" }) {
   const [last, setLast] = useState("none");
   return (
     <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
@@ -45,7 +45,7 @@ function RoomsListCardDemo({ theme = "paper" }: { theme?: "paper" | "copper" | "
 
 export const roomsListCardStory = defineStory({
   Component: RoomsListCardDemo,
-  args: { initial: {} },
+  args: { initial: { theme: "paper" } },
 });
 
 export const roomsListCardCopperStory = defineStory({

@@ -292,7 +292,7 @@ export const buildingExperienceListStory = defineStory({
 // MultiRoomViewBuilding
 const alpineIcon = <BuildingIcon buildingName="Alpine" />;
 
-function MultiRoomViewBuildingDemo({ layout = "Row", displayBuildingIcon = false }: { layout?: "Row" | "Row Reverse" | "StackedCenter" | "StackedLeft"; displayBuildingIcon?: boolean }) {
+function MultiRoomViewBuildingDemo({ layout, displayBuildingIcon }: { layout: "Row" | "Row Reverse" | "StackedCenter" | "StackedLeft"; displayBuildingIcon: boolean }) {
   return (
     <div className="w-full min-h-[400px] rounded-xl bg-smoke p-4 sm:p-6">
       <MultiRoomViewBuilding
@@ -383,7 +383,7 @@ export const multiRoomViewListStory = defineStory({
 });
 
 // MultiRoomViewListItem
-function MultiRoomViewListItemDemo({ layout = "Default" }: { layout?: "Default" | "Row" | "RowReverse" }) {
+function MultiRoomViewListItemDemo({ layout }: { layout: "Default" | "Row" | "RowReverse" }) {
   const alpineRooms = mockRooms.filter(r => r.merchandising?.roomTypeGroupKey === "alpine").slice(0, 3);
   return (
     <div className="w-full min-h-[300px] rounded-xl bg-smoke p-4 sm:p-6">
@@ -419,7 +419,7 @@ export const multiRoomViewListItemRowReverseStory = defineStory({
 });
 
 // MultiRoomViewRoomTypeCard
-function MultiRoomViewRoomTypeCardDemo({ state = "Default" }: { state?: "Default" | "Focus" }) {
+function MultiRoomViewRoomTypeCardDemo({ state }: { state: "Default" | "Focus" }) {
   return (
     <div className="w-full min-h-[400px] rounded-xl bg-smoke p-4 sm:p-6">
       <MultiRoomViewRoomTypeCard
@@ -444,7 +444,7 @@ export const multiRoomViewRoomTypeCardFocusedStory = defineStory({
 });
 
 // GuestReviewQuoteCard
-function GuestReviewQuoteCardDemo({ size = "md", hasAttribution = true, hasLink = true }: { size?: "sm" | "md" | "lg"; hasAttribution?: boolean; hasLink?: boolean }) {
+function GuestReviewQuoteCardDemo({ size, hasAttribution, hasLink }: { size: "sm" | "md" | "lg"; hasAttribution: boolean; hasLink: boolean }) {
   return (
     <div className="w-full min-h-[200px] rounded-xl bg-smoke p-4 sm:p-6">
       <GuestReviewQuoteCard
