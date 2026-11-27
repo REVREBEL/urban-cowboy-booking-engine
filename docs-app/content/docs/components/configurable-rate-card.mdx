@@ -24,20 +24,6 @@ grid below, using a deterministic fixture with no artwork so the semantic fallba
 
 <ConfigurableRateCardVariantsStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `config` | `RateCardConfig` | CMS fields: copy, colours, border/font presets, overlay positions, cancellation windows |
-| `live` | `RateCardLiveContent` | Already-formatted `price`, `priceUnit`, `taxLabel`, `cancellationText`, optional `ctaLabel` |
-| `layout` | `vertical`, `horizontal` | Horizontal uses a measured overlay layout |
-| `artworkMode` | `auto`, `desktop`, `mobile` | Which artwork source is preferred |
-| `isExpanded` / `onExpand` | boolean / callback | Drives the confirm step |
-| `onBook` | callback | Called on the confirmed action |
-| `confirmLabel` | string | Label shown in the expanded state |
-| `disabled` | boolean | Disables the action |
-| `className` | string | Placement only |
-
 When any artwork URL fails to load, the card falls back to its semantic copy. Both price and
 cancellation text are supplied by the caller; the component performs no pricing or policy
 calculation.

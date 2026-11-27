@@ -23,17 +23,6 @@ the docs only updates a local status message — no reservation is created.
 
 <JourneyRoomsPreferencesStoryControl />
 
-## Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `profile` | `MatchProfile` or `null` | Drives recommendation copy and ordering |
-| `rooms` | `ShapedRoom[]` | Empty in docs; studio catalogue is used |
-| `studioCatalog` | boolean | Selects the index view over photo spreads |
-| `imageBaseUrl` / `galleries` | string / map | Photo URL prefix and optional CMS galleries |
-| `guests` / `children` | number | Occupancy context |
-| `onChoose`, `onEditJournal`, `onChangeDates` | callbacks | Recorded locally in docs |
-
 ## Responsive behaviour
 
 The index is a responsive grid of room cards; photo spreads become a single-column story on

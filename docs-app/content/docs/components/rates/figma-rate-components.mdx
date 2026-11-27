@@ -27,63 +27,17 @@ These components implement the production rate card designs from Figma (1390:313
 
 <FigmaRateCardPackageStoryControl />
 
-### Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `eyebrow` | string | Upper label (e.g., "Keep Your Options Open") |
-| `name` | string | Rate name (e.g., "Ride Easy", "Member Rate") |
-| `description` | string | Marketing description |
-| `policy` | string | Cancellation/terms summary |
-| `roomSummary` | string | Room/type summary line |
-| `total` | number | Total price |
-| `currency` | string | Currency code (default: "USD") |
-| `variant` | `default`, `member`, `package` | Visual variant |
-| `perks` | string[] | Package perks (package variant only) |
-| `confirmLabel` | string | CTA button text |
-| `onDetails` | `() => void` | Details click callback |
-| `onConfirm` | `() => void` | Confirm booking callback |
-
 ## Detail Popup — FigmaRateDetailPopup
 
 Full-width detail modal with nightly breakdown, cancellation timeline and policy.
 
 <FigmaRateDetailPopupStoryControl />
 
-### Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `name` | string | Rate name |
-| `eyebrow` | string | Upper label |
-| `description` | string | Marketing description |
-| `nightly` | number | Nightly rate |
-| `currency` | string | Currency code |
-| `nights` | number | Number of nights |
-| `subtotal` | number | Room subtotal |
-| `taxes` | number | Tax amount |
-| `total` | number | Grand total |
-| `dueToday` | number | Deposit due at booking |
-| `policyText` | string | Human-readable policy |
-| `timeline` | `CancellationTimeline` | Structured cancellation timeline |
-| `arrivalDate` | string | Check-in date (ISO) |
-| `onClose` | `() => void` | Close callback |
-| `onConfirm` | `() => void` | Confirm booking callback |
-
 ## Policy Timeline — FigmaPolicyTimeline
 
 Visual timeline showing free cancellation date, balance due date and deposit/remaining split.
 
 <FigmaPolicyTimelineStoryControl />
-
-### Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `timeline` | `CancellationTimeline` | Output from `buildCancellationTimeline` |
-| `currency` | string | Currency code |
-| `arrivalDate` | string | Check-in date (ISO) |
-| `language` | `PolicyLanguage` | Optional policy language override |
 
 ## Responsive behaviour
 

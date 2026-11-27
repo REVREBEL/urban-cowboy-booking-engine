@@ -124,6 +124,26 @@ test("SearchBar docs use one toggleable demo instead of static prop tables", () 
   assert.doesNotMatch(mdx, /\| `dateLabel` \/ `dateValue`/);
 });
 
+test("component docs use story controls instead of static prop tables", () => {
+  // The interactive Props panel on each story is the single source of truth
+  // for selectable values; a static table beside it only goes stale.
+  const walk = (dir: URL): URL[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const child = new URL(`${entry.name}${entry.isDirectory() ? "/" : ""}`, dir);
+      return entry.isDirectory()
+        ? walk(child)
+        : entry.name.endsWith(".mdx")
+          ? [child]
+          : [];
+    });
+  const files = walk(new URL("docs-app/content/docs/", root));
+  assert.ok(files.length > 0);
+  for (const file of files) {
+    const mdx = readFileSync(file, "utf8");
+    assert.doesNotMatch(mdx, /^\| Prop \| Values \| Notes \|$/m, `${file.pathname} has a static prop table`);
+  }
+});
+
 test("story demos never expose a no-op Unset choice", () => {
   // @fumadocs/story adds "Unset" for optional demo props. When the wrapper
   // also has a default, choosing it changes nothing, so all demo props are

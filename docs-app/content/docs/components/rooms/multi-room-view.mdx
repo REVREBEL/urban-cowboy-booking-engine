@@ -43,31 +43,11 @@ The building header shows the building name, tagline, description and optional i
 
 <MultiRoomViewBuildingStackedLeftStoryControl />
 
-### Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `buildingName` | string | Building display name |
-| `buildingDescription` | string | Editorial description |
-| `buildingTagline` | string | Marketing tagline |
-| `layout` | `Row`, `Row Reverse`, `StackedCenter`, `StackedLeft` | Content arrangement |
-| `displayBuildingIcon` | boolean | Show building icon slot |
-| `buildingIconSlot` | `ReactNode` | Optional `BuildingIcon` instance |
-
 ## Room List — MultiRoomViewList
 
 Displays up to three building groups as vertical stacks. Each group is a `MultiRoomViewListItem` with an optional building section slot. The component is exported from `RoomTypeList.tsx`.
 
 <MultiRoomViewListStoryControl />
-
-### Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `buildingGroup1` | `ReactNode` | First building group (required) |
-| `buildingGroup2` | `ReactNode` | Second building group (optional) |
-| `buildingGroup3` | `ReactNode` | Third building group (optional) |
-| `className` | string | Additional CSS classes |
 
 ### Usage
 
@@ -108,16 +88,6 @@ Renders a building section with optional header and a horizontal list of room ty
 
 <MultiRoomViewListItemRowReverseStoryControl />
 
-### Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `layout` | `Default`, `Row`, `RowReverse` | Card arrangement (default: `Default`) |
-| `roomTypes` | `MultiRoomViewRoomTypeCardData[]` | Array of room type card data (required) |
-| `buildingSectionSlot` | `ReactNode` | Optional building header slot (e.g., `MultiRoomViewBuilding`) |
-| `displayBuilding` | boolean | Show building section (default: `true`) |
-| `className` | string | Additional CSS classes |
-
 ### Room Type Card Data Shape
 
 ```ts
@@ -142,16 +112,6 @@ Focused room type presentation with optional highlight state.
 ### Focused
 
 <MultiRoomViewRoomTypeCardFocusedStoryControl />
-
-### Props
-
-| Prop | Values | Notes |
-| --- | --- | --- |
-| `buildingName` | string | Building display name |
-| `numberOfBeds` | string | Bed count label (e.g., "8 beds") |
-| `price` | string | Price label (e.g., "$596") |
-| `roomTypeName` | string | Room type name |
-| `state` | `Default`, `Focus` | Highlighted presentation (default: `Default`) |
 
 ## Responsive behaviour
 

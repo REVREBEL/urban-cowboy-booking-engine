@@ -16,3 +16,7 @@ The docs app is a separate Fumadocs theme layer, so controls rendered by `@fumad
 
 `@fumadocs/story` marks a prop optional when the demo wrapper's prop has a `?`. For enum/string props this adds an "Unset" option and displays "Unset" until a value is provided, even when the wrapper supplies a default in its function signature. To keep controls limited to real values, make demo wrapper props required and set them in `defineStory({ args: { initial: ... } })`.
 
+## The interactive Props panel replaces static prop tables
+
+Component docs must not contain a `| Prop | Values | Notes |` table. The story's Props panel already exposes the wrapper's selectable props (including the variant controls) and is the single source of truth; a static table beside it duplicates that list and drifts out of sync. Keep other reference tables such as data shapes and visual variants — omit only the prop table and its now-empty `## Props` heading.
+
