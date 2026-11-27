@@ -68,3 +68,10 @@ Working record for the Urban Cowboy database redesign. Add a dated entry wheneve
 ## Local unified amenity preview — 2026-11-27
 
 `scripts/schema-review/amenity_review_preview.sql` on `draft/amenity-schema-foundation` is a **local review preview, not a production D1 migration**. It rebuilds `amenities` with the agreed proposed fields, copies `amenity_editorial` values into it, and removes the separate editorial table from the review copy. Type/category, selling points, slug and global values remain NULL pending verified source mapping; NULL global is unknown rather than disabled. SQLite integrity and foreign-key checks passed; all 76 editorial rows and 253 room assignments were preserved and field comparisons returned zero differences. A pre-preview local backup is `~/Documents/Urban-Cowboy-Database-Review/urban-cowboy-before-amenity-unification.sqlite`. Application compatibility, idempotent production migration and remaining data mappings are still pending.
+
+## Policy design — 2026-11-27
+
+### POL-01: One type per policy
+**OLD:** Policy and Activity were among the legacy amenity Type choices; a separate policy classification model is still being designed.
+**NEW:** Gary specified one Type per policy. Whether this means one classification (such as Pets or Age), one assignment level (Property, Room Type or Rate), or both must be clarified before fixing the relationships.
+**Status:** one-Type requirement recorded; interpretation and assignment behavior open. No policy schema has been implemented.
