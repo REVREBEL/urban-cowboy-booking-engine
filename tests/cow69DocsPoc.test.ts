@@ -83,6 +83,14 @@ test("Fumadocs theme maps brand color tokens and lays out the desktop sidebar", 
   assert.match(globalCss, /--fd-toc-width: 0px/);
 });
 
+test("story select menu has an opaque popover surface", () => {
+  // The story controls use bg-fd-popover/text-fd-popover-foreground on the
+  // expanded select popup. Without local definitions the menu renders transparent.
+  assert.match(globalCss, /\.bg-fd-popover \{ background-color: var\(--color-fd-popover\)/);
+  assert.match(globalCss, /\.text-fd-popover-foreground \{ color: var\(--color-fd-popover-foreground\)/);
+  assert.match(globalCss, /data-\\\[highlighted\\\]\\:bg-fd-accent\[data-highlighted\]/);
+});
+
 test("muted foreground meets WCAG AA contrast in both themes", () => {
   const light = contrastForTokens(brandColors, "lake-forest-200", "paper-100");
   const dark = contrastForTokens(brandColors, "paper-300", "smoke-950");

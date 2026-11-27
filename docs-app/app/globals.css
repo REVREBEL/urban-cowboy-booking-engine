@@ -10,12 +10,27 @@
 .text-fd-foreground { color: var(--color-fd-foreground); }
 .text-fd-muted-foreground { color: var(--color-fd-muted-foreground); }
 .text-fd-accent-foreground { color: var(--color-fd-accent-foreground); }
+.text-fd-popover-foreground { color: var(--color-fd-popover-foreground); }
 .text-fd-primary { color: var(--color-fd-primary); }
 .text-fd-primary-foreground { color: var(--color-fd-primary-foreground); }
 .bg-fd-background { background-color: var(--color-fd-background); }
 .bg-fd-card { background-color: var(--color-fd-card); }
 .bg-fd-muted { background-color: var(--color-fd-muted); }
+.bg-fd-popover { background-color: var(--color-fd-popover); }
 .bg-fd-primary { background-color: var(--color-fd-primary); }
+.bg-fd-secondary { background-color: var(--color-fd-secondary); }
+.bg-fd-accent { background-color: var(--color-fd-accent); }
+/* Story select popup states: keep the open menu opaque and its highlighted row legible. */
+.hover\:bg-fd-accent:hover,
+.data-popup-open\:bg-fd-accent[data-popup-open],
+.data-\[highlighted\]\:bg-fd-accent[data-highlighted] {
+  background-color: var(--color-fd-accent);
+}
+.from-fd-popover {
+  --tw-gradient-from: var(--color-fd-popover) var(--tw-gradient-from-position, 0%);
+  --tw-gradient-to: transparent var(--tw-gradient-to-position, 100%);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
 .border-fd-border { border-color: var(--color-fd-border); }
 
 :root {
