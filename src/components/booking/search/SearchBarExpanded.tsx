@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
+import { SearchButton } from "./SearchButton";
 import { SearchBarPromoDropdown } from "./SearchBarPromoDropdown";
 
 export type SearchBarExpandedVariant = "circle" | "square";
@@ -58,67 +59,6 @@ function injectPromoTriggerRef(
     );
   });
 }
-
-export interface ExpandedSearchButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: SearchBarExpandedVariant;
-  isLoading?: boolean;
-}
-
-export const ExpandedSearchButton = React.forwardRef<HTMLButtonElement, ExpandedSearchButtonProps>(
-  (
-    {
-      variant = "circle",
-      isLoading = false,
-      disabled,
-      className = "",
-      children,
-      onClick,
-      type = "button",
-      ...props
-    },
-    ref,
-  ) => {
-    const isInteractive = !disabled && !isLoading;
-    const rounded = variant === "circle" ? "rounded-full" : "rounded-field";
-
-    return (
-      <button
-        ref={ref}
-        type={type}
-        disabled={!isInteractive}
-        onClick={onClick}
-        aria-label="Search accommodations"
-        aria-busy={isLoading}
-        className={`grid h-12 w-12 shrink-0 place-items-center bg-button-primary-foreground text-center font-button text-button-primary transition md:flex md:h-14 md:w-29 md:items-center md:justify-center md:gap-2 ${rounded} ${
-          isInteractive
-            ? "cursor-pointer hover:bg-smoke active:scale-[0.98]"
-            : "cursor-not-allowed opacity-60"
-        } focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${className}`}
-        {...props}
-      >
-        {isLoading ? (
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-paper/35 border-t-primary" aria-hidden="true" />
-        ) : (
-          <>
-            <span className="hidden h-5 items-center justify-center text-center font-button text-[14px] font-semibold leading-5 md:inline-flex">
-              {children || "Search"}
-            </span>
-            <span
-              aria-hidden="true"
-              className="block h-4 w-4 bg-current"
-              style={{
-                WebkitMask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat',
-                mask: 'url("/assets/icons/ui/arrow-right.svg") center / contain no-repeat',
-              }}
-            />
-          </>
-        )}
-      </button>
-    );
-  },
-);
-
-ExpandedSearchButton.displayName = "ExpandedSearchButton";
 
 function properCase(value: string) {
   return value
@@ -251,7 +191,12 @@ export const SearchBarExpanded: React.FC<SearchBarExpandedProps> = ({
         {showSearchButton && (
           <div className="flex justify-end p-1.5 md:pl-3">
             {buttonSlot ?? (
-              <ExpandedSearchButton variant={variant} isLoading={isLoading} onClick={() => !isLoading && onSearch?.(currentValues)} />
+              <SearchButton
+                aria-label="Search accommodations"
+                variant={variant === "circle" ? "full-circle" : "full-square"}
+                isLoading={isLoading}
+                onClick={() => !isLoading && onSearch?.(currentValues)}
+              />
             )}
           </div>
         )}

@@ -124,6 +124,17 @@ test("SearchBar docs use one toggleable demo instead of static prop tables", () 
   assert.doesNotMatch(mdx, /\| `dateLabel` \/ `dateValue`/);
 });
 
+test("expanded search bar renders the shared SearchButton in its button slot", () => {
+  const expanded = read("src/components/booking/search/SearchBarExpanded.tsx");
+  assert.match(expanded, /import \{ SearchButton \} from "\.\/SearchButton";/);
+  assert.match(
+    expanded,
+    /buttonSlot \?\? \(\s*<SearchButton[\s\S]*?aria-label="Search accommodations"[\s\S]*?variant=\{variant === "circle" \? "full-circle" : "full-square"\}/,
+  );
+  // The bespoke button used to duplicate SearchButton's styling and icon.
+  assert.doesNotMatch(expanded, /ExpandedSearchButton/);
+});
+
 test("component docs use story controls instead of static prop tables", () => {
   // The interactive Props panel on each story is the single source of truth
   // for selectable values; a static table beside it only goes stale.
