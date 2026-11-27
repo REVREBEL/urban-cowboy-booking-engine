@@ -29,7 +29,7 @@ const room: ShapedRoom = {
 function RoomsListCardDemo({ theme }: { theme: "paper" | "copper" | "lake-forest" }) {
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       <RoomsListCard
         room={room}
         imageBaseUrl={process.env.NEXT_PUBLIC_DOCS_BASE_PATH ?? ""}

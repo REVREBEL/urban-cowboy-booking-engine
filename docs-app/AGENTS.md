@@ -20,3 +20,7 @@ The docs app is a separate Fumadocs theme layer, so controls rendered by `@fumad
 
 Component docs must not contain a `| Prop | Values | Notes |` table. The story's Props panel already exposes the wrapper's selectable props (including the variant controls) and is the single source of truth; a static table beside it duplicates that list and drifts out of sync. Keep other reference tables such as data shapes and visual variants — omit only the prop table and its now-empty `## Props` heading.
 
+## Story demos render on light surfaces
+
+Docs story demos must not use `bg-smoke` (or another dark token) as a wrapper canvas, and demo labels must not use `text-paper`. Use the page surface or `bg-paper`, and use foreground/muted text tokens. If a demo previously relied on a dark canvas for light-colored controls, change the control's `colorScheme` to a dark token rather than restoring the canvas. The signboard's `text-paper` is the one exception: it is printed over a dark wooden image. Dark backgrounds painted by the real product components (photo journey steps, the Search button) are part of the product design and are out of scope.
+

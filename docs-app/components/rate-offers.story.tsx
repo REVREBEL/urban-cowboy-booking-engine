@@ -41,7 +41,7 @@ function RateCardDemo() {
   const [expanded, setExpanded] = useState(false);
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       <div className="w-full overflow-x-auto">
         <RateOfferCard
           theme="ride-easy" headline="Ride Easy" eyebrow="FLEXIBLE"
@@ -61,7 +61,7 @@ function RateCardDemo() {
 function ConfigurableOfferDemo() {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       <ConfigurableRateOffer
         config={config}
         live={live}
@@ -84,7 +84,7 @@ function ConfigurableOfferDemo() {
 function SidePanelDemo() {
   const [open, setOpen] = useState(true);
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       {open ? (
         <RateOfferSidePanel
           variant="default" theme="plan-ahead" rateTitle="Plan Ahead"
@@ -111,7 +111,7 @@ function SidePanelDemo() {
 
 function PolicyDemo() {
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       <PolicyDisplay
         title="Payment schedule" orientation="horizontal"
         initialAmount="$586" remainingAmount="$586"

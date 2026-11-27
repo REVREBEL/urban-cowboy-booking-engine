@@ -12,7 +12,7 @@ const imageBaseUrl = process.env.NEXT_PUBLIC_DOCS_BASE_PATH ?? "";
 function LabelsDemo() {
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full space-y-5 rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full space-y-5 rounded-xl p-4 sm:p-6">
       <BestRateGuaranteedLabel tooltipText="Applies to direct bookings." />
       <div className="flex flex-wrap gap-3">
         <PropertyLocationLabel location="catskills" interactive selected
@@ -28,7 +28,7 @@ function LabelsDemo() {
 function SignboardDemo() {
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       <LodgeSignboard
         backgroundImage={`${imageBaseUrl}/assets/decoration/backgrounds/background.png`}
         backboardImage={`${imageBaseUrl}/assets/decoration/backgrounds/backboard.png`}

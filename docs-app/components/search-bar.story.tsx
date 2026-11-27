@@ -11,7 +11,7 @@ function SearchBarDemo({ variant, loading }: {
 }) {
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       <SearchBar
         variant={variant}
         isLoading={loading}
@@ -39,7 +39,7 @@ export const searchBarStory = defineStory({
 function ExpandedSearchDemo({ variant }: { variant: "circle" | "square" }) {
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       <SearchBarExpanded
         variant={variant}
         initialValues={{

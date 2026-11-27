@@ -268,7 +268,7 @@ const makeRoomTypeCardData = (room: ShapedRoom, index: number) => {
 function BuildingExperienceListDemo() {
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full min-h-[800px] rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full min-h-[800px] rounded-xl p-4 sm:p-6">
       <BuildingExperienceList
         criteria={mockCriteria}
         rooms={mockRooms}
@@ -294,7 +294,7 @@ const alpineIcon = <BuildingIcon buildingName="Alpine" />;
 
 function MultiRoomViewBuildingDemo({ layout, displayBuildingIcon }: { layout: "Row" | "Row Reverse" | "StackedCenter" | "StackedLeft"; displayBuildingIcon: boolean }) {
   return (
-    <div className="w-full min-h-[400px] rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full min-h-[400px] rounded-xl p-4 sm:p-6">
       <MultiRoomViewBuilding
         buildingName="Alpine"
         buildingDescription="Built into the hillside above the Lodge, Alpine is home to ten of The Cowboy's most iconic rooms. Every suite pairs a freestanding clawfoot tub in front of a picture window, with the forest and mountains doing the decorating outside."
@@ -368,7 +368,7 @@ function MultiRoomViewListDemo() {
   );
 
   return (
-    <div className="w-full min-h-[600px] rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full min-h-[600px] rounded-xl p-4 sm:p-6">
       <MultiRoomViewList
         buildingGroup1={buildingGroup1}
         buildingGroup2={buildingGroup2}
@@ -386,7 +386,7 @@ export const multiRoomViewListStory = defineStory({
 function MultiRoomViewListItemDemo({ layout }: { layout: "Default" | "Row" | "RowReverse" }) {
   const alpineRooms = mockRooms.filter(r => r.merchandising?.roomTypeGroupKey === "alpine").slice(0, 3);
   return (
-    <div className="w-full min-h-[300px] rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full min-h-[300px] rounded-xl p-4 sm:p-6">
       <MultiRoomViewListItem
         layout={layout}
         roomTypes={alpineRooms.map((r, i) => makeRoomTypeCardData(r, i))}
@@ -421,7 +421,7 @@ export const multiRoomViewListItemRowReverseStory = defineStory({
 // MultiRoomViewRoomTypeCard
 function MultiRoomViewRoomTypeCardDemo({ state }: { state: "Default" | "Focus" }) {
   return (
-    <div className="w-full min-h-[400px] rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full min-h-[400px] rounded-xl p-4 sm:p-6">
       <MultiRoomViewRoomTypeCard
         buildingName="Alpine"
         numberOfBeds="8 beds"
@@ -446,7 +446,7 @@ export const multiRoomViewRoomTypeCardFocusedStory = defineStory({
 // GuestReviewQuoteCard
 function GuestReviewQuoteCardDemo({ size, hasAttribution, hasLink }: { size: "sm" | "md" | "lg"; hasAttribution: boolean; hasLink: boolean }) {
   return (
-    <div className="w-full min-h-[200px] rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full min-h-[200px] rounded-xl p-4 sm:p-6">
       <GuestReviewQuoteCard
         quote="The freestanding clawfoot tub facing the snow-dusted pines was magic."
         reviewer={hasAttribution ? "Sarah Jenkins" : null}

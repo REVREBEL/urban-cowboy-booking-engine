@@ -24,7 +24,7 @@ const FREE_CANCEL_DATE = "December 30";
 
 function FigmaRateCardDemo({ variant }: { variant: "default" | "member" | "package" }) {
   return (
-    <div className="w-full max-w-[523px] mx-auto rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full max-w-[523px] mx-auto rounded-xl p-4 sm:p-6">
       <FigmaRateCard
         eyebrow={variant === "member" ? "Member Exclusive" : "Keep Your Options Open"}
         name={variant === "member" ? "Member Rate" : variant === "package" ? "Cowboy Package" : "Ride Easy"}
@@ -95,7 +95,7 @@ export const figmaRateDetailPopupStory = defineStory({
 
 function FigmaPolicyTimelineDemo() {
   return (
-    <div className="w-full max-w-[523px] mx-auto rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full max-w-[523px] mx-auto rounded-xl p-4 sm:p-6">
       <FigmaPolicyTimeline
         timeline={timeline}
         arrivalDate={SAMPLE_DATE}
@@ -113,7 +113,7 @@ export const figmaPolicyTimelineStory = defineStory({
 // PillarFeatures (no props)
 function PillarFeaturesDemo() {
   return (
-    <div className="w-full max-w-2xl mx-auto rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full max-w-2xl mx-auto rounded-xl p-4 sm:p-6">
       <PillarFeatures />
     </div>
   );

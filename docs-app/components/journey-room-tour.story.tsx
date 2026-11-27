@@ -39,7 +39,7 @@ function RoomTourDemo({ details }: TourDemoProps) {
   const [open, setOpen] = useState(details);
   const [choice, setChoice] = useState(false);
   return (
-    <div className="min-h-dvh bg-smoke text-paper">
+    <div className="min-h-dvh">
       <RoomPhotoTour
         room={room}
         position={0}

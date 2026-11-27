@@ -43,18 +43,13 @@ function ButtonVariantsDemo() {
         {styles.map((variant) => (
           <div key={variant} className="space-y-2">
             <p className="text-xs text-muted-foreground">{variant}</p>
-            {[["bg-paper", "Light"], ["bg-smoke", "Dark"]].map(([surface, label]) => (
-              <div key={surface} className="space-y-1">
-                <p className="text-[11px] text-muted-foreground">{label} surface</p>
-                <div className={`flex flex-wrap items-center gap-2 rounded-xl ${surface} p-3`}>
-                  {colors.map((color) => (
-                    <Button key={color} type="button" colorScheme={color} variant={variant} size="small">
-                      {color}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <div className="flex flex-wrap items-center gap-2 rounded-xl bg-paper p-3">
+              {colors.map((color) => (
+                <Button key={color} type="button" colorScheme={color} variant={variant} size="small">
+                  {color}
+                </Button>
+              ))}
+            </div>
           </div>
         ))}
       </section>
@@ -102,9 +97,9 @@ function ButtonVariantsDemo() {
       </section>
       <section className="space-y-2">
         <h3 className="font-label text-sm uppercase tracking-wider">Icon-only controls</h3>
-        <div className="flex flex-wrap items-center gap-2 rounded-xl bg-smoke p-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl bg-paper p-3">
           {sizes.map((size) => (
-            <Button key={size} type="button" aria-label={`${size} icon control`} iconOnly colorScheme="paper" size={size}>
+            <Button key={size} type="button" aria-label={`${size} icon control`} iconOnly colorScheme="lake-forest" size={size}>
               <span aria-hidden="true">→</span>
             </Button>
           ))}

@@ -144,6 +144,21 @@ test("component docs use story controls instead of static prop tables", () => {
   }
 });
 
+test("story demos render on light surfaces without dark canvases", () => {
+  const files = readdirSync(new URL("docs-app/components/", root))
+    .filter((file) => file.endsWith(".story.tsx"));
+  assert.ok(files.length > 0);
+  for (const file of files) {
+    const source = read(`docs-app/components/${file}`);
+    assert.doesNotMatch(source, /\bbg-smoke\b/, `${file} has a dark demo canvas`);
+    // The signboard keeps light text because it is printed over a dark wooden
+    // image; every other demo label must use a light-surface text token.
+    if (file !== "booking-details.story.tsx") {
+      assert.doesNotMatch(source, /text-paper/, `${file} has light-on-dark demo text`);
+    }
+  }
+});
+
 test("story demos never expose a no-op Unset choice", () => {
   // @fumadocs/story adds "Unset" for optional demo props. When the wrapper
   // also has a default, choosing it changes nothing, so all demo props are
