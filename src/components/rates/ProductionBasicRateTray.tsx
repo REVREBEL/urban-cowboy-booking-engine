@@ -1,4 +1,4 @@
-import { FigmaRateCard, FigmaRateDetailPopup } from "./FigmaRateComponents";
+import { BasicRateCard, FigmaRateDetailPopup } from "./FigmaRateComponents";
 import "./FigmaProductionRateTray.css";
 import { useMemo, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
@@ -283,7 +283,7 @@ export function ProductionRateTray({
                 : "See rate details for cancellation terms";
 
             return (
-              <FigmaRateCard
+              <BasicRateCard
                 key={rate.rateId}
                 eyebrow={eyebrow}
                 name={headline}

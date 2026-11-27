@@ -4,28 +4,28 @@ description: Production rate card variants, detail popup and policy timeline fro
 ---
 
 import {
-  FigmaRateCardStandardStoryControl,
-  FigmaRateCardMemberStoryControl,
-  FigmaRateCardPackageStoryControl,
+  BasicRateCardStandardStoryControl,
+  BasicRateCardMemberStoryControl,
+  BasicRateCardPackageStoryControl,
   FigmaRateDetailPopupStoryControl,
   FigmaPolicyTimelineStoryControl,
 } from '~/components/story-controls';
 
 These components implement the production rate card designs from Figma (1390:31339). They are responsive without fixed dimensions and use shared design-system button controls. Prices and policies in demos are static fixtures; callbacks record actions locally and never call Mews or start payment.
 
-## Rate Card — FigmaRateCard
+## Rate Card — BasicRateCard
 
 ### Standard
 
-<FigmaRateCardStandardStoryControl />
+<BasicRateCardStandardStoryControl />
 
 ### Member Rate
 
-<FigmaRateCardMemberStoryControl />
+<BasicRateCardMemberStoryControl />
 
 ### Package Rate
 
-<FigmaRateCardPackageStoryControl />
+<BasicRateCardPackageStoryControl />
 
 ## Detail Popup — FigmaRateDetailPopup
 
@@ -49,7 +49,7 @@ Visual timeline showing free cancellation date, balance due date and deposit/rem
 ## Usage
 
 ```tsx
-import { FigmaRateCard, FigmaRateDetailPopup, FigmaPolicyTimeline } from '@/components/rates/FigmaRateComponents';
+import { BasicRateCard, FigmaRateDetailPopup, FigmaPolicyTimeline } from '@/components/rates/FigmaRateComponents';
 import { buildCancellationTimeline } from '@/lib/cancellationTimeline';
 
 const timeline = buildCancellationTimeline("2026-11-20", "2027-01-13", 285.60, {
@@ -59,7 +59,7 @@ const timeline = buildCancellationTimeline("2026-11-20", "2027-01-13", 285.60, {
 });
 
 // Rate card
-<FigmaRateCard
+<BasicRateCard
   eyebrow="Keep Your Options Open"
   name="Ride Easy"
   description="Our standard rate for guests who want a little more freedom around their plans."

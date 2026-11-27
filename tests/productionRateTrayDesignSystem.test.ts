@@ -12,7 +12,7 @@ test("production rate actions render named slots through the shared Button", () 
   assert.match(source, /import \{ Button \} from ["']@\/components\/ui\/Button["']/);
   assert.match(tray, /type RateActionSlot =/);
   assert.match(tray, /data-slot=\{slot\}/);
-  assert.match(tray, /<FigmaRateCard/);
+  assert.match(tray, /<BasicRateCard/);
   assert.match(tray, /<FigmaRateDetailPopup/);
   assert.match(replacement, /<FigmaPolicyTimeline/);
   assert.match(source, /<Button\b/);

@@ -85,7 +85,7 @@ export function FigmaPolicyTimeline({ timeline, currency, arrivalDate, language 
 }
 
 /** Figma 1390:31339, standard, member and package rate-card variants. */
-export function FigmaRateCard({
+export function BasicRateCard({
   eyebrow, name, description, policy, roomSummary, total, currency,
   variant = "default", perks, isSelected, isDetailsOpen = false, onDetails, onConfirm, detailsLabel = "View Details", confirmLabel,
   disabled,

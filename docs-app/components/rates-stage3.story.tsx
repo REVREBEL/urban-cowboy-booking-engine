@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { buildCancellationTimeline } from "@/lib/cancellationTimeline";
 import {
-  FigmaRateCard,
+  BasicRateCard,
   FigmaRateDetailPopup,
   FigmaPolicyTimeline,
 } from "@/components/rates/FigmaRateComponents";
@@ -22,10 +22,10 @@ const timeline = buildCancellationTimeline("2026-11-20", SAMPLE_DATE, 285.60, {
 // Timeline free cancellation: 14 days before 2027-01-13 = 2026-12-30
 const FREE_CANCEL_DATE = "December 30";
 
-function FigmaRateCardDemo({ variant }: { variant: "default" | "member" | "package" }) {
+function BasicRateCardDemo({ variant }: { variant: "default" | "member" | "package" }) {
   return (
     <div className="w-full max-w-[523px] mx-auto rounded-xl bg-smoke p-4 sm:p-6">
-      <FigmaRateCard
+      <BasicRateCard
         eyebrow={variant === "member" ? "Member Exclusive" : "Keep Your Options Open"}
         name={variant === "member" ? "Member Rate" : variant === "package" ? "Cowboy Package" : "Ride Easy"}
         description="Our standard rate for guests who want a little more freedom around their plans."
@@ -44,17 +44,17 @@ function FigmaRateCardDemo({ variant }: { variant: "default" | "member" | "packa
 }
 
 export const figmaRateCardStandardStory = defineStory({
-  Component: FigmaRateCardDemo,
+  Component: BasicRateCardDemo,
   args: { initial: { variant: "default" } },
 });
 
 export const figmaRateCardMemberStory = defineStory({
-  Component: FigmaRateCardDemo,
+  Component: BasicRateCardDemo,
   args: { initial: { variant: "member" } },
 });
 
 export const figmaRateCardPackageStory = defineStory({
-  Component: FigmaRateCardDemo,
+  Component: BasicRateCardDemo,
   args: { initial: { variant: "package" } },
 });
 

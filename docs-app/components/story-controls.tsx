@@ -538,15 +538,15 @@ export function GuestReviewQuoteCardAttributionNoLinkStoryControl() {
   return <guestReviewQuoteCardAttributionNoLinkStory.WithControl />;
 }
 
-export function FigmaRateCardStandardStoryControl() {
+export function BasicRateCardStandardStoryControl() {
   return <figmaRateCardStandardStory.WithControl />;
 }
 
-export function FigmaRateCardMemberStoryControl() {
+export function BasicRateCardMemberStoryControl() {
   return <figmaRateCardMemberStory.WithControl />;
 }
 
-export function FigmaRateCardPackageStoryControl() {
+export function BasicRateCardPackageStoryControl() {
   return <figmaRateCardPackageStory.WithControl />;
 }
 
