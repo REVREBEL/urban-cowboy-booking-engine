@@ -31,7 +31,7 @@ const second = "CREATE INDEX IF NOT EXISTS idx_t ON t (id);\n";
 test("committed migrations pass the check gate", () => {
   const result = spawnSync(process.execPath, [runner, "--check"], { cwd: root, encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, new RegExp(`Applied ${committed.migrations.length} migration\\(s\\) twice`));
+  assert.match(result.stdout, new RegExp(`Applied ${committed.migrations.length} migration\\(s\\); replayed idempotent migrations`));
   assert.match(result.stdout, /FK and integrity checks passed/);
 });
 
@@ -56,7 +56,7 @@ test("check applies migrations idempotently", () => {
     assert.equal(migrate(dir, "--record").status, 0);
     const result = migrate(dir, "--check");
     assert.equal(result.status, 0, result.stderr);
-    assert.match(result.stdout, /twice/);
+    assert.match(result.stdout, /replayed idempotent migrations/);
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
@@ -91,4 +91,47 @@ test("sequence gaps and conflict markers are rejected before the manifest check"
     rmSync(gap, { recursive: true, force: true });
     rmSync(markers, { recursive: true, force: true });
   }
+});
+
+test("explicit apply-once migrations may add SQLite columns", () => {
+  const dir = fixture({ "0001_first.sql": first, "0002_columns.sql": "-- d1-migration: apply-once\nALTER TABLE t ADD COLUMN title TEXT;\n" });
+  try {
+    assert.equal(migrate(dir, "--record").status, 0);
+    const result = migrate(dir, "--check");
+    assert.equal(result.status, 0, result.stderr);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("redesign migrates seeded data while retaining existing readers and relationships", async () => {
+  const { DatabaseSync } = await import("node:sqlite");
+  const { readdirSync } = await import("node:fs");
+  const db = new DatabaseSync(":memory:");
+  db.exec("PRAGMA foreign_keys=ON");
+  try {
+    const paths = readdirSync(join(root, "migrations")).filter(n => /^\d{4}_.*\.sql$/.test(n)).sort();
+    for (const name of paths.filter(n => n < "0014_")) db.exec(readFileSync(join(root, "migrations", name), "utf8"));
+    db.exec(readFileSync(join(root, "seed.sql"), "utf8"));
+    db.exec(`INSERT INTO content_items(id,tenant_id,kind,slug,status,current_revision_id)
+      SELECT 'test-extra-content',tenant_id,'add_on',id,'published','test-extra-revision' FROM add_ons LIMIT 1;
+      INSERT INTO content_revisions(id,content_item_id,revision,payload_json)
+      VALUES ('test-extra-revision','test-extra-content',1,'{"imageUrl":"https://example.com/image.svg","itemName":"Example"}');`);
+    for (const name of paths.filter(n => n >= "0014_")) db.exec(readFileSync(join(root, "migrations", name), "utf8"));
+    const count = table => db.prepare(`SELECT count(*) AS n FROM ${table}`).get().n;
+    for (const [table,n] of Object.entries({ amenities:76, amenity_editorial:76, room_types:22, buildings:9, offers:8, rates:8, add_ons:9, extras:9, outlets:3, policies:4, rate_policies:4, room_type_reviews:11, content_sections:1, content_section_items:3 })) {
+      assert.equal(count(table), n, table);
+    }
+    assert.equal(db.prepare("SELECT count(*) AS n FROM room_types WHERE building_id IS NOT NULL").get().n,22);
+    assert.equal(db.prepare("SELECT count(*) AS n FROM media_placements WHERE target_table='extras'").get().n,1);
+    const media = db.prepare("SELECT media_asset_id FROM media_placements WHERE target_table='extras'").get().media_asset_id;
+    assert.equal(db.prepare("SELECT status FROM media_asset_metadata WHERE media_asset_id=?").get(media).status, "active");
+    db.prepare("INSERT INTO media_versions(id,media_asset_id,version,squarespace_asset_id,squarespace_url) VALUES (?,?,1,?,?)").run(`${media}:v1`, media, `${media}:v1`, `urn:media:${media}:v1`);
+    db.prepare("UPDATE media_asset_metadata SET current_version_id=? WHERE media_asset_id=?").run(`${media}:v1`, media);
+    assert.equal(db.prepare("SELECT current_version_id FROM media_asset_metadata WHERE media_asset_id=?").get(media).current_version_id, `${media}:v1`);
+    db.prepare("UPDATE media_asset_metadata SET status='retired' WHERE media_asset_id=?").run(media);
+    assert.equal(db.prepare("SELECT status FROM media_asset_metadata WHERE media_asset_id=?").get(media).status, "retired");
+    assert.throws(() => db.exec("UPDATE outlets SET outlet_type_id='invalid'"));
+    assert.throws(() => db.exec("UPDATE rate_card_geographic_settings SET mode='invalid'"));
+    assert.deepEqual(db.prepare("PRAGMA foreign_key_check").all(), []);
+    assert.equal(db.prepare("PRAGMA integrity_check").get().integrity_check,"ok");
+  } finally { db.close(); }
 });
