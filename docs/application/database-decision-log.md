@@ -2,7 +2,7 @@
 
 Working record for the Urban Cowboy database redesign. Add a dated entry whenever a decision is made, including the current structure (OLD), the agreed direction (NEW), and implementation or review status. Keep open questions separate from decisions. Update the migration and validation references as work progresses.
 
-**Current status:** first additive lookup/property-assignment migration is prepared on `draft/amenity-schema-foundation` and applied to the local review copy on the Mac. Production has not been migrated. Consolidation, global behavior and existing assignment backfill remain pending. Baseline: main at `e54b19ae50f661c9a08ee6080443b9a1dc3d8394`; live D1 amenity schema and counts were inspected on 2026-11-26. Database and source data may change.
+**Current status:** first additive lookup/property-assignment migration is prepared on `draft/amenity-schema-foundation` and applied to the local review copy on the Mac. Production has not been migrated. A local-only unified amenities preview is also applied to the Mac review copy. A production-ready consolidation, global behavior and existing assignment backfill remain pending. Baseline: main at `e54b19ae50f661c9a08ee6080443b9a1dc3d8394`; live D1 amenity schema and counts were inspected on 2026-11-26. Database and source data may change.
 
 ## Decisions — 2026-11-26
 
@@ -64,3 +64,7 @@ Working record for the Urban Cowboy database redesign. Add a dated entry wheneve
 - [Webflow photo hotspots and amenity contract](webflow-photo-hotspots.md)
 - [Current migrations](../../migrations/)
 - First migration: `0013_amenity_foundation.sql` on `draft/amenity-schema-foundation`, for local review. Initial lookup and property-assignment tables only; it does not consolidate existing amenity tables, assign existing amenities to locations, or implement global/exception behavior.\n- Local review copy created from the live D1 export on 2026-11-26 and opened with DbGate. The migration was applied directly to this SQLite copy; it is not marked in a Wrangler ledger. Rebuild the local copy or reconcile the ledger before using a migration runner on it.\n- Production application: not scheduled.
+
+## Local unified amenity preview — 2026-11-27
+
+`scripts/schema-review/amenity_review_preview.sql` on `draft/amenity-schema-foundation` is a **local review preview, not a production D1 migration**. It rebuilds `amenities` with the agreed proposed fields, copies `amenity_editorial` values into it, and removes the separate editorial table from the review copy. Type/category, selling points, slug and global values remain NULL pending verified source mapping; NULL global is unknown rather than disabled. SQLite integrity and foreign-key checks passed; all 76 editorial rows and 253 room assignments were preserved and field comparisons returned zero differences. A pre-preview local backup is `~/Documents/Urban-Cowboy-Database-Review/urban-cowboy-before-amenity-unification.sqlite`. Application compatibility, idempotent production migration and remaining data mappings are still pending.
