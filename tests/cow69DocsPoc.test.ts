@@ -131,6 +131,8 @@ test("the removed compact SearchBar and legacy component showcase leave no refer
   assert.doesNotMatch(packageJson, /"components":/);
   assert.doesNotMatch(smokeScript, /21 – 24 Nov/);
   assert.match(smokeScript, /"components\/search-bar\/index\.html": \["2026-11-21 — 2026-11-24", "Search accommodations"\]/);
+  const runtimeTest = read("tests/docsRuntime.test.mjs");
+  assert.doesNotMatch(runtimeTest, /page: "search-bar", asset: "assets\/icons\/ui\/arrow-right\.svg"/);
 });
 
 test("expanded search bar renders the shared SearchButton in its button slot", () => {
