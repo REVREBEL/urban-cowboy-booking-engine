@@ -215,6 +215,17 @@ test("story demos never expose a no-op Unset choice", () => {
   }
 });
 
+test("color swatch demo has a concrete color and static smoke coverage", () => {
+  const component = read("docs-app/components/color-swatch.tsx");
+  const story = read("docs-app/components/color-swatch.story.tsx");
+  assert.doesNotMatch(component, /color\?:/);
+  assert.match(story, /color: "var\(--lake-forest\)"/);
+  // next/image warns when a rounded DOM height disagrees with a fractional attribute.
+  assert.match(component, /width=\{21\} height=\{23\}/);
+  assert.match(smokeScript, /"components\/color-swatch\/index\.html",/);
+  assert.match(smokeScript, /"components\/color-swatch\/index\.html": \[/);
+});
+
 test("component-name headings have a distinct docs title style", () => {
   const mdx = read("docs-app/content/docs/components/search-bar.mdx");
   assert.match(mdx, /<div className="docs-component-heading">\n\n## Expanded search panel/);

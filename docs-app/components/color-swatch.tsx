@@ -9,7 +9,7 @@ export type ColorSwatchProps = {
   colorToken: string;
   hexValue: string;
   oklchValue: string;
-  color?: string;
+  color: string;
 };
 
 /** Figma color--swatch (1478:813), using the booking engine's real type and color tokens. */
@@ -18,7 +18,7 @@ export function ColorSwatch({
   colorToken,
   hexValue,
   oklchValue,
-  color = "var(--lake-forest-500, #184428)",
+  color,
 }: ColorSwatchProps) {
   const [copied, setCopied] = useState(false);
 
@@ -49,7 +49,7 @@ export function ColorSwatch({
               title={copied ? "Copied" : `Copy ${hexValue}`}
               className={styles.copyButton}
             >
-              <Image className={styles.copyIcon} src="/icons/color-swatch-copy.svg" alt="" width={21} height={24} priority />
+              <Image className={styles.copyIcon} src="/icons/color-swatch-copy.svg" alt="" width={21} height={23} />
               <span className={styles.srOnly} aria-live="polite">{copied ? "Color value copied" : ""}</span>
             </button>
             <div className={styles.itemWrapper}>

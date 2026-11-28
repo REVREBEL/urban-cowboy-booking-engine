@@ -9,6 +9,7 @@ export const colorSwatchStory = defineStory({
       colorToken: "--lake-forest",
       hexValue: "#184428",
       oklchValue: "oklch(27.72% 0.05 152.42)",
+      color: "var(--lake-forest)",
     },
   },
 });
