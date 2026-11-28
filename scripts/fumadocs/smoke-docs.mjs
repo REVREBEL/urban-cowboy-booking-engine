@@ -119,8 +119,7 @@ const markersByPage = {
   "components/progress-step/index.html": ["Stepper"],
   "design-tokens/typography/index.html": ["Font families", "--font-heading", "DesertRain", "Aa Bb Cc 0123456789"],
   "design-tokens/colors/index.html": [
-    "Primitive palette", "--paper-500", "--color-primary", "Contrast pairings",
-    'data-name="color--swatch"', "Lake Forest 500", "#0e301a",
+    "Main colors", "—lake-forest", "Oxidized Teal", 'data-name="color--swatch"', "#0e301a",
   ],
   "design-tokens/general-tokens/index.html": ["Radii", "--radius-control", "--shadow-card", "--border-width-medium", "Gaps in the current theme"],
 };

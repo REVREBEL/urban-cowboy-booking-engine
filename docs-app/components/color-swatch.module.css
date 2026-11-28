@@ -8,7 +8,13 @@
   overflow: hidden;
   padding: 40px 30px;
   border-radius: 15px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.12);
   color: var(--paper, #f2f2f2);
+}
+
+/* Figma outlines the light swatches so they stay legible on a light page. */
+.swatch[data-dark-ink="true"] {
+  border: 1px solid var(--lake-forest, #184428);
 }
 
 .container {

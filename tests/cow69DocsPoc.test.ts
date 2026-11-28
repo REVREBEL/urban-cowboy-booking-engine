@@ -215,19 +215,28 @@ test("story demos never expose a no-op Unset choice", () => {
   }
 });
 
-test("Colors page uses the Figma color swatch for palette cards", () => {
+test("Colors page uses the Figma color swatch for the twelve main colors", () => {
   const showcase = read("docs-app/components/colors-showcase.tsx");
   const swatch = read("docs-app/components/color-swatch.tsx");
+  const swatchCss = read("docs-app/components/color-swatch.module.css");
   assert.match(showcase, /import \{ ColorSwatch \} from "\.\/color-swatch"/);
   assert.match(showcase, /<PaletteCard/);
   assert.doesNotMatch(showcase, /function Swatch\(/);
   assert.match(showcase, /oklchToHex/);
-  // Light palette cards need dark ink, and the copy icon must follow it.
+  assert.match(showcase, /const MAIN_COLORS = \[/);
+  assert.equal((showcase.match(/\{ name: "/g) ?? []).length, 12);
+  assert.match(showcase, /grid-cols-1 gap-6 sm:grid-cols-2/);
+  // Only the Figma main-colors frame is rendered on this page.
+  assert.doesNotMatch(showcase, /Primitive palette|Semantic roles|Contrast pairings|controlColors/);
+  // Light palette cards need dark ink, a border and a dark copy icon.
   assert.match(swatch, /foreground: string/);
   assert.match(swatch, /color: foreground/);
   assert.match(swatch, /width=\{21\} height=\{23\}/);
+  assert.match(swatch, /colorToken\.replace\(\/\^--\/, "—"\)/);
   assert.match(read("docs-app/public/icons/color-swatch-copy.svg"), /fill="#F2F2F2"/);
-  assert.match(read("docs-app/components/color-swatch.module.css"), /data-dark-ink="true"\] \.copyIcon/);
+  assert.match(swatchCss, /data-dark-ink="true"\] \{[\s\S]*?border: 1px solid/);
+  assert.match(swatchCss, /data-dark-ink="true"\] \.copyIcon/);
+  assert.match(swatchCss, /box-shadow:/);
 });
 
 test("component-name headings have a distinct docs title style", () => {

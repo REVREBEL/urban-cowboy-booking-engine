@@ -119,11 +119,14 @@ test("copy affordances use accessible native controls", () => {
   assert.match(source, /aria-label=/);
   assert.match(source, /aria-live="polite"/);
   assert.match(source, /navigator\.clipboard\.writeText/);
-  for (const file of [
-    "typography-showcase.tsx", "colors-showcase.tsx", "general-tokens-showcase.tsx",
+  for (const [file, copyControl] of [
+    ["typography-showcase.tsx", /TokenCopyButton/],
+    // Main-color cards copy their HEX through the Figma ColorSwatch's own button.
+    ["colors-showcase.tsx", /ColorSwatch/],
+    ["general-tokens-showcase.tsx", /TokenCopyButton/],
   ]) {
     const component = read(`docs-app/components/${file}`);
     assert.match(component, /design-tokens\.generated\.json/);
-    assert.match(component, /TokenCopyButton/);
+    assert.match(component, copyControl);
   }
 });

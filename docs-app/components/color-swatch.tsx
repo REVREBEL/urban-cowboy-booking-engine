@@ -61,7 +61,7 @@ export function ColorSwatch({
             </button>
             <div className={styles.itemWrapper}>
               <h3 className={styles.name}>{colorName}</h3>
-              <p className={styles.token}>{colorToken}</p>
+              <p className={styles.token}>{colorToken.replace(/^--/, "—")}</p>
             </div>
           </div>
           <div className={styles.bottomSection}>
