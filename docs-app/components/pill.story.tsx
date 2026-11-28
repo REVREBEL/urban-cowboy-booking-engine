@@ -9,6 +9,7 @@ import {
   type ButtonStyle,
 } from "../../src/components/ui/Button";
 import { defineStory } from "../lib/story";
+import { PaletteSpecimen } from "./palette-specimen";
 
 const colors = Object.keys(COLOR_PALETTE) as ButtonColor[];
 const styles: ButtonStyle[] = ["filled", "outline", "transparent"];
@@ -31,8 +32,8 @@ function InteractiveExamples() {
   const [features, setFeatures] = useState(["Outdoor soak"]);
 
   return (
-    <div className="space-y-4 rounded-xl bg-smoke p-6">
-      <p className="text-sm text-paper">Select your interests</p>
+    <div className="space-y-4 rounded-xl p-6">
+      <p className="text-sm text-foreground">Select your interests</p>
       <div className="flex flex-wrap gap-2">
         {["Outdoor soak", "Scenic views", "Fireplace", "Dog friendly"].map((feature) => {
           const selected = features.includes(feature);
@@ -42,7 +43,7 @@ function InteractiveExamples() {
               type="button"
               pressed={selected}
               variant={selected ? "filled" : "outline"}
-              colorScheme={selected ? "alpine-linen" : "paper"}
+              colorScheme="lake-forest"
               onClick={() =>
                 setFeatures((items) =>
                   selected ? items.filter((item) => item !== feature) : [...items, feature]
@@ -54,10 +55,10 @@ function InteractiveExamples() {
           );
         })}
       </div>
-      <PillButton colorScheme="paper" variant="outline" disabled>
+      <PillButton colorScheme="lake-forest" variant="outline" disabled>
         Unavailable
       </PillButton>
-      <p className="text-xs text-paper/80">Selected: {features.join(", ") || "none"}</p>
+      <p className="text-xs text-muted-foreground">Selected: {features.join(", ") || "none"}</p>
     </div>
   );
 }
@@ -68,18 +69,15 @@ function PillVariantsDemo() {
       {styles.map((variant) => (
         <section key={variant} className="space-y-3">
           <h3 className="font-label text-sm uppercase tracking-wider">{variant}</h3>
-          {[["bg-paper", "Light"], ["bg-smoke", "Dark"]].map(([surface, label]) => (
-            <div key={surface} className="space-y-2">
-              <p className="text-xs text-muted-foreground">{label} surface</p>
-              <div className={`flex flex-wrap items-center gap-2 rounded-xl ${surface} p-3`}>
-                {colors.map((color) => (
-                  <Pill key={color} colorScheme={color} variant={variant}>
-                    {color}
-                  </Pill>
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className="flex flex-wrap items-center gap-2 rounded-xl bg-paper p-3">
+            {colors.map((color) => (
+              <PaletteSpecimen key={color} color={color} variant={variant}>
+                <Pill colorScheme={color} variant={variant}>
+                  {color}
+                </Pill>
+              </PaletteSpecimen>
+            ))}
+          </div>
         </section>
       ))}
 
@@ -137,12 +135,16 @@ function PillVariantsDemo() {
             <Pill colorScheme={color} variant="filled">
               Pill
             </Pill>
-            <Button colorScheme={color} variant="outline" size="xsmall">
-              Button outline
-            </Button>
-            <Pill colorScheme={color} variant="outline">
-              Pill outline
-            </Pill>
+            <PaletteSpecimen color={color} variant="outline">
+              <Button colorScheme={color} variant="outline" size="xsmall">
+                Button outline
+              </Button>
+            </PaletteSpecimen>
+            <PaletteSpecimen color={color} variant="outline">
+              <Pill colorScheme={color} variant="outline">
+                Pill outline
+              </Pill>
+            </PaletteSpecimen>
           </div>
         ))}
       </section>

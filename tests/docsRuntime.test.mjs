@@ -154,7 +154,7 @@ const docsAssetPages = [
 test("COW-85 inline mask URLs are base-path prefixed and their assets are copied", async () => {
   const cases = [
     { page: "booking-chrome", asset: "assets/brand/logos/Cowboy.svg" },
-    { page: "search-bar", asset: "assets/icons/ui/arrow-right.svg" },
+    { page: "arrival", asset: "assets/icons/ui/arrow-right.svg" },
     { page: "focus-amenity", asset: "assets/icons/badges/features/wifi_badge.svg" },
     { page: "booking-details", asset: "assets/decoration/backgrounds/background.png" },
   ];

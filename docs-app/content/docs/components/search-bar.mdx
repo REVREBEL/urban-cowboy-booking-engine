@@ -1,20 +1,13 @@
 ---
-title: SearchBar
-description: Booking search summary with date, guest and offer controls.
+title: SearchBarExpanded
+description: Expanded booking search bar with property, dates, guests and promo selectors.
 ---
 
-import { SearchBarStoryControl, ExpandedSearchStoryControl } from '~/components/story-controls';
+import { ExpandedSearchStoryControl } from '~/components/story-controls';
 
-`SearchBar` composes the date, guest and offer selectors with the shared `SearchButton`.
-The demos keep click state in a docs-only harness; they do not call the Mews API or start a booking.
-Use the **Props** panel to switch the action between circle and square and to preview the loading state.
-
-<SearchBarStoryControl />
-
-## Responsive behaviour
-
-The selector fields wrap on narrow screens and keep accessible labels. The search action does not
-shrink below its touch target.
+`SearchBarExpanded` keeps property, dates, guests and promo controls in one bar and renders the
+shared `SearchButton` in its `buttonSlot`. The demo uses `initialValues` and local callbacks; it
+does not validate a promo code or start a booking.
 
 <div className="docs-component-heading">
 
@@ -22,13 +15,18 @@ shrink below its touch target.
 
 </div>
 
-`SearchBarExpanded` is the composite variant that keeps property, dates, guests and promo controls
-in one bar. The demo uses `initialValues` and local callbacks; it does not validate a promo code or
-start a search.
-
 <ExpandedSearchStoryControl />
+
+Use the **Props** panel to set the panel shape, the `buttonVariant` of the shared `SearchButton`
+in its button slot — full or icon, circle or square — and `isLoading` to preview the spinner. A
+custom `buttonSlot` overrides the default action.
+
+## Responsive behaviour
+
+The selector fields wrap on narrow screens and keep accessible labels. The search action does not
+shrink below its touch target.
 
 The individual dropdowns are documented on the `Search dropdowns`, `DateRangePicker`,
 `TravelPartyButton` and `SearchButton` pages.
 
-[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBar.tsx) · [View expanded source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBarExpanded.tsx)
+[View source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/components/booking/search/SearchBarExpanded.tsx)

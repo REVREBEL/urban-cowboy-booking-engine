@@ -1,47 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { SearchBar, type SearchBarVariant } from "../../src/components/booking/search/SearchBar";
-import { SearchBarExpanded } from "../../src/components/booking/search/SearchBarExpanded";
+import { type SearchButtonVariant } from "../../src/components/booking/search/SearchButton";
+import {
+  SearchBarExpanded,
+  type SearchBarExpandedVariant,
+} from "../../src/components/booking/search/SearchBarExpanded";
 import { defineStory } from "../lib/story";
 
-function SearchBarDemo({ variant, loading }: {
-  variant: SearchBarVariant;
-  loading: boolean;
+function ExpandedSearchDemo({ variant, buttonVariant, isLoading }: {
+  variant: SearchBarExpandedVariant;
+  buttonVariant: SearchButtonVariant;
+  isLoading: boolean;
 }) {
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
-      <SearchBar
-        variant={variant}
-        isLoading={loading}
-        dateLabel="Dates"
-        dateValue="21 – 24 Nov"
-        guestLabel="Guests"
-        guestValue="2 adults"
-        promoLabel="Offer"
-        promoValue="Add a code"
-        onDateClick={() => setLast("dates")}
-        onGuestClick={() => setLast("guests")}
-        onPromoClick={() => setLast("offer")}
-        onSearch={() => setLast("search")}
-      />
-      <p className="sr-only" role="status">{`Last action: ${last}`}</p>
-    </div>
-  );
-}
-
-export const searchBarStory = defineStory({
-  Component: SearchBarDemo,
-  args: { initial: { variant: "circle", loading: false } },
-});
-
-function ExpandedSearchDemo({ variant }: { variant: "circle" | "square" }) {
-  const [last, setLast] = useState("none");
-  return (
-    <div className="w-full rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full rounded-xl p-4 sm:p-6">
       <SearchBarExpanded
         variant={variant}
+        buttonVariant={buttonVariant}
+        isLoading={isLoading}
         initialValues={{
           property: "catskills",
           checkInDate: "2026-11-21",
@@ -60,5 +38,5 @@ function ExpandedSearchDemo({ variant }: { variant: "circle" | "square" }) {
 
 export const expandedSearchStory = defineStory({
   Component: ExpandedSearchDemo,
-  args: { initial: { variant: "circle" } },
+  args: { initial: { variant: "circle", buttonVariant: "full-circle", isLoading: false } },
 });

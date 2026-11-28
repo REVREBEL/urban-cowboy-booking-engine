@@ -1,6 +1,6 @@
 // COW-69 docs PoC: inventory, static-export config and real-component import contract.
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 import { resolveDocsBasePath } from "../scripts/fumadocs/base-path.mjs";
 import { contrastForTokens } from "../scripts/fumadocs/contrast.mjs";
@@ -113,15 +113,44 @@ test("PoC stories import real components through client story controls", () => {
   assert.match(preferenceMdx, /docs-only harness/);
 });
 
-test("SearchBar docs use one toggleable demo instead of static prop tables", () => {
+test("the removed compact SearchBar and legacy component showcase leave no references", () => {
+  assert.equal(existsSync(new URL("src/components/booking/search/SearchBar.tsx", root)), false);
+  assert.equal(existsSync(new URL("components.html", root)), false);
+  assert.equal(existsSync(new URL("src/component-library/", root)), false);
+
   const story = read("docs-app/components/search-bar.story.tsx");
   const mdx = read("docs-app/content/docs/components/search-bar.mdx");
-  assert.match(story, /variant: SearchBarVariant;\n  loading: boolean;/);
-  assert.match(story, /initial: \{ variant: "circle", loading: false \}/);
-  assert.doesNotMatch(story, /searchBarSquareStory|searchBarLoadingStory/);
-  assert.equal((mdx.match(/<SearchBarStoryControl \/>/g) ?? []).length, 1);
-  assert.doesNotMatch(mdx, /<SearchBarSquareStoryControl \/>|<SearchBarLoadingStoryControl \/>/);
-  assert.doesNotMatch(mdx, /\| `dateLabel` \/ `dateValue`/);
+  const controls = read("docs-app/components/story-controls.tsx");
+  const viteConfig = read("vite.config.ts");
+  const packageJson = read("package.json");
+  assert.doesNotMatch(story, /\bSearchBar\b(?!Expanded)/);
+  assert.doesNotMatch(mdx, /<SearchBarStoryControl \/>/);
+  assert.match(mdx, /title: SearchBarExpanded/);
+  assert.doesNotMatch(storyControls, /SearchBarStoryControl/);
+  assert.doesNotMatch(viteConfig, /components\.html/);
+  assert.doesNotMatch(packageJson, /"components":/);
+  assert.doesNotMatch(smokeScript, /21 – 24 Nov/);
+  assert.match(smokeScript, /"components\/search-bar\/index\.html": \["2026-11-21 — 2026-11-24", "Search accommodations"\]/);
+  const runtimeTest = read("tests/docsRuntime.test.mjs");
+  assert.doesNotMatch(runtimeTest, /page: "search-bar", asset: "assets\/icons\/ui\/arrow-right\.svg"/);
+});
+
+test("expanded search bar renders the shared SearchButton in its button slot", () => {
+  const expanded = read("src/components/booking/search/SearchBarExpanded.tsx");
+  assert.match(expanded, /import \{ SearchButton, type SearchButtonVariant \} from "\.\/SearchButton";/);
+  assert.match(expanded, /buttonVariant\?: SearchButtonVariant;/);
+  assert.match(
+    expanded,
+    /buttonSlot \?\? \(\s*<SearchButton[\s\S]*?aria-label="Search accommodations"[\s\S]*?variant=\{buttonVariant \?\? \(variant === "circle" \? "full-circle" : "full-square"\)\}/,
+  );
+  // The bespoke button used to duplicate SearchButton's styling and icon.
+  assert.doesNotMatch(expanded, /ExpandedSearchButton/);
+
+  const story = read("docs-app/components/search-bar.story.tsx");
+  assert.match(story, /buttonVariant: SearchButtonVariant;/);
+  assert.match(story, /<SearchBarExpanded[\s\S]*?buttonVariant=\{buttonVariant\}/);
+  assert.match(story, /<SearchBarExpanded[\s\S]*?isLoading=\{isLoading\}/);
+  assert.match(story, /initial: \{ variant: "circle", buttonVariant: "full-circle", isLoading: false \}/);
 });
 
 test("component docs use story controls instead of static prop tables", () => {
@@ -142,6 +171,34 @@ test("component docs use story controls instead of static prop tables", () => {
     const mdx = readFileSync(file, "utf8");
     assert.doesNotMatch(mdx, /^\| Prop \| Values \| Notes \|$/m, `${file.pathname} has a static prop table`);
   }
+});
+
+test("story demos render on light surfaces without dark canvases", () => {
+  // Any dark palette token used as a demo wrapper would reintroduce the
+  // decorative canvas; only the bounded .docs-contrast-specimen swatch is dark.
+  const darkCanvas = /\bbg-(?:smoke|dark|foreground|lake-forest|cowboy-umber|oxblood)\b/;
+  const signboard = /<span className="text-paper">Find your stay<\/span>/g;
+  const files = readdirSync(new URL("docs-app/components/", root))
+    .filter((file) => file.endsWith(".story.tsx"));
+  assert.ok(files.length > 0);
+  for (const file of files) {
+    const source = read(`docs-app/components/${file}`);
+    assert.doesNotMatch(source, darkCanvas, `${file} has a dark demo canvas`);
+    // The signboard keeps light text because it is printed over a dark wooden
+    // image; strip only that span before checking the rest of the demo.
+    const withoutSignboard = source.replace(signboard, "");
+    assert.doesNotMatch(withoutSignboard, /text-paper/, `${file} has light-on-dark demo text`);
+  }
+
+  const buttonStory = read("docs-app/components/button.story.tsx");
+  const pillStory = read("docs-app/components/pill.story.tsx");
+  assert.match(buttonStory, /<PaletteSpecimen key=\{color\} color=\{color\} variant=\{variant\}>/);
+  assert.match(pillStory, /<PaletteSpecimen key=\{color\} color=\{color\} variant=\{variant\}>/);
+  assert.match(globalCss, /\.docs-contrast-specimen \{[^}]*background-color: var\(--color-smoke\)/);
+  assert.match(
+    read("src/styles/room-photo-tour.css"),
+    /\.j-tour-footer \{[^}]*color: var\(--color-paper\)/,
+  );
 });
 
 test("story demos never expose a no-op Unset choice", () => {

@@ -83,7 +83,7 @@ const markersByPage = {
   "components/dog-toggle-button/index.html": ["Bringing the dog"],
   "components/travel-party-button/index.html": ["Just the two of us"],
   "components/search-button/index.html": ["icon-circle"],
-  "components/search-bar/index.html": ["21 – 24 Nov"],
+  "components/search-bar/index.html": ["2026-11-21 — 2026-11-24", "Search accommodations"],
   "components/search-dropdowns/index.html": ["Guest, location and promo panels"],
   "components/booking-chrome/index.html": ["Advance step"],
   "components/conversion-badges/index.html": ["Badges visible"],

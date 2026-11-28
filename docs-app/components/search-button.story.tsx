@@ -7,14 +7,14 @@ const variants: SearchButtonVariant[] = ["full-circle", "icon-circle", "full-squ
 
 function SearchButtonVariants() {
   return (
-    <div className="flex w-full flex-wrap items-center gap-4 rounded-xl bg-smoke p-4">
+    <div className="flex w-full flex-wrap items-center gap-4 rounded-xl p-4">
       {variants.map((variant) => (
-        <div key={variant} className="flex flex-col items-center gap-2 text-paper">
+        <div key={variant} className="flex flex-col items-center gap-2 text-foreground">
           <SearchButton variant={variant} aria-label={`Search (${variant})`} />
           <span className="text-xs">{variant}</span>
         </div>
       ))}
-      <div className="flex flex-col items-center gap-2 text-paper">
+      <div className="flex flex-col items-center gap-2 text-foreground">
         <SearchButton variant="full-circle" isLoading aria-label="Search (loading)" />
         <span className="text-xs">loading</span>
       </div>

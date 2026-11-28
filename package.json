@@ -20,7 +20,6 @@
     "admin:deploy:check": "node scripts/deploy-admin.mjs --check",
     "dev:worker": "VITE_SHOW_API_DEBUGGER=true vite build && wrangler dev --port 8787",
     "dev:web": "vite",
-    "components": "vite --open /components.html",
     "build": "vite build",
     "preview": "npm run build && wrangler dev --port 8787",
     "deploy": "node scripts/deploy-worker.mjs",

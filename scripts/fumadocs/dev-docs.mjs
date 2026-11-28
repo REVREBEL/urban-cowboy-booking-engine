@@ -35,16 +35,33 @@ const child = spawn("npm", ["run", "dev", "-w", "@urban-cowboy/docs"], {
 
 const watchers = new Map();
 function watchTree(directory, onChange) {
-  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+  let entries;
+  try {
+    entries = readdirSync(directory, { withFileTypes: true });
+  } catch (error) {
+    // A watched directory can disappear while the dev server is running.
+    if (error.code === "ENOENT") return;
+    throw error;
+  }
+  for (const entry of entries) {
     const path = join(directory, entry.name);
     if (entry.isDirectory()) watchTree(path, onChange);
   }
   if (!watchers.has(directory)) {
-    watchers.set(directory, watch(directory, () => {
+    const watcher = watch(directory, () => {
       // Re-walk so directories created after startup are watched too.
       watchTree(directory, onChange);
       onChange();
-    }));
+    });
+    watcher.on("error", (error) => {
+      if (error.code === "ENOENT") {
+        watcher.close();
+        watchers.delete(directory);
+        return;
+      }
+      console.error(`[docs-dev] watch ${directory} failed:`, error);
+    });
+    watchers.set(directory, watcher);
   }
 }
 

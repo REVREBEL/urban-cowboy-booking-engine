@@ -11,7 +11,7 @@ type Which = "guests" | "location" | "promo";
 function SearchDropdownDemo({ which }: { which: Which }) {
   const [last, setLast] = useState("none");
   return (
-    <div className="w-full min-h-64 rounded-xl bg-smoke p-4 sm:p-6">
+    <div className="w-full min-h-64 rounded-xl p-4 sm:p-6">
       {which === "guests" && (
         <SearchBarGuestDropdown
           initialCounts={{ adults: 2, children: 0 }}
