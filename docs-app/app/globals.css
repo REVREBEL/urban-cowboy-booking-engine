@@ -204,6 +204,17 @@ article#nd-page .prose.flex-1 {
   background-color: var(--color-fd-ring);
 }
 
+/* The light and paper schemes use paper as the text colour of outline and
+   transparent controls. Keep the docs page light, but give those two schemes
+   a small dark specimen so their labels stay readable. */
+.docs-contrast-specimen {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background-color: var(--color-smoke);
+}
+
 /* The Fumadocs prose preset centres table headings; component API tables read
    better with headers aligned to the cells they describe. */
 .prose table th,

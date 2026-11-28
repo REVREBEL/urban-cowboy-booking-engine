@@ -9,6 +9,7 @@ import {
   type ButtonStyle,
 } from "../../src/components/ui/Button";
 import { defineStory } from "../lib/story";
+import { PaletteSpecimen } from "./palette-specimen";
 
 const colors = Object.keys(COLOR_PALETTE) as ButtonColor[];
 const styles: ButtonStyle[] = ["filled", "outline", "transparent"];
@@ -45,9 +46,11 @@ function ButtonVariantsDemo() {
             <p className="text-xs text-muted-foreground">{variant}</p>
             <div className="flex flex-wrap items-center gap-2 rounded-xl bg-paper p-3">
               {colors.map((color) => (
-                <Button key={color} type="button" colorScheme={color} variant={variant} size="small">
-                  {color}
-                </Button>
+                <PaletteSpecimen key={color} color={color} variant={variant}>
+                  <Button type="button" colorScheme={color} variant={variant} size="small">
+                    {color}
+                  </Button>
+                </PaletteSpecimen>
               ))}
             </div>
           </div>

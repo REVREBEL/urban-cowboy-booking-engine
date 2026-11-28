@@ -170,18 +170,31 @@ test("component docs use story controls instead of static prop tables", () => {
 });
 
 test("story demos render on light surfaces without dark canvases", () => {
+  // Any dark palette token used as a demo wrapper would reintroduce the
+  // decorative canvas; only the bounded .docs-contrast-specimen swatch is dark.
+  const darkCanvas = /\bbg-(?:smoke|dark|foreground|lake-forest|cowboy-umber|oxblood)\b/;
+  const signboard = /<span className="text-paper">Find your stay<\/span>/g;
   const files = readdirSync(new URL("docs-app/components/", root))
     .filter((file) => file.endsWith(".story.tsx"));
   assert.ok(files.length > 0);
   for (const file of files) {
     const source = read(`docs-app/components/${file}`);
-    assert.doesNotMatch(source, /\bbg-smoke\b/, `${file} has a dark demo canvas`);
+    assert.doesNotMatch(source, darkCanvas, `${file} has a dark demo canvas`);
     // The signboard keeps light text because it is printed over a dark wooden
-    // image; every other demo label must use a light-surface text token.
-    if (file !== "booking-details.story.tsx") {
-      assert.doesNotMatch(source, /text-paper/, `${file} has light-on-dark demo text`);
-    }
+    // image; strip only that span before checking the rest of the demo.
+    const withoutSignboard = source.replace(signboard, "");
+    assert.doesNotMatch(withoutSignboard, /text-paper/, `${file} has light-on-dark demo text`);
   }
+
+  const buttonStory = read("docs-app/components/button.story.tsx");
+  const pillStory = read("docs-app/components/pill.story.tsx");
+  assert.match(buttonStory, /<PaletteSpecimen key=\{color\} color=\{color\} variant=\{variant\}>/);
+  assert.match(pillStory, /<PaletteSpecimen key=\{color\} color=\{color\} variant=\{variant\}>/);
+  assert.match(globalCss, /\.docs-contrast-specimen \{[^}]*background-color: var\(--color-smoke\)/);
+  assert.match(
+    read("src/styles/room-photo-tour.css"),
+    /\.j-tour-footer \{[^}]*color: var\(--color-paper\)/,
+  );
 });
 
 test("story demos never expose a no-op Unset choice", () => {

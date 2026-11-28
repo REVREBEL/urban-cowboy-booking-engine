@@ -9,6 +9,7 @@ import {
   type ButtonStyle,
 } from "../../src/components/ui/Button";
 import { defineStory } from "../lib/story";
+import { PaletteSpecimen } from "./palette-specimen";
 
 const colors = Object.keys(COLOR_PALETTE) as ButtonColor[];
 const styles: ButtonStyle[] = ["filled", "outline", "transparent"];
@@ -70,9 +71,11 @@ function PillVariantsDemo() {
           <h3 className="font-label text-sm uppercase tracking-wider">{variant}</h3>
           <div className="flex flex-wrap items-center gap-2 rounded-xl bg-paper p-3">
             {colors.map((color) => (
-              <Pill key={color} colorScheme={color} variant={variant}>
-                {color}
-              </Pill>
+              <PaletteSpecimen key={color} color={color} variant={variant}>
+                <Pill colorScheme={color} variant={variant}>
+                  {color}
+                </Pill>
+              </PaletteSpecimen>
             ))}
           </div>
         </section>
@@ -132,12 +135,16 @@ function PillVariantsDemo() {
             <Pill colorScheme={color} variant="filled">
               Pill
             </Pill>
-            <Button colorScheme={color} variant="outline" size="xsmall">
-              Button outline
-            </Button>
-            <Pill colorScheme={color} variant="outline">
-              Pill outline
-            </Pill>
+            <PaletteSpecimen color={color} variant="outline">
+              <Button colorScheme={color} variant="outline" size="xsmall">
+                Button outline
+              </Button>
+            </PaletteSpecimen>
+            <PaletteSpecimen color={color} variant="outline">
+              <Pill colorScheme={color} variant="outline">
+                Pill outline
+              </Pill>
+            </PaletteSpecimen>
           </div>
         ))}
       </section>
