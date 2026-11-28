@@ -127,6 +127,14 @@ for (const [page, markers] of Object.entries(markersByPage)) {
   }
 }
 if (!html.includes("View source")) fail("missing rendered marker: View source");
+// The typography page documents component-library faces only. Keep the
+// rate-card-only families out of the static export even though the booking
+// engine still declares them.
+const typographyHtml = htmlByPage.get("design-tokens/typography/index.html");
+const hiddenFonts = JSON.parse(readFileSync(join(process.cwd(), "docs-app", "lib", "hidden-font-families.json"), "utf8"));
+for (const family of hiddenFonts) {
+  if (typographyHtml.includes(family)) fail(`rate-card-only font family rendered on typography page: ${family}`);
+}
 const searchIndex = join(out, "search-index.json");
 if (!existsSync(searchIndex)) fail("missing static search index");
 const searchData = JSON.parse(readFileSync(searchIndex, "utf8"));
