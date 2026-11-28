@@ -215,6 +215,25 @@ test("story demos never expose a no-op Unset choice", () => {
   }
 });
 
+test("typography page omits rate-card-only font families", () => {
+  const showcase = read("docs-app/components/typography-showcase.tsx");
+  const mdx = read("docs-app/content/docs/design-tokens/typography.mdx");
+  const hidden = JSON.parse(read("docs-app/lib/hidden-font-families.json")) as string[];
+  for (const name of [
+    "Arvo", "Coustard", "DM Sans", "Filicudi", "Lato", "League Gothic",
+    "Noto Emoji", "Noto Serif Tibetan", "Quattrocento Sans", "Rundeck", "Special Elite",
+  ]) {
+    assert.ok(hidden.includes(name), `${name} missing from the hidden font list`);
+  }
+  assert.ok(hidden.includes("Fineday Style One"));
+  assert.ok(hidden.includes("League Gothic Condensed"));
+  assert.match(showcase, /hiddenFontFamilies/);
+  assert.match(showcase, /families\.filter/);
+  assert.match(showcase, /familyTokens\.filter/);
+  assert.match(mdx, /Rate-card-only families are omitted/);
+  assert.match(smokeScript, /hidden-font-families\.json/);
+});
+
 test("component-name headings have a distinct docs title style", () => {
   const mdx = read("docs-app/content/docs/components/search-bar.mdx");
   assert.match(mdx, /<div className="docs-component-heading">\n\n## Expanded search panel/);

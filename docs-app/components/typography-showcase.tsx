@@ -2,10 +2,15 @@
 
 import type { CSSProperties } from "react";
 import tokenData from "../lib/design-tokens.generated.json";
+import hiddenFontFamilies from "../lib/hidden-font-families.json";
 import { TokenCopyButton } from "./token-copy-button";
 
 const SPECIMEN = "Aa Bb Cc 0123456789";
 const SENTENCE = "A quick brown fox jumps over the lazy dog.";
+
+// Rate-card-only faces stay declared in the booking engine; this page documents
+// the component library's type system, so their specimens are omitted here.
+const HIDDEN_FONT_FAMILIES = new Set(hiddenFontFamilies);
 
 function TokenMeta({ token, value }: { token: string; value?: string | null }) {
   return (
@@ -28,6 +33,8 @@ function roleValue(role: string) {
 
 export function TypographyShowcase() {
   const { families, familyTokens, sizes, tracking, textCases } = tokenData.typography;
+  const shownFamilies = families.filter((group) => !HIDDEN_FONT_FAMILIES.has(group.family));
+  const shownRoles = familyTokens.filter((token) => !HIDDEN_FONT_FAMILIES.has(token.primaryFamily));
 
   return (
     <div className="flex flex-col gap-10">
@@ -37,12 +44,13 @@ export function TypographyShowcase() {
             Font families
           </h3>
           <p className="text-sm text-lake-forest-200">
-            Every <code>@font-face</code> declared in the booking engine, rendered from its real asset.
-            A family with a design token is labelled with that token; copy either the token or the asset path.
+            The component library's <code>@font-face</code> families, rendered from their real assets.
+            Rate-card-only faces stay declared in the booking engine but are omitted here. A family with a
+            design token is labelled with that token; copy either the token or the asset path.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {families.map((group) => {
+          {shownFamilies.map((group) => {
             const faceLabel = group.faces
               .map((face) => `${face.weight}${face.style === "italic" ? " italic" : ""}`)
               .join(" · ");
@@ -85,7 +93,7 @@ export function TypographyShowcase() {
             Font roles
           </h3>
           <p className="text-sm text-lake-forest-200">
-            The configured <code>--font-*</code> tokens. Specimens use the token itself, so a theme change is reflected here.
+            The component library's <code>--font-*</code> tokens. Specimens use the token itself, so a theme change is reflected here.
           </p>
         </div>
         <div className="overflow-x-auto">
@@ -98,7 +106,7 @@ export function TypographyShowcase() {
               </tr>
             </thead>
             <tbody>
-              {familyTokens.map((token) => (
+              {shownRoles.map((token) => (
                 <tr key={token.name} className="border-b border-paper-300 align-middle">
                   <td className="py-3 pr-4 font-label text-xs uppercase tracking-wider">{token.role}</td>
                   <td className="py-3 pr-4">
