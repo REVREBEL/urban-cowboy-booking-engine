@@ -215,6 +215,21 @@ test("story demos never expose a no-op Unset choice", () => {
   }
 });
 
+test("Colors page uses the Figma color swatch for palette cards", () => {
+  const showcase = read("docs-app/components/colors-showcase.tsx");
+  const swatch = read("docs-app/components/color-swatch.tsx");
+  assert.match(showcase, /import \{ ColorSwatch \} from "\.\/color-swatch"/);
+  assert.match(showcase, /<PaletteCard/);
+  assert.doesNotMatch(showcase, /function Swatch\(/);
+  assert.match(showcase, /oklchToHex/);
+  // Light palette cards need dark ink, and the copy icon must follow it.
+  assert.match(swatch, /foreground: string/);
+  assert.match(swatch, /color: foreground/);
+  assert.match(swatch, /width=\{21\} height=\{23\}/);
+  assert.match(read("docs-app/public/icons/color-swatch-copy.svg"), /fill="#F2F2F2"/);
+  assert.match(read("docs-app/components/color-swatch.module.css"), /data-dark-ink="true"\] \.copyIcon/);
+});
+
 test("component-name headings have a distinct docs title style", () => {
   const mdx = read("docs-app/content/docs/components/search-bar.mdx");
   assert.match(mdx, /<div className="docs-component-heading">\n\n## Expanded search panel/);

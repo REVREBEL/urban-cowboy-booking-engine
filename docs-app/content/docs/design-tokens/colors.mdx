@@ -5,18 +5,18 @@ description: Primitive shades, semantic roles, contrast pairings and control col
 
 import { ColorsShowcase } from '~/components/colors-showcase';
 
-Every swatch below is painted by its own custom property. The token name, its declaration and the
-resolved CSS value are shown next to it, and each can be copied. Primitive shades come from
-`colors.css`; semantic roles and control colors come from `index.css` and `utilities.css`.
+Every swatch card is painted by its own custom property and shows the token name, its HEX and OKLCH
+values; the card's copy button copies the HEX value. Primitive shades come from `colors.css`;
+semantic roles and contrast pairings come from `index.css` and `utilities.css`.
 
 <ColorsShowcase />
 
 ## Reading the palette
 
 Primitive families present all declared numeric shades plus the family aliases such as `--paper`
-and `--lake-forest-muted`. Semantic roles are shown with sample text on their own background token,
-where a matching `*-foreground` token exists. Contrast pairings use the pairs already defined by
-the theme rather than newly chosen color combinations.
+and `--lake-forest-muted` as color-swatch cards. Semantic roles are shown with sample text on their
+own background token, where a matching `*-foreground` token exists. Contrast pairings use the pairs
+already defined by the theme rather than newly chosen color combinations.
 
 The control section uses the real shared `Button` with documented props. Hover, focus and active
 colors come from the same `control-color-*` utilities; the loading and disabled examples use the
@@ -24,7 +24,7 @@ component's own states.
 
 ## Responsive notes
 
-Swatch grids collapse from six columns to two on narrow screens. The semantic cards and pairing
-samples wrap to one column, so no horizontal scrolling is needed to read a token name or value.
+Swatch-card grids collapse from four columns to one on narrow screens. The semantic cards and
+pairing samples wrap to one column, so no horizontal scrolling is needed to read a token name or value.
 
 [View the color source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/styles/colors.css)

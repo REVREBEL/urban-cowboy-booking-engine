@@ -3,14 +3,18 @@
 import { useState } from "react";
 import { Button, type ButtonColor } from "../../src/components/ui/Button";
 import tokenData from "../lib/design-tokens.generated.json";
+import { oklchToHex } from "../lib/oklch-hex";
+import { ColorSwatch } from "./color-swatch";
 import { TokenCopyButton } from "./token-copy-button";
 
 /** oklch lightness drives readable labels; both inks are existing theme tokens. */
 function ink(resolved: string | undefined) {
-  const lightness = /oklch\(\s*([\d.]+)%/i.exec(resolved ?? "")?.[1];
-  return lightness !== undefined && Number(lightness) < 62
-    ? "var(--paper)"
-    : "var(--color-foreground)";
+  return usesDarkInk(resolved) ? "var(--color-foreground)" : "var(--paper)";
+}
+
+function usesDarkInk(resolved: string | undefined) {
+  const lightness = Number(/oklch\(\s*([\d.]+)%/i.exec(resolved ?? "")?.[1] ?? 100);
+  return lightness >= 62;
 }
 
 function TokenMeta({ name, value, resolved }: { name: string; value: string; resolved?: string }) {
@@ -30,24 +34,27 @@ function TokenMeta({ name, value, resolved }: { name: string; value: string; res
   );
 }
 
-type SwatchProps = {
-  name: string;
-  value: string;
-  resolved?: string;
-  label?: string;
-};
+function humanize(value: string) {
+  return value
+    .replace(/^--/, "")
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
 
-function Swatch({ name, value, resolved, label }: SwatchProps) {
+/** Token data stores OKLCH only; the card also needs a hex value to copy. */
+function PaletteCard({ token, resolved, name }: { token: string; resolved?: string; name: string }) {
+  const value = resolved ?? token;
   return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <div
-        className="flex h-20 items-end rounded-field border border-paper-700 p-2"
-        style={{ backgroundColor: `var(${name})`, color: ink(resolved ?? value) }}
-      >
-        <span className="font-label text-[11px] uppercase tracking-wider">{label ?? name.replace(/^--/, "")}</span>
-      </div>
-      <TokenMeta name={name} value={value} resolved={resolved} />
-    </div>
+    <ColorSwatch
+      colorName={name}
+      colorToken={token}
+      hexValue={oklchToHex(value)}
+      oklchValue={value}
+      color={`var(${token})`}
+      foreground={ink(value)}
+      copyIconDark={usesDarkInk(value)}
+    />
   );
 }
 
@@ -67,28 +74,32 @@ export function ColorsShowcase() {
             Primitive palette
           </h3>
           <p className="text-sm text-lake-forest-200">
-            Raw <code>oklch</code> shades from <code>colors.css</code>. Each swatch is painted by its own token and prints the declaration plus the resolved value.
+            Raw <code>oklch</code> shades from <code>colors.css</code>. Each card is painted by its own token and
+            prints the token, HEX and OKLCH values; its copy button copies the HEX value.
           </p>
         </div>
         <div className="flex flex-col gap-6">
           {families.map((family) => (
             <div key={family} className="flex flex-col gap-3">
               <h4 className="font-label text-xs uppercase tracking-wider">{family}</h4>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {primitives
                   .filter((color) => color.family === family)
                   .map((color) => (
-                    <Swatch key={color.name} name={color.name} value={color.value} resolved={color.resolved} label={color.shade} />
+                    <PaletteCard
+                      key={color.name}
+                      token={color.name}
+                      resolved={color.resolved}
+                      name={`${humanize(family)} ${color.shade}`}
+                    />
                   ))}
               </div>
               {familyAliases.some((color) => color.name.startsWith(`--${family}-`) || aliases.has(`--${family}`)) ? (
-                <div className="flex flex-wrap gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {familyAliases
                     .filter((color) => color.name === `--${family}` || color.name.startsWith(`--${family}-`))
                     .map((color) => (
-                      <div key={color.name} className="w-44 min-w-0">
-                        <Swatch name={color.name} value={color.value} resolved={color.resolved} />
-                      </div>
+                      <PaletteCard key={color.name} token={color.name} resolved={color.resolved} name={humanize(color.name)} />
                     ))}
                 </div>
               ) : null}
