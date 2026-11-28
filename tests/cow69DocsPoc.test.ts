@@ -129,6 +129,8 @@ test("the removed compact SearchBar and legacy component showcase leave no refer
   assert.doesNotMatch(storyControls, /SearchBarStoryControl/);
   assert.doesNotMatch(viteConfig, /components\.html/);
   assert.doesNotMatch(packageJson, /"components":/);
+  assert.doesNotMatch(smokeScript, /21 – 24 Nov/);
+  assert.match(smokeScript, /"components\/search-bar\/index\.html": \["2026-11-21 — 2026-11-24", "Search accommodations"\]/);
 });
 
 test("expanded search bar renders the shared SearchButton in its button slot", () => {
