@@ -26,3 +26,7 @@ Docs story demos must not use `bg-smoke` (or another dark token) as a wrapper ca
 
 The `light` and `paper` schemes use paper as the text colour of outline and transparent controls, which is invisible on a light row. Wrap only those sample controls in `<PaletteSpecimen>` from `components/palette-specimen.tsx`; it renders a bounded `.docs-contrast-specimen` swatch without changing the control itself or the page surface.
 
+## The Colors page shows only the Figma main colors
+
+`colors-showcase.tsx` renders the twelve main-color swatches from the Figma palette in a two-column grid; primitive shades, semantic roles, pairings and control states are out of scope for that page. Read each card's HEX/OKLCH from the live generated token data, not from Figma's placeholder labels. The `--oxblood` family alias resolves to `--cowboy-umber-500` in the booking-engine theme, so the Figma burgundy Oxblood card must paint `var(--oxblood-500)` instead of the alias. Similarly the Figma "Cowboy Ember" card paints `--cowboy-umber` and "Oxidized Teal" paints `--oxidized-teal`; the Figma token text on the teal card is a copy/paste error.
+

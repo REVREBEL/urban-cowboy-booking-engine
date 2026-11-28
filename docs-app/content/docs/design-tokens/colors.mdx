@@ -1,30 +1,20 @@
 ---
 title: Colors
-description: Primitive shades, semantic roles, contrast pairings and control color states from the live booking-engine theme.
+description: The twelve main brand colors from the Urban Cowboy Figma palette, shown as live token swatches.
 ---
 
 import { ColorsShowcase } from '~/components/colors-showcase';
 
-Every swatch below is painted by its own custom property. The token name, its declaration and the
-resolved CSS value are shown next to it, and each can be copied. Primitive shades come from
-`colors.css`; semantic roles and control colors come from `index.css` and `utilities.css`.
+Each card is painted by its own live custom property and shows the token name, its HEX and OKLCH values; the card's copy button copies the HEX value. The colors and card layout follow the main-colors frame in the Figma design system.
 
 <ColorsShowcase />
 
 ## Reading the palette
 
-Primitive families present all declared numeric shades plus the family aliases such as `--paper`
-and `--lake-forest-muted`. Semantic roles are shown with sample text on their own background token,
-where a matching `*-foreground` token exists. Contrast pairings use the pairs already defined by
-the theme rather than newly chosen color combinations.
-
-The control section uses the real shared `Button` with documented props. Hover, focus and active
-colors come from the same `control-color-*` utilities; the loading and disabled examples use the
-component's own states.
+The twelve cards show the main brand colors in design order. Values are read from the booking-engine theme, so a card's displayed HEX and OKLCH always match the color currently rendered by its token.
 
 ## Responsive notes
 
-Swatch grids collapse from six columns to two on narrow screens. The semantic cards and pairing
-samples wrap to one column, so no horizontal scrolling is needed to read a token name or value.
+The cards sit in two columns on wide screens and collapse to one column on narrow screens, so no horizontal scrolling is needed to read a token name or value.
 
 [View the color source](https://github.com/REVREBEL/urban-cowboy-booking-engine/blob/main/src/styles/colors.css)
