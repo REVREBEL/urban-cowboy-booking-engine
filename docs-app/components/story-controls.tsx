@@ -1,6 +1,7 @@
 "use client";
 
 import { pillStory, pillVariantsStory } from "./pill.story";
+import { colorSwatchStory } from "./color-swatch.story";
 import { preferenceIconButtonStory } from "./preference-icon-button.story";
 import { buttonStory, buttonVariantsStory } from "./button.story";
 import { switchStory } from "./switch.story";
@@ -556,4 +557,8 @@ export function BasicPolicyTimelineStoryControl() {
 
 export function PillarFeaturesStoryControl() {
   return <pillarFeaturesStory.WithControl />;
+}
+
+export function ColorSwatchStoryControl() {
+  return <colorSwatchStory.WithControl />;
 }
